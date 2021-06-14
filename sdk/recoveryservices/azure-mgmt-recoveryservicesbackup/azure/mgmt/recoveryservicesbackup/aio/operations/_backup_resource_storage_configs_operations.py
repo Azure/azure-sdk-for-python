@@ -44,7 +44,7 @@ class BackupResourceStorageConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupResourceConfigResource":
         """Fetches resource storage config.
 
@@ -105,7 +105,7 @@ class BackupResourceStorageConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.BackupResourceConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupResourceConfigResource":
         """Updates vault storage model type.
 
@@ -173,7 +173,7 @@ class BackupResourceStorageConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.BackupResourceConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Updates vault storage model type.
 

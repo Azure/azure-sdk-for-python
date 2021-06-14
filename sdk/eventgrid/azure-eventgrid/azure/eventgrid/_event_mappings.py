@@ -37,8 +37,6 @@ class SystemEventNames(str, Enum):
 
     ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener'
-
     ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
 
     AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
@@ -109,36 +107,6 @@ class SystemEventNames(str, Enum):
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
-
-    FarmBeatsApplicationNameChangedEventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
-
-    FarmBeatsBoundaryChangedEventName = 'Microsoft.AgFoodPlatform.BoundaryChanged'
-
-    FarmBeatsCropChangedEventName = 'Microsoft.AgFoodPlatform.CropChanged'
-
-    FarmBeatsCropVarietyChangedEventName = 'Microsoft.AgFoodPlatform.CropVarietyChanged'
-
-    FarmBeatsFarmChangedEventName = 'Microsoft.AgFoodPlatform.FarmChanged'
-
-    FarmBeatsFarmOperationNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
-
-    FarmBeatsFarmerChangedEventName = 'Microsoft.AgFoodPlatform.FarmerChanged'
-
-    FarmBeatsFieldChangedEventName = 'Microsoft.AgFoodPlatform.FieldChanged'
-
-    FarmBeatsHarvestNameChangedEventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
-
-    FarmBeatsPlantingNameChangedEventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
-
-    FarmBeatsSatelliteNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
-
-    FarmBeatsSeasonChangedEventName = 'Microsoft.AgFoodPlatform.SeasonChanged'
-
-    FarmBeatsSeasonalFieldChangedEventName = 'Microsoft.AgFoodPlatform.SeasonalFieldChanged'
-
-    FarmBeatsTillageNameChangedEventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
-
-    FarmBeatsWeatherNameIngestionJobStatusChangedEventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
 
     IotHubDeviceConnectedEventName = 'Microsoft.Devices.DeviceConnected'
 
@@ -327,3 +295,6 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    # servicebus alias
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

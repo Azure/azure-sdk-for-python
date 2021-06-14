@@ -24,7 +24,7 @@ from azure.core.exceptions import (
 
 from azure.data.tables import (
     TableSasPermissions,
-    AccessPolicy,
+    TableAccessPolicy,
     UpdateMode,
     generate_table_sas,
     TableEntity,
@@ -1833,7 +1833,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Arrange
             entity, _ = await self._insert_random_entity()
 
-            access_policy = AccessPolicy()
+            access_policy = TableAccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2025, 10, 12)
             access_policy.permission = TableSasPermissions(read=True)
@@ -1931,7 +1931,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert 'timestamp' in received.metadata
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
-        
+
             received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9)
             await self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = await self.table.get_entity(partition, row)
@@ -1970,7 +1970,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity['Etag'] = u'three'
             with pytest.raises(ValueError):
                 await self.table.update_entity(entity, match_condition=MatchConditions.IfNotModified)
-        
+
             created['ETag'] = u'one'
             created['etag'] = u'two'
             created['Etag'] = u'three'

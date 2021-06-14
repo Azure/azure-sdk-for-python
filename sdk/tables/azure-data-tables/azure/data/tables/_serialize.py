@@ -141,9 +141,9 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
 try:
     _PYTHON_TO_ENTITY_CONVERSIONS.update(
         {
-            unicode: _to_entity_str,
+            unicode: _to_entity_str,  # type: ignore
             str: _to_entity_binary,
-            long: _to_entity_int32,
+            long: _to_entity_int32,  # type: ignore
         }
     )
 except NameError:
@@ -198,7 +198,7 @@ def _add_entity_properties(source):
 
         if isinstance(value, Enum):
             try:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
             except NameError:
                 conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
             mtype, value = conv(value)

@@ -113,6 +113,12 @@ IGNORED_SAMPLES = {
         "release_phone_number_sample_async.py",
         "release_phone_number_sample.py"
     ],
+    "azure-ai-translation-document": [
+        "sample_list_document_statuses_with_filters_async.py",
+        "sample_list_translations_with_filters_async.py",
+        "sample_list_document_statuses_with_filters.py",
+        "sample_list_translations_with_filters.py",
+    ]
 }
 
 

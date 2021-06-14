@@ -201,6 +201,31 @@ class AbsoluteClipTime(ClipTime):
         self.time = kwargs['time']
 
 
+class AccessControl(msrest.serialization.Model):
+    """AccessControl.
+
+    :param default_action: The behavior for IP access control in Key Delivery. Possible values
+     include: "Allow", "Deny".
+    :type default_action: str or ~azure.mgmt.media.models.DefaultAction
+    :param ip_allow_list: The IP allow list for access control in Key Delivery. If the default
+     action is set to 'Allow', the IP allow list must be empty.
+    :type ip_allow_list: list[str]
+    """
+
+    _attribute_map = {
+        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        'ip_allow_list': {'key': 'ipAllowList', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AccessControl, self).__init__(**kwargs)
+        self.default_action = kwargs.get('default_action', None)
+        self.ip_allow_list = kwargs.get('ip_allow_list', None)
+
+
 class AccountEncryption(msrest.serialization.Model):
     """AccountEncryption.
 
@@ -268,8 +293,8 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class AccountFilter(Resource):
-    """An Account Filter.
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -281,12 +306,6 @@ class AccountFilter(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param presentation_time_range: The presentation time range.
-    :type presentation_time_range: ~azure.mgmt.media.models.PresentationTimeRange
-    :param first_quality: The first quality.
-    :type first_quality: ~azure.mgmt.media.models.FirstQuality
-    :param tracks: The tracks selection conditions.
-    :type tracks: list[~azure.mgmt.media.models.FilterTrackSelection]
     """
 
     _validation = {
@@ -299,6 +318,50 @@ class AccountFilter(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AccountFilter(ProxyResource):
+    """An Account Filter.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
+    :param presentation_time_range: The presentation time range.
+    :type presentation_time_range: ~azure.mgmt.media.models.PresentationTimeRange
+    :param first_quality: The first quality.
+    :type first_quality: ~azure.mgmt.media.models.FirstQuality
+    :param tracks: The tracks selection conditions.
+    :type tracks: list[~azure.mgmt.media.models.FilterTrackSelection]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'presentation_time_range': {'key': 'properties.presentationTimeRange', 'type': 'PresentationTimeRange'},
         'first_quality': {'key': 'properties.firstQuality', 'type': 'FirstQuality'},
         'tracks': {'key': 'properties.tracks', 'type': '[FilterTrackSelection]'},
@@ -309,6 +372,7 @@ class AccountFilter(Resource):
         **kwargs
     ):
         super(AccountFilter, self).__init__(**kwargs)
+        self.system_data = None
         self.presentation_time_range = kwargs.get('presentation_time_range', None)
         self.first_quality = kwargs.get('first_quality', None)
         self.tracks = kwargs.get('tracks', None)
@@ -404,7 +468,7 @@ class ApiError(msrest.serialization.Model):
         self.error = kwargs.get('error', None)
 
 
-class Asset(Resource):
+class Asset(ProxyResource):
     """An Asset.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -417,6 +481,8 @@ class Asset(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :ivar asset_id: The Asset ID.
     :vartype asset_id: str
     :ivar created: The creation date of the Asset.
@@ -441,6 +507,7 @@ class Asset(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'asset_id': {'readonly': True},
         'created': {'readonly': True},
         'last_modified': {'readonly': True},
@@ -451,6 +518,7 @@ class Asset(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'asset_id': {'key': 'properties.assetId', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
@@ -466,6 +534,7 @@ class Asset(Resource):
         **kwargs
     ):
         super(Asset, self).__init__(**kwargs)
+        self.system_data = None
         self.asset_id = None
         self.created = None
         self.last_modified = None
@@ -552,7 +621,7 @@ class AssetFileEncryptionMetadata(msrest.serialization.Model):
         self.asset_file_id = kwargs['asset_file_id']
 
 
-class AssetFilter(Resource):
+class AssetFilter(ProxyResource):
     """An Asset Filter.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -565,6 +634,8 @@ class AssetFilter(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :param presentation_time_range: The presentation time range.
     :type presentation_time_range: ~azure.mgmt.media.models.PresentationTimeRange
     :param first_quality: The first quality.
@@ -577,12 +648,14 @@ class AssetFilter(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'presentation_time_range': {'key': 'properties.presentationTimeRange', 'type': 'PresentationTimeRange'},
         'first_quality': {'key': 'properties.firstQuality', 'type': 'FirstQuality'},
         'tracks': {'key': 'properties.tracks', 'type': '[FilterTrackSelection]'},
@@ -593,6 +666,7 @@ class AssetFilter(Resource):
         **kwargs
     ):
         super(AssetFilter, self).__init__(**kwargs)
+        self.system_data = None
         self.presentation_time_range = kwargs.get('presentation_time_range', None)
         self.first_quality = kwargs.get('first_quality', None)
         self.tracks = kwargs.get('tracks', None)
@@ -733,8 +807,8 @@ class AudioAnalyzerPreset(Preset):
      language detected and process with the selected language for the duration of the file. It does
      not currently support dynamically switching between languages after the first language is
      detected. The automatic detection works best with audio recordings with clearly discernable
-     speech. If automatic detection fails to find the language, transcription would fallback to 'en-
-     US'." The list of supported languages is available here:
+     speech. If automatic detection fails to find the language, transcription would fallback to
+     'en-US'." The list of supported languages is available here:
      https://go.microsoft.com/fwlink/?linkid=2109463.
     :type audio_language: str
     :param mode: Determines the set of audio analysis operations to be performed. If unspecified,
@@ -782,8 +856,8 @@ class Overlay(msrest.serialization.Model):
     :param odata_type: Required. The discriminator for derived types.Constant filled by server.
     :type odata_type: str
     :param input_label: Required. The label of the job input which is to be used as an overlay. The
-     Input must specify exactly one file. You can specify an image file in JPG or PNG formats, or an
-     audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+     Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
+     format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
      https://aka.ms/mesformats for the complete list of supported audio and video file formats.
     :type input_label: str
     :param start: The start position, with reference to the input video, at which the overlay
@@ -852,8 +926,8 @@ class AudioOverlay(Overlay):
     :param odata_type: Required. The discriminator for derived types.Constant filled by server.
     :type odata_type: str
     :param input_label: Required. The label of the job input which is to be used as an overlay. The
-     Input must specify exactly one file. You can specify an image file in JPG or PNG formats, or an
-     audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+     Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
+     format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
      https://aka.ms/mesformats for the complete list of supported audio and video file formats.
     :type input_label: str
     :param start: The start position, with reference to the input video, at which the overlay
@@ -904,6 +978,77 @@ class AudioOverlay(Overlay):
         self.odata_type = '#Microsoft.Media.AudioOverlay'  # type: str
 
 
+class TrackDescriptor(msrest.serialization.Model):
+    """Base type for all TrackDescriptor types, which define the metadata and selection for tracks that should be processed by a Job.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AudioTrackDescriptor, VideoTrackDescriptor.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Media.AudioTrackDescriptor': 'AudioTrackDescriptor', '#Microsoft.Media.VideoTrackDescriptor': 'VideoTrackDescriptor'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TrackDescriptor, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+
+
+class AudioTrackDescriptor(TrackDescriptor):
+    """A TrackSelection to select audio tracks.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SelectAudioTrackByAttribute, SelectAudioTrackById.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param channel_mapping: Optional designation for single channel audio tracks.  Can be used to
+     combine the tracks into stereo or multi-channel audio tracks. Possible values include:
+     "FrontLeft", "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight",
+     "StereoLeft", "StereoRight".
+    :type channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'channel_mapping': {'key': 'channelMapping', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Media.SelectAudioTrackByAttribute': 'SelectAudioTrackByAttribute', '#Microsoft.Media.SelectAudioTrackById': 'SelectAudioTrackById'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AudioTrackDescriptor, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.AudioTrackDescriptor'  # type: str
+        self.channel_mapping = kwargs.get('channel_mapping', None)
+
+
 class BuiltInStandardEncoderPreset(Preset):
     """Describes a built-in preset for encoding the input video with the Standard Encoder.
 
@@ -915,7 +1060,9 @@ class BuiltInStandardEncoderPreset(Preset):
      values include: "H264SingleBitrateSD", "H264SingleBitrate720p", "H264SingleBitrate1080p",
      "AdaptiveStreaming", "AACGoodQualityAudio", "ContentAwareEncodingExperimental",
      "ContentAwareEncoding", "CopyAllBitrateNonInterleaved", "H264MultipleBitrate1080p",
-     "H264MultipleBitrate720p", "H264MultipleBitrateSD".
+     "H264MultipleBitrate720p", "H264MultipleBitrateSD", "H265ContentAwareEncoding",
+     "H265AdaptiveStreaming", "H265SingleBitrate720p", "H265SingleBitrate1080p",
+     "H265SingleBitrate4K".
     :type preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
     """
 
@@ -1075,7 +1222,7 @@ class CommonEncryptionCenc(msrest.serialization.Model):
         self.drm = kwargs.get('drm', None)
 
 
-class ContentKeyPolicy(Resource):
+class ContentKeyPolicy(ProxyResource):
     """A Content Key Policy resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1088,6 +1235,8 @@ class ContentKeyPolicy(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :ivar policy_id: The legacy Policy ID.
     :vartype policy_id: str
     :ivar created: The creation date of the Policy.
@@ -1104,6 +1253,7 @@ class ContentKeyPolicy(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'policy_id': {'readonly': True},
         'created': {'readonly': True},
         'last_modified': {'readonly': True},
@@ -1113,6 +1263,7 @@ class ContentKeyPolicy(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'policy_id': {'key': 'properties.policyId', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
@@ -1125,6 +1276,7 @@ class ContentKeyPolicy(Resource):
         **kwargs
     ):
         super(ContentKeyPolicy, self).__init__(**kwargs)
+        self.system_data = None
         self.policy_id = None
         self.created = None
         self.last_modified = None
@@ -2371,7 +2523,7 @@ class EnvelopeEncryption(msrest.serialization.Model):
 
 
 class FaceDetectorPreset(Preset):
-    """Describes all the settings to be used when analyzing a video in order to detect all the faces present.
+    """Describes all the settings to be used when analyzing a video in order to detect (and optionally redact) all the faces present.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2388,6 +2540,16 @@ class FaceDetectorPreset(Preset):
      However, faces that end up being too small in the resized video may not be detected. Possible
      values include: "SourceResolution", "StandardDefinition".
     :type resolution: str or ~azure.mgmt.media.models.AnalysisResolution
+    :param mode: This mode provides the ability to choose between the following settings: 1)
+     Analyze - For detection only.This mode generates a metadata JSON file marking appearances of
+     faces throughout the video.Where possible, appearances of the same person are assigned the same
+     ID. 2) Combined - Additionally redacts(blurs) detected faces. 3) Redact - This enables a 2-pass
+     process, allowing for selective redaction of a subset of detected faces.It takes in the
+     metadata file from a prior analyze pass, along with the source video, and a user-selected
+     subset of IDs that require redaction. Possible values include: "Analyze", "Redact", "Combined".
+    :type mode: str or ~azure.mgmt.media.models.FaceRedactorMode
+    :param blur_type: Blur type. Possible values include: "Box", "Low", "Med", "High", "Black".
+    :type blur_type: str or ~azure.mgmt.media.models.BlurType
     :param experimental_options: Dictionary containing key value pairs for parameters not exposed
      in the preset itself.
     :type experimental_options: dict[str, str]
@@ -2400,6 +2562,8 @@ class FaceDetectorPreset(Preset):
     _attribute_map = {
         'odata_type': {'key': '@odata\\.type', 'type': 'str'},
         'resolution': {'key': 'resolution', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'str'},
+        'blur_type': {'key': 'blurType', 'type': 'str'},
         'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
     }
 
@@ -2410,6 +2574,8 @@ class FaceDetectorPreset(Preset):
         super(FaceDetectorPreset, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Media.FaceDetectorPreset'  # type: str
         self.resolution = kwargs.get('resolution', None)
+        self.mode = kwargs.get('mode', None)
+        self.blur_type = kwargs.get('blur_type', None)
         self.experimental_options = kwargs.get('experimental_options', None)
 
 
@@ -2538,7 +2704,7 @@ class Format(msrest.serialization.Model):
     """Base class for output.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageFormat, JpgFormat, MultiBitrateFormat, PngFormat.
+    sub-classes are: ImageFormat, MultiBitrateFormat.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2552,8 +2718,9 @@ class Format(msrest.serialization.Model):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     """
 
@@ -2568,7 +2735,7 @@ class Format(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.ImageFormat': 'ImageFormat', '#Microsoft.Media.JpgFormat': 'JpgFormat', '#Microsoft.Media.MultiBitrateFormat': 'MultiBitrateFormat', '#Microsoft.Media.PngFormat': 'PngFormat'}
+        'odata_type': {'#Microsoft.Media.ImageFormat': 'ImageFormat', '#Microsoft.Media.MultiBitrateFormat': 'MultiBitrateFormat'}
     }
 
     def __init__(
@@ -2580,11 +2747,106 @@ class Format(msrest.serialization.Model):
         self.filename_pattern = kwargs['filename_pattern']
 
 
+class InputDefinition(msrest.serialization.Model):
+    """Base class for defining an input. Use sub classes of this class to specify tracks selections and related metadata.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FromAllInputFile, FromEachInputFile, InputFile.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param included_tracks: The list of TrackDescriptors which define the metadata and selection of
+     tracks in the input.
+    :type included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Media.FromAllInputFile': 'FromAllInputFile', '#Microsoft.Media.FromEachInputFile': 'FromEachInputFile', '#Microsoft.Media.InputFile': 'InputFile'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(InputDefinition, self).__init__(**kwargs)
+        self.odata_type = None  # type: Optional[str]
+        self.included_tracks = kwargs.get('included_tracks', None)
+
+
+class FromAllInputFile(InputDefinition):
+    """An InputDefinition that looks across all of the files provided to select tracks specified by the IncludedTracks property. Generally used with the AudioTrackByAttribute and VideoTrackByAttribute to allow selection of a single track across a set of input files.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param included_tracks: The list of TrackDescriptors which define the metadata and selection of
+     tracks in the input.
+    :type included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FromAllInputFile, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.FromAllInputFile'  # type: str
+
+
+class FromEachInputFile(InputDefinition):
+    """An InputDefinition that looks at each input file provided to select tracks specified by the IncludedTracks property. Generally used with the AudioTrackByAttribute and VideoTrackByAttribute to select tracks from each file given.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param included_tracks: The list of TrackDescriptors which define the metadata and selection of
+     tracks in the input.
+    :type included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FromEachInputFile, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.FromEachInputFile'  # type: str
+
+
 class Layer(msrest.serialization.Model):
     """The encoder can be configured to produce video and/or images (thumbnails) at different resolutions, by specifying a layer for each desired resolution. A layer represents the properties for the video or image at a resolution.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JpgLayer, PngLayer, VideoLayer.
+    sub-classes are: H265VideoLayer, JpgLayer, PngLayer, VideoLayer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2615,7 +2877,7 @@ class Layer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JpgLayer': 'JpgLayer', '#Microsoft.Media.PngLayer': 'PngLayer', '#Microsoft.Media.VideoLayer': 'VideoLayer'}
+        'odata_type': {'#Microsoft.Media.H265VideoLayer': 'H265VideoLayer', '#Microsoft.Media.JpgLayer': 'JpgLayer', '#Microsoft.Media.PngLayer': 'PngLayer', '#Microsoft.Media.VideoLayer': 'VideoLayer'}
     }
 
     def __init__(
@@ -2810,7 +3072,7 @@ class Video(Codec):
     """Describes the basic properties for encoding the input video.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: H264Video, Image.
+    sub-classes are: H264Video, H265Video, Image.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2846,7 +3108,7 @@ class Video(Codec):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.H264Video': 'H264Video', '#Microsoft.Media.Image': 'Image'}
+        'odata_type': {'#Microsoft.Media.H264Video': 'H264Video', '#Microsoft.Media.H265Video': 'H265Video', '#Microsoft.Media.Image': 'Image'}
     }
 
     def __init__(
@@ -2914,6 +3176,240 @@ class H264Video(Video):
     ):
         super(H264Video, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Media.H264Video'  # type: str
+        self.scene_change_detection = kwargs.get('scene_change_detection', None)
+        self.complexity = kwargs.get('complexity', None)
+        self.layers = kwargs.get('layers', None)
+
+
+class H265VideoLayer(Layer):
+    """Describes the settings to be used when encoding the input video into a desired output bitrate layer.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: H265Layer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param width: The width of the output video for this layer. The value can be absolute (in
+     pixels) or relative (in percentage). For example 50% means the output video has half as many
+     pixels in width as the input.
+    :type width: str
+    :param height: The height of the output video for this layer. The value can be absolute (in
+     pixels) or relative (in percentage). For example 50% means the output video has half as many
+     pixels in height as the input.
+    :type height: str
+    :param label: The alphanumeric label for this layer, which can be used in multiplexing
+     different video and audio layers, or in naming the output file.
+    :type label: str
+    :param bitrate: Required. The average bitrate in bits per second at which to encode the input
+     video when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this
+     value should be 3000000 This is a required field.
+    :type bitrate: int
+    :param max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should be
+     assumed to refill. If not specified, defaults to the same value as bitrate.
+    :type max_bitrate: int
+    :param b_frames: The number of B-frames to be used when encoding this layer.  If not specified,
+     the encoder chooses an appropriate number based on the video profile and level.
+    :type b_frames: int
+    :param frame_rate: The frame rate (in frames per second) at which to encode this layer. The
+     value can be in the form of M/N where M and N are integers (For example, 30000/1001), or in the
+     form of a number (For example, 30, or 29.97). The encoder enforces constraints on allowed frame
+     rates based on the profile and level. If it is not specified, the encoder will use the same
+     frame rate as the input video.
+    :type frame_rate: str
+    :param slices: The number of slices to be used when encoding this layer. If not specified,
+     default is zero, which means that encoder will use a single slice for each frame.
+    :type slices: int
+    :param adaptive_b_frame: Specifies whether or not adaptive B-frames are to be used when
+     encoding this layer. If not specified, the encoder will turn it on whenever the video profile
+     permits its use.
+    :type adaptive_b_frame: bool
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'bitrate': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'width': {'key': 'width', 'type': 'str'},
+        'height': {'key': 'height', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'bitrate': {'key': 'bitrate', 'type': 'int'},
+        'max_bitrate': {'key': 'maxBitrate', 'type': 'int'},
+        'b_frames': {'key': 'bFrames', 'type': 'int'},
+        'frame_rate': {'key': 'frameRate', 'type': 'str'},
+        'slices': {'key': 'slices', 'type': 'int'},
+        'adaptive_b_frame': {'key': 'adaptiveBFrame', 'type': 'bool'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Media.H265Layer': 'H265Layer'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(H265VideoLayer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.H265VideoLayer'  # type: str
+        self.bitrate = kwargs['bitrate']
+        self.max_bitrate = kwargs.get('max_bitrate', None)
+        self.b_frames = kwargs.get('b_frames', None)
+        self.frame_rate = kwargs.get('frame_rate', None)
+        self.slices = kwargs.get('slices', None)
+        self.adaptive_b_frame = kwargs.get('adaptive_b_frame', None)
+
+
+class H265Layer(H265VideoLayer):
+    """Describes the settings to be used when encoding the input video into a desired output bitrate layer with the H.265 video codec.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param width: The width of the output video for this layer. The value can be absolute (in
+     pixels) or relative (in percentage). For example 50% means the output video has half as many
+     pixels in width as the input.
+    :type width: str
+    :param height: The height of the output video for this layer. The value can be absolute (in
+     pixels) or relative (in percentage). For example 50% means the output video has half as many
+     pixels in height as the input.
+    :type height: str
+    :param label: The alphanumeric label for this layer, which can be used in multiplexing
+     different video and audio layers, or in naming the output file.
+    :type label: str
+    :param bitrate: Required. The average bitrate in bits per second at which to encode the input
+     video when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this
+     value should be 3000000 This is a required field.
+    :type bitrate: int
+    :param max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should be
+     assumed to refill. If not specified, defaults to the same value as bitrate.
+    :type max_bitrate: int
+    :param b_frames: The number of B-frames to be used when encoding this layer.  If not specified,
+     the encoder chooses an appropriate number based on the video profile and level.
+    :type b_frames: int
+    :param frame_rate: The frame rate (in frames per second) at which to encode this layer. The
+     value can be in the form of M/N where M and N are integers (For example, 30000/1001), or in the
+     form of a number (For example, 30, or 29.97). The encoder enforces constraints on allowed frame
+     rates based on the profile and level. If it is not specified, the encoder will use the same
+     frame rate as the input video.
+    :type frame_rate: str
+    :param slices: The number of slices to be used when encoding this layer. If not specified,
+     default is zero, which means that encoder will use a single slice for each frame.
+    :type slices: int
+    :param adaptive_b_frame: Specifies whether or not adaptive B-frames are to be used when
+     encoding this layer. If not specified, the encoder will turn it on whenever the video profile
+     permits its use.
+    :type adaptive_b_frame: bool
+    :param profile: We currently support Main. Default is Auto. Possible values include: "Auto",
+     "Main".
+    :type profile: str or ~azure.mgmt.media.models.H265VideoProfile
+    :param level: We currently support Level up to 6.2. The value can be Auto, or a number that
+     matches the H.265 profile. If not specified, the default is Auto, which lets the encoder choose
+     the Level that is appropriate for this layer.
+    :type level: str
+    :param buffer_window: The VBV buffer window length. The value should be in ISO 8601 format. The
+     value should be in the range [0.1-100] seconds. The default is 5 seconds (for example, PT5S).
+    :type buffer_window: ~datetime.timedelta
+    :param reference_frames: The number of reference frames to be used when encoding this layer. If
+     not specified, the encoder determines an appropriate number based on the encoder complexity
+     setting.
+    :type reference_frames: int
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'bitrate': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'width': {'key': 'width', 'type': 'str'},
+        'height': {'key': 'height', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'bitrate': {'key': 'bitrate', 'type': 'int'},
+        'max_bitrate': {'key': 'maxBitrate', 'type': 'int'},
+        'b_frames': {'key': 'bFrames', 'type': 'int'},
+        'frame_rate': {'key': 'frameRate', 'type': 'str'},
+        'slices': {'key': 'slices', 'type': 'int'},
+        'adaptive_b_frame': {'key': 'adaptiveBFrame', 'type': 'bool'},
+        'profile': {'key': 'profile', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'str'},
+        'buffer_window': {'key': 'bufferWindow', 'type': 'duration'},
+        'reference_frames': {'key': 'referenceFrames', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(H265Layer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.H265Layer'  # type: str
+        self.profile = kwargs.get('profile', None)
+        self.level = kwargs.get('level', None)
+        self.buffer_window = kwargs.get('buffer_window', None)
+        self.reference_frames = kwargs.get('reference_frames', None)
+
+
+class H265Video(Video):
+    """Describes all the properties for encoding a video with the H.265 codec.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param label: An optional label for the codec. The label can be used to control muxing
+     behavior.
+    :type label: str
+    :param key_frame_interval: The distance between two key frames. The value should be non-zero in
+     the range [0.5, 20] seconds, specified in ISO 8601 format. The default is 2 seconds(PT2S). Note
+     that this setting is ignored if VideoSyncMode.Passthrough is set, where the KeyFrameInterval
+     value will follow the input source setting.
+    :type key_frame_interval: ~datetime.timedelta
+    :param stretch_mode: The resizing mode - how the input video will be resized to fit the desired
+     output resolution(s). Default is AutoSize. Possible values include: "None", "AutoSize",
+     "AutoFit".
+    :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
+    :param sync_mode: The Video Sync Mode. Possible values include: "Auto", "Passthrough", "Cfr",
+     "Vfr".
+    :type sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
+    :param scene_change_detection: Specifies whether or not the encoder should insert key frames at
+     scene changes. If not specified, the default is false. This flag should be set to true only
+     when the encoder is being configured to produce a single output video.
+    :type scene_change_detection: bool
+    :param complexity: Tells the encoder how to choose its encoding settings.  Quality will provide
+     for a higher compression ratio but at a higher cost and longer compute time.  Speed will
+     produce a relatively larger file but is faster and more economical. The default value is
+     Balanced. Possible values include: "Speed", "Balanced", "Quality".
+    :type complexity: str or ~azure.mgmt.media.models.H265Complexity
+    :param layers: The collection of output H.265 layers to be produced by the encoder.
+    :type layers: list[~azure.mgmt.media.models.H265Layer]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
+        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
+        'scene_change_detection': {'key': 'sceneChangeDetection', 'type': 'bool'},
+        'complexity': {'key': 'complexity', 'type': 'str'},
+        'layers': {'key': 'layers', 'type': '[H265Layer]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(H265Video, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.H265Video'  # type: str
         self.scene_change_detection = kwargs.get('scene_change_detection', None)
         self.complexity = kwargs.get('complexity', None)
         self.layers = kwargs.get('layers', None)
@@ -3028,6 +3524,9 @@ class Image(Video):
 class ImageFormat(Format):
     """Describes the properties for an output image file.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: JpgFormat, PngFormat.
+
     All required parameters must be populated in order to send to Azure.
 
     :param odata_type: Required. The discriminator for derived types.Constant filled by server.
@@ -3040,8 +3539,9 @@ class ImageFormat(Format):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     """
 
@@ -3055,12 +3555,49 @@ class ImageFormat(Format):
         'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
     }
 
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Media.JpgFormat': 'JpgFormat', '#Microsoft.Media.PngFormat': 'PngFormat'}
+    }
+
     def __init__(
         self,
         **kwargs
     ):
         super(ImageFormat, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Media.ImageFormat'  # type: str
+
+
+class InputFile(InputDefinition):
+    """An InputDefinition for a single file.  TrackSelections are scoped to the file specified.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param included_tracks: The list of TrackDescriptors which define the metadata and selection of
+     tracks in the input.
+    :type included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
+    :param filename: Name of the file that this input definition applies to.
+    :type filename: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+        'filename': {'key': 'filename', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(InputFile, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.InputFile'  # type: str
+        self.filename = kwargs.get('filename', None)
 
 
 class IPAccessControl(msrest.serialization.Model):
@@ -3109,7 +3646,7 @@ class IPRange(msrest.serialization.Model):
         self.subnet_prefix_length = kwargs.get('subnet_prefix_length', None)
 
 
-class Job(Resource):
+class Job(ProxyResource):
     """A Job resource type. The progress and state can be obtained by polling a Job or subscribing to events using EventGrid.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3122,8 +3659,10 @@ class Job(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar created: The UTC date and time when the customer has created the Job, in 'YYYY-MM-
-     DDThh:mm:ssZ' format.
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
+    :ivar created: The UTC date and time when the customer has created the Job, in
+     'YYYY-MM-DDThh:mm:ssZ' format.
     :vartype created: ~datetime.datetime
     :ivar state: The current state of the job. Possible values include: "Canceled", "Canceling",
      "Error", "Finished", "Processing", "Queued", "Scheduled".
@@ -3154,6 +3693,7 @@ class Job(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'created': {'readonly': True},
         'state': {'readonly': True},
         'last_modified': {'readonly': True},
@@ -3165,6 +3705,7 @@ class Job(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -3182,6 +3723,7 @@ class Job(Resource):
         **kwargs
     ):
         super(Job, self).__init__(**kwargs)
+        self.system_data = None
         self.created = None
         self.state = None
         self.description = kwargs.get('description', None)
@@ -3303,7 +3845,7 @@ class JobInput(msrest.serialization.Model):
     """Base class for inputs to a Job.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JobInputClip, JobInputs.
+    sub-classes are: JobInputClip, JobInputSequence, JobInputs.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3320,7 +3862,7 @@ class JobInput(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JobInputClip': 'JobInputClip', '#Microsoft.Media.JobInputs': 'JobInputs'}
+        'odata_type': {'#Microsoft.Media.JobInputClip': 'JobInputClip', '#Microsoft.Media.JobInputSequence': 'JobInputSequence', '#Microsoft.Media.JobInputs': 'JobInputs'}
     }
 
     def __init__(
@@ -3355,6 +3897,9 @@ class JobInputClip(JobInput):
      submitting a Job, exactly one of the JobInputs should be the image file, and it should have the
      label 'xyz'.
     :type label: str
+    :param input_definitions: Defines a list of InputDefinitions. For each InputDefinition, it
+     defines a list of track selections and related metadata.
+    :type input_definitions: list[~azure.mgmt.media.models.InputDefinition]
     """
 
     _validation = {
@@ -3367,6 +3912,7 @@ class JobInputClip(JobInput):
         'start': {'key': 'start', 'type': 'ClipTime'},
         'end': {'key': 'end', 'type': 'ClipTime'},
         'label': {'key': 'label', 'type': 'str'},
+        'input_definitions': {'key': 'inputDefinitions', 'type': '[InputDefinition]'},
     }
 
     _subtype_map = {
@@ -3383,6 +3929,7 @@ class JobInputClip(JobInput):
         self.start = kwargs.get('start', None)
         self.end = kwargs.get('end', None)
         self.label = kwargs.get('label', None)
+        self.input_definitions = kwargs.get('input_definitions', None)
 
 
 class JobInputAsset(JobInputClip):
@@ -3406,6 +3953,9 @@ class JobInputAsset(JobInputClip):
      submitting a Job, exactly one of the JobInputs should be the image file, and it should have the
      label 'xyz'.
     :type label: str
+    :param input_definitions: Defines a list of InputDefinitions. For each InputDefinition, it
+     defines a list of track selections and related metadata.
+    :type input_definitions: list[~azure.mgmt.media.models.InputDefinition]
     :param asset_name: Required. The name of the input Asset.
     :type asset_name: str
     """
@@ -3421,6 +3971,7 @@ class JobInputAsset(JobInputClip):
         'start': {'key': 'start', 'type': 'ClipTime'},
         'end': {'key': 'end', 'type': 'ClipTime'},
         'label': {'key': 'label', 'type': 'str'},
+        'input_definitions': {'key': 'inputDefinitions', 'type': '[InputDefinition]'},
         'asset_name': {'key': 'assetName', 'type': 'str'},
     }
 
@@ -3454,6 +4005,9 @@ class JobInputHttp(JobInputClip):
      submitting a Job, exactly one of the JobInputs should be the image file, and it should have the
      label 'xyz'.
     :type label: str
+    :param input_definitions: Defines a list of InputDefinitions. For each InputDefinition, it
+     defines a list of track selections and related metadata.
+    :type input_definitions: list[~azure.mgmt.media.models.InputDefinition]
     :param base_uri: Base URI for HTTPS job input. It will be concatenated with provided file
      names. If no base uri is given, then the provided file list is assumed to be fully qualified
      uris. Maximum length of 4000 characters.
@@ -3470,6 +4024,7 @@ class JobInputHttp(JobInputClip):
         'start': {'key': 'start', 'type': 'ClipTime'},
         'end': {'key': 'end', 'type': 'ClipTime'},
         'label': {'key': 'label', 'type': 'str'},
+        'input_definitions': {'key': 'inputDefinitions', 'type': '[InputDefinition]'},
         'base_uri': {'key': 'baseUri', 'type': 'str'},
     }
 
@@ -3508,6 +4063,35 @@ class JobInputs(JobInput):
     ):
         super(JobInputs, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Media.JobInputs'  # type: str
+        self.inputs = kwargs.get('inputs', None)
+
+
+class JobInputSequence(JobInput):
+    """A Sequence contains an ordered list of Clips where each clip is a JobInput.  The Sequence will be treated as a single input.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param inputs: JobInputs that make up the timeline.
+    :type inputs: list[~azure.mgmt.media.models.JobInputClip]
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[JobInputClip]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JobInputSequence, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.JobInputSequence'  # type: str
         self.inputs = kwargs.get('inputs', None)
 
 
@@ -3653,7 +4237,7 @@ class JobOutputAsset(JobOutput):
         self.asset_name = kwargs['asset_name']
 
 
-class JpgFormat(Format):
+class JpgFormat(ImageFormat):
     """Describes the settings for producing JPEG thumbnails.
 
     All required parameters must be populated in order to send to Azure.
@@ -3668,8 +4252,9 @@ class JpgFormat(Format):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     """
 
@@ -3820,6 +4405,25 @@ class JpgLayer(Layer):
         super(JpgLayer, self).__init__(**kwargs)
         self.odata_type = '#Microsoft.Media.JpgLayer'  # type: str
         self.quality = kwargs.get('quality', None)
+
+
+class KeyDelivery(msrest.serialization.Model):
+    """KeyDelivery.
+
+    :param access_control: The access control properties for Key Delivery.
+    :type access_control: ~azure.mgmt.media.models.AccessControl
+    """
+
+    _attribute_map = {
+        'access_control': {'key': 'accessControl', 'type': 'AccessControl'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KeyDelivery, self).__init__(**kwargs)
+        self.access_control = kwargs.get('access_control', None)
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -4029,6 +4633,8 @@ class LiveEvent(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :param description: A description for the live event.
     :type description: str
     :param input: Live event input settings. It defines how the live event receives input from a
@@ -4076,6 +4682,7 @@ class LiveEvent(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
         'created': {'readonly': True},
@@ -4088,6 +4695,7 @@ class LiveEvent(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'input': {'key': 'properties.input', 'type': 'LiveEventInput'},
         'preview': {'key': 'properties.preview', 'type': 'LiveEventPreview'},
@@ -4108,6 +4716,7 @@ class LiveEvent(TrackedResource):
         **kwargs
     ):
         super(LiveEvent, self).__init__(**kwargs)
+        self.system_data = None
         self.description = kwargs.get('description', None)
         self.input = kwargs.get('input', None)
         self.preview = kwargs.get('preview', None)
@@ -4458,7 +5067,7 @@ class LiveEventTranscription(msrest.serialization.Model):
         self.output_transcription_track = kwargs.get('output_transcription_track', None)
 
 
-class LiveOutput(Resource):
+class LiveOutput(ProxyResource):
     """The Live Output.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4651,6 +5260,8 @@ class MediaService(TrackedResource):
     :type location: str
     :param identity: The Managed Identity for the Media Services account.
     :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :ivar media_service_id: The Media Services account ID.
     :vartype media_service_id: str
     :param storage_accounts: The storage accounts for this resource.
@@ -4659,6 +5270,8 @@ class MediaService(TrackedResource):
     :type storage_authentication: str or ~azure.mgmt.media.models.StorageAuthentication
     :param encryption: The account encryption properties.
     :type encryption: ~azure.mgmt.media.models.AccountEncryption
+    :param key_delivery: The Key Delivery properties for Media Services account.
+    :type key_delivery: ~azure.mgmt.media.models.KeyDelivery
     """
 
     _validation = {
@@ -4666,6 +5279,7 @@ class MediaService(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'media_service_id': {'readonly': True},
     }
 
@@ -4676,10 +5290,12 @@ class MediaService(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
         'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
+        'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
     }
 
     def __init__(
@@ -4688,10 +5304,12 @@ class MediaService(TrackedResource):
     ):
         super(MediaService, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
+        self.system_data = None
         self.media_service_id = None
         self.storage_accounts = kwargs.get('storage_accounts', None)
         self.storage_authentication = kwargs.get('storage_authentication', None)
         self.encryption = kwargs.get('encryption', None)
+        self.key_delivery = kwargs.get('key_delivery', None)
 
 
 class MediaServiceCollection(msrest.serialization.Model):
@@ -4755,6 +5373,55 @@ class MediaServiceIdentity(msrest.serialization.Model):
         self.tenant_id = None
 
 
+class MediaServiceUpdate(msrest.serialization.Model):
+    """A Media Services account update.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param identity: The Managed Identity for the Media Services account.
+    :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
+    :ivar media_service_id: The Media Services account ID.
+    :vartype media_service_id: str
+    :param storage_accounts: The storage accounts for this resource.
+    :type storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
+    :param storage_authentication:  Possible values include: "System", "ManagedIdentity".
+    :type storage_authentication: str or ~azure.mgmt.media.models.StorageAuthentication
+    :param encryption: The account encryption properties.
+    :type encryption: ~azure.mgmt.media.models.AccountEncryption
+    :param key_delivery: The Key Delivery properties for Media Services account.
+    :type key_delivery: ~azure.mgmt.media.models.KeyDelivery
+    """
+
+    _validation = {
+        'media_service_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
+        'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
+        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
+        'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
+        'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MediaServiceUpdate, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
+        self.media_service_id = None
+        self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.storage_authentication = kwargs.get('storage_authentication', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.key_delivery = kwargs.get('key_delivery', None)
+
+
 class MetricDimension(msrest.serialization.Model):
     """A metric dimension.
 
@@ -4806,10 +5473,21 @@ class MetricSpecification(msrest.serialization.Model):
     :ivar aggregation_type: The metric aggregation type. Possible values include: "Average",
      "Count", "Total".
     :vartype aggregation_type: str or ~azure.mgmt.media.models.MetricAggregationType
+    :ivar lock_aggregation_type: The metric lock aggregation type. Possible values include:
+     "Average", "Count", "Total".
+    :vartype lock_aggregation_type: str or ~azure.mgmt.media.models.MetricAggregationType
     :param supported_aggregation_types: Supported aggregation types.
     :type supported_aggregation_types: list[str]
     :ivar dimensions: The metric dimensions.
     :vartype dimensions: list[~azure.mgmt.media.models.MetricDimension]
+    :ivar enable_regional_mdm_account: Indicates whether regional MDM account is enabled.
+    :vartype enable_regional_mdm_account: bool
+    :ivar source_mdm_account: The source MDM account.
+    :vartype source_mdm_account: str
+    :ivar source_mdm_namespace: The source MDM namespace.
+    :vartype source_mdm_namespace: str
+    :ivar supported_time_grain_types: The supported time grain types.
+    :vartype supported_time_grain_types: list[str]
     """
 
     _validation = {
@@ -4818,7 +5496,12 @@ class MetricSpecification(msrest.serialization.Model):
         'display_description': {'readonly': True},
         'unit': {'readonly': True},
         'aggregation_type': {'readonly': True},
+        'lock_aggregation_type': {'readonly': True},
         'dimensions': {'readonly': True},
+        'enable_regional_mdm_account': {'readonly': True},
+        'source_mdm_account': {'readonly': True},
+        'source_mdm_namespace': {'readonly': True},
+        'supported_time_grain_types': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4827,8 +5510,13 @@ class MetricSpecification(msrest.serialization.Model):
         'display_description': {'key': 'displayDescription', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'lock_aggregation_type': {'key': 'lockAggregationType', 'type': 'str'},
         'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
     }
 
     def __init__(
@@ -4841,8 +5529,13 @@ class MetricSpecification(msrest.serialization.Model):
         self.display_description = None
         self.unit = None
         self.aggregation_type = None
+        self.lock_aggregation_type = None
         self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
         self.dimensions = None
+        self.enable_regional_mdm_account = None
+        self.source_mdm_account = None
+        self.source_mdm_namespace = None
+        self.supported_time_grain_types = None
 
 
 class MultiBitrateFormat(Format):
@@ -4863,8 +5556,9 @@ class MultiBitrateFormat(Format):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     :param output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -4910,8 +5604,9 @@ class Mp4Format(MultiBitrateFormat):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     :param output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -5000,6 +5695,10 @@ class Operation(msrest.serialization.Model):
     :type origin: str
     :param properties: Operation properties format.
     :type properties: ~azure.mgmt.media.models.Properties
+    :param is_data_action: Whether the operation applies to data-plane.
+    :type is_data_action: bool
+    :param action_type: Indicates the action type. Possible values include: "Internal".
+    :type action_type: str or ~azure.mgmt.media.models.ActionType
     """
 
     _validation = {
@@ -5011,6 +5710,8 @@ class Operation(msrest.serialization.Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'Properties'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
     def __init__(
@@ -5022,6 +5723,8 @@ class Operation(msrest.serialization.Model):
         self.display = kwargs.get('display', None)
         self.origin = kwargs.get('origin', None)
         self.properties = kwargs.get('properties', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
+        self.action_type = kwargs.get('action_type', None)
 
 
 class OperationCollection(msrest.serialization.Model):
@@ -5108,7 +5811,7 @@ class OutputFile(msrest.serialization.Model):
         self.labels = kwargs['labels']
 
 
-class PngFormat(Format):
+class PngFormat(ImageFormat):
     """Describes the settings for producing PNG thumbnails.
 
     All required parameters must be populated in order to send to Azure.
@@ -5123,8 +5826,9 @@ class PngFormat(Format):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     """
 
@@ -5196,7 +5900,7 @@ class PngImage(Image):
      stop at the end of the stream.
     :type range: str
     :param layers: A collection of output PNG image layers to be produced by the encoder.
-    :type layers: list[~azure.mgmt.media.models.Layer]
+    :type layers: list[~azure.mgmt.media.models.PngLayer]
     """
 
     _validation = {
@@ -5213,7 +5917,7 @@ class PngImage(Image):
         'start': {'key': 'start', 'type': 'str'},
         'step': {'key': 'step', 'type': 'str'},
         'range': {'key': 'range', 'type': 'str'},
-        'layers': {'key': 'layers', 'type': '[Layer]'},
+        'layers': {'key': 'layers', 'type': '[PngLayer]'},
     }
 
     def __init__(
@@ -5544,40 +6248,6 @@ class Provider(msrest.serialization.Model):
         self.provider_name = kwargs['provider_name']
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class Rectangle(msrest.serialization.Model):
     """Describes the properties of a rectangular window applied to the input media before processing it.
 
@@ -5611,6 +6281,196 @@ class Rectangle(msrest.serialization.Model):
         self.top = kwargs.get('top', None)
         self.width = kwargs.get('width', None)
         self.height = kwargs.get('height', None)
+
+
+class SelectAudioTrackByAttribute(AudioTrackDescriptor):
+    """Select audio tracks from the input by specifying an attribute and an attribute filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param channel_mapping: Optional designation for single channel audio tracks.  Can be used to
+     combine the tracks into stereo or multi-channel audio tracks. Possible values include:
+     "FrontLeft", "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight",
+     "StereoLeft", "StereoRight".
+    :type channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
+    :param attribute: Required. The TrackAttribute to filter the tracks by. Possible values
+     include: "Bitrate", "Language".
+    :type attribute: str or ~azure.mgmt.media.models.TrackAttribute
+    :param filter: Required. The type of AttributeFilter to apply to the TrackAttribute in order to
+     select the tracks. Possible values include: "All", "Top", "Bottom", "ValueEquals".
+    :type filter: str or ~azure.mgmt.media.models.AttributeFilter
+    :param filter_value: The value to filter the tracks by.  Only used when
+     AttributeFilter.ValueEquals is specified for the Filter property.
+    :type filter_value: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'attribute': {'required': True},
+        'filter': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'channel_mapping': {'key': 'channelMapping', 'type': 'str'},
+        'attribute': {'key': 'attribute', 'type': 'str'},
+        'filter': {'key': 'filter', 'type': 'str'},
+        'filter_value': {'key': 'filterValue', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelectAudioTrackByAttribute, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.SelectAudioTrackByAttribute'  # type: str
+        self.attribute = kwargs['attribute']
+        self.filter = kwargs['filter']
+        self.filter_value = kwargs.get('filter_value', None)
+
+
+class SelectAudioTrackById(AudioTrackDescriptor):
+    """Select audio tracks from the input by specifying a track identifier.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param channel_mapping: Optional designation for single channel audio tracks.  Can be used to
+     combine the tracks into stereo or multi-channel audio tracks. Possible values include:
+     "FrontLeft", "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight",
+     "StereoLeft", "StereoRight".
+    :type channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
+    :param track_id: Required. Track identifier to select.
+    :type track_id: long
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'track_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'channel_mapping': {'key': 'channelMapping', 'type': 'str'},
+        'track_id': {'key': 'trackId', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelectAudioTrackById, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.SelectAudioTrackById'  # type: str
+        self.track_id = kwargs['track_id']
+
+
+class VideoTrackDescriptor(TrackDescriptor):
+    """A TrackSelection to select video tracks.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SelectVideoTrackByAttribute, SelectVideoTrackById.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Media.SelectVideoTrackByAttribute': 'SelectVideoTrackByAttribute', '#Microsoft.Media.SelectVideoTrackById': 'SelectVideoTrackById'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VideoTrackDescriptor, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.VideoTrackDescriptor'  # type: str
+
+
+class SelectVideoTrackByAttribute(VideoTrackDescriptor):
+    """Select video tracks from the input by specifying an attribute and an attribute filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param attribute: Required. The TrackAttribute to filter the tracks by. Possible values
+     include: "Bitrate", "Language".
+    :type attribute: str or ~azure.mgmt.media.models.TrackAttribute
+    :param filter: Required. The type of AttributeFilter to apply to the TrackAttribute in order to
+     select the tracks. Possible values include: "All", "Top", "Bottom", "ValueEquals".
+    :type filter: str or ~azure.mgmt.media.models.AttributeFilter
+    :param filter_value: The value to filter the tracks by.  Only used when
+     AttributeFilter.ValueEquals is specified for the Filter property. For TrackAttribute.Bitrate,
+     this should be an integer value in bits per second (e.g: '1500000').  The
+     TrackAttribute.Language is not supported for video tracks.
+    :type filter_value: str
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'attribute': {'required': True},
+        'filter': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'attribute': {'key': 'attribute', 'type': 'str'},
+        'filter': {'key': 'filter', 'type': 'str'},
+        'filter_value': {'key': 'filterValue', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelectVideoTrackByAttribute, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.SelectVideoTrackByAttribute'  # type: str
+        self.attribute = kwargs['attribute']
+        self.filter = kwargs['filter']
+        self.filter_value = kwargs.get('filter_value', None)
+
+
+class SelectVideoTrackById(VideoTrackDescriptor):
+    """Select video tracks from the input by specifying a track identifier.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :type odata_type: str
+    :param track_id: Required. Track identifier to select.
+    :type track_id: long
+    """
+
+    _validation = {
+        'odata_type': {'required': True},
+        'track_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        'track_id': {'key': 'trackId', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelectVideoTrackById, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Media.SelectVideoTrackById'  # type: str
+        self.track_id = kwargs['track_id']
 
 
 class ServiceSpecification(msrest.serialization.Model):
@@ -5759,6 +6619,8 @@ class StreamingEndpoint(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :param description: The streaming endpoint description.
     :type description: str
     :param scale_units: The number of scale units. Use the Scale operation to adjust this value.
@@ -5799,6 +6661,7 @@ class StreamingEndpoint(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'host_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
@@ -5813,6 +6676,7 @@ class StreamingEndpoint(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'scale_units': {'key': 'properties.scaleUnits', 'type': 'int'},
         'availability_set_name': {'key': 'properties.availabilitySetName', 'type': 'str'},
@@ -5836,6 +6700,7 @@ class StreamingEndpoint(TrackedResource):
         **kwargs
     ):
         super(StreamingEndpoint, self).__init__(**kwargs)
+        self.system_data = None
         self.description = kwargs.get('description', None)
         self.scale_units = kwargs.get('scale_units', None)
         self.availability_set_name = kwargs.get('availability_set_name', None)
@@ -5924,7 +6789,7 @@ class StreamingEntityScaleUnit(msrest.serialization.Model):
         self.scale_unit = kwargs.get('scale_unit', None)
 
 
-class StreamingLocator(Resource):
+class StreamingLocator(ProxyResource):
     """A Streaming Locator resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5937,6 +6802,8 @@ class StreamingLocator(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :param asset_name: Asset Name.
     :type asset_name: str
     :ivar created: The creation time of the Streaming Locator.
@@ -5968,6 +6835,7 @@ class StreamingLocator(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'created': {'readonly': True},
     }
 
@@ -5975,6 +6843,7 @@ class StreamingLocator(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'asset_name': {'key': 'properties.assetName', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
@@ -5992,6 +6861,7 @@ class StreamingLocator(Resource):
         **kwargs
     ):
         super(StreamingLocator, self).__init__(**kwargs)
+        self.system_data = None
         self.asset_name = kwargs.get('asset_name', None)
         self.created = None
         self.start_time = kwargs.get('start_time', None)
@@ -6116,7 +6986,7 @@ class StreamingPath(msrest.serialization.Model):
         self.paths = kwargs.get('paths', None)
 
 
-class StreamingPolicy(Resource):
+class StreamingPolicy(ProxyResource):
     """A Streaming Policy resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6129,6 +6999,8 @@ class StreamingPolicy(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :ivar created: Creation time of Streaming Policy.
     :vartype created: ~datetime.datetime
     :param default_content_key_policy_name: Default ContentKey used by current Streaming Policy.
@@ -6147,6 +7019,7 @@ class StreamingPolicy(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'created': {'readonly': True},
     }
 
@@ -6154,6 +7027,7 @@ class StreamingPolicy(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
         'envelope_encryption': {'key': 'properties.envelopeEncryption', 'type': 'EnvelopeEncryption'},
@@ -6167,6 +7041,7 @@ class StreamingPolicy(Resource):
         **kwargs
     ):
         super(StreamingPolicy, self).__init__(**kwargs)
+        self.system_data = None
         self.created = None
         self.default_content_key_policy_name = kwargs.get('default_content_key_policy_name', None)
         self.envelope_encryption = kwargs.get('envelope_encryption', None)
@@ -6357,6 +7232,47 @@ class SyncStorageKeysInput(msrest.serialization.Model):
         self.id = kwargs.get('id', None)
 
 
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.media.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.media.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class TrackPropertyCondition(msrest.serialization.Model):
     """Class to specify one track property condition.
 
@@ -6412,7 +7328,7 @@ class TrackSelection(msrest.serialization.Model):
         self.track_selections = kwargs.get('track_selections', None)
 
 
-class Transform(Resource):
+class Transform(ProxyResource):
     """A Transform encapsulates the rules or instructions for generating desired outputs from input media, such as by transcoding or by extracting insights. After the Transform is created, it can be applied to input media by creating Jobs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6425,13 +7341,15 @@ class Transform(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.media.models.SystemData
     :ivar created: The UTC date and time when the Transform was created, in 'YYYY-MM-DDThh:mm:ssZ'
      format.
     :vartype created: ~datetime.datetime
     :param description: An optional verbose description of the Transform.
     :type description: str
-    :ivar last_modified: The UTC date and time when the Transform was last updated, in 'YYYY-MM-
-     DDThh:mm:ssZ' format.
+    :ivar last_modified: The UTC date and time when the Transform was last updated, in
+     'YYYY-MM-DDThh:mm:ssZ' format.
     :vartype last_modified: ~datetime.datetime
     :param outputs: An array of one or more TransformOutputs that the Transform should generate.
     :type outputs: list[~azure.mgmt.media.models.TransformOutput]
@@ -6441,6 +7359,7 @@ class Transform(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'created': {'readonly': True},
         'last_modified': {'readonly': True},
     }
@@ -6449,6 +7368,7 @@ class Transform(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
@@ -6460,6 +7380,7 @@ class Transform(Resource):
         **kwargs
     ):
         super(Transform, self).__init__(**kwargs)
+        self.system_data = None
         self.created = None
         self.description = kwargs.get('description', None)
         self.last_modified = None
@@ -6545,8 +7466,9 @@ class TransportStreamFormat(MultiBitrateFormat):
      the base name is truncated to the first 32 characters in total length. {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
      - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec. Any
-     unsubstituted macros will be collapsed and removed from the filename.
+     bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
+     {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
+     from the filename.
     :type filename_pattern: str
     :param output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -6617,8 +7539,8 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
      language detected and process with the selected language for the duration of the file. It does
      not currently support dynamically switching between languages after the first language is
      detected. The automatic detection works best with audio recordings with clearly discernable
-     speech. If automatic detection fails to find the language, transcription would fallback to 'en-
-     US'." The list of supported languages is available here:
+     speech. If automatic detection fails to find the language, transcription would fallback to
+     'en-US'." The list of supported languages is available here:
      https://go.microsoft.com/fwlink/?linkid=2109463.
     :type audio_language: str
     :param mode: Determines the set of audio analysis operations to be performed. If unspecified,
@@ -6667,8 +7589,8 @@ class VideoOverlay(Overlay):
     :param odata_type: Required. The discriminator for derived types.Constant filled by server.
     :type odata_type: str
     :param input_label: Required. The label of the job input which is to be used as an overlay. The
-     Input must specify exactly one file. You can specify an image file in JPG or PNG formats, or an
-     audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+     Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
+     format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
      https://aka.ms/mesformats for the complete list of supported audio and video file formats.
     :type input_label: str
     :param start: The start position, with reference to the input video, at which the overlay

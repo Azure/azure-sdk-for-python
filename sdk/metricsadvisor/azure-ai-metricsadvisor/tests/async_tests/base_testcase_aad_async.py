@@ -31,7 +31,6 @@ from azure.ai.metricsadvisor.models import (
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
-    DataFeedOptions,
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
     MetricAnomalyAlertConditions,
@@ -193,8 +192,8 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                     sensitivity=50,
                     anomaly_detector_direction="Both",
                     suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+                        min_number=5,
+                        min_ratio=5
                     )
                 )
             )
@@ -230,21 +229,18 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                 ingestion_start_offset=-1,
                 stop_retry_after=-1,
             ),
-            options=DataFeedOptions(
-                admin_emails=["yournamehere@microsoft.com"],
-                data_feed_description="my first data feed",
-                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                    fill_type="SmartFilling"
-                ),
-                rollup_settings=DataFeedRollupSettings(
-                    rollup_type="NoRollup",
-                    rollup_method="None",
-                ),
-                viewer_emails=["viewers"],
-                access_mode="Private",
-                action_link_template="action link template"
-            )
-
+            admin_emails=["yournamehere@microsoft.com"],
+            data_feed_description="my first data feed",
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type="SmartFilling"
+            ),
+            rollup_settings=DataFeedRollupSettings(
+                rollup_type="NoRollup",
+                rollup_method="None",
+            ),
+            viewer_emails=["viewers"],
+            access_mode="Private",
+            action_link_template="action link template"
         )
 
     async def _create_alert_config_for_update(self, name):
@@ -316,8 +312,8 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                     sensitivity=50,
                     anomaly_detector_direction="Both",
                     suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+                        min_number=5,
+                        min_ratio=5
                     )
                 ),
                 hard_threshold_condition=HardThresholdCondition(

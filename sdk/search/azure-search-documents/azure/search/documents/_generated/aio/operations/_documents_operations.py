@@ -42,7 +42,7 @@ class DocumentsOperations:
     async def count(
         self,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> int:
         """Queries the number of documents in the index.
 
@@ -62,7 +62,7 @@ class DocumentsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -105,7 +105,7 @@ class DocumentsOperations:
         search_text: Optional[str] = None,
         search_options: Optional["_models.SearchOptions"] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchDocumentsResult":
         """Searches for documents in the index.
 
@@ -139,6 +139,9 @@ class DocumentsOperations:
         _scoring_parameters = None
         _scoring_profile = None
         _search_fields = None
+        _query_language = None
+        _speller = None
+        _answers = None
         _search_mode = None
         _scoring_statistics = None
         _session_id = None
@@ -161,13 +164,16 @@ class DocumentsOperations:
             _scoring_parameters = search_options.scoring_parameters
             _scoring_profile = search_options.scoring_profile
             _search_fields = search_options.search_fields
+            _query_language = search_options.query_language
+            _speller = search_options.speller
+            _answers = search_options.answers
             _search_mode = search_options.search_mode
             _scoring_statistics = search_options.scoring_statistics
             _session_id = search_options.session_id
             _select = search_options.select
             _skip = search_options.skip
             _top = search_options.top
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -206,6 +212,12 @@ class DocumentsOperations:
             query_parameters['scoringProfile'] = self._serialize.query("scoring_profile", _scoring_profile, 'str')
         if _search_fields is not None:
             query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]', div=',')
+        if _query_language is not None:
+            query_parameters['queryLanguage'] = self._serialize.query("query_language", _query_language, 'str')
+        if _speller is not None:
+            query_parameters['speller'] = self._serialize.query("speller", _speller, 'str')
+        if _answers is not None:
+            query_parameters['answers'] = self._serialize.query("answers", _answers, 'str')
         if _search_mode is not None:
             query_parameters['searchMode'] = self._serialize.query("search_mode", _search_mode, 'str')
         if _scoring_statistics is not None:
@@ -247,7 +259,7 @@ class DocumentsOperations:
         self,
         search_request: "_models.SearchRequest",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchDocumentsResult":
         """Searches for documents in the index.
 
@@ -269,7 +281,7 @@ class DocumentsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -317,8 +329,8 @@ class DocumentsOperations:
         key: str,
         selected_fields: Optional[List[str]] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
-    ) -> Any:
+        **kwargs
+    ) -> object:
         """Retrieves a document from the index.
 
         :param key: The key of the document to retrieve.
@@ -329,11 +341,11 @@ class DocumentsOperations:
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
+        :return: object, or the result of cls(response)
+        :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -342,7 +354,7 @@ class DocumentsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -389,7 +401,7 @@ class DocumentsOperations:
         suggester_name: str,
         suggest_options: Optional["_models.SuggestOptions"] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SuggestDocumentsResult":
         """Suggests documents in the index that match the given partial query text.
 
@@ -436,7 +448,7 @@ class DocumentsOperations:
             _search_fields = suggest_options.search_fields
             _select = suggest_options.select
             _top = suggest_options.top
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -498,7 +510,7 @@ class DocumentsOperations:
         self,
         suggest_request: "_models.SuggestRequest",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SuggestDocumentsResult":
         """Suggests documents in the index that match the given partial query text.
 
@@ -520,7 +532,7 @@ class DocumentsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -567,7 +579,7 @@ class DocumentsOperations:
         self,
         actions: List["_models.IndexAction"],
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.IndexDocumentsResult":
         """Sends a batch of document write actions to the index.
 
@@ -591,7 +603,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         _batch = _models.IndexBatch(actions=actions)
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -644,7 +656,7 @@ class DocumentsOperations:
         suggester_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
         autocomplete_options: Optional["_models.AutocompleteOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.AutocompleteResult":
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
@@ -688,7 +700,7 @@ class DocumentsOperations:
             _top = autocomplete_options.top
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -748,7 +760,7 @@ class DocumentsOperations:
         self,
         autocomplete_request: "_models.AutocompleteRequest",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.AutocompleteResult":
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
@@ -770,7 +782,7 @@ class DocumentsOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

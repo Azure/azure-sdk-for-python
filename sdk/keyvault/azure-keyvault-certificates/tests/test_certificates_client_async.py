@@ -23,9 +23,11 @@ from azure.keyvault.certificates import (
     CertificateContentType,
     LifetimeAction,
     CertificateIssuer,
-    IssuerProperties
+    IssuerProperties,
+    WellKnownIssuerNames
 )
 from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -690,6 +692,20 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
                 pass
 
         assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_policy_expected_errors_for_create_cert():
+    """Either a subject or subject alternative name property are required for creating a certificate"""
+    client = CertificateClient("...", object())
+
+    with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
+        policy = CertificatePolicy()
+        await client.create_certificate("...", policy=policy)
+
+    with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
+        policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self)
+        await client.create_certificate("...", policy=policy)
 
 
 def test_service_headers_allowed_in_logs():

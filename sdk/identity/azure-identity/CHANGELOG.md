@@ -1,6 +1,15 @@
 # Release History
 
-## 1.6.1 (Unreleased)
+## 1.7.0b2 (Unreleased)
+
+
+## 1.7.0b1 (2021-06-08)
+Beginning with this release, this library requires Python 2.7 or 3.6+.
+
+### Added
+- `VisualStudioCodeCredential` gets its default tenant and authority
+  configuration from VS Code user settings
+  ([#14808](https://github.com/Azure/azure-sdk-for-python/issues/14808))
 
 
 ## 1.6.0 (2021-05-13)

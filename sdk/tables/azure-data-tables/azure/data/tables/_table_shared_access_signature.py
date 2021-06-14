@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
 
 from ._models import AccountSasPermissions
 from ._common_conversion import _sign_string
@@ -16,13 +16,16 @@ from ._shared_access_signature import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Union
+    from datetime import datetime
+    from azure.core.credentials import AzureNamedKeyCredential
+    from ._models import ResourceTypes
+
 
 def generate_account_sas(
     credential,  # type: AzureNamedKeyCredential
     resource_types,  # type: ResourceTypes
-    permission,  # type: Union[str,AccountSasPermissions]
-    expiry,  # type: Union[datetime,str]
+    permission,  # type: Union[str, AccountSasPermissions]
+    expiry,  # type: Union[datetime, str]
     **kwargs  # type: Any
 ):
     # type: (...) -> str
@@ -72,7 +75,7 @@ def generate_account_sas(
     _validate_not_none("account_name", credential.named_key.name)
     _validate_not_none("account_key", credential.named_key.key)
     if permission is str:
-        permission = AccountSasPermissions.from_string(permission=permission)
+        permission = AccountSasPermissions.from_string(permission=permission)  # type: ignore
     sas = TableSharedAccessSignature(credential)
     return sas.generate_account(
         "t",
@@ -85,21 +88,15 @@ def generate_account_sas(
     )
 
 
-def generate_table_sas(
-    credential,  # type: AzureNamedKeyCredential
-    table_name,  # type: str
-    **kwargs  # type: Any
-):  # type: (...) -> str
-
+def generate_table_sas(credential, table_name, **kwargs):
+    # type: (AzureNamedKeyCredential, str, **Any) -> str
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
 
 
-    :param account_key: Account key
-    :type account_key: str
-    :param account_name: Account name
-    :type account_name: str
+    :param credential: Credential used for creating Shared Access Signature
+    :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential`
     :param table_name: Table name
     :type table_name: str
     :keyword TableSasPermissions permission:

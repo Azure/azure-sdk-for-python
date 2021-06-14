@@ -19,7 +19,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
+from .._generated.aio import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
@@ -194,8 +194,19 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param ingestion_settings: The data feed ingestions settings. Can be passed as a datetime to use for the
             ingestion begin time or as a DataFeedIngestionSettings object if additional configuration is needed.
         :type ingestion_settings: Union[~datetime.datetime, ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings]
-        :keyword options: Data feed options.
-        :paramtype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+        :keyword list[str] admin_emails: Data feed administrator emails.
+        :keyword str data_feed_description: Data feed description.
+        :keyword missing_data_point_fill_settings: The fill missing point type and value.
+        :paramtype missing_data_point_fill_settings:
+            ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
+        :keyword rollup_settings: The rollup settings.
+        :paramtype rollup_settings:
+            ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
+        :keyword list[str] viewer_emails: Data feed viewer emails.
+        :keyword access_mode: Data feed access mode. Possible values include:
+            "Private", "Public". Default value: "Private".
+        :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+        :keyword str action_link_template: action link for alert.
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -210,7 +221,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create a data feed
         """
 
-        options = kwargs.pop("options", None)
+        admin_emails = kwargs.pop('admin_emails', None)
+        data_feed_description = kwargs.pop('data_feed_description', None)
+        missing_data_point_fill_settings = kwargs.pop('missing_data_point_fill_settings', None)
+        rollup_settings = kwargs.pop('rollup_settings', None)
+        viewer_emails = kwargs.pop('viewer_emails', None)
+        access_mode = kwargs.pop('access_mode', "Private")
+        action_link_template = kwargs.pop('action_link_template', None)
         data_feed_type = DATA_FEED[source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
@@ -219,7 +236,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             granularity=granularity,
             schema=schema,
             ingestion_settings=ingestion_settings,
-            options=options
+            admin_emails=admin_emails,
+            data_feed_description=data_feed_description,
+            missing_data_point_fill_settings=missing_data_point_fill_settings,
+            rollup_settings=rollup_settings,
+            viewer_emails=viewer_emails,
+            access_mode=access_mode,
+            action_link_template=action_link_template
         )
 
         response_headers = await self._client.create_data_feed(

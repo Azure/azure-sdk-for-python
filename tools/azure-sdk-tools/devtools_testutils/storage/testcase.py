@@ -8,12 +8,14 @@
 from datetime import datetime, timedelta
 import logging
 import math
+import os
 import random
 import sys
 import time
 import zlib
 
 from .processors import XMSRequestIDBody
+from . import ApiVersionAssertPolicy, service_version_map
 from .. import AzureMgmtTestCase, FakeTokenCredential
 
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
@@ -181,3 +183,17 @@ class StorageTestCase(AzureMgmtTestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+    def _get_service_version(self, **kwargs):
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
+        return kwargs.pop("service_version", env_version)
+
+    def create_storage_client(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client(*args, **kwargs)
+
+    def create_storage_client_from_conn_str(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client.from_connection_string(*args, **kwargs)

@@ -34,6 +34,7 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
@@ -51,6 +52,8 @@ except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
 
 import pytest
+
+from .service_versions import service_version_map
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -310,11 +313,64 @@ class StorageTestCase(AzureMgmtTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def _get_service_version(self, **kwargs):
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
+        return kwargs.pop("service_version", env_version)
+
+    def create_storage_client(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client(*args, **kwargs)
+
+    def create_storage_client_from_conn_str(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client.from_connection_string(*args, **kwargs)
+
 
 def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
         test(self)
     return skip_test_if_targeting_emulator
+
+
+class ApiVersionAssertPolicy(SansIOHTTPPolicy):
+    """
+    Assert the ApiVersion is set properly on the response
+    """
+
+    def __init__(self, api_version):
+        self.api_version = api_version
+
+    def on_request(self, request):
+        assert request.http_request.headers['x-ms-version'] == self.api_version
+
+
+class RetryCounter(object):
+    def __init__(self):
+        self.count = 0
+
+    def simple_count(self, retry_context):
+        self.count += 1
+
+
+class ResponseCallback(object):
+    def __init__(self, status=None, new_status=None):
+        self.status = status
+        self.new_status = new_status
+        self.first = True
+        self.count = 0
+
+    def override_first_status(self, response):
+        if self.first and response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
+            self.first = False
+        self.count += 1
+
+    def override_status(self, response):
+        if response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
+        self.count += 1
 
 
 class LogCaptured(object):

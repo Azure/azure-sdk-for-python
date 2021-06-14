@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Optional, Any
+from typing import Union, Dict, Any, Optional
+
 from uuid import UUID
 import logging
 import datetime
@@ -51,7 +52,7 @@ def _from_entity_binary(value):
 
 
 def _from_entity_int32(value):
-    # type: (str) -> EntityProperty
+    # type: (str) -> int
     return int(value)
 
 
@@ -90,16 +91,22 @@ def clean_up_dotnet_timestamps(value):
     return value[0]
 
 
+def deserialize_iso(value):
+    if not value:
+        return value
+    return _from_entity_datetime(value)
+
 
 def _from_entity_guid(value):
     return UUID(value)
 
 
 def _from_entity_str(value):
-    # type: (str) -> EntityProperty
-    if isinstance(six.binary_type):
+    # type: (Union[str, bytes]) -> str
+    if isinstance(value, six.binary_type):
         return value.decode('utf-8')
     return value
+
 
 _EDM_TYPES = [
     EdmType.BINARY,
@@ -180,7 +187,7 @@ def _convert_to_entity(entry_element):
 
         # Add type for String
         try:
-            if isinstance(value, unicode) and mtype is None:
+            if isinstance(value, unicode) and mtype is None:  # type: ignore
                 mtype = EdmType.STRING
         except NameError:
             if isinstance(value, str) and mtype is None:
@@ -256,7 +263,7 @@ def _return_context_and_deserialized(
 
 
 def _trim_service_metadata(metadata, content=None):
-    # type: (Dict[str,str], Optional[Dict[str, Any]]) -> None
+    # type: (Dict[str, str], Optional[Dict[str, Any]]) -> Dict[str, Any]
     result = {
         "date": metadata.pop("date", None),
         "etag": metadata.pop("etag", None),
@@ -265,5 +272,5 @@ def _trim_service_metadata(metadata, content=None):
     preference = metadata.pop('preference_applied', None)
     if preference:
         result["preference_applied"] = preference
-        result["content"] = content
+        result["content"] = content  # type: ignore
     return result

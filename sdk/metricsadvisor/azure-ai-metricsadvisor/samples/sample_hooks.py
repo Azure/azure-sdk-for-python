@@ -42,7 +42,7 @@ def sample_create_hook():
             name="email hook",
             description="my email hook",
             emails_to_alert=["alertme@alertme.com"],
-            external_link="https://example.com/alertHandler" # the external link to handle the alerts
+            external_link="https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts"
         )
     )
 

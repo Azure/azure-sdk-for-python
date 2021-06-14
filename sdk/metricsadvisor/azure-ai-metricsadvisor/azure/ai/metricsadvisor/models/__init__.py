@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_enums import (
+from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import (
     SnoozeScope,
     Severity as AnomalySeverity,
     DataSourceType,
@@ -65,7 +65,6 @@ from ._models import (
     MetricAnomalyAlertConfigurationsOperator,
     DataFeedGranularity,
     DataFeedIngestionSettings,
-    DataFeedOptions,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
     DataFeedSchema,
@@ -140,7 +139,6 @@ __all__ = (
     "DataFeedStatus",
     "DataFeedGranularity",
     "DataFeedIngestionSettings",
-    "DataFeedOptions",
     "DataFeedMissingDataPointFillSettings",
     "DataFeedRollupSettings",
     "DataFeedSchema",

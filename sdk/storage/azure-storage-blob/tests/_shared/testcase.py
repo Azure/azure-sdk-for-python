@@ -7,6 +7,7 @@
 from __future__ import division
 import os.path
 import time
+import os
 import logging
 from devtools_testutils import (
     AzureMgmtTestCase,
@@ -20,6 +21,7 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.mgmt.storage.models import StorageAccount, Endpoints

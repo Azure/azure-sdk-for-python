@@ -21,7 +21,6 @@ from azure.ai.metricsadvisor.models import (
     DataFeedSchema,
     DataFeedIngestionSettings,
     DataFeedGranularity,
-    DataFeedOptions,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
     AzureApplicationInsightsDataFeedSource,
@@ -95,21 +94,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     ingestion_start_offset=-1,
                     stop_retry_after=-1,
                 ),
-                options=DataFeedOptions(
-                    admin_emails=["yournamehere@microsoft.com"],
-                    data_feed_description="my first data feed",
-                    missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                        fill_type="SmartFilling"
-                    ),
-                    rollup_settings=DataFeedRollupSettings(
-                        rollup_type="NoRollup",
-                        rollup_method="None",
-                    ),
-                    viewer_emails=["viewers"],
-                    access_mode="Private",
-                    action_link_template="action link template"
-                )
-
+                admin_emails=["yournamehere@microsoft.com"],
+                data_feed_description="my first data feed",
+                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                    fill_type="SmartFilling"
+                ),
+                rollup_settings=DataFeedRollupSettings(
+                    rollup_type="NoRollup",
+                    rollup_method="None",
+                ),
+                viewer_emails=["viewers"],
+                access_mode="Private",
+                action_link_template="action link template"
             )
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
@@ -134,14 +130,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
             self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
             self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-            self.assertIn("yournamehere@microsoft.com", data_feed.options.admin_emails)
-            self.assertEqual(data_feed.options.data_feed_description, "my first data feed")
-            self.assertEqual(data_feed.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
-            self.assertEqual(data_feed.options.rollup_settings.rollup_type, "NoRollup")
-            self.assertEqual(data_feed.options.rollup_settings.rollup_method, "None")
-            self.assertEqual(data_feed.options.viewer_emails, ["viewers"])
-            self.assertEqual(data_feed.options.access_mode, "Private")
-            self.assertEqual(data_feed.options.action_link_template, "action link template")
+            self.assertIn("yournamehere@microsoft.com", data_feed.admin_emails)
+            self.assertEqual(data_feed.data_feed_description, "my first data feed")
+            self.assertEqual(data_feed.missing_data_point_fill_settings.fill_type, "SmartFilling")
+            self.assertEqual(data_feed.rollup_settings.rollup_type, "NoRollup")
+            self.assertEqual(data_feed.rollup_settings.rollup_method, "None")
+            self.assertEqual(data_feed.viewer_emails, ["viewers"])
+            self.assertEqual(data_feed.access_mode, "Private")
+            self.assertEqual(data_feed.action_link_template, "action link template")
             self.assertEqual(data_feed.status, "Active")
             self.assertTrue(data_feed.is_admin)
             self.assertIsNotNone(data_feed.metric_ids)
@@ -164,7 +160,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ),
                 granularity=DataFeedGranularity(
                     granularity_type="Custom",
-                    custom_granularity_value=20
+                    custom_granularity_value=400
                 ),
                 schema=DataFeedSchema(
                     metrics=[
@@ -184,23 +180,20 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                     ingestion_start_offset=-1,
                     stop_retry_after=-1,
                 ),
-                options=DataFeedOptions(
-                    admin_emails=["yournamehere@microsoft.com"],
-                    data_feed_description="my first data feed",
-                    missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                        fill_type="CustomValue",
-                        custom_fill_value=10
-                    ),
-                    rollup_settings=DataFeedRollupSettings(
-                        rollup_type="AlreadyRollup",
-                        rollup_method="Sum",
-                        rollup_identification_value="sumrollup"
-                    ),
-                    viewer_emails=["viewers"],
-                    access_mode="Private",
-                    action_link_template="action link template"
-                )
-
+                admin_emails=["yournamehere@microsoft.com"],
+                data_feed_description="my first data feed",
+                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                    fill_type="CustomValue",
+                    custom_fill_value=10
+                ),
+                rollup_settings=DataFeedRollupSettings(
+                    rollup_type="AlreadyRollup",
+                    rollup_method="Sum",
+                    rollup_identification_value="sumrollup"
+                ),
+                viewer_emails=["viewers"],
+                access_mode="Private",
+                action_link_template="action link template"
             )
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
@@ -208,7 +201,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.source.data_source_type, "SqlServer")
             self.assertIsNotNone(data_feed.source.query)
             self.assertEqual(data_feed.granularity.granularity_type, "Custom")
-            self.assertEqual(data_feed.granularity.custom_granularity_value, 20)
+            self.assertEqual(data_feed.granularity.custom_granularity_value, 400)
             self.assertEqual(data_feed.schema.metrics[0].name, "cost")
             self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
             self.assertEqual(data_feed.schema.metrics[0].display_name, "display cost")
@@ -225,16 +218,16 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
             self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
             self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-            self.assertIn("yournamehere@microsoft.com", data_feed.options.admin_emails)
-            self.assertEqual(data_feed.options.data_feed_description, "my first data feed")
-            self.assertEqual(data_feed.options.missing_data_point_fill_settings.fill_type, "CustomValue")
-            self.assertEqual(data_feed.options.missing_data_point_fill_settings.custom_fill_value, 10)
-            self.assertEqual(data_feed.options.rollup_settings.rollup_type, "AlreadyRollup")
-            self.assertEqual(data_feed.options.rollup_settings.rollup_method, "Sum")
-            self.assertEqual(data_feed.options.rollup_settings.rollup_identification_value, "sumrollup")
-            self.assertEqual(data_feed.options.viewer_emails, ["viewers"])
-            self.assertEqual(data_feed.options.access_mode, "Private")
-            self.assertEqual(data_feed.options.action_link_template, "action link template")
+            self.assertIn("yournamehere@microsoft.com", data_feed.admin_emails)
+            self.assertEqual(data_feed.data_feed_description, "my first data feed")
+            self.assertEqual(data_feed.missing_data_point_fill_settings.fill_type, "CustomValue")
+            self.assertEqual(data_feed.missing_data_point_fill_settings.custom_fill_value, 10)
+            self.assertEqual(data_feed.rollup_settings.rollup_type, "AlreadyRollup")
+            self.assertEqual(data_feed.rollup_settings.rollup_method, "Sum")
+            self.assertEqual(data_feed.rollup_settings.rollup_identification_value, "sumrollup")
+            self.assertEqual(data_feed.viewer_emails, ["viewers"])
+            self.assertEqual(data_feed.access_mode, "Private")
+            self.assertEqual(data_feed.action_link_template, "action link template")
             self.assertEqual(data_feed.status, "Active")
             self.assertTrue(data_feed.is_admin)
             self.assertIsNotNone(data_feed.metric_ids)
@@ -675,30 +668,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         data_feed = self._create_data_feed_for_update("update")
         try:
             data_feed.name = "update"
-            data_feed.options.data_feed_description = "updated"
+            data_feed.data_feed_description = "updated"
             data_feed.schema.timestamp_column = "time"
             data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2020, 12, 10)
             data_feed.ingestion_settings.ingestion_start_offset = 1
             data_feed.ingestion_settings.data_source_request_concurrency = 1
             data_feed.ingestion_settings.ingestion_retry_delay = 1
             data_feed.ingestion_settings.stop_retry_after = 1
-            data_feed.options.rollup_settings.rollup_type = "AlreadyRollup"
-            data_feed.options.rollup_settings.rollup_method = "Sum"
-            data_feed.options.rollup_settings.rollup_identification_value = "sumrollup"
-            data_feed.options.rollup_settings.auto_rollup_group_by_column_names = []
-            data_feed.options.missing_data_point_fill_settings.fill_type = "CustomValue"
-            data_feed.options.missing_data_point_fill_settings.custom_fill_value = 2
-            data_feed.options.access_mode = "Public"
-            data_feed.options.viewer_emails = ["updated"]
+            data_feed.rollup_settings.rollup_type = "AlreadyRollup"
+            data_feed.rollup_settings.rollup_method = "Sum"
+            data_feed.rollup_settings.rollup_identification_value = "sumrollup"
+            data_feed.rollup_settings.auto_rollup_group_by_column_names = []
+            data_feed.missing_data_point_fill_settings.fill_type = "CustomValue"
+            data_feed.missing_data_point_fill_settings.custom_fill_value = 2
+            data_feed.access_mode = "Public"
+            data_feed.viewer_emails = ["updated"]
             data_feed.status = "Paused"
-            data_feed.options.action_link_template = "updated"
+            data_feed.action_link_template = "updated"
             data_feed.source.connection_string = "updated"
             data_feed.source.query = "get data"
 
             self.admin_client.update_data_feed(data_feed)
             updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.options.data_feed_description, "updated")
+            self.assertEqual(updated.data_feed_description, "updated")
             self.assertEqual(updated.schema.timestamp_column, "time")
             self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
                              datetime.datetime(2020, 12, 10, tzinfo=tzutc()))
@@ -706,15 +699,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
             self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
             self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-            self.assertEqual(updated.options.rollup_settings.rollup_type, "AlreadyRollup")
-            self.assertEqual(updated.options.rollup_settings.rollup_method, "Sum")
-            self.assertEqual(updated.options.rollup_settings.rollup_identification_value, "sumrollup")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
-            self.assertEqual(updated.options.access_mode, "Public")
-            self.assertEqual(updated.options.viewer_emails, ["updated"])
+            self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
+            self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
+            self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
+            self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
+            self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
+            self.assertEqual(updated.access_mode, "Public")
+            self.assertEqual(updated.viewer_emails, ["updated"])
             self.assertEqual(updated.status, "Paused")
-            self.assertEqual(updated.options.action_link_template, "updated")
+            self.assertEqual(updated.action_link_template, "updated")
             self.assertEqual(updated.source.query, "get data")
 
         finally:
@@ -751,7 +744,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
-            self.assertEqual(updated.options.data_feed_description, "updated")
+            self.assertEqual(updated.data_feed_description, "updated")
             self.assertEqual(updated.schema.timestamp_column, "time")
             self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
                              datetime.datetime(2020, 12, 10, tzinfo=tzutc()))
@@ -759,15 +752,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
             self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
             self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-            self.assertEqual(updated.options.rollup_settings.rollup_type, "AlreadyRollup")
-            self.assertEqual(updated.options.rollup_settings.rollup_method, "Sum")
-            self.assertEqual(updated.options.rollup_settings.rollup_identification_value, "sumrollup")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
-            self.assertEqual(updated.options.access_mode, "Public")
-            self.assertEqual(updated.options.viewer_emails, ["updated"])
+            self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
+            self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
+            self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
+            self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
+            self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
+            self.assertEqual(updated.access_mode, "Public")
+            self.assertEqual(updated.viewer_emails, ["updated"])
             self.assertEqual(updated.status, "Paused")
-            self.assertEqual(updated.options.action_link_template, "updated")
+            self.assertEqual(updated.action_link_template, "updated")
             self.assertEqual(updated.source.query, "get data")
 
         finally:
@@ -778,23 +771,23 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         data_feed = self._create_data_feed_for_update("update")
         try:
             data_feed.name = "updateMe"
-            data_feed.options.data_feed_description = "updateMe"
+            data_feed.data_feed_description = "updateMe"
             data_feed.schema.timestamp_column = "don't update me"
             data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2020, 12, 22)
             data_feed.ingestion_settings.ingestion_start_offset = 2
             data_feed.ingestion_settings.data_source_request_concurrency = 2
             data_feed.ingestion_settings.ingestion_retry_delay = 2
             data_feed.ingestion_settings.stop_retry_after = 2
-            data_feed.options.rollup_settings.rollup_type = "don't update me"
-            data_feed.options.rollup_settings.rollup_method = "don't update me"
-            data_feed.options.rollup_settings.rollup_identification_value = "don't update me"
-            data_feed.options.rollup_settings.auto_rollup_group_by_column_names = []
-            data_feed.options.missing_data_point_fill_settings.fill_type = "don't update me"
-            data_feed.options.missing_data_point_fill_settings.custom_fill_value = 4
-            data_feed.options.access_mode = "don't update me"
-            data_feed.options.viewer_emails = ["don't update me"]
+            data_feed.rollup_settings.rollup_type = "don't update me"
+            data_feed.rollup_settings.rollup_method = "don't update me"
+            data_feed.rollup_settings.rollup_identification_value = "don't update me"
+            data_feed.rollup_settings.auto_rollup_group_by_column_names = []
+            data_feed.missing_data_point_fill_settings.fill_type = "don't update me"
+            data_feed.missing_data_point_fill_settings.custom_fill_value = 4
+            data_feed.access_mode = "don't update me"
+            data_feed.viewer_emails = ["don't update me"]
             data_feed.status = "don't update me"
-            data_feed.options.action_link_template = "don't update me"
+            data_feed.action_link_template = "don't update me"
             data_feed.source.connection_string = "don't update me"
             data_feed.source.query = "don't update me"
 
@@ -823,7 +816,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "updateMe")
-            self.assertEqual(updated.options.data_feed_description, "updateMe")
+            self.assertEqual(updated.data_feed_description, "updateMe")
             self.assertEqual(updated.schema.timestamp_column, "time")
             self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
                              datetime.datetime(2020, 12, 10, tzinfo=tzutc()))
@@ -831,15 +824,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 1)
             self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, 1)
             self.assertEqual(updated.ingestion_settings.stop_retry_after, 1)
-            self.assertEqual(updated.options.rollup_settings.rollup_type, "AlreadyRollup")
-            self.assertEqual(updated.options.rollup_settings.rollup_method, "Sum")
-            self.assertEqual(updated.options.rollup_settings.rollup_identification_value, "sumrollup")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
-            self.assertEqual(updated.options.access_mode, "Public")
-            self.assertEqual(updated.options.viewer_emails, ["updated"])
+            self.assertEqual(updated.rollup_settings.rollup_type, "AlreadyRollup")
+            self.assertEqual(updated.rollup_settings.rollup_method, "Sum")
+            self.assertEqual(updated.rollup_settings.rollup_identification_value, "sumrollup")
+            self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "CustomValue")
+            self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 2)
+            self.assertEqual(updated.access_mode, "Public")
+            self.assertEqual(updated.viewer_emails, ["updated"])
             self.assertEqual(updated.status, "Paused")
-            self.assertEqual(updated.options.action_link_template, "updated")
+            self.assertEqual(updated.action_link_template, "updated")
             self.assertEqual(updated.source.query, "get data")
 
         finally:
@@ -872,7 +865,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             updated = self.admin_client.get_data_feed(data_feed.id)
             self.assertEqual(updated.name, "update")
-            # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
+            # self.assertEqual(updated.data_feed_description, "")  # doesn't currently clear
             # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear
             self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
                              datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
@@ -880,15 +873,15 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.ingestion_settings.data_source_request_concurrency, 0)
             self.assertEqual(updated.ingestion_settings.ingestion_retry_delay, -1)
             self.assertEqual(updated.ingestion_settings.stop_retry_after, -1)
-            self.assertEqual(updated.options.rollup_settings.rollup_type, "NoRollup")
-            self.assertEqual(updated.options.rollup_settings.rollup_method, "None")
-            self.assertEqual(updated.options.rollup_settings.rollup_identification_value, None)
-            self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
-            self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 0)
-            self.assertEqual(updated.options.access_mode, "Private")
-            # self.assertEqual(updated.options.viewer_emails, ["viewers"]) # doesn't currently clear
+            self.assertEqual(updated.rollup_settings.rollup_type, "NoRollup")
+            self.assertEqual(updated.rollup_settings.rollup_method, "None")
+            self.assertEqual(updated.rollup_settings.rollup_identification_value, None)
+            self.assertEqual(updated.missing_data_point_fill_settings.fill_type, "SmartFilling")
+            self.assertEqual(updated.missing_data_point_fill_settings.custom_fill_value, 0)
+            self.assertEqual(updated.access_mode, "Private")
+            # self.assertEqual(updated.viewer_emails, ["viewers"]) # doesn't currently clear
             self.assertEqual(updated.status, "Active")
-            # self.assertEqual(updated.options.action_link_template, "updated")  # doesn't currently clear
+            # self.assertEqual(updated.action_link_template, "updated")  # doesn't currently clear
 
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
