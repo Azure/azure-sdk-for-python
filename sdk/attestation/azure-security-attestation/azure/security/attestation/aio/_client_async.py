@@ -72,11 +72,8 @@ class AttestationClient(object):
     """
 
     def __init__(
-        self,
-        credential,  # type: 'AsyncTokenCredential'
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> None
+        self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any
+    ) -> None:
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
@@ -85,9 +82,7 @@ class AttestationClient(object):
         self._signing_certificates = None
 
     @distributed_trace_async
-    async def get_openidmetadata(
-        self, **kwargs  # type: Any
-    ):  # type: (...) -> Any
+    async def get_openidmetadata(self, **kwargs: Any) -> Any:
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
@@ -103,9 +98,7 @@ class AttestationClient(object):
         return await self._client.metadata_configuration.get(**kwargs)
 
     @distributed_trace_async
-    async def get_signing_certificates(
-        self, **kwargs  # type: Any
-    ):  # type: (...) -> List[AttestationSigner]
+    async def get_signing_certificates(self, **kwargs: Any) -> List[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens.
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
@@ -124,12 +117,12 @@ class AttestationClient(object):
     async def attest_sgx_enclave(
         self,
         quote: bytes,
-        inittime_json=None,  # type: bytes
-        inittime_data=None,  # type: bytes
-        runtime_json=None,  # type: bytes
-        runtime_data=None,  # type: bytes
-        **kwargs  # type:Any
-    ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
+        inittime_json: bytes = None,
+        inittime_data: bytes = None,
+        runtime_json: bytes = None,
+        runtime_data: bytes = None,
+        **kwargs: Any
+    ) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -232,12 +225,12 @@ class AttestationClient(object):
     async def attest_open_enclave(
         self,
         report: bytes,
-        inittime_json=None,  # type: bytes
-        inittime_data=None,  # type: bytes
-        runtime_json=None,  # type: bytes
-        runtime_data=None,  # type: bytes
-        **kwargs  # type: Any
-    ):  # type: (...) -> AttestationResult
+        inittime_json: bytes = None,
+        inittime_data: bytes = None,
+        runtime_json: bytes = None,
+        runtime_data: bytes = None,
+        **kwargs: Any
+    ) -> AttestationResult:
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -349,11 +342,7 @@ class AttestationClient(object):
         return AttestationResult._from_generated(token.get_body(), token)
 
     @distributed_trace_async
-    async def attest_tpm(
-        self,
-        request,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> str
+    async def attest_tpm(self, request: str, **kwargs: Any) -> str:
         """Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
@@ -385,15 +374,12 @@ class AttestationClient(object):
             signers = self._signing_certificates
         return signers
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self):
-        # type: () -> AttestationClient
+    async def __aenter__(self) -> "AttestationClient":
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):
-        # type: (Any) -> None
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
