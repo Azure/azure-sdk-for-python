@@ -108,6 +108,10 @@ def get_authentication_policy(
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
+        if is_async:
+            from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+            return AsyncBearerTokenCredentialPolicy(
+                credential, "https://communication.azure.com//.default")
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
