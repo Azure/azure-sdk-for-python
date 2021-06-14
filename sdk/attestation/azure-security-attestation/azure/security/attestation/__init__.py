@@ -9,34 +9,36 @@ from ._administration_client import AttestationAdministrationClient
 from ._models import (
     AttestationSigner,
     AttestationToken,
-    AttestationPolicyResult, 
-    AttestationResult, 
+    AttestationPolicyResult,
+    AttestationResult,
     AttestationTokenValidationException,
     AttestationPolicyCertificateResult,
     AttestationType,
     PolicyModification,
     StoredAttestationPolicy,
-    CertificateModification)
+    CertificateModification,
+)
 from ._version import VERSION
 
 __version__ = VERSION
 __all__ = [
-    'AttestationClient',
-    'AttestationAdministrationClient',
-    'AttestationType',
-    'AttestationToken',
-    'AttestationSigner',
-    'AttestationPolicyResult',
-    'AttestationPolicyCertificateResult',
-    'AttestationResult',
-    'StoredAttestationPolicy',
-    'CertificateModification',
-    'PolicyModification',
-    'AttestationTokenValidationException',
+    "AttestationClient",
+    "AttestationAdministrationClient",
+    "AttestationType",
+    "AttestationToken",
+    "AttestationSigner",
+    "AttestationPolicyResult",
+    "AttestationPolicyCertificateResult",
+    "AttestationResult",
+    "StoredAttestationPolicy",
+    "CertificateModification",
+    "PolicyModification",
+    "AttestationTokenValidationException",
 ]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

@@ -22,12 +22,10 @@ from .._generated.models import (
     InitTimeData,
     DataType,
     AttestSgxEnclaveRequest,
-    AttestOpenEnclaveRequest)
+    AttestOpenEnclaveRequest,
+)
 from .._configuration import AttestationClientConfiguration
-from .._models import (
-    AttestationSigner,
-    AttestationToken,
-    AttestationResult)
+from .._models import AttestationSigner, AttestationToken, AttestationResult
 import base64
 from threading import Lock
 from .._common import merge_validation_args
@@ -47,13 +45,13 @@ class AttestationClient(object):
     :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-        if the token is invalid, the `validation_callback` function should throw 
+        if the token is invalid, the `validation_callback` function should throw
         an exception.
     :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
-    :keyword float validation_slack: Slack time for validation - tolerance applied 
+    :keyword float validation_slack: Slack time for validation - tolerance applied
         to help account for clock drift between the issuer and the current machine.
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
@@ -63,7 +61,7 @@ class AttestationClient(object):
     :keyword list[~azure.core.pipeline.policies.AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     .. tip::
-        The `validate_token`, `validation_callback`, `validate_signature`, 
+        The `validate_token`, `validation_callback`, `validate_signature`,
         `validate_expiration`, `validate_not_before_time`, `validate_issuer`, and
         `issuer` keyword arguments are default values applied to each API call within
         the :py:class:`AttestationClient` class. These values can be
@@ -72,12 +70,13 @@ class AttestationClient(object):
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
     """
+
     def __init__(
         self,
         credential,  # type: 'AsyncTokenCredential'
-        endpoint, #type: str
-        **kwargs #type: Any
-    ): #type: (...) -> None
+        endpoint,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> None
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
@@ -87,10 +86,9 @@ class AttestationClient(object):
 
     @distributed_trace_async
     async def get_openidmetadata(
-        self, 
-        **kwargs #type: Any
-        ): #type: (...) -> Any
-        """ Retrieves the OpenID metadata configuration document for this attestation instance.
+        self, **kwargs  # type: Any
+    ):  # type: (...) -> Any
+        """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
 
@@ -106,10 +104,9 @@ class AttestationClient(object):
 
     @distributed_trace_async
     async def get_signing_certificates(
-        self, 
-        **kwargs #type: Any
-        ): #type: (...) -> List[AttestationSigner]
-        """ Returns the set of signing certificates used to sign attestation tokens.
+        self, **kwargs  # type: Any
+    ):  # type: (...) -> List[AttestationSigner]
+        """Returns the set of signing certificates used to sign attestation tokens.
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
         :rtype: list[azure.security.attestation.AttestationSigner]
@@ -126,39 +123,39 @@ class AttestationClient(object):
     @distributed_trace_async
     async def attest_sgx_enclave(
         self,
-        quote : bytes,
-        inittime_json=None, #type: bytes
-        inittime_data=None, #type: bytes
-        runtime_json=None, #type: bytes
-        runtime_data=None, #type: bytes
-        **kwargs #type:Any
-        ): #type: (...) -> Tuple[AttestationResult, AttestationToken]
-        """ Attests the validity of an SGX quote.
+        quote: bytes,
+        inittime_json=None,  # type: bytes
+        inittime_data=None,  # type: bytes
+        runtime_json=None,  # type: bytes
+        runtime_data=None,  # type: bytes
+        **kwargs  # type:Any
+    ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
+        """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :param bytes inittime_data: Data presented at the time that the SGX 
+        :param bytes inittime_data: Data presented at the time that the SGX
             enclave was initialized.
-        :param bytes inittime_json: Data presented at the time that the SGX 
+        :param bytes inittime_json: Data presented at the time that the SGX
             enclave was initialized, JSON encoded.
-        :param bytes runtime_data: Data presented at the time that the open_enclave 
+        :param bytes runtime_data: Data presented at the time that the open_enclave
             report was created.
-        :param bytes runtime_json: Data presented at the time that the open_enclave 
+        :param bytes runtime_json: Data presented at the time that the open_enclave
             report was created. JSON Encoded.
         :keyword draft_policy: "draft" or "experimental" policy to be used with
-            this attestation request. If this parameter is provided, then this 
+            this attestation request. If this parameter is provided, then this
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
         :paramtype draft_policy: str
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
@@ -178,7 +175,7 @@ class AttestationClient(object):
                 :language: python
                 :dedent: 8
                 :caption: Attesting an SGX Enclave
-        
+
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
@@ -195,7 +192,6 @@ class AttestationClient(object):
         if runtime_json:
             json.loads(runtime_json)
 
-
         # Now create the RuntimeData object to be sent to the service.
         runtime = None
         if runtime_data:
@@ -203,7 +199,6 @@ class AttestationClient(object):
 
         if runtime_json:
             runtime = RuntimeData(data=runtime_json, data_type=DataType.JSON)
-
 
         # And the InitTimeData object to be sent to the service.
         inittime = None
@@ -214,18 +209,20 @@ class AttestationClient(object):
 
         request = AttestSgxEnclaveRequest(
             quote=quote,
-            init_time_data = inittime,
-            runtime_data = runtime,
-            draft_policy_for_attestation=kwargs.pop('draft_policy', None))
-        # Merge our existing config options with the options for this API call. 
+            init_time_data=inittime,
+            runtime_data=runtime,
+            draft_policy_for_attestation=kwargs.pop("draft_policy", None),
+        )
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
-        token = AttestationToken(token=result.token,
-            body_type=GeneratedAttestationResult)
+        token = AttestationToken(
+            token=result.token, body_type=GeneratedAttestationResult
+        )
 
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
@@ -234,39 +231,39 @@ class AttestationClient(object):
     @distributed_trace_async
     async def attest_open_enclave(
         self,
-        report : bytes,
-        inittime_json=None, #type: bytes
-        inittime_data=None, #type: bytes
-        runtime_json=None, #type: bytes
-        runtime_data=None, #type: bytes
-        **kwargs #type: Any
-        ): #type: (...) -> AttestationResult
-        """ Attests the validity of an Open Enclave report.
+        report: bytes,
+        inittime_json=None,  # type: bytes
+        inittime_data=None,  # type: bytes
+        runtime_json=None,  # type: bytes
+        runtime_data=None,  # type: bytes
+        **kwargs  # type: Any
+    ):  # type: (...) -> AttestationResult
+        """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :param bytes inittime_data: Data presented at the time that the SGX 
+        :param bytes inittime_data: Data presented at the time that the SGX
             enclave was initialized.
-        :param bytes inittime_json: Data presented at the time that the SGX 
+        :param bytes inittime_json: Data presented at the time that the SGX
             enclave was initialized, JSON encoded.
-        :param bytes runtime_data: Data presented at the time that the open_enclave 
+        :param bytes runtime_data: Data presented at the time that the open_enclave
             report was created.
-        :param bytes runtime_json: Data presented at the time that the open_enclave 
+        :param bytes runtime_json: Data presented at the time that the open_enclave
             report was created. JSON Encoded.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
-            this attestation request. If this parameter is provided, then this 
+            this attestation request. If this parameter is provided, then this
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
 
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
@@ -284,8 +281,8 @@ class AttestationClient(object):
                 :caption: Attesting an open_enclave report for an SGX enclave.
 
         .. admonition:: Example: Simple OpenEnclave attestation with draft attestation policy.
-        
-            
+
+
             .. literalinclude:: ../samples/sample_attest_enclave_async.py
                 :start-after: [START attest_open_enclave_shared_draft]
                 :end-before: [END attest_open_enclave_shared_draft]
@@ -314,7 +311,6 @@ class AttestationClient(object):
         if runtime_json:
             json.loads(runtime_json)
 
-
         # Now create the RuntimeData object to be sent to the service.
         runtime = None
         if runtime_data:
@@ -322,7 +318,6 @@ class AttestationClient(object):
 
         if runtime_json:
             runtime = RuntimeData(data=runtime_json, data_type=DataType.JSON)
-
 
         # And the InitTimeData object to be sent to the service.
         inittime = None
@@ -333,19 +328,21 @@ class AttestationClient(object):
 
         request = AttestOpenEnclaveRequest(
             report=report,
-            init_time_data = inittime,
-            runtime_data = runtime,
-            draft_policy_for_attestation = kwargs.pop('draft_policy', None))
+            init_time_data=inittime,
+            runtime_data=runtime,
+            draft_policy_for_attestation=kwargs.pop("draft_policy", None),
+        )
 
-        # Merge our existing config options with the options for this API call. 
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
-            
+        options = merge_validation_args(self._config._kwargs, kwargs)
+
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
-        token = AttestationToken(token=result.token,
-            body_type=GeneratedAttestationResult)
+        token = AttestationToken(
+            token=result.token, body_type=GeneratedAttestationResult
+        )
 
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
@@ -353,11 +350,11 @@ class AttestationClient(object):
 
     @distributed_trace_async
     async def attest_tpm(
-        self, 
-        request, #type: str
-        **kwargs #type: Any
-        ): #type: (...) -> str
-        """ Attest a TPM based enclave.
+        self,
+        request,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> str
+        """Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
@@ -365,19 +362,26 @@ class AttestationClient(object):
         :returns: A structure containing the response from the TPM attestation.
         :rtype: str
         """
-        response = await self._client.attestation.attest_tpm(request.encode('ascii'), **kwargs)
-        return response.data.decode('ascii')
+        response = await self._client.attestation.attest_tpm(
+            request.encode("ascii"), **kwargs
+        )
+        return response.data.decode("ascii")
 
-    async def _get_signers(self, **kwargs: Any): #type: (Any) -> list[AttestationSigner]
-        """ Returns the set of signing certificates used to sign attestation tokens.
-        """
+    async def _get_signers(
+        self, **kwargs: Any
+    ):  # type: (Any) -> list[AttestationSigner]
+        """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
             if self._signing_certificates is None:
-                signing_certificates = await self._client.signing_certificates.get(**kwargs)
+                signing_certificates = await self._client.signing_certificates.get(
+                    **kwargs
+                )
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
-                    self._signing_certificates.append(AttestationSigner._from_generated(key))
+                    self._signing_certificates.append(
+                        AttestationSigner._from_generated(key)
+                    )
             signers = self._signing_certificates
         return signers
 

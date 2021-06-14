@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Any, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, List, Any, Optional, TYPE_CHECKING, Tuple
 
 from azure.core import PipelineClient
 from cryptography.hazmat.primitives import serialization
@@ -18,21 +18,21 @@ if TYPE_CHECKING:
 
 from ._generated import AzureAttestationRestClient
 from ._generated.models import (
-    AttestationType, 
-    PolicyResult as GeneratedPolicyResult, 
-    PolicyCertificatesResult as GeneratedPolicyCertificatesResult, 
-    JSONWebKey, 
-    AttestationCertificateManagementBody, 
+    AttestationType,
+    PolicyResult as GeneratedPolicyResult,
+    PolicyCertificatesResult as GeneratedPolicyCertificatesResult,
+    JSONWebKey,
+    AttestationCertificateManagementBody,
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
-    PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult
+    PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
 )
 from ._configuration import AttestationClientConfiguration
 from ._models import (
-    AttestationSigner, 
-    AttestationToken, 
+    AttestationSigner,
+    AttestationToken,
     AttestationPolicyResult,
     AttestationPolicyCertificateResult,
-    AttestationTokenValidationException
+    AttestationTokenValidationException,
 )
 import base64
 from azure.core.tracing.decorator import distributed_trace
@@ -44,7 +44,7 @@ from cryptography.x509 import load_pem_x509_certificate
 class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
-    The :class:`~AttestationAdministrationClient` object implements the policy 
+    The :class:`~AttestationAdministrationClient` object implements the policy
     management and policy certificate management functions.
 
     :param credential: Credentials for the caller used to interact with the service.
@@ -57,13 +57,13 @@ class AttestationAdministrationClient(object):
 
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-        if the token is invalid, the `validation_callback` function should throw 
+        if the token is invalid, the `validation_callback` function should throw
         an exception.
     :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
-    :keyword float validation_slack: Slack time for validation - tolerance applied 
+    :keyword float validation_slack: Slack time for validation - tolerance applied
         to help account for clock drift between the issuer and the current machine.
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
@@ -80,26 +80,25 @@ class AttestationAdministrationClient(object):
     * :py:func:`add_policy_management_certificate`
     * :py:func:`remove_policy_management_certificate`
 
-    .. note:: 
-        The `signing_key` and `signing_certificate` parameters are a pair. If one 
+    .. note::
+        The `signing_key` and `signing_certificate` parameters are a pair. If one
         is present, the other must also be provided. In addition, the public key
         in the `signing_key` and the public key in the `signing_certificate` must
         match to ensure that the `signing_certificate` can be used to validate an
         object signed by `signing_key`.
 
     .. tip::
-        The `validate_token`, `validation_callback`, `validate_signature`, 
+        The `validate_token`, `validation_callback`, `validate_signature`,
         `validate_expiration`, `validate_not_before_time`, `validate_issuer`, and
         `issuer` keyword arguments are default values applied to each API call within
         the :py:class:`AttestationAdministrationClient` class. These values can be
         overridden on individual API calls as needed.
     """
 
-
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        endpoint, #type: str
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -113,35 +112,36 @@ class AttestationAdministrationClient(object):
         self._signing_key = None
         self._signing_certificate = None
 
-        signing_key = kwargs.pop('signing_key', None)
-        signing_certificate = kwargs.pop('signing_certificate', None)
+        signing_key = kwargs.pop("signing_key", None)
+        signing_certificate = kwargs.pop("signing_certificate", None)
         if signing_key or signing_certificate:
-            self._signing_key, self._signing_certificate = validate_signing_keys(signing_key, signing_certificate)
-
+            self._signing_key, self._signing_certificate = validate_signing_keys(
+                signing_key, signing_certificate
+            )
 
     @distributed_trace
-    def get_policy(self, attestation_type, **kwargs): 
-        #type: (AttestationType, **Any) -> Tuple[str, AttestationToken]
-        """ Retrieves the attestation policy for a specified attestation type.
+    def get_policy(self, attestation_type, **kwargs):
+        # type: (AttestationType, **Any) -> Tuple[str, AttestationToken]
+        """Retrieves the attestation policy for a specified attestation type.
 
-        :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
+        :param attestation_type: :class:`azure.security.attestation.AttestationType` for
             which to retrieve the policy.
-        
-        :type attestation_type: azure.security.attestation.AttestationType 
+
+        :type attestation_type: azure.security.attestation.AttestationType
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :return: A tuple containing the attestation policy and the token returned 
+        :return: A tuple containing the attestation policy and the token returned
             by the service..
 
         :rtype: ~typing.Tuple[str, AttestationToken]
@@ -152,8 +152,8 @@ class AttestationAdministrationClient(object):
             The Azure Attestation Policy language is defined `here <https://docs.microsoft.com/azure/attestation/author-sign-policy>`_
 
         .. admonition:: Example: Retrieving the current policy on an attestation instance.
-        
-            
+
+
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN get_policy]
                 :end-before: [END get_policy]
@@ -165,31 +165,34 @@ class AttestationAdministrationClient(object):
 
 
         """
-        # Merge our existing config options with the options for this API call. 
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
-
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
         policyResult = self._client.policy.get(attestation_type, **kwargs)
-        token = AttestationToken(token=policyResult.token, body_type=GeneratedPolicyResult)
+        token = AttestationToken(
+            token=policyResult.token, body_type=GeneratedPolicyResult
+        )
         token_body = token.get_body()
-        stored_policy = AttestationToken(token=token_body.policy, body_type=GeneratedStoredAttestationPolicy)
+        stored_policy = AttestationToken(
+            token=token_body.policy, body_type=GeneratedStoredAttestationPolicy
+        )
 
-        actual_policy = stored_policy.get_body().attestation_policy #type: bytes
+        actual_policy = stored_policy.get_body().attestation_policy  # type: bytes
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return actual_policy.decode('utf-8'), token
+        return actual_policy.decode("utf-8"), token
 
     @distributed_trace
-    def set_policy(self, attestation_type, attestation_policy, **kwargs): 
-        #type:(AttestationType, str, **Any) -> AttestationPolicyResult
-        """ Sets the attestation policy for the specified attestation type.
+    def set_policy(self, attestation_type, attestation_policy, **kwargs):
+        # type:(AttestationType, str, **Any) -> AttestationPolicyResult
+        """Sets the attestation policy for the specified attestation type.
 
-        :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
+        :param attestation_type: :class:`azure.security.attestation.AttestationType` for
             which to set the policy.
         :type attestation_type: azure.security.attestation.AttestationType
         :param attestation_policy: Attestation policy to be set.
@@ -200,13 +203,13 @@ class AttestationAdministrationClient(object):
             service along with the policy.
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
@@ -218,7 +221,7 @@ class AttestationAdministrationClient(object):
         :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. admonition:: Example: Setting the attestation policy on an AAD mode
-            attestation instance (no signing key required). 
+            attestation instance (no signing key required).
 
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN set_policy_unsecured]
@@ -227,8 +230,8 @@ class AttestationAdministrationClient(object):
                 :dedent: 0
                 :caption: Setting a security policy without a signing key.
 
-        .. admonition:: Example: Setting the attestation policy and verifying 
-            that the policy was recieved by the service. 
+        .. admonition:: Example: Setting the attestation policy and verifying
+            that the policy was recieved by the service.
 
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [START validate_policy_hash]
@@ -239,42 +242,51 @@ class AttestationAdministrationClient(object):
 
 
         .. note::
-            If the attestation instance is in *Isolated* mode, then the 
+            If the attestation instance is in *Isolated* mode, then the
             `signing_key` parameter MUST be a signing key containing one of the
             certificates returned by :meth:`get_policy_management_certificates`.
 
-            If the attestation instance is in *AAD* mode, then the `signing_key` 
+            If the attestation instance is in *AAD* mode, then the `signing_key`
             parameter does not need to be provided.
 
         """
 
         # If the caller provided a signing key and certificate, validate that,
         # otherwise use the default values from the service.
-        signing_key = kwargs.pop('signing_key', None)
-        signing_certificate = kwargs.pop('signing_certificate', None)
-        if signing_key or signing_certificate:
-            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
 
-        if not signing_key:
-            signing_key = self._signing_key
-        if not signing_certificate:
-            signing_certificate = self._signing_certificate
+        # Note that the signing_key and signing_certificate argument to AttestationToken
+        # is polymorphic - it can be either a PEM encoded string or a cryptography
+        # object. The self._signing_key and self._signing_certificate are cryptography
+        # objects, the keyword arguments are strings. The AttestationToken knows
+        # how to tease these two apart.
+        signing_key = kwargs.pop("signing_key", self._signing_key)
+        signing_certificate = kwargs.pop(
+            "signing_certificate", self._signing_certificate
+        )
 
         policy_token = AttestationToken(
-            body=GeneratedStoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
+            body=GeneratedStoredAttestationPolicy(
+                attestation_policy=attestation_policy.encode("ascii")
+            ),
             signing_key=signing_key,
             signing_certificate=signing_certificate,
-            body_type=GeneratedStoredAttestationPolicy)
+            body_type=GeneratedStoredAttestationPolicy,
+        )
 
-        # Merge our existing config options with the options for this API call. 
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
-        policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.to_jwt_string(), **kwargs)
-        token = AttestationToken(token=policyResult.token,
-            body_type=GeneratedPolicyResult)
+        policyResult = self._client.policy.set(
+            attestation_type=attestation_type,
+            new_attestation_policy=policy_token.to_jwt_string(),
+            **kwargs
+        )
+        token = AttestationToken(
+            token=policyResult.token, body_type=GeneratedPolicyResult
+        )
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
@@ -282,11 +294,11 @@ class AttestationAdministrationClient(object):
         return AttestationPolicyResult._from_generated(token.get_body(), token)
 
     @distributed_trace
-    def reset_policy(self, attestation_type, **kwargs): 
-        #type:(AttestationType, **dict[str, Any]) -> AttestationPolicyResult
-        """ Resets the attestation policy for the specified attestation type to the default value.
+    def reset_policy(self, attestation_type, **kwargs):
+        # type:(AttestationType, **Dict[str, Any]) -> AttestationPolicyResult
+        """Resets the attestation policy for the specified attestation type to the default value.
 
-        :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
+        :param attestation_type: :class:`azure.security.attestation.AttestationType` for
             which to set the policy.
         :type attestation_type: azure.security.attestation.AttestationType
         :keyword str signing_key: PEM encoded signing key to be used to sign the policy
@@ -295,33 +307,33 @@ class AttestationAdministrationClient(object):
             service along with the policy.
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
         :return: A policy set result reflecting the outcome of the policy removal.
-        
+
         :rtype: azure.security.attestation.AttestationPolicyResult
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
-            If the attestation instance is in *Isolated* mode, then the 
+            If the attestation instance is in *Isolated* mode, then the
             `signing_key` parameter MUST be a signing key containing one of the
             certificates returned by :meth:`get_policy_management_certificates`.
 
-            If the attestation instance is in *AAD* mode, then the `signing_key` 
+            If the attestation instance is in *AAD* mode, then the `signing_key`
             parameter does not need to be provided.
 
         .. admonition:: Example: Resetting the attestation policy on an AAD mode
-            attestation instance (no signing key required). 
+            attestation instance (no signing key required).
 
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN reset_aad_policy]
@@ -331,7 +343,7 @@ class AttestationAdministrationClient(object):
                 :caption: Resetting an AAD mode attestation instance.
 
         .. admonition:: Example: Resetting the attestation policy on an Isolated mode
-            attestation instance (signing key required). 
+            attestation instance (signing key required).
 
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN reset_isolated_policy]
@@ -344,41 +356,39 @@ class AttestationAdministrationClient(object):
 
         # If the caller provided a signing key and certificate, validate that,
         # otherwise use the default values from the service.
-        signing_key = kwargs.pop('signing_key', None)
-        signing_certificate = kwargs.pop('signing_certificate', None)
-        if signing_key or signing_certificate:
-            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
-
-        if not signing_key:
-            signing_key = self._signing_key
-        if not signing_certificate:
-            signing_certificate = self._signing_certificate
+        signing_key = kwargs.pop("signing_key", self._signing_key)
+        signing_certificate = kwargs.pop(
+            "signing_certificate", self._signing_certificate
+        )
 
         policy_token = AttestationToken(
-            body=None,
-            signing_key=signing_key,
-            signing_certificate=signing_certificate)
+            body=None, signing_key=signing_key, signing_certificate=signing_certificate
+        )
 
-        # Merge our existing config options with the options for this API call. 
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
-        policyResult = self._client.policy.reset(attestation_type=attestation_type, policy_jws=policy_token.to_jwt_string(), **kwargs)
-        token = AttestationToken(token=policyResult.token,
-            body_type=GeneratedPolicyResult)
+        policyResult = self._client.policy.reset(
+            attestation_type=attestation_type,
+            policy_jws=policy_token.to_jwt_string(),
+            **kwargs
+        )
+        token = AttestationToken(
+            token=policyResult.token, body_type=GeneratedPolicyResult
+        )
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
         return AttestationPolicyResult._from_generated(token.get_body(), token)
 
-
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
-        #type:(**Any) -> Tuple[list[list[str]], AttestationToken]
-        """ Retrieves the set of policy management certificates for the instance.
+        # type:(**Any) -> Tuple[list[list[str]], AttestationToken]
+        """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
         attestation service instance is in Isolated mode.
@@ -386,7 +396,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_token: if True, validate the token, otherwise
             return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to
-            perform custom validation of the token. If the token is invalid, 
+            perform custom validation of the token. If the token is invalid,
             the `validation_callback` function should throw an exception to cause
             the API call to fail.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
@@ -394,13 +404,13 @@ class AttestationAdministrationClient(object):
             token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time
             of the token being validated.
-        :keyword float validation_slack: Slack time for validation - tolerance 
-            applied to help account for clock drift between the issuer and 
+        :keyword float validation_slack: Slack time for validation - tolerance
+            applied to help account for clock drift between the issuer and
             the current machine.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
         :keyword bool validate_issuer: If True, validate that the issuer of the
             token matches the expected issuer.
-        :keyword bool validate_not_before_time: If true, validate the 
+        :keyword bool validate_not_before_time: If true, validate the
             "Not Before" time in the token.
 
         :return: A tuple containing the list of PEM encoded X.509 certificate chains and an attestation token.
@@ -418,16 +428,16 @@ class AttestationAdministrationClient(object):
 
         """
 
-        # Merge our existing config options with the options for this API call. 
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
         cert_response = self._client.policy_certificates.get(**kwargs)
         token = AttestationToken(
-            token=cert_response.token,
-            body_type=GeneratedPolicyCertificatesResult)
+            token=cert_response.token, body_type=GeneratedPolicyCertificatesResult
+        )
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
@@ -442,40 +452,40 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, **kwargs):
-        #type:(str, **Any) -> AttestationPolicyCertificateResult
-        """ Adds a new policy management certificate to the set of policy management certificates for the instance.
+        # type:(str, **Any) -> AttestationPolicyCertificateResult
+        """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
-        :param str certificate_to_add: PEM encoded X.509 certificate to add to 
+        :param str certificate_to_add: PEM encoded X.509 certificate to add to
             the list of attestation policy management certificates.
-        :keyword  str signing_key: PEM encoded signing Key representing the key 
+        :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
-        :keyword str signing_certificate: PEM encoded signing certificate which is one of 
+        :keyword str signing_certificate: PEM encoded signing certificate which is one of
             the *existing* attestation signing certificates.
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :return: Attestation service response 
+        :return: Attestation service response
             encapsulating the status of the add request.
 
         :rtype: azure.security.attestation.AttestationPolicyCertificateResult
 
-        The :class:`AttestationPolicyCertificatesResult` response to the 
+        The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes
-        of interest. 
-        
-        The first is `certificate_resolution`, which indicates 
-        whether the certificate in question is present in the set of policy 
-        management certificates after the operation has completed, or if it is 
+        of interest.
+
+        The first is `certificate_resolution`, which indicates
+        whether the certificate in question is present in the set of policy
+        management certificates after the operation has completed, or if it is
         absent.
 
         The second is the `thumbprint` of the certificate added. The `thumbprint`
@@ -484,7 +494,7 @@ class AttestationAdministrationClient(object):
 
         .. admonition:: Example: Generating and adding a new policy management
             certificates for an isolated attestation instance.
-                    
+
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN add_policy_management_certificate]
                 :end-before: [END add_policy_management_certificate]
@@ -493,76 +503,90 @@ class AttestationAdministrationClient(object):
                 :caption: Adding a policy management certificate.
 
         """
-        signing_key = kwargs.pop('signing_key', None)
-        signing_certificate = kwargs.pop('signing_certificate', None)
-        if signing_key or signing_certificate:
-            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
-        if not signing_key:
-            signing_key = self._signing_key
-        if not signing_certificate:
-            signing_certificate = self._signing_certificate
+        signing_key = kwargs.pop("signing_key", self._signing_key)
+        signing_certificate = kwargs.pop(
+            "signing_certificate", self._signing_certificate
+        )
 
         if not signing_key or not signing_certificate:
-            raise ValueError("A signing certificate and key must be provided to add_policy_management_certificate.")
+            raise ValueError(
+                "A signing certificate and key must be provided to add_policy_management_certificate."
+            )
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
-        certificate_to_add = load_pem_x509_certificate(certificate_to_add.encode('ascii'))
+        certificate_to_add = load_pem_x509_certificate(
+            certificate_to_add.encode("ascii")
+        )
 
-        jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add.public_bytes(serialization.Encoding.DER)).decode('ascii')])
+        jwk = JSONWebKey(
+            kty="RSA",
+            x5_c=[
+                base64.b64encode(
+                    certificate_to_add.public_bytes(serialization.Encoding.DER)
+                ).decode("ascii")
+            ],
+        )
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken(
             body=add_body,
             signing_key=signing_key,
             signing_certificate=signing_certificate,
-            body_type=AttestationCertificateManagementBody)
+            body_type=AttestationCertificateManagementBody,
+        )
 
-        # Merge our existing config options with the options for this API call. 
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
-        cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs)
-        token = AttestationToken(token=cert_response.token,
-            body_type=GeneratedPolicyCertificatesModificationResult)
+        cert_response = self._client.policy_certificates.add(
+            cert_add_token.to_jwt_string(), **kwargs
+        )
+        token = AttestationToken(
+            token=cert_response.token,
+            body_type=GeneratedPolicyCertificatesModificationResult,
+        )
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return AttestationPolicyCertificateResult._from_generated(token.get_body(), token)
+        return AttestationPolicyCertificateResult._from_generated(
+            token.get_body(), token
+        )
 
     @distributed_trace
     def remove_policy_management_certificate(self, certificate_to_remove, **kwargs):
-        #type:(bytes, **Any) -> AttestationPolicyCertificateResult
-        """ Removes a policy management certificate from the set of policy management certificates for the instance.
+        # type:(bytes, **Any) -> AttestationPolicyCertificateResult
+        """Removes a policy management certificate from the set of policy management certificates for the instance.
 
-        :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from 
+        :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from
             the list of attestation policy management certificates.
-        :keyword  str signing_key: PEM encoded signing Key representing the key 
+        :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
-        :keyword str signing_certificate: PEM encoded signing certificate which is one of 
+        :keyword str signing_certificate: PEM encoded signing certificate which is one of
             the *existing* attestation signing certificates.
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
-            if the token is invalid, the `validation_callback` function should throw 
+            if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
-        :keyword float validation_slack: Slack time for validation - tolerance applied 
+        :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Result describing the outcome of the certificate removal.
         :rtype: ~azure.security.attestation.AttestationPolicyCertificateResult
 
-        The :class:`AttestationPolicyCertificateResult` response to the 
+        The :class:`AttestationPolicyCertificateResult` response to the
         :meth:`remove_policy_management_certificate` API contains two attributes
-        of interest. 
-        
-        The first is `certificate_resolution`, which indicates 
-        whether the certificate in question is present in the set of policy 
-        management certificates after the operation has completed, or if it is 
+        of interest.
+
+        The first is `certificate_resolution`, which indicates
+        whether the certificate in question is present in the set of policy
+        management certificates after the operation has completed, or if it is
         absent.
 
         The second is the `thumbprint` of the certificate added. The `thumbprint`
@@ -571,7 +595,7 @@ class AttestationAdministrationClient(object):
 
         .. admonition:: Example: Removing an added policy management
             certificate for an isolated attestation instance.
-                    
+
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN remove_policy_management_certificate]
                 :end-before: [END remove_policy_management_certificate]
@@ -580,46 +604,59 @@ class AttestationAdministrationClient(object):
                 :caption: Removing a policy management certificate.
 
         """
-        signing_key = kwargs.pop('signing_key', None)
-        signing_certificate = kwargs.pop('signing_certificate', None)
-        if signing_key or signing_certificate:
-            signing_key, signing_certificate = validate_signing_keys(signing_key, signing_certificate)
-        if not signing_key:
-            signing_key = self._signing_key
-        if not signing_certificate:
-            signing_certificate = self._signing_certificate
+        signing_key = kwargs.pop("signing_key", self._signing_key)
+        signing_certificate = kwargs.pop(
+            "signing_certificate", self._signing_certificate
+        )
 
         if not signing_key or not signing_certificate:
-            raise ValueError("A signing certificate and key must be provided to remove_policy_management_certificate.")
+            raise ValueError(
+                "A signing certificate and key must be provided to remove_policy_management_certificate."
+            )
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
-        certificate_to_remove = load_pem_x509_certificate(certificate_to_remove.encode('ascii'))
+        certificate_to_remove = load_pem_x509_certificate(
+            certificate_to_remove.encode("ascii")
+        )
 
-        jwk=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_remove.public_bytes(serialization.Encoding.DER)).decode('ascii')])
+        jwk = JSONWebKey(
+            kty="RSA",
+            x5_c=[
+                base64.b64encode(
+                    certificate_to_remove.public_bytes(serialization.Encoding.DER)
+                ).decode("ascii")
+            ],
+        )
         add_body = AttestationCertificateManagementBody(policy_certificate=jwk)
         cert_add_token = AttestationToken(
             body=add_body,
             signing_key=signing_key,
             signing_certificate=signing_certificate,
-            body_type=AttestationCertificateManagementBody)
-        # Merge our existing config options with the options for this API call. 
+            body_type=AttestationCertificateManagementBody,
+        )
+        # Merge our existing config options with the options for this API call.
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._args, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
-        cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs)
-        token = AttestationToken(token=cert_response.token,
-            body_type=GeneratedPolicyCertificatesModificationResult)
+        cert_response = self._client.policy_certificates.remove(
+            cert_add_token.to_jwt_string(), **kwargs
+        )
+        token = AttestationToken(
+            token=cert_response.token,
+            body_type=GeneratedPolicyCertificatesModificationResult,
+        )
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return AttestationPolicyCertificateResult._from_generated(token.get_body(), token)
+        return AttestationPolicyCertificateResult._from_generated(
+            token.get_body(), token
+        )
 
     def _get_signers(self, **kwargs):
-        #type(**Any) -> List[AttestationSigner]
-        """ Returns the set of signing certificates used to sign attestation tokens.
-        """
+        # type(**Any) -> List[AttestationSigner]
+        """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
             if self._signing_certificates == None:
@@ -627,7 +664,9 @@ class AttestationAdministrationClient(object):
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    self._signing_certificates.append(AttestationSigner._from_generated(key))
+                    self._signing_certificates.append(
+                        AttestationSigner._from_generated(key)
+                    )
             signers = self._signing_certificates
         return signers
 
