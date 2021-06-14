@@ -1,4 +1,4 @@
-
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 class ApiVersionAssertPolicy(SansIOHTTPPolicy):
     """
