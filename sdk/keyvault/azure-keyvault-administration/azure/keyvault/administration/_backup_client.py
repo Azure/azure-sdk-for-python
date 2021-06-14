@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import functools
+import pickle
 from typing import TYPE_CHECKING
 
 from ._models import KeyVaultBackupOperation
@@ -13,6 +15,15 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any
     from azure.core.polling import LROPoller
+
+
+def _get_status_from_continuation_token(token, pipeline_client):
+    continuation_url = base64.b64decode(token.encode()).decode("ascii")
+    status_response = pipeline_client._pipeline.run(pipeline_client.get(continuation_url), stream=False)
+    # inject the status URL if it's not in the response
+    if "azure-asyncoperation" not in status_response.http_response.headers:
+        status_response.http_response.headers["azure-asyncoperation"] = continuation_url
+    return base64.b64encode(pickle.dumps(status_response)).decode('ascii')
 
 
 class KeyVaultBackupClient(KeyVaultClientBase):
@@ -38,11 +49,17 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
+
+        continuation_token = kwargs.pop("continuation_token", None)
+        status_response = None
+        if continuation_token:
+            status_response = _get_status_from_continuation_token(continuation_token, self._client._client)
+
         return self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
             cls=KeyVaultBackupOperation._from_generated,
-            continuation_token=kwargs.pop("continuation_token", None),
+            continuation_token=status_response,
             polling=KeyVaultBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),
@@ -67,6 +84,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         key_name = kwargs.pop("key_name", None)
 
+        status_response = None
+        if continuation_token:
+            status_response = _get_status_from_continuation_token(continuation_token, self._client._client)
+
         container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
         polling = KeyVaultBackupClientPollingMethod(
@@ -88,7 +109,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             restore_blob_details=restore_details,
             cls=lambda *_: None,  # poller.result() returns None
-            continuation_token=continuation_token,
+            continuation_token=status_response,
             polling=polling,
             **kwargs
         )

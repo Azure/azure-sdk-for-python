@@ -40,7 +40,15 @@ class BackupClientTests(KeyVaultTestCase):
     @property
     def credential(self):
         if self.is_live:
-            return DefaultAzureCredential()
+            from dotenv import load_dotenv
+            from azure.identity.aio import ClientSecretCredential
+            import os
+            load_dotenv()
+            return ClientSecretCredential(
+                tenant_id=os.environ["KEYVAULT_TENANT_ID"],
+                client_id=os.environ["KEYVAULT_CLIENT_ID"],
+                client_secret=os.environ["KEYVAULT_CLIENT_SECRET"]
+            )
 
         async def get_token(*_, **__):
             return AccessToken("secret", time.time() + 3600)
@@ -101,33 +109,60 @@ class BackupClientTests(KeyVaultTestCase):
         await self._poll_until_no_exception(key_client.delete_key, key_name, expected_exception=ResourceExistsError)
         await key_client.purge_deleted_key(key_name)
 
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @StorageAccountPreparer(random_name_enabled=True)
+    @BlobContainerPreparer()
+    async def test_backup_client_polling(self, container_uri, sas_token):
+        # backup the vault
+        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
+        backup_poller = await backup_client.begin_backup(container_uri, sas_token)
+        
+        # create a new poller from a continuation token
+        token = backup_poller.polling_method().get_continuation_token()
+        rehydrated = await backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
 
-@pytest.mark.asyncio
-async def test_continuation_token():
-    """Methods returning pollers should accept continuation tokens"""
+        # check that pollers and polling methods behave as expected
+        assert backup_poller.status() == "InProgress"
+        assert not backup_poller.done() or backup_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
 
-    expected_token = "token"
+        await backup_poller.polling_method().update_status()
+        assert backup_poller.status() == "InProgress"
+        await rehydrated.polling_method().update_status()
+        assert rehydrated.status() == "InProgress"
 
-    mock_generated_client = mock.Mock()
-    mock_methods = [
-        getattr(mock_generated_client, method_name)
-        for method_name in (
-            "begin_full_backup",
-            "begin_full_restore_operation",
-            "begin_selective_key_restore_operation",
-        )
-    ]
-    for method in mock_methods:
-        # the mock client's methods must return awaitables, and we don't have AsyncMock before 3.8
-        method.return_value = get_completed_future()
+        backup_operation = await backup_poller.result()
+        assert backup_poller.status() == "Succeeded" and backup_poller.polling_method().status() == "Succeeded"
+        rehydrated_operation = await rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        assert backup_operation.folder_url == rehydrated_operation.folder_url
 
-    backup_client = KeyVaultBackupClient("vault-url", object())
-    backup_client._client = mock_generated_client
-    await backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_restore("storage uri", "sas", key_name="key", continuation_token=expected_token)
+        # rehydrate a poller with a continuation token of a completed operation
+        late_rehydrated = await backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
+        assert late_rehydrated.status() == "InProgress"
+        await late_rehydrated.polling_method().update_status()
+        assert late_rehydrated.status() == "Succeeded"
 
-    for method in mock_methods:
-        assert method.call_count == 1
-        _, kwargs = method.call_args
-        assert kwargs["continuation_token"] == expected_token
+        # restore the backup
+        restore_poller = await backup_client.begin_restore(backup_operation.folder_url, sas_token)
+
+        # create a new poller from a continuation token
+        token = restore_poller.polling_method().get_continuation_token()
+        rehydrated = await backup_client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert restore_poller.status() == "InProgress"
+        assert not restore_poller.done() or restore_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        await rehydrated.polling_method().update_status()
+        assert rehydrated.status() == "InProgress"
+        await restore_poller.polling_method().update_status()
+        assert restore_poller.status() == "InProgress"
+
+        await rehydrated.wait()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        await restore_poller.wait()
+        assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
