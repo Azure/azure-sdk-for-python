@@ -30,7 +30,7 @@ from azure.storage.blob.aio import (
 
 from _shared.testcase import GlobalStorageAccountPreparer
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
 class AiohttpTestTransport(AioHttpTransport):

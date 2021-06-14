@@ -25,7 +25,8 @@ if sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'

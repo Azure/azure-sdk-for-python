@@ -8,8 +8,9 @@ import pytest
 
 from azure.storage.blob import BlobServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \

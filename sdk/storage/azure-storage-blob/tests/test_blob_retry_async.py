@@ -19,7 +19,7 @@ from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # test constants
 PUT_BLOCK_SIZE = 4 * 1024

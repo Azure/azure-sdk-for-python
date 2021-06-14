@@ -36,7 +36,7 @@ from azure.storage.blob import (
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
 from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,

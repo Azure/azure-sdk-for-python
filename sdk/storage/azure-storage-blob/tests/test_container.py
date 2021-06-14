@@ -13,7 +13,7 @@ from time import sleep
 import pytest
 import requests
 
-from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
+from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     BlobServiceClient,
@@ -26,6 +26,7 @@ from azure.storage.blob import (
     generate_container_sas,
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient, ContentSettings)
+from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
