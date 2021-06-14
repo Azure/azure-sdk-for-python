@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-import sys
 from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
