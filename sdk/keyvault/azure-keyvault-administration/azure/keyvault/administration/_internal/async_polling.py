@@ -26,9 +26,7 @@ class KeyVaultAsyncBackupClientPollingMethod(AsyncLROBasePolling):
             self._status = "InProgress"  # assume the operation is ongoing for now, so the actual status gets polled
 
         else:
-            super(KeyVaultAsyncBackupClientPollingMethod, self).initialize(
-                client, initial_response, deserialization_callback
-            )
+            super().initialize(client, initial_response, deserialization_callback)
 
     def get_continuation_token(self):
         # type() -> str

@@ -115,7 +115,7 @@ class KeyVaultBackupClientPollingMethod(LROBasePolling):
 
     def resource(self):
         try:
-            return super().resource()
+            return super(KeyVaultBackupClientPollingMethod, self).resource()
         except AttributeError:
             return None
 
