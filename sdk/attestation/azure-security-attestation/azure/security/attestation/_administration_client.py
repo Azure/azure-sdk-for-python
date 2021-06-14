@@ -387,7 +387,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
-        # type:(**Any) -> Tuple[list[list[str]], AttestationToken]
+        # type:(**Any) -> Tuple[List[List[str]], AttestationToken]
         """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
