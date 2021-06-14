@@ -15,7 +15,7 @@ from functools import partial
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from ._base_client import TextAnalyticsClientBase
+from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
@@ -785,6 +785,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
+            if self._api_version == TextAnalyticsApiVersion.V3_0 and show_opinion_mining:
+                raise ValueError(
+                    "'show_opinion_mining' is only available for API version v3.1 and up"
+                )
             kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
@@ -795,12 +799,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
-        except TypeError as error:
-            if "opinion_mining" in str(error):
-                raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1 and up"
-                )
-            raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 

@@ -384,16 +384,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version_multiple_tasks(self, client):
 
-        def callback(resp):
-            if not resp.raw_response:
-                # this is the initial post call
-                request_body = json.loads(resp.http_request.body)
-                assert len(request_body["tasks"]) == 5
-                for task in request_body["tasks"].values():
-                    assert len(task) == 1
-                    assert task[0]['parameters']['model-version'] == 'latest'
-                    assert not task[0]['parameters']['loggingOptOut']
-
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
