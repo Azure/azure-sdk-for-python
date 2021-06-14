@@ -201,21 +201,20 @@ def _get_property_name_from_task_type(task_type):
     return "key_phrase_extraction_tasks"
 
 def _get_good_result(task, doc_id_order, response_headers, returned_tasks_object):
-    current_task_type, task_name = task[0], task[1]
+    current_task_type, task_name = task
     deserialization_callback = _get_deserialization_callback_from_task_type(current_task_type)
     property_name = _get_property_name_from_task_type(current_task_type)
-    response_task_to_deserialize = [task for task in getattr(returned_tasks_object, property_name) if task.task_name == task_name][0]
+    response_task_to_deserialize = \
+        [task for task in getattr(returned_tasks_object, property_name) if task.task_name == task_name][0]
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, response_headers, lro=True
     )
 
 def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state):
     iter_items = defaultdict(list)  # map doc id to action results
-    # task_type_to_index = defaultdict(int)  # need to keep track of how many of each type of tasks we've seen
     returned_tasks_object = analyze_job_state.tasks
 
     for task in task_order:
-        # index_of_task_result = task_type_to_index[current_task_type]
         results = _get_good_result(
             task,
             doc_id_order,
@@ -224,7 +223,6 @@ def get_iter_items(doc_id_order, task_order, response_headers, analyze_job_state
         )
         for result in results:
             iter_items[result.id].append(result)
-        # task_type_to_index[current_task_type] += 1
     return [
         iter_items[doc_id]
         for doc_id in doc_id_order

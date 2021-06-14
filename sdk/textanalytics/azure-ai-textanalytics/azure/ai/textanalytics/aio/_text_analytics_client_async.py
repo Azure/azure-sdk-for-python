@@ -17,7 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from .._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
+from .._request_handlers import _validate_input, _determine_task_type, _check_string_index_type_arg
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -838,7 +838,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an LROPoller. Call `result()` on the poller
+        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
             if you have documents input ["Hello", "world"], and actions
@@ -850,7 +850,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Then, you will get the :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
-            ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.core.polling.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[
             RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult
@@ -879,32 +879,26 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
-        task_order = [_determine_action_type(action) for action in actions]
+        generated_tasks = [action.to_generated(str(idx)) for idx, action in enumerate(actions)]
+        task_order = [(_determine_task_type(a), a.task_name) for a in generated_tasks]
 
         try:
             analyze_tasks = self._client.models(api_version='v3.1').JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES]
+                    a for a in generated_tasks if _determine_task_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
                 ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
+                    a for a in generated_tasks if _determine_task_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                 ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES]
+                    a for a in generated_tasks if _determine_task_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
                 ],
                 entity_linking_tasks=[
-                    t.to_generated() for t in
-                    [
-                        a for a in actions if \
-                        _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-                    ]
+                    a for a in generated_tasks
+                    if _determine_task_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                 ],
                 sentiment_analysis_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT]
+                    a for a in generated_tasks if _determine_task_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1').AnalyzeBatchInput(

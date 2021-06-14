@@ -737,3 +737,92 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             actions=actions,
             polling_interval=self._interval(),
         )).result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_partial_success_for_actions(self, client):
+        docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                    docs,
+                    actions=[
+                        AnalyzeSentimentAction(),
+                        RecognizePiiEntitiesAction(),
+                    ],
+                    polling_interval=self._interval(),
+                )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+
+        assert len(action_results) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+        ]
+
+        assert len(action_results[0]) == len(action_order)
+        assert len(action_results[1]) == len(action_order)
+
+        # first doc
+        assert isinstance(action_results[0][0], AnalyzeSentimentResult)
+        assert action_results[0][0].id == "1"
+        assert action_results[0][1].is_error
+        assert action_results[0][1].id == "1"
+
+        # second doc
+        assert isinstance(action_results[1][0], AnalyzeSentimentResult)
+        assert action_results[1][0].id == "2"
+        assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
+        assert action_results[1][1].id == "2"
+
+    @pytest.skip("Service bug - https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/10145316")
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_multiple_of_same_action(self, client):
+        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
+                {"id": "2", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                    docs,
+                    actions=[
+                        AnalyzeSentimentAction(),
+                        RecognizePiiEntitiesAction(),
+                        RecognizePiiEntitiesAction(domain_filter="phi"),
+                    ],
+                    polling_interval=self._interval(),
+                )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+
+        assert len(action_results) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+        ]
+
+        assert len(action_results[0]) == len(action_order)
+        assert len(action_results[1]) == len(action_order)
+
+        # first doc
+        assert isinstance(action_results[0][0], AnalyzeSentimentResult)
+        assert action_results[0][0].id == "1"
+        assert isinstance(action_results[0][1], RecognizePiiEntitiesResult)
+        assert action_results[0][1].id == "1"
+        assert isinstance(action_results[0][2], RecognizePiiEntitiesResult)
+        assert action_results[0][2].id == "1"
+
+        # second doc
+        assert isinstance(action_results[1][0], AnalyzeSentimentResult)
+        assert action_results[1][0].id == "2"
+        assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
+        assert action_results[1][1].id == "2"
+        assert isinstance(action_results[1][2], RecognizePiiEntitiesResult)
+        assert action_results[1][2].id == "2"

@@ -82,14 +82,14 @@ def _determine_action_type(action):
 
 def _determine_task_type(action):
     if isinstance(action, EntitiesTask):
-        return AnalyzeActionsType.RECOGNIZE_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_ENTITIES
     if isinstance(action, PiiTask):
-        return AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
     if isinstance(action, EntityLinkingTask):
-        return AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
     if isinstance(action, SentimentAnalysisTask):
-        return AnalyzeActionsType.ANALYZE_SENTIMENT
-    return AnalyzeActionsType.EXTRACT_KEY_PHRASES
+        return _AnalyzeActionsType.ANALYZE_SENTIMENT
+    return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
 def _check_string_index_type_arg(string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"):
     string_index_type = None
