@@ -3,3 +3,4 @@ include azure/__init__.py
 include azure/security/__init__.py
 recursive-include samples *.py *.md
 recursive-include tests *.py *.yaml
+include LICENSE.txt

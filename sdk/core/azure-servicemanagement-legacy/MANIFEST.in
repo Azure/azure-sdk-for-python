@@ -1,2 +1,3 @@
 include *.md
 include azure_bdist_wheel.py
+include LICENSE.txt

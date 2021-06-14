@@ -4,3 +4,4 @@ include azure/keyvault/__init__.py
 recursive-include samples *.py
 recursive-include tests *.py
 include azure/keyvault/administration/py.typed
+include LICENSE.txt

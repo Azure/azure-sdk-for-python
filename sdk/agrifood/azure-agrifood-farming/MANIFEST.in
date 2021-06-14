@@ -3,3 +3,4 @@ recursive-include samples *.py *.md
 include *.md
 include azure/__init__.py
 include azure/agrifood/__init__.py
+include LICENSE.txt
