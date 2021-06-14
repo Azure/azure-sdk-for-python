@@ -779,7 +779,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
-    @pytest.skip("Service bug - https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/10145316")
+    @pytest.mark.skip("Service bug - https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/10145316")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_multiple_of_same_action(self, client):
