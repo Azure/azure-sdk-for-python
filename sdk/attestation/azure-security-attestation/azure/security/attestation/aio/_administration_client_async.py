@@ -119,7 +119,7 @@ class AttestationAdministrationClient(object):
     @distributed_trace_async
     async def get_policy(
         self, attestation_type: AttestationType, **kwargs: Any
-    ) -> AttestationPolicyResult:
+    ) -> Tuple[str, AttestationToken]:
         """Retrieves the attestation policy for a specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -361,7 +361,7 @@ class AttestationAdministrationClient(object):
     @distributed_trace_async
     async def get_policy_management_certificates(
         self, **kwargs: Any
-    ) -> Tuple[list[list[str]], AttestationToken]:
+    ) -> Tuple[List[List[str]], AttestationToken]:
         """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
@@ -473,7 +473,7 @@ class AttestationAdministrationClient(object):
                 :start-after: [BEGIN add_policy_management_certificate]
                 :end-before: [END add_policy_management_certificate]
                 :language: python
-                :dedent: 8
+                :dedent: 0
                 :caption: Adding a policy management certificate.
 
         """
