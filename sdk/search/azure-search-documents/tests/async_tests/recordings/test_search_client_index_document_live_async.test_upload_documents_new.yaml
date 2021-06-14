@@ -11,9 +11,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -26,28 +26,28 @@ interactions:
       content-encoding: gzip
       content-length: '193'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:20:03 GMT
-      elapsed-time: '114'
+      date: Sat, 08 May 2021 06:25:17 GMT
+      elapsed-time: '102'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9d0833ec-b98f-11eb-b503-a0481ca055a9
+      request-id: 2778352a-afc6-11eb-be4f-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -59,28 +59,28 @@ interactions:
       content-encoding: gzip
       content-length: '127'
       content-type: text/plain
-      date: Thu, 20 May 2021 17:20:06 GMT
-      elapsed-time: '4'
+      date: Sat, 08 May 2021 06:25:20 GMT
+      elapsed-time: '3'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9f1038ad-b98f-11eb-b899-a0481ca055a9
+      request-id: 29794321-afc6-11eb-abf0-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -94,28 +94,28 @@ interactions:
       content-encoding: gzip
       content-length: '267'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:20:07 GMT
-      elapsed-time: '11'
+      date: Sat, 08 May 2021 06:25:20 GMT
+      elapsed-time: '8'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9f1ae749-b98f-11eb-9b2a-a0481ca055a9
+      request-id: 2984c195-afc6-11eb-8506-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1001')?api-version=2020-06-30
+    uri: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1001')?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -129,17 +129,17 @@ interactions:
       content-encoding: gzip
       content-length: '268'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:20:07 GMT
-      elapsed-time: '6'
+      date: Sat, 08 May 2021 06:25:20 GMT
+      elapsed-time: '5'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9f3c03d0-b98f-11eb-80f2-a0481ca055a9
+      request-id: 29909f32-afc6-11eb-9d54-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1001')?api-version=2020-06-30
+    url: https://search21ce1.search.windows.net/indexes('drgqefsg')/docs('1001')?api-version=2020-06-30-Preview
 version: 1

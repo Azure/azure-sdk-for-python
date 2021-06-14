@@ -9,7 +9,7 @@ import datetime
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
-from ....aio._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationPoller
+from ....aio._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationLROPoller
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -102,7 +102,7 @@ class DocumentTranslationOperations:
         self,
         inputs: List["_models.BatchRequest"],
         **kwargs: Any
-    ) -> AsyncDocumentTranslationPoller[None]:
+    ) -> AsyncDocumentTranslationLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document Translation service.
@@ -128,8 +128,8 @@ class DocumentTranslationOperations:
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncDocumentTranslationPoller that returns either None or the result of cls(response)
-        :rtype: ~....aio._async_polling.AsyncDocumentTranslationPoller[None]
+        :return: An instance of AsyncDocumentTranslationLROPoller that returns either None or the result of cls(response)
+        :rtype: ~....aio._async_polling.AsyncDocumentTranslationLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -161,14 +161,14 @@ class DocumentTranslationOperations:
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return AsyncDocumentTranslationPoller.from_continuation_token(
+            return AsyncDocumentTranslationLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AsyncDocumentTranslationPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncDocumentTranslationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_start_translation.metadata = {'url': '/batches'}  # type: ignore
 
     def get_translations_status(

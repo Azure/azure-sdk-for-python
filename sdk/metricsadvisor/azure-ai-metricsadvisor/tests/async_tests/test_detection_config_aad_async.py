@@ -40,8 +40,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             sensitivity=50,
                             anomaly_detector_direction="Both",
                             suppress_condition=SuppressCondition(
-                                min_number=50,
-                                min_ratio=50
+                                min_number=5,
+                                min_ratio=5
                             )
                         ),
                         hard_threshold_condition=HardThresholdCondition(
@@ -93,9 +93,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(config.whole_series_detection_condition.smart_detection_condition.sensitivity, 50)
                 self.assertEqual(
-                    config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 50)
+                    config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(
-                    config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 50)
+                    config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 5)
 
                 await self.admin_client.delete_detection_configuration(config.id)
 
@@ -120,8 +120,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             sensitivity=50,
                             anomaly_detector_direction="Both",
                             suppress_condition=SuppressCondition(
-                                min_number=50,
-                                min_ratio=50
+                                min_number=5,
+                                min_ratio=5
                             )
                         ),
                         hard_threshold_condition=HardThresholdCondition(
@@ -194,9 +194,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     detection_config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(detection_config.whole_series_detection_condition.smart_detection_condition.sensitivity, 50)
                 self.assertEqual(
-                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 50)
+                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(
-                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 50)
+                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 5)
                 self.assertEqual(
                     detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
                 self.assertEqual(
@@ -237,8 +237,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             sensitivity=50,
                             anomaly_detector_direction="Both",
                             suppress_condition=SuppressCondition(
-                                min_number=50,
-                                min_ratio=50
+                                min_number=5,
+                                min_ratio=5
                             )
                         ),
                         hard_threshold_condition=HardThresholdCondition(
@@ -381,9 +381,9 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     detection_config.whole_series_detection_condition.smart_detection_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(detection_config.whole_series_detection_condition.smart_detection_condition.sensitivity, 50)
                 self.assertEqual(
-                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 50)
+                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(
-                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 50)
+                    detection_config.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 5)
 
                 # series detection conditions
                 self.assertEqual(

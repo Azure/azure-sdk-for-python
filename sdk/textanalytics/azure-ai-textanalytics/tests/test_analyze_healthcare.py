@@ -132,11 +132,20 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
+        def callback(resp):
+            assert resp.raw_response
+            stats = resp.raw_response['results']['statistics']
+            assert stats['documentsCount'] == 5
+            assert stats['validDocumentsCount'] == 4
+            assert stats['erroneousDocumentsCount'] == 1
+            assert stats['transactionsCount'] == 4
+
         response = client.begin_analyze_healthcare_entities(
             docs,
             show_stats=True,
             model_version="2021-01-11",
-            polling_interval=self._interval()
+            polling_interval=self._interval(),
+            raw_response_hook = callback,
         ).result()
 
         num_error = 0

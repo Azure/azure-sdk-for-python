@@ -32,11 +32,7 @@ def sample_document_status_checks():
     import os
     import time
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import (
-        DocumentTranslationClient,
-        DocumentTranslationInput,
-        TranslationTarget
-    )
+    from azure.ai.translation.document import DocumentTranslationClient
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -45,18 +41,7 @@ def sample_document_status_checks():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-    poller = client.begin_translation(inputs=[
-            DocumentTranslationInput(
-                source_url=source_container_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_url,
-                        language_code="es"
-                    )
-                ]
-            )
-        ]
-    )
+    poller = client.begin_translation(source_container_url, target_container_url, "es")
 
     completed_docs = []
     while not poller.done():
@@ -67,12 +52,12 @@ def sample_document_status_checks():
             if document.id not in completed_docs:
                 if document.status == "Succeeded":
                     print("Document at {} was translated to {} language. You can find translated document at {}".format(
-                        document.source_document_url, document.translate_to, document.translated_document_url
+                        document.source_document_url, document.translated_to, document.translated_document_url
                     ))
                     completed_docs.append(document.id)
                 if document.status == "Failed":
-                    print("Document ID: {}, Error Code: {}, Message: {}".format(
-                        document.id, document.error.code, document.error.message
+                    print("Document at {} failed translation. Error Code: {}, Message: {}".format(
+                        document.source_document_url, document.error.code, document.error.message
                     ))
                     completed_docs.append(document.id)
                 if document.status == "Running":
@@ -80,7 +65,7 @@ def sample_document_status_checks():
                         document.id, document.translation_progress * 100
                     ))
 
-        print("\nTranslation completed.")
+    print("\nTranslation completed.")
     # [END list_all_document_statuses]
 
 

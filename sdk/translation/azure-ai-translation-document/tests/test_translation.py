@@ -40,7 +40,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "fr")
 
     @DocumentTranslationPreparer()
@@ -64,7 +64,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -93,7 +93,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -128,7 +128,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 2)
 
     @DocumentTranslationPreparer()
@@ -154,7 +154,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -180,7 +180,7 @@ class TestTranslation(DocumentTranslationTest):
             )
         ]
 
-        # submit job and test
+        # submit translation and test
         self._begin_and_validate_translation(client, translation_inputs, 1, "es")
 
     @DocumentTranslationPreparer()
@@ -207,7 +207,6 @@ class TestTranslation(DocumentTranslationTest):
             result = poller.result()
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_bad_input_target(self, client):
@@ -231,7 +230,7 @@ class TestTranslation(DocumentTranslationTest):
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_translation(translation_inputs)
             result = poller.result()
-        assert e.value.error.code == "InvalidDocumentAccessLevel"
+        assert e.value.error.code == "InvalidTargetDocumentAccessLevel"
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -346,3 +345,98 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             assert doc.status == "Failed"
             assert doc.error.code == "WrongDocumentEncoding"
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_overloaded_inputs(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+        target_container_sas_url_2 = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+
+        # positional
+        poller = client.begin_translation(translation_inputs)
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+        # keyword
+        translation_inputs[0].targets[0].target_url = target_container_sas_url_2
+        poller = client.begin_translation(inputs=translation_inputs)
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_overloaded_single_input(self, client):
+        # prepare containers and test data
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+        target_container_sas_url_2 = self.create_target_container()
+
+        # positional
+        poller = client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+        # keyword
+        poller = client.begin_translation(source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language_code="es")
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_overloaded_bad_input(self, client):
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url="container",
+                targets=[
+                    TranslationTarget(
+                        target_url="container",
+                        language_code="es"
+                    )
+                ]
+            )
+        ]
+
+        with pytest.raises(ValueError):
+            client.begin_translation("container")
+
+        with pytest.raises(ValueError):
+            client.begin_translation("container", "container")
+
+        with pytest.raises(ValueError):
+            client.begin_translation(source_url=translation_inputs)
+
+        with pytest.raises(ValueError):
+            client.begin_translation(inputs="container")
+
+    @pytest.mark.live_test_only
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    def test_translation_continuation_token(self, client):
+        source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
+        target_container_sas_url = self.create_target_container()
+
+        initial_poller = client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
+        cont_token = initial_poller.continuation_token()
+
+        poller = client.begin_translation(None, continuation_token=cont_token)
+        result = poller.result()
+        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+        for doc in result:
+            self._validate_doc_status(doc, target_language="es")
+        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

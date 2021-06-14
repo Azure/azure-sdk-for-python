@@ -10,15 +10,15 @@ from ._generated.models import (
     StorageInputType,
 )
 from ._api_version import DocumentTranslationApiVersion
-from ._polling import DocumentTranslationPoller
+from ._polling import DocumentTranslationLROPoller
 from ._models import (
     TranslationTarget,
-    JobStatusResult,
+    TranslationStatusResult,
     DocumentStatusResult,
     DocumentTranslationError,
     TranslationGlossary,
     DocumentTranslationInput,
-    FileFormat
+    FileFormat,
 )
 
 __VERSION__ = VERSION
@@ -32,8 +32,8 @@ __all__ = [
     "StorageInputType",
     "FileFormat",
     "TranslationTarget",
-    "JobStatusResult",
+    "TranslationStatusResult",
     "DocumentStatusResult",
     "DocumentTranslationError",
-    "DocumentTranslationPoller"
+    "DocumentTranslationLROPoller",
 ]

@@ -34,10 +34,6 @@ async def sample_translation_async():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
-    from azure.ai.translation.document import (
-        DocumentTranslationInput,
-        TranslationTarget
-    )
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -47,18 +43,7 @@ async def sample_translation_async():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     async with client:
-        poller = await client.begin_translation(inputs=[
-                DocumentTranslationInput(
-                    source_url=source_container_url,
-                    targets=[
-                        TranslationTarget(
-                            target_url=target_container_url,
-                            language_code="es"
-                        )
-                    ]
-                )
-            ]
-        )
+        poller = await client.begin_translation(source_container_url, target_container_url, "fr")
         result = await poller.result()
 
         print("Status: {}".format(poller.status()))
@@ -76,7 +61,7 @@ async def sample_translation_async():
             if document.status == "Succeeded":
                 print("Source document location: {}".format(document.source_document_url))
                 print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translate_to))
+                print("Translated to language: {}\n".format(document.translated_to))
             else:
                 print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
     # [END begin_translation_async]

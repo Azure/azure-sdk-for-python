@@ -5,9 +5,6 @@
 # ------------------------------------
 
 from ._client_async import DocumentTranslationClient
-from ._async_polling import AsyncDocumentTranslationPoller
+from ._async_polling import AsyncDocumentTranslationLROPoller
 
-__all__ = [
-    "DocumentTranslationClient",
-    "AsyncDocumentTranslationPoller"
-]
+__all__ = ["DocumentTranslationClient", "AsyncDocumentTranslationLROPoller"]

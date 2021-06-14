@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential
     from ._models import ResourceTypes
 
+
 def generate_account_sas(
     credential,  # type: AzureNamedKeyCredential
     resource_types,  # type: ResourceTypes
@@ -94,10 +95,8 @@ def generate_table_sas(credential, table_name, **kwargs):
     Use the returned signature with the sas_token parameter of TableService.
 
 
-    :param account_key: Account key
-    :type account_key: str
-    :param account_name: Account name
-    :type account_name: str
+    :param credential: Credential used for creating Shared Access Signature
+    :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential`
     :param table_name: Table name
     :type table_name: str
     :keyword TableSasPermissions permission:

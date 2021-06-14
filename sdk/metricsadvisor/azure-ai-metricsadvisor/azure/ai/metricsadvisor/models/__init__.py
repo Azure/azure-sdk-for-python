@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_enums import (
+from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import (
     SnoozeScope,
     Severity as AnomalySeverity,
     DataSourceType,

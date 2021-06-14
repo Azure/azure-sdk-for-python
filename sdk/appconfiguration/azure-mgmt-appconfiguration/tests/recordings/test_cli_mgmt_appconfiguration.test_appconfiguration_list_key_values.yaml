@@ -14,23 +14,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-appconfiguration/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-appconfiguration/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c?api-version=2020-06-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-09-14T08:15:31.8743642+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c","name":"configurationcae61c3c","location":"westus","tags":{}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","location":"westus","properties":{"provisioningState":"Creating","creationDate":"2021-06-09T16:59:04.4482843+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":{"name":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c","name":"configurationcae61c3c","tags":{}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/aff8af00-5b34-5f16-165b-f920c2b1c519?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/990e6efc-a461-1228-c2cc-2d3d796e640d?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '523'
+      - '543'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:32 GMT
+      - Wed, 09 Jun 2021 16:59:05 GMT
       expires:
       - '-1'
       pragma:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1165'
     status:
       code: 201
       message: Created
@@ -56,15 +56,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-appconfiguration/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-appconfiguration/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/aff8af00-5b34-5f16-165b-f920c2b1c519?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/990e6efc-a461-1228-c2cc-2d3d796e640d?api-version=2020-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/aff8af00-5b34-5f16-165b-f920c2b1c519","name":"aff8af00-5b34-5f16-165b-f920c2b1c519","status":"Succeeded","error":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/990e6efc-a461-1228-c2cc-2d3d796e640d","name":"990e6efc-a461-1228-c2cc-2d3d796e640d","status":"Succeeded","error":null}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/aff8af00-5b34-5f16-165b-f920c2b1c519?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/990e6efc-a461-1228-c2cc-2d3d796e640d?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:42 GMT
+      - Wed, 09 Jun 2021 16:59:15 GMT
       expires:
       - '-1'
       pragma:
@@ -100,23 +100,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-appconfiguration/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-appconfiguration/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c?api-version=2020-06-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-09-14T08:15:38+00:00","endpoint":"https://configurationcae61c3c.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c","name":"configurationcae61c3c","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","location":"westus","properties":{"provisioningState":"Succeeded","creationDate":"2021-06-09T16:59:05+00:00","endpoint":"https://configurationcae61c3c.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c","name":"configurationcae61c3c","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '614'
+      - '619'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:42 GMT
+      - Wed, 09 Jun 2021 16:59:15 GMT
       etag:
-      - W/"56009200-0000-0700-0000-5f5f26a90000"
+      - W/"020035b2-0000-0700-0000-60c0f3590000"
       expires:
       - '-1'
       pragma:
@@ -146,14 +146,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-appconfiguration/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-appconfiguration/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c/ListKeys?api-version=2020-06-01
   response:
     body:
-      string: '{"value":[{"id":"R3g7-l1-s0:I5/reC29Nk+pvMXgcJpz","name":"Primary","value":"V0EDlQxb6kNnqInoLFy97aKD6t5jaFHWhN7WC11Y7Y4=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=R3g7-l1-s0:I5/reC29Nk+pvMXgcJpz;Secret=V0EDlQxb6kNnqInoLFy97aKD6t5jaFHWhN7WC11Y7Y4=","lastModified":"2020-09-14T08:15:37+00:00","readOnly":false},{"id":"nqlI-l1-s0:779gYmzrJp8B56vAiW/R","name":"Secondary","value":"vXtc/Kww24mrsF++l5zTNZ8PQi95ywqTnWaQECaUwk4=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=nqlI-l1-s0:779gYmzrJp8B56vAiW/R;Secret=vXtc/Kww24mrsF++l5zTNZ8PQi95ywqTnWaQECaUwk4=","lastModified":"2020-09-14T08:15:37+00:00","readOnly":false},{"id":"Ndta-l1-s0:Q/yFZqBrOOtutWWkk1J5","name":"Primary
-        Read Only","value":"lMj2eOnBBHSefbs0aFjRaaBHcc+j02BslKRSpc9f1kE=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=Ndta-l1-s0:Q/yFZqBrOOtutWWkk1J5;Secret=lMj2eOnBBHSefbs0aFjRaaBHcc+j02BslKRSpc9f1kE=","lastModified":"2020-09-14T08:15:37+00:00","readOnly":true},{"id":"KEQI-l1-s0:myLMJ++rnqT+hF5CKe1H","name":"Secondary
-        Read Only","value":"G9u5R3wCLcDUZQBRFPYIApeK0bytt5ACelfwnghFE/k=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=KEQI-l1-s0:myLMJ++rnqT+hF5CKe1H;Secret=G9u5R3wCLcDUZQBRFPYIApeK0bytt5ACelfwnghFE/k=","lastModified":"2020-09-14T08:15:37+00:00","readOnly":true}],"nextLink":null}'
+      string: '{"value":[{"id":"0kAl-l1-s0:i96YfD7iryZorykIgLQF","name":"Primary","value":"BBCQNyhz2q63cVblTOtUetZVOTLcs6KXsVTHB5XGG6w=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=0kAl-l1-s0:i96YfD7iryZorykIgLQF;Secret=BBCQNyhz2q63cVblTOtUetZVOTLcs6KXsVTHB5XGG6w=","lastModified":"2021-06-09T16:59:04+00:00","readOnly":false},{"id":"At89-l1-s0:fav64Mn6z1IiZZwb1Quf","name":"Secondary","value":"7hexaP2bVARYlYWuhfXpDjmmZLxBUJ7Rv8ls2s2SAC8=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=At89-l1-s0:fav64Mn6z1IiZZwb1Quf;Secret=7hexaP2bVARYlYWuhfXpDjmmZLxBUJ7Rv8ls2s2SAC8=","lastModified":"2021-06-09T16:59:04+00:00","readOnly":false},{"id":"WuZF-l1-s0:TOLYNcqAgBat1SgnI02n","name":"Primary
+        Read Only","value":"Xv6QpT/NimeEKRZFZXNCv9dLGpqnkk4wPBLGYVC6Nh8=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=WuZF-l1-s0:TOLYNcqAgBat1SgnI02n;Secret=Xv6QpT/NimeEKRZFZXNCv9dLGpqnkk4wPBLGYVC6Nh8=","lastModified":"2021-06-09T16:59:04+00:00","readOnly":true},{"id":"7PqF-l1-s0:rwzaj8kVvVE+BfaOEbyn","name":"Secondary
+        Read Only","value":"+ic8SHY+jECzMMkVYJVnEXUaymjs10BrxpKrBDPqJb0=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=7PqF-l1-s0:rwzaj8kVvVE+BfaOEbyn;Secret=+ic8SHY+jECzMMkVYJVnEXUaymjs10BrxpKrBDPqJb0=","lastModified":"2021-06-09T16:59:04+00:00","readOnly":true}],"nextLink":null}'
     headers:
       cache-control:
       - no-cache
@@ -162,7 +162,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:43 GMT
+      - Wed, 09 Jun 2021 16:59:15 GMT
       expires:
       - '-1'
       pragma:
@@ -183,7 +183,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "R3g7-l1-s0:I5/reC29Nk+pvMXgcJpz"}'
+    body: '{"id": "0kAl-l1-s0:i96YfD7iryZorykIgLQF"}'
     headers:
       Accept:
       - application/json
@@ -196,12 +196,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-appconfiguration/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-appconfiguration/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c/RegenerateKey?api-version=2020-06-01
   response:
     body:
-      string: '{"id":"jjmA-l1-s0:3Ct91hRpYTbPu8QdJ7LS","name":"Primary","value":"yY54SM9as0VZRQW9fV0+zbMFVkXo6tSVLe2C8PV85C0=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=jjmA-l1-s0:3Ct91hRpYTbPu8QdJ7LS;Secret=yY54SM9as0VZRQW9fV0+zbMFVkXo6tSVLe2C8PV85C0=","lastModified":"2020-09-14T08:15:44+00:00","readOnly":false}'
+      string: '{"id":"FKsW-l1-s0:PYQah0qRa1MtHwsBzzTN","name":"Primary","value":"wDKdBJoPqwwYEf2t4GNK1mSPojWxZHagfPjra9Hdtjg=","connectionString":"Endpoint=https://configurationcae61c3c.azconfig.io;Id=FKsW-l1-s0:PYQah0qRa1MtHwsBzzTN;Secret=wDKdBJoPqwwYEf2t4GNK1mSPojWxZHagfPjra9Hdtjg=","lastModified":"2021-06-09T16:59:15+00:00","readOnly":false}'
     headers:
       cache-control:
       - no-cache
@@ -210,7 +210,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:43 GMT
+      - Wed, 09 Jun 2021 16:59:15 GMT
       expires:
       - '-1'
       pragma:
@@ -236,7 +236,7 @@ interactions:
       type", "value": "test value", "tags": {"tag1": "tag1", "tag2": "tag2"}}'
     headers:
       Accept:
-      - application/vnd.microsoft.appconfig.kv+json
+      - application/vnd.microsoft.appconfig.kv+json, application/json, application/problem+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -244,21 +244,21 @@ interactions:
       Content-Length:
       - '231'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-appconfiguration/1.1.1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-appconfiguration/1.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
       x-ms-content-sha256:
       - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
       x-ms-date:
-      - Sep, 14 2020 08:15:44 GMT
+      - Jun, 09 2021 16:59:14.514060 GMT
     method: PUT
     uri: https://configurationcae61c3c.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"XuK4JkTld3O9xOQgSfAoz0Qq2dC","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2020-09-14T08:15:46+00:00"}'
+      string: '{"etag":"zmZdtxbiremQzYOVYGnKBHC8fy8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2021-06-09T16:59:16+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -269,23 +269,24 @@ interactions:
         Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent,
         x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match,
         If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified,
-        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, WWW-Authenticate
+        Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id,
+        x-ms-effective-locale, WWW-Authenticate
       connection:
       - keep-alive
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:46 GMT
+      - Wed, 09 Jun 2021 16:59:15 GMT
       etag:
-      - '"XuK4JkTld3O9xOQgSfAoz0Qq2dC"'
+      - '"zmZdtxbiremQzYOVYGnKBHC8fy8"'
       last-modified:
-      - Mon, 14 Sep 2020 08:15:46 GMT
+      - Wed, 09 Jun 2021 16:59:16 GMT
       server:
-      - openresty/1.15.8.3
+      - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=ODo0IzIyOTY0MjcjMT0tMQ==;sn=2296427
+      - zAJw6V16=Mzo1IzMwODY0Mzk=;sn=3086439
       transfer-encoding:
       - chunked
     status:
@@ -306,13 +307,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-appconfiguration/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-appconfiguration/1.0.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.AppConfiguration/configurationStores/configurationcae61c3c/listKeyValue?api-version=2020-06-01
   response:
     body:
       string: '{"key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","value":"test
-        value","contentType":"test content type","eTag":"XuK4JkTld3O9xOQgSfAoz0Qq2dC","lastModified":"2020-09-14T08:15:46+00:00","locked":false,"tags":{"tag1":"tag1","tag2":"tag2"}}'
+        value","contentType":"test content type","eTag":"zmZdtxbiremQzYOVYGnKBHC8fy8","lastModified":"2021-06-09T16:59:16+00:00","locked":false,"tags":{"tag1":"tag1","tag2":"tag2"}}'
     headers:
       cache-control:
       - no-cache
@@ -321,7 +322,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 08:15:51 GMT
+      - Wed, 09 Jun 2021 16:59:16 GMT
       expires:
       - '-1'
       pragma:

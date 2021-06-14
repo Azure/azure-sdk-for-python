@@ -611,12 +611,12 @@ class FileSystemTest(StorageTestCase):
         self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
         self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
 
-        paths_generator1 = file_system.list_deleted_paths(max_results=2).by_page()
+        paths_generator1 = file_system.list_deleted_paths(results_per_page=2).by_page()
         paths1 = []
         async for path in await paths_generator1.__anext__():
             paths1.append(path)
 
-        paths_generator2 = file_system.list_deleted_paths(max_results=4) \
+        paths_generator2 = file_system.list_deleted_paths(results_per_page=4) \
             .by_page(continuation_token=paths_generator1.continuation_token)
         paths2 = []
         async for path in await paths_generator2.__anext__():

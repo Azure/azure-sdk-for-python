@@ -43,8 +43,8 @@ class ManagedClusterVersionsOperations:
     async def list_by_os(
         self,
         location: str,
-        os_type: Union[str, "_models.Enum22"],
-        **kwargs
+        os_type: Union[str, "_models.Enum23"],
+        **kwargs: Any
     ) -> List["_models.ManagedClusterVersionDetails"]:
         """Gets the list of Service Fabric cluster code versions available for the specified OS type.
 
@@ -54,7 +54,7 @@ class ManagedClusterVersionsOperations:
          location.
         :type location: str
         :param os_type: The operating system of the cluster.
-        :type os_type: str or ~azure.mgmt.servicefabric.models.Enum22
+        :type os_type: str or ~azure.mgmt.servicefabric.models.Enum23
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of ManagedClusterVersionDetails, or the result of cls(response)
         :rtype: list[~azure.mgmt.servicefabric.models.ManagedClusterVersionDetails]
@@ -91,7 +91,7 @@ class ManagedClusterVersionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[ManagedClusterVersionDetails]', pipeline_response)

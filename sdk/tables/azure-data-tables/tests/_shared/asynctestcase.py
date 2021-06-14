@@ -56,7 +56,7 @@ class AsyncTableTestCase(TableTestCase):
         return table
 
     async def _delete_all_tables(self, account_name, key):
-        client = TableServiceClient(self.account_url(account_name, "cosmos"), key)
+        client = TableServiceClient(self.account_url(account_name, "cosmos"), credential=key)
         async for table in client.list_tables():
             await client.delete_table(table.name)
 
@@ -118,7 +118,7 @@ class AsyncTableTestCase(TableTestCase):
 
     async def _set_up(self, account_name, account_key, url="table"):
         account_url = self.account_url(account_name, url)
-        self.ts = TableServiceClient(account_url, account_key)
+        self.ts = TableServiceClient(account_url, credential=account_key)
         self.table_name = self.get_resource_name("uttable")
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:

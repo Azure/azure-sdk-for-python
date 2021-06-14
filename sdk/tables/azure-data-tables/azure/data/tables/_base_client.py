@@ -12,7 +12,6 @@ except ImportError:
     from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
@@ -72,7 +71,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         account_url,  # type: Any
-        credential=None,  # type: Optional[Any]
+        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -88,7 +87,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
-                "You need to provide either a SAS token or an account shared key to authenticate."
+                "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
             )
         self._query_str, credential = format_query_string(sas_token, credential)
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
@@ -115,9 +114,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name
+            self.account_name = self.credential.named_key.name  # type: ignore
             secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.named_key.name, SERVICE_HOST_BASE
+                self.credential.named_key.name, SERVICE_HOST_BASE  # type: ignore
             )
 
         if not self._hosts:
@@ -201,13 +200,13 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
 class TablesBaseClient(AccountHostsMixin):
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint,  # type: str
-        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        credential = kwargs.pop('credential', None)
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
@@ -345,9 +344,10 @@ def parse_connection_str(conn_str, credential, keyword_args):
         try:
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
         except KeyError:
-            credential = conn_settings.get("sharedaccesssignature")
-            # if "sharedaccesssignature" in conn_settings:
-            #     credential = AzureSasCredential(conn_settings['sharedaccesssignature'])
+            credential = conn_settings.get("sharedaccesssignature", None)
+            if not credential:
+                raise ValueError("Connection string missing required connection details.")
+            credential = AzureSasCredential(credential)
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
     if not primary:
@@ -394,10 +394,9 @@ def format_query_string(sas_token, credential):
             "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
     if sas_token and not credential:
         query_str += sas_token
-    elif is_credential_sastoken(credential):
-        query_str += credential.lstrip("?")
-        credential = None
-    return query_str.rstrip("?&"), credential
+    elif isinstance(credential, (AzureSasCredential, AzureNamedKeyCredential)):
+        return "", credential
+    return query_str.rstrip("?&"), None
 
 
 def parse_query(query_str):
@@ -414,14 +413,3 @@ def parse_query(query_str):
 
     snapshot = parsed_query.get("snapshot") or parsed_query.get("sharesnapshot")
     return snapshot, sas_token
-
-
-def is_credential_sastoken(credential):
-    if not credential or not isinstance(credential, six.string_types):
-        return False
-
-    sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
-        return True
-    return False

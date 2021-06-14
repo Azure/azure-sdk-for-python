@@ -10,7 +10,7 @@ FILE: sample_translation_with_azure_blob_async.py
 DESCRIPTION:
     This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to translate
     documents. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
-    containers. Once the job is completed, use the storage library to download your documents locally.
+    containers. Once the operation is completed, use the storage library to download your documents locally.
 
 PREREQUISITE:
     This sample requires you install azure-storage-blob client library:
@@ -39,10 +39,6 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.ai.translation.document.aio import DocumentTranslationClient
-from azure.ai.translation.document import (
-    DocumentTranslationInput,
-    TranslationTarget
-)
 from azure.storage.blob.aio import BlobServiceClient, BlobClient
 from azure.storage.blob import generate_container_sas
 
@@ -72,11 +68,11 @@ class SampleTranslationWithAzureBlobAsync(object):
 
         source_container = await self.create_container(
             blob_service_client,
-            container_name=self.storage_source_container_name or "translation-source-container",
+            container_name=self.storage_source_container_name or "translation-source-container-async",
         )
         target_container = await self.create_container(
             blob_service_client,
-            container_name=self.storage_target_container_name or "translation-target-container"
+            container_name=self.storage_target_container_name or "translation-target-container-async"
         )
 
         if self.document_name:
@@ -93,24 +89,12 @@ class SampleTranslationWithAzureBlobAsync(object):
         source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
         target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="fr"
-                    )
-                ]
-            )
-        ]
-
-        poller = await translation_client.begin_translation(translation_inputs)
-        print("Created translation job with ID: {}".format(poller.id))
+        poller = await translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
+        print("Created translation operation with ID: {}".format(poller.id))
         print("Waiting until translation completes...")
 
         result = await poller.result()
-        print("Job status: {}".format(poller.status()))
+        print("Status: {}".format(poller.status()))
 
         print("\nDocument results:")
         async for document in result:
@@ -119,7 +103,7 @@ class SampleTranslationWithAzureBlobAsync(object):
             if document.status == "Succeeded":
                 print("Source document location: {}".format(document.source_document_url))
                 print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translate_to))
+                print("Translated to language: {}\n".format(document.translated_to))
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
                 async with blob_client:
