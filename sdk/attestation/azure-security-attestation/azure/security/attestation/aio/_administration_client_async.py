@@ -473,7 +473,7 @@ class AttestationAdministrationClient(object):
                 :start-after: [BEGIN add_policy_management_certificate]
                 :end-before: [END add_policy_management_certificate]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Adding a policy management certificate.
 
         """
