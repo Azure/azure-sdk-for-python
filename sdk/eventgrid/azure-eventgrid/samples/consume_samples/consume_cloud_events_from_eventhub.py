@@ -14,8 +14,8 @@ USAGE:
     3) EVENTHUB_NAME: The name of the eventhub account
 """
 
-# Note: This sample would not work on pypy since one of the dependencies
-# of azure-eventhub is not pypy compatible.
+# Note: This sample would not work on pypy since azure-eventhub
+# depends on uamqp which is not pypy compatible.
 
 import os
 import json
