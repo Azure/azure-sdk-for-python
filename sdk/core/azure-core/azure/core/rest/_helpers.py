@@ -109,125 +109,6 @@ class ResponseNotReadError(Exception):
         )
         super(ResponseNotReadError, self).__init__(message)
 
-class RequestNotReadError(Exception):
-
-    def __init__(self):
-        message = (
-            "You have not read in the request's bytes yet. Call request.read() first."
-        )
-        super(RequestNotReadError, self).__init__(message)
-
-########################### STREAM SECTION #################################
-
-class SyncByteStream(object):
-    def __init__(self, stream):
-        self._data = stream  # naming it data bc this is what requests / aiohttp are interested in
-
-    def __iter__(self):
-        raise NotImplementedError()
-
-    def close(self):
-        """Close the stream"""
-
-    def read(self):
-        # type: () -> bytes
-        """Read the stream"""
-
-class ByteStream(SyncByteStream):
-    def __init__(self, stream):
-        # type: (bytes) -> None
-        super(ByteStream, self).__init__(stream)
-        self._stream = stream
-
-    def __iter__(self):
-        # type: () -> Iterator[bytes]
-        yield self._stream
-
-class IteratorByteStream(SyncByteStream):
-    def __init__(self, stream):
-        # type: (Iterable[bytes]) -> None
-        super(IteratorByteStream, self).__init__(stream)
-        self._stream = stream
-        self._is_stream_consumed = False
-        self._is_generator = isgenerator(stream)
-
-    def __iter__(self):
-        # type: () -> Iterator[bytes]
-        if self._is_stream_consumed and self._is_generator:
-            raise StreamConsumedError()
-
-        self._is_stream_consumed = True
-        for part in self._stream:
-            yield part
-
-def to_bytes(value):
-    # type: (Union[str, bytes]) -> bytes
-    return value.encode("utf-8") if isinstance(value, six.string_types) else value
-
-class MultipartDataField(object):
-    def __init__(self, name, value):
-        if not isinstance(name, str):
-            raise TypeError(
-                "Invalid type for data name. Expected str, got {}: {}".format(
-                    type(name), name
-                )
-            )
-        if not isinstance(value, (str, bytes)):
-            raise TypeError(
-                "Invalid type for data value. Expected str or bytes, got {}: {}".format(
-                    type(value), value
-                )
-        )
-        self.name = name
-        self.value = value
-        self._headers = None
-        self._data = None
-
-    def render_data(self):
-        # type: () -> bytes
-        if self._data is None:
-            self._data = to_bytes(self.value)
-        return self._data
-
-    def render(self):
-        # type: () -> Iterator[bytes]
-        yield self.render_data()
-
-
-class MultipartFileField(object):
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-def _validate_single(name, value):
-    if not isinstance(name, str):
-        raise TypeError(
-            "Invalid type for data name. Expected str, got {}: {}".format(
-                type(name), name
-            )
-        )
-    if not isinstance(value, (str, bytes)):
-        raise TypeError(
-            "Invalid type for data value. Expected str or bytes, got {}: {}".format(
-                type(value), value
-            )
-    )
-
-def _validate(data):
-    for name, value in data.items():
-        if isinstance(value, list):
-            for item in value:
-                _validate_single(name=name, value=item)
-        else:
-            _validate_single(name, value)
-
-class MultipartHolder():
-    def __init__(self, data, files):
-        # type: (dict, FileType) -> None
-        _validate(data)
-        self._data = data
-        self._files = files
-
 ########################### HELPER SECTION #################################
 
 def _verify_data_object(name, value):
@@ -239,7 +120,7 @@ def _verify_data_object(name, value):
         )
     if value is not None and not isinstance(value, (str, bytes, int, float)):
         raise TypeError(
-            "Invalid type for value. Expected primitive type, got {}: {}".format(
+            "Invalid type for data value. Expected primitive type, got {}: {}".format(
                 type(name), name
             )
         )
@@ -263,12 +144,6 @@ def _format_data(data):
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
 
-def set_multipart_body(data, files):
-    formatted_files = {
-        f: _format_data(d) for f, d in files.items() if d is not None
-    }
-    return {}, MultipartHolder(data=data, files=formatted_files)
-
 def set_urlencoded_body(data):
     body = {}
     for f, d in data.items():
@@ -284,108 +159,86 @@ def set_urlencoded_body(data):
         "Content-Type": "application/x-www-form-urlencoded"
     }, body
 
-class RequestHelper(object):
+def set_multipart_body(files):
+    formatted_files = {
+        f: _format_data(d) for f, d in files.items() if d is not None
+    }
+    return {}, formatted_files
 
-    @property
-    def byte_stream(self):
-        return ByteStream
+def set_xml_body(content):
+    headers = {}
+    bytes_content = ET.tostring(content, encoding="utf-8")
+    body = bytes_content.replace(b"encoding='utf8'", b"encoding='utf-8'")
+    if body:
+        headers["Content-Length"] = str(len(body))
+    return headers, body
 
-    @property
-    def iterator_byte_stream(self):
-        return IteratorByteStream
+def _shared_set_content_body(content):
+    # type: (Any) -> Tuple[Dict[str, str], ContentType]
+    headers = {}
 
-    def set_xml_body(self, content):
+    if isinstance(content, ET.Element):
+        # XML body
+        return set_xml_body(content)
+    if isinstance(content, (str, bytes)):
         headers = {}
-        bytes_content = ET.tostring(content, encoding="utf-8")
-        body = bytes_content.replace(b"encoding='utf8'", b"encoding='utf-8'")
+        if isinstance(content, six.string_types):
+            body = content.encode("utf-8")
+            headers["Content-Type"] = "text/plain"
+        else:
+            body = content
         if body:
             headers["Content-Length"] = str(len(body))
-        return headers, self.byte_stream(body)
+        return headers, body
+    if isinstance(content, collections.Iterable):
+        return {"Transfer-Encoding": "chunked"}, content
+    return headers, None
 
-    def _shared_set_content_body(self, content):
-        # type: (Any) -> Tuple[Dict[str, str], Optional[SyncByteStream]]
-        headers = {}
+def set_content_body(content):
+    headers, body = _shared_set_content_body(content)
+    if body:
+        return headers, body
+    raise TypeError(
+        "Unexpected type for 'content': '{}'. ".format(type(content)) +
+        "We expect 'content' to either be str, bytes, or an Iterable"
+    )
 
-        if isinstance(content, ET.Element):
-            # XML body
-            return self.set_xml_body(content)
-        if isinstance(content, (str, bytes)):
-            headers = {}
-            if isinstance(content, six.string_types):
-                body = content.encode("utf-8")
-                headers["Content-Type"] = "text/plain"
-            else:
-                body = content
-            if body:
-                headers["Content-Length"] = str(len(body))
-            return headers, self.byte_stream(body)
-        if isinstance(content, collections.Iterable):
-            return {"Transfer-Encoding": "chunked"}, self.iterator_byte_stream(content)
-        return headers, None
+def set_json_body(json):
+    # type: (Any) -> Tuple[Dict[str, str], Any]
+    body = dumps(json)
+    return {
+        "Content-Type": "application/json",
+        "Content-Length": str(len(body))
+    }, body
 
-    def set_content_body(self, content):
-        headers, body = self._shared_set_content_body(content)
-        if body:
-            return headers, body
-        raise TypeError(
-            "Unexpected type for 'content': '{}'. ".format(type(content)) +
-            "We expect 'content' to either be str, bytes, or an Iterable"
-        )
+def format_parameters(url, params):
+    """Format parameters into a valid query string.
+    It's assumed all parameters have already been quoted as
+    valid URL strings.
 
-    def set_json_body(self, json):
-        # type: (Any) -> Tuple[Dict[str, str], ByteStream]
-        body = dumps(json).encode("utf-8")
-        return {
-            "Content-Type": "application/json",
-            "Content-Length": str(len(body))
-        }, self.byte_stream(body)
-
-
-
-    def set_body(self, content, data, files, json):
-        # type: (ContentTypeBase, dict, FilesType, Any) -> Tuple[Dict[str, str], SyncByteStream]
-        if data is not None and not isinstance(data, dict):
-            # should we warn?
-            return self.set_content_body(data)
-        if content is not None:
-            return self.set_content_body(content)
-        if json is not None:
-            return self.set_json_body(json)
-        if files:
-            return set_multipart_body(data or {}, files)
-        if data:
-            return set_urlencoded_body(data)
-        return {}, self.byte_stream(b"")
-
-    @staticmethod
-    def format_parameters(url, params):
-        """Format parameters into a valid query string.
-        It's assumed all parameters have already been quoted as
-        valid URL strings.
-
-        :param dict params: A dictionary of parameters.
-        """
-        query = urlparse(url).query
-        if query:
-            url = url.partition("?")[0]
-            existing_params = {
-                p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
-            }
-            params.update(existing_params)
-        query_params = []
-        for k, v in params.items():
-            if isinstance(v, list):
-                for w in v:
-                    if w is None:
-                        raise ValueError("Query parameter {} cannot be None".format(k))
-                    query_params.append("{}={}".format(k, w))
-            else:
-                if v is None:
+    :param dict params: A dictionary of parameters.
+    """
+    query = urlparse(url).query
+    if query:
+        url = url.partition("?")[0]
+        existing_params = {
+            p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
+        }
+        params.update(existing_params)
+    query_params = []
+    for k, v in params.items():
+        if isinstance(v, list):
+            for w in v:
+                if w is None:
                     raise ValueError("Query parameter {} cannot be None".format(k))
-                query_params.append("{}={}".format(k, v))
-        query = "?" + "&".join(query_params)
-        url += query
-        return url
+                query_params.append("{}={}".format(k, w))
+        else:
+            if v is None:
+                raise ValueError("Query parameter {} cannot be None".format(k))
+            query_params.append("{}={}".format(k, v))
+    query = "?" + "&".join(query_params)
+    url += query
+    return url
 
 def lookup_encoding(encoding):
     # type: (str) -> bool

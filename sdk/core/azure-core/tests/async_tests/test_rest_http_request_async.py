@@ -7,18 +7,18 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import pytest
-from azure.core.rest import HttpRequest, RequestNotReadError
+from azure.core.rest import HttpRequest
 from typing import AsyncGenerator
 import collections.abc
 
 @pytest.fixture
 def assert_aiterator_body():
     async def _comparer(request, final_value):
-        with pytest.raises(RequestNotReadError):
-            request.content
-        read_bytes = await request.aread()
-        assert read_bytes == final_value
-        assert request.content == final_value
+        parts = []
+        async for part in request.content:
+            parts.append(part)
+        content = b"".join(parts)
+        assert content == final_value
     return _comparer
 
 def test_transfer_encoding_header():

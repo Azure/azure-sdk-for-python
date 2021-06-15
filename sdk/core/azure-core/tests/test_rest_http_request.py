@@ -11,16 +11,13 @@ import pytest
 import sys
 import collections
 from typing import Generator
-from azure.core.rest import HttpRequest, RequestNotReadError, ResponseClosedError
+from azure.core.rest import HttpRequest
 
 @pytest.fixture
 def assert_iterator_body():
     def _comparer(request, final_value):
-        with pytest.raises(RequestNotReadError):
-            request.content
-        read_bytes = request.read()
-        assert read_bytes == final_value
-        assert request.content == final_value
+        content = b"".join([p for p in request.content])
+        assert content == final_value
     return _comparer
 
 def test_request_repr():
@@ -78,7 +75,7 @@ def test_json_encoded_data():
     request = HttpRequest("POST", "http://example.org", json={"test": 123})
 
     assert request.headers["Content-Type"] == "application/json"
-    assert request.content == b'{"test": 123}'
+    assert request.content == '{"test": 123}'
 
 
 def test_headers():
@@ -115,7 +112,7 @@ def test_override_accept_encoding_header():
 """Test request body"""
 def test_empty_content():
     request = HttpRequest("GET", "http://example.org")
-    assert request.content == b""
+    assert request.content is None
 
 def test_string_content():
     request = HttpRequest("PUT", "http://example.org", content="Hello, world!")
@@ -162,21 +159,21 @@ def test_iterator_content(assert_iterator_body):
         yield b"world!"
 
     request = HttpRequest("POST", url="http://example.org", content=hello_world())
-    assert isinstance(request._content, collections.Iterable)
+    assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
     assert request.headers == {"Transfer-Encoding": "chunked"}
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
-    assert isinstance(request._content, collections.Iterable)
+    assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
     assert request.headers == {"Transfer-Encoding": "chunked"}
 
     # transfer encoding should still be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
-    assert isinstance(request._content, collections.Iterable)
+    assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
     assert request.headers == {"Transfer-Encoding": "chunked"}
@@ -189,7 +186,7 @@ def test_json_content():
         "Content-Length": "19",
         "Content-Type": "application/json",
     }
-    assert request.content == b'{"Hello": "world!"}'
+    assert request.content == '{"Hello": "world!"}'
 
 def test_urlencoded_content():
     # NOTE: not adding content length setting and content testing bc we're not adding content length in the rest code
@@ -231,7 +228,7 @@ def test_multipart_invalid_key_binary_string():
     assert "Invalid type for data name" in str(e.value)
     assert repr(b"abc") in str(e.value)
 
-@pytest.mark.parametrize(("value"), (1, 2.3, [None, "abc"], {None: "abc"}))
+@pytest.mark.parametrize(("value"), (object(), {"key": "value"}))
 def test_multipart_invalid_value(value):
 
     data = {"text": value}

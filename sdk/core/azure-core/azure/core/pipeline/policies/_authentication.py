@@ -14,6 +14,11 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse  # type: ignore
+
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional
@@ -132,11 +137,11 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         url = request.http_request.url
-        query = request.http_request.query
+        parsed = urlparse.urlparse(url)
         signature = self._credential.signature
         if signature.startswith("?"):
             signature = signature[1:]
-        if query:
+        if parsed.query:
             if signature not in url:
                 url = url + "&" + signature
         else:

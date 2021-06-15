@@ -29,17 +29,17 @@ from ._base_async import AsyncHttpTransport
 
 class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):
     async def _retrieve_request_data(self, request):
-        if hasattr(request.data, '__aiter__'):
+        if hasattr(request.content, '__aiter__'):
             # Need to consume that async generator, since requests can't do anything with it
             # That's not ideal, but a list is our only choice. Memory not optimal here,
             # but providing an async generator to a requests based transport is not optimal too
-            new_data = []
-            async for part in request.data:
-                new_data.append(part)
-            data_to_send = iter(new_data)
+            new_content = []
+            async for part in request.content:
+                new_content.append(part)
+            content_to_send = iter(new_content)
         else:
-            data_to_send = request.data
-        return data_to_send
+            content_to_send = request.content
+        return content_to_send
 
     async def __aenter__(self):
         return super(RequestsAsyncTransportBase, self).__enter__()

@@ -11,7 +11,8 @@ try:
 except ImportError:
     import mock
 
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse, AsyncHttpTransport, AioHttpTransport
+from azure.core.pipeline.transport import  AsyncHttpTransport, AioHttpTransport
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import HttpResponseError

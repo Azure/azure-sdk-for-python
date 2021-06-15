@@ -309,7 +309,7 @@ class HttpResponseError(AzureError):
         # - parameter "message", OR
         # - generic meassage using "reason"
         try:
-            parsed_body = self._parse_odata_body()
+            parsed_body = self._parse_odata_body(response.json())
             if not parsed_body:
                 # want same behavior as in exception handling, so throwing
                 raise Exception
@@ -331,7 +331,12 @@ class HttpResponseError(AzureError):
         if not self._error:
             if not self.response:
                 return None
-            self._error = self._parse_odata_body()
+            response_json = None
+            try:
+                response_json = self.response.json()
+            except ValueError:
+                pass
+            self._error = self._parse_odata_body(response_json)
         return self._error
 
     @error.setter
@@ -348,15 +353,10 @@ class HttpResponseError(AzureError):
     def model(self, val):
         self._model = val
 
-    def _parse_odata_body(self):
+    def _parse_odata_body(self, response_json):
         # type: (...) -> Optional[ODataV4Format]
         try:
-            response_text = self.response.text()
-        except TypeError:
-            response_text = self.response.text
-        try:
-            odata_json = json.loads(response_text)
-            return self._error_format(odata_json)
+            return self._error_format(response_json)
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass

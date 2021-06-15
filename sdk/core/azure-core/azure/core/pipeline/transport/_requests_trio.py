@@ -39,11 +39,11 @@ from azure.core.exceptions import (
 from azure.core.pipeline import Pipeline
 from ._base import HttpRequest
 from ._base_async import (
-    AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import _RequestsTransportResponseBase, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
+from ...rest import AsyncHttpResponse, StreamConsumedError, ResponseClosedError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = kwargs.pop("chunk_size", None) or response._connection_data_block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -99,13 +99,45 @@ class TrioStreamDownloadGenerator(AsyncIterator):
             self.response.internal_response.close()
             raise
 
-class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
+class TrioRequestsTransportResponse(AsyncHttpResponse, _RequestsTransportResponseBase):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
-        """Generator for streaming response data.
+    async def _stream_download_helper(self, decompress, chunk_size=None):
+        if self.is_stream_consumed:
+            raise StreamConsumedError()
+        if self.is_closed:
+            raise ResponseClosedError()
+
+        self.is_stream_consumed = True
+        stream_download = TrioStreamDownloadGenerator(
+            pipeline=None,
+            response=self,
+            chunk_size=chunk_size,
+            decompress=decompress,
+        )
+        async for part in stream_download:
+            self._num_bytes_downloaded += len(part)
+            yield part
+
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+        """Iterate over the raw response bytes
         """
-        return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
+        async for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
+            yield raw_bytes
+        await self.close()
+
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+        """Iterate over the bytes in the response stream
+        """
+        if self._content is not None:
+            if chunk_size is None:
+                chunk_size = len(self._content)
+            async for i in range(0, len(self._content), chunk_size):
+                yield self._content[i: i + chunk_size]
+        else:
+            async for raw_bytes in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
+                yield raw_bytes
+        await self.close()
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
@@ -156,7 +188,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
                         request.url,
                         headers=request.headers,
                         data=data_to_send,
-                        files=request.files,
+                        files=request._files,
                         verify=kwargs.pop('connection_verify', self.connection_config.verify),
                         timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                         cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -171,7 +203,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
                         request.url,
                         headers=request.headers,
                         data=request.data,
-                        files=request.files,
+                        files=request._files,
                         verify=kwargs.pop('connection_verify', self.connection_config.verify),
                         timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                         cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -194,4 +226,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         if error:
             raise error
 
-        return TrioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        response = TrioRequestsTransportResponse(request=request, internal_response=response)
+        response._connection_data_block_size = self.connection_config.data_block_size
+        if not kwargs.get("stream", None):
+            await response.read()
+            await response.close()
+        return response

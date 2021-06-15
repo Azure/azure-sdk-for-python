@@ -31,7 +31,7 @@ def test_distributed_tracing_policy_solo():
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
 
-        response = HttpResponse(request, None)
+        response = HttpResponse(request=request, internal_response=None)
         response.headers = request.headers
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
@@ -82,7 +82,7 @@ def test_distributed_tracing_policy_attributes():
         pipeline_request = PipelineRequest(request, PipelineContext(None))
         policy.on_request(pipeline_request)
 
-        response = HttpResponse(request, None)
+        response = HttpResponse(request=request, internal_response=None)
         response.headers = request.headers
         response.status_code = 202
 
@@ -107,7 +107,7 @@ def test_distributed_tracing_policy_badurl(caplog):
             policy.on_request(pipeline_request)
         assert "Unable to start network span" in caplog.text
 
-        response = HttpResponse(request, None)
+        response = HttpResponse(request=request, internal_response=None)
         response.headers = request.headers
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
@@ -142,7 +142,7 @@ def test_distributed_tracing_policy_with_user_agent():
             user_agent.on_request(pipeline_request)
             policy.on_request(pipeline_request)
 
-            response = HttpResponse(request, None)
+            response = HttpResponse(request=request, internal_response=None)
             response.headers = request.headers
             response.status_code = 202
             response.headers["x-ms-request-id"] = "some request id"
@@ -199,7 +199,7 @@ def test_span_namer():
 
         policy.on_request(pipeline_request)
 
-        response = HttpResponse(request, None)
+        response = HttpResponse(request=request, internal_response=None)
         response.headers = request.headers
         response.status_code = 202
 
@@ -213,7 +213,7 @@ def test_span_namer():
 
         policy.on_request(pipeline_request)
 
-        response = HttpResponse(request, None)
+        response = HttpResponse(request=request, internal_response=None)
         response.headers = request.headers
         response.status_code = 202
 

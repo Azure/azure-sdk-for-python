@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest
 
 def test_decompress_plain_no_header():
     # expect plain text
@@ -32,10 +33,10 @@ def test_decompress_plain_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     content = b"".join(list(data))
     decoded = content.decode('utf-8')
     assert decoded == "test"
@@ -46,10 +47,10 @@ def test_compress_plain_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b"".join(list(data))
     decoded = content.decode('utf-8')
     assert decoded == "test"
@@ -60,10 +61,10 @@ def test_decompress_compressed_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     content = b"".join(list(data))
     try:
         decoded = content.decode('utf-8')
@@ -77,10 +78,10 @@ def test_compress_compressed_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b"".join(list(data))
     try:
         decoded = content.decode('utf-8')
@@ -95,10 +96,10 @@ def test_decompress_plain_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     try:
         content = b"".join(list(data))
         assert False
@@ -111,10 +112,10 @@ def test_compress_plain_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b"".join(list(data))
     decoded = content.decode('utf-8')
     assert decoded == "test"
@@ -125,10 +126,10 @@ def test_decompress_compressed_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     content = b"".join(list(data))
     decoded = content.decode('utf-8')
     assert decoded == "test"
@@ -139,10 +140,10 @@ def test_compress_compressed_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = PipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b"".join(list(data))
     try:
         decoded = content.decode('utf-8')

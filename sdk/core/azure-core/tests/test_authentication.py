@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy
 )
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 
 import pytest
 

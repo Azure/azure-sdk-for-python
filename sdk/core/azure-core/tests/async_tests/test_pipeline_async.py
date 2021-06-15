@@ -38,11 +38,12 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
-    HttpRequest,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
     AioHttpTransport
 )
+
+from azure.core.rest import HttpRequest
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling.base_polling import LocationPolling

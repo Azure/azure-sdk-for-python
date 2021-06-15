@@ -41,17 +41,15 @@ from azure.core.pipeline import (
     PipelineRequest,
     PipelineContext
 )
-from azure.core.pipeline.transport import (
+from azure.core.rest import (
     HttpRequest,
     HttpResponse,
-    RequestsTransportResponse,
 )
+from azure.core.pipeline.transport import RequestsTransportResponse
 
 from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    UserAgentPolicy,
-    HttpLoggingPolicy,
     RequestHistory,
     RetryPolicy,
     HTTPPolicy,
@@ -94,8 +92,8 @@ def test_request_history():
             raise ValueError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
-    request.body = body
+    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'})
+    request._content = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
@@ -107,7 +105,7 @@ def test_request_history_type_error():
             raise TypeError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'})
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
@@ -119,7 +117,7 @@ def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
     request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
-    response = PipelineResponse(request, HttpResponse(universal_request, None), request.context)
+    response = PipelineResponse(request, HttpResponse(request=universal_request, internal_response=None), request.context)
 
     # By default, no log handler for HTTP
     http_logger.on_request(request)
@@ -199,12 +197,14 @@ def test_raw_deserializer():
     def build_response(body, content_type=None):
         class MockResponse(HttpResponse):
             def __init__(self, body, content_type):
-                super(MockResponse, self).__init__(None, None)
-                self._body = body
+                super(MockResponse, self).__init__(request=None, internal_response=None)
+                self._content = body
                 self.content_type = content_type
 
-            def body(self):
-                return self._body
+            @property
+            def text(self):
+                # usually we go through internal response
+                return self._content
 
         return PipelineResponse(request, MockResponse(body, content_type), context)
 
@@ -289,8 +289,9 @@ def test_raw_deserializer():
     req_response.headers["content-type"] = "application/json"
     req_response._content = b'{"success": true}'
     req_response._content_consumed = True
-    response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
+    response = PipelineResponse(None, RequestsTransportResponse(request=None, internal_response=req_response), PipelineContext(None, stream=False))
 
+    response.http_response.read()  # in our transports, we read the response bytes in (unless we're streaming, which in that case we wouldn't deserialize)
     raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True

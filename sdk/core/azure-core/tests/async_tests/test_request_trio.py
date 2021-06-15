@@ -5,7 +5,8 @@
 # -------------------------------------------------------------------------
 import json
 
-from azure.core.pipeline.transport import TrioRequestsTransport, HttpRequest
+from azure.core.pipeline.transport import TrioRequestsTransport
+from azure.core.rest import HttpRequest
 
 import pytest
 
@@ -26,14 +27,14 @@ async def test_async_gen_data():
                 raise StopAsyncIteration
 
     async with TrioRequestsTransport() as transport:
-        req = HttpRequest('GET', 'http://httpbin.org/anything', data=AsyncGen())
+        req = HttpRequest('GET', 'http://httpbin.org/anything', content=AsyncGen())
         response = await transport.send(req)
-        assert json.loads(response.text())['data'] == "azerty"
+        assert response.json()['data'] == "azerty"
 
 @pytest.mark.trio
 async def test_send_data():
     async with TrioRequestsTransport() as transport:
-        req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
+        req = HttpRequest('PUT', 'http://httpbin.org/anything', content=b"azerty")
         response = await transport.send(req)
 
-        assert json.loads(response.text())['data'] == "azerty"
+        assert response.json()['data'] == "azerty"

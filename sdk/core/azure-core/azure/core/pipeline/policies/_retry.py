@@ -316,22 +316,17 @@ class RetryPolicyBase(object):
     def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
-        if request.http_request._content and hasattr(request.http_request._content, 'read'):
+        if request.http_request.content and hasattr(request.http_request.content, 'read'):
             try:
-                body_position = request.http_request.body.tell()
+                body_position = request.http_request.content.tell()
             except (AttributeError, UnsupportedOperation):
                 # if body position cannot be obtained, then retries will not work
                 pass
         else:
-            # check if it's a multipart stream with attributes
-            try:
-                files = request.http_request._content._files
-            except AttributeError:
-                files = None
-            if files:
+            if request.http_request._files:
                 file_positions = {}
                 try:
-                    for value in files.values():
+                    for value in request.http_request._files.values():
                         name, body = value[0], value[1]
                         if name and body and hasattr(body, 'read'):
                             position = body.tell()
@@ -460,7 +455,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if self._is_method_retryable(retry_settings, request.http_request):
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)

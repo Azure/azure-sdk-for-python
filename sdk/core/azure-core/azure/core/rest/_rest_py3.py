@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import copy
 import asyncio
 import cgi
 import collections
@@ -35,6 +36,7 @@ from typing import (
     Dict,
     Iterable, Iterator,
     Optional,
+    Type,
     Union,
 )
 
@@ -46,15 +48,17 @@ from ._helpers import (
     ParamsType,
     FilesType,
     HeadersType,
-    RequestNotReadError,
     ResponseClosedError,
     ResponseNotReadError,
     StreamConsumedError,
     lookup_encoding,
-    SyncByteStream,
-    parse_lines_from_text
+    parse_lines_from_text,
+    set_json_body,
+    set_multipart_body,
+    set_urlencoded_body,
+    format_parameters,
 )
-from ._helpers_py3 import RequestHelperPy3, AsyncByteStream
+from ._helpers_py3 import set_content_body
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
@@ -127,24 +131,18 @@ class HttpRequest:
         self.url = url
         self.method = method
         self.headers = _case_insensitive_dict(headers)
-        helper = RequestHelperPy3()
         if params:
-            self.url = helper.format_parameters(self.url, params)
+            self.url = format_parameters(self.url, params)
+        self._files = None
+        self._data = None
 
-        headers, self._body = helper.set_body(
+        headers = self._set_body(
             content=content,
             data=data,
             files=files,
             json=json,
         )
-        self._read_content = False
         self._update_headers(_case_insensitive_dict(headers))
-        self._content = self._body
-        # we just return content in the case of 'data' or 'files'
-        if not isinstance(self._body, (SyncByteStream, AsyncByteStream)):
-            self._read_content = True
-        if isinstance(self._body, helper.byte_stream):
-            self.read()
 
         if kwargs:
             raise TypeError(
@@ -152,6 +150,35 @@ class HttpRequest:
                     "', '".join(list(kwargs.keys()))
                 )
             )
+
+    def _set_body(
+        self,
+        content: Optional[ContentType],
+        data: Optional[dict],
+        files: Optional[FilesType],
+        json: Any,
+    ) -> Dict[str, str]:
+        """Sets the body of the request, and returns the default headers
+        """
+        default_headers = {}
+        if data is not None and not isinstance(data, dict):
+            # should we warn?
+            content = data
+        if content is not None:
+            default_headers, self._data = set_content_body(content)
+            return default_headers
+        if json is not None:
+            default_headers, self._data = set_json_body(json)
+            return default_headers
+        if files:
+            default_headers, self._files = set_multipart_body(files)
+        if data:
+            default_headers, self._data = set_urlencoded_body(data)
+        if files and data:
+            # little hacky, but for files we don't send a content type with
+            # boundary so requests / aiohttp etc deal with it
+            default_headers.pop("Content-Type")
+        return default_headers
 
     def _update_headers(self, default_headers: Dict[str, str]) -> None:
         for name, value in default_headers.items():
@@ -163,28 +190,25 @@ class HttpRequest:
     def content(self) -> Any:
         """Gets the request content.
         """
-        if not self._read_content:
-            raise RequestNotReadError()
-        return self._content
+        return self._data or self._files
+    # def read(self) -> bytes:
+    #     if not self._read_content:
+    #         if not isinstance(self._content, collections.abc.Iterable):
+    #             raise TypeError("read() should only be called on sync streams.")
+    #         self._content = b"".join(self._content)
+    #         self._read_content = True
+    #     return self._content
 
-    def read(self) -> bytes:
-        if not self._read_content:
-            if not isinstance(self._content, collections.abc.Iterable):
-                raise TypeError("read() should only be called on sync streams.")
-            self._content = b"".join(self._content)
-            self._read_content = True
-        return self._content
-
-    async def aread(self) -> bytes:
-        if not self._read_content:
-            if not isinstance(self._content, collections.abc.AsyncIterable):
-                raise TypeError("aread() should only be called on async streams.")
-            parts = []
-            async for part in self._content:
-                parts.append(part)
-            self._content = b"".join(parts)
-            self._read_content = True
-        return self._content
+    # async def aread(self) -> bytes:
+    #     if not self._read_content:
+    #         if not isinstance(self._content, collections.abc.AsyncIterable):
+    #             raise TypeError("aread() should only be called on async streams.")
+    #         parts = []
+    #         async for part in self._content:
+    #             parts.append(part)
+    #         self._content = b"".join(parts)
+    #         self._read_content = True
+    #     return self._content
 
 
     def __repr__(self) -> str:
@@ -192,26 +216,17 @@ class HttpRequest:
             self.method, self.url
         )
 
-    @property
-    def _data(self):
+    def __deepcopy__(self, memo=None) -> "HttpRequest":
         try:
-            return self._body._data  # pylint: disable=protected-access
-        except AttributeError:
-            return self._body
-
-    @property
-    def _files(self):
-        try:
-            return self._body._files  # pylint: disable=protected-access
-        except AttributeError:
-            return None
-
-    # def __deepcopy__(self, memo=None) -> "HttpRequest":
-    #     return HttpRequest(
-    #         self.method,
-    #         self.url,
-    #         _internal_request=self._internal_request.__deepcopy__(memo)
-    #     )
+            return HttpRequest(
+                method=self.method,
+                url=self.url,
+                headers=self.headers,
+                files=copy.deepcopy(self._files),
+                data=copy.deepcopy(self._data),
+            )
+        except (ValueError, TypeError):
+            return copy.copy(self)
 
 class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     """Base class for HttpResponse and AsyncHttpResponse.
@@ -252,10 +267,9 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self.is_closed = False
         self.is_stream_consumed = False
         self._num_bytes_downloaded = 0
-        self._content: Optional[bytes] = None
-        self._read_content = False
         self.content_type = None
         self._connection_data_block_size = None
+        self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
 
     @property
     def url(self) -> str:
@@ -272,6 +286,18 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         if encoding is None or not lookup_encoding(encoding):
             return None
         return encoding
+
+    def _get_content(self):
+        """Return the internal response's content"""
+        raise NotImplementedError()
+
+    def _set_content(self, val):
+        """Set the internal response's content"""
+        raise NotImplementedError()
+
+    def _has_content(self):
+        """How to check if your internal response has content"""
+        raise NotImplementedError()
 
     @property
     def encoding(self) -> Optional[str]:
@@ -291,9 +317,10 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     @property
     def text(self) -> str:
         """Returns the response body as a string"""
-        if not self._content:
-            raise ResponseNotReadError()
-        return self.internal_response.text
+        encoding = self.encoding
+        if encoding == "utf-8" or encoding is None:
+            encoding = "utf-8-sig"
+        return self.content.decode(encoding)
 
     @property
     def num_bytes_downloaded(self) -> int:
@@ -307,7 +334,11 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        return loads(self.text)
+        if not self._has_content():
+            raise ResponseNotReadError()
+        if not self._json:
+            self._json = loads(self.text)
+        return self._json
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
@@ -320,9 +351,9 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     @property
     def content(self) -> bytes:
         """Return the response's content in bytes."""
-        if not self._read_content:
+        if not self._has_content():
             raise ResponseNotReadError()
-        return self._content
+        return self._get_content()
 
     def __repr__(self) -> str:
         content_type_str = (
@@ -356,14 +387,14 @@ class HttpResponse(_HttpResponseBase):
         Read the response's bytes.
 
         """
-        if not self._read_content:
-            self._content = b"".join(self.iter_bytes())
-            self._read_content = True
-        return self._content
+        if not self._has_content():
+            self._set_content(b"".join(self.iter_bytes()))
+        return self.content
 
     def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the bytes in the response stream
         """
+        raise NotImplementedError()
 
     def iter_text(self, chunk_size: int = None) -> Iterator[str]:
         """Iterate over the response text
@@ -378,40 +409,37 @@ class HttpResponse(_HttpResponseBase):
             for line in lines:
                 yield line
 
-    def _close_stream(self) -> None:
-        self.is_stream_consumed = True
-        self.close()
-
     def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
         """Iterate over the raw response bytes
         """
+        raise NotImplementedError()
 
 class AsyncHttpResponse(_HttpResponseBase):
-
-    async def _close_stream(self) -> None:
-        self.is_stream_consumed = True
-        await self.close()
 
     async def read(self) -> bytes:
         """
         Read the response's bytes.
 
         """
-        if not self._read_content:
+        if not self._has_content():
             parts = []
-            async for part in self.iter_bytes():
-                parts.append(part)
-            self._content = b"".join(parts)
-            self._read_content = True
-        return self._content
+            try:
+                async for part in self.iter_bytes():
+                    parts.append(part)
+            except StopAsyncIteration:
+                pass
+            self._set_content(b"".join(parts))
+        return self.content
 
     async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the raw response bytes
         """
+        raise NotImplementedError()
 
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the bytes in the response stream
         """
+        raise NotImplementedError()
 
     async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
         """Iterate over the response text

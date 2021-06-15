@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import sys
 from ._helpers import (
-    RequestNotReadError,
     ResponseNotReadError,
     StreamConsumedError,
     ResponseClosedError,
@@ -34,13 +33,14 @@ try:
     from ._rest_py3 import (
         HttpRequest,
         HttpResponse,
+        _HttpResponseBase,
     )
 except (SyntaxError, ImportError):
     from ._rest import (  # type: ignore
         HttpRequest,
         HttpResponse,
+        _HttpResponseBase,
     )
-from ._requests_basic import RequestsTransportResponse
 
 __all__ = [
     "HttpRequest",
@@ -48,8 +48,7 @@ __all__ = [
     "StreamConsumedError",
     "ResponseNotReadError",
     "ResponseClosedError",
-    "RequestNotReadError",
-    "RequestsTransportResponse",
+    "_HttpResponseBase",
 ]
 
 try:
@@ -61,20 +60,6 @@ try:
         "AsyncHttpResponse",
         "_AsyncContextManager",
     ])
-
-    if sys.version_info >= (3, 7):
-        __all__.extend([
-            'AioHttpTransportResponse',
-        ])
-
-        def __getattr__(name):
-            if name == "AioHttpTransportResponse":
-                try:
-                    from ._aiohttp import AioHttpTransportResponse
-                    return AioHttpTransportResponse
-                except ImportError:
-                    raise ImportError("aiohttp package is not installed")
-            return name
 
 except (SyntaxError, ImportError):
     pass

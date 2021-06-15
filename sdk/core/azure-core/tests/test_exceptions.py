@@ -38,11 +38,11 @@ except ImportError:
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
 from azure.core.pipeline.transport import RequestsTransportResponse
-from azure.core.pipeline.transport._base import _HttpResponseBase
+from azure.core.rest import HttpResponse
 
 
 def _build_response(json_body):
-    class MockResponse(_HttpResponseBase):
+    class MockResponse(HttpResponse):
         def __init__(self):
             super(MockResponse, self).__init__(
                 request=None,
@@ -51,10 +51,14 @@ def _build_response(json_body):
             self.status_code = 400
             self.reason = "Bad Request"
             self.content_type = "application/json"
-            self._body = json_body
+            self._content = json_body
 
-        def body(self):
-            return self._body
+        @property
+        def text(self):
+            return self._content
+
+        def _has_content(self):
+            return bool(self._content)
 
     return MockResponse()
 
@@ -161,7 +165,8 @@ class TestExceptions(object):
 
     def test_httpresponse_error_with_response(self):
         response = requests.get("https://bing.com")
-        http_response = RequestsTransportResponse(None, response)
+        http_response = RequestsTransportResponse(request=None, internal_response=response)
+        http_response.read()
 
         error = HttpResponseError(response=http_response)
         assert error.message == "Operation returned an invalid status 'OK'"
