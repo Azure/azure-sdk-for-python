@@ -57,7 +57,7 @@ class ChatParticipant(object):
         )
 
 
-class ChatMessage(object):
+class ChatMessage(object): # pylint: disable=too-many-instance-attributes
     """Chat message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
