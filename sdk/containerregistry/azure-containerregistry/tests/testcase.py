@@ -162,7 +162,11 @@ class ContainerRegistryTestClass(AzureTestCase):
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+        if endpoint.endswith("azurecr.io"):
+            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+        if endpoint.endswith("azurecr.cn"):
+            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), authorization_scope="https://portal.azure.cn", **kwargs)
+
 
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
