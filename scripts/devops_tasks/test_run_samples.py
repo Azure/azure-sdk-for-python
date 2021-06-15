@@ -79,9 +79,7 @@ IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
-        "consume_eventgrid_events_from_service_bus_queue.py",
-        "sample_publish_events_to_a_topic_using_sas_credential.py",
-        "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
+        "consume_eventgrid_events_from_service_bus_queue.py"],
     "azure-eventhub": [
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
