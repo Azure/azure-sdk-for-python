@@ -80,7 +80,7 @@ async def sample_create_detection_config_async():
             metric_id=metric_id,
             description="anomaly detection config for metric",
             whole_series_detection_condition=MetricDetectionCondition(
-                cross_conditions_operator="OR",
+                condition_operator="OR",
                 change_threshold_condition=change_threshold_condition,
                 hard_threshold_condition=hard_threshold_condition,
                 smart_detection_condition=smart_detection_condition
@@ -114,7 +114,7 @@ async def sample_get_detection_config_async(detection_config_id):
         print("\nWhole Series Detection Conditions:\n")
         conditions = config.whole_series_detection_condition
 
-        print("Use {} operator for multiple detection conditions".format(conditions.cross_conditions_operator))
+        print("Use {} operator for multiple detection conditions".format(conditions.condition_operator))
 
         print("Smart Detection Condition:")
         print("- Sensitivity: {}".format(conditions.smart_detection_condition.sensitivity))
