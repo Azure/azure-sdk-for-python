@@ -7,8 +7,6 @@ from ...fake_async_credential import AsyncFakeCredential
 from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
-from azure.core.credentials import AccessToken
-
 
 def patch_play_responses(unit_test):
     """Fixes a bug affecting blob tests by applying https://github.com/kevin1024/vcrpy/pull/511 to vcrpy 3.0.0"""
