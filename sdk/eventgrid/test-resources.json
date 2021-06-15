@@ -7,6 +7,8 @@
         }
     },
     "variables": {
+        "storageApiVersion":  "2019-04-01",
+        "storageQueueName": "eventgrid",
         "apiVersion": "2020-04-01-preview",
         "eventGridTopicName": "[concat(parameters('baseName'), 'topic')]",
         "eventGridDomainName": "[concat(parameters('baseName'), 'domain')]",
@@ -45,6 +47,17 @@
             "properties": {
                 "inputSchema": "CloudEventSchemaV1_0"
              }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "name": "[variables('storageQueueName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
         },
         {
             "type": "Microsoft.EventGrid/topics",
@@ -122,6 +135,14 @@
         "CUSTOM_SCHEMA_ACCESS_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.EventGrid/topics', variables('customeventTopicName')), variables('apiVersion')).key1]"
+        },
+        "AZURE_STORAGE_CONNECTION_STRING": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageQueueName')), variables('storageApiVersion')).keys[1].value]"
+        },
+        "STORAGE_QUEUE_NAME": {
+            "type": "string",
+            "value": "[reference(variables('storageQueueName'))]"
         }
     }
 }
