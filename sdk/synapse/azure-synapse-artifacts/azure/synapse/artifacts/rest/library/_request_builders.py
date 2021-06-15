@@ -27,10 +27,10 @@ def build_list_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -88,10 +88,10 @@ def build_flush_request_initial(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -143,10 +143,10 @@ def build_get_operation_result_request(
 
     :param operation_id: operation id for which status is requested.
     :type operation_id: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -220,10 +220,10 @@ def build_delete_request_initial(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -276,10 +276,10 @@ def build_get_request(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -336,10 +336,10 @@ def build_create_request_initial(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -403,10 +403,10 @@ def build_append_request(
      Otherwise, the request fails with the AppendPositionConditionNotMet error (HTTP status code 412
      – Precondition Failed).
     :paramtype blob_condition_append_position: long
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
     """
 
     content_type = kwargs.pop("content_type", None)  # type: Optional[str]

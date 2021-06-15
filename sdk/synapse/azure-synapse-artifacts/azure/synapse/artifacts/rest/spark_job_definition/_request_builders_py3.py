@@ -20,10 +20,10 @@ def build_get_spark_job_definitions_by_workspace_request(**kwargs: Any) -> HttpR
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -121,10 +121,10 @@ def build_create_or_update_spark_job_definition_request_initial(
     :keyword if_match: ETag of the Spark Job Definition entity.  Should only be specified for
      update, for which it should match existing entity or can be * for unconditional update.
     :paramtype if_match: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -265,10 +265,10 @@ def build_get_spark_job_definition_request(
      get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
      returned.
     :paramtype if_none_match: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -351,10 +351,10 @@ def build_delete_spark_job_definition_request_initial(spark_job_definition_name:
 
     :param spark_job_definition_name: The spark job definition name.
     :type spark_job_definition_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
     """
 
     api_version = "2020-12-01"
@@ -386,10 +386,10 @@ def build_execute_spark_job_definition_request_initial(spark_job_definition_name
 
     :param spark_job_definition_name: The spark job definition name.
     :type spark_job_definition_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -516,10 +516,10 @@ def build_rename_spark_job_definition_request_initial(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). proposed new name.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -571,10 +571,10 @@ def build_debug_spark_job_definition_request_initial(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Spark Job Definition resource definition.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python

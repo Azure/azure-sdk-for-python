@@ -33,10 +33,10 @@ def build_create_data_flow_debug_session_request_initial(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Data flow debug session definition.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -94,10 +94,10 @@ def build_query_data_flow_debug_sessions_by_workspace_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -156,10 +156,10 @@ def build_add_data_flow_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Data flow debug session definition with debug content.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -256,10 +256,10 @@ def build_delete_data_flow_debug_session_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Data flow debug session definition for deletion.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -308,10 +308,10 @@ def build_execute_command_request_initial(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Data flow debug command definition.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python

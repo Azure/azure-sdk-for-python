@@ -20,10 +20,10 @@ def build_get_request(**kwargs: Any) -> HttpRequest:
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python

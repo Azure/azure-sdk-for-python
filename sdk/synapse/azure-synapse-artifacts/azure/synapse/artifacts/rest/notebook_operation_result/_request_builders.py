@@ -30,10 +30,10 @@ def build_get_request(
 
     :param operation_id: Operation ID.
     :type operation_id: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
     """
 
     api_version = "2020-12-01"

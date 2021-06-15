@@ -27,10 +27,10 @@ def build_get_sql_scripts_by_workspace_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -113,10 +113,10 @@ def build_create_or_update_sql_script_request_initial(
     :keyword if_match: ETag of the SQL script entity.  Should only be specified for update, for
      which it should match existing entity or can be * for unconditional update.
     :paramtype if_match: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -236,10 +236,10 @@ def build_get_sql_script_request(
      the ETag matches the existing entity tag, or if * was provided, then no content will be
      returned.
     :paramtype if_none_match: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python
@@ -317,10 +317,10 @@ def build_delete_sql_script_request_initial(
 
     :param sql_script_name: The sql script name.
     :type sql_script_name: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
     """
 
     api_version = "2020-12-01"
@@ -362,10 +362,10 @@ def build_rename_sql_script_request_initial(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). proposed new name.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.artifacts.core.rest .HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.artifacts.core.rest .HttpRequest
 
     Example:
         .. code-block:: python

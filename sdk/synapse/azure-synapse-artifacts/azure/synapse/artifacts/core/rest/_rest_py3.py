@@ -373,7 +373,7 @@ class _HttpResponseBase:
     """Base class for HttpResponse and AsyncHttpResponse.
 
     :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
+    :paramtype request: ~azure.synapse.artifacts.core.rest .HttpRequest
     :ivar int status_code: The status code of this response
     :ivar headers: The response headers
     :vartype headers: dict[str, any]
@@ -384,7 +384,7 @@ class _HttpResponseBase:
      is the response Content-Type header
     :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
-    :vartype request: ~azure.core.rest.HttpRequest
+    :vartype request: ~azure.synapse.artifacts.core.rest .HttpRequest
     :ivar str content_type: The content type of the response
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
