@@ -385,7 +385,7 @@ class ChatThreadClient(object):
             self,
             message_id: str,
             content: str = None,
-            metadata: dict[str, str] = None,
+            metadata: Dict[str, str] = None,
             **kwargs
     ) -> None:
         """Updates a message.
