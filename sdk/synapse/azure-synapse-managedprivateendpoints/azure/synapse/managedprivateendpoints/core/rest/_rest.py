@@ -41,20 +41,15 @@ from azure.core.pipeline.transport import (
 )
 
 if TYPE_CHECKING:
-    from typing import (
-        Any, Optional, Union, Mapping, Sequence, Tuple, Iterator
-    )
+    from typing import Any, Optional, Union, Mapping, Sequence, Tuple, Iterator
+
     ByteStream = Iterable[bytes]
 
-    HeadersType = Union[
-        Mapping[str, str],
-        Sequence[Tuple[str, str]]
-    ]
+    HeadersType = Union[Mapping[str, str], Sequence[Tuple[str, str]]]
     ContentType = Union[str, bytes, ByteStream]
-    from azure.core.pipeline.transport._base import (
-        _HttpResponseBase as _PipelineTransportHttpResponseBase
-    )
+    from azure.core.pipeline.transport._base import _HttpResponseBase as _PipelineTransportHttpResponseBase
     from azure.core.pipeline import Pipeline
+
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -64,14 +59,18 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
+
+
 from azure.core.exceptions import HttpResponseError
 
 ########################### UTILS SECTION #################################
+
 
 def _is_stream_or_str_bytes(content):
     return isinstance(content, (str, bytes)) or any(
         hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
     )
+
 
 def _lookup_encoding(encoding):
     # type: (str) -> bool
@@ -82,20 +81,22 @@ def _lookup_encoding(encoding):
     except LookupError:
         return False
 
+
 def _set_content_length_header(header_name, header_value, internal_request):
     # type: (str, str, _PipelineTransportHttpRequest) -> None
     valid_methods = ["put", "post", "patch"]
     content_length_headers = ["Content-Length", "Transfer-Encoding"]
-    if (
-        internal_request.method.lower() in valid_methods and
-        not any([c for c in content_length_headers if c in internal_request.headers])
+    if internal_request.method.lower() in valid_methods and not any(
+        [c for c in content_length_headers if c in internal_request.headers]
     ):
         internal_request.headers[header_name] = header_value
+
 
 def _set_content_type_header(header_value, internal_request):
     # type: (str, _PipelineTransportHttpRequest) -> None
     if not internal_request.headers.get("Content-Type"):
         internal_request.headers["Content-Type"] = header_value
+
 
 def _set_content_body(content, internal_request):
     # type: (ContentType, _PipelineTransportHttpRequest) -> None
@@ -127,6 +128,7 @@ def _set_content_body(content, internal_request):
         internal_request.data = content
     internal_request.headers = headers
 
+
 def _set_body(content, data, files, json_body, internal_request):
     # type: (ContentType, dict, Any, Any, _PipelineTransportHttpRequest) -> None
     if data is not None and not isinstance(data, dict):
@@ -149,6 +151,7 @@ def _set_body(content, data, files, json_body, internal_request):
         # don't want to risk changing pipeline.transport, so doing twice here
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
 
+
 def _parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
     lines = []
@@ -160,17 +163,17 @@ def _parse_lines_from_text(text):
             next_char = None if idx == len(text) - 1 else text[idx + 1]
             if curr_char == "\n":
                 lines.append(text[: idx + 1])
-                text = text[idx + 1: ]
+                text = text[idx + 1 :]
                 break
             if curr_char == "\r" and next_char == "\n":
                 # if it ends with \r\n, we only do \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 2:]
+                text = text[idx + 2 :]
                 break
             if curr_char == "\r" and next_char is not None:
                 # if it's \r then a normal character, we switch \r to \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 1:]
+                text = text[idx + 1 :]
                 break
             if next_char is None:
                 text = ""
@@ -182,6 +185,7 @@ def _parse_lines_from_text(text):
     elif last_chunk_of_text:
         lines.append(last_chunk_of_text)
     return lines
+
 
 ################################## CLASSES ######################################
 class _StreamContextManager(object):
@@ -200,14 +204,9 @@ class _StreamContextManager(object):
         # type: (...) -> HttpResponse
         """Actually make the call only when we enter. For sync stream_response calls"""
         pipeline_transport_response = self.pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
+            self.request._internal_request, stream=True, **self.kwargs
         ).http_response
-        self.response = HttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
-        )
+        self.response = HttpResponse(request=self.request, _internal_response=pipeline_transport_response)
         return self.response
 
     def __exit__(self, *args):
@@ -216,6 +215,7 @@ class _StreamContextManager(object):
 
     def close(self):
         self.response.close()
+
 
 class HttpRequest(object):
     """Represents an HTTP request.
@@ -256,29 +256,24 @@ class HttpRequest(object):
         json_body = kwargs.pop("json", None)
         files = kwargs.pop("files", None)
 
-        self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
-            method=method,
-            url=url,
-            headers=kwargs.pop("headers", None),
-        ))
+        self._internal_request = kwargs.pop(
+            "_internal_request",
+            _PipelineTransportHttpRequest(
+                method=method,
+                url=url,
+                headers=kwargs.pop("headers", None),
+            ),
+        )
         params = kwargs.pop("params", None)
 
         if params:
             self._internal_request.format_parameters(params)
 
-        _set_body(
-            content=content,
-            data=data,
-            files=files,
-            json_body=json_body,
-            internal_request=self._internal_request
-        )
+        _set_body(content=content, data=data, files=files, json_body=json_body, internal_request=self._internal_request)
 
         if kwargs:
             raise TypeError(
-                "You have passed in kwargs '{}' that are not valid kwargs.".format(
-                    "', '".join(list(kwargs.keys()))
-                )
+                "You have passed in kwargs '{}' that are not valid kwargs.".format("', '".join(list(kwargs.keys())))
             )
 
     def _set_content_length_header(self):
@@ -310,25 +305,21 @@ class HttpRequest(object):
     @property
     def content(self):
         # type: (...) -> Any
-        """Gets the request content.
-        """
+        """Gets the request content."""
         return self._internal_request.data or self._internal_request.files
 
     def __repr__(self):
         return self._internal_request.__repr__()
 
     def __deepcopy__(self, memo=None):
-        return HttpRequest(
-            self.method,
-            self.url,
-            _internal_request=self._internal_request.__deepcopy__(memo)
-        )
+        return HttpRequest(self.method, self.url, _internal_request=self._internal_request.__deepcopy__(memo))
+
 
 class _HttpResponseBase(object):
     """Base class for HttpResponse and AsyncHttpResponse.
 
     :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
+    :paramtype request: ~azure.synapse.managedprivateendpoints.core.rest.HttpRequest
     :ivar int status_code: The status code of this response
     :ivar headers: The response headers
     :vartype headers: dict[str, any]
@@ -339,7 +330,7 @@ class _HttpResponseBase(object):
      is the response Content-Type header
     :ivar str text: The response body as a string.
     :ivar request: The request that resulted in this response.
-    :vartype request: ~azure.core.rest.HttpRequest
+    :vartype request: ~azure.synapse.managedprivateendpoints.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
     :ivar bool is_error: Whether this response is an error.
     """
@@ -409,7 +400,7 @@ class _HttpResponseBase(object):
         if not content_type:
             return None
         _, params = cgi.parse_header(content_type)
-        encoding = params.get('charset') # -> utf-8
+        encoding = params.get("charset")  # -> utf-8
         if encoding is None or not _lookup_encoding(encoding):
             return None
         return encoding
@@ -483,12 +474,8 @@ class _HttpResponseBase(object):
 
     def __repr__(self):
         # type: (...) -> str
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<{}: {} {}{}>".format(
-            type(self).__name__, self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
     def _validate_streaming_access(self):
         # type: (...) -> None
@@ -497,8 +484,8 @@ class _HttpResponseBase(object):
         if self.is_stream_consumed:
             raise StreamConsumedError()
 
-class HttpResponse(_HttpResponseBase):
 
+class HttpResponse(_HttpResponseBase):
     def close(self):
         # type: (...) -> None
         self.is_closed = True
@@ -518,21 +505,17 @@ class HttpResponse(_HttpResponseBase):
             return self._content
         except AttributeError:
             self._validate_streaming_access()
-            self._content = (
-                self._internal_response.body() or
-                b"".join(self.iter_raw())
-            )
+            self._content = self._internal_response.body() or b"".join(self.iter_raw())
             self._close_stream()
             return self._content
 
     def iter_bytes(self, chunk_size=None):
         # type: (int) -> Iterator[bytes]
-        """Iterate over the bytes in the response stream
-        """
+        """Iterate over the bytes in the response stream"""
         try:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
+                yield self._content[i : i + chunk_size]
 
         except AttributeError:
             for raw_bytes in self.iter_raw(chunk_size=chunk_size):
@@ -540,8 +523,7 @@ class HttpResponse(_HttpResponseBase):
 
     def iter_text(self, chunk_size=None):
         # type: (int) -> Iterator[str]
-        """Iterate over the response text
-        """
+        """Iterate over the response text"""
         for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
@@ -560,8 +542,7 @@ class HttpResponse(_HttpResponseBase):
 
     def iter_raw(self, chunk_size=None):
         # type: (int) -> Iterator[bytes]
-        """Iterate over the raw response bytes
-        """
+        """Iterate over the raw response bytes"""
         self._validate_streaming_access()
         stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
         for raw_bytes in stream_download:
@@ -570,7 +551,9 @@ class HttpResponse(_HttpResponseBase):
 
         self._close_stream()
 
+
 ########################### ERRORS SECTION #################################
+
 
 class StreamConsumedError(Exception):
     def __init__(self):
@@ -580,18 +563,14 @@ class StreamConsumedError(Exception):
         )
         super(StreamConsumedError, self).__init__(message)
 
+
 class ResponseClosedError(Exception):
     def __init__(self):
-        message = (
-            "You can not try to read or stream this response's content, since the "
-            "response has been closed."
-        )
+        message = "You can not try to read or stream this response's content, since the " "response has been closed."
         super(ResponseClosedError, self).__init__(message)
 
-class ResponseNotReadError(Exception):
 
+class ResponseNotReadError(Exception):
     def __init__(self):
-        message = (
-            "You have not read in the response's bytes yet. Call response.read() first."
-        )
+        message = "You have not read in the response's bytes yet. Call response.read() first."
         super(ResponseNotReadError, self).__init__(message)

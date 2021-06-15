@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._vnet_client import VnetClient
+from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
 
-__all__ = ["VnetClient"]
+__all__ = [
+    "ManagedPrivateEndpointsOperations",
+]

@@ -15,9 +15,7 @@ _SERIALIZER = Serializer()
 
 
 def build_get_request(
-    managed_private_endpoint_name: str,
-    managed_virtual_network_name: str = "default",
-    **kwargs: Any
+    managed_private_endpoint_name: str, managed_virtual_network_name: str = "default", **kwargs: Any
 ) -> HttpRequest:
     """Get Managed Private Endpoints.
 
@@ -28,10 +26,9 @@ def build_get_request(
     :type managed_private_endpoint_name: str
     :param managed_virtual_network_name: Managed virtual network name.
     :type managed_virtual_network_name: str
-    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that
-     you will pass to the client's `send_request` method. See
-     https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your
-     code flow.
+    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
     :rtype: ~azure.synapse.managedprivateendpoints.core.rest.HttpRequest
 
     Example:
@@ -56,33 +53,33 @@ def build_get_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}')
+    url = kwargs.pop(
+        "template_url",
+        "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}",
+    )
     path_format_arguments = {
-        'managedVirtualNetworkName': _SERIALIZER.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
-        'managedPrivateEndpointName': _SERIALIZER.url("managed_private_endpoint_name", managed_private_endpoint_name, 'str'),
+        "managedVirtualNetworkName": _SERIALIZER.url(
+            "managed_virtual_network_name", managed_virtual_network_name, "str"
+        ),
+        "managedPrivateEndpointName": _SERIALIZER.url(
+            "managed_private_endpoint_name", managed_private_endpoint_name, "str"
+        ),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_create_request(
@@ -108,10 +105,9 @@ def build_create_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Managed private endpoint properties.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that
-     you will pass to the client's `send_request` method. See
-     https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your
-     code flow.
+    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
     :rtype: ~azure.synapse.managedprivateendpoints.core.rest.HttpRequest
 
     Example:
@@ -154,44 +150,43 @@ def build_create_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}')
+    url = kwargs.pop(
+        "template_url",
+        "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}",
+    )
     path_format_arguments = {
-        'managedVirtualNetworkName': _SERIALIZER.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
-        'managedPrivateEndpointName': _SERIALIZER.url("managed_private_endpoint_name", managed_private_endpoint_name, 'str'),
+        "managedVirtualNetworkName": _SERIALIZER.url(
+            "managed_virtual_network_name", managed_virtual_network_name, "str"
+        ),
+        "managedPrivateEndpointName": _SERIALIZER.url(
+            "managed_private_endpoint_name", managed_private_endpoint_name, "str"
+        ),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
+        method="PUT", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
     )
 
 
 def build_delete_request(
-    managed_private_endpoint_name: str,
-    managed_virtual_network_name: str = "default",
-    **kwargs: Any
+    managed_private_endpoint_name: str, managed_virtual_network_name: str = "default", **kwargs: Any
 ) -> HttpRequest:
     """Delete Managed Private Endpoints.
 
@@ -202,40 +197,37 @@ def build_delete_request(
     :type managed_private_endpoint_name: str
     :param managed_virtual_network_name: Managed virtual network name.
     :type managed_virtual_network_name: str
-    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that
-     you will pass to the client's `send_request` method. See
-     https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your
-     code flow.
+    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
     :rtype: ~azure.synapse.managedprivateendpoints.core.rest.HttpRequest
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}')
+    url = kwargs.pop(
+        "template_url",
+        "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}",
+    )
     path_format_arguments = {
-        'managedVirtualNetworkName': _SERIALIZER.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
-        'managedPrivateEndpointName': _SERIALIZER.url("managed_private_endpoint_name", managed_private_endpoint_name, 'str'),
+        "managedVirtualNetworkName": _SERIALIZER.url(
+            "managed_virtual_network_name", managed_virtual_network_name, "str"
+        ),
+        "managedPrivateEndpointName": _SERIALIZER.url(
+            "managed_private_endpoint_name", managed_private_endpoint_name, "str"
+        ),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=url, params=query_parameters, **kwargs)
 
 
-def build_list_request(
-    managed_virtual_network_name: str = "default",
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_request(managed_virtual_network_name: str = "default", **kwargs: Any) -> HttpRequest:
     """List Managed Private Endpoints.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -243,10 +235,9 @@ def build_list_request(
 
     :param managed_virtual_network_name: Managed virtual network name.
     :type managed_virtual_network_name: str
-    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that
-     you will pass to the client's `send_request` method. See
-     https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your
-     code flow.
+    :return: Returns an :class:`~azure.synapse.managedprivateendpoints.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
     :rtype: ~azure.synapse.managedprivateendpoints.core.rest.HttpRequest
 
     Example:
@@ -276,30 +267,24 @@ def build_list_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints')
+    url = kwargs.pop("template_url", "/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints")
     path_format_arguments = {
-        'managedVirtualNetworkName': _SERIALIZER.url("managed_virtual_network_name", managed_virtual_network_name, 'str'),
+        "managedVirtualNetworkName": _SERIALIZER.url(
+            "managed_virtual_network_name", managed_virtual_network_name, "str"
+        ),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
