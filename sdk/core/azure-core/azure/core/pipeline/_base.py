@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+
 import logging
 from typing import Generic, TypeVar, List, Union, Any, Dict
 from azure.core.pipeline import (
@@ -32,7 +33,7 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-from ._tools import await_result as _await_result, prepare_multipart_body
+from ._tools import await_result as _await_result
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -153,18 +154,19 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        if not hasattr(request, "requests"):
+        multipart_mixed_info = request.multipart_mixed_info   # type: ignore
+        if not multipart_mixed_info:
             return
 
-        requests = request.requests  # type: List[HTTPRequestType]
-        policies = request.policies  # type: List[SansIOHTTPPolicy]
-        pipeline_options = request.kwargs  # type: Dict[str, Any]
+        requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
+        policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
 
         # Apply on_requests concurrently to all requests
         import concurrent.futures
 
         def prepare_requests(req):
-            if hasattr(request, "requests"):
+            if req.multipart_mixed_info:
                 # Recursively update changeset "sub requests"
                 Pipeline._prepare_multipart_mixed_request(req)
             context = PipelineContext(None, **pipeline_options)
@@ -185,7 +187,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         # since we didn't see (yet) pipeline usage where it's not this actual instance
         # class used
         self._prepare_multipart_mixed_request(request)
-        prepare_multipart_body(request)  # type: ignore
+        request.prepare_multipart_body()  # type: ignore
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse

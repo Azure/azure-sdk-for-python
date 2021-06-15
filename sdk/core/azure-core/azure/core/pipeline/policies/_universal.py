@@ -284,17 +284,17 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Request body:")
 
                 # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.content, types.GeneratorType):
+                if isinstance(http_request.body, types.GeneratorType):
                     _LOGGER.debug("File upload")
                     return
                 try:
-                    if isinstance(http_request.content, types.AsyncGeneratorType):
+                    if isinstance(http_request.body, types.AsyncGeneratorType):
                         _LOGGER.debug("File upload")
                         return
                 except AttributeError:
                     pass
-                if http_request.content:
-                    _LOGGER.debug(str(http_request.content))
+                if http_request.body:
+                    _LOGGER.debug(str(http_request.body))
                     return
                 _LOGGER.debug("This request has no body")
             except Exception as err:  # pylint: disable=broad-except
@@ -337,7 +337,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                     if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
-                        _LOGGER.debug(http_response.text)
+                        _LOGGER.debug(http_response.text())
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 
@@ -422,16 +422,16 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             for header, value in http_request.headers.items():
                 value = self._redact_header(header, value)
                 logger.info("    %r: %r", header, value)
-            if isinstance(http_request.content, types.GeneratorType):
+            if isinstance(http_request.body, types.GeneratorType):
                 logger.info("File upload")
                 return
             try:
-                if isinstance(http_request.content, types.AsyncGeneratorType):
+                if isinstance(http_request.body, types.AsyncGeneratorType):
                     logger.info("File upload")
                     return
             except AttributeError:
                 pass
-            if http_request.content:
+            if http_request.body:
                 logger.info("A body is sent with the request")
                 return
             logger.info("No body was attached to the request")
@@ -562,7 +562,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :returns: A dict or XML tree, depending of the mime-type
         """
         # Try to use content-type from headers if available
-        if hasattr(response, "content_type") and response.content_type:
+        if response.content_type:
             mime_type = response.content_type.split(";")[0].strip().lower()
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
@@ -570,10 +570,9 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         # need that test as well....
         else:
             mime_type = "application/json"
-        if encoding:
-            response.encoding = encoding
+
         # Rely on transport implementation to give me "text()" decoded correctly
-        return cls.deserialize_from_text(response.text, mime_type, response=response)
+        return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -609,18 +608,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         response_encoding = request.context.get('response_encoding')
 
-        deserialized = self.deserialize_from_http_generics(
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
             response.http_response,
             response_encoding
         )
-        response.context[self.CONTEXT_NAME] = deserialized
-        # currently, I'm not doing anything with the XML deserialized properties
-        if hasattr(response, "content_type") and response.http_response.content_type:
-            mime_type = response.http_response.content_type.split(";")[0].strip().lower()
-        else:
-            mime_type = "application/json"
-        if self.JSON_REGEXP.match(mime_type):
-            response.http_response._json = deserialized
 
 
 class ProxyPolicy(SansIOHTTPPolicy):
