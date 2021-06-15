@@ -47,7 +47,7 @@ class DevicesForHubOperations:
         limit: Optional[int] = None,
         skip_token: Optional[str] = None,
         device_management_type: Optional[Union[str, "_models.ManagementState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeviceList"]:
         """Get list of the devices for the specified IoT Hub resource.
 

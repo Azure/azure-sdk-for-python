@@ -43,7 +43,7 @@ class IotSitesOperations:
     async def list(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotSitesList":
         """List IoT sites.
 
@@ -96,7 +96,7 @@ class IotSitesOperations:
     async def get(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotSitesModel":
         """Get IoT site.
 
@@ -150,7 +150,7 @@ class IotSitesOperations:
         self,
         scope: str,
         iot_sites_model: "_models.IotSitesModel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotSitesModel":
         """Create or update IoT site.
 
@@ -214,7 +214,7 @@ class IotSitesOperations:
     async def delete(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete IoT site.
 

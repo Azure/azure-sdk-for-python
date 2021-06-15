@@ -44,7 +44,7 @@ class TasksOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityTaskList"]:
         """Recommended tasks that will help improve the security of the subscription proactively.
 
@@ -115,7 +115,7 @@ class TasksOperations:
     def list_by_home_region(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityTaskList"]:
         """Recommended tasks that will help improve the security of the subscription proactively.
 
@@ -187,7 +187,7 @@ class TasksOperations:
     async def get_subscription_level_task(
         self,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityTask":
         """Recommended tasks that will help improve the security of the subscription proactively.
 
@@ -243,7 +243,7 @@ class TasksOperations:
         self,
         task_name: str,
         task_update_action_type: Union[str, "_models.Enum15"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Recommended tasks that will help improve the security of the subscription proactively.
 
@@ -299,7 +299,7 @@ class TasksOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SecurityTaskList"]:
         """Recommended tasks that will help improve the security of the subscription proactively.
 
@@ -376,7 +376,7 @@ class TasksOperations:
         self,
         resource_group_name: str,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SecurityTask":
         """Recommended tasks that will help improve the security of the subscription proactively.
 
@@ -437,7 +437,7 @@ class TasksOperations:
         resource_group_name: str,
         task_name: str,
         task_update_action_type: Union[str, "_models.Enum15"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Recommended tasks that will help improve the security of the subscription proactively.
 

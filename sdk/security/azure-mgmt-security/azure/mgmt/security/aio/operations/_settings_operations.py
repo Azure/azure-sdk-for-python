@@ -43,7 +43,7 @@ class SettingsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SettingsList"]:
         """Settings about different configurations in security center.
 
@@ -110,7 +110,7 @@ class SettingsOperations:
     async def get(
         self,
         setting_name: Union[str, "_models.Enum3"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Setting":
         """Settings of different configurations in security center.
 
@@ -165,7 +165,7 @@ class SettingsOperations:
         self,
         setting_name: Union[str, "_models.Enum3"],
         setting: "_models.Setting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Setting":
         """updating settings about different configurations in security center.
 

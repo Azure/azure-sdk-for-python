@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AlertsSuppressionRulesOperations:
-    """AlertsSuppressionRulesOperations async operations.
+class IngestionSettingsOperations:
+    """IngestionSettingsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,24 +43,22 @@ class AlertsSuppressionRulesOperations:
 
     def list(
         self,
-        alert_type: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AlertsSuppressionRulesList"]:
-        """List of all the dismiss rules for the given subscription.
+    ) -> AsyncIterable["_models.IngestionSettingList"]:
+        """Settings for ingesting security data and logs to correlate with resources associated with the
+        subscription.
 
-        :param alert_type: Type of the alert to get rules for.
-        :type alert_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AlertsSuppressionRulesList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.AlertsSuppressionRulesList]
+        :return: An iterator like instance of either IngestionSettingList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.IngestionSettingList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertsSuppressionRulesList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSettingList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -78,8 +76,6 @@ class AlertsSuppressionRulesOperations:
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if alert_type is not None:
-                    query_parameters['AlertType'] = self._serialize.query("alert_type", alert_type, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -89,7 +85,7 @@ class AlertsSuppressionRulesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('AlertsSuppressionRulesList', pipeline_response)
+            deserialized = self._deserialize('IngestionSettingList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -110,35 +106,36 @@ class AlertsSuppressionRulesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings'}  # type: ignore
 
     async def get(
         self,
-        alerts_suppression_rule_name: str,
+        ingestion_setting_name: str,
         **kwargs: Any
-    ) -> "_models.AlertsSuppressionRule":
-        """Get dismiss rule, with name: {alertsSuppressionRuleName}, for the given subscription.
+    ) -> "_models.IngestionSetting":
+        """Settings for ingesting security data and logs to correlate with resources associated with the
+        subscription.
 
-        :param alerts_suppression_rule_name: The unique name of the suppression alert rule.
-        :type alerts_suppression_rule_name: str
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AlertsSuppressionRule, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.AlertsSuppressionRule
+        :return: IngestionSetting, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IngestionSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertsSuppressionRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'alertsSuppressionRuleName': self._serialize.url("alerts_suppression_rule_name", alerts_suppression_rule_name, 'str'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -158,45 +155,46 @@ class AlertsSuppressionRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AlertsSuppressionRule', pipeline_response)
+        deserialized = self._deserialize('IngestionSetting', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}'}  # type: ignore
 
-    async def update(
+    async def create(
         self,
-        alerts_suppression_rule_name: str,
-        alerts_suppression_rule: "_models.AlertsSuppressionRule",
+        ingestion_setting_name: str,
+        ingestion_setting: "_models.IngestionSetting",
         **kwargs: Any
-    ) -> "_models.AlertsSuppressionRule":
-        """Update existing rule or create new rule if it doesn't exist.
+    ) -> "_models.IngestionSetting":
+        """Create setting for ingesting security data and logs to correlate with resources associated with
+        the subscription.
 
-        :param alerts_suppression_rule_name: The unique name of the suppression alert rule.
-        :type alerts_suppression_rule_name: str
-        :param alerts_suppression_rule: Suppression rule object.
-        :type alerts_suppression_rule: ~azure.mgmt.security.models.AlertsSuppressionRule
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
+        :param ingestion_setting: Ingestion setting object.
+        :type ingestion_setting: ~azure.mgmt.security.models.IngestionSetting
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AlertsSuppressionRule, or the result of cls(response)
-        :rtype: ~azure.mgmt.security.models.AlertsSuppressionRule
+        :return: IngestionSetting, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IngestionSetting
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AlertsSuppressionRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSetting"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01-preview"
+        api_version = "2021-01-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.update.metadata['url']  # type: ignore
+        url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'alertsSuppressionRuleName': self._serialize.url("alerts_suppression_rule_name", alerts_suppression_rule_name, 'str'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -210,7 +208,7 @@ class AlertsSuppressionRulesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(alerts_suppression_rule, 'AlertsSuppressionRule')
+        body_content = self._serialize.body(ingestion_setting, 'IngestionSetting')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -220,23 +218,23 @@ class AlertsSuppressionRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AlertsSuppressionRule', pipeline_response)
+        deserialized = self._deserialize('IngestionSetting', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}'}  # type: ignore
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}'}  # type: ignore
 
     async def delete(
         self,
-        alerts_suppression_rule_name: str,
+        ingestion_setting_name: str,
         **kwargs: Any
     ) -> None:
-        """Delete dismiss alert rule for this subscription.
+        """Deletes the ingestion settings for this subscription.
 
-        :param alerts_suppression_rule_name: The unique name of the suppression alert rule.
-        :type alerts_suppression_rule_name: str
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -247,14 +245,14 @@ class AlertsSuppressionRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-01-01-preview"
+        api_version = "2021-01-15-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'alertsSuppressionRuleName': self._serialize.url("alerts_suppression_rule_name", alerts_suppression_rule_name, 'str'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -270,11 +268,120 @@ class AlertsSuppressionRulesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/alertsSuppressionRules/{alertsSuppressionRuleName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}'}  # type: ignore
+
+    async def list_tokens(
+        self,
+        ingestion_setting_name: str,
+        **kwargs: Any
+    ) -> "_models.IngestionSettingToken":
+        """Returns the token that is used for correlating ingested telemetry with the resources in the
+        subscription.
+
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IngestionSettingToken, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.IngestionSettingToken
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IngestionSettingToken"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-01-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.list_tokens.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('IngestionSettingToken', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_tokens.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listTokens'}  # type: ignore
+
+    async def list_connection_strings(
+        self,
+        ingestion_setting_name: str,
+        **kwargs: Any
+    ) -> "_models.ConnectionStrings":
+        """Connection strings for ingesting security scan logs and data.
+
+        :param ingestion_setting_name: Name of the ingestion setting.
+        :type ingestion_setting_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ConnectionStrings, or the result of cls(response)
+        :rtype: ~azure.mgmt.security.models.ConnectionStrings
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionStrings"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-01-15-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.list_connection_strings.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ingestionSettingName': self._serialize.url("ingestion_setting_name", ingestion_setting_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('ConnectionStrings', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_connection_strings.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listConnectionStrings'}  # type: ignore

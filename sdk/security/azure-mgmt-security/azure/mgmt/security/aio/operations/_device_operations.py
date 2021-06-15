@@ -44,7 +44,7 @@ class DeviceOperations:
         self,
         resource_id: str,
         device_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Device":
         """Get device.
 

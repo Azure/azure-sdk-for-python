@@ -43,7 +43,7 @@ class AllowedConnectionsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AllowedConnectionsList"]:
         """Gets the list of all possible traffic between resources for the subscription.
 
@@ -109,7 +109,7 @@ class AllowedConnectionsOperations:
 
     def list_by_home_region(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AllowedConnectionsList"]:
         """Gets the list of all possible traffic between resources for the subscription and location.
 
@@ -178,7 +178,7 @@ class AllowedConnectionsOperations:
         self,
         resource_group_name: str,
         connection_type: Union[str, "_models.ConnectionType"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AllowedConnectionsResource":
         """Gets the list of all possible traffic between resources for the subscription and location,
         based on connection type.
