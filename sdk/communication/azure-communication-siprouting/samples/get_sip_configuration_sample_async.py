@@ -18,13 +18,13 @@ USAGE:
 
 import os
 import asyncio
-from azure.communication.siprouting.aio import SIPRoutingClient
+from azure.communication.siprouting.aio import SipRoutingClient
 
 
 class GetSIPConfigurationSampleAsync(object):
     def __init__(self):
         connection_string = os.getenv("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
-        self._client = SIPRoutingClient.from_connection_string(connection_string)
+        self._client = SipRoutingClient.from_connection_string(connection_string)
 
     async def get_sip_configuration_sample(self):
         configuration = await self._client.get_sip_configuration()

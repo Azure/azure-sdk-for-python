@@ -4,21 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-
 from testcases.communication_testcase import CommunicationTestCase
 from testcases.uri_replacer_processor import URIReplacerProcessor
-from azure.communication.siprouting import SIPRoutingClient
+from azure.communication.siprouting import SipRoutingClient
 
-
-class TestSIPRoutingClientE2E(CommunicationTestCase):
+class TestSipRoutingClientE2E(CommunicationTestCase):
     def __init__(self, method_name):
-        super(TestSIPRoutingClientE2E, self).__init__(method_name)
+        super(TestSipRoutingClientE2E, self).__init__(method_name)
         
     def setUp(self):
-        super(TestSIPRoutingClientE2E, self).setUp()
+        super(TestSipRoutingClientE2E, self).setUp()
 
-        self._sip_routing_client = SIPRoutingClient.from_connection_string(
+        self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=self._get_http_logging_policy()
         )
         self.recording_processors.extend([URIReplacerProcessor()])
@@ -106,6 +103,16 @@ class TestSIPRoutingClientE2E(CommunicationTestCase):
         self._routes_are_equal(
             new_configuration.routes, new_routes
         ), "Configuration routes were not updated."
+
+    def test_delete_trunk(self):
+        test_trunk_name = "test_remove_trunk.com"
+        test_trunk = {test_trunk_name: {"sipSignalingPort": 9876}}
+        configuration_with_test_trunks = self._sip_routing_client.update_sip_trunks(test_trunk)
+
+        configuration = self._sip_routing_client.update_sip_trunks({test_trunk_name: None})
+
+        assert test_trunk_name in configuration_with_test_trunks.trunks.keys(), "Test trunk not setup."
+        assert  not test_trunk_name in configuration.trunks.keys(), "Test trunk not removed."
 
     def _trunks_are_equal(self, response_trunks, request_trunks):
         assert len(response_trunks) == len(request_trunks)

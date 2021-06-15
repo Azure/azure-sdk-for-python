@@ -8,7 +8,7 @@ import aiounittest
 import json
 import pytest
 
-from azure.communication.siprouting.aio import SIPRoutingClient
+from azure.communication.siprouting.aio import SipRoutingClient
 from azure.core.credentials import AccessToken
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 from testcases.fake_token_credential import FakeTokenCredential
@@ -19,7 +19,7 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
-class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
+class TestSipRoutingClientAsync(aiounittest.AsyncTestCase):
     @classmethod
     def mock_response(self, status_code=200, headers=None, json_payload=None):
         response = Mock(status_code=status_code, headers=headers or {})
@@ -34,7 +34,7 @@ class TestSIPRoutingClientAsync(aiounittest.AsyncTestCase):
         return response
 
     def get_simple_test_client(self):
-        return SIPRoutingClient("https://endpoint", FakeTokenCredential())
+        return SipRoutingClient("https://endpoint", FakeTokenCredential())
 
     def setUp(self):
         sip_trunk = Trunk(sip_signaling_port=4001)

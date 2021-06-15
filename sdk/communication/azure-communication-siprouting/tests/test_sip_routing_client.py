@@ -7,7 +7,7 @@
 import unittest
 import json
 
-from azure.communication.siprouting import SIPRoutingClient
+from azure.communication.siprouting import SipRoutingClient
 from azure.communication.siprouting._generated.models import Trunk, TrunkRoute
 from testcases.fake_token_credential import FakeTokenCredential
 
@@ -17,7 +17,7 @@ except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 
 
-class TestSIPRoutingClient(unittest.TestCase):
+class TestSipRoutingClient(unittest.TestCase):
     @classmethod
     def mock_response(self, status_code=200, headers=None, json_payload=None):
         response = Mock(status_code=status_code, headers=headers or {})
@@ -32,7 +32,7 @@ class TestSIPRoutingClient(unittest.TestCase):
         return response
 
     def get_simple_test_client(self):
-        return SIPRoutingClient("https://endpoint", FakeTokenCredential())
+        return SipRoutingClient("https://endpoint", FakeTokenCredential())
 
     def setUp(self):
         sip_trunk = Trunk(sip_signaling_port=4001)
@@ -60,7 +60,7 @@ class TestSIPRoutingClient(unittest.TestCase):
         def mock_send(*_, **__):
             return self.response
 
-        test_client = SIPRoutingClient(
+        test_client = SipRoutingClient(
             "https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
 
         response = test_client.get_sip_configuration()
@@ -70,7 +70,7 @@ class TestSIPRoutingClient(unittest.TestCase):
 
     def test_update_sip_configuration(self):
         mock = Mock(send=Mock(return_value=self.response))
-        test_client = SIPRoutingClient(
+        test_client = SipRoutingClient(
             "https://endpoint", FakeTokenCredential(), transport=mock)
 
         test_client.update_sip_configuration(
@@ -84,7 +84,7 @@ class TestSIPRoutingClient(unittest.TestCase):
         expected_request_body = {"trunks": {
             "trunk_1": {"sipSignalingPort": 4001}}}
         mock = Mock(send=Mock(return_value=self.response))
-        test_client = SIPRoutingClient(
+        test_client = SipRoutingClient(
             "https://endpoint", FakeTokenCredential(), transport=mock)
 
         test_client.update_sip_trunks(self.test_trunks)
@@ -98,7 +98,7 @@ class TestSIPRoutingClient(unittest.TestCase):
             {"name": "route_1", "numberPattern": "x", "trunks": ["trunk_1"]}]}
 
         mock = Mock(send=Mock(return_value=self.response))
-        test_client = SIPRoutingClient(
+        test_client = SipRoutingClient(
             "https://endpoint", FakeTokenCredential(), transport=mock)
 
         test_client.update_sip_routes(self.test_routes)

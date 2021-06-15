@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Mon, 07 Jun 2021 09:53:24 GMT
+      - Tue, 15 Jun 2021 07:46:33 GMT
       User-Agent:
-      - azsdk-python-azurecommunicationsiproutingservice/unknown Python/3.9.5 (Windows-10-10.0.19043-SP0)
+      - azsdk-python-communication-siprouting/1.0.0b1 Python/3.9.5 (Windows-10-10.0.19043-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Jun 2021 09:53:25 GMT
+      - Tue, 15 Jun 2021 07:46:33 GMT
       ms-cv:
-      - NPUocfARNEy/Lw+/F4PGXA.0
+      - cAATgRxR7E2rTHFlk64R6w.0
       request-context:
       - appId=
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 610ms
+      - 579ms
     status:
       code: 200
       message: OK

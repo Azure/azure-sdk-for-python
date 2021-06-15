@@ -46,20 +46,20 @@ The following section provides several code snippets covering some of the most c
 Initialize client with the service endpoint and azure credentials:
 
 ```python
-from azure.communication.siprouting import SIPRoutingClient
+from azure.communication.siprouting import SipRoutingClient
 from azure.identity import DefaultAzureCredential
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
 endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
-sip_client = SIPRoutingClient(endpoint,DefaultAzureCredential())
+sip_client = SipRoutingClient(endpoint,DefaultAzureCredential())
 ```
 
 Or initialize the client from connection string:
 
 ```python
-from azure.communication.siprouting import SIPRoutingClient
+from azure.communication.siprouting import SipRoutingClient
 connection_string = "endpoint=ENDPOINT;accessKey=KEY"
-sip_client = SIPRoutingClient.from_connection_string(connection_string)
+sip_client = SipRoutingClient.from_connection_string(connection_string)
 ```
 
 ### Retrieve SIP configuration: {#retrieve-sip-configuration}

@@ -21,14 +21,14 @@ USAGE:
 """
 
 import os
-from azure.communication.siprouting import SIPRoutingClient
+from azure.communication.siprouting import SipRoutingClient
 from azure.communication.siprouting._generated.models import TrunkPatch, TrunkRoute
 
 
 class UpdateSIPConfigurationSample(object):
     def __init__(self):
         connection_string = os.getenv("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
-        self._client = SIPRoutingClient.from_connection_string(connection_string)
+        self._client = SipRoutingClient.from_connection_string(connection_string)
 
     def update_sip_configuration_sample(self):
         test_trunks = {
