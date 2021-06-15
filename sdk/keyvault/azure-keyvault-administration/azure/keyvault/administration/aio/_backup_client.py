@@ -90,11 +90,11 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.core.polling.AsyncLROPoller
 
         Example:
-            .. literalinclude:: ../tests/test_examples_administration.py
-                :start-after: [START begin_backup]
-                :end-before: [END begin_backup]
+            .. literalinclude:: ../tests/test_examples_administration_async.py
+                :start-after: [START begin_restore]
+                :end-before: [END begin_restore]
                 :language: python
-                :caption: Start a vault backup operation
+                :caption: Start a vault restore operation
                 :dedent: 8
         """
         # AsyncLROBasePolling passes its kwargs to pipeline.run(), so we remove unexpected args before constructing it

@@ -46,6 +46,14 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
             operation to complete and get a :class:`KeyVaultBackupOperation`.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START begin_backup]
+                :end-before: [END begin_backup]
+                :language: python
+                :caption: Start a vault backup operation
+                :dedent: 8
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
@@ -79,6 +87,14 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
         :rtype: ~azure.core.polling.LROPoller
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START begin_restore]
+                :end-before: [END begin_restore]
+                :language: python
+                :caption: Start a vault restore operation
+                :dedent: 8
         """
         # LROBasePolling passes its kwargs to pipeline.run(), so we remove unexpected args before constructing it
         continuation_token = kwargs.pop("continuation_token", None)
