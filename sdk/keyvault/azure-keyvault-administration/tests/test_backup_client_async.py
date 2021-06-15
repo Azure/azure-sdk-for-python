@@ -39,7 +39,15 @@ class BackupClientTests(KeyVaultTestCase):
     @property
     def credential(self):
         if self.is_live:
-            return DefaultAzureCredential()
+            from dotenv import load_dotenv
+            from azure.identity.aio import ClientSecretCredential
+            import os
+            load_dotenv()
+            return ClientSecretCredential(
+                tenant_id=os.environ["KEYVAULT_TENANT_ID"],
+                client_id=os.environ["KEYVAULT_CLIENT_ID"],
+                client_secret=os.environ["KEYVAULT_CLIENT_SECRET"]
+            )
 
         async def get_token(*_, **__):
             return AccessToken("secret", time.time() + 3600)

@@ -8,6 +8,7 @@ from azure.core.credentials import AccessToken
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration._internal import HttpChallengeCache
 from azure.keyvault.administration import KeyVaultBackupClient
+from azure.keyvault.keys import KeyClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -37,7 +38,15 @@ class TestExamplesTests(KeyVaultTestCase):
     @property
     def credential(self):
         if self.is_live:
-            return DefaultAzureCredential()
+            from dotenv import load_dotenv
+            from azure.identity import ClientSecretCredential
+            import os
+            load_dotenv()
+            return ClientSecretCredential(
+                tenant_id=os.environ["KEYVAULT_TENANT_ID"],
+                client_id=os.environ["KEYVAULT_CLIENT_ID"],
+                client_secret=os.environ["KEYVAULT_CLIENT_SECRET"]
+            )
         return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
@@ -53,14 +62,15 @@ class TestExamplesTests(KeyVaultTestCase):
         # check if the backup completed
         done = backup_poller.done()
 
-        # get the final result
+        # block until the backup completes
+        # result() returns an object with a URL of the backup
         backup_operation = backup_poller.result()
         # [END begin_backup]
 
         folder_url = backup_operation.folder_url
 
         # [START begin_restore]
-        # begin a full vault restore; to restore a single key, use the key_name kwarg
+        # begin a full vault restore
         restore_poller = backup_client.begin_restore(folder_url, sas_token)
 
         # check if the restore completed
@@ -69,3 +79,28 @@ class TestExamplesTests(KeyVaultTestCase):
         # wait for the restore to complete
         restore_poller.wait()
         # [END begin_restore]
+
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @StorageAccountPreparer(random_name_enabled=True)
+    @BlobContainerPreparer()
+    def test_example_selective_key_restore(self, container_uri, sas_token):
+        # create a key to selectively restore
+        key_client = KeyClient(self.managed_hsm["url"], self.credential)
+        key_name = self.get_resource_name("selective-restore-test-key")
+        key_client.create_rsa_key(key_name)
+
+        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
+        backup_poller = backup_client.begin_backup(container_uri, sas_token)
+        backup_operation = backup_poller.result()
+        folder_url = backup_operation.folder_url
+
+        # [START begin_selective_restore]
+        # begin a restore of a single key from a backed up vault
+        restore_poller = backup_client.begin_restore(folder_url, sas_token, key_name=key_name)
+
+        # check if the restore completed
+        done = backup_poller.done()
+
+        # wait for the restore to complete
+        restore_poller.wait()
+        # [END begin_selective_restore]
