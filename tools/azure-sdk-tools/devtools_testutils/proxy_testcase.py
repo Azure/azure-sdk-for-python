@@ -8,8 +8,15 @@ import functools
 import pdb
 import os
 import requests
-from contextlib import contextmanager
 
+try:
+    # py3
+    import urllib.parse as url_parse
+except:
+    # py2
+    import urlparse as url_parse
+
+from contextlib import contextmanager
 import subprocess
 
 
@@ -20,7 +27,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 # defaults
-PROXY_URL = "http://localhost:5001"
+PROXY_URL = "http://localhost:5000"
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
@@ -76,6 +83,9 @@ def stop_record_or_playback(test_id, recording_id):
             verify=False,
         )
 
+def get_proxy_netloc():
+    parsed_result = url_parse.urlparse(PROXY_URL)
+    return { "scheme": parsed_result.scheme, "netloc": parsed_result.netloc }
 
 def transform_request(request, recording_id):
     upstream_url = request.url.replace("//text", "/text")
@@ -83,11 +93,13 @@ def transform_request(request, recording_id):
 
     # quiet passthrough if neither are set
     if os.getenv("AZURE_RECORD_MODE") == "record" or os.getenv("AZURE_RECORD_MODE") == "playback":
+        parsed_result = url_parse.urlparse(request.url)
+        updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
         if headers.get("x-recording-upstream-base-uri", None) is None:
-            headers["x-recording-upstream-base-uri"] = upstream_url
+            headers["x-recording-upstream-base-uri"] = "{}://{}".format(parsed_result.scheme, parsed_result.netloc)
         headers["x-recording-id"] = recording_id
         headers["x-recording-mode"] = os.getenv("AZURE_RECORD_MODE")
-        request.url = PROXY_URL
+        request.url = updated_target
 
 
 def RecordedByProxy(func):
