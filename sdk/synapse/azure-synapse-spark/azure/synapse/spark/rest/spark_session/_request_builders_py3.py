@@ -8,7 +8,7 @@
 from typing import Any, Optional
 
 from azure.core.pipeline.transport._base import _format_url_section
-from azure.core.rest import HttpRequest
+from azure.synapse.spark.core.rest import HttpRequest
 from msrest import Serializer
 
 _SERIALIZER = Serializer()
@@ -40,10 +40,10 @@ def build_get_spark_sessions_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -201,10 +201,10 @@ def build_create_spark_session_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -386,10 +386,10 @@ def build_get_spark_session_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -528,10 +528,10 @@ def build_cancel_spark_session_request(
     :type session_id: int
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
     """
 
 
@@ -569,10 +569,10 @@ def build_reset_spark_session_timeout_request(
     :type session_id: int
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
     """
 
 
@@ -610,10 +610,10 @@ def build_get_spark_statements_request(
     :type session_id: int
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -691,10 +691,10 @@ def build_create_spark_statement_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Livy compatible batch job request payload.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -772,10 +772,10 @@ def build_get_spark_statement_request(
     :type statement_id: int
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -843,10 +843,10 @@ def build_cancel_spark_statement_request(
     :type statement_id: int
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python

@@ -12,7 +12,7 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.synapse.spark.core.rest import HttpRequest
 
 from .. import models as _models
 from ..rest import spark_session as rest_spark_session
@@ -71,13 +71,13 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         from_parameter = kwargs.pop('from_parameter', None)  # type: Optional[int]
         size = kwargs.pop('size', None)  # type: Optional[int]
         detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
 
 
-        
+
 
         request = rest_spark_session.build_get_spark_sessions_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -132,12 +132,12 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
 
 
-        
+
         json = self._serialize.body(spark_session_options, 'object')
 
         request = rest_spark_session.build_create_spark_session_request(
@@ -193,11 +193,11 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
 
 
-        
+
 
         request = rest_spark_session.build_get_spark_session_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -248,10 +248,10 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_session.build_cancel_spark_session_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -297,10 +297,10 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_session.build_reset_spark_session_timeout_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -346,10 +346,10 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_session.build_get_spark_statements_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -402,11 +402,11 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
 
-        
+
         json = self._serialize.body(spark_statement_options, 'object')
 
         request = rest_spark_session.build_create_spark_statement_request(
@@ -462,10 +462,10 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_session.build_get_spark_statement_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -519,10 +519,10 @@ class SparkSessionOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_session.build_cancel_spark_statement_request(
             spark_pool_name=self._config.spark_pool_name,

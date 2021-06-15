@@ -40,10 +40,10 @@ def build_get_spark_batch_jobs_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -199,10 +199,10 @@ def build_create_spark_batch_job_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -382,10 +382,10 @@ def build_get_spark_batch_job_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -522,10 +522,10 @@ def build_cancel_spark_batch_job_request(
     :type batch_id: int
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
     """
 
 

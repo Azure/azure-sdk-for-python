@@ -12,7 +12,7 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.synapse.spark.core.rest import HttpRequest
 
 from ... import models as _models
 from ...rest import spark_batch as rest_spark_batch
@@ -70,10 +70,10 @@ class SparkBatchOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_batch.build_get_spark_batch_jobs_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -129,11 +129,11 @@ class SparkBatchOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
 
-        
+
         json = self._serialize.body(spark_batch_job_options, 'object')
 
         request = rest_spark_batch.build_create_spark_batch_job_request(
@@ -190,10 +190,10 @@ class SparkBatchOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_batch.build_get_spark_batch_job_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -243,10 +243,10 @@ class SparkBatchOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
 
 
-        
+
+
 
         request = rest_spark_batch.build_cancel_spark_batch_job_request(
             spark_pool_name=self._config.spark_pool_name,
