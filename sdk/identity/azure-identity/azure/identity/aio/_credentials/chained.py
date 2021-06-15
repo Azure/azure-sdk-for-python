@@ -10,6 +10,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
+from ..._internal import within_credential_chain
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -52,6 +53,7 @@ class ChainedTokenCredential(AsyncContextManager):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
+        within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
             try:
@@ -74,6 +76,7 @@ class ChainedTokenCredential(AsyncContextManager):
                 )
                 break
 
+        within_credential_chain.set(False)
         attempts = _get_error_message(history)
         message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
         raise ClientAuthenticationError(message=message)

@@ -7,6 +7,7 @@ import logging
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
+from .._internal import within_credential_chain
 
 try:
     from typing import TYPE_CHECKING
@@ -61,6 +62,7 @@ class ChainedTokenCredential(object):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
+        within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
             try:
@@ -83,6 +85,7 @@ class ChainedTokenCredential(object):
                 )
                 break
 
+        within_credential_chain.set(False)
         attempts = _get_error_message(history)
         message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
         _LOGGER.warning(message)
