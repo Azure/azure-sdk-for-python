@@ -33,6 +33,11 @@ TIMEOUT_SAMPLES = {
 }
 """
 TIMEOUT_SAMPLES = {
+    "azure-eventgrid": {
+        "consume_cloud_events_from_eventhub.py": (10),
+        "consume_eventgrid_events_from_service_bus_queue.py": (10),
+        "consume_cloud_events_from_storage_queue.py": (10),
+    },
     "azure-eventhub": {
         "receive_batch_with_checkpoint.py": (10),
         "recv.py": (10),
