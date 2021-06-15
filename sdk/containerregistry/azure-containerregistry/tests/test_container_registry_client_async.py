@@ -24,6 +24,14 @@ from preparer import acr_preparer
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
+    def test_service_versions(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
+        assert client._client._config.version == "2019-08-15-preview"
+
+        with pytest.raises(ValueError):
+            client = self.create_registry_client(containerregistry_endpoint, api_version="2019-05-15")
+
+    @acr_preparer()
     async def test_list_repository_names(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 

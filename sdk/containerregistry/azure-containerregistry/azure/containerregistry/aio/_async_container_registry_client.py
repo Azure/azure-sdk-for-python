@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link
+from .._helpers import _is_tag, _parse_next_link, get_api_version
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -35,6 +35,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :keyword authentication_scope: URL for credential authentication if different from the default
         :paramtype authentication_scope: str
+        :keyword service_version: Date based service version string
+        :paramtype service_Version: str
         :returns: None
         :raises: None
 
@@ -52,6 +54,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._endpoint = endpoint
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)

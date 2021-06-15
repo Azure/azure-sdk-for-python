@@ -7,7 +7,7 @@ import base64
 import json
 import re
 import time
-from typing import TYPE_CHECKING, List, Dict
+from typing import TYPE_CHECKING, List, Dict, Any
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
 
+_SUPPORTED_API_VERSIONS = [
+    "2019-08-15-preview"
+]
 
 def _is_tag(tag_or_digest):
     # type: (str) -> bool
@@ -121,3 +124,17 @@ def _parse_exp_time(raw_token):
         return web_token.get("exp", time.time())
 
     return time.time()
+
+
+def get_api_version(kwargs, default):
+    # type: (Dict[str, Any], str) -> str
+    api_version = kwargs.pop("api_version", None)
+    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
+        versions = "\n".join(_SUPPORTED_API_VERSIONS)
+        raise ValueError(
+            "Unsupported API version '{}'. Please select from:\n{}".format(
+                api_version, versions
+            )
+        )
+
+    return api_version or default
