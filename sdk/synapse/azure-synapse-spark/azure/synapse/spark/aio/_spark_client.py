@@ -15,16 +15,21 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import SparkClientConfiguration
+from .operations import SparkBatchOperations
+from .operations import SparkSessionOperations
+from .. import models
 
 
 class SparkClient(object):
     """SparkClient.
 
+    :ivar spark_batch: SparkBatchOperations operations
+    :vartype spark_batch: azure.synapse.spark.aio.operations.SparkBatchOperations
+    :ivar spark_session: SparkSessionOperations operations
+    :vartype spark_session: azure.synapse.spark.aio.operations.SparkSessionOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -43,13 +48,18 @@ class SparkClient(object):
         livy_api_version: str = "2019-11-01-preview",
         **kwargs: Any
     ) -> None:
-        base_url = '{endpoint}/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}'
+        base_url = '{endpoint}'
         self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.spark_batch = SparkBatchOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_session = SparkSessionOperations(
+            self._client, self._config, self._serialize, self._deserialize)
 
     async def send_request(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
@@ -58,8 +68,8 @@ class SparkClient(object):
         Use these helper methods to create the request you pass to this method. See our example below:
 
         >>> from azure.synapse.spark.rest import build_get_spark_batch_jobs_request
-        >>> request = build_get_spark_batch_jobs_request(from_parameter, size, detailed)
-        <HttpRequest [GET], url: '/batches'>
+        >>> request = build_get_spark_batch_jobs_request(spark_pool_name, livy_api_version, from_parameter, size, detailed)
+        <HttpRequest [GET], url: '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'>
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
@@ -77,8 +87,6 @@ class SparkClient(object):
         request_copy = deepcopy(request)
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'livyApiVersion': self._serialize.url("self._config.livy_api_version", self._config.livy_api_version, 'str', skip_quote=True),
-            'sparkPoolName': self._serialize.url("self._config.spark_pool_name", self._config.spark_pool_name, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         if kwargs.pop("stream", False):

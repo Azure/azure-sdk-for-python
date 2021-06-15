@@ -15,6 +15,8 @@ _SERIALIZER = Serializer()
 
 
 def build_get_spark_batch_jobs_request(
+    spark_pool_name: str,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     from_parameter: Optional[int] = None,
     size: Optional[int] = None,
@@ -26,6 +28,10 @@ def build_get_spark_batch_jobs_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword from_parameter: Optional param specifying which index the list should begin from.
     :paramtype from_parameter: int
     :keyword size: Optional param specifying the size of the returned list.
@@ -34,10 +40,10 @@ def build_get_spark_batch_jobs_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -137,7 +143,12 @@ def build_get_spark_batch_jobs_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/batches')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches')
+    path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+    }
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -162,6 +173,8 @@ def build_get_spark_batch_jobs_request(
 
 
 def build_create_spark_batch_job_request(
+    spark_pool_name: str,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     json: Any = None,
     content: Any = None,
@@ -173,6 +186,10 @@ def build_create_spark_batch_job_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. Livy compatible batch job request payload.
     :paramtype json: Any
@@ -182,10 +199,10 @@ def build_create_spark_batch_job_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -314,7 +331,12 @@ def build_create_spark_batch_job_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/batches')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches')
+    path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+    }
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -339,7 +361,9 @@ def build_create_spark_batch_job_request(
 
 
 def build_get_spark_batch_job_request(
+    spark_pool_name: str,
     batch_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     detailed: Optional[bool] = None,
     **kwargs: Any
@@ -349,15 +373,19 @@ def build_get_spark_batch_job_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param batch_id: Identifier for the batch job.
     :type batch_id: int
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -451,8 +479,10 @@ def build_get_spark_batch_job_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/batches/{batchId}')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'batchId': _SERIALIZER.url("batch_id", batch_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)
@@ -476,7 +506,9 @@ def build_get_spark_batch_job_request(
 
 
 def build_cancel_spark_batch_job_request(
+    spark_pool_name: str,
     batch_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     **kwargs: Any
 ) -> HttpRequest:
     """Cancels a running spark batch job.
@@ -484,19 +516,25 @@ def build_cancel_spark_batch_job_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param batch_id: Identifier for the batch job.
     :type batch_id: int
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
     """
 
 
 
     # Construct URL
-    url = kwargs.pop("template_url", '/batches/{batchId}')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'batchId': _SERIALIZER.url("batch_id", batch_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)

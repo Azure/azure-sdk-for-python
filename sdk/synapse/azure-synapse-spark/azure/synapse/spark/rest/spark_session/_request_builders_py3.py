@@ -8,13 +8,15 @@
 from typing import Any, Optional
 
 from azure.core.pipeline.transport._base import _format_url_section
-from azure.synapse.spark.core.rest import HttpRequest
+from azure.core.rest import HttpRequest
 from msrest import Serializer
 
 _SERIALIZER = Serializer()
 
 
 def build_get_spark_sessions_request(
+    spark_pool_name: str,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     from_parameter: Optional[int] = None,
     size: Optional[int] = None,
@@ -26,6 +28,10 @@ def build_get_spark_sessions_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword from_parameter: Optional param specifying which index the list should begin from.
     :paramtype from_parameter: int
     :keyword size: Optional param specifying the size of the returned list.
@@ -34,10 +40,10 @@ def build_get_spark_sessions_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -139,7 +145,12 @@ def build_get_spark_sessions_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions')
+    path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+    }
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -164,6 +175,8 @@ def build_get_spark_sessions_request(
 
 
 def build_create_spark_session_request(
+    spark_pool_name: str,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     json: Any = None,
     content: Any = None,
@@ -175,6 +188,10 @@ def build_create_spark_session_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. Livy compatible batch job request payload.
     :paramtype json: Any
@@ -184,10 +201,10 @@ def build_create_spark_session_request(
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -318,7 +335,12 @@ def build_create_spark_session_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions')
+    path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+    }
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -343,7 +365,9 @@ def build_create_spark_session_request(
 
 
 def build_get_spark_session_request(
+    spark_pool_name: str,
     session_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     detailed: Optional[bool] = None,
     **kwargs: Any
@@ -353,15 +377,19 @@ def build_get_spark_session_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword detailed: Optional query param specifying whether detailed response is returned beyond
      plain livy.
     :paramtype detailed: bool
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -457,8 +485,10 @@ def build_get_spark_session_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)
@@ -482,7 +512,9 @@ def build_get_spark_session_request(
 
 
 def build_cancel_spark_session_request(
+    spark_pool_name: str,
     session_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     **kwargs: Any
 ) -> HttpRequest:
     """Cancels a running spark session.
@@ -490,19 +522,25 @@ def build_cancel_spark_session_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
     """
 
 
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)
@@ -515,7 +553,9 @@ def build_cancel_spark_session_request(
 
 
 def build_reset_spark_session_timeout_request(
+    spark_pool_name: str,
     session_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     **kwargs: Any
 ) -> HttpRequest:
     """Sends a keep alive call to the current session to reset the session timeout.
@@ -523,19 +563,25 @@ def build_reset_spark_session_timeout_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
     """
 
 
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}/reset-timeout')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/reset-timeout')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)
@@ -548,7 +594,9 @@ def build_reset_spark_session_timeout_request(
 
 
 def build_get_spark_statements_request(
+    spark_pool_name: str,
     session_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     **kwargs: Any
 ) -> HttpRequest:
     """Gets a list of statements within a spark session.
@@ -556,12 +604,16 @@ def build_get_spark_statements_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -593,8 +645,10 @@ def build_get_spark_statements_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}/statements')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)
@@ -612,7 +666,9 @@ def build_get_spark_statements_request(
 
 
 def build_create_spark_statement_request(
+    spark_pool_name: str,
     session_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     *,
     json: Any = None,
     content: Any = None,
@@ -623,18 +679,22 @@ def build_create_spark_statement_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. Livy compatible batch job request payload.
     :paramtype json: Any
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Livy compatible batch job request payload.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -668,8 +728,10 @@ def build_create_spark_statement_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}/statements')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
     }
     url = _format_url_section(url, **path_format_arguments)
@@ -691,8 +753,10 @@ def build_create_spark_statement_request(
 
 
 def build_get_spark_statement_request(
+    spark_pool_name: str,
     session_id: int,
     statement_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     **kwargs: Any
 ) -> HttpRequest:
     """Gets a single statement within a spark session.
@@ -700,14 +764,18 @@ def build_get_spark_statement_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
     :param statement_id: Identifier for the statement.
     :type statement_id: int
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -734,8 +802,10 @@ def build_get_spark_statement_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}/statements/{statementId}')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
         'statementId': _SERIALIZER.url("statement_id", statement_id, 'int'),
     }
@@ -754,8 +824,10 @@ def build_get_spark_statement_request(
 
 
 def build_cancel_spark_statement_request(
+    spark_pool_name: str,
     session_id: int,
     statement_id: int,
+    livy_api_version: str = "2019-11-01-preview",
     **kwargs: Any
 ) -> HttpRequest:
     """Kill a statement within a session.
@@ -763,14 +835,18 @@ def build_cancel_spark_statement_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
+    :param spark_pool_name: Name of the spark pool.
+    :type spark_pool_name: str
     :param session_id: Identifier for the session.
     :type session_id: int
     :param statement_id: Identifier for the statement.
     :type statement_id: int
-    :return: Returns an :class:`~azure.synapse.spark.core.rest.HttpRequest` that you will pass to
-     the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how
-     to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.spark.core.rest.HttpRequest
+    :param livy_api_version: Valid api-version for the request.
+    :type livy_api_version: str
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -785,8 +861,10 @@ def build_cancel_spark_statement_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sessions/{sessionId}/statements/{statementId}/cancel')
+    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}/cancel')
     path_format_arguments = {
+        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
+        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
         'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
         'statementId': _SERIALIZER.url("statement_id", statement_id, 'int'),
     }
