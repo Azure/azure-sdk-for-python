@@ -123,7 +123,7 @@ from ._models import (
 )
 
 
-__all__ = (    
+__all__ = (
     "MetricFeedback",
     "AnomalyFeedback",
     "ChangePointFeedback",
