@@ -60,7 +60,7 @@ policy = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
 or
 
 ```python
-response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)[0]
+response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 policy = response[0]
 ```
 
