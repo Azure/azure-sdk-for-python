@@ -18,7 +18,7 @@ from azure.containerregistry._helpers import _is_tag
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
 
 from devtools_testutils import AzureTestCase, is_live
 from azure_devtools.scenario_tests import (
@@ -156,17 +156,20 @@ class ContainerRegistryTestClass(AzureTestCase):
             return
         import_image(repository, tags)
 
-    def get_credential(self):
+    def get_credential(self, **kwargs):
         if self.is_live:
-            return DefaultAzureCredential()
+            return DefaultAzureCredential(**kwargs)
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
         if endpoint.endswith("azurecr.io"):
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
         if endpoint.endswith("azurecr.cn"):
-            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), authorization_scope="https://portal.azure.cn", **kwargs)
-
+            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_CHINA), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
+        if endpoint.endswith("azure.us"):
+            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
+        else:
+            raise ValueError("The endpoint was not understood: {}".format(endpoint))
 
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
