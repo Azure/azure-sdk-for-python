@@ -140,43 +140,37 @@ def build_get_spark_batch_jobs_request(
             }
     """
 
-    from_parameter = kwargs.pop('from_parameter', None)  # type: Optional[int]
-    size = kwargs.pop('size', None)  # type: Optional[int]
-    detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
-    from_parameter = kwargs.pop('from_parameter', None)  # type: Optional[int]
-    size = kwargs.pop('size', None)  # type: Optional[int]
-    detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
+    from_parameter = kwargs.pop("from_parameter", None)  # type: Optional[int]
+    size = kwargs.pop("size", None)  # type: Optional[int]
+    detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
+    from_parameter = kwargs.pop("from_parameter", None)  # type: Optional[int]
+    size = kwargs.pop("size", None)  # type: Optional[int]
+    detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
 
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches')
+    url = kwargs.pop("template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches")
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if from_parameter is not None:
-        query_parameters['from'] = _SERIALIZER.query("from_parameter", from_parameter, 'int')
+        query_parameters["from"] = _SERIALIZER.query("from_parameter", from_parameter, "int")
     if size is not None:
-        query_parameters['size'] = _SERIALIZER.query("size", size, 'int')
+        query_parameters["size"] = _SERIALIZER.query("size", size, "int")
     if detailed is not None:
-        query_parameters['detailed'] = _SERIALIZER.query("detailed", detailed, 'bool')
+        query_parameters["detailed"] = _SERIALIZER.query("detailed", detailed, "bool")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_create_spark_batch_job_request(
@@ -330,39 +324,33 @@ def build_create_spark_batch_job_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    json = kwargs.pop('json', None)  # type: Any
-    detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
-    detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    json = kwargs.pop("json", None)  # type: Any
+    detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
+    detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
 
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches')
+    url = kwargs.pop("template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches")
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if detailed is not None:
-        query_parameters['detailed'] = _SERIALIZER.query("detailed", detailed, 'bool')
+        query_parameters["detailed"] = _SERIALIZER.query("detailed", detailed, "bool")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_get_spark_batch_job_request(
@@ -479,36 +467,30 @@ def build_get_spark_batch_job_request(
             }
     """
 
-    detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
-    detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
+    detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
+    detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
 
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}')
+    url = kwargs.pop("template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}")
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'batchId': _SERIALIZER.url("batch_id", batch_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if detailed is not None:
-        query_parameters['detailed'] = _SERIALIZER.query("detailed", detailed, 'bool')
+        query_parameters["detailed"] = _SERIALIZER.query("detailed", detailed, "bool")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_cancel_spark_batch_job_request(
@@ -535,20 +517,13 @@ def build_cancel_spark_batch_job_request(
     :rtype: ~azure.synapse.spark.core.rest.HttpRequest
     """
 
-
-
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}')
+    url = kwargs.pop("template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}")
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'batchId': _SERIALIZER.url("batch_id", batch_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        **kwargs
-    )
-
+    return HttpRequest(method="DELETE", url=url, **kwargs)

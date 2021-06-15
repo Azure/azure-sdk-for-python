@@ -10,10 +10,11 @@ from ._spark_client import SparkClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['SparkClient']
+__all__ = ["SparkClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

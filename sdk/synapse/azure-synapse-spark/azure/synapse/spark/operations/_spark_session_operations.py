@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.synapse.spark.core.rest import HttpRequest
@@ -21,8 +27,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class SparkSessionOperations(object):
     """SparkSessionOperations operations.
@@ -47,8 +54,7 @@ class SparkSessionOperations(object):
         self._config = config
 
     def get_spark_sessions(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SparkSessionCollection"
         """List all spark sessions which are running under a particular spark pool.
@@ -66,18 +72,13 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkSessionCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkSessionCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkSessionCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        from_parameter = kwargs.pop('from_parameter', None)  # type: Optional[int]
-        size = kwargs.pop('size', None)  # type: Optional[int]
-        detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
-
-
-
+        from_parameter = kwargs.pop("from_parameter", None)  # type: Optional[int]
+        size = kwargs.pop("size", None)  # type: Optional[int]
+        detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
 
         request = rest_spark_session.build_get_spark_sessions_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -85,11 +86,11 @@ class SparkSessionOperations(object):
             from_parameter=from_parameter,
             size=size,
             detailed=detailed,
-            template_url=self.get_spark_sessions.metadata['url'],
+            template_url=self.get_spark_sessions.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -100,14 +101,14 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkSessionCollection', pipeline_response)
+        deserialized = self._deserialize("SparkSessionCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_sessions.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions'}  # type: ignore
+    get_spark_sessions.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions"}  # type: ignore
 
     def create_spark_session(
         self,
@@ -127,18 +128,14 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkSession"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkSession"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
 
-
-
-        json = self._serialize.body(spark_session_options, 'object')
+        json = self._serialize.body(spark_session_options, "object")
 
         request = rest_spark_session.build_create_spark_session_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -146,11 +143,11 @@ class SparkSessionOperations(object):
             detailed=detailed,
             json=json,
             content_type=content_type,
-            template_url=self.create_spark_session.metadata['url'],
+            template_url=self.create_spark_session.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -161,14 +158,14 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkSession', pipeline_response)
+        deserialized = self._deserialize("SparkSession", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_spark_session.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions'}  # type: ignore
+    create_spark_session.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions"}  # type: ignore
 
     def get_spark_session(
         self,
@@ -188,27 +185,22 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkSession"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkSession"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        detailed = kwargs.pop('detailed', None)  # type: Optional[bool]
-
-
-
+        detailed = kwargs.pop("detailed", None)  # type: Optional[bool]
 
         request = rest_spark_session.build_get_spark_session_request(
             spark_pool_name=self._config.spark_pool_name,
             session_id=session_id,
             livy_api_version=self._config.livy_api_version,
             detailed=detailed,
-            template_url=self.get_spark_session.metadata['url'],
+            template_url=self.get_spark_session.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -219,14 +211,14 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkSession', pipeline_response)
+        deserialized = self._deserialize("SparkSession", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_session.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}'}  # type: ignore
+    get_spark_session.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}"}  # type: ignore
 
     def cancel_spark_session(
         self,
@@ -243,25 +235,19 @@ class SparkSessionOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_session.build_cancel_spark_session_request(
             spark_pool_name=self._config.spark_pool_name,
             session_id=session_id,
             livy_api_version=self._config.livy_api_version,
-            template_url=self.cancel_spark_session.metadata['url'],
+            template_url=self.cancel_spark_session.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -275,7 +261,7 @@ class SparkSessionOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_spark_session.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}'}  # type: ignore
+    cancel_spark_session.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}"}  # type: ignore
 
     def reset_spark_session_timeout(
         self,
@@ -292,25 +278,19 @@ class SparkSessionOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_session.build_reset_spark_session_timeout_request(
             spark_pool_name=self._config.spark_pool_name,
             session_id=session_id,
             livy_api_version=self._config.livy_api_version,
-            template_url=self.reset_spark_session_timeout.metadata['url'],
+            template_url=self.reset_spark_session_timeout.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -324,7 +304,7 @@ class SparkSessionOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    reset_spark_session_timeout.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/reset-timeout'}  # type: ignore
+    reset_spark_session_timeout.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/reset-timeout"}  # type: ignore
 
     def get_spark_statements(
         self,
@@ -341,25 +321,19 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkStatementCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatementCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkStatementCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_session.build_get_spark_statements_request(
             spark_pool_name=self._config.spark_pool_name,
             session_id=session_id,
             livy_api_version=self._config.livy_api_version,
-            template_url=self.get_spark_statements.metadata['url'],
+            template_url=self.get_spark_statements.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -370,14 +344,14 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkStatementCollection', pipeline_response)
+        deserialized = self._deserialize("SparkStatementCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_statements.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements'}  # type: ignore
+    get_spark_statements.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements"}  # type: ignore
 
     def create_spark_statement(
         self,
@@ -397,17 +371,13 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkStatement
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatement"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkStatement"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-
-
-        json = self._serialize.body(spark_statement_options, 'object')
+        json = self._serialize.body(spark_statement_options, "object")
 
         request = rest_spark_session.build_create_spark_statement_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -415,11 +385,11 @@ class SparkSessionOperations(object):
             livy_api_version=self._config.livy_api_version,
             json=json,
             content_type=content_type,
-            template_url=self.create_spark_statement.metadata['url'],
+            template_url=self.create_spark_statement.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -430,14 +400,14 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkStatement', pipeline_response)
+        deserialized = self._deserialize("SparkStatement", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_spark_statement.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements'}  # type: ignore
+    create_spark_statement.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements"}  # type: ignore
 
     def get_spark_statement(
         self,
@@ -457,26 +427,20 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkStatement
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatement"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkStatement"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_session.build_get_spark_statement_request(
             spark_pool_name=self._config.spark_pool_name,
             session_id=session_id,
             statement_id=statement_id,
             livy_api_version=self._config.livy_api_version,
-            template_url=self.get_spark_statement.metadata['url'],
+            template_url=self.get_spark_statement.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -487,14 +451,14 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkStatement', pipeline_response)
+        deserialized = self._deserialize("SparkStatement", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_statement.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}'}  # type: ignore
+    get_spark_statement.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}"}  # type: ignore
 
     def cancel_spark_statement(
         self,
@@ -514,26 +478,20 @@ class SparkSessionOperations(object):
         :rtype: ~azure.synapse.spark.models.SparkStatementCancellationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatementCancellationResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkStatementCancellationResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_session.build_cancel_spark_statement_request(
             spark_pool_name=self._config.spark_pool_name,
             session_id=session_id,
             statement_id=statement_id,
             livy_api_version=self._config.livy_api_version,
-            template_url=self.cancel_spark_statement.metadata['url'],
+            template_url=self.cancel_spark_statement.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -544,11 +502,11 @@ class SparkSessionOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkStatementCancellationResult', pipeline_response)
+        deserialized = self._deserialize("SparkStatementCancellationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    cancel_spark_statement.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}/cancel'}  # type: ignore
+    cancel_spark_statement.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}/cancel"}  # type: ignore

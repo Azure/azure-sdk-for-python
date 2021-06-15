@@ -35,7 +35,8 @@ from typing import (
     Any,
     AsyncIterable,
     IO,
-    Iterable, Iterator,
+    Iterable,
+    Iterator,
     Optional,
     Type,
     Union,
@@ -53,15 +54,9 @@ ByteStream = Union[Iterable[bytes], AsyncIterable[bytes]]
 PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
-ParamsType = Union[
-    Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]],
-    List[Tuple[str, PrimitiveData]]
-]
+ParamsType = Union[Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]], List[Tuple[str, PrimitiveData]]]
 
-HeadersType = Union[
-    Mapping[str, str],
-    Sequence[Tuple[str, str]]
-]
+HeadersType = Union[Mapping[str, str], Sequence[Tuple[str, str]]]
 
 ContentType = Union[str, bytes, ByteStream]
 
@@ -70,22 +65,18 @@ FileType = Union[
     Tuple[Optional[str], FileContent],
 ]
 
-FilesType = Union[
-    Mapping[str, FileType],
-    Sequence[Tuple[str, FileType]]
-]
+FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
 from azure.core.pipeline import Pipeline, AsyncPipeline
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
 
-from azure.core.pipeline.transport._base import (
-    _HttpResponseBase as _PipelineTransportHttpResponseBase
-)
+from azure.core.pipeline.transport._base import _HttpResponseBase as _PipelineTransportHttpResponseBase
 
 from azure.core._pipeline_client import PipelineClient as _PipelineClient
 from azure.core._pipeline_client_async import AsyncPipelineClient as _AsyncPipelineClient
+
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -96,12 +87,15 @@ class HttpVerbs(str, Enum):
     DELETE = "DELETE"
     MERGE = "MERGE"
 
+
 ########################### UTILS SECTION #################################
+
 
 def _is_stream_or_str_bytes(content: Any) -> bool:
     return isinstance(content, (str, bytes)) or any(
         hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
     )
+
 
 def _lookup_encoding(encoding: str) -> bool:
     # including check for whether encoding is known taken from httpx
@@ -111,18 +105,22 @@ def _lookup_encoding(encoding: str) -> bool:
     except LookupError:
         return False
 
-def _set_content_length_header(header_name: str, header_value: str, internal_request: _PipelineTransportHttpRequest) -> None:
+
+def _set_content_length_header(
+    header_name: str, header_value: str, internal_request: _PipelineTransportHttpRequest
+) -> None:
     valid_methods = ["put", "post", "patch"]
     content_length_headers = ["Content-Length", "Transfer-Encoding"]
-    if (
-        internal_request.method.lower() in valid_methods and
-        not any([c for c in content_length_headers if c in internal_request.headers])
+    if internal_request.method.lower() in valid_methods and not any(
+        [c for c in content_length_headers if c in internal_request.headers]
     ):
         internal_request.headers[header_name] = header_value
+
 
 def _set_content_type_header(header_value: str, internal_request: _PipelineTransportHttpRequest) -> None:
     if not internal_request.headers.get("Content-Type"):
         internal_request.headers["Content-Type"] = header_value
+
 
 def _set_content_body(content: ContentType, internal_request: _PipelineTransportHttpRequest) -> None:
     headers = internal_request.headers
@@ -153,6 +151,7 @@ def _set_content_body(content: ContentType, internal_request: _PipelineTransport
         internal_request.data = content
     internal_request.headers = headers
 
+
 def _set_body(
     content: ContentType, data: dict, files: Any, json_body: Any, internal_request: _PipelineTransportHttpRequest
 ) -> None:
@@ -176,6 +175,7 @@ def _set_body(
         # don't want to risk changing pipeline.transport, so doing twice here
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
 
+
 def _parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
     lines = []
@@ -187,17 +187,17 @@ def _parse_lines_from_text(text):
             next_char = None if idx == len(text) - 1 else text[idx + 1]
             if curr_char == "\n":
                 lines.append(text[: idx + 1])
-                text = text[idx + 1: ]
+                text = text[idx + 1 :]
                 break
             if curr_char == "\r" and next_char == "\n":
                 # if it ends with \r\n, we only do \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 2:]
+                text = text[idx + 2 :]
                 break
             if curr_char == "\r" and next_char is not None:
                 # if it's \r then a normal character, we switch \r to \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 1:]
+                text = text[idx + 1 :]
                 break
             if next_char is None:
                 text = ""
@@ -212,12 +212,7 @@ def _parse_lines_from_text(text):
 
 
 class _StreamContextManagerBase:
-    def __init__(
-        self,
-        pipeline: Union[Pipeline, AsyncPipeline],
-        request: "HttpRequest",
-        **kwargs
-    ):
+    def __init__(self, pipeline: Union[Pipeline, AsyncPipeline], request: "HttpRequest", **kwargs):
         """Used so we can treat stream requests and responses as a context manager.
 
         In Autorest, we only return a `StreamContextManager` if users pass in `stream_response` True
@@ -234,18 +229,14 @@ class _StreamContextManagerBase:
     def close(self):
         ...
 
+
 class _StreamContextManager(_StreamContextManagerBase):
     def __enter__(self) -> "HttpResponse":
         """Actually make the call only when we enter. For sync stream_response calls"""
         pipeline_transport_response = self.pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
+            self.request._internal_request, stream=True, **self.kwargs
         ).http_response
-        self.response = HttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
-        )
+        self.response = HttpResponse(request=self.request, _internal_response=pipeline_transport_response)
         return self.response
 
     def __exit__(self, *args):
@@ -255,23 +246,18 @@ class _StreamContextManager(_StreamContextManagerBase):
     def close(self):
         self.response.close()
 
+
 class _AsyncStreamContextManager(_StreamContextManagerBase):
     async def __aenter__(self) -> "AsyncHttpResponse":
         """Actually make the call only when we enter. For async stream_response calls."""
         if not isinstance(self.pipeline, AsyncPipeline):
             raise TypeError(
-                "Only async calls should enter here. If you mean to do a sync call, "
-                "make sure to use 'with' instead."
+                "Only async calls should enter here. If you mean to do a sync call, " "make sure to use 'with' instead."
             )
-        pipeline_transport_response = (await self.pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
-        )).http_response
-        self.response = AsyncHttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
-        )
+        pipeline_transport_response = (
+            await self.pipeline.run(self.request._internal_request, stream=True, **self.kwargs)
+        ).http_response
+        self.response = AsyncHttpResponse(request=self.request, _internal_response=pipeline_transport_response)
         return self.response
 
     async def __aexit__(self, *args):
@@ -280,7 +266,9 @@ class _AsyncStreamContextManager(_StreamContextManagerBase):
     async def close(self):
         await self.response.close()
 
+
 ################################## CLASSES ######################################
+
 
 class HttpRequest:
     """Represents an HTTP request.
@@ -328,28 +316,23 @@ class HttpRequest:
     ):
         # type: (str, str, Any) -> None
 
-        self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
-            method=method,
-            url=url,
-            headers=headers,
-        ))
+        self._internal_request = kwargs.pop(
+            "_internal_request",
+            _PipelineTransportHttpRequest(
+                method=method,
+                url=url,
+                headers=headers,
+            ),
+        )
 
         if params:
             self._internal_request.format_parameters(params)
 
-        _set_body(
-            content=content,
-            data=data,
-            files=files,
-            json_body=json,
-            internal_request=self._internal_request
-        )
+        _set_body(content=content, data=data, files=files, json_body=json, internal_request=self._internal_request)
 
         if kwargs:
             raise TypeError(
-                "You have passed in kwargs '{}' that are not valid kwargs.".format(
-                    "', '".join(list(kwargs.keys()))
-                )
+                "You have passed in kwargs '{}' that are not valid kwargs.".format("', '".join(list(kwargs.keys())))
             )
 
     def _set_content_length_header(self) -> None:
@@ -376,19 +359,15 @@ class HttpRequest:
 
     @property
     def content(self) -> Any:
-        """Gets the request content.
-        """
+        """Gets the request content."""
         return self._internal_request.data or self._internal_request.files
 
     def __repr__(self) -> str:
         return self._internal_request.__repr__()
 
     def __deepcopy__(self, memo=None) -> "HttpRequest":
-        return HttpRequest(
-            self.method,
-            self.url,
-            _internal_request=self._internal_request.__deepcopy__(memo)
-        )
+        return HttpRequest(self.method, self.url, _internal_request=self._internal_request.__deepcopy__(memo))
+
 
 class _HttpResponseBase:
     """Base class for HttpResponse and AsyncHttpResponse.
@@ -414,12 +393,7 @@ class _HttpResponseBase:
      have been downloaded
     """
 
-    def __init__(
-        self,
-        *,
-        request: HttpRequest,
-        **kwargs
-    ):
+    def __init__(self, *, request: HttpRequest, **kwargs):
         self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
         self._request = request
         self.is_closed = False
@@ -468,7 +442,7 @@ class _HttpResponseBase:
         if not content_type:
             return None
         _, params = cgi.parse_header(content_type)
-        encoding = params.get('charset') # -> utf-8
+        encoding = params.get("charset")  # -> utf-8
         if encoding is None or not _lookup_encoding(encoding):
             return None
         return encoding
@@ -533,12 +507,8 @@ class _HttpResponseBase:
             raise ResponseNotReadError()
 
     def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<{}: {} {}{}>".format(
-            type(self).__name__, self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
     def _validate_streaming_access(self) -> None:
         if self.is_closed:
@@ -546,8 +516,8 @@ class _HttpResponseBase:
         if self.is_stream_consumed:
             raise StreamConsumedError()
 
-class HttpResponse(_HttpResponseBase):
 
+class HttpResponse(_HttpResponseBase):
     def close(self) -> None:
         self.is_closed = True
         self._internal_response.internal_response.close()
@@ -565,28 +535,23 @@ class HttpResponse(_HttpResponseBase):
             return self._content
         except AttributeError:
             self._validate_streaming_access()
-            self._content = (
-                self._internal_response.body() or
-                b"".join(self.iter_raw())
-            )
+            self._content = self._internal_response.body() or b"".join(self.iter_raw())
             self._close_stream()
             return self._content
 
     def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
-        """Iterate over the bytes in the response stream
-        """
+        """Iterate over the bytes in the response stream"""
         try:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
+                yield self._content[i : i + chunk_size]
 
         except AttributeError:
             for raw_bytes in self.iter_raw(chunk_size=chunk_size):
                 yield raw_bytes
 
     def iter_text(self, chunk_size: int = None) -> Iterator[str]:
-        """Iterate over the response text
-        """
+        """Iterate over the response text"""
         for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
@@ -602,8 +567,7 @@ class HttpResponse(_HttpResponseBase):
         self.close()
 
     def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
-        """Iterate over the raw response bytes
-        """
+        """Iterate over the raw response bytes"""
         self._validate_streaming_access()
         stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
         for raw_bytes in stream_download:
@@ -614,7 +578,6 @@ class HttpResponse(_HttpResponseBase):
 
 
 class AsyncHttpResponse(_HttpResponseBase):
-
     async def _close_stream(self) -> None:
         self.is_stream_consumed = True
         await self.close()
@@ -634,20 +597,18 @@ class AsyncHttpResponse(_HttpResponseBase):
             return self._content
 
     async def iter_bytes(self, chunk_size: int = None) -> Iterator[bytes]:
-        """Iterate over the bytes in the response stream
-        """
+        """Iterate over the bytes in the response stream"""
         try:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
+                yield self._content[i : i + chunk_size]
 
         except AttributeError:
             async for raw_bytes in self.iter_raw(chunk_size=chunk_size):
                 yield raw_bytes
 
     async def iter_text(self, chunk_size: int = None) -> Iterator[str]:
-        """Iterate over the response text
-        """
+        """Iterate over the response text"""
         async for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
@@ -659,8 +620,7 @@ class AsyncHttpResponse(_HttpResponseBase):
                 yield line
 
     async def iter_raw(self, chunk_size: int = None) -> Iterator[bytes]:
-        """Iterate over the raw response bytes
-        """
+        """Iterate over the raw response bytes"""
         self._validate_streaming_access()
         stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
         async for raw_bytes in stream_download:
@@ -681,6 +641,7 @@ class AsyncHttpResponse(_HttpResponseBase):
 
 ########################### ERRORS SECTION #################################
 
+
 class StreamConsumedError(Exception):
     def __init__(self) -> None:
         message = (
@@ -689,18 +650,14 @@ class StreamConsumedError(Exception):
         )
         super().__init__(message)
 
+
 class ResponseClosedError(Exception):
     def __init__(self) -> None:
-        message = (
-            "You can not try to read or stream this response's content, since the "
-            "response has been closed."
-        )
+        message = "You can not try to read or stream this response's content, since the " "response has been closed."
         super().__init__(message)
 
-class ResponseNotReadError(Exception):
 
+class ResponseNotReadError(Exception):
     def __init__(self) -> None:
-        message = (
-            "You have not read in the response's bytes yet. Call response.read() first."
-        )
+        message = "You have not read in the response's bytes yet. Call response.read() first."
         super().__init__(message)

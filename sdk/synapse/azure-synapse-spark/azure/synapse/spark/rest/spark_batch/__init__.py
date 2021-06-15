@@ -18,8 +18,8 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_cancel_spark_batch_job_request  # type: ignore
 
 __all__ = [
-    'build_get_spark_batch_jobs_request',
-    'build_create_spark_batch_job_request',
-    'build_get_spark_batch_job_request',
-    'build_cancel_spark_batch_job_request',
+    "build_get_spark_batch_jobs_request",
+    "build_create_spark_batch_job_request",
+    "build_get_spark_batch_job_request",
+    "build_cancel_spark_batch_job_request",
 ]

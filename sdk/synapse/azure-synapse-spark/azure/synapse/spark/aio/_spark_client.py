@@ -48,7 +48,7 @@ class SparkClient(object):
         livy_api_version: str = "2019-11-01-preview",
         **kwargs: Any
     ) -> None:
-        base_url = '{endpoint}'
+        base_url = "{endpoint}"
         self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -56,10 +56,8 @@ class SparkClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.spark_batch = SparkBatchOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.spark_session = SparkSessionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self.spark_batch = SparkBatchOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.spark_session = SparkSessionOperations(self._client, self._config, self._serialize, self._deserialize)
 
     async def send_request(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
@@ -86,7 +84,7 @@ class SparkClient(object):
         """
         request_copy = deepcopy(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         if kwargs.pop("stream", False):
@@ -98,7 +96,7 @@ class SparkClient(object):
         response = AsyncHttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
-            _internal_response=pipeline_response.http_response
+            _internal_response=pipeline_response.http_response,
         )
         await response.read()
         return response

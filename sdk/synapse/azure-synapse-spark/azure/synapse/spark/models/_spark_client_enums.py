@@ -9,6 +9,7 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
+
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -36,20 +37,22 @@ class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CLEANUP = "Cleanup"
     ENDED = "Ended"
 
+
 class SchedulerCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     QUEUED = "Queued"
     SCHEDULED = "Scheduled"
     ENDED = "Ended"
 
+
 class SparkBatchJobResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Spark batch job result.
-    """
+    """The Spark batch job result."""
 
     UNCERTAIN = "Uncertain"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
+
 
 class SparkErrorSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -58,12 +61,13 @@ class SparkErrorSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "Unknown"
     DEPENDENCY = "Dependency"
 
+
 class SparkJobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The job type.
-    """
+    """The job type."""
 
     SPARK_BATCH = "SparkBatch"
     SPARK_SESSION = "SparkSession"
+
 
 class SparkSessionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -71,6 +75,7 @@ class SparkSessionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
+
 
 class SparkStatementLanguageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

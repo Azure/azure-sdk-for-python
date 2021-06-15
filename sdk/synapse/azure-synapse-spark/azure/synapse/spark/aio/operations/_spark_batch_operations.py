@@ -9,7 +9,13 @@ import functools
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.synapse.spark.core.rest import HttpRequest
@@ -17,8 +23,9 @@ from azure.synapse.spark.core.rest import HttpRequest
 from ... import models as _models
 from ...rest import spark_batch as rest_spark_batch
 
-T = TypeVar('T')
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class SparkBatchOperations:
     """SparkBatchOperations async operations.
@@ -65,15 +72,9 @@ class SparkBatchOperations:
         :rtype: ~azure.synapse.spark.models.SparkBatchJobCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJobCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkBatchJobCollection"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_batch.build_get_spark_batch_jobs_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -81,36 +82,34 @@ class SparkBatchOperations:
             from_parameter=from_parameter,
             size=size,
             detailed=detailed,
-            template_url=self.get_spark_batch_jobs.metadata['url'],
+            template_url=self.get_spark_batch_jobs.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkBatchJobCollection', pipeline_response)
+        deserialized = self._deserialize("SparkBatchJobCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_batch_jobs.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}  # type: ignore
+    get_spark_batch_jobs.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches"}  # type: ignore
 
     async def create_spark_batch_job(
-        self,
-        spark_batch_job_options: "_models.SparkBatchJobOptions",
-        *,
-        detailed: Optional[bool] = None,
-        **kwargs: Any
+        self, spark_batch_job_options: "_models.SparkBatchJobOptions", *, detailed: Optional[bool] = None, **kwargs: Any
     ) -> "_models.SparkBatchJob":
         """Create new spark batch job.
 
@@ -124,17 +123,13 @@ class SparkBatchOperations:
         :rtype: ~azure.synapse.spark.models.SparkBatchJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkBatchJob"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-
-
-        json = self._serialize.body(spark_batch_job_options, 'object')
+        json = self._serialize.body(spark_batch_job_options, "object")
 
         request = rest_spark_batch.build_create_spark_batch_job_request(
             spark_pool_name=self._config.spark_pool_name,
@@ -142,36 +137,34 @@ class SparkBatchOperations:
             detailed=detailed,
             json=json,
             content_type=content_type,
-            template_url=self.create_spark_batch_job.metadata['url'],
+            template_url=self.create_spark_batch_job.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+        deserialized = self._deserialize("SparkBatchJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches'}  # type: ignore
+    create_spark_batch_job.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches"}  # type: ignore
 
     async def get_spark_batch_job(
-        self,
-        batch_id: int,
-        *,
-        detailed: Optional[bool] = None,
-        **kwargs: Any
+        self, batch_id: int, *, detailed: Optional[bool] = None, **kwargs: Any
     ) -> "_models.SparkBatchJob":
         """Gets a single spark batch job.
 
@@ -185,50 +178,42 @@ class SparkBatchOperations:
         :rtype: ~azure.synapse.spark.models.SparkBatchJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkBatchJob"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.SparkBatchJob"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_batch.build_get_spark_batch_job_request(
             spark_pool_name=self._config.spark_pool_name,
             batch_id=batch_id,
             livy_api_version=self._config.livy_api_version,
             detailed=detailed,
-            template_url=self.get_spark_batch_job.metadata['url'],
+            template_url=self.get_spark_batch_job.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+        deserialized = self._deserialize("SparkBatchJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}  # type: ignore
+    get_spark_batch_job.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}"}  # type: ignore
 
-    async def cancel_spark_batch_job(
-        self,
-        batch_id: int,
-        **kwargs: Any
-    ) -> None:
+    async def cancel_spark_batch_job(self, batch_id: int, **kwargs: Any) -> None:
         """Cancels a running spark batch job.
 
         :param batch_id: Identifier for the batch job.
@@ -238,29 +223,25 @@ class SparkBatchOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-
-
-
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
         request = rest_spark_batch.build_cancel_spark_batch_job_request(
             spark_pool_name=self._config.spark_pool_name,
             batch_id=batch_id,
             livy_api_version=self._config.livy_api_version,
-            template_url=self.cancel_spark_batch_job.metadata['url'],
+            template_url=self.cancel_spark_batch_job.metadata["url"],
             **kwargs
         )._internal_request
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client.send_request(
+            request, stream=False, _return_pipeline_response=True, **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -270,4 +251,4 @@ class SparkBatchOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_spark_batch_job.metadata = {'url': '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}'}  # type: ignore
+    cancel_spark_batch_job.metadata = {"url": "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/batches/{batchId}"}  # type: ignore

@@ -141,37 +141,30 @@ def build_get_spark_sessions_request(
             }
     """
 
-
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions')
+    url = kwargs.pop("template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions")
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if from_parameter is not None:
-        query_parameters['from'] = _SERIALIZER.query("from_parameter", from_parameter, 'int')
+        query_parameters["from"] = _SERIALIZER.query("from_parameter", from_parameter, "int")
     if size is not None:
-        query_parameters['size'] = _SERIALIZER.query("size", size, 'int')
+        query_parameters["size"] = _SERIALIZER.query("size", size, "int")
     if detailed is not None:
-        query_parameters['detailed'] = _SERIALIZER.query("detailed", detailed, 'bool')
+        query_parameters["detailed"] = _SERIALIZER.query("detailed", detailed, "bool")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_create_spark_session_request(
@@ -330,37 +323,31 @@ def build_create_spark_session_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions')
+    url = kwargs.pop("template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions")
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if detailed is not None:
-        query_parameters['detailed'] = _SERIALIZER.query("detailed", detailed, 'bool')
+        query_parameters["detailed"] = _SERIALIZER.query("detailed", detailed, "bool")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
+        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
     )
 
 
@@ -481,41 +468,33 @@ def build_get_spark_session_request(
             }
     """
 
-
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}')
+    url = kwargs.pop(
+        "template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}"
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if detailed is not None:
-        query_parameters['detailed'] = _SERIALIZER.query("detailed", detailed, 'bool')
+        query_parameters["detailed"] = _SERIALIZER.query("detailed", detailed, "bool")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_cancel_spark_session_request(
-    spark_pool_name: str,
-    session_id: int,
-    livy_api_version: str = "2019-11-01-preview",
-    **kwargs: Any
+    spark_pool_name: str, session_id: int, livy_api_version: str = "2019-11-01-preview", **kwargs: Any
 ) -> HttpRequest:
     """Cancels a running spark session.
 
@@ -534,29 +513,22 @@ def build_cancel_spark_session_request(
     :rtype: ~azure.synapse.spark.core.rest.HttpRequest
     """
 
-
-
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}')
+    url = kwargs.pop(
+        "template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}"
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=url, **kwargs)
 
 
 def build_reset_spark_session_timeout_request(
-    spark_pool_name: str,
-    session_id: int,
-    livy_api_version: str = "2019-11-01-preview",
-    **kwargs: Any
+    spark_pool_name: str, session_id: int, livy_api_version: str = "2019-11-01-preview", **kwargs: Any
 ) -> HttpRequest:
     """Sends a keep alive call to the current session to reset the session timeout.
 
@@ -575,29 +547,23 @@ def build_reset_spark_session_timeout_request(
     :rtype: ~azure.synapse.spark.core.rest.HttpRequest
     """
 
-
-
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/reset-timeout')
+    url = kwargs.pop(
+        "template_url",
+        "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/reset-timeout",
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=url, **kwargs)
 
 
 def build_get_spark_statements_request(
-    spark_pool_name: str,
-    session_id: int,
-    livy_api_version: str = "2019-11-01-preview",
-    **kwargs: Any
+    spark_pool_name: str, session_id: int, livy_api_version: str = "2019-11-01-preview", **kwargs: Any
 ) -> HttpRequest:
     """Gets a list of statements within a spark session.
 
@@ -641,28 +607,24 @@ def build_get_spark_statements_request(
             }
     """
 
-
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements')
+    url = kwargs.pop(
+        "template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements"
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
 
 
 def build_create_spark_statement_request(
@@ -723,33 +685,28 @@ def build_create_spark_statement_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements')
+    url = kwargs.pop(
+        "template_url", "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements"
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
 
 
 def build_get_spark_statement_request(
@@ -798,29 +755,26 @@ def build_get_spark_statement_request(
             }
     """
 
-
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}')
+    url = kwargs.pop(
+        "template_url",
+        "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}",
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
-        'statementId': _SERIALIZER.url("statement_id", statement_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
+        "statementId": _SERIALIZER.url("statement_id", statement_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
 
 
 def build_cancel_spark_statement_request(
@@ -857,27 +811,23 @@ def build_cancel_spark_statement_request(
             }
     """
 
-
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}/cancel')
+    url = kwargs.pop(
+        "template_url",
+        "/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}/sessions/{sessionId}/statements/{statementId}/cancel",
+    )
     path_format_arguments = {
-        'livyApiVersion': _SERIALIZER.url("livy_api_version", livy_api_version, 'str', skip_quote=True),
-        'sparkPoolName': _SERIALIZER.url("spark_pool_name", spark_pool_name, 'str', skip_quote=True),
-        'sessionId': _SERIALIZER.url("session_id", session_id, 'int'),
-        'statementId': _SERIALIZER.url("statement_id", statement_id, 'int'),
+        "livyApiVersion": _SERIALIZER.url("livy_api_version", livy_api_version, "str", skip_quote=True),
+        "sparkPoolName": _SERIALIZER.url("spark_pool_name", spark_pool_name, "str", skip_quote=True),
+        "sessionId": _SERIALIZER.url("session_id", session_id, "int"),
+        "statementId": _SERIALIZER.url("statement_id", statement_id, "int"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="POST", url=url, headers=header_parameters, **kwargs)
