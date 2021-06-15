@@ -15,7 +15,7 @@ USAGE:
 """
 
 # Note: This sample would not work on pypy since one of the dependencies
-# of azure-eventhub is not pypy compatible.
+# of azure-servicebus is not pypy compatible.
 
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
