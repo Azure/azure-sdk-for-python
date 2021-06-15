@@ -8,33 +8,33 @@
 
 try:
     from ._request_builders_py3 import build_get_triggers_by_workspace_request
-    from ._request_builders_py3 import build_create_or_update_trigger_request
+    from ._request_builders_py3 import build_create_or_update_trigger_request_initial
     from ._request_builders_py3 import build_get_trigger_request
-    from ._request_builders_py3 import build_delete_trigger_request
-    from ._request_builders_py3 import build_subscribe_trigger_to_events_request
+    from ._request_builders_py3 import build_delete_trigger_request_initial
+    from ._request_builders_py3 import build_subscribe_trigger_to_events_request_initial
     from ._request_builders_py3 import build_get_event_subscription_status_request
-    from ._request_builders_py3 import build_unsubscribe_trigger_from_events_request
-    from ._request_builders_py3 import build_start_trigger_request
-    from ._request_builders_py3 import build_stop_trigger_request
+    from ._request_builders_py3 import build_unsubscribe_trigger_from_events_request_initial
+    from ._request_builders_py3 import build_start_trigger_request_initial
+    from ._request_builders_py3 import build_stop_trigger_request_initial
 except (SyntaxError, ImportError):
     from ._request_builders import build_get_triggers_by_workspace_request  # type: ignore
-    from ._request_builders import build_create_or_update_trigger_request  # type: ignore
+    from ._request_builders import build_create_or_update_trigger_request_initial  # type: ignore
     from ._request_builders import build_get_trigger_request  # type: ignore
-    from ._request_builders import build_delete_trigger_request  # type: ignore
-    from ._request_builders import build_subscribe_trigger_to_events_request  # type: ignore
+    from ._request_builders import build_delete_trigger_request_initial  # type: ignore
+    from ._request_builders import build_subscribe_trigger_to_events_request_initial  # type: ignore
     from ._request_builders import build_get_event_subscription_status_request  # type: ignore
-    from ._request_builders import build_unsubscribe_trigger_from_events_request  # type: ignore
-    from ._request_builders import build_start_trigger_request  # type: ignore
-    from ._request_builders import build_stop_trigger_request  # type: ignore
+    from ._request_builders import build_unsubscribe_trigger_from_events_request_initial  # type: ignore
+    from ._request_builders import build_start_trigger_request_initial  # type: ignore
+    from ._request_builders import build_stop_trigger_request_initial  # type: ignore
 
 __all__ = [
-    'build_get_triggers_by_workspace_request',
-    'build_create_or_update_trigger_request',
-    'build_get_trigger_request',
-    'build_delete_trigger_request',
-    'build_subscribe_trigger_to_events_request',
-    'build_get_event_subscription_status_request',
-    'build_unsubscribe_trigger_from_events_request',
-    'build_start_trigger_request',
-    'build_stop_trigger_request',
+    "build_get_triggers_by_workspace_request",
+    "build_create_or_update_trigger_request_initial",
+    "build_get_trigger_request",
+    "build_delete_trigger_request_initial",
+    "build_subscribe_trigger_to_events_request_initial",
+    "build_get_event_subscription_status_request",
+    "build_unsubscribe_trigger_from_events_request_initial",
+    "build_start_trigger_request_initial",
+    "build_stop_trigger_request_initial",
 ]

@@ -14,6 +14,6 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_get_request  # type: ignore
 
 __all__ = [
-    'build_list_request',
-    'build_get_request',
+    "build_list_request",
+    "build_get_request",
 ]

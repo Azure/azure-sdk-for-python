@@ -14,18 +14,16 @@ from msrest import Serializer
 _SERIALIZER = Serializer()
 
 
-def build_get_spark_job_definitions_by_workspace_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_spark_job_definitions_by_workspace_request(**kwargs: Any) -> HttpRequest:
     """Lists spark job definitions.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -35,6 +33,9 @@ def build_get_spark_job_definitions_by_workspace_request(
                 "nextLink": "str (optional)",
                 "value": [
                     {
+                        "etag": "str (optional)",
+                        "id": "str (optional)",
+                        "name": "str (optional)",
                         "properties": {
                             "": {
                                 "str": "object (optional)"
@@ -72,37 +73,31 @@ def build_get_spark_job_definitions_by_workspace_request(
                                 "referenceName": "str",
                                 "type": "str"
                             }
-                        }
+                        },
+                        "type": "str (optional)"
                     }
                 ]
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sparkJobDefinitions')
+    url = kwargs.pop("template_url", "/sparkJobDefinitions")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_create_or_update_spark_job_definition_request(
+def build_create_or_update_spark_job_definition_request_initial(
     spark_job_definition_name: str,
     *,
     json: Any = None,
@@ -126,16 +121,19 @@ def build_create_or_update_spark_job_definition_request(
     :keyword if_match: ETag of the Spark Job Definition entity.  Should only be specified for
      update, for which it should match existing entity or can be * for unconditional update.
     :paramtype if_match: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
                 "properties": {
                     "": {
                         "str": "object (optional)"
@@ -173,11 +171,15 @@ def build_create_or_update_spark_job_definition_request(
                         "referenceName": "str",
                         "type": "str"
                     }
-                }
+                },
+                "type": "str (optional)"
             }
 
             # response body for status code(s): 200
             response.json() == {
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
                 "properties": {
                     "": {
                         "str": "object (optional)"
@@ -215,50 +217,42 @@ def build_create_or_update_spark_job_definition_request(
                         "referenceName": "str",
                         "type": "str"
                     }
-                }
+                },
+                "type": "str (optional)"
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}')
+    url = kwargs.pop("template_url", "/sparkJobDefinitions/{sparkJobDefinitionName}")
     path_format_arguments = {
-        'sparkJobDefinitionName': _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        "sparkJobDefinitionName": _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        header_parameters["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
+        method="PUT", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
     )
 
 
 def build_get_spark_job_definition_request(
-    spark_job_definition_name: str,
-    *,
-    if_none_match: Optional[str] = None,
-    **kwargs: Any
+    spark_job_definition_name: str, *, if_none_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     """Gets a Spark Job Definition.
 
@@ -271,16 +265,19 @@ def build_get_spark_job_definition_request(
      get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
      returned.
     :paramtype if_none_match: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
             # response body for status code(s): 200
             response.json() == {
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
                 "properties": {
                     "": {
                         "str": "object (optional)"
@@ -318,44 +315,35 @@ def build_get_spark_job_definition_request(
                         "referenceName": "str",
                         "type": "str"
                     }
-                }
+                },
+                "type": "str (optional)"
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}')
+    url = kwargs.pop("template_url", "/sparkJobDefinitions/{sparkJobDefinitionName}")
     path_format_arguments = {
-        'sparkJobDefinitionName': _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        "sparkJobDefinitionName": _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_delete_spark_job_definition_request(
-    spark_job_definition_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_spark_job_definition_request_initial(spark_job_definition_name: str, **kwargs: Any) -> HttpRequest:
     """Deletes a Spark Job Definition.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -363,44 +351,34 @@ def build_delete_spark_job_definition_request(
 
     :param spark_job_definition_name: The spark job definition name.
     :type spark_job_definition_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}')
+    url = kwargs.pop("template_url", "/sparkJobDefinitions/{sparkJobDefinitionName}")
     path_format_arguments = {
-        'sparkJobDefinitionName': _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        "sparkJobDefinitionName": _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_execute_spark_job_definition_request(
-    spark_job_definition_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_execute_spark_job_definition_request_initial(spark_job_definition_name: str, **kwargs: Any) -> HttpRequest:
     """Executes the spark job definition.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -408,10 +386,10 @@ def build_execute_spark_job_definition_request(
 
     :param spark_job_definition_name: The spark job definition name.
     :type spark_job_definition_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -501,40 +479,29 @@ def build_execute_spark_job_definition_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}/execute')
+    url = kwargs.pop("template_url", "/sparkJobDefinitions/{sparkJobDefinitionName}/execute")
     path_format_arguments = {
-        'sparkJobDefinitionName': _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        "sparkJobDefinitionName": _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_rename_spark_job_definition_request(
-    spark_job_definition_name: str,
-    *,
-    json: Any = None,
-    content: Any = None,
-    **kwargs: Any
+def build_rename_spark_job_definition_request_initial(
+    spark_job_definition_name: str, *, json: Any = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     """Renames a sparkJobDefinition.
 
@@ -549,10 +516,10 @@ def build_rename_spark_job_definition_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). proposed new name.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -563,44 +530,35 @@ def build_rename_spark_job_definition_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sparkJobDefinitions/{sparkJobDefinitionName}/rename')
+    url = kwargs.pop("template_url", "/sparkJobDefinitions/{sparkJobDefinitionName}/rename")
     path_format_arguments = {
-        'sparkJobDefinitionName': _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, 'str'),
+        "sparkJobDefinitionName": _SERIALIZER.url("spark_job_definition_name", spark_job_definition_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
+        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
     )
 
 
-def build_debug_spark_job_definition_request(
-    *,
-    json: Any = None,
-    content: Any = None,
-    **kwargs: Any
+def build_debug_spark_job_definition_request_initial(
+    *, json: Any = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     """Debug the spark job definition.
 
@@ -613,16 +571,19 @@ def build_debug_spark_job_definition_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Spark Job Definition resource definition.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
                 "properties": {
                     "": {
                         "str": "object (optional)"
@@ -660,7 +621,8 @@ def build_debug_spark_job_definition_request(
                         "referenceName": "str",
                         "type": "str"
                     }
-                }
+                },
+                "type": "str (optional)"
             }
 
             # response body for status code(s): 200, 202
@@ -748,31 +710,24 @@ def build_debug_spark_job_definition_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/debugSparkJobDefinition')
+    url = kwargs.pop("template_url", "/debugSparkJobDefinition")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
+        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
     )
-

@@ -19,7 +19,7 @@ _SERIALIZER = Serializer()
 
 
 def build_get_request(
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Get Workspace.
@@ -27,10 +27,10 @@ def build_get_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -58,11 +58,13 @@ def build_get_request(
                 "extraProperties": {
                     "str": "object (optional)"
                 },
+                "id": "str (optional)",
                 "identity": {
                     "principalId": "str (optional)",
                     "tenantId": "str (optional)",
                     "type": "str (optional)"
                 },
+                "location": "str",
                 "managedResourceGroupName": "str (optional)",
                 "managedVirtualNetwork": "str (optional)",
                 "managedVirtualNetworkSettings": {
@@ -72,8 +74,11 @@ def build_get_request(
                     "linkedAccessCheckOnTargetResource": "bool (optional)",
                     "preventDataExfiltration": "bool (optional)"
                 },
+                "name": "str (optional)",
                 "privateEndpointConnections": [
                     {
+                        "id": "str (optional)",
+                        "name": "str (optional)",
                         "privateEndpoint": {
                             "id": "str (optional)"
                         },
@@ -82,7 +87,8 @@ def build_get_request(
                             "description": "str (optional)",
                             "status": "str (optional)"
                         },
-                        "provisioningState": "str (optional)"
+                        "provisioningState": "str (optional)",
+                        "type": "str (optional)"
                     }
                 ],
                 "provisioningState": "str (optional)",
@@ -91,6 +97,10 @@ def build_get_request(
                 },
                 "sqlAdministratorLogin": "str (optional)",
                 "sqlAdministratorLoginPassword": "str (optional)",
+                "tags": {
+                    "str": "str (optional)"
+                },
+                "type": "str (optional)",
                 "virtualNetworkProfile": {
                     "computeSubnetId": "str (optional)"
                 },
@@ -109,26 +119,18 @@ def build_get_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/workspace')
+    url = kwargs.pop("template_url", "/workspace")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)

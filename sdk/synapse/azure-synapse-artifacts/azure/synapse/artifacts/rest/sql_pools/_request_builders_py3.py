@@ -14,18 +14,16 @@ from msrest import Serializer
 _SERIALIZER = Serializer()
 
 
-def build_list_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_request(**kwargs: Any) -> HttpRequest:
     """List Sql Pools.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -38,7 +36,10 @@ def build_list_request(
                         "collation": "str (optional)",
                         "createMode": "str (optional)",
                         "creationDate": "datetime (optional)",
+                        "id": "str (optional)",
+                        "location": "str",
                         "maxSizeBytes": "long (optional)",
+                        "name": "str (optional)",
                         "provisioningState": "str (optional)",
                         "recoverableDatabaseId": "str (optional)",
                         "restorePointInTime": "str (optional)",
@@ -48,40 +49,34 @@ def build_list_request(
                             "tier": "str (optional)"
                         },
                         "sourceDatabaseId": "str (optional)",
-                        "status": "str (optional)"
+                        "status": "str (optional)",
+                        "tags": {
+                            "str": "str (optional)"
+                        },
+                        "type": "str (optional)"
                     }
                 ]
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlPools')
+    url = kwargs.pop("template_url", "/sqlPools")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_get_request(
-    sql_pool_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_request(sql_pool_name: str, **kwargs: Any) -> HttpRequest:
     """Get Sql Pool.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -89,10 +84,10 @@ def build_get_request(
 
     :param sql_pool_name: The Sql Pool name.
     :type sql_pool_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -102,7 +97,10 @@ def build_get_request(
                 "collation": "str (optional)",
                 "createMode": "str (optional)",
                 "creationDate": "datetime (optional)",
+                "id": "str (optional)",
+                "location": "str",
                 "maxSizeBytes": "long (optional)",
+                "name": "str (optional)",
                 "provisioningState": "str (optional)",
                 "recoverableDatabaseId": "str (optional)",
                 "restorePointInTime": "str (optional)",
@@ -112,34 +110,30 @@ def build_get_request(
                     "tier": "str (optional)"
                 },
                 "sourceDatabaseId": "str (optional)",
-                "status": "str (optional)"
+                "status": "str (optional)",
+                "tags": {
+                    "str": "str (optional)"
+                },
+                "type": "str (optional)"
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlPools/{sqlPoolName}')
+    url = kwargs.pop("template_url", "/sqlPools/{sqlPoolName}")
     path_format_arguments = {
-        'sqlPoolName': _SERIALIZER.url("sql_pool_name", sql_pool_name, 'str'),
+        "sqlPoolName": _SERIALIZER.url("sql_pool_name", sql_pool_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)

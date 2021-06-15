@@ -14,18 +14,16 @@ from msrest import Serializer
 _SERIALIZER = Serializer()
 
 
-def build_list_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_request(**kwargs: Any) -> HttpRequest:
     """Lists Library.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -35,6 +33,9 @@ def build_list_request(
                 "nextLink": "str (optional)",
                 "value": [
                     {
+                        "etag": "str (optional)",
+                        "id": "str (optional)",
+                        "name": "str (optional)",
                         "properties": {
                             "containerName": "str (optional)",
                             "creatorId": "str (optional)",
@@ -43,40 +44,31 @@ def build_list_request(
                             "provisioningStatus": "str (optional)",
                             "type": "str (optional)",
                             "uploadedTimestamp": "str (optional)"
-                        }
+                        },
+                        "type": "str (optional)"
                     }
                 ]
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraries')
+    url = kwargs.pop("template_url", "/libraries")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_flush_request(
-    library_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_flush_request_initial(library_name: str, **kwargs: Any) -> HttpRequest:
     """Flush Library.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -85,10 +77,10 @@ def build_flush_request(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -107,38 +99,28 @@ def build_flush_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraries/{libraryName}/flush')
+    url = kwargs.pop("template_url", "/libraries/{libraryName}/flush")
     path_format_arguments = {
-        'libraryName': _SERIALIZER.url("library_name", library_name, 'str', max_length=100, min_length=0),
+        "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100, min_length=0),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_get_operation_result_request(
-    operation_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_operation_result_request(operation_id: str, **kwargs: Any) -> HttpRequest:
     """Get Operation result for Library.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -146,16 +128,19 @@ def build_get_operation_result_request(
 
     :param operation_id: operation id for which status is requested.
     :type operation_id: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
             # response body for status code(s): 200
             response.json() == {
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
                 "properties": {
                     "containerName": "str (optional)",
                     "creatorId": "str (optional)",
@@ -164,7 +149,8 @@ def build_get_operation_result_request(
                     "provisioningStatus": "str (optional)",
                     "type": "str (optional)",
                     "uploadedTimestamp": "str (optional)"
-                }
+                },
+                "type": "str (optional)"
             }
             # response body for status code(s): 202
             response.json() == {
@@ -185,38 +171,28 @@ def build_get_operation_result_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraryOperationResults/{operationId}')
+    url = kwargs.pop("template_url", "/libraryOperationResults/{operationId}")
     path_format_arguments = {
-        'operationId': _SERIALIZER.url("operation_id", operation_id, 'str'),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_delete_request(
-    library_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_request_initial(library_name: str, **kwargs: Any) -> HttpRequest:
     """Delete Library.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -225,10 +201,10 @@ def build_delete_request(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -247,38 +223,28 @@ def build_delete_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraries/{libraryName}')
+    url = kwargs.pop("template_url", "/libraries/{libraryName}")
     path_format_arguments = {
-        'libraryName': _SERIALIZER.url("library_name", library_name, 'str', max_length=100, min_length=0),
+        "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100, min_length=0),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_get_request(
-    library_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_request(library_name: str, **kwargs: Any) -> HttpRequest:
     """Get Library.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -287,16 +253,19 @@ def build_get_request(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
             # response body for status code(s): 200
             response.json() == {
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
                 "properties": {
                     "containerName": "str (optional)",
                     "creatorId": "str (optional)",
@@ -305,42 +274,33 @@ def build_get_request(
                     "provisioningStatus": "str (optional)",
                     "type": "str (optional)",
                     "uploadedTimestamp": "str (optional)"
-                }
+                },
+                "type": "str (optional)"
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraries/{libraryName}')
+    url = kwargs.pop("template_url", "/libraries/{libraryName}")
     path_format_arguments = {
-        'libraryName': _SERIALIZER.url("library_name", library_name, 'str', max_length=100, min_length=0),
+        "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100, min_length=0),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_create_request(
-    library_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_create_request_initial(library_name: str, **kwargs: Any) -> HttpRequest:
     """Creates a library with the library name.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -349,10 +309,10 @@ def build_create_request(
     :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
      the extension length.
     :type library_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -371,41 +331,29 @@ def build_create_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraries/{libraryName}')
+    url = kwargs.pop("template_url", "/libraries/{libraryName}")
     path_format_arguments = {
-        'libraryName': _SERIALIZER.url("library_name", library_name, 'str', max_length=100, min_length=0),
+        "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100, min_length=0),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_append_request(
-    library_name: str,
-    *,
-    content: Any,
-    content: IO,
-    blob_condition_append_position: Optional[int] = None,
-    **kwargs: Any
+    library_name: str, *, content: Any, content: IO, blob_condition_append_position: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     """Append the content to the library resource created using the create operation. The maximum
     content size is 4MiB. Content larger than 4MiB must be appended in 4MiB chunks.
@@ -426,44 +374,40 @@ def build_append_request(
      Otherwise, the request fails with the AppendPositionConditionNotMet error (HTTP status code 412
      – Precondition Failed).
     :paramtype blob_condition_append_position: long
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
     comp = "appendblock"
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/libraries/{libraryName}')
+    url = kwargs.pop("template_url", "/libraries/{libraryName}")
     path_format_arguments = {
-        'libraryName': _SERIALIZER.url("library_name", library_name, 'str', max_length=100, min_length=0),
+        "libraryName": _SERIALIZER.url("library_name", library_name, "str", max_length=100, min_length=0),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["comp"] = _SERIALIZER.query("comp", comp, "str")
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if blob_condition_append_position is not None:
-        header_parameters['x-ms-blob-condition-appendpos'] = _SERIALIZER.header("blob_condition_append_position", blob_condition_append_position, 'long')
+        header_parameters["x-ms-blob-condition-appendpos"] = _SERIALIZER.header(
+            "blob_condition_append_position", blob_condition_append_position, "long"
+        )
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        content=content,
-        **kwargs
+        method="PUT", url=url, params=query_parameters, headers=header_parameters, content=content, **kwargs
     )
-

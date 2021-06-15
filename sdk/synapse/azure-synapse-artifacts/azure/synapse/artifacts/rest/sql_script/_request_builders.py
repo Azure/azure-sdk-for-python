@@ -19,7 +19,7 @@ _SERIALIZER = Serializer()
 
 
 def build_get_sql_scripts_by_workspace_request(
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Lists sql scripts.
@@ -27,10 +27,10 @@ def build_get_sql_scripts_by_workspace_request(
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -75,33 +75,26 @@ def build_get_sql_scripts_by_workspace_request(
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlScripts')
+    url = kwargs.pop("template_url", "/sqlScripts")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_create_or_update_sql_script_request(
+def build_create_or_update_sql_script_request_initial(
     sql_script_name,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Creates or updates a Sql Script.
@@ -120,10 +113,10 @@ def build_create_or_update_sql_script_request(
     :keyword if_match: ETag of the SQL script entity.  Should only be specified for update, for
      which it should match existing entity or can be * for unconditional update.
     :paramtype if_match: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -197,43 +190,39 @@ def build_create_or_update_sql_script_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    json = kwargs.pop("json", None)  # type: Any
+    if_match = kwargs.pop("if_match", None)  # type: Optional[str]
+    if_match = kwargs.pop("if_match", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}')
+    url = kwargs.pop("template_url", "/sqlScripts/{sqlScriptName}")
     path_format_arguments = {
-        'sqlScriptName': _SERIALIZER.url("sql_script_name", sql_script_name, 'str'),
+        "sqlScriptName": _SERIALIZER.url("sql_script_name", sql_script_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        header_parameters["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_get_sql_script_request(
     sql_script_name,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Gets a sql script.
@@ -247,10 +236,10 @@ def build_get_sql_script_request(
      the ETag matches the existing entity tag, or if * was provided, then no content will be
      returned.
     :paramtype if_none_match: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -290,40 +279,35 @@ def build_get_sql_script_request(
             }
     """
 
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
+    if_none_match = kwargs.pop("if_none_match", None)  # type: Optional[str]
+    if_none_match = kwargs.pop("if_none_match", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}')
+    url = kwargs.pop("template_url", "/sqlScripts/{sqlScriptName}")
     path_format_arguments = {
-        'sqlScriptName': _SERIALIZER.url("sql_script_name", sql_script_name, 'str'),
+        "sqlScriptName": _SERIALIZER.url("sql_script_name", sql_script_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_delete_sql_script_request(
+def build_delete_sql_script_request_initial(
     sql_script_name,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Deletes a Sql Script.
@@ -333,43 +317,36 @@ def build_delete_sql_script_request(
 
     :param sql_script_name: The sql script name.
     :type sql_script_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}')
+    url = kwargs.pop("template_url", "/sqlScripts/{sqlScriptName}")
     path_format_arguments = {
-        'sqlScriptName': _SERIALIZER.url("sql_script_name", sql_script_name, 'str'),
+        "sqlScriptName": _SERIALIZER.url("sql_script_name", sql_script_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_rename_sql_script_request(
+def build_rename_sql_script_request_initial(
     sql_script_name,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Renames a sqlScript.
@@ -385,10 +362,10 @@ def build_rename_sql_script_request(
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). proposed new name.
     :paramtype content: Any
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -399,33 +376,27 @@ def build_rename_sql_script_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    json = kwargs.pop("json", None)  # type: Any
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/sqlScripts/{sqlScriptName}/rename')
+    url = kwargs.pop("template_url", "/sqlScripts/{sqlScriptName}/rename")
     path_format_arguments = {
-        'sqlScriptName': _SERIALIZER.url("sql_script_name", sql_script_name, 'str'),
+        "sqlScriptName": _SERIALIZER.url("sql_script_name", sql_script_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)

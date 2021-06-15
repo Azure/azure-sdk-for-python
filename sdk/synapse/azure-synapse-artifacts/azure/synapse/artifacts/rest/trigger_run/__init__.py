@@ -16,7 +16,7 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_query_trigger_runs_by_workspace_request  # type: ignore
 
 __all__ = [
-    'build_rerun_trigger_instance_request',
-    'build_cancel_trigger_instance_request',
-    'build_query_trigger_runs_by_workspace_request',
+    "build_rerun_trigger_instance_request",
+    "build_cancel_trigger_instance_request",
+    "build_query_trigger_runs_by_workspace_request",
 ]

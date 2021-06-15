@@ -15,11 +15,7 @@ _SERIALIZER = Serializer()
 
 
 def build_get_git_hub_access_token_request(
-    *,
-    json: Any = None,
-    content: Any = None,
-    client_request_id: Optional[str] = None,
-    **kwargs: Any
+    *, json: Any = None, content: Any = None, client_request_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     """Get the GitHub access token.
 
@@ -35,10 +31,10 @@ def build_get_git_hub_access_token_request(
     :keyword client_request_id: Can provide a guid, which is helpful for debugging and to provide
      better customer support.
     :paramtype client_request_id: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -56,33 +52,26 @@ def build_get_git_hub_access_token_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/getGitHubAccessToken')
+    url = kwargs.pop("template_url", "/getGitHubAccessToken")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if client_request_id is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        header_parameters["x-ms-client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
+        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
     )
-

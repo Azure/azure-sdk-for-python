@@ -18,8 +18,8 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_cancel_pipeline_run_request  # type: ignore
 
 __all__ = [
-    'build_query_pipeline_runs_by_workspace_request',
-    'build_get_pipeline_run_request',
-    'build_query_activity_runs_request',
-    'build_cancel_pipeline_run_request',
+    "build_query_pipeline_runs_by_workspace_request",
+    "build_get_pipeline_run_request",
+    "build_query_activity_runs_request",
+    "build_cancel_pipeline_run_request",
 ]

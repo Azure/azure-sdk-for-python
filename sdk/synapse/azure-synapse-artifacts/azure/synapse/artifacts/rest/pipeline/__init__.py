@@ -8,24 +8,24 @@
 
 try:
     from ._request_builders_py3 import build_get_pipelines_by_workspace_request
-    from ._request_builders_py3 import build_create_or_update_pipeline_request
+    from ._request_builders_py3 import build_create_or_update_pipeline_request_initial
     from ._request_builders_py3 import build_get_pipeline_request
-    from ._request_builders_py3 import build_delete_pipeline_request
-    from ._request_builders_py3 import build_rename_pipeline_request
+    from ._request_builders_py3 import build_delete_pipeline_request_initial
+    from ._request_builders_py3 import build_rename_pipeline_request_initial
     from ._request_builders_py3 import build_create_pipeline_run_request
 except (SyntaxError, ImportError):
     from ._request_builders import build_get_pipelines_by_workspace_request  # type: ignore
-    from ._request_builders import build_create_or_update_pipeline_request  # type: ignore
+    from ._request_builders import build_create_or_update_pipeline_request_initial  # type: ignore
     from ._request_builders import build_get_pipeline_request  # type: ignore
-    from ._request_builders import build_delete_pipeline_request  # type: ignore
-    from ._request_builders import build_rename_pipeline_request  # type: ignore
+    from ._request_builders import build_delete_pipeline_request_initial  # type: ignore
+    from ._request_builders import build_rename_pipeline_request_initial  # type: ignore
     from ._request_builders import build_create_pipeline_run_request  # type: ignore
 
 __all__ = [
-    'build_get_pipelines_by_workspace_request',
-    'build_create_or_update_pipeline_request',
-    'build_get_pipeline_request',
-    'build_delete_pipeline_request',
-    'build_rename_pipeline_request',
-    'build_create_pipeline_run_request',
+    "build_get_pipelines_by_workspace_request",
+    "build_create_or_update_pipeline_request_initial",
+    "build_get_pipeline_request",
+    "build_delete_pipeline_request_initial",
+    "build_rename_pipeline_request_initial",
+    "build_create_pipeline_run_request",
 ]

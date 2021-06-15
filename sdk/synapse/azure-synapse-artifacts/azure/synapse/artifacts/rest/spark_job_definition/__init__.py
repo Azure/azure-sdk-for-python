@@ -8,27 +8,27 @@
 
 try:
     from ._request_builders_py3 import build_get_spark_job_definitions_by_workspace_request
-    from ._request_builders_py3 import build_create_or_update_spark_job_definition_request
+    from ._request_builders_py3 import build_create_or_update_spark_job_definition_request_initial
     from ._request_builders_py3 import build_get_spark_job_definition_request
-    from ._request_builders_py3 import build_delete_spark_job_definition_request
-    from ._request_builders_py3 import build_execute_spark_job_definition_request
-    from ._request_builders_py3 import build_rename_spark_job_definition_request
-    from ._request_builders_py3 import build_debug_spark_job_definition_request
+    from ._request_builders_py3 import build_delete_spark_job_definition_request_initial
+    from ._request_builders_py3 import build_execute_spark_job_definition_request_initial
+    from ._request_builders_py3 import build_rename_spark_job_definition_request_initial
+    from ._request_builders_py3 import build_debug_spark_job_definition_request_initial
 except (SyntaxError, ImportError):
     from ._request_builders import build_get_spark_job_definitions_by_workspace_request  # type: ignore
-    from ._request_builders import build_create_or_update_spark_job_definition_request  # type: ignore
+    from ._request_builders import build_create_or_update_spark_job_definition_request_initial  # type: ignore
     from ._request_builders import build_get_spark_job_definition_request  # type: ignore
-    from ._request_builders import build_delete_spark_job_definition_request  # type: ignore
-    from ._request_builders import build_execute_spark_job_definition_request  # type: ignore
-    from ._request_builders import build_rename_spark_job_definition_request  # type: ignore
-    from ._request_builders import build_debug_spark_job_definition_request  # type: ignore
+    from ._request_builders import build_delete_spark_job_definition_request_initial  # type: ignore
+    from ._request_builders import build_execute_spark_job_definition_request_initial  # type: ignore
+    from ._request_builders import build_rename_spark_job_definition_request_initial  # type: ignore
+    from ._request_builders import build_debug_spark_job_definition_request_initial  # type: ignore
 
 __all__ = [
-    'build_get_spark_job_definitions_by_workspace_request',
-    'build_create_or_update_spark_job_definition_request',
-    'build_get_spark_job_definition_request',
-    'build_delete_spark_job_definition_request',
-    'build_execute_spark_job_definition_request',
-    'build_rename_spark_job_definition_request',
-    'build_debug_spark_job_definition_request',
+    "build_get_spark_job_definitions_by_workspace_request",
+    "build_create_or_update_spark_job_definition_request_initial",
+    "build_get_spark_job_definition_request",
+    "build_delete_spark_job_definition_request_initial",
+    "build_execute_spark_job_definition_request_initial",
+    "build_rename_spark_job_definition_request_initial",
+    "build_debug_spark_job_definition_request_initial",
 ]

@@ -9,23 +9,23 @@
 try:
     from ._request_builders_py3 import build_get_notebooks_by_workspace_request
     from ._request_builders_py3 import build_get_notebook_summary_by_work_space_request
-    from ._request_builders_py3 import build_create_or_update_notebook_request
+    from ._request_builders_py3 import build_create_or_update_notebook_request_initial
     from ._request_builders_py3 import build_get_notebook_request
-    from ._request_builders_py3 import build_delete_notebook_request
-    from ._request_builders_py3 import build_rename_notebook_request
+    from ._request_builders_py3 import build_delete_notebook_request_initial
+    from ._request_builders_py3 import build_rename_notebook_request_initial
 except (SyntaxError, ImportError):
     from ._request_builders import build_get_notebooks_by_workspace_request  # type: ignore
     from ._request_builders import build_get_notebook_summary_by_work_space_request  # type: ignore
-    from ._request_builders import build_create_or_update_notebook_request  # type: ignore
+    from ._request_builders import build_create_or_update_notebook_request_initial  # type: ignore
     from ._request_builders import build_get_notebook_request  # type: ignore
-    from ._request_builders import build_delete_notebook_request  # type: ignore
-    from ._request_builders import build_rename_notebook_request  # type: ignore
+    from ._request_builders import build_delete_notebook_request_initial  # type: ignore
+    from ._request_builders import build_rename_notebook_request_initial  # type: ignore
 
 __all__ = [
-    'build_get_notebooks_by_workspace_request',
-    'build_get_notebook_summary_by_work_space_request',
-    'build_create_or_update_notebook_request',
-    'build_get_notebook_request',
-    'build_delete_notebook_request',
-    'build_rename_notebook_request',
+    "build_get_notebooks_by_workspace_request",
+    "build_get_notebook_summary_by_work_space_request",
+    "build_create_or_update_notebook_request_initial",
+    "build_get_notebook_request",
+    "build_delete_notebook_request_initial",
+    "build_rename_notebook_request_initial",
 ]

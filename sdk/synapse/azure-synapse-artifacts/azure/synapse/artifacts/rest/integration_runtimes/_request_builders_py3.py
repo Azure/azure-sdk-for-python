@@ -14,18 +14,16 @@ from msrest import Serializer
 _SERIALIZER = Serializer()
 
 
-def build_list_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_request(**kwargs: Any) -> HttpRequest:
     """List Integration Runtimes.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
     code flow.
 
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
@@ -35,40 +33,34 @@ def build_list_request(
                 "nextLink": "str (optional)",
                 "value": [
                     {
-                        "properties": "properties"
+                        "etag": "str (optional)",
+                        "id": "str (optional)",
+                        "name": "str (optional)",
+                        "properties": "properties",
+                        "type": "str (optional)"
                     }
                 ]
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/integrationRuntimes')
+    url = kwargs.pop("template_url", "/integrationRuntimes")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
-def build_get_request(
-    integration_runtime_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_request(integration_runtime_name: str, **kwargs: Any) -> HttpRequest:
     """Get Integration Runtime.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -76,44 +68,40 @@ def build_get_request(
 
     :param integration_runtime_name: The Integration Runtime name.
     :type integration_runtime_name: str
-    :return: Returns an :class:`~azure.synapse.artifacts.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
-    :rtype: ~azure.synapse.artifacts.core.rest.HttpRequest
+    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
+    :rtype: ~azure.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
             # response body for status code(s): 200
             response.json() == {
-                "properties": "properties"
+                "etag": "str (optional)",
+                "id": "str (optional)",
+                "name": "str (optional)",
+                "properties": "properties",
+                "type": "str (optional)"
             }
     """
 
-
-    api_version = "2019-06-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/integrationRuntimes/{integrationRuntimeName}')
+    url = kwargs.pop("template_url", "/integrationRuntimes/{integrationRuntimeName}")
     path_format_arguments = {
-        'integrationRuntimeName': _SERIALIZER.url("integration_runtime_name", integration_runtime_name, 'str'),
+        "integrationRuntimeName": _SERIALIZER.url("integration_runtime_name", integration_runtime_name, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)

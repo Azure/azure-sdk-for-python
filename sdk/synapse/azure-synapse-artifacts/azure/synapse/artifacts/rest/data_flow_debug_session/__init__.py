@@ -7,22 +7,22 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._request_builders_py3 import build_create_data_flow_debug_session_request
+    from ._request_builders_py3 import build_create_data_flow_debug_session_request_initial
     from ._request_builders_py3 import build_query_data_flow_debug_sessions_by_workspace_request
     from ._request_builders_py3 import build_add_data_flow_request
     from ._request_builders_py3 import build_delete_data_flow_debug_session_request
-    from ._request_builders_py3 import build_execute_command_request
+    from ._request_builders_py3 import build_execute_command_request_initial
 except (SyntaxError, ImportError):
-    from ._request_builders import build_create_data_flow_debug_session_request  # type: ignore
+    from ._request_builders import build_create_data_flow_debug_session_request_initial  # type: ignore
     from ._request_builders import build_query_data_flow_debug_sessions_by_workspace_request  # type: ignore
     from ._request_builders import build_add_data_flow_request  # type: ignore
     from ._request_builders import build_delete_data_flow_debug_session_request  # type: ignore
-    from ._request_builders import build_execute_command_request  # type: ignore
+    from ._request_builders import build_execute_command_request_initial  # type: ignore
 
 __all__ = [
-    'build_create_data_flow_debug_session_request',
-    'build_query_data_flow_debug_sessions_by_workspace_request',
-    'build_add_data_flow_request',
-    'build_delete_data_flow_debug_session_request',
-    'build_execute_command_request',
+    "build_create_data_flow_debug_session_request_initial",
+    "build_query_data_flow_debug_sessions_by_workspace_request",
+    "build_add_data_flow_request",
+    "build_delete_data_flow_debug_session_request",
+    "build_execute_command_request_initial",
 ]

@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._artifacts_client import ArtifactsClient
-__all__ = ['ArtifactsClient']
+
+__all__ = ["ArtifactsClient"]
