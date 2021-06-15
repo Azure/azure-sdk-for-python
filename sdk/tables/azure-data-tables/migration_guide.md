@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to `azure-data-tables` from `azure-cosmosdb-table`. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-We assume that you are familiar with `azure-cosmosdb-table`. If not, please refer to the README for [`azure-cosmosdb-table`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table) rather than this guide.
+We assume that you are familiar with `azure-cosmosdb-table`. If not, please refer to the README for [`azure-data-tables`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables#azure-data-tables-client-library-for-python) rather than this guide.
 
 ## Table of contents
 
@@ -26,17 +26,13 @@ To improve the development experience across Azure services, a set of uniform [d
 ### Cross Service SDK improvements
 
 The modern `azure-data-tables` client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as:
-- A unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
-
-### Performance improvements
-
-Use this section to advertise the performance improvements in new package when compared to the old one. Skip this section if no perf improvements are found yet.
-@annatisch, should we remove this section?
+* A unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
+* A unified authentication experience using `azure-core` credentials
 
 ### New features
 
 We have a variety of new features available in the new Azure Data Tables library:
-* Ability to submit a batch of operations with the `TableClient.submit_transaction` method
+* A batch of operations can be submitted using list-based transactions.
 * Separates Table and Entity level operations into two clients, `TableServiceClient` and `TableClient`
 * Adds the ability to query tables and list entities explicitly.
 
@@ -44,11 +40,11 @@ We have a variety of new features available in the new Azure Data Tables library
 
 ### Package names and namespaces
 
-The package name has been changed from `azure-cosmosdb-table` to `azure-data-tables`. This package can be used to access and manipulate data stored in a CosmosDB Table account or an Azure Storage Tables account.
+The package name has been changed from `azure-cosmosdb-table` to `azure-data-tables`. This package can be used to access and manipulate data stored in either a CosmosDB Table account or an Azure Storage Tables account.
 
 ### Client hierarchy and constructors
 
-In the interest of simplicity, there are only two clients, `TableServiceClient` for account-level interactions and `TableClient` for table-level interactions. This is in contrast to the single `ServiceClient` used for interacting with the account level operations and entity level operations. The two clients will simplify the method calls by not requiring a Table name to be included on each service call.
+In order to provide an improved conceptual experience, we have divided the single `ServiceClient` into two clients: `TableServiceClient` and `TableClient`. The `TableServiceClient` is used for account-level interactions and the `TableClient` is used for table-level interactions. The two clients simplifies the method calls by not requiring a Table name to be included on each service call.
 
 ### Authenticating Clients
 
@@ -72,9 +68,9 @@ url = os.environ["TABLES_ACCOUNT_URL"]
 
 credential = AzureNamedKeyCredential(key=key, name=name)
 
-table_client = TableClient(account_url, "tablename", credential=credential)
-
 table_service_client = TableServiceClient(account_url, credential=credential)
+
+table_client = TableClient(account_url, "tablename", credential=credential)
 ```
 
 
@@ -105,10 +101,11 @@ service_client = TableServiceClient.from_connection_string(conn_str)
 table_client = service_client.create_table("tableName")
 service_client.delete_table("tableName")
 
-# The create_table_if_not_exists is an alternative to create_table
-table_client = TableClient.from_connection_string(conn_str, table_name="tableName")
-table_client.create_table_if_not_exists()
-table_client.delete_table()
+# The create_table_if_not_exists is an alternative to create_table and is
+# only available on the TableServiceClient
+service_client = TableServiceClient.from_connection_string(conn_str)
+service_client.create_table_if_not_exists("tableName")
+service_client.delete_table("tableName")
 ```
 
 #### List and Query
@@ -215,6 +212,10 @@ client = TableService(...)
 my_entity["Value"] += 5
 my_table = "tableName"
 
+# This operation replaces an existing entity or inserts a new one if it does not exist
+etag = client.insert_or_replace_entity(my_table, my_entity)
+
+# update an existing entity, this replaces the entity entity and can be used to remove properties.
 etag = client.update_entity(my_table, my_entity)
 ```
 
@@ -223,11 +224,21 @@ In `azure-data-tables`:
 from azure.data.tables import UpdateMode
 
 my_entity["Value"] += 5
-table_client.update_entity(my_entity)
+
+# Replace an existing entity or insert a new one if it does not exist
+table_client.upsert_entity(my_entity, update_mode=UpdateMode.REPLACE)
 
 my_entity["StringProperty"] = "new_string"
+
+# Merge an existing entity or insert a new one if it does not exist
 table_client.upsert_entity(my_entity, mode=UpdateMode.MERGE)
+
+# Update an already existing entity
+table_client.update_entity(my_entity, update_mode=UpdateMode.REPLACE)
 ```
+
+`UpdateMode.REPLACE` will replace an existing entity with the given one, deleting an existing properties not included in the submitted entity.
+`UpdateMode.MERGE` will add new properties to an existing entity, it will not delete existing properties.
 
 #### Queries with OData
 
