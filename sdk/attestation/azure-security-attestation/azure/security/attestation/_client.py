@@ -87,7 +87,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def get_openidmetadata(self, **kwargs):
-        # type:(Dict[str, Any]) -> Any
+        # type: (Dict[str, Any]) -> Any
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
@@ -354,7 +354,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):
-        # type:(str, **Any) -> str
+        # type: (str, **Any) -> str
         """Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
@@ -370,7 +370,7 @@ class AttestationClient(object):
         return response.data.decode("ascii")
 
     def _get_signers(self, **kwargs):
-        # type:(Any) -> list[AttestationSigner]
+        # type: (Any) -> list[AttestationSigner]
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:

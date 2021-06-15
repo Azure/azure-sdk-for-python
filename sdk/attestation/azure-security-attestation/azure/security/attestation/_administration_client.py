@@ -655,7 +655,7 @@ class AttestationAdministrationClient(object):
         )
 
     def _get_signers(self, **kwargs):
-        # type(**Any) -> List[AttestationSigner]
+        # type: (**Any) -> List[AttestationSigner]
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:

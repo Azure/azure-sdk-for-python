@@ -223,7 +223,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def _test_get_policy_management_certificates(
         self, base_uri, pem_expected_certificate
     ):
-        # type:(str, str) -> None
+        # type: (str, str) -> None
         admin_client = self.create_admin_client(base_uri)
         policy_signers, _ = await admin_client.get_policy_management_certificates()
         if pem_expected_certificate is not None:
@@ -272,7 +272,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         attestation_policy_signing_key0,
         attestation_policy_signing_certificate0,
     ):
-        # type:(str, str, str, str, str, str) -> None
+        # type: (str, str, str, str, str, str) -> None
 
         signing_certificate = PemUtils.pem_from_base64(
             attestation_isolated_signing_certificate, "CERTIFICATE"
@@ -331,7 +331,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
     def create_admin_client(
         self, base_uri, **kwargs
-    ):  # type() -> AttestationAdministrationClient:
+    ) -> AttestationAdministrationClient:
         """
         docstring
         """
@@ -350,15 +350,15 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         return attest_client
 
     def shared_admin_client(
-        self, location_name
-    ):  # type(str) -> AttestationAdministrationClient:
+        self, location_name: str
+    ) -> AttestationAdministrationClient:
         """
         docstring
         """
         return self.create_admin_client(self.shared_base_uri(location_name))
 
     @staticmethod
-    def shared_base_uri(location_name):  # type(str) -> str
+    def shared_base_uri(location_name):  # type: (str) -> str
         # When run with recorded tests, the location_name may be 'None', deal with it.
         #        return 'https://shareduks.uks.test.attest.azure.net'
         if location_name is not None:
@@ -377,7 +377,7 @@ class Base64Url:
 
     @staticmethod
     def encode(unencoded):
-        # type(bytes)->str
+        # type: (bytes)->str
         base64val = base64.urlsafe_b64encode(unencoded)
         strip_trailing = base64val.split(b"=")[
             0
@@ -386,7 +386,7 @@ class Base64Url:
 
     @staticmethod
     def decode(encoded):
-        # type(str)->bytes
+        # type: (str)->bytes
         padding_added = encoded + "=" * ((len(encoded) * -1) % 4)
         return base64.urlsafe_b64decode(padding_added.encode("utf-8"))
 

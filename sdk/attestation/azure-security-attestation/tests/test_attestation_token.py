@@ -154,7 +154,7 @@ class TestAzureAttestationToken(object):
             }
         )
         with pytest.raises(AttestationTokenValidationException):
-            early_token._validate_token() is False
+            early_token._validate_token()
 
         # Specify 40 seconds of slack, so we're within the slack.
         # Token validation should start succeeding now because the slack
@@ -165,7 +165,7 @@ class TestAzureAttestationToken(object):
     # Helper functions to create keys and certificates wrapping those keys.
 
     @staticmethod
-    def _create_ecds_key():  # type() -> str
+    def _create_ecds_key():  # type: () -> str
         return (
             ec.generate_private_key(ec.SECP256R1(), backend=default_backend())
             .private_bytes(
@@ -177,7 +177,7 @@ class TestAzureAttestationToken(object):
         )
 
     @staticmethod
-    def _create_rsa_key():  # type() -> str
+    def _create_rsa_key():  # type: () -> str
         return (
             rsa.generate_private_key(65537, 2048, backend=default_backend())
             .private_bytes(
@@ -189,7 +189,7 @@ class TestAzureAttestationToken(object):
         )
 
     @staticmethod
-    def _create_x509_certificate(key_pem, subject_name):  # type(str, str) -> str
+    def _create_x509_certificate(key_pem, subject_name):  # type: (str, str) -> str
         signing_key = serialization.load_pem_private_key(
             key_pem.encode("utf-8"), password=None, backend=default_backend()
         )

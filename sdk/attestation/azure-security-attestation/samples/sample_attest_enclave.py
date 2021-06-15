@@ -51,7 +51,11 @@ from dotenv import find_dotenv, load_dotenv
 import base64
 import json
 
-from azure.security.attestation import AttestationClient
+from azure.security.attestation import (
+    AttestationClient,
+    AttestationSigner,
+    AttestationToken,
+)
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
 from sample_utils import write_banner
@@ -67,7 +71,7 @@ class AttestationClientAttestationSamples(object):
             + "."
             + shared_short_name
             + ".attest.azure.net"
-        )  # type:str
+        )  # type: str
 
     def close(self):
         pass
@@ -230,7 +234,7 @@ issuancerules {
         # [START attest_open_enclave_shared_with_options]
 
         def validate_token(token, signer):
-            # type(AttestationToken, AttestationSigner) -> bool
+            # type: (AttestationToken, AttestationSigner) -> bool
             """
             Perform minimal validation of the issued SGX token.
             The token validation logic will have checked the issuance_time

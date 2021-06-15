@@ -11,7 +11,8 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
 from ._common import (
-    Base64Url,
+    base64url_decode,
+    base64url_encode,
     pem_from_base64,
     validate_signing_keys,
     merge_validation_args,
@@ -63,7 +64,7 @@ class AttestationSigner(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type:(JSONWebKey)->AttestationSigner
+        # type: (JSONWebKey)->AttestationSigner
         if not generated:
             return cls
         return cls(generated.x5_c, generated.kid)
@@ -83,7 +84,7 @@ class AttestationPolicyCertificateResult(object):
     """
 
     def __init__(self, certificate_thumbprint, certificate_resolution, token):
-        # type:(str, CertificateModification, AttestationToken)->None
+        # type: (str, CertificateModification, AttestationToken)->None
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
         self.token = token
@@ -122,7 +123,7 @@ class AttestationPolicyResult(object):
     """
 
     def __init__(self, token, policy_resolution, policy_signer, policy_token_hash):
-        # type:(AttestationToken, PolicyModification, JSONWebKey, str, str) -> None
+        # type: (AttestationToken, PolicyModification, JSONWebKey, str, str) -> None
         self.token = token
         self.policy_resolution = policy_resolution
         self.policy_signer = AttestationSigner._from_generated(policy_signer)
@@ -130,7 +131,7 @@ class AttestationPolicyResult(object):
 
     @classmethod
     def _from_generated(cls, generated, token):
-        # type:(GeneratedPolicyResult, AttestationToken, str)->AttestationPolicyResult
+        # type: (GeneratedPolicyResult, AttestationToken, str)->AttestationPolicyResult
         if not token:
             raise ValueError("Token parameter must be provided.")
         # If we have a generated policy result or policy text, return that.
@@ -152,7 +153,7 @@ class AttestationResult(object):
     """
 
     def __init__(self, **kwargs):
-        # type:(Dict[str,Any])->None
+        # type: (Dict[str,Any])->None
         """
         :keyword issuer: Entity which issued the attestation token.
         :paramtype issuer: str
@@ -195,40 +196,40 @@ class AttestationResult(object):
         :paramtype token: AttestationToken
 
         """
-        self._issuer = kwargs.pop("issuer")  # type:Union[str, None]
+        self._issuer = kwargs.pop("issuer")  # type: Union[str, None]
         self._unique_identifier = kwargs.pop(
             "unique_identifier", None
-        )  # type:Union[str, None]
-        self._nonce = kwargs.pop("nonce", None)  # type:Union[str, None]
-        self._version = kwargs.pop("version")  # type:str
+        )  # type: Union[str, None]
+        self._nonce = kwargs.pop("nonce", None)  # type: Union[str, None]
+        self._version = kwargs.pop("version")  # type: str
         self._runtime_claims = kwargs.pop(
             "runtime_claims", None
-        )  # type:Union[Dict, None]
+        )  # type: Union[Dict, None]
         self._inittime_claims = kwargs.pop(
             "inittime_claims", None
-        )  # type:Union[Dict, None]
+        )  # type: Union[Dict, None]
         self._policy_claims = kwargs.pop(
             "policy_claims", None
-        )  # type:Union[Dict, None]
-        self._verifier_type = kwargs.pop("verifier_type")  # type:str
+        )  # type: Union[Dict, None]
+        self._verifier_type = kwargs.pop("verifier_type")  # type: str
         self._policy_signer = kwargs.pop(
             "policy_signer", None
-        )  # type:Union[AttestationSigner, None]
-        self._policy_hash = kwargs.pop("policy_hash")  # type:str
-        self._is_debuggable = kwargs.pop("is_debuggable")  # type:bool
-        self._product_id = kwargs.pop("product_id")  # type:int
-        self._mr_enclave = kwargs.pop("mr_enclave")  # type:str
-        self._mr_signer = kwargs.pop("mr_signer")  # type:str
-        self._svn = kwargs.pop("svn")  # type:int
+        )  # type: Union[AttestationSigner, None]
+        self._policy_hash = kwargs.pop("policy_hash")  # type: str
+        self._is_debuggable = kwargs.pop("is_debuggable")  # type: bool
+        self._product_id = kwargs.pop("product_id")  # type: int
+        self._mr_enclave = kwargs.pop("mr_enclave")  # type: str
+        self._mr_signer = kwargs.pop("mr_signer")  # type: str
+        self._svn = kwargs.pop("svn")  # type: int
         self._enclave_held_data = kwargs.pop(
             "enclave_held_data", None
-        )  # type:Union[bytes, None]
-        self._sgx_collateral = kwargs.pop("sgx_collateral")  # type:Dict
+        )  # type: Union[bytes, None]
+        self._sgx_collateral = kwargs.pop("sgx_collateral")  # type: Dict
         self._token = kwargs.pop("token")  # type: AttestationToken
 
     @classmethod
     def _from_generated(cls, generated, token):
-        # type:(GeneratedAttestationResult, AttestationToken) -> AttestationResult
+        # type: (GeneratedAttestationResult, AttestationToken) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
             unique_identifier=generated.jti,
@@ -254,7 +255,7 @@ class AttestationResult(object):
 
     @property
     def token(self):
-        # type:() -> AttestationToken
+        # type: () -> AttestationToken
         """Returns the attestation token returned from the service.
 
         :rtype AttestationToken
@@ -263,7 +264,7 @@ class AttestationResult(object):
 
     @property
     def issuer(self):
-        # type:() -> str
+        # type: () -> str
         """Returns the issuer of the attestation token.
 
         The issuer for the token MUST be the same as the `endpoint` associated
@@ -279,7 +280,7 @@ class AttestationResult(object):
 
     @property
     def unique_id(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Returns a unique ID claim for the attestation token.
 
         If present, the unique_id property can be used to distinguish between
@@ -294,7 +295,7 @@ class AttestationResult(object):
 
     @property
     def nonce(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Returns the value of the "nonce" input to the attestation request.
 
         :rtype: str or None
@@ -303,7 +304,7 @@ class AttestationResult(object):
 
     @property
     def version(self):
-        # type:() -> str
+        # type: () -> str
         """Returns the version of the information returned in the token.
 
         :rtype: str
@@ -312,7 +313,7 @@ class AttestationResult(object):
 
     @property
     def runtime_claims(self):
-        # type:() -> Union[Dict[str, Any], None]
+        # type: () -> Union[Dict[str, Any], None]
         """Returns the runtime claims in the token.
 
         This value will match the input `runtime_json` property to the
@@ -330,7 +331,7 @@ class AttestationResult(object):
 
     @property
     def inittime_claims(self):
-        # type:() -> Union[Dict[str, Any], None]
+        # type: () -> Union[Dict[str, Any], None]
         """Returns the inittime claims in the token.
 
         This value will match the input `inittime_json` property to the
@@ -349,7 +350,7 @@ class AttestationResult(object):
 
     @property
     def policy_claims(self):
-        # type:() -> Union[Dict[str, Any], None]
+        # type: () -> Union[Dict[str, Any], None]
         """Returns the claims for the token generated by attestation policy.
 
         :rtype: dict[str, Any] or None
@@ -359,7 +360,7 @@ class AttestationResult(object):
 
     @property
     def verifier_type(self):
-        # type:() -> str
+        # type: () -> str
         """Returns the verifier which generated this attestation token.
 
         :rtype: str
@@ -368,7 +369,7 @@ class AttestationResult(object):
 
     @property
     def policy_signer(self):
-        # type:() -> Union[AttestationSigner, None]
+        # type: () -> Union[AttestationSigner, None]
         """Returns the signing certificate which was used to sign the policy
         which was applied when the token was generated.
 
@@ -380,7 +381,7 @@ class AttestationResult(object):
 
     @property
     def policy_hash(self):
-        # type:() -> str
+        # type: () -> str
         """Returns the base64url encoded SHA256 hash of the Base64Url encoded
         attestation policy which was applied when generating this token.
 
@@ -390,7 +391,7 @@ class AttestationResult(object):
 
     @property
     def is_debuggable(self):
-        # type:() -> bool
+        # type: () -> bool
         """Returns "True" if the source evidence being attested indicates
         that the TEE has debugging enabled.
 
@@ -400,7 +401,7 @@ class AttestationResult(object):
 
     @property
     def product_id(self):
-        # type:() -> float
+        # type: () -> float
         """Returns the product id associated with the SGX enclave being attested.
 
         :rtype: float
@@ -410,7 +411,7 @@ class AttestationResult(object):
 
     @property
     def mr_enclave(self):
-        # type:() -> str
+        # type: () -> str
         """Returns HEX encoded `mr-enclave` value of the SGX enclave being attested.
 
         :rtype: str
@@ -419,7 +420,7 @@ class AttestationResult(object):
 
     @property
     def mr_signer(self):
-        # type:() -> str
+        # type: () -> str
         """Returns HEX encoded `mr-signer` value of the SGX enclave being attested.
 
         :rtype: str
@@ -428,7 +429,7 @@ class AttestationResult(object):
 
     @property
     def svn(self):
-        # type:() -> int
+        # type: () -> int
         """Returns the `svn` value of the SGX enclave being attested.
 
         :rtype: int
@@ -437,7 +438,7 @@ class AttestationResult(object):
 
     @property
     def enclave_held_data(self):
-        # type:() -> Union[bytes, None]
+        # type: () -> Union[bytes, None]
         """Returns the value of the runtime_data field specified as an input
         to the :meth:`azure.security.attestation.AttestationClient.attest_sgx` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
@@ -452,7 +453,7 @@ class AttestationResult(object):
 
     @property
     def sgx_collateral(self):
-        # type:() -> Dict[str, Any]
+        # type: () -> Dict[str, Any]
         """Returns a set of information describing the complete set of inputs
         to the `oe_verify_evidence`
 
@@ -473,21 +474,21 @@ class StoredAttestationPolicy(object):
     """
 
     def __init__(self, policy):
-        # type:(str) -> None
+        # type: (str) -> None
         """
         :param str policy: Policy to be saved.
         """
         self._policy = policy.encode("ascii")
 
     def serialize(self, **kwargs):
-        # type:(Any) -> str
+        # type: (Any) -> str
         return GeneratedStoredAttestationPolicy(
             attestation_policy=self._policy
         ).serialize(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
-        # type:(GeneratedStoredAttestationPolicy) -> StoredAttestationPolicy
+        # type: (GeneratedStoredAttestationPolicy) -> StoredAttestationPolicy
         if generated is None:
             return StoredAttestationPolicy("")
         return StoredAttestationPolicy(generated.attestation_policy)
@@ -544,9 +545,9 @@ class AttestationToken(object):
         token_parts = token.split(".")
         if len(token_parts) != 3:
             raise ValueError("Malformed JSON Web Token")
-        self.header_bytes = Base64Url.decode(token_parts[0])
-        self.body_bytes = Base64Url.decode(token_parts[1])
-        self.signature_bytes = Base64Url.decode(token_parts[2])
+        self.header_bytes = base64url_decode(token_parts[0])
+        self.body_bytes = base64url_decode(token_parts[1])
+        self.signature_bytes = base64url_decode(token_parts[2])
         if len(self.body_bytes) != 0:
             self._body = JSONDecoder().decode(self.body_bytes.decode("ascii"))
         else:
@@ -614,7 +615,7 @@ class AttestationToken(object):
 
     @property
     def critical(self):
-        # type() -> # type: Union[bool, None]
+        # type:() -> Union[bool, None]
         """Json Web Token Header "Critical".
 
         See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>`_ for details.
@@ -803,9 +804,9 @@ class AttestationToken(object):
     def _validate_signature(self, candidate_certificates):
         # type:(list[AttestationSigner]) -> AttestationSigner
         signed_data = (
-            Base64Url.encode(self.header_bytes)
+            base64url_encode(self.header_bytes)
             + "."
-            + Base64Url.encode(self.body_bytes)
+            + base64url_encode(self.body_bytes)
         )
         for signer in candidate_certificates:
             cert = load_pem_x509_certificate(
@@ -894,7 +895,7 @@ class AttestationToken(object):
         if body is not None:
             json_body = JSONEncoder().encode(body)
 
-        return_value += Base64Url.encode(json_body.encode("utf-8"))
+        return_value += base64url_encode(json_body.encode("utf-8"))
         return_value += "."
         return return_value
 
@@ -923,7 +924,7 @@ class AttestationToken(object):
             },
         }
         json_header = JSONEncoder().encode(header)
-        return_value = Base64Url.encode(json_header.encode("ascii"))
+        return_value = base64url_encode(json_header.encode("ascii"))
 
         try:
             body = body.serialize()
@@ -933,7 +934,7 @@ class AttestationToken(object):
         if body is not None:
             json_body = JSONEncoder().encode(body)
         return_value += "."
-        return_value += Base64Url.encode(json_body.encode("utf-8"))
+        return_value += base64url_encode(json_body.encode("utf-8"))
 
         # Now we want to sign the return_value.
         if isinstance(key, RSAPrivateKey):
@@ -946,7 +947,7 @@ class AttestationToken(object):
             signature = key.sign(return_value.encode("utf-8"), algorithm=SHA256())
         # And finally append the base64url encoded signature.
         return_value += "."
-        return_value += Base64Url.encode(signature)
+        return_value += base64url_encode(signature)
         return return_value
 
 

@@ -336,14 +336,14 @@ class AttestationTest(AzureTestCase):
     """
 
     def shared_client(self, location_name, **kwargs):
-        # type:(str, Any) -> AttestationClient
+        # type: (str, Any) -> AttestationClient
         """
         docstring
         """
         return self.create_client(self.shared_base_uri(location_name), **kwargs)
 
     def create_client(self, base_uri, **kwargs):
-        # type:(str, Any) -> AttestationClient
+        # type: (str, Any) -> AttestationClient
         """
         docstring
         """
@@ -383,7 +383,7 @@ class AttestationTest(AzureTestCase):
         return attest_client
 
     @staticmethod
-    def shared_base_uri(location_name):  # type(str) -> str
+    def shared_base_uri(location_name):  # type: (str) -> str
         # When run with recorded tests, the location_name may be 'None', deal with it.
         #        return 'https://shareduks.uks.test.attest.azure.net'
         if location_name is not None:

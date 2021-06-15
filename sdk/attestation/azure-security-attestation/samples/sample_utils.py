@@ -27,7 +27,7 @@ import os
 
 
 def write_banner(banner):
-    # type:(str) -> None
+    # type: (str) -> None
     """
     Write a banner which can be used to visually separate the output of the samples.
     """
@@ -38,7 +38,7 @@ def write_banner(banner):
     print(separator)
 
 
-def create_rsa_key():  # type() -> RSAPrivateKey
+def create_rsa_key():  # type: () -> rsa.RSAPrivateKey
     """
     Create an RSA Asymmetric 2048 bit key.
     """
@@ -53,7 +53,7 @@ def create_rsa_key():  # type() -> RSAPrivateKey
     )
 
 
-def create_x509_certificate(key_pem, subject_name):  # type(str, str) -> str
+def create_x509_certificate(key_pem, subject_name):  # type: (str, str) -> str
     """
     Given an RSA or ECDS private key, create a self-signed X.509 certificate
     with the specified subject name signed with that key.
