@@ -73,7 +73,7 @@ from azure.core.pipeline import (
     PipelineResponse,
     PipelineContext,
 )
-from .._tools import await_result as _await_result
+from .._tools import await_result as _await_result, prepare_multipart_body
 from ..._utils import _case_insensitive_dict
 from ...rest import _HttpResponseBase, HttpResponse
 
@@ -432,7 +432,7 @@ class HttpRequest(object):
         for req in requests:
             part_message = Message()
             if req.multipart_mixed_info:
-                content_index = req.prepare_multipart_body(content_index=content_index)
+                content_index = prepare_multipart_body(req, content_index=content_index)
                 part_message.add_header("Content-Type", req.headers['Content-Type'])
                 payload = req.serialize()
                 # We need to remove the ~HTTP/1.1 prefix along with the added content-length

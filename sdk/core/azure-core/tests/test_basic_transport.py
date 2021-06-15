@@ -20,8 +20,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineContext, PipelineRequest
-from azure.core.pipeline._base import serialize
-from azure.core.pipeline._tools import await_result as _await_result
+from azure.core.pipeline._tools import await_result as _await_result, serialize
 from azure.core.exceptions import HttpResponseError
 from email.message import Message
 import logging
@@ -1188,6 +1187,7 @@ def test_multipart_receive_with_bom():
     assert len(response) == 1
 
     res0 = response[0]
+    res0.read()  # in the originaly body of an HttpClientTransportResponse, we call read https://github.com/Azure/azure-sdk-for-python/blob/a081faba936e42f1931092a7b560b0298fa48651/sdk/core/azure-core/azure/core/pipeline/transport/_base.py#L236
     assert res0.status_code == 400
     assert res0.content.startswith(b'\xef\xbb\xbf')
 
