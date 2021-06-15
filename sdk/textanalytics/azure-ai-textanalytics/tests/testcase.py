@@ -14,6 +14,14 @@ from devtools_testutils import (
     FakeResource,
     ResourceGroupPreparer,
 )
+from azure.ai.textanalytics import (
+    RecognizeEntitiesResult,
+    RecognizeLinkedEntitiesResult,
+    RecognizePiiEntitiesResult,
+    AnalyzeSentimentResult,
+    ExtractKeyPhrasesResult,
+    _AnalyzeActionsType
+)
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
@@ -86,6 +94,19 @@ class TextAnalyticsTest(AzureTestCase):
         self.assert_healthcare_data_sources_equal(entity_a.data_sources, entity_b.data_sources)
         assert entity_a.length == entity_b.length
         assert entity_a.offset == entity_b.offset
+
+    def document_result_to_action_type(self, document_result):
+        if isinstance(document_result, RecognizePiiEntitiesResult):
+            return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+        if isinstance(document_result, RecognizeEntitiesResult):
+            return _AnalyzeActionsType.RECOGNIZE_ENTITIES
+        if isinstance(document_result, RecognizeLinkedEntitiesResult):
+            return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+        if isinstance(document_result, AnalyzeSentimentResult):
+            return _AnalyzeActionsType.ANALYZE_SENTIMENT
+        if isinstance(document_result, ExtractKeyPhrasesResult):
+            return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
+        raise ValueError("Your action result doesn't match any of the action types")
 
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):

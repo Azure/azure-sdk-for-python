@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/query
   response:
@@ -589,21 +589,21 @@ interactions:
         Angeles","category":"Shoes Handbags & Sunglasses"}},"property":{"maxSeverity":"High","incidentStatus":"Active","valueOfRootNode":5537234.0,"expectedValueOfRootNode":5030769.276739401}}]}'
     headers:
       apim-request-id:
-      - 2e05d89d-b57a-4bbf-a02d-3e1100c6c2d5
+      - f785fc3c-db88-4fd9-8563-fdabff6571c7
       content-length:
       - '229296'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 21 May 2021 21:09:28 GMT
+      - Sat, 12 Jun 2021 00:01:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '456'
+      - '360'
       x-request-id:
-      - 2e05d89d-b57a-4bbf-a02d-3e1100c6c2d5
+      - f785fc3c-db88-4fd9-8563-fdabff6571c7
     status:
       code: 200
       message: OK
