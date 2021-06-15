@@ -4,6 +4,4 @@
 -e ../../identity/azure-identity
 -e ../azure-mgmt-eventgrid
 azure-storage-queue
-azure-servicebus
-azure-eventhub
 aiohttp>=3.0; python_version >= '3.5'
