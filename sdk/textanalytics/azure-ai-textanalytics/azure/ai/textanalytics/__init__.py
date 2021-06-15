@@ -51,7 +51,8 @@ from ._generated.v3_1.models import (
     RelationType as HealthcareEntityRelationType,
     Conditionality as EntityConditionality,
     Certainty as EntityCertainty,
-    Association as EntityAssociation
+    Association as EntityAssociation,
+    HealthcareEntityCategory
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
@@ -102,6 +103,7 @@ __all__ = [
     "AnalyzeSentimentAction",
     "AnalyzeHealthcareEntitiesLROPoller",
     "AnalyzeActionsLROPoller",
+    "HealthcareEntityCategory"
 ]
 
 __version__ = VERSION

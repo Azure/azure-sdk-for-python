@@ -495,8 +495,8 @@ class HealthcareEntity(DictMixin):
     :ivar str text: Entity text as appears in the document.
     :ivar str normalized_text: Optional. Normalized version of the raw `text` we extract
         from the document. Not all `text`s have a normalized version.
-    :ivar str category: Entity category, see the following link for health's named
-        entity types: https://aka.ms/text-analytics-health-entities
+    :ivar str category: Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
+        type for possible healthcare entity categories.
     :ivar str subcategory: Entity subcategory.
     :ivar assertion: Contains various assertions about this entity. For example, if
         an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
