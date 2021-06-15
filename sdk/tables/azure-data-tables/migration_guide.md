@@ -2,9 +2,18 @@
 
 This guide is intended to assist in the migration to `azure-data-tables` from `azure-cosmosdb-table`. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-We assume that you are familiar with `azure-cosmosdb-table`. If not, please refer to the README for `azure-cosmosdb-table` rather than this guide.
+We assume that you are familiar with `azure-cosmosdb-table`. If not, please refer to the README for [`azure-cosmosdb-table`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table) rather than this guide.
 
 ## Table of contents
+
+* [Migration benefits](#migration-benefits)
+* [Important changes](#important-changes)
+    - [Package Names](#package-names-and-namespaces)
+    - [Client hierarchy and constructors](#client-hierarchy-and-constructors)
+    - [Authenticating Clients](#authenticating-clients)
+    - [Table Level Scenarios](#table-level-scenarios)
+    - [Entity Level Scenarios](#entity-level-scenarios)
+* [Additional Samples](#additional-samples)
 
 ## Migration benefits
 
@@ -16,29 +25,30 @@ To improve the development experience across Azure services, a set of uniform [d
 
 ### Cross Service SDK improvements
 
-The modern `azure-data-tables` client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
-<!-- # Not used in this library, should we still include?
-- Using the new `azure-identity` library to share a single authentication approach between clients -->
+The modern `azure-data-tables` client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as:
 - A unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
 
 ### Performance improvements
 
 Use this section to advertise the performance improvements in new package when compared to the old one. Skip this section if no perf improvements are found yet.
+@annatisch, should we remove this section?
 
 ### New features
 
-We have a variety of new features available in the new library:
+We have a variety of new features available in the new Azure Data Tables library:
 * Ability to submit a batch of operations with the `TableClient.submit_transaction` method
+* Separates Table and Entity level operations into two clients, `TableServiceClient` and `TableClient`
+* Adds the ability to query tables and list entities explicitly.
 
 ## Important changes
 
 ### Package names and namespaces
 
-The package name has been changed from `azure-cosmosdb-table` to `azure-data-tables`. This package can target either CosmosDB or Azure Storage Tables accounts.
+The package name has been changed from `azure-cosmosdb-table` to `azure-data-tables`. This package can be used to access and manipulate data stored in a CosmosDB Table account or an Azure Storage Tables account.
 
 ### Client hierarchy and constructors
 
-In the interest of simplicity, there are only two clients, `TableServiceClient` for account-level interactions and `TableClient` for table-level interactions. This is in contrast to the single `CosmosClient` used for interacting with the account level operations and the proxies used for interactions with specific resources (ie. `DatabaseProxy` and `ContainerProxy`).
+In the interest of simplicity, there are only two clients, `TableServiceClient` for account-level interactions and `TableClient` for table-level interactions. This is in contrast to the single `ServiceClient` used for interacting with the account level operations and entity level operations. The two clients will simplify the method calls by not requiring a Table name to be included on each service call.
 
 ### Authenticating Clients
 
@@ -77,16 +87,16 @@ In `azure-cosmosdb-table`:
 from azure.cosmosdb.table import TableService
 client = TableService(...)
 table_name = "tableName"
-created = client.create_table(table_name)
 # create_table returns True if a new table was created, False if the table already exists
+created = client.create_table(table_name)
 
 # Delete
 table_name = "deleteTableName"
-client.delete_table(table_name)
 # delete_table returns True if a table was deleted, False if the table does not exist
+client.delete_table(table_name)
 ```
 
-In `azure-data-tables`:
+In `azure-data-tables` the `TableClient` or `TableServiceClient` can be used to create a new table or delete an existing table:
 ```python
 from azure.data.tables import TableServiceClient, TableClient
 
@@ -95,7 +105,7 @@ service_client = TableServiceClient.from_connection_string(conn_str)
 table_client = service_client.create_table("tableName")
 service_client.delete_table("tableName")
 
-# The create_table_if_not_exists
+# The create_table_if_not_exists is an alternative to create_table
 table_client = TableClient.from_connection_string(conn_str, table_name="tableName")
 table_client.create_table_if_not_exists()
 table_client.delete_table()
@@ -178,7 +188,6 @@ entity = {
 }
 
 endpoint = "https://{}.table.cosmos.azure.com".format(account_name)
-# endpoint = "https://{}.table.core.windows.net".format(account_name)
 table_name = "myTable"
 credential = AzureNamedKeyCredential(
     key=os.environ["tables_primary_cosmos_account_key"],
@@ -286,4 +295,4 @@ table_client.submit_transaction(operations)
 
 ## Additional samples
 
-More examples can be found at the [library home page](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples).
+More examples can be found at the [samples for `azure-data-tables` page](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples).
