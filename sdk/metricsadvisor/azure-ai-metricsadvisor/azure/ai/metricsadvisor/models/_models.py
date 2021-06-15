@@ -777,6 +777,7 @@ class AnomalyAlertConfiguration(object):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
+    :keyword list[str] dimensions_to_split_alerts: dimensions used to split alert.
 
     """
     def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
@@ -787,17 +788,19 @@ class AnomalyAlertConfiguration(object):
         self.id = kwargs.get('id', None)
         self.description = kwargs.get('description', None)
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
+        self.dimensions_to_split_alerts = kwargs.get('dimensions_to_split_alerts', None)
 
     def __repr__(self):
         return "AnomalyAlertConfiguration(id={}, name={}, description={}, cross_metrics_operator={}, hook_ids={}, " \
-               "metric_alert_configurations={})".format(
-                    self.id,
-                    self.name,
-                    self.description,
-                    self.cross_metrics_operator,
-                    self.hook_ids,
-                    repr(self.metric_alert_configurations)
-                )[:1024]
+               "metric_alert_configurations={}, dimensions_to_split_alerts={})".format(
+            self.id,
+            self.name,
+            self.description,
+            self.cross_metrics_operator,
+            self.hook_ids,
+            repr(self.metric_alert_configurations),
+            self.dimensions_to_split_alerts
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, config):
@@ -810,7 +813,8 @@ class AnomalyAlertConfiguration(object):
             metric_alert_configurations=[
                 MetricAlertConfiguration._from_generated(c)
                 for c in config.metric_alerting_configurations
-            ]
+            ],
+            dimensions_to_split_alerts=config.split_alert_by_dimensions
         )
 
     def _to_generated(self):
@@ -821,7 +825,8 @@ class AnomalyAlertConfiguration(object):
             ],
             hook_ids=self.hook_ids,
             cross_metrics_operator=self.cross_metrics_operator,
-            description=self.description
+            description=self.description,
+            split_alert_by_dimensions=self.dimensions_to_split_alerts
         )
 
     def _to_generated_patch(
@@ -839,7 +844,8 @@ class AnomalyAlertConfiguration(object):
             ] if metric_alert_configurations else None,
             hook_ids=hook_ids or self.hook_ids,
             cross_metrics_operator=cross_metrics_operator or self.cross_metrics_operator,
-            description=description or self.description
+            description=description or self.description,
+            split_alert_by_dimensions=self.dimensions_to_split_alerts
         )
 
 
@@ -2077,10 +2083,10 @@ class WebNotificationHook(NotificationHook):
 class MetricDetectionCondition(object):
     """MetricDetectionCondition.
 
-    :keyword cross_conditions_operator: condition operator
+    :keyword condition_operator: condition operator
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
-    :paramtype cross_conditions_operator: str or
+    :paramtype condition_operator: str or
      ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
@@ -2091,15 +2097,15 @@ class MetricDetectionCondition(object):
     """
 
     def __init__(self, **kwargs):
-        self.cross_conditions_operator = kwargs.get('cross_conditions_operator', None)
+        self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
         self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
         self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
 
     def __repr__(self):
-        return "MetricDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+        return "MetricDetectionCondition(condition_operator={}, smart_detection_condition={}, " \
                "hard_threshold_condition={}, change_threshold_condition={})".format(
-                    self.cross_conditions_operator,
+                    self.condition_operator,
                     repr(self.smart_detection_condition),
                     repr(self.hard_threshold_condition),
                     repr(self.change_threshold_condition)
@@ -2108,7 +2114,7 @@ class MetricDetectionCondition(object):
     @classmethod
     def _from_generated(cls, condition):
         return cls(
-            cross_conditions_operator=condition.condition_operator,
+            condition_operator=condition.condition_operator,
             smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
             hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
             change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition)
@@ -2116,7 +2122,7 @@ class MetricDetectionCondition(object):
 
     def _to_generated(self):
         return _WholeMetricConfiguration(
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated()
@@ -2127,7 +2133,7 @@ class MetricDetectionCondition(object):
 
     def _to_generated_patch(self):
         return _WholeMetricConfigurationPatch(
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated_patch()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated_patch()
@@ -2373,10 +2379,10 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
 
     :param series_group_key: Required. dimension specified for series group.
     :type series_group_key: dict[str, str]
-    :keyword cross_conditions_operator: condition operator
+    :keyword condition_operator: condition operator
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
-    :paramtype cross_conditions_operator: str or
+    :paramtype condition_operator: str or
         ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
@@ -2392,9 +2398,9 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
         self.series_group_key = series_group_key
 
     def __repr__(self):
-        return "MetricSeriesGroupDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+        return "MetricSeriesGroupDetectionCondition(condition_operator={}, smart_detection_condition={}, " \
                "hard_threshold_condition={}, change_threshold_condition={}, series_group_key={})".format(
-                    self.cross_conditions_operator,
+                    self.condition_operator,
                     repr(self.smart_detection_condition),
                     repr(self.hard_threshold_condition),
                     repr(self.change_threshold_condition),
@@ -2405,7 +2411,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
     def _from_generated(cls, condition):
         return cls(
             series_group_key=condition.group.dimension,
-            cross_conditions_operator=condition.condition_operator,
+            condition_operator=condition.condition_operator,
             smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
             hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
             change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition)
@@ -2414,7 +2420,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
     def _to_generated(self):
         return _DimensionGroupConfiguration(
             group=_DimensionGroupIdentity(dimension=self.series_group_key),
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated()
@@ -2429,10 +2435,10 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
 
     :param series_key: Required. dimension specified for series.
     :type series_key: dict[str, str]
-    :keyword cross_conditions_operator: condition operator
+    :keyword condition_operator: condition operator
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
-    :paramtype cross_conditions_operator: str or
+    :paramtype condition_operator: str or
         ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
@@ -2448,9 +2454,9 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
         self.series_key = series_key
 
     def __repr__(self):
-        return "MetricSingleSeriesDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+        return "MetricSingleSeriesDetectionCondition(condition_operator={}, smart_detection_condition={}, " \
                "hard_threshold_condition={}, change_threshold_condition={}, series_key={})".format(
-                    self.cross_conditions_operator,
+                    self.condition_operator,
                     repr(self.smart_detection_condition),
                     repr(self.hard_threshold_condition),
                     repr(self.change_threshold_condition),
@@ -2461,7 +2467,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
     def _from_generated(cls, condition):
         return cls(
             series_key=condition.series.dimension,
-            cross_conditions_operator=condition.condition_operator,
+            condition_operator=condition.condition_operator,
             smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
             hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
             change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition)
@@ -2470,7 +2476,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
     def _to_generated(self):
         return _SeriesConfiguration(
             series=_SeriesIdentity(dimension=self.series_key),
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated()

@@ -694,11 +694,11 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(self,
+    def list_metric_series_data(self,
                                  metric_id,     # type: str
+                                 series_keys,  # type: List[Dict[str, str]]
                                  start_time,    # type: Union[str, datetime.datetime]
                                  end_time,  # type: Union[str, datetime.datetime]
-                                 series_to_filter,  # type: List[Dict[str, str]]
                                  **kwargs   # type: Any
                                  ):
         # type: (...) -> ItemPaged[MetricSeriesData]
@@ -707,10 +707,10 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: metric unique id.
         :type metric_id: str
+        :param series_keys: query specific series.
+        :type series_keys: list[dict[str, str]]
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :param series_to_filter: query specific series.
-        :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -718,8 +718,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metrics_series_data]
-                :end-before: [END list_metrics_series_data]
+                :start-after: [START list_metric_series_data]
+                :end-before: [END list_metric_series_data]
                 :language: python
                 :dedent: 4
                 :caption: Query metrics series data.
@@ -731,7 +731,7 @@ class MetricsAdvisorClient(object):
         metric_data_query_options = MetricDataQueryOptions(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            series=series_to_filter,
+            series=series_keys,
         )
 
         return self._client.get_metric_data(  # type: ignore

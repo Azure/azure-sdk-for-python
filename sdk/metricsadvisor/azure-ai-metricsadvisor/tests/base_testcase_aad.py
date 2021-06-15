@@ -303,7 +303,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             metric_id=data_feed.metric_ids['cost'],
             description="My test metric anomaly detection configuration",
             whole_series_detection_condition=MetricDetectionCondition(
-                cross_conditions_operator="AND",
+                condition_operator="AND",
                 smart_detection_condition=SmartDetectionCondition(
                     sensitivity=50,
                     anomaly_detector_direction="Both",
