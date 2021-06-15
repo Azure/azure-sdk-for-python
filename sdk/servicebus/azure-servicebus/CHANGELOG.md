@@ -1,5 +1,11 @@
 # Release History
 
+## 7.3.1 (Unreleased)
+
+**Bug Fixes**
+
+* Fixed a bug when setting the `partition_key` on `ServiceBusMessage` that should ensure that the session ID has been set before checking that the value passed in is equivalent to the session ID (PR #19233, thanks @bishnu-shb).
+
 ## 7.3.0 (2021-06-08)
 
 **New Features**
