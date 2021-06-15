@@ -71,16 +71,15 @@ class ChainedTokenCredential(object):
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
-                _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
             except Exception as ex:  # pylint: disable=broad-except
                 # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
-                _LOGGER.warning(
+                _LOGGER.debug(
                     '%s.get_token failed: %s raised unexpected error "%s"',
                     self.__class__.__name__,
                     credential.__class__.__name__,
                     ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                    exc_info=True,
                 )
                 break
 
