@@ -5,14 +5,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import pytest
-
+import functools
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
-    FakeResource,
-    ResourceGroupPreparer,
 )
 from azure.ai.textanalytics import (
     RecognizeEntitiesResult,
@@ -22,10 +21,38 @@ from azure.ai.textanalytics import (
     ExtractKeyPhrasesResult,
     _AnalyzeActionsType
 )
-from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
+from devtools_testutils import PowerShellPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
-REGION = 'westus2'
+
+TextAnalyticsPreparer = functools.partial(
+    PowerShellPreparer,
+    'textanalytics',
+    textanalytics_test_endpoint="https://westus2.api.cognitive.microsoft.com/",
+    textanalytics_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+)
+
+
+class TextAnalyticsClientPreparer(AzureMgmtPreparer):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+        super(TextAnalyticsClientPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+        self.client_kwargs = client_kwargs
+        self.client_cls = client_cls
+
+    def create_resource(self, name, **kwargs):
+        textanalytics_test_endpoint = kwargs.get("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.get("textanalytics_test_api_key")
+
+        client = self.client_cls(
+            textanalytics_test_endpoint,
+            AzureKeyCredential(textanalytics_test_api_key),
+            **self.client_kwargs
+        )
+        kwargs.update({"client": client})
+        return kwargs
 
 
 class FakeTokenCredential(object):
@@ -46,15 +73,15 @@ class TextAnalyticsTest(AzureTestCase):
         super(TextAnalyticsTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT_STABLE")
+        return os.getenv("TEXTANALYTICS_TEST_ENDPOINT")
 
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
+                os.getenv("TEXTANALYTICS_TENANT_ID"),
+                os.getenv("TEXTANALYTICS_CLIENT_ID"),
+                os.getenv("TEXTANALYTICS_CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 
@@ -107,103 +134,3 @@ class TextAnalyticsTest(AzureTestCase):
         if isinstance(document_result, ExtractKeyPhrasesResult):
             return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
         raise ValueError("Your action result doesn't match any of the action types")
-
-
-class GlobalResourceGroupPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalResourceGroupPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        rg = TextAnalyticsTest._RESOURCE_GROUP
-        if self.is_live:
-            self.test_class_instance.scrubber.register_name_pair(
-                rg.name,
-                "rgname"
-            )
-        else:
-            rg = FakeResource(
-                name="rgname",
-                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
-            )
-
-        return {
-            'location': REGION,
-            'resource_group': rg,
-        }
-
-
-class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalTextAnalyticsAccountPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
-
-        return {
-            'location': REGION,
-            'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
-            'text_analytics_account': text_analytics_account,
-            'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
-        }
-
-class TextAnalyticsClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(TextAnalyticsClientPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-        self.client_kwargs = client_kwargs
-        self.client_cls = client_cls
-
-    def create_resource(self, name, **kwargs):
-        client = self.create_text_analytics_client(**kwargs)
-        return {"client": client}
-
-    def create_text_analytics_client(self, **kwargs):
-        text_analytics_account = self.client_kwargs.pop("text_analytics_account", None)
-        if text_analytics_account is None:
-            text_analytics_account = kwargs.pop("text_analytics_account")
-
-        text_analytics_account_key = self.client_kwargs.pop("text_analytics_account_key", None)
-        if text_analytics_account_key is None:
-            text_analytics_account_key = kwargs.pop("text_analytics_account_key")
-
-        return self.client_cls(
-            text_analytics_account,
-            AzureKeyCredential(text_analytics_account_key),
-            **self.client_kwargs
-        )
-
-
-@pytest.fixture(scope="session")
-def text_analytics_account():
-    test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    text_analytics_preparer = CognitiveServicesAccountPreparer(
-        random_name_enabled=True, name_prefix='pycog', location=REGION
-    )
-
-    try:
-        rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-        TextAnalyticsTest._RESOURCE_GROUP = rg_kwargs['resource_group']
-        try:
-            text_analytics_name, text_analytics_kwargs = text_analytics_preparer._prepare_create_resource(test_case, **rg_kwargs)
-            TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT = text_analytics_kwargs['cognitiveservices_account']
-            TextAnalyticsTest._TEXT_ANALYTICS_KEY = text_analytics_kwargs['cognitiveservices_account_key']
-            yield
-        finally:
-            text_analytics_preparer.remove_resource(
-                text_analytics_name,
-                resource_group=rg_kwargs['resource_group']
-            )
-            TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT = None
-            TextAnalyticsTest._TEXT_ANALYTICS_KEY = None
-    finally:
-        rg_preparer.remove_resource(rg_name)
-        TextAnalyticsTest._RESOURCE_GROUP = None
