@@ -1,5 +1,6 @@
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
+
 class ApiVersionAssertPolicy(SansIOHTTPPolicy):
     """
     Assert the ApiVersion is set properly on the response
@@ -9,4 +10,4 @@ class ApiVersionAssertPolicy(SansIOHTTPPolicy):
         self.api_version = api_version
 
     def on_request(self, request):
-        assert request.http_request.headers['x-ms-version'] == self.api_version
+        assert request.http_request.headers["x-ms-version"] == self.api_version

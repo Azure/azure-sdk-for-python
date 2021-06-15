@@ -17,6 +17,7 @@
 * [`PowerShellPreparer`][powershell_preparer]: Abstract preparer for delivering secrets from environment variables to individual tests
 * [`RetryCounter`][retry_counter]: Object for counting retries on a request.
 * [`ResponseCallback`][response_callback]: Object for mocking response callbacks.
+* [`FakeCredential`][fake_credential]: Fake credential used for authenticating in playback mode.
 
 
 <!-- LINKS -->

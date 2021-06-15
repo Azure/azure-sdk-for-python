@@ -9,6 +9,7 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from azure.core.credentials import AccessToken
 
+
 def patch_play_responses(unit_test):
     """Fixes a bug affecting blob tests by applying https://github.com/kevin1024/vcrpy/pull/511 to vcrpy 3.0.0"""
 
@@ -58,6 +59,7 @@ class AsyncStorageTestCase(StorageTestCase):
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity.aio import ClientSecretCredential
+
             return ClientSecretCredential(
                 self.get_settings_value("TENANT_ID"),
                 self.get_settings_value("CLIENT_ID"),
