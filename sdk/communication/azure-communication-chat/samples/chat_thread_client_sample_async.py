@@ -144,7 +144,8 @@ class ChatThreadClientSamplesAsync(object):
                 send_message_result_w_type_id = send_message_result_w_type.id
 
                 # Verify message content
-                print("First Message:", (await chat_thread_client.get_message(send_message_result_id)).content.message)
+                chat_message_1 = await chat_thread_client.get_message(send_message_result_id)
+                print("First Message:", chat_message_1.content.message, chat_message_1.metadata)
                 print("Second Message:", (await chat_thread_client.get_message(send_message_result_w_type_id)).content.message)
         # [END send_message]
                 self._message_id = send_message_result_id

@@ -87,6 +87,8 @@ class ChatMessage(object):
     :ivar edited_on: The last timestamp (if applicable) when the message was edited. The timestamp
      is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type edited_on: ~datetime.datetime
+    :ivar metadata: Message metadata.
+    :type metadata: dict[str, str]
     """
 
     def __init__(
