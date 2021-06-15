@@ -13,6 +13,10 @@ USAGE:
     1) SB_CONN_STR: The connection string to the Service Bus account
     3) SERVICE_BUS_QUEUE_NAME: The name of the servicebus account
 """
+
+# Note: This sample would not work on pypy since one of the dependencies
+# of azure-eventhub is not pypy compatible.
+
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
 import os

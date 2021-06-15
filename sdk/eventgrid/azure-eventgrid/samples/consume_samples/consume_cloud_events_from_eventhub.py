@@ -13,6 +13,10 @@ USAGE:
     1) EVENT_HUB_CONN_STR: The connection string to the Event hub account
     3) EVENTHUB_NAME: The name of the eventhub account
 """
+
+# Note: This sample would not work on pypy since one of the dependencies
+# of azure-eventhub is not pypy compatible.
+
 import os
 import json
 from azure.core.messaging import CloudEvent
