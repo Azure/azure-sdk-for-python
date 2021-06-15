@@ -38,15 +38,7 @@ class TestExamplesTests(KeyVaultTestCase):
     @property
     def credential(self):
         if self.is_live:
-            from dotenv import load_dotenv
-            from azure.identity import ClientSecretCredential
-            import os
-            load_dotenv()
-            return ClientSecretCredential(
-                tenant_id=os.environ["KEYVAULT_TENANT_ID"],
-                client_id=os.environ["KEYVAULT_CLIENT_ID"],
-                client_secret=os.environ["KEYVAULT_CLIENT_SECRET"]
-            )
+            return DefaultAzureCredential()
         return mock.Mock(get_token=lambda *_, **__: AccessToken("secret", time.time() + 3600))
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)

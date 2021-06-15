@@ -39,15 +39,7 @@ class BackupClientTests(KeyVaultTestCase):
     @property
     def credential(self):
         if self.is_live:
-            from dotenv import load_dotenv
-            from azure.identity.aio import ClientSecretCredential
-            import os
-            load_dotenv()
-            return ClientSecretCredential(
-                tenant_id=os.environ["KEYVAULT_TENANT_ID"],
-                client_id=os.environ["KEYVAULT_CLIENT_ID"],
-                client_secret=os.environ["KEYVAULT_CLIENT_SECRET"]
-            )
+            return DefaultAzureCredential()
 
         async def get_token(*_, **__):
             return AccessToken("secret", time.time() + 3600)
@@ -80,7 +72,7 @@ class BackupClientTests(KeyVaultTestCase):
         backup_poller = await backup_client.begin_backup(container_uri, sas_token)
 
         # create a new poller from a continuation token
-        token = backup_poller.polling_method().get_continuation_token()
+        token = backup_poller.continuation_token()
         rehydrated = await backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
 
         rehydrated_operation = await rehydrated.result()
@@ -92,7 +84,7 @@ class BackupClientTests(KeyVaultTestCase):
         restore_poller = await backup_client.begin_restore(backup_operation.folder_url, sas_token)
 
         # create a new poller from a continuation token
-        token = restore_poller.polling_method().get_continuation_token()
+        token = restore_poller.continuation_token()
         rehydrated = await backup_client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
         await rehydrated.wait()
@@ -132,7 +124,7 @@ class BackupClientTests(KeyVaultTestCase):
         backup_poller = await backup_client.begin_backup(container_uri, sas_token)
         
         # create a new poller from a continuation token
-        token = backup_poller.polling_method().get_continuation_token()
+        token = backup_poller.continuation_token()
         rehydrated = await backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
 
         # check that pollers and polling methods behave as expected
@@ -162,7 +154,7 @@ class BackupClientTests(KeyVaultTestCase):
         restore_poller = await backup_client.begin_restore(backup_operation.folder_url, sas_token)
 
         # create a new poller from a continuation token
-        token = restore_poller.polling_method().get_continuation_token()
+        token = restore_poller.continuation_token()
         rehydrated = await backup_client.begin_restore(backup_operation.folder_url, sas_token, continuation_token=token)
 
         # check that pollers and polling methods behave as expected
