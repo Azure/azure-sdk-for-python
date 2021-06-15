@@ -220,11 +220,6 @@ There are two properties provided in the [PolicyResult][attestation_policy_resul
 To verify the hash, clients can generate an attestation token and verify the hash generated from that token:
 
 ```python
-# The set_policy API will create an AttestationToken signed with the 
-# AttestationSigningKey to transmit the policy. To verify that the policy
-# specified by the caller was received by the service inside the enclave, we
-# verify that the hash of the policy document returned from the Attestation 
-# Service matches the hash of an attestation token created locally.
 from cryptography.hazmat.primitives import hashes
 
 expected_policy = AttestationToken(
@@ -259,35 +254,24 @@ This example shows one common pattern of calling into the attestation service to
 This example assumes that you have an existing `AttestationClient` object which is configured with the base URI for your endpoint. It also assumes that you have an SGX Quote (`quote`) generated from within the SGX enclave you are attesting, and "Runtime Data" (`runtime_data`) which is referenced in the SGX Quote.
 
 ```python
-# Collect quote and runtime data from an SGX enclave.
-#
-# For the "Secure Key Release" scenario, the runtime data is normally a serialized asymmetric key.
-# When the 'quote' (attestation evidence) is created specify the SHA256 hash
-# of the runtime data when creating the evidence.
-#
-# When the generated evidence is created, the hash of the runtime data is
-#  included in the secured portion of the evidence.
-#
-# The Attestation service will validate that the Evidence is valid and that
-# the SHA256 of the RuntimeData parameter is included in the evidence.
-response = attest_client.attest_sgx_enclave(
-        quote,
-        runtime_data=AttestationData(runtime_data, is_json=False))
-assert response.enclave_held_data == runtime_data
-assert response.sgx_collateral is not None
-
-# At this point, the EnclaveHeldData field in the attestationResult.Value 
-# property will hold the input binaryRuntimeData.
-
-# The token is now passed to the "relying party". The relying party will 
-# validate that the token was issued by the Attestation Service. It then 
-# extracts the asymmetric key from the EnclaveHeldData field. The relying
-#  party will then Encrypt it's "key" data using the asymmetric key and 
-# transmits it back to the enclave.
-encryptedData = send_token_to_relying_party(attestationResult.Token)
-
-# Now the encrypted data can be passed into the enclave which can decrypt that data.
+response = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
 ```
+
+At this point, the enclave_held_data attribute in the attestationResult
+will hold the input binary runtime_data.
+
+The token is now passed to the "relying party". The relying party will 
+validate that the token was issued by the Attestation Service. It then 
+extracts the asymmetric key from the EnclaveHeldData field. The relying
+ party will then Encrypt it's "key" data using the asymmetric key and 
+transmits it back to the enclave.
+
+```python
+encryptedData = send_token_to_relying_party(attestationResult.Token)
+```
+
+Now the encrypted data can be passed into the enclave which can decrypt that data.
+
 
 Additional information on how to perform attestation token validation can be found in the [MAA Service Attestation Sample](https://github.com/Azure-Samples/microsoft-azure-attestation).
 
