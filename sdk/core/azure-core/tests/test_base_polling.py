@@ -124,10 +124,7 @@ def pipeline_client_builder():
 @pytest.fixture
 def deserialization_cb():
     def cb(pipeline_response):
-        try:
-            return pipeline_response.http_response.json()
-        except Exception:
-            a = "b"
+        return pipeline_response.http_response.json()
     return cb
 
 

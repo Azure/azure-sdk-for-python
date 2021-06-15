@@ -12,9 +12,6 @@ from azure.core.rest import HttpRequest, ResponseNotReadError
 async def test_normal_call(client):
     async def _raise_and_get_text(response):
         response.raise_for_status()
-        with pytest.raises(ResponseNotReadError):
-            response.text
-        await response.read()
         assert response.text == "Hello, world!"
         assert response.is_closed
     request = HttpRequest("GET", url="http://localhost:5000/basic/string")

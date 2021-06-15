@@ -423,13 +423,10 @@ class AsyncHttpResponse(_HttpResponseBase):
         """
         if not self._has_content():
             parts = []
-            try:
-                async for part in self.iter_bytes():
-                    parts.append(part)
-            except StopAsyncIteration:
-                pass
+            async for part in self.iter_bytes():
+                parts.append(part)
             self._set_content(b"".join(parts))
-        return self.content
+        return self._get_content()
 
     async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the raw response bytes

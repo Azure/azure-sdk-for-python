@@ -4,12 +4,11 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    AsyncHttpResponse,
     AsyncHttpTransport,
     AsyncioRequestsTransportResponse,
     AioHttpTransport,
 )
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from unittest import mock
@@ -39,7 +38,7 @@ async def test_connection_error_response():
 
         async def send(self, request, **kwargs):
             request = HttpRequest('GET', 'http://127.0.0.1/')
-            response = AsyncHttpResponse(request, None)
+            response = AsyncHttpResponse(request=request, internal_response=None)
             response.status_code = 200
             return response
 
@@ -67,7 +66,7 @@ async def test_connection_error_response():
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     pipeline = AsyncPipeline(MockTransport())
-    http_response = AsyncHttpResponse(http_request, None)
+    http_response = AsyncHttpResponse(request=http_request, internal_response=None)
     http_response.internal_response = MockInternalResponse()
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
@@ -112,10 +111,10 @@ async def test_response_streaming_error_behavior():
     req_response.raw = FakeStreamWithConnectionError()
 
     response = AsyncioRequestsTransportResponse(
-        req_request,
-        req_response,
-        block_size,
+        request=req_request,
+        internal_response=req_response,
     )
+    response._connection_data_block_size = block_size
 
     async def mock_run(self, *args, **kwargs):
         return PipelineResponse(
@@ -127,7 +126,7 @@ async def test_response_streaming_error_behavior():
     transport = AioHttpTransport()
     pipeline = AsyncPipeline(transport)
     pipeline.run = mock_run
-    downloader = response.stream_download(pipeline)
+    downloader = response.iter_bytes()
     with pytest.raises(requests.exceptions.ConnectionError):
         while True:
             await downloader.__anext__()

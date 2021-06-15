@@ -15,7 +15,8 @@ import time
 import pytest
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpTransport, HttpRequest
+from azure.core.pipeline.transport import HttpTransport
+from azure.core.rest import HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async

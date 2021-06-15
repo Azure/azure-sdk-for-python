@@ -26,6 +26,7 @@
 import os
 import pytest
 from azure.core import AsyncPipelineClient
+from azure.core.rest import HttpRequest
 
 @pytest.mark.asyncio
 async def test_decompress_plain_no_header():
@@ -34,10 +35,10 @@ async def test_decompress_plain_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     content = b""
     async for d in data:
         content += d
@@ -51,10 +52,10 @@ async def test_compress_plain_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b""
     async for d in data:
         content += d
@@ -68,10 +69,10 @@ async def test_decompress_compressed_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     content = b""
     async for d in data:
         content += d
@@ -88,10 +89,10 @@ async def test_compress_compressed_no_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b""
     async for d in data:
         content += d
@@ -109,10 +110,10 @@ async def test_decompress_plain_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     try:
         content = b""
         async for d in data:
@@ -128,10 +129,10 @@ async def test_compress_plain_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b""
     async for d in data:
         content += d
@@ -145,10 +146,10 @@ async def test_decompress_compressed_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    data = response.iter_bytes()
     content = b""
     async for d in data:
         content += d
@@ -162,10 +163,10 @@ async def test_compress_compressed_header():
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    request = HttpRequest("GET", url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    data = response.iter_raw()
     content = b""
     async for d in data:
         content += d

@@ -308,7 +308,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     def _has_content(self):
         """How to check if your internal response has content"""
-        return bool(self._content)
+        return self._content is not None
 
     async def _stream_download_helper(self, decompress, chunk_size=None):
         if self.is_stream_consumed:
@@ -337,11 +337,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Iterate over the bytes in the response stream
         """
-        if self._content is not None:
+        content = self._get_content()
+        if content is not None:
             if chunk_size is None:
-                chunk_size = len(self._content)
-            async for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
+                chunk_size = len(content)
+            for i in range(0, len(content), chunk_size):
+                yield content[i: i + chunk_size]
         else:
             async for raw_bytes in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
                 yield raw_bytes

@@ -58,24 +58,24 @@ async def test_aiterator_content(assert_aiterator_body):
         yield b"world!"
 
     request = HttpRequest("POST", url="http://example.org", content=hello_world())
-    assert not isinstance(request._content, collections.abc.Iterable)
-    assert isinstance(request._content, collections.abc.AsyncIterable)
+    assert not isinstance(request._data, collections.abc.Iterable)
+    assert isinstance(request._data, collections.abc.AsyncIterable)
 
     assert request.headers == {"Transfer-Encoding": "chunked"}
     await assert_aiterator_body(request, b"Hello, world!")
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
-    assert not isinstance(request._content, collections.abc.Iterable)
-    assert isinstance(request._content, collections.abc.AsyncIterable)
+    assert not isinstance(request._data, collections.abc.Iterable)
+    assert isinstance(request._data, collections.abc.AsyncIterable)
 
     assert request.headers == {"Transfer-Encoding": "chunked"}
     await assert_aiterator_body(request, b"Hello, world!")
 
     # transfer encoding should not be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
-    assert not isinstance(request._content, collections.abc.Iterable)
-    assert isinstance(request._content, collections.abc.AsyncIterable)
+    assert not isinstance(request._data, collections.abc.Iterable)
+    assert isinstance(request._data, collections.abc.AsyncIterable)
 
     assert request.headers == {"Transfer-Encoding": "chunked"}
     await assert_aiterator_body(request, b"Hello, world!")

@@ -17,11 +17,8 @@ from azure.core.pipeline.policies import (
     RetryMode,
 )
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
-from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
-    AsyncHttpTransport,
-)
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest import HttpRequest, HttpResponse
 import tempfile
 import os
 import time
@@ -57,7 +54,7 @@ def test_retry_types():
 def test_retry_after(retry_after_input):
     retry_policy = AsyncRetryPolicy()
     request = HttpRequest("GET", "https://bing.com")
-    response = HttpResponse(request, None)
+    response = HttpResponse(request=request, internal_response=None)
     response.headers["retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
     retry_after = retry_policy.get_retry_after(pipeline_response)
@@ -75,7 +72,7 @@ def test_retry_after(retry_after_input):
 def test_x_ms_retry_after(retry_after_input):
     retry_policy = AsyncRetryPolicy()
     request = HttpRequest("GET", "https://bing.com")
-    response = HttpResponse(request, None)
+    response = HttpResponse(request=request, internal_response=None)
     response.headers["x-ms-retry-after-ms"] = retry_after_input
     pipeline_response = PipelineResponse(request, response, None)
     retry_after = retry_policy.get_retry_after(pipeline_response)
@@ -103,7 +100,7 @@ async def test_retry_on_429():
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
-            response = HttpResponse(request, None)
+            response = HttpResponse(request=request, internal_response=None)
             response.status_code = 429
             return response
 
@@ -128,7 +125,7 @@ async def test_no_retry_on_201():
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
-            response = HttpResponse(request, None)
+            response = HttpResponse(request=request, internal_response=None)
             response.status_code = 201
             headers = {"Retry-After": "1"}
             response.headers = headers
@@ -156,17 +153,16 @@ async def test_retry_seekable_stream():
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             if self._first:
                 self._first = False
-                request.body.seek(0,2)
+                request._data.seek(0,2)
                 raise AzureError('fail on first')
-            position = request.body.tell()
+            position = request._data.tell()
             assert position == 0
-            response = HttpResponse(request, None)
+            response = HttpResponse(request=request, internal_response=None)
             response.status_code = 400
             return response
 
-    data = BytesIO(b"Lots of dataaaa")
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
-    http_request.set_streamed_data_body(data)
+    content = BytesIO(b"Lots of dataaaa")
+    http_request = HttpRequest('GET', 'http://127.0.0.1/', content=content)
     http_retry = AsyncRetryPolicy(retry_total = 1)
     pipeline = AsyncPipeline(MockTransport(), [http_retry])
     await pipeline.run(http_request)
@@ -196,22 +192,19 @@ async def test_retry_seekable_file():
                 if name and body and hasattr(body, 'read'):
                     position = body.tell()
                     assert not position
-                    response = HttpResponse(request, None)
+                    response = HttpResponse(request=request, internal_response=None)
                     response.status_code = 400
                     return response
 
     file = tempfile.NamedTemporaryFile(delete=False)
     file.write(b'Lots of dataaaa')
     file.close()
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
-    headers = {'Content-Type': "multipart/form-data"}
-    http_request.headers = headers
     with open(file.name, 'rb') as f:
         form_data_content = {
             'fileContent': f,
             'fileName': f.name,
         }
-        http_request.set_formdata_body(form_data_content)
+        http_request = HttpRequest('GET', 'http://127.0.0.1/', headers={'Content-Type': "multipart/form-data"}, files=form_data_content)
         http_retry = AsyncRetryPolicy(retry_total=1)
         pipeline = AsyncPipeline(MockTransport(), [http_retry])
         await pipeline.run(http_request)
@@ -245,7 +238,7 @@ async def test_timeout_defaults():
     async def send(request, **kwargs):
         for arg in ("connection_timeout", "read_timeout"):
             assert arg not in kwargs, "policy should defer to transport configuration when not given a timeout"
-        response = HttpResponse(request, None)
+        response = HttpResponse(request=request, internal_response=None)
         response.status_code = 200
         return response
 

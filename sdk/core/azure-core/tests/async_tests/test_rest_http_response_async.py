@@ -68,10 +68,10 @@ async def test_response_html(send_request):
 
 @pytest.mark.asyncio
 async def test_raise_for_status(client):
-    response = await client.send_request(
-        HttpRequest("GET", "http://localhost:5000/basic/string"),
-    )
-    response.raise_for_status()
+    # response = await client.send_request(
+    #     HttpRequest("GET", "http://localhost:5000/basic/string"),
+    # )
+    # response.raise_for_status()
 
     response = await client.send_request(
         HttpRequest("GET", "http://localhost:5000/errors/403"),

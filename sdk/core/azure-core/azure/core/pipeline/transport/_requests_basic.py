@@ -148,7 +148,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         self.internal_response._content = val
 
     def _has_content(self):
-        return self._get_content() is not None or self.internal_response._content_consumed
+        return self._get_content() is not None
 
     @_HttpResponseBase.encoding.setter
     def encoding(self, value):
