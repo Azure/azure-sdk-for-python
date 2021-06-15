@@ -25,8 +25,7 @@ from azure.storage.blob import (
     BlobBlock, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_container_sas,
     ContainerSasPermissions, BlobClient, generate_blob_sas, BlobSasPermissions)
 
-from devtools_testutils.storage import StorageTestCase
-from _shared.service_versions import is_version_before, ServiceVersion
+from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion
 
 #------------------------------------------------------------------------------
 
