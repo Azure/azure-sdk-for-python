@@ -136,7 +136,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             self.assertEqual(str(idx + 1), doc.id)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
+    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.recognize_entities(
@@ -144,7 +144,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": "xxxxxxxxxxxx"})
+    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.recognize_entities(

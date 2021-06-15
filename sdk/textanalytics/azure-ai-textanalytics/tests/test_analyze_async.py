@@ -289,7 +289,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "",
+        "textanalytics_test_api_key": "",
     })
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -308,7 +308,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "xxxxxxxxxxxx"
+        "textanalytics_test_api_key": "xxxxxxxxxxxx"
     })
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):

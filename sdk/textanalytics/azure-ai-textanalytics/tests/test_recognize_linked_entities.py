@@ -134,7 +134,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             self.assertEqual(str(idx + 1), doc.id)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
+    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_linked_entities(
@@ -142,7 +142,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": "xxxxxxxxxxxx"})
+    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.recognize_linked_entities(
