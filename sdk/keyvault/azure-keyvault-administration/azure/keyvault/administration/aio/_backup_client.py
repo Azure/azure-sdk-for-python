@@ -7,6 +7,7 @@ import functools
 import pickle
 from typing import TYPE_CHECKING
 
+from .._backup_client import _parse_status_url
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
 from .._internal.polling import KeyVaultBackupClientPolling
@@ -16,17 +17,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any
     from azure.core.polling import AsyncLROPoller
-
-# pylint: disable=W0212
-
-
-async def _get_status_from_continuation_token(token, pipeline_client):
-    continuation_url = base64.b64decode(token.encode()).decode("ascii")
-    status_response = await pipeline_client._pipeline.run(pipeline_client.get(continuation_url), stream=False)
-    # inject the status URL if it's not in the response
-    if "azure-asyncoperation" not in status_response.http_response.headers:
-        status_response.http_response.headers["azure-asyncoperation"] = continuation_url
-    return base64.b64encode(pickle.dumps(status_response)).decode('ascii')
 
 
 class KeyVaultBackupClient(AsyncKeyVaultClientBase):
@@ -64,7 +54,20 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         status_response = None
         if continuation_token:
-            status_response = await _get_status_from_continuation_token(continuation_token, self._client._client)
+            try:
+                job_id = _parse_status_url(base64.b64decode(continuation_token.encode()).decode("ascii"))
+            except:  # pylint: disable=broad-except
+                raise ValueError("The provided continuation_token is malformed. A base64-encoded URL is expected")
+
+            pipeline_response = await self._client.full_backup_status(
+                vault_base_url=self._vault_url,
+                job_id=job_id,
+                cls=lambda pipeline_response, _, __: pipeline_response
+            )
+            if "azure-asyncoperation" not in pipeline_response.http_response.headers:
+                status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
+                pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
+            status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode('ascii')
 
         return await self._client.begin_full_backup(
             vault_base_url=self._vault_url,
@@ -105,7 +108,20 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
         status_response = None
         if continuation_token:
-            status_response = await _get_status_from_continuation_token(continuation_token, self._client._client)
+            try:
+                job_id = _parse_status_url(base64.b64decode(continuation_token.encode()).decode("ascii"))
+            except:  # pylint: disable=broad-except
+                raise ValueError("The provided continuation_token is malformed. A base64-encoded URL is expected")
+
+            pipeline_response = await self._client.restore_status(
+                vault_base_url=self._vault_url,
+                job_id=job_id,
+                cls=lambda pipeline_response, _, __: pipeline_response
+            )
+            if "azure-asyncoperation" not in pipeline_response.http_response.headers:
+                status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
+                pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
+            status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode('ascii')
 
         container_url, folder_name = parse_folder_url(folder_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)

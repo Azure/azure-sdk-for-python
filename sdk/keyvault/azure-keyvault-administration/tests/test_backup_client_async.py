@@ -172,20 +172,3 @@ class BackupClientTests(KeyVaultTestCase):
         assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
         await restore_poller.wait()
         assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
-
-
-        # check that pollers and polling methods behave as expected
-        assert restore_poller.status() == "InProgress"
-        assert not restore_poller.done() or restore_poller.polling_method().finished()
-        assert rehydrated.status() == "InProgress"
-        assert not rehydrated.done() or rehydrated.polling_method().finished()
-
-        await rehydrated.polling_method().update_status()
-        assert rehydrated.status() == "InProgress"
-        await restore_poller.polling_method().update_status()
-        assert restore_poller.status() == "InProgress"
-
-        await rehydrated.wait()
-        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
-        await restore_poller.wait()
-        assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"

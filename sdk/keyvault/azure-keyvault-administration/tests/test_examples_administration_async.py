@@ -48,42 +48,27 @@ class TestExamplesTests(KeyVaultTestCase):
     @StorageAccountPreparer(random_name_enabled=True)
     @BlobContainerPreparer()
     async def test_example_backup_and_restore(self, container_uri, sas_token):
-        if not self.is_live:
-            pytest.skip("Poller requests are incompatible with vcrpy in playback")
-
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
 
         # [START begin_backup]
         # begin a vault backup
         backup_poller = await backup_client.begin_backup(container_uri, sas_token)
 
-        # to create a new poller for the operation, use a continuation token
-        token = backup_poller.polling_method().get_continuation_token()
-        new_poller = await backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
-
-        # check if the backup completed
-        done = new_poller.done()
+        done = backup_poller.done()
 
         # get the final result
         backup_operation = await backup_poller.result()
         # [END begin_backup]
 
-        await new_poller.wait()
         folder_url = backup_operation.folder_url
 
         # [START begin_restore]
         # begin a full vault restore; to restore a single key, use the key_name kwarg
         restore_poller = await backup_client.begin_restore(folder_url, sas_token)
 
-        # to create a new poller for the operation, use a continuation token
-        token = restore_poller.polling_method().get_continuation_token()
-        new_poller = await backup_client.begin_restore(folder_url, sas_token, continuation_token=token)
-
         # check if the restore completed
-        done = new_poller.done()
+        done = backup_poller.done()
 
         # wait for the restore to complete
         await restore_poller.wait()
         # [END begin_restore]
-
-        await new_poller.wait()
