@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core.polling import AsyncLROPoller
 
+# pylint: disable=W0212
+
 
 async def _get_status_from_continuation_token(token, pipeline_client):
     continuation_url = base64.b64decode(token.encode()).decode("ascii")

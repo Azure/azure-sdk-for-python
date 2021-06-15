@@ -49,7 +49,7 @@ class TestExamplesTests(KeyVaultTestCase):
 
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
 
-        # [START backup_vault]
+        # [START begin_backup]
         # begin a vault backup
         backup_poller = backup_client.begin_backup(container_uri, sas_token)
 
@@ -57,14 +57,17 @@ class TestExamplesTests(KeyVaultTestCase):
         token = backup_poller.polling_method().get_continuation_token()
         new_poller = backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
 
+        # check if the backup completed
+        done = new_poller.done()
+
         # get the final result
         backup_operation = backup_poller.result()
-        # [END backup_vault]
+        # [END begin_backup]
 
         new_poller.wait()
         folder_url = backup_operation.folder_url
 
-        # [START restore_vault]
+        # [START begin_restore]
         # begin a full vault restore; to restore a single key, use the key_name kwarg
         restore_poller = backup_client.begin_restore(folder_url, sas_token)
 
@@ -72,8 +75,11 @@ class TestExamplesTests(KeyVaultTestCase):
         token = restore_poller.polling_method().get_continuation_token()
         new_poller = backup_client.begin_restore(folder_url, sas_token, continuation_token=token)
 
+        # check if the restore completed
+        done = new_poller.done()
+
         # wait for the restore to complete
         restore_poller.wait()
-        # [END restore_vault]
+        # [END begin_restore]
 
         new_poller.wait()
