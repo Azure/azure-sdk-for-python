@@ -37,3 +37,4 @@
 [powershell_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/520ea7175e10a971eae9d3e6cd0735efd80447b1/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py#L14
 [retry_counter]: https://github.com/Azure/azure-sdk-for-python/blob/ab7e7f1a7b2a6d7255abdc77a40e2d6a86c9de0a/tools/azure-sdk-tools/devtools_testutils/helpers.py#L6
 [response_callback]: https://github.com/Azure/azure-sdk-for-python/blob/ab7e7f1a7b2a6d7255abdc77a40e2d6a86c9de0a/tools/azure-sdk-tools/devtools_testutils/helpers.py#L14
+[fake_credential]: https://github.com/Azure/azure-sdk-for-python/blob/65ffc49fbdd0f4f83e68eb5c8e0c6d293f0569cd/tools/azure-sdk-tools/devtools_testutils/fake_credential.py
