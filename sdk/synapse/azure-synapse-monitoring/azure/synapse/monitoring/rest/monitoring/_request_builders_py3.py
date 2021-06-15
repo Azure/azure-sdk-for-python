@@ -13,11 +13,7 @@ from msrest import Serializer
 _SERIALIZER = Serializer()
 
 
-def build_get_spark_job_list_request(
-    *,
-    x_ms_client_request_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_spark_job_list_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     """Get list of spark applications for the workspace.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
@@ -26,9 +22,9 @@ def build_get_spark_job_list_request(
     :keyword x_ms_client_request_id: Can provide a guid, which is helpful for debugging and to
      provide better customer support.
     :paramtype x_ms_client_request_id: str
-    :return: Returns an :class:`~azure.synapse.monitoring.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
+    :return: Returns an :class:`~azure.synapse.monitoring.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
     :rtype: ~azure.synapse.monitoring.core.rest.HttpRequest
 
     Example:
@@ -63,30 +59,25 @@ def build_get_spark_job_list_request(
             }
     """
 
-
-    api_version = "2019-11-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/monitoring/workloadTypes/spark/Applications')
+    url = kwargs.pop("template_url", "/monitoring/workloadTypes/spark/Applications")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if x_ms_client_request_id is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_get_sql_job_query_string_request(
@@ -111,9 +102,9 @@ def build_get_sql_job_query_string_request(
     :paramtype orderby: str
     :keyword skip:
     :paramtype skip: str
-    :return: Returns an :class:`~azure.synapse.monitoring.core.rest.HttpRequest` that you will pass
-     to the client's `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for
-     how to incorporate this response into your code flow.
+    :return: Returns an :class:`~azure.synapse.monitoring.core.rest.HttpRequest` that you will pass to the client's
+     `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
+     incorporate this response into your code flow.
     :rtype: ~azure.synapse.monitoring.core.rest.HttpRequest
 
     Example:
@@ -125,34 +116,28 @@ def build_get_sql_job_query_string_request(
             }
     """
 
-
-    api_version = "2019-11-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/monitoring/workloadTypes/sql/querystring')
+    url = kwargs.pop("template_url", "/monitoring/workloadTypes/sql/querystring")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
-        query_parameters['filter'] = _SERIALIZER.query("filter", filter, 'str')
+        query_parameters["filter"] = _SERIALIZER.query("filter", filter, "str")
     if orderby is not None:
-        query_parameters['$orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
+        query_parameters["$orderby"] = _SERIALIZER.query("orderby", orderby, "str")
     if skip is not None:
-        query_parameters['skip'] = _SERIALIZER.query("skip", skip, 'str')
+        query_parameters["skip"] = _SERIALIZER.query("skip", skip, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if x_ms_client_request_id is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)

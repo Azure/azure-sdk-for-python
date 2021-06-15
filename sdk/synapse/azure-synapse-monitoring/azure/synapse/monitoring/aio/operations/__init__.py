@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._monitoring_client import MonitoringClient
+from ._monitoring_operations import MonitoringOperations
 
-__all__ = ["MonitoringClient"]
+__all__ = [
+    "MonitoringOperations",
+]

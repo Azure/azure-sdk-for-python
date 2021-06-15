@@ -6,6 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._monitoring_client import MonitoringClient
+try:
+    from ._models_py3 import SparkJob
+    from ._models_py3 import SparkJobListViewResponse
+    from ._models_py3 import SqlQueryStringDataModel
+except (SyntaxError, ImportError):
+    from ._models import SparkJob  # type: ignore
+    from ._models import SparkJobListViewResponse  # type: ignore
+    from ._models import SqlQueryStringDataModel  # type: ignore
 
-__all__ = ["MonitoringClient"]
+__all__ = [
+    "SparkJob",
+    "SparkJobListViewResponse",
+    "SqlQueryStringDataModel",
+]

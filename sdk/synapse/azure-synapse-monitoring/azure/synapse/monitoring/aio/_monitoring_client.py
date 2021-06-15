@@ -15,35 +15,34 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import MonitoringClientConfiguration
+from .operations import MonitoringOperations
+from .. import models
 
 
 class MonitoringClient(object):
     """MonitoringClient.
 
+    :ivar monitoring: MonitoringOperations operations
+    :vartype monitoring: azure.synapse.monitoring.aio.operations.MonitoringOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        base_url = '{endpoint}'
+    def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
+        base_url = "{endpoint}"
         self._config = MonitoringClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.monitoring = MonitoringOperations(self._client, self._config, self._serialize, self._deserialize)
 
     async def send_request(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
@@ -70,7 +69,7 @@ class MonitoringClient(object):
         """
         request_copy = deepcopy(request)
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         if kwargs.pop("stream", False):
@@ -82,7 +81,7 @@ class MonitoringClient(object):
         response = AsyncHttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
-            _internal_response=pipeline_response.http_response
+            _internal_response=pipeline_response.http_response,
         )
         await response.read()
         return response
