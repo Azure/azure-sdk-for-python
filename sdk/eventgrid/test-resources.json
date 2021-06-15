@@ -111,10 +111,6 @@
             "type": "string",
             "value": "[reference(variables('cloudeventDomainName')).endpoint]"
         },
-        "DOMAIN_NAME": {
-            "type": "string",
-            "value": "[reference(variables('cloudeventDomainName'))]"
-        },
         "DOMAIN_ACCESS_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.EventGrid/domains', variables('cloudeventDomainName')), variables('apiVersion')).key1]"
