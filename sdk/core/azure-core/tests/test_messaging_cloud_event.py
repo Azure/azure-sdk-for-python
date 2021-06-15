@@ -233,7 +233,7 @@ def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
 
 def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
     cloud_custom_dict_with_extensions = {
-        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e034",
         "source":"https://egtest.dev/cloudcustomevent",
         "data":{"team": "event grid squad"},
         "type":"Azure.Sdk.Sample",
