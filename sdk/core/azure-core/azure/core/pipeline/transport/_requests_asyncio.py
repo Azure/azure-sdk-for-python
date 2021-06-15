@@ -37,11 +37,12 @@ from azure.core.exceptions import (
     ServiceResponseError
 )
 from azure.core.pipeline import Pipeline
+from ._base import HttpRequest
 from ._base_async import (
+    AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ...rest import AsyncHttpResponse, HttpRequest, StreamConsumedError, ResponseClosedError
-from ._requests_basic import _RequestsTransportResponseBase, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
 
 
@@ -107,7 +108,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     request.url,
                     headers=request.headers,
                     data=data_to_send,
-                    files=request._files,
+                    files=request.files,
                     verify=kwargs.pop('connection_verify', self.connection_config.verify),
                     timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                     cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -129,12 +130,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         if error:
             raise error
 
-        response = AsyncioRequestsTransportResponse(request=request, internal_response=response)
-        response._connection_data_block_size = self.connection_config.data_block_size
-        if not kwargs.get("stream", None):
-            await response.read()
-            await response.close()
-        return response
+        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
@@ -184,43 +180,9 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             raise
 
 
-class AsyncioRequestsTransportResponse(AsyncHttpResponse, _RequestsTransportResponseBase): # type: ignore
+class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    async def _stream_download_helper(self, decompress, chunk_size=None):
-        if self.is_stream_consumed:
-            raise StreamConsumedError()
-        if self.is_closed:
-            raise ResponseClosedError()
-
-        self.is_stream_consumed = True
-        stream_download = AsyncioStreamDownloadGenerator(
-            pipeline=None,
-            response=self,
-            chunk_size=chunk_size,
-            decompress=decompress,
-        )
-        async for part in stream_download:
-            self._num_bytes_downloaded += len(part)
-            yield part
-
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
-        """Iterate over the raw response bytes
-        """
-        async for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
-            yield raw_bytes
-        await self.close()
-
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
-        """Iterate over the bytes in the response stream
-        """
-        content = self._get_content()
-        if content is not None:
-            if chunk_size is None:
-                chunk_size = len(content)
-            for i in range(0, len(content), chunk_size):
-                yield content[i: i + chunk_size]
-        else:
-            async for raw_bytes in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
-                yield raw_bytes
-        await self.close()
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
+        """Generator for streaming request body data."""
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore

@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar, TYPE_CHECKING
+from typing import Iterator, Optional, Any, Union, TypeVar
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 from urllib3.exceptions import (
@@ -38,17 +38,14 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
+from . import HttpRequest # pylint: disable=unused-import
 
 from ._base import (
     HttpTransport,
+    HttpResponse,
+    _HttpResponseBase
 )
-from ...rest import ResponseNotReadError, ResponseClosedError, StreamConsumedError
-
-from ...rest import _HttpResponseBase, HttpResponse
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
-
-if TYPE_CHECKING:
-    from ...rest import HttpRequest
 
 PipelineType = TypeVar("PipelineType")
 
@@ -74,8 +71,48 @@ def _read_raw_stream(response, chunk_size=1):
                 break
             yield chunk
 
-    # following behavior from requests iter_content, we set content consumed to True
-    response._content_consumed = True
+class _RequestsTransportResponseBase(_HttpResponseBase):
+    """Base class for accessing response data.
+
+    :param HttpRequest request: The request.
+    :param requests_response: The object returned from the HTTP library.
+    :param int block_size: Size in bytes.
+    """
+    def __init__(self, request, requests_response, block_size=None):
+        super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
+        self.status_code = requests_response.status_code
+        self.headers = requests_response.headers
+        self.reason = requests_response.reason
+        self.content_type = requests_response.headers.get('content-type')
+
+    def body(self):
+        return self.internal_response.content
+
+    def text(self, encoding=None):
+        # type: (Optional[str]) -> str
+        """Return the whole body as a string.
+
+        If encoding is not provided, mostly rely on requests auto-detection, except
+        for BOM, that requests ignores. If we see a UTF8 BOM, we assumes UTF8 unlike requests.
+
+        :param str encoding: The encoding to apply.
+        """
+        if not encoding:
+            # There is a few situation where "requests" magic doesn't fit us:
+            # - https://github.com/psf/requests/issues/654
+            # - https://github.com/psf/requests/issues/1737
+            # - https://github.com/psf/requests/issues/2086
+            from codecs import BOM_UTF8
+            if self.internal_response.content[:3] == BOM_UTF8:
+                encoding = "utf-8-sig"
+
+        if encoding:
+            if encoding == "utf-8":
+                encoding = "utf-8-sig"
+
+            self.internal_response.encoding = encoding
+
+        return self.internal_response.text
 
 
 class StreamDownloadGenerator(object):
@@ -90,7 +127,7 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = kwargs.pop("chunk_size", None) or response._connection_data_block_size
+        self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -123,99 +160,15 @@ class StreamDownloadGenerator(object):
             raise
     next = __next__  # Python 2 compatibility.
 
-class _RequestsTransportResponseBase(_HttpResponseBase):
-    def __init__(self, **kwargs):
-        super(_RequestsTransportResponseBase, self).__init__(**kwargs)
-        self.status_code = self.internal_response.status_code
-        self.headers = self.internal_response.headers
-        self.reason = self.internal_response.reason
-        self.content_type = self.internal_response.headers.get('content-type')
-
-    def _get_content(self):
-        """Return the internal response's content"""
-        if not self.internal_response._content_consumed:
-            # if we just call .content, requests will read in the content.
-            # we want to read it in our own way
-            return None
-        try:
-            return self.internal_response.content
-        except RuntimeError:
-            # requests throws a RuntimeError if the content for a response is already consumed
-            return None
-
-    def _set_content(self, val):
-        """Set the internal response's content"""
-        self.internal_response._content = val
-
-    def _has_content(self):
-        return self._get_content() is not None
-
-    @_HttpResponseBase.encoding.setter
-    def encoding(self, value):
-        # type: (str) -> None
-        self._encoding = value
-        encoding = value
-        if not encoding:
-            # There is a few situation where "requests" magic doesn't fit us:
-            # - https://github.com/psf/requests/issues/654
-            # - https://github.com/psf/requests/issues/1737
-            # - https://github.com/psf/requests/issues/2086
-            from codecs import BOM_UTF8
-            if self.internal_response.content[:3] == BOM_UTF8:
-                encoding = "utf-8-sig"
-        if encoding:
-            if encoding == "utf-8":
-                encoding = "utf-8-sig"
-        self.internal_response.encoding = encoding
-
-    @property
-    def text(self):
-        if not self._has_content():
-            raise ResponseNotReadError()
-        return self.internal_response.text
-
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def _stream_download_helper(self, decompress, chunk_size=None):
-        if self.is_stream_consumed:
-            raise StreamConsumedError()
-        if self.is_closed:
-            raise ResponseClosedError()
+    def stream_download(self, pipeline, **kwargs):
+        # type: (PipelineType, **Any) -> Iterator[bytes]
+        """Generator for streaming request body data."""
+        return StreamDownloadGenerator(pipeline, self, **kwargs)
 
-        self.is_stream_consumed = True
-        stream_download = StreamDownloadGenerator(
-            pipeline=None,
-            response=self,
-            chunk_size=chunk_size,
-            decompress=decompress,
-        )
-        for part in stream_download:
-            self._num_bytes_downloaded += len(part)
-            yield part
-
-    def iter_raw(self, chunk_size=None):
-        # type: (Optional[int]) -> Iterator[bytes]
-        """Iterate over the raw response bytes
-        """
-        for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
-            yield raw_bytes
-        self.close()
-
-    def iter_bytes(self, chunk_size=None):
-        # type: (Optional[int]) -> Iterator[bytes]
-        """Iterate over the response bytes
-        """
-        if self._has_content():
-            if chunk_size is None:
-                chunk_size = len(self.content)
-            for i in range(0, len(self.content), chunk_size):
-                yield self.content[i: i + chunk_size]
-        else:
-            for part in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
-                yield part
-        self.close()
 
 class RequestsTransport(HttpTransport):
     """Implements a basic requests HTTP sender.
@@ -314,8 +267,8 @@ class RequestsTransport(HttpTransport):
                 request.method,
                 request.url,
                 headers=request.headers,
-                data=request._data,
-                files=request._files,
+                data=request.data,
+                files=request.files,
                 verify=kwargs.pop('connection_verify', self.connection_config.verify),
                 timeout=timeout,
                 cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -336,14 +289,4 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-
-        response = RequestsTransportResponse(
-            request=request,
-            internal_response=response,
-            # self.connection_config.data_block_size
-        )
-        response._connection_data_block_size = self.connection_config.data_block_size
-        if not kwargs.get("stream", False):
-            response.read()
-            response.close()
-        return response
+        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)
