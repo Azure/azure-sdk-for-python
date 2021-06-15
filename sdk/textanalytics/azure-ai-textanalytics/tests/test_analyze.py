@@ -701,13 +701,10 @@ class TestAnalyze(TextAnalyticsTest):
 
         result = client.begin_analyze_actions(documents=docs, actions=actions, polling_interval=self._interval()).result()
         action_results = list(result)
-        assert len(action_results) == 1
-        action_result = action_results[0]
-        assert action_result.action_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-        assert len(action_result.document_results) == len(docs)
+        assert len(action_results) == 3
 
-        assert action_result.document_results[0].entities[0].text == "859-98-0987"
-        assert action_result.document_results[0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
-        assert action_result.document_results[1].entities[0].text == "111000025"
-        assert action_result.document_results[1].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
-        assert action_result.document_results[2].entities[0].entities == []  # No Brazilian CPF since not in categories_filter
+        assert action_results[0][0].entities[0].text == "859-98-0987"
+        assert action_results[0][0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
+        assert action_results[1][0].entities[0].text == "111000025"
+        assert action_results[1][0].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
+        assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter

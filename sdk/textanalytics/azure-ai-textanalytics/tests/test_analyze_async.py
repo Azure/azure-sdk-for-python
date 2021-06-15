@@ -742,8 +742,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             RecognizePiiEntitiesAction(
                 categories_filter=[
                     PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER,
-                    PiiEntityCategoryType.ABA_ROUTING_NUMBER,
-                    PiiEntityCategoryType.BRCPF_NUMBER
+                    PiiEntityCategoryType.ABA_ROUTING_NUMBER
                 ]
             ),
         ]
@@ -753,13 +752,10 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async for p in result:
                 action_results.append(p)
 
-        assert len(action_results) == 1
-        action_result = action_results[0]
-        assert action_result.action_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-        assert len(action_result.document_results) == len(docs)
+        assert len(action_results) == 3
 
-        assert action_result.document_results[0].entities[0].text == "859-98-0987"
-        assert action_result.document_results[0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
-        assert action_result.document_results[1].entities[0].text == "111000025"
-        assert action_result.document_results[1].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
-        assert action_result.document_results[2].entities[0].entities == []  # No Brazilian CPF since not in categories_filter
+        assert action_results[0][0].entities[0].text == "859-98-0987"
+        assert action_results[0][0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
+        assert action_results[1][0].entities[0].text == "111000025"
+        assert action_results[1][0].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
+        assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
