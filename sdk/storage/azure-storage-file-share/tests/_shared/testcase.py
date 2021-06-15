@@ -316,6 +316,14 @@ def not_for_emulator(test):
     return skip_test_if_targeting_emulator
 
 
+class RetryCounter(object):
+    def __init__(self):
+        self.count = 0
+
+    def simple_count(self, retry_context):
+        self.count += 1
+
+
 class ResponseCallback(object):
     def __init__(self, status=None, new_status=None):
         self.status = status

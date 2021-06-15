@@ -10,7 +10,6 @@ from time import sleep
 import pytest
 from devtools_testutils import StorageAccountPreparer
 
-# from devtools_testutils.storage.aio import AsyncStorageTestCase
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 try:
