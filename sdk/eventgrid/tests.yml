@@ -13,7 +13,4 @@ stages:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        DOMAIN_ACCESS_KEY: $(python-sdk-test-eg-domain-access-key)
-        DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-eg-domain-topic-hostname)
         EVENTGRID_SAS: $(python-sdk-test-eg-sas)
-        DOMAIN_NAME: $(python-sdk-test-eg-domain-name)

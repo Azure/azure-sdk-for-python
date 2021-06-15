@@ -11,7 +11,8 @@
         "eventGridTopicName": "[concat(parameters('baseName'), 'topic')]",
         "eventGridDomainName": "[concat(parameters('baseName'), 'domain')]",
         "cloudeventTopicName": "[concat(parameters('baseName'), 'cloudevent-topic')]",
-        "customeventTopicName": "[concat(parameters('baseName'), 'customevent-topic')]"
+        "customeventTopicName": "[concat(parameters('baseName'), 'customevent-topic')]",
+        "cloudeventDomainName": "[concat(parameters('baseName'), 'cloudevent-domain')]"
     },
     "resources": [
         {
@@ -31,6 +32,15 @@
             "type": "Microsoft.EventGrid/topics",
             "apiVersion": "[variables('apiVersion')]",
             "name": "[variables('cloudeventTopicName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "inputSchema": "CloudEventSchemaV1_0"
+             }
+        },
+        {
+            "name": "[variables('cloudeventDomainName')]",
+            "type": "Microsoft.EventGrid/domains",
+            "apiVersion": "[variables('apiVersion')]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "inputSchema": "CloudEventSchemaV1_0"
@@ -96,6 +106,18 @@
         "CLOUD_ACCESS_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.EventGrid/topics', variables('cloudeventTopicName')), variables('apiVersion')).key1]"
+        },
+        "DOMAIN_TOPIC_HOSTNAME": {
+            "type": "string",
+            "value": "[reference(variables('cloudeventDomainName')).endpoint]"
+        },
+        "DOMAIN_NAME": {
+            "type": "string",
+            "value": "[reference(variables('cloudeventDomainName'))]"
+        },
+        "DOMAIN_ACCESS_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.EventGrid/domains', variables('cloudeventDomainName')), variables('apiVersion')).key1]"
         },
         "CUSTOM_SCHEMA_TOPIC_HOSTNAME": {
             "type": "string",
