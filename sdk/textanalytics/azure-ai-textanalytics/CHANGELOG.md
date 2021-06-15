@@ -9,6 +9,9 @@
 - Removed `AnalyzeActionsResult`
 - Removed `AnalyzeActionsError`
 
+**New Features**
+- Added `catagories_filter` to `RecognizePiiEntitiesAction`
+
 ## 5.1.0b7 (2021-05-18)
 
 **Breaking Changes**
