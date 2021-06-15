@@ -43,26 +43,26 @@ jobs:
         Python_27_Linux (AzureCloud):
           PythonVersion: '2.7'
           SkipAsyncInstall: true
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
         Python_37_Linux (AzureCloud):
           PythonVersion: '3.7'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
         Python_38_Linux (AzureCloud):
           PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
         Python_38_Linux (AzureCloud Canary):
           PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
           ArmTemplateParameters: $(azureCloudArmParameters)
           Location: 'eastus2euap'
@@ -74,8 +74,8 @@ jobs:
           ArmTemplateParameters: $(azureCloudArmParameters)
         Python_38_Windows (AzureCloud):
           PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
         Python_37_Mac (AzureCloud):
@@ -92,27 +92,27 @@ jobs:
           ArmTemplateParameters: $(azureCloudArmParameters)
         Python_38_Linux (AzureUSGovernment):
           PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu120.04"
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
           ArmTemplateParameters: $(azureUSGovernmentArmParameters)
         Python_37_Windows (AzureUSGovernment):
           PythonVersion: '3.7'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
           ArmTemplateParameters: $(azureUSGovernmentArmParameters)
         Python_38_Linux (AzureChinaCloud):
           PythonVersion: '3.8'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           Location: 'chinanorth'
           ArmTemplateParameters: $(azureChinaCloudArmParameters)
         Python_37_Windows (AzureChinaCloud):
           PythonVersion: '3.7'
-          Pool: "azsdk-pool-mms-ubuntu-1804-general"
-          OSVmImage: "MMSUbuntu18.04"
+          Pool: "azsdk-pool-mms-ubuntu-2004-general"
+          OSVmImage: "MMSUbuntu20.04"
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           Location: 'chinanorth'
           ArmTemplateParameters: $(azureChinaCloudArmParameters)

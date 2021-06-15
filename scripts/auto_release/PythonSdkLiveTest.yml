@@ -15,7 +15,7 @@ jobs:
   strategy:
     maxParallel: 5
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-20.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
