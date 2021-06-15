@@ -162,11 +162,11 @@ class ContainerRegistryTestClass(AzureTestCase):
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        if endpoint.endswith("azurecr.io"):
+        if "azurecr.io" in endpoint:
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
-        if endpoint.endswith("azurecr.cn"):
+        if "azurecr.cn" in endpoint:
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_CHINA), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
-        if endpoint.endswith("azure.us"):
+        if "azurecr.us" in endpoint:
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
         else:
             raise ValueError("The endpoint was not understood: {}".format(endpoint))
