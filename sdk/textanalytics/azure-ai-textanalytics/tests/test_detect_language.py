@@ -380,7 +380,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = client.detect_language(docs)
 
-        credential.update(textanalytics_test_endpoint)  # Authenticate successfully again
+        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
         response = client.detect_language(docs)
         self.assertIsNotNone(response)
 

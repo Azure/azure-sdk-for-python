@@ -46,6 +46,9 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
         textanalytics_test_endpoint = kwargs.get("textanalytics_test_endpoint")
         textanalytics_test_api_key = kwargs.get("textanalytics_test_api_key")
 
+        if self.client_kwargs:
+            textanalytics_test_api_key = self.client_kwargs.pop("textanalytics_test_api_key")
+
         client = self.client_cls(
             textanalytics_test_endpoint,
             AzureKeyCredential(textanalytics_test_api_key),
