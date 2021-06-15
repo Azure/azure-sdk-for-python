@@ -24,6 +24,8 @@ class _ServiceTest(PerfStressTest):
         kwargs['max_single_put_size'] = self.args.max_put_size
         kwargs['max_block_size'] = self.args.max_block_size
         kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        # kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
+
         if not _ServiceTest.service_client or self.args.no_client_share:
             _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **kwargs)
             _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(conn_str=connection_string, **kwargs)
