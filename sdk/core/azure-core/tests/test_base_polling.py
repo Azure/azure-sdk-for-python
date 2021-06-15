@@ -48,7 +48,6 @@ from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
-from azure.core.rest import HttpRequest
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
@@ -124,7 +123,7 @@ def pipeline_client_builder():
 @pytest.fixture
 def deserialization_cb():
     def cb(pipeline_response):
-        return pipeline_response.http_response.json()
+        return json.loads(pipeline_response.http_response.text())
     return cb
 
 
@@ -140,8 +139,8 @@ def polling_response():
     polling._pipeline_response = PipelineResponse(
         None,
         RequestsTransportResponse(
-            request=None,
-            internal_response=response,
+            None,
+            response,
         ),
         PipelineContext(None)
     )
@@ -328,18 +327,21 @@ class TestBasePolling(object):
         response.headers.update({"content-type": "application/json; charset=utf8"})
         response.reason = "OK"
 
-        request = HttpRequest(
-            method=response.request.method,
-            url=response.request.url,
-            headers=response.request.headers,
-            content=body,
+        request = CLIENT._request(
+            response.request.method,
+            response.request.url,
+            None,  # params
+            response.request.headers,
+            body,
+            None,  # form_content
+            None  # stream_content
         )
 
         return PipelineResponse(
             request,
             RequestsTransportResponse(
-                request=request,
-                internal_response=response,
+                request,
+                response,
             ),
             None  # context
         )
@@ -390,8 +392,8 @@ class TestBasePolling(object):
         return PipelineResponse(
             request,
             RequestsTransportResponse(
-                request=request,
-                internal_response=response,
+                request,
+                response,
             ),
             None  # context
         )
@@ -400,7 +402,7 @@ class TestBasePolling(object):
     def mock_outputs(pipeline_response):
         response = pipeline_response.http_response
         try:
-            body = response.json()
+            body = json.loads(response.text())
         except ValueError:
             raise DecodeError("Impossible to deserialize")
 

@@ -26,12 +26,13 @@
 import sys
 
 from azure.core.pipeline.transport import (
+    HttpRequest,
     AioHttpTransport,
     AioHttpTransportResponse,
     AsyncHttpTransport,
     AsyncioRequestsTransport,
     TrioRequestsTransport)
-from azure.core.rest import HttpRequest
+
 import aiohttp
 import trio
 
@@ -45,7 +46,7 @@ async def test_basic_aiohttp():
     request = HttpRequest("GET", "https://www.bing.com/")
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
-        assert response.content is not None
+        assert response.body() is not None
 
     assert sender.session is None
     assert isinstance(response.status_code, int)
@@ -65,7 +66,7 @@ async def test_basic_async_requests():
     request = HttpRequest("GET", "https://www.bing.com/")
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
-        assert response.content is not None
+        assert response.body() is not None
 
     assert isinstance(response.status_code, int)
 
@@ -75,7 +76,7 @@ async def test_conf_async_requests():
     request = HttpRequest("GET", "https://www.bing.com/")
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
-        assert response.content is not None
+        assert response.body() is not None
 
     assert isinstance(response.status_code, int)
 
@@ -85,7 +86,7 @@ def test_conf_async_trio_requests():
         request = HttpRequest("GET", "https://www.bing.com/")
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
-            assert response.content is not None
+            assert response.body() is not None
 
     response = trio.run(do)
     assert isinstance(response.status_code, int)
@@ -94,7 +95,7 @@ def test_conf_async_trio_requests():
 def _create_aiohttp_response(body_bytes, headers=None):
     class MockAiohttpClientResponse(aiohttp.ClientResponse):
         def __init__(self, body_bytes, headers=None):
-            self._content = body_bytes
+            self._body = body_bytes
             self._headers = headers
             self._cache = {}
             self.status = 200
@@ -103,10 +104,10 @@ def _create_aiohttp_response(body_bytes, headers=None):
     req_response = MockAiohttpClientResponse(body_bytes, headers)
 
     response = AioHttpTransportResponse(
-        request=None, # Don't need a request here
-        internal_response=req_response
+        None, # Don't need a request here
+        req_response
     )
-    response._content = body_bytes
+    response._body = body_bytes
 
     return response
 
@@ -120,8 +121,7 @@ async def test_aiohttp_response_text():
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
-        res.encoding = encoding
-        assert res.text == '56', "Encoding {} didn't work".format(encoding)
+        assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
 @pytest.mark.asyncio
 async def test_aiohttp_response_decompression():
@@ -137,12 +137,13 @@ async def test_aiohttp_response_decompression():
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
         {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
     )
+    body = res.body()
     expect = b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":' \
              b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":' \
              b'"2021-05-07T17:35:36.3121069Z","status":"NotStarted",' \
              b'"summary":{"total":0,"failed":0,"success":0,"inProgress":0,' \
              b'"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
-    assert res.content == expect, "Decompression didn't work"
+    assert res.body() == expect, "Decompression didn't work"
 
 @pytest.mark.asyncio
 async def test_aiohttp_response_decompression_negtive():
@@ -159,8 +160,7 @@ async def test_aiohttp_response_decompression_negtive():
         {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
     )
     with pytest.raises(zlib.error):
-        async for part in res.iter_bytes():
-            print(part)
+        body = res.body()
 
 def test_repr():
     res = _create_aiohttp_response(

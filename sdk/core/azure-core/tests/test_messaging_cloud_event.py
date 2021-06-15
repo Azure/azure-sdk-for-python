@@ -98,7 +98,7 @@ def test_cloud_storage_dict():
             "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
         },
         "type":"Microsoft.Storage.BlobCreated",
-        "time":"2021-02-18T20:18:10.53986Z",
+        "time":"2021-02-18T20:18:10.581147898Z",
         "specversion":"1.0"
     }
 
@@ -120,6 +120,7 @@ def test_cloud_storage_dict():
     assert event.time.month == 2
     assert event.time.day == 18
     assert event.time.hour == 20
+    assert event.time.microsecond == 581147
     assert event.__class__ == CloudEvent
     assert "id" in cloud_storage_dict
     assert "data" in cloud_storage_dict
@@ -131,7 +132,7 @@ def test_cloud_custom_dict_with_extensions():
         "source":"https://egtest.dev/cloudcustomevent",
         "data":{"team": "event grid squad"},
         "type":"Azure.Sdk.Sample",
-        "time":"2021-02-18T20:18:10.53986+00:00",
+        "time":"2021-02-18T20:18:10.539861122+00:00",
         "specversion":"1.0",
         "ext1": "example",
         "ext2": "example2"
@@ -142,6 +143,7 @@ def test_cloud_custom_dict_with_extensions():
     assert event.time.month == 2
     assert event.time.day == 18
     assert event.time.hour == 20
+    assert event.time.microsecond == 539861
     assert event.extensions == {"ext1": "example", "ext2": "example2"}
 
 def test_cloud_custom_dict_blank_data():

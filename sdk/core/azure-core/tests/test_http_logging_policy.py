@@ -15,7 +15,7 @@ from azure.core.pipeline import (
     PipelineRequest,
     PipelineContext
 )
-from azure.core.rest import (
+from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
 )
@@ -43,7 +43,7 @@ def test_http_logger():
     policy = HttpLoggingPolicy(logger=logger)
 
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    http_response = HttpResponse(request=universal_request, internal_response=None)
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -158,7 +158,7 @@ def test_http_logger_operation_level():
     kwargs={'logger': logger}
 
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    http_response = HttpResponse(request=universal_request, internal_response=None)
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None, **kwargs))
 
@@ -228,8 +228,8 @@ def test_http_logger_with_body():
     policy = HttpLoggingPolicy(logger=logger)
 
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    universal_request._data = "testbody"
-    http_response = HttpResponse(request=universal_request, internal_response=None)
+    universal_request.body = "testbody"
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -270,8 +270,8 @@ def test_http_logger_with_generator_body():
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
     mock = Mock()
     mock.__class__ = types.GeneratorType
-    universal_request._data = mock
-    http_response = HttpResponse(request=universal_request, internal_response=None)
+    universal_request.body = mock
+    http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 

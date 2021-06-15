@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+from six.moves.http_client import HTTPConnection
 from collections import OrderedDict
 import time
 import sys
@@ -14,143 +14,29 @@ try:
 except ImportError:
     import mock
 
-from six.moves.http_client import HTTPConnection
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
-from azure.core.pipeline import Pipeline, PipelineResponse, PipelineContext, PipelineRequest
-from azure.core.pipeline._tools import await_result as _await_result, serialize
+from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
-from email.message import Message
 import logging
 import pytest
-
-try:
-    from email import message_from_bytes as message_parser
-except ImportError:  # 2.7
-    from email import message_from_string as message_parser  # type: ignore
 
 
 class MockResponse(HttpResponse):
     def __init__(self, request, body, content_type):
-        super(MockResponse, self).__init__(request=request, internal_response=None)
-        self._content = body
+        super(MockResponse, self).__init__(request, None)
+        self._body = body
         self.content_type = content_type
 
-    def _has_content(self):
-        return True
-
-    def _get_content(self):
-        return self._content
-
-    def _set_content(self, val):
-        self._content = val
-
-class MultipartMixedRequest(HttpRequest):
-    def __init__(self, request, *requests, **kwargs):
-        super(MultipartMixedRequest, self).__init__(
-            method=request.method,
-            url=request.url,
-            headers=request.headers,
-            data=request._data,
-            files=request._files,
-        )
-        self.requests = requests
-        self.policies = kwargs.pop("policies", [])
-        self.boundary = kwargs.pop("boundary", None)
-        self.kwargs = kwargs
-
-def _decode_parts(response, message, http_response_type, requests):
-   # code from here https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/pipeline/transport/_base.py#L517
-    """Rebuild an HTTP response from pure string."""
-    responses = []
-    for index, raw_reponse in enumerate(message.get_payload()):
-        content_type = raw_reponse.get_content_type()
-        if content_type == "application/http":
-            responses.append(
-                _deserialize_response(
-                    raw_reponse.get_payload(decode=True),
-                    requests[index],
-                    http_response_type=http_response_type,
-                )
-            )
-        elif content_type == "multipart/mixed" and hasattr(requests[index], "requests"):
-            # The message batch contains one or more change sets
-            changeset_requests = requests[index].requests  # type: ignore
-            changeset_responses = _decode_parts(response, raw_reponse, http_response_type, changeset_requests)
-            responses.extend(changeset_responses)
-        else:
-            raise ValueError(
-                "Multipart doesn't support part other than application/http for now"
-            )
-    return responses
-
-def _get_raw_parts(response, http_response_type=None):
-    # code from here https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/pipeline/transport/_base.py#L542
-    """Assuming this body is multipart, return the iterator or parts.
-    If parts are application/http use http_response_type or HttpClientTransportResponse
-    as enveloppe.
-    """
-    if http_response_type is None:
-        http_response_type = HttpClientTransportResponse
-
-    response.read()
-    body_as_bytes = response.content
-    # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
-    http_body = (
-        b"Content-Type: "
-        + response.content_type.encode("ascii")
-        + b"\r\n\r\n"
-        + body_as_bytes
-    )
-    message = message_parser(http_body)  # type: Message
-    requests = response.request.requests  # type: List[HttpRequest]
-    return _decode_parts(response, message, http_response_type, requests)
-
-def get_parts(response):
-    # code from here https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/pipeline/transport/_base.py#L593
-    """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
-    :rtype: iterator[HttpResponse]
-    :raises ValueError: If the content is not multipart/mixed
-    """
-    if not response.content_type or not response.content_type.startswith("multipart/mixed"):
-        raise ValueError(
-            "You can't get parts if the response is not multipart/mixed"
-        )
-
-    responses = _get_raw_parts(response)
-    if hasattr(response.request, "requests"):
-        policies = response.request.policies  # type: List[SansIOHTTPPolicy]
-
-        # Apply on_response concurrently to all requests
-        import concurrent.futures
-
-        def parse_responses(response):
-            http_request = response.request
-            context = PipelineContext(None)
-            pipeline_request = PipelineRequest(http_request, context)
-            pipeline_response = PipelineResponse(
-                http_request, response, context=context
-            )
-
-            for policy in policies:
-                _await_result(policy.on_response, pipeline_request, pipeline_response)
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # List comprehension to raise exceptions if happened
-            [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
-                _ for _ in executor.map(parse_responses, responses)
-            ]
-
-    return responses
-
+    def body(self):
+        return self._body
 
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
 def test_http_request_serialization():
     # Method + Url
     request = HttpRequest("DELETE", "/container0/blob0")
-    serialized = serialize(request)
+    serialized = request.serialize()
 
     expected = (
         b'DELETE /container0/blob0 HTTP/1.1\r\n'
@@ -170,7 +56,7 @@ def test_http_request_serialization():
             "Content-Length": "0",
         })
     )
-    serialized = serialize(request)
+    serialized = request.serialize()
 
     expected = (
         b'DELETE /container0/blob0 HTTP/1.1\r\n'
@@ -189,9 +75,9 @@ def test_http_request_serialization():
         headers={
             "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
         },
-        content=b"I am groot"
     )
-    serialized = serialize(request)
+    request.set_bytes_body(b"I am groot")
+    serialized = request.serialize()
 
     expected = (
         b'DELETE /container0/blob0 HTTP/1.1\r\n'
@@ -219,14 +105,14 @@ def test_http_client_response():
     conn.request("GET", "/get")
     r1 = conn.getresponse()
 
-    response = HttpClientTransportResponse(request=request, internal_response=r1)
-    response.read()
+    response = HttpClientTransportResponse(request, r1)
+
     # Don't assume too much in those assert, since we reach a real server
     assert response.internal_response is r1
     assert response.reason is not None
     assert isinstance(response.status_code, int)
     assert len(response.headers.keys()) != 0
-    assert len(response.text) != 0
+    assert len(response.text()) != 0
     assert "content-type" in response.headers
     assert "Content-Type" in response.headers
 
@@ -257,8 +143,8 @@ def test_response_deserialization():
         headers={
             "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
         },
-        content=b"I am groot"
     )
+    request.set_bytes_body(b"I am groot")
     body = (
         b'HTTP/1.1 200 OK\r\n'
         b'x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n'
@@ -268,7 +154,6 @@ def test_response_deserialization():
     )
 
     response = _deserialize_response(body, request)
-    response.read()
 
     assert isinstance(response.status_code, int)
     assert response.reason == "OK"
@@ -276,7 +161,7 @@ def test_response_deserialization():
         'x-ms-request-id': '778fdc83-801e-0000-62ff-0334671e284f',
         'x-ms-version': '2018-11-09'
     }
-    assert response.text == "I am groot"
+    assert response.text() == "I am groot"
 
 def test_response_deserialization_utf8_bom():
 
@@ -294,8 +179,7 @@ def test_response_deserialization_utf8_bom():
         b'of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\nTime:2019-09-17T23:44:07.4671860Z</Message></Error>'
     )
     response = _deserialize_response(body, request)
-    response.read()
-    assert response.content.startswith(b'\xef\xbb\xbf')
+    assert response.body().startswith(b'\xef\xbb\xbf')
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
@@ -311,9 +195,7 @@ def test_multipart_send():
     req1 = HttpRequest("DELETE", "/container1/blob1")
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         req0,
         req1,
         policies=[header_policy],
@@ -323,7 +205,7 @@ def test_multipart_send():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
         b'Content-Transfer-Encoding: binary\r\n'
@@ -358,8 +240,7 @@ def test_multipart_send_with_context():
     req1 = HttpRequest("DELETE", "/container1/blob1")
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         req0,
         req1,
         policies=[header_policy],
@@ -370,7 +251,7 @@ def test_multipart_send_with_context():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
         b'Content-Transfer-Encoding: binary\r\n'
@@ -410,16 +291,14 @@ def test_multipart_send_with_one_changeset():
     ]
 
     changeset = HttpRequest("", "")
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         *requests,
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         changeset,
         boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
     )
@@ -427,7 +306,7 @@ def test_multipart_send_with_one_changeset():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
@@ -465,16 +344,14 @@ def test_multipart_send_with_multiple_changesets():
     })
 
     changeset1 = HttpRequest("", "")
-    changeset1 = MultipartMixedRequest(
-        changeset1,
+    changeset1.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
     changeset2 = HttpRequest("", "")
-    changeset2 = MultipartMixedRequest(
-        changeset2,
+    changeset2.set_multipart_mixed(
         HttpRequest("DELETE", "/container2/blob2"),
         HttpRequest("DELETE", "/container3/blob3"),
         policies=[header_policy],
@@ -482,8 +359,7 @@ def test_multipart_send_with_multiple_changesets():
     )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         changeset1,
         changeset2,
         policies=[header_policy],
@@ -493,7 +369,7 @@ def test_multipart_send_with_multiple_changesets():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
@@ -554,16 +430,14 @@ def test_multipart_send_with_combination_changeset_first():
     })
 
     changeset = HttpRequest("", "")
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         changeset,
         HttpRequest("DELETE", "/container2/blob2"),
         policies=[header_policy],
@@ -573,7 +447,7 @@ def test_multipart_send_with_combination_changeset_first():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: multipart/mixed; boundary=changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'\r\n'
@@ -619,16 +493,14 @@ def test_multipart_send_with_combination_changeset_last():
     })
 
     changeset = HttpRequest("", "")
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         HttpRequest("DELETE", "/container2/blob2"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         changeset,
         policies=[header_policy],
@@ -638,7 +510,7 @@ def test_multipart_send_with_combination_changeset_last():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
         b'Content-Transfer-Encoding: binary\r\n'
@@ -684,15 +556,13 @@ def test_multipart_send_with_combination_changeset_middle():
     })
 
     changeset = HttpRequest("", "")
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         changeset,
         HttpRequest("DELETE", "/container2/blob2"),
@@ -703,7 +573,7 @@ def test_multipart_send_with_combination_changeset_middle():
     with Pipeline(transport) as pipeline:
         pipeline.run(request)
 
-    assert request.content == (
+    assert request.body == (
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
         b'Content-Type: application/http\r\n'
         b'Content-Transfer-Encoding: binary\r\n'
@@ -751,8 +621,7 @@ def test_multipart_receive():
     req1 = HttpRequest("DELETE", "/container1/blob1")
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         req0,
         req1,
         policies=[ResponsePolicy()]
@@ -791,7 +660,7 @@ def test_multipart_receive():
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
     )
 
-    response = get_parts(response)
+    response = response.parts()
 
     assert len(response) == 2
 
@@ -818,14 +687,13 @@ def test_raise_for_status_good_response():
 def test_multipart_receive_with_one_changeset():
 
     changeset = HttpRequest(None, None)
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
     )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(request, changeset)
+    request.set_multipart_mixed(changeset)
 
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
@@ -863,7 +731,7 @@ def test_multipart_receive_with_one_changeset():
     )
 
     parts = []
-    for part in get_parts(response):
+    for part in response.parts():
         parts.append(part)
     assert len(parts) == 2
 
@@ -874,20 +742,18 @@ def test_multipart_receive_with_one_changeset():
 def test_multipart_receive_with_multiple_changesets():
 
     changeset1 = HttpRequest(None, None)
-    changeset1 = MultipartMixedRequest(
-        changeset1,
+    changeset1.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
     )
     changeset2 = HttpRequest(None, None)
-    changeset2 = MultipartMixedRequest(
-        changeset2,
+    changeset2.set_multipart_mixed(
         HttpRequest("DELETE", "/container2/blob2"),
         HttpRequest("DELETE", "/container3/blob3")
     )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(request, changeset1, changeset2)
+    request.set_multipart_mixed(changeset1, changeset2)
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
         b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
@@ -949,7 +815,7 @@ def test_multipart_receive_with_multiple_changesets():
     )
 
     parts = []
-    for part in get_parts(response):
+    for part in response.parts():
         parts.append(part)
     assert len(parts) == 4
     assert parts[0].status_code == 200
@@ -961,14 +827,13 @@ def test_multipart_receive_with_multiple_changesets():
 def test_multipart_receive_with_combination_changeset_first():
 
     changeset = HttpRequest(None, None)
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
     )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(request, changeset, HttpRequest("DELETE", "/container2/blob2"))
+    request.set_multipart_mixed(changeset, HttpRequest("DELETE", "/container2/blob2"))
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
         b'Content-Type: multipart/mixed; boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"\r\n'
@@ -1015,7 +880,7 @@ def test_multipart_receive_with_combination_changeset_first():
     )
 
     parts = []
-    for part in get_parts(response):
+    for part in response.parts():
         parts.append(part)
     assert len(parts) == 3
     assert parts[0].status_code == 200
@@ -1026,11 +891,10 @@ def test_multipart_receive_with_combination_changeset_first():
 def test_multipart_receive_with_combination_changeset_middle():
 
     changeset = HttpRequest(None, None)
-    changeset = MultipartMixedRequest(changeset, HttpRequest("DELETE", "/container1/blob1"))
+    changeset.set_multipart_mixed(HttpRequest("DELETE", "/container1/blob1"))
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(
-        request,
+    request.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         changeset,
         HttpRequest("DELETE", "/container2/blob2")
@@ -1081,7 +945,7 @@ def test_multipart_receive_with_combination_changeset_middle():
     )
 
     parts = []
-    for part in get_parts(response):
+    for part in response.parts():
         parts.append(part)
     assert len(parts) == 3
     assert parts[0].status_code == 200
@@ -1092,14 +956,13 @@ def test_multipart_receive_with_combination_changeset_middle():
 def test_multipart_receive_with_combination_changeset_last():
 
     changeset = HttpRequest(None, None)
-    changeset = MultipartMixedRequest(
-        changeset,
+    changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         HttpRequest("DELETE", "/container2/blob2")
     )
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(request, HttpRequest("DELETE", "/container0/blob0"), changeset)
+    request.set_multipart_mixed(HttpRequest("DELETE", "/container0/blob0"), changeset)
 
     body_as_bytes = (
         b'--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n'
@@ -1147,7 +1010,7 @@ def test_multipart_receive_with_combination_changeset_last():
     )
 
     parts = []
-    for part in get_parts(response):
+    for part in response.parts():
         parts.append(part)
     assert len(parts) == 3
     assert parts[0].status_code == 200
@@ -1160,7 +1023,7 @@ def test_multipart_receive_with_bom():
     req0 = HttpRequest("DELETE", "/container0/blob0")
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(request, req0)
+    request.set_multipart_mixed(req0)
     body_as_bytes = (
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
         b"Content-Type: application/http\n"
@@ -1183,22 +1046,21 @@ def test_multipart_receive_with_bom():
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
     )
 
-    response = get_parts(response)
+    response = response.parts()
     assert len(response) == 1
 
     res0 = response[0]
-    res0.read()  # in the originaly body of an HttpClientTransportResponse, we call read https://github.com/Azure/azure-sdk-for-python/blob/a081faba936e42f1931092a7b560b0298fa48651/sdk/core/azure-core/azure/core/pipeline/transport/_base.py#L236
     assert res0.status_code == 400
-    assert res0.content.startswith(b'\xef\xbb\xbf')
+    assert res0.body().startswith(b'\xef\xbb\xbf')
 
 
 def test_recursive_multipart_receive():
     req0 = HttpRequest("DELETE", "/container0/blob0")
     internal_req0 = HttpRequest("DELETE", "/container0/blob0")
-    req0 = MultipartMixedRequest(req0, internal_req0)
+    req0.set_multipart_mixed(internal_req0)
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request = MultipartMixedRequest(request, req0)
+    request.set_multipart_mixed(req0)
     internal_body_as_str = (
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
         "Content-Type: application/http\r\n"
@@ -1229,13 +1091,13 @@ def test_recursive_multipart_receive():
         "multipart/mixed; boundary=batchresponse_8d5f5bcd-2cb5-44bb-91b5-e9a722e68cb6"
     )
 
-    response = get_parts(response)
+    response = response.parts()
     assert len(response) == 1
 
     res0 = response[0]
     assert res0.status_code == 202
 
-    internal_response = get_parts(res0)
+    internal_response = res0.parts()
     assert len(internal_response) == 1
 
     internal_response0 = internal_response[0]

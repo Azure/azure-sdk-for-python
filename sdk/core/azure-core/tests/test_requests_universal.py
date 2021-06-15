@@ -27,8 +27,7 @@ import concurrent.futures
 import pytest
 import requests.utils
 
-from azure.core.rest import HttpRequest
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport, RequestsTransportResponse
 from azure.core.configuration import Configuration
 
 
@@ -67,8 +66,8 @@ def _create_requests_response(body_bytes, headers=None):
     req_response.encoding = requests.utils.get_encoding_from_headers(req_response.headers)
 
     response = RequestsTransportResponse(
-        request=None, # Don't need a request here
-        internal_response=req_response
+        None, # Don't need a request here
+        req_response
     )
 
     return response
@@ -82,9 +81,7 @@ def test_requests_response_text():
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
-        res.encoding = encoding
-        res.read()
-        assert res.text == "56"
+        assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
 def test_repr():
     res = _create_requests_response(

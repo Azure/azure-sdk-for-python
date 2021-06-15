@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import json
 
-from azure.core.pipeline.transport import AsyncioRequestsTransport
-from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpRequest
 
 import pytest
 
@@ -26,13 +26,13 @@ async def test_async_gen_data():
                 raise StopAsyncIteration
 
     async with AsyncioRequestsTransport() as transport:
-        req = HttpRequest('GET', 'http://httpbin.org/post', content=AsyncGen())
+        req = HttpRequest('GET', 'http://httpbin.org/post', data=AsyncGen())
         await transport.send(req)
 
 @pytest.mark.asyncio
 async def test_send_data():
     async with AsyncioRequestsTransport() as transport:
-        req = HttpRequest('PUT', 'http://httpbin.org/anything', content=b"azerty")
+        req = HttpRequest('PUT', 'http://httpbin.org/anything', data=b"azerty")
         response = await transport.send(req)
 
-        assert response.json()['data'] == "azerty"
+        assert json.loads(response.text())['data'] == "azerty"

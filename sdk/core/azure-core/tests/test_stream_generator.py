@@ -3,10 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import requests
-from azure.core.pipeline.transport import HttpTransport, RequestsTransport
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import (
+    HttpRequest,
+    HttpResponse,
+    HttpTransport,
+    RequestsTransport,
+    RequestsTransportResponse,
+)
 from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
 try:
     from unittest import mock
@@ -28,7 +32,7 @@ def test_connection_error_response():
 
         def send(self, request, **kwargs):
             request = HttpRequest('GET', 'http://127.0.0.1/')
-            response = HttpResponse(request=request, internal_response=None)
+            response = HttpResponse(request, None)
             response.status_code = 200
             return response
 
@@ -39,7 +43,7 @@ def test_connection_error_response():
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
-
+        
         def stream(self, chunk_size, decode_content=False):
             if self._count == 0:
                 self._count += 1
@@ -56,7 +60,7 @@ def test_connection_error_response():
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     pipeline = Pipeline(MockTransport())
-    http_response = HttpResponse(request=http_request, internal_response=None)
+    http_response = HttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('time.sleep', return_value=None):
@@ -101,10 +105,10 @@ def test_response_streaming_error_behavior():
     req_response.raw = FakeStreamWithConnectionError()
 
     response = RequestsTransportResponse(
-        request=req_request,
-        internal_response=req_response,
+        req_request,
+        req_response,
+        block_size,
     )
-    response._connection_data_block_size = block_size
 
     def mock_run(self, *args, **kwargs):
         return PipelineResponse(
@@ -116,5 +120,6 @@ def test_response_streaming_error_behavior():
     transport = RequestsTransport()
     pipeline = Pipeline(transport)
     pipeline.run = mock_run
+    downloader = response.stream_download(pipeline, decompress=False)
     with pytest.raises(requests.exceptions.ConnectionError):
-        full_response = b"".join(response.iter_raw())
+        full_response = b"".join(downloader)

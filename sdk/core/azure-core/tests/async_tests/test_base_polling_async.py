@@ -121,7 +121,7 @@ def async_pipeline_client_builder():
 @pytest.fixture
 def deserialization_cb():
     def cb(pipeline_response):
-        return pipeline_response.http_response.json()
+        return json.loads(pipeline_response.http_response.text())
     return cb
 
 
@@ -137,8 +137,8 @@ def polling_response():
     polling._pipeline_response = PipelineResponse(
         None,
         AsyncioRequestsTransportResponse(
-            request=None,
-            internal_response=response,
+            None,
+            response,
         ),
         PipelineContext(None)
     )
@@ -315,8 +315,8 @@ class TestBasePolling(object):
         return PipelineResponse(
             request,
             AsyncioRequestsTransportResponse(
-                request=request,
-                internal_response=response,
+                request,
+                response,
             ),
             None  # context
         )
@@ -367,8 +367,8 @@ class TestBasePolling(object):
         return PipelineResponse(
             request,
             AsyncioRequestsTransportResponse(
-                request=request,
-                internal_response=response,
+                request,
+                response,
             ),
             None  # context
         )
@@ -377,7 +377,7 @@ class TestBasePolling(object):
     def mock_outputs(pipeline_response):
         response = pipeline_response.http_response
         try:
-            body = response.json()
+            body = json.loads(response.text())
         except ValueError:
             raise DecodeError("Impossible to deserialize")
 

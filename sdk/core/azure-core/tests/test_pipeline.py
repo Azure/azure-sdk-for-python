@@ -58,8 +58,8 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
-from azure.core.rest import HttpRequest
 from azure.core.pipeline.transport import (
+    HttpRequest,
     HttpTransport,
     RequestsTransport,
 )
@@ -239,73 +239,79 @@ class TestClientPipelineURLFormatting(unittest.TestCase):
 
 class TestClientRequest(unittest.TestCase):
     def test_request_json(self):
-        content = "Lots of dataaaa"
-        request = HttpRequest("GET", "/", json=content)
 
-        self.assertEqual(request.content, json.dumps(content))
+        request = HttpRequest("GET", "/")
+        data = "Lots of dataaaa"
+        request.set_json_body(data)
+
+        self.assertEqual(request.data, json.dumps(data))
         self.assertEqual(request.headers.get("Content-Length"), "17")
 
     def test_request_data(self):
 
-        content = b"Lots of dataaaa"
-        request = HttpRequest("GET", "/", content=content)
+        request = HttpRequest("GET", "/")
+        data = "Lots of dataaaa"
+        request.set_bytes_body(data)
 
-        self.assertEqual(request.content, content)
+        self.assertEqual(request.data, data)
         self.assertEqual(request.headers.get("Content-Length"), "15")
 
     def test_request_stream(self):
         request = HttpRequest("GET", "/")
 
-        content = b"Lots of dataaaa"
-        request = HttpRequest("GET", "/", content=content)
-        assert request.content == content
+        data = b"Lots of dataaaa"
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
 
-        def content_gen():
-            # same as httpx, our content reading can't deal with ints
-            # switching to hello world
-            yield b"Hello, "
-            yield b"world!"
-        content = content_gen()
-        request = HttpRequest("GET", "/", content=content)
-        self.assertEqual(request.content, content)
+        def data_gen():
+            for i in range(10):
+                yield i
+        data = data_gen()
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
 
-        content = BytesIO(b"Lots of dataaaa")
-        request = HttpRequest("GET", "/", content=content)
-        self.assertEqual(request.content, content)
+        data = BytesIO(b"Lots of dataaaa")
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
 
 
     def test_request_xml(self):
+        request = HttpRequest("GET", "/")
         data = ET.Element("root")
-        request = HttpRequest(
-            method="GET",
-            url="/",
-            content=data,
-        )
+        request.set_xml_body(data)
 
-        assert request.content == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
+        assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
 
     def test_request_url_with_params(self):
 
-        request = HttpRequest(
-            "GET",
-            "a/b/c?t=y",
-            params={"g": "h"}
-        )
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
+        request.format_parameters({"g": "h"})
+
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
 
     def test_request_url_with_params_as_list(self):
 
-        request = HttpRequest("GET", "a/b/c?t=y", params={"g": ["h","i"]})
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
+        request.format_parameters({"g": ["h","i"]})
 
         self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
 
     def test_request_url_with_params_with_none_in_list(self):
+
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
         with pytest.raises(ValueError):
-            HttpRequest("GET", "a/b/c?t=y", params={"g": ["h",None]})
+            request.format_parameters({"g": ["h",None]})
 
     def test_request_url_with_params_with_none(self):
+
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
         with pytest.raises(ValueError):
-            HttpRequest("GET", "a/b/c?t=y", params={"g": None})
+            request.format_parameters({"g": None})
+
 
     def test_request_text(self):
         client = PipelineClientBase('http://example.org')

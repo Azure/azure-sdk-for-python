@@ -30,14 +30,14 @@ from azure.core.exceptions import (
     map_error,
     ErrorMap,
 )
-from azure.core.rest import (
+from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
 )
 
 def test_error_map():
     request = HttpRequest("GET", "")
-    response = HttpResponse(request=request, internal_response=None)
+    response = HttpResponse(request, None)
     error_map = {
         404: ResourceNotFoundError
     }
@@ -46,7 +46,7 @@ def test_error_map():
 
 def test_error_map_no_default():
     request = HttpRequest("GET", "")
-    response = HttpResponse(request=request, internal_response=None)
+    response = HttpResponse(request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     })
@@ -55,7 +55,7 @@ def test_error_map_no_default():
 
 def test_error_map_with_default():
     request = HttpRequest("GET", "")
-    response = HttpResponse(request=request, internal_response=None)
+    response = HttpResponse(request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     }, default_error=ResourceExistsError)
@@ -64,7 +64,7 @@ def test_error_map_with_default():
 
 def test_only_default():
     request = HttpRequest("GET", "")
-    response = HttpResponse(request=request, internal_response=None)
+    response = HttpResponse(request, None)
     error_map = ErrorMap(default_error=ResourceExistsError)
     with pytest.raises(ResourceExistsError):
         map_error(401, response, error_map)
