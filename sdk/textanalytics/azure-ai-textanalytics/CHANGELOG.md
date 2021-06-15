@@ -11,6 +11,7 @@
 
 **New Features**
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
+- Added `HealthcareEntityCategory`
 
 ## 5.1.0b7 (2021-05-18)
 
