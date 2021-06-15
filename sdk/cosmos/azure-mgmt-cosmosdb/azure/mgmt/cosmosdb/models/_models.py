@@ -10,6 +10,26 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class AnalyticalStorageConfiguration(msrest.serialization.Model):
+    """Analytical storage specific properties.
+
+    :param schema_type: Describes the types of schema for analytical storage. Possible values
+     include: "WellDefined", "FullFidelity".
+    :type schema_type: str or ~azure.mgmt.cosmosdb.models.AnalyticalStorageSchemaType
+    """
+
+    _attribute_map = {
+        'schema_type': {'key': 'schemaType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnalyticalStorageConfiguration, self).__init__(**kwargs)
+        self.schema_type = kwargs.get('schema_type', None)
+
+
 class ApiProperties(msrest.serialization.Model):
     """ApiProperties.
 
@@ -189,6 +209,31 @@ class AutoUpgradePolicyResource(msrest.serialization.Model):
         self.throughput_policy = kwargs.get('throughput_policy', None)
 
 
+class BackupInformation(msrest.serialization.Model):
+    """Backup information of a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar continuous_backup_information: Information about the status of continuous backups.
+    :vartype continuous_backup_information: ~azure.mgmt.cosmosdb.models.ContinuousBackupInformation
+    """
+
+    _validation = {
+        'continuous_backup_information': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'continuous_backup_information': {'key': 'continuousBackupInformation', 'type': 'ContinuousBackupInformation'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BackupInformation, self).__init__(**kwargs)
+        self.continuous_backup_information = None
+
+
 class BackupPolicy(msrest.serialization.Model):
     """The object representing the policy for taking backups on an account.
 
@@ -200,6 +245,9 @@ class BackupPolicy(msrest.serialization.Model):
     :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
      values include: "Periodic", "Continuous".
     :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    :param migration_state: The object representing the state of the migration between the backup
+     policies.
+    :type migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
     """
 
     _validation = {
@@ -208,6 +256,7 @@ class BackupPolicy(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'migration_state': {'key': 'migrationState', 'type': 'BackupPolicyMigrationState'},
     }
 
     _subtype_map = {
@@ -220,6 +269,36 @@ class BackupPolicy(msrest.serialization.Model):
     ):
         super(BackupPolicy, self).__init__(**kwargs)
         self.type = None  # type: Optional[str]
+        self.migration_state = kwargs.get('migration_state', None)
+
+
+class BackupPolicyMigrationState(msrest.serialization.Model):
+    """The object representing the state of the migration between the backup policies.
+
+    :param status: Describes the status of migration between backup policy types. Possible values
+     include: "Invalid", "InProgress", "Completed", "Failed".
+    :type status: str or ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationStatus
+    :param target_type: Describes the target backup policy type of the backup policy migration.
+     Possible values include: "Periodic", "Continuous".
+    :type target_type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    :param start_time: Time at which the backup policy migration started (ISO-8601 format).
+    :type start_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BackupPolicyMigrationState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.target_type = kwargs.get('target_type', None)
+        self.start_time = kwargs.get('start_time', None)
 
 
 class Capability(msrest.serialization.Model):
@@ -1027,6 +1106,44 @@ class ContainerPartitionKey(msrest.serialization.Model):
         self.system_key = None
 
 
+class ContinuousBackupInformation(msrest.serialization.Model):
+    """Information about the status of continuous backups.
+
+    :param latest_restorable_timestamp: The latest restorable timestamp for a resource.
+    :type latest_restorable_timestamp: str
+    """
+
+    _attribute_map = {
+        'latest_restorable_timestamp': {'key': 'latestRestorableTimestamp', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContinuousBackupInformation, self).__init__(**kwargs)
+        self.latest_restorable_timestamp = kwargs.get('latest_restorable_timestamp', None)
+
+
+class ContinuousBackupRestoreLocation(msrest.serialization.Model):
+    """Properties of the regional restorable account.
+
+    :param location: The name of the continuous backup restore location.
+    :type location: str
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContinuousBackupRestoreLocation, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+
+
 class ContinuousModeBackupPolicy(BackupPolicy):
     """The object representing continuous mode backup policy.
 
@@ -1035,6 +1152,9 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
      values include: "Periodic", "Continuous".
     :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    :param migration_state: The object representing the state of the migration between the backup
+     policies.
+    :type migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
     """
 
     _validation = {
@@ -1043,6 +1163,7 @@ class ContinuousModeBackupPolicy(BackupPolicy):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'migration_state': {'key': 'migrationState', 'type': 'BackupPolicyMigrationState'},
     }
 
     def __init__(
@@ -1228,6 +1349,12 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
     :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
     :type enable_analytical_storage: bool
+    :param analytical_storage_configuration: Analytical storage specific properties.
+    :type analytical_storage_configuration:
+     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
+    :param create_mode: Enum to indicate the mode of account creation. Possible values include:
+     "Default", "Restore". Default value: "Default".
+    :type create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
     :param backup_policy: The object representing the policy for taking backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
@@ -1238,6 +1365,11 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
     :type network_acl_bypass_resource_ids: list[str]
+    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
+     used exclusively for authentication.
+    :type disable_local_auth: bool
+    :param restore_parameters: Parameters to indicate the information about the restore.
+    :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
     """
 
     _validation = {
@@ -1274,10 +1406,14 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
         'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
     }
 
     database_account_offer_type = "Standard"
@@ -1306,10 +1442,14 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
+        self.create_mode = kwargs.get('create_mode', "Default")
         self.backup_policy = kwargs.get('backup_policy', None)
         self.cors = kwargs.get('cors', None)
         self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
         self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+        self.restore_parameters = kwargs.get('restore_parameters', None)
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1337,6 +1477,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
     :param identity: Identity for the resource.
     :type identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar provisioning_state: The status of the Cosmos DB account at the time the operation was
      called. The status can be one of following. 'Creating' – the Cosmos DB account is being
      created. When an account is in Creating state, only properties that are specified as input for
@@ -1406,6 +1548,16 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
     :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
     :type enable_analytical_storage: bool
+    :param analytical_storage_configuration: Analytical storage specific properties.
+    :type analytical_storage_configuration:
+     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
+    :ivar instance_id: A unique identifier assigned to the database account.
+    :vartype instance_id: str
+    :param create_mode: Enum to indicate the mode of account creation. Possible values include:
+     "Default", "Restore". Default value: "Default".
+    :type create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
+    :param restore_parameters: Parameters to indicate the information about the restore.
+    :type restore_parameters: ~azure.mgmt.cosmosdb.models.RestoreParameters
     :param backup_policy: The object representing the policy for taking backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
@@ -1416,12 +1568,16 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
     :type network_acl_bypass_resource_ids: list[str]
+    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
+     used exclusively for authentication.
+    :type disable_local_auth: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'document_endpoint': {'readonly': True},
         'database_account_offer_type': {'readonly': True, 'constant': True},
@@ -1430,6 +1586,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'locations': {'readonly': True},
         'failover_policies': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'instance_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1440,6 +1597,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
@@ -1464,10 +1622,15 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
+        'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
+        'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
         'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     database_account_offer_type = "Standard"
@@ -1479,6 +1642,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         super(DatabaseAccountGetResults, self).__init__(**kwargs)
         self.kind = kwargs.get('kind', None)
         self.identity = kwargs.get('identity', None)
+        self.system_data = None
         self.provisioning_state = None
         self.document_endpoint = None
         self.database_account_offer_type = None
@@ -1503,10 +1667,15 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
+        self.instance_id = None
+        self.create_mode = kwargs.get('create_mode', "Default")
+        self.restore_parameters = kwargs.get('restore_parameters', None)
         self.backup_policy = kwargs.get('backup_policy', None)
         self.cors = kwargs.get('cors', None)
         self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
         self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
 
 
 class DatabaseAccountListConnectionStringsResult(msrest.serialization.Model):
@@ -1707,6 +1876,9 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :type api_properties: ~azure.mgmt.cosmosdb.models.ApiProperties
     :param enable_analytical_storage: Flag to indicate whether to enable storage analytics.
     :type enable_analytical_storage: bool
+    :param analytical_storage_configuration: Analytical storage specific properties.
+    :type analytical_storage_configuration:
+     ~azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration
     :param backup_policy: The object representing the policy for taking backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
     :param cors: The CORS policy for the Cosmos DB database account.
@@ -1717,6 +1889,9 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
     :param network_acl_bypass_resource_ids: An array that contains the Resource Ids for Network Acl
      Bypass for the Cosmos DB account.
     :type network_acl_bypass_resource_ids: list[str]
+    :param disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
+     used exclusively for authentication.
+    :type disable_local_auth: bool
     """
 
     _attribute_map = {
@@ -1740,10 +1915,12 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'analytical_storage_configuration': {'key': 'properties.analyticalStorageConfiguration', 'type': 'AnalyticalStorageConfiguration'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
         'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
         'network_acl_bypass': {'key': 'properties.networkAclBypass', 'type': 'str'},
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1771,10 +1948,35 @@ class DatabaseAccountUpdateParameters(msrest.serialization.Model):
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.analytical_storage_configuration = kwargs.get('analytical_storage_configuration', None)
         self.backup_policy = kwargs.get('backup_policy', None)
         self.cors = kwargs.get('cors', None)
         self.network_acl_bypass = kwargs.get('network_acl_bypass', None)
         self.network_acl_bypass_resource_ids = kwargs.get('network_acl_bypass_resource_ids', None)
+        self.disable_local_auth = kwargs.get('disable_local_auth', None)
+
+
+class DatabaseRestoreResource(msrest.serialization.Model):
+    """Specific Databases to restore.
+
+    :param database_name: The name of the database available for restore.
+    :type database_name: str
+    :param collection_names: The names of the collections available for restore.
+    :type collection_names: list[str]
+    """
+
+    _attribute_map = {
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'collection_names': {'key': 'collectionNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatabaseRestoreResource, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.collection_names = kwargs.get('collection_names', None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -3952,6 +4154,9 @@ class PeriodicModeBackupPolicy(BackupPolicy):
     :param type: Required. Describes the mode of backups.Constant filled by server.  Possible
      values include: "Periodic", "Continuous".
     :type type: str or ~azure.mgmt.cosmosdb.models.BackupPolicyType
+    :param migration_state: The object representing the state of the migration between the backup
+     policies.
+    :type migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
     :param periodic_mode_properties: Configuration values for periodic mode backup.
     :type periodic_mode_properties: ~azure.mgmt.cosmosdb.models.PeriodicModeProperties
     """
@@ -3962,6 +4167,7 @@ class PeriodicModeBackupPolicy(BackupPolicy):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'migration_state': {'key': 'migrationState', 'type': 'BackupPolicyMigrationState'},
         'periodic_mode_properties': {'key': 'periodicModeProperties', 'type': 'PeriodicModeProperties'},
     }
 
@@ -4313,6 +4519,888 @@ class RegionForOnlineOffline(msrest.serialization.Model):
         self.region = kwargs['region']
 
 
+class RestorableDatabaseAccountGetResult(msrest.serialization.Model):
+    """A Azure Cosmos DB restorable database account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource belongs.
+    :type location: str
+    :param account_name: The name of the global database account.
+    :type account_name: str
+    :param creation_time: The creation time of the restorable database account (ISO-8601 format).
+    :type creation_time: ~datetime.datetime
+    :param deletion_time: The time at which the restorable database account has been deleted
+     (ISO-8601 format).
+    :type deletion_time: ~datetime.datetime
+    :ivar api_type: The API type of the restorable database account. Possible values include:
+     "MongoDB", "Gremlin", "Cassandra", "Table", "Sql", "GremlinV2".
+    :vartype api_type: str or ~azure.mgmt.cosmosdb.models.ApiType
+    :ivar restorable_locations: List of regions where the of the database account can be restored
+     from.
+    :vartype restorable_locations: list[~azure.mgmt.cosmosdb.models.RestorableLocationResource]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'api_type': {'readonly': True},
+        'restorable_locations': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'deletion_time': {'key': 'properties.deletionTime', 'type': 'iso-8601'},
+        'api_type': {'key': 'properties.apiType', 'type': 'str'},
+        'restorable_locations': {'key': 'properties.restorableLocations', 'type': '[RestorableLocationResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableDatabaseAccountGetResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+        self.account_name = kwargs.get('account_name', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.deletion_time = kwargs.get('deletion_time', None)
+        self.api_type = None
+        self.restorable_locations = None
+
+
+class RestorableDatabaseAccountsListResult(msrest.serialization.Model):
+    """The List operation response, that contains the restorable database accounts and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of restorable database accounts and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RestorableDatabaseAccountGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableDatabaseAccountsListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestorableLocationResource(msrest.serialization.Model):
+    """Properties of the regional restorable account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location_name: The location of the regional restorable account.
+    :vartype location_name: str
+    :ivar regional_database_account_instance_id: The instance id of the regional restorable
+     account.
+    :vartype regional_database_account_instance_id: str
+    :ivar creation_time: The creation time of the regional restorable database account (ISO-8601
+     format).
+    :vartype creation_time: ~datetime.datetime
+    :ivar deletion_time: The time at which the regional restorable database account has been
+     deleted (ISO-8601 format).
+    :vartype deletion_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'location_name': {'readonly': True},
+        'regional_database_account_instance_id': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'deletion_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location_name': {'key': 'locationName', 'type': 'str'},
+        'regional_database_account_instance_id': {'key': 'regionalDatabaseAccountInstanceId', 'type': 'str'},
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'deletion_time': {'key': 'deletionTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableLocationResource, self).__init__(**kwargs)
+        self.location_name = None
+        self.regional_database_account_instance_id = None
+        self.creation_time = None
+        self.deletion_time = None
+
+
+class RestorableMongodbCollectionGetResult(msrest.serialization.Model):
+    """An Azure Cosmos DB MongoDB collection event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource Identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param resource: The resource of an Azure Cosmos DB MongoDB collection event.
+    :type resource: ~azure.mgmt.cosmosdb.models.RestorableMongodbCollectionPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableMongodbCollectionPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbCollectionGetResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.resource = kwargs.get('resource', None)
+
+
+class RestorableMongodbCollectionPropertiesResource(msrest.serialization.Model):
+    """The resource of an Azure Cosmos DB MongoDB collection event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar operation_type: The operation type of this collection event. Possible values include:
+     "Create", "Replace", "Delete", "SystemOperation".
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The time when this collection event happened.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this MongoDB collection.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource ID of this MongoDB collection.
+    :vartype owner_resource_id: str
+    """
+
+    _validation = {
+        'rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbCollectionPropertiesResource, self).__init__(**kwargs)
+        self.rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+
+
+class RestorableMongodbCollectionsListResult(msrest.serialization.Model):
+    """The List operation response, that contains the MongoDB collection events and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of MongoDB collection events and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.RestorableMongodbCollectionGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RestorableMongodbCollectionGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbCollectionsListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestorableMongodbDatabaseGetResult(msrest.serialization.Model):
+    """An Azure Cosmos DB MongoDB database event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource Identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param resource: The resource of an Azure Cosmos DB MongoDB database event.
+    :type resource: ~azure.mgmt.cosmosdb.models.RestorableMongodbDatabasePropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableMongodbDatabasePropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbDatabaseGetResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.resource = kwargs.get('resource', None)
+
+
+class RestorableMongodbDatabasePropertiesResource(msrest.serialization.Model):
+    """The resource of an Azure Cosmos DB MongoDB database event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar operation_type: The operation type of this database event. Possible values include:
+     "Create", "Replace", "Delete", "SystemOperation".
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The time when this database event happened.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this MongoDB database.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource ID of this MongoDB database.
+    :vartype owner_resource_id: str
+    """
+
+    _validation = {
+        'rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbDatabasePropertiesResource, self).__init__(**kwargs)
+        self.rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+
+
+class RestorableMongodbDatabasesListResult(msrest.serialization.Model):
+    """The List operation response, that contains the MongoDB database events and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of MongoDB database events and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.RestorableMongodbDatabaseGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RestorableMongodbDatabaseGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbDatabasesListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestorableMongodbResourcesListResult(msrest.serialization.Model):
+    """The List operation response, that contains the restorable MongoDB resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of restorable MongoDB resources, including the database and collection names.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.DatabaseRestoreResource]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DatabaseRestoreResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableMongodbResourcesListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestorableSqlContainerGetResult(msrest.serialization.Model):
+    """An Azure Cosmos DB SQL container event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource Identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param resource: The resource of an Azure Cosmos DB SQL container event.
+    :type resource: ~azure.mgmt.cosmosdb.models.RestorableSqlContainerPropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableSqlContainerPropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlContainerGetResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.resource = kwargs.get('resource', None)
+
+
+class RestorableSqlContainerPropertiesResource(msrest.serialization.Model):
+    """The resource of an Azure Cosmos DB SQL container event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar operation_type: The operation type of this container event. Possible values include:
+     "Create", "Replace", "Delete", "SystemOperation".
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The when this container event happened.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of this SQL container.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource ID of this SQL container.
+    :vartype owner_resource_id: str
+    :param container: Cosmos DB SQL container resource object.
+    :type container: ~azure.mgmt.cosmosdb.models.RestorableSqlContainerPropertiesResourceContainer
+    """
+
+    _validation = {
+        'rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+        'container': {'key': 'container', 'type': 'RestorableSqlContainerPropertiesResourceContainer'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlContainerPropertiesResource, self).__init__(**kwargs)
+        self.rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+        self.container = kwargs.get('container', None)
+
+
+class SqlContainerResource(msrest.serialization.Model):
+    """Cosmos DB SQL container resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL container.
+    :type id: str
+    :param indexing_policy: The configuration of the indexing policy. By default, the indexing is
+     automatic for all document paths within the container.
+    :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
+    :param partition_key: The configuration of the partition key to be used for partitioning data
+     into multiple partitions.
+    :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
+    :param default_ttl: Default time to live.
+    :type default_ttl: int
+    :param unique_key_policy: The unique key policy configuration for specifying uniqueness
+     constraints on documents in the collection in the Azure Cosmos DB service.
+    :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
+    :param conflict_resolution_policy: The conflict resolution policy for the container.
+    :type conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: long
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
+        'partition_key': {'key': 'partitionKey', 'type': 'ContainerPartitionKey'},
+        'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
+        'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlContainerResource, self).__init__(**kwargs)
+        self.id = kwargs['id']
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
+
+
+class RestorableSqlContainerPropertiesResourceContainer(ExtendedResourceProperties, SqlContainerResource):
+    """Cosmos DB SQL container resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL container.
+    :type id: str
+    :param indexing_policy: The configuration of the indexing policy. By default, the indexing is
+     automatic for all document paths within the container.
+    :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
+    :param partition_key: The configuration of the partition key to be used for partitioning data
+     into multiple partitions.
+    :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
+    :param default_ttl: Default time to live.
+    :type default_ttl: int
+    :param unique_key_policy: The unique key policy configuration for specifying uniqueness
+     constraints on documents in the collection in the Azure Cosmos DB service.
+    :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
+    :param conflict_resolution_policy: The conflict resolution policy for the container.
+    :type conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: long
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
+    :vartype ts: float
+    :ivar etag: A system generated property representing the resource etag required for optimistic
+     concurrency control.
+    :vartype etag: str
+    :ivar self_property: A system generated property that specifies the addressable path of the
+     container resource.
+    :vartype self_property: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'rid': {'readonly': True},
+        'ts': {'readonly': True},
+        'etag': {'readonly': True},
+        'self_property': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
+        'partition_key': {'key': 'partitionKey', 'type': 'ContainerPartitionKey'},
+        'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
+        'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
+        'rid': {'key': '_rid', 'type': 'str'},
+        'ts': {'key': '_ts', 'type': 'float'},
+        'etag': {'key': '_etag', 'type': 'str'},
+        'self_property': {'key': '_self', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlContainerPropertiesResourceContainer, self).__init__(**kwargs)
+        self.id = kwargs['id']
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
+        self.self_property = None
+        self.rid = None
+        self.ts = None
+        self.etag = None
+        self.self_property = None
+
+
+class RestorableSqlContainersListResult(msrest.serialization.Model):
+    """The List operation response, that contains the SQL container events and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of SQL container events and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.RestorableSqlContainerGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RestorableSqlContainerGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlContainersListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestorableSqlDatabaseGetResult(msrest.serialization.Model):
+    """An Azure Cosmos DB SQL database event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The unique resource Identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param resource: The resource of an Azure Cosmos DB SQL database event.
+    :type resource: ~azure.mgmt.cosmosdb.models.RestorableSqlDatabasePropertiesResource
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource': {'key': 'properties.resource', 'type': 'RestorableSqlDatabasePropertiesResource'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlDatabaseGetResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.resource = kwargs.get('resource', None)
+
+
+class RestorableSqlDatabasePropertiesResource(msrest.serialization.Model):
+    """The resource of an Azure Cosmos DB SQL database event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar operation_type: The operation type of this database event. Possible values include:
+     "Create", "Replace", "Delete", "SystemOperation".
+    :vartype operation_type: str or ~azure.mgmt.cosmosdb.models.OperationType
+    :ivar event_timestamp: The time when this database event happened.
+    :vartype event_timestamp: str
+    :ivar owner_id: The name of the SQL database.
+    :vartype owner_id: str
+    :ivar owner_resource_id: The resource ID of the SQL database.
+    :vartype owner_resource_id: str
+    :param database: Cosmos DB SQL database resource object.
+    :type database: ~azure.mgmt.cosmosdb.models.RestorableSqlDatabasePropertiesResourceDatabase
+    """
+
+    _validation = {
+        'rid': {'readonly': True},
+        'operation_type': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'owner_id': {'readonly': True},
+        'owner_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rid': {'key': '_rid', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
+        'event_timestamp': {'key': 'eventTimestamp', 'type': 'str'},
+        'owner_id': {'key': 'ownerId', 'type': 'str'},
+        'owner_resource_id': {'key': 'ownerResourceId', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'RestorableSqlDatabasePropertiesResourceDatabase'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlDatabasePropertiesResource, self).__init__(**kwargs)
+        self.rid = None
+        self.operation_type = None
+        self.event_timestamp = None
+        self.owner_id = None
+        self.owner_resource_id = None
+        self.database = kwargs.get('database', None)
+
+
+class SqlDatabaseResource(msrest.serialization.Model):
+    """Cosmos DB SQL database resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL database.
+    :type id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlDatabaseResource, self).__init__(**kwargs)
+        self.id = kwargs['id']
+
+
+class RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource, ExtendedResourceProperties):
+    """Cosmos DB SQL database resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar ts: A system generated property that denotes the last updated timestamp of the resource.
+    :vartype ts: float
+    :ivar etag: A system generated property representing the resource etag required for optimistic
+     concurrency control.
+    :vartype etag: str
+    :param id: Required. Name of the Cosmos DB SQL database.
+    :type id: str
+    :ivar colls: A system generated property that specified the addressable path of the collections
+     resource.
+    :vartype colls: str
+    :ivar users: A system generated property that specifies the addressable path of the users
+     resource.
+    :vartype users: str
+    :ivar self_property: A system generated property that specifies the addressable path of the
+     database resource.
+    :vartype self_property: str
+    """
+
+    _validation = {
+        'rid': {'readonly': True},
+        'ts': {'readonly': True},
+        'etag': {'readonly': True},
+        'id': {'required': True},
+        'colls': {'readonly': True},
+        'users': {'readonly': True},
+        'self_property': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'rid': {'key': '_rid', 'type': 'str'},
+        'ts': {'key': '_ts', 'type': 'float'},
+        'etag': {'key': '_etag', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'colls': {'key': '_colls', 'type': 'str'},
+        'users': {'key': '_users', 'type': 'str'},
+        'self_property': {'key': '_self', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlDatabasePropertiesResourceDatabase, self).__init__(**kwargs)
+        self.rid = None
+        self.ts = None
+        self.etag = None
+        self.colls = None
+        self.users = None
+        self.self_property = None
+        self.id = kwargs['id']
+        self.colls = None
+        self.users = None
+        self.self_property = None
+
+
+class RestorableSqlDatabasesListResult(msrest.serialization.Model):
+    """The List operation response, that contains the SQL database events and their properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of SQL database events and their properties.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.RestorableSqlDatabaseGetResult]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RestorableSqlDatabaseGetResult]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlDatabasesListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestorableSqlResourcesListResult(msrest.serialization.Model):
+    """The List operation response, that contains the restorable SQL resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of restorable SQL resources, including the database and collection names.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.DatabaseRestoreResource]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DatabaseRestoreResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestorableSqlResourcesListResult, self).__init__(**kwargs)
+        self.value = None
+
+
+class RestoreParameters(msrest.serialization.Model):
+    """Parameters to indicate the information about the restore.
+
+    :param restore_mode: Describes the mode of the restore. Possible values include: "PointInTime".
+    :type restore_mode: str or ~azure.mgmt.cosmosdb.models.RestoreMode
+    :param restore_source: The id of the restorable database account from which the restore has to
+     be initiated. For example:
+     /subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{restorableDatabaseAccountName}.
+    :type restore_source: str
+    :param restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601
+     format).
+    :type restore_timestamp_in_utc: ~datetime.datetime
+    :param databases_to_restore: List of specific databases available for restore.
+    :type databases_to_restore: list[~azure.mgmt.cosmosdb.models.DatabaseRestoreResource]
+    """
+
+    _attribute_map = {
+        'restore_mode': {'key': 'restoreMode', 'type': 'str'},
+        'restore_source': {'key': 'restoreSource', 'type': 'str'},
+        'restore_timestamp_in_utc': {'key': 'restoreTimestampInUtc', 'type': 'iso-8601'},
+        'databases_to_restore': {'key': 'databasesToRestore', 'type': '[DatabaseRestoreResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestoreParameters, self).__init__(**kwargs)
+        self.restore_mode = kwargs.get('restore_mode', None)
+        self.restore_source = kwargs.get('restore_source', None)
+        self.restore_timestamp_in_utc = kwargs.get('restore_timestamp_in_utc', None)
+        self.databases_to_restore = kwargs.get('databases_to_restore', None)
+
+
 class SpatialSpec(msrest.serialization.Model):
     """SpatialSpec.
 
@@ -4412,58 +5500,6 @@ class SqlContainerGetPropertiesOptions(OptionsResource):
         **kwargs
     ):
         super(SqlContainerGetPropertiesOptions, self).__init__(**kwargs)
-
-
-class SqlContainerResource(msrest.serialization.Model):
-    """Cosmos DB SQL container resource object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Name of the Cosmos DB SQL container.
-    :type id: str
-    :param indexing_policy: The configuration of the indexing policy. By default, the indexing is
-     automatic for all document paths within the container.
-    :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
-    :param partition_key: The configuration of the partition key to be used for partitioning data
-     into multiple partitions.
-    :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
-    :param default_ttl: Default time to live.
-    :type default_ttl: int
-    :param unique_key_policy: The unique key policy configuration for specifying uniqueness
-     constraints on documents in the collection in the Azure Cosmos DB service.
-    :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
-    :param conflict_resolution_policy: The conflict resolution policy for the container.
-    :type conflict_resolution_policy: ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
-    :param analytical_storage_ttl: Analytical TTL.
-    :type analytical_storage_ttl: long
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
-        'partition_key': {'key': 'partitionKey', 'type': 'ContainerPartitionKey'},
-        'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
-        'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
-        'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
-        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SqlContainerResource, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.indexing_policy = kwargs.get('indexing_policy', None)
-        self.partition_key = kwargs.get('partition_key', None)
-        self.default_ttl = kwargs.get('default_ttl', None)
-        self.unique_key_policy = kwargs.get('unique_key_policy', None)
-        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
-        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
 
 
 class SqlContainerGetPropertiesResource(ExtendedResourceProperties, SqlContainerResource):
@@ -4687,31 +5723,6 @@ class SqlDatabaseGetPropertiesOptions(OptionsResource):
         **kwargs
     ):
         super(SqlDatabaseGetPropertiesOptions, self).__init__(**kwargs)
-
-
-class SqlDatabaseResource(msrest.serialization.Model):
-    """Cosmos DB SQL database resource object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Name of the Cosmos DB SQL database.
-    :type id: str
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SqlDatabaseResource, self).__init__(**kwargs)
-        self.id = kwargs['id']
 
 
 class SqlDatabaseGetPropertiesResource(SqlDatabaseResource, ExtendedResourceProperties):
@@ -5688,6 +6699,47 @@ class SqlUserDefinedFunctionListResult(msrest.serialization.Model):
     ):
         super(SqlUserDefinedFunctionListResult, self).__init__(**kwargs)
         self.value = None
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.cosmosdb.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.cosmosdb.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
 class TableCreateUpdateParameters(ARMResourceProperties):
