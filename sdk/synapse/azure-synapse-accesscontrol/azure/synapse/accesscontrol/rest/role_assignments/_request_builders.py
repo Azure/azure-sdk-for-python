@@ -19,7 +19,7 @@ _SERIALIZER = Serializer()
 
 
 def build_check_principal_access_request(
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Check if the given principalId has access to perform list of actions at a given scope.
@@ -60,7 +60,7 @@ def build_check_principal_access_request(
 
             # response body for status code(s): 200
             response.json() == {
-                "AccessDecisions": [
+                "accessDecisions": [
                     {
                         "accessDecision": "str (optional)",
                         "actionId": "str (optional)",
@@ -76,35 +76,30 @@ def build_check_principal_access_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    json = kwargs.pop("json", None)  # type: Any
 
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/checkAccessSynapseRbac')
+    url = kwargs.pop("template_url", "/checkAccessSynapseRbac")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_list_role_assignments_request(
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """List role assignments.
@@ -143,45 +138,45 @@ def build_list_role_assignments_request(
             }
     """
 
-    role_id = kwargs.pop('role_id', None)  # type: Optional[str]
-    principal_id = kwargs.pop('principal_id', None)  # type: Optional[str]
-    scope = kwargs.pop('scope', None)  # type: Optional[str]
-    continuation_token_parameter = kwargs.pop('continuation_token_parameter', None)  # type: Optional[str]
+    role_id = kwargs.pop("role_id", None)  # type: Optional[str]
+    principal_id = kwargs.pop("principal_id", None)  # type: Optional[str]
+    scope = kwargs.pop("scope", None)  # type: Optional[str]
+    continuation_token_parameter = kwargs.pop("continuation_token_parameter", None)  # type: Optional[str]
+    role_id = kwargs.pop("role_id", None)  # type: Optional[str]
+    principal_id = kwargs.pop("principal_id", None)  # type: Optional[str]
+    scope = kwargs.pop("scope", None)  # type: Optional[str]
+    continuation_token_parameter = kwargs.pop("continuation_token_parameter", None)  # type: Optional[str]
 
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/roleAssignments')
+    url = kwargs.pop("template_url", "/roleAssignments")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if role_id is not None:
-        query_parameters['roleId'] = _SERIALIZER.query("role_id", role_id, 'str')
+        query_parameters["roleId"] = _SERIALIZER.query("role_id", role_id, "str")
     if principal_id is not None:
-        query_parameters['principalId'] = _SERIALIZER.query("principal_id", principal_id, 'str')
+        query_parameters["principalId"] = _SERIALIZER.query("principal_id", principal_id, "str")
     if scope is not None:
-        query_parameters['scope'] = _SERIALIZER.query("scope", scope, 'str')
+        query_parameters["scope"] = _SERIALIZER.query("scope", scope, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if continuation_token_parameter is not None:
-        header_parameters['x-ms-continuation'] = _SERIALIZER.header("continuation_token_parameter", continuation_token_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["x-ms-continuation"] = _SERIALIZER.header(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_create_role_assignment_request(
     role_assignment_id,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Create role assignment.
@@ -223,40 +218,35 @@ def build_create_role_assignment_request(
             }
     """
 
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    content_type = kwargs.pop("content_type", None)  # type: Optional[str]
+    json = kwargs.pop("json", None)  # type: Any
 
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/roleAssignments/{roleAssignmentId}')
+    url = kwargs.pop("template_url", "/roleAssignments/{roleAssignmentId}")
     path_format_arguments = {
-        'roleAssignmentId': _SERIALIZER.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
+        "roleAssignmentId": _SERIALIZER.url("role_assignment_id", role_assignment_id, "str", min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_get_role_assignment_by_id_request(
     role_assignment_id,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Get role assignment by role assignment Id.
@@ -284,37 +274,30 @@ def build_get_role_assignment_by_id_request(
             }
     """
 
-
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/roleAssignments/{roleAssignmentId}')
+    url = kwargs.pop("template_url", "/roleAssignments/{roleAssignmentId}")
     path_format_arguments = {
-        'roleAssignmentId': _SERIALIZER.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
+        "roleAssignmentId": _SERIALIZER.url("role_assignment_id", role_assignment_id, "str", min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_delete_role_assignment_by_id_request(
     role_assignment_id,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Delete role assignment by role assignment Id.
@@ -332,33 +315,27 @@ def build_delete_role_assignment_by_id_request(
     :rtype: ~azure.synapse.accesscontrol.core.rest.HttpRequest
     """
 
-    scope = kwargs.pop('scope', None)  # type: Optional[str]
+    scope = kwargs.pop("scope", None)  # type: Optional[str]
+    scope = kwargs.pop("scope", None)  # type: Optional[str]
 
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/roleAssignments/{roleAssignmentId}')
+    url = kwargs.pop("template_url", "/roleAssignments/{roleAssignmentId}")
     path_format_arguments = {
-        'roleAssignmentId': _SERIALIZER.url("role_assignment_id", role_assignment_id, 'str', min_length=1),
+        "roleAssignmentId": _SERIALIZER.url("role_assignment_id", role_assignment_id, "str", min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if scope is not None:
-        query_parameters['scope'] = _SERIALIZER.query("scope", scope, 'str')
+        query_parameters["scope"] = _SERIALIZER.query("scope", scope, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)

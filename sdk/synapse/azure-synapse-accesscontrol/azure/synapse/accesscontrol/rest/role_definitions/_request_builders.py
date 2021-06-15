@@ -19,7 +19,7 @@ _SERIALIZER = Serializer()
 
 
 def build_list_role_definitions_request(
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """List role definitions.
@@ -70,39 +70,35 @@ def build_list_role_definitions_request(
             ]
     """
 
-    is_built_in = kwargs.pop('is_built_in', None)  # type: Optional[bool]
-    scope = kwargs.pop('scope', None)  # type: Optional[str]
+    is_built_in = kwargs.pop("is_built_in", None)  # type: Optional[bool]
+    scope = kwargs.pop("scope", None)  # type: Optional[str]
+    is_built_in = kwargs.pop("is_built_in", None)  # type: Optional[bool]
+    scope = kwargs.pop("scope", None)  # type: Optional[str]
 
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/roleDefinitions')
+    url = kwargs.pop("template_url", "/roleDefinitions")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if is_built_in is not None:
-        query_parameters['isBuiltIn'] = _SERIALIZER.query("is_built_in", is_built_in, 'bool')
+        query_parameters["isBuiltIn"] = _SERIALIZER.query("is_built_in", is_built_in, "bool")
     if scope is not None:
-        query_parameters['scope'] = _SERIALIZER.query("scope", scope, 'str')
+        query_parameters["scope"] = _SERIALIZER.query("scope", scope, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_get_role_definition_by_id_request(
     role_definition_id,  # type: str
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Get role definition by role definition Id.
@@ -149,36 +145,29 @@ def build_get_role_definition_by_id_request(
             }
     """
 
-
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/roleDefinitions/{roleDefinitionId}')
+    url = kwargs.pop("template_url", "/roleDefinitions/{roleDefinitionId}")
     path_format_arguments = {
-        'roleDefinitionId': _SERIALIZER.url("role_definition_id", role_definition_id, 'str'),
+        "roleDefinitionId": _SERIALIZER.url("role_definition_id", role_definition_id, "str"),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
 
 
 def build_list_scopes_request(
-    **kwargs  # type: Any
+    **kwargs,  # type: Any
 ):
     # type: (...) -> HttpRequest
     """List rbac scopes.
@@ -200,26 +189,18 @@ def build_list_scopes_request(
             ]
     """
 
-
-    api_version = "2020-08-01-preview"
+    api_version = "2020-12-01"
     accept = "application/json, text/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/rbacScopes')
+    url = kwargs.pop("template_url", "/rbacScopes")
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
+    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)

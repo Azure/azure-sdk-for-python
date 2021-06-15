@@ -6,15 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._access_control_client import AccessControlClient
-from ._version import VERSION
+from ._role_assignments_operations import RoleAssignmentsOperations
+from ._role_definitions_operations import RoleDefinitionsOperations
 
-__version__ = VERSION
-__all__ = ["AccessControlClient"]
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    "RoleAssignmentsOperations",
+    "RoleDefinitionsOperations",
+]

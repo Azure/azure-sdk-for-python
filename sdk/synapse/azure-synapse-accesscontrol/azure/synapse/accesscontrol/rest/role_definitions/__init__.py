@@ -16,7 +16,7 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_list_scopes_request  # type: ignore
 
 __all__ = [
-    'build_list_role_definitions_request',
-    'build_get_role_definition_by_id_request',
-    'build_list_scopes_request',
+    "build_list_role_definitions_request",
+    "build_get_role_definition_by_id_request",
+    "build_list_scopes_request",
 ]

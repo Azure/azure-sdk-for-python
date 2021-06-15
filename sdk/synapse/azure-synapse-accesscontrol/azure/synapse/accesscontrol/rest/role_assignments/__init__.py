@@ -20,9 +20,9 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_delete_role_assignment_by_id_request  # type: ignore
 
 __all__ = [
-    'build_check_principal_access_request',
-    'build_list_role_assignments_request',
-    'build_create_role_assignment_request',
-    'build_get_role_assignment_by_id_request',
-    'build_delete_role_assignment_by_id_request',
+    "build_check_principal_access_request",
+    "build_list_role_assignments_request",
+    "build_create_role_assignment_request",
+    "build_get_role_assignment_by_id_request",
+    "build_delete_role_assignment_by_id_request",
 ]

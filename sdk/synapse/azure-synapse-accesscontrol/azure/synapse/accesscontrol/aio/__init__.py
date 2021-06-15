@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._access_control_client import AccessControlClient
-__all__ = ['AccessControlClient']
+
+__all__ = ["AccessControlClient"]
