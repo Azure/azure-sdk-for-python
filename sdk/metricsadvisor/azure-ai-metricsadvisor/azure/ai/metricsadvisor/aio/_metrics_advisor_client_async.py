@@ -44,14 +44,10 @@ if TYPE_CHECKING:
         EnrichmentStatus,
         MetricSeriesItem as MetricSeriesDefinition
     )
-    from ..models._models import (
-        AnomalyFeedback,
-        ChangePointFeedback,
-        CommentFeedback,
-        PeriodFeedback
-    )
+    from ..models._models import MetricFeedback
     from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from .._metrics_advisor_client import FeedbackUnion
 
 class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
@@ -107,7 +103,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def add_feedback(self, feedback, **kwargs):
-        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], Any) -> None
+        # type: (FeedbackUnion, Any) -> None
 
         """Create a new metric feedback.
 
@@ -134,13 +130,14 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, Any) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
+        # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
 
         """Get a metric feedback by its id.
 
         :param str feedback_id: the id of the feedback.
         :return: The feedback object
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+        :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback or
+            ~azure.ai.metricsadvisor.models.AnomalyFeedback or
             ~azure.ai.metricsadvisor.models.ChangePointFeedback or
             ~azure.ai.metricsadvisor.models.CommentFeedback or
             ~azure.ai.metricsadvisor.models.PeriodFeedback
@@ -167,7 +164,7 @@ class MetricsAdvisorClient(object):
         self, metric_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+        # type: (...) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]
 
         """List feedback on the given metric.
 
@@ -185,7 +182,7 @@ class MetricsAdvisorClient(object):
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         :return: Pageable list of MetricFeedback
         :rtype: ~azure.core.async_paging.AsyncItemPaged[
-            Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+            Union[MetricFeedback, AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

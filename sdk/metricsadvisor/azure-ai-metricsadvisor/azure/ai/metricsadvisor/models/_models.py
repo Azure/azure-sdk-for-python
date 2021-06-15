@@ -952,7 +952,7 @@ class DataFeedSource(dict):
     :keyword authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :paramtype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :paramtype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     """
     def __init__(self, data_source_type, **kwargs):
@@ -973,7 +973,7 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query.
     :keyword str azure_cloud: Azure cloud environment.
@@ -1041,7 +1041,7 @@ class AzureBlobDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param container: Required. Container.
     :type container: str
@@ -1110,7 +1110,7 @@ class AzureCosmosDbDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param sql_query: Required. Query script.
     :type sql_query: str
@@ -1187,7 +1187,7 @@ class AzureDataExplorerDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param query: Required. Query script.
     :type query: str
@@ -1259,7 +1259,7 @@ class AzureTableDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query script.
     :param str table: Required. Table name.
@@ -1321,7 +1321,7 @@ class AzureEventHubsDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: The connection string of this Azure Event Hubs.
     :param str consumer_group: Required. The consumer group to be used in this data feed.
@@ -1377,7 +1377,7 @@ class InfluxDbDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: InfluxDB connection string.
     :keyword str database: Database name.
@@ -1451,7 +1451,7 @@ class MySqlDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: Database connection string.
     :param str query: Required. Query script.
@@ -1507,7 +1507,7 @@ class PostgreSqlDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: Database connection string.
     :param str query: Required. Query script.
@@ -1563,7 +1563,7 @@ class SqlServerDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query script.
     :keyword str connection_string: Database connection string.
@@ -1639,7 +1639,7 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str account_name: Account name.
     :keyword str account_key: Account key.
@@ -1740,7 +1740,7 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str tenant_id: The tenant id of service principal that have access to this Log
      Analytics.
@@ -1828,7 +1828,7 @@ class MongoDbDataFeedSource(DataFeedSource):
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: MongoDb connection string.
     :keyword str database: Database name.
@@ -2967,26 +2967,78 @@ class IncidentRootCause(msrest.serialization.Model):
             description=root_cause.description,
         )
 
-class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-instance-attributes
+class MetricFeedback(dict):
+    """Feedback base class
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
+     include: "Anomaly", "ChangePoint", "Period", "Comment".
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :ivar created_time: feedback created time.
+    :vartype created_time: ~datetime.datetime
+    :ivar user_principal: user who gives this feedback.
+    :vartype user_principal: str
+    :ivar str metric_id: Required. metric unique id.
+    :ivar dict[str, str] dimension_key: Required. metric dimension filter.
+    """
+    _attribute_map = {
+        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
+        'metric_id': {'key': 'metricId', 'type': 'str'},
+        'dimension_key': {'key': 'dimensionKey', 'type': '{str}'},
+    }
+
+    def __init__(
+            self,
+            feedback_type,
+            metric_id,
+            dimension_key,
+            **kwargs
+    ):
+        super(MetricFeedback, self).__init__(**kwargs)
+        self.feedback_type = feedback_type  # type: str
+        self.id = kwargs.get('id', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.user_principal = kwargs.get('user_principal', None)
+        self.metric_id = metric_id
+        self.dimension_key = dimension_key
+
+    def __repr__(self):
+        return "MetricFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, " \
+               "dimension_key={})".format(
+                    self.feedback_type,
+                    self.id,
+                    self.created_time,
+                    self.user_principal,
+                    self.metric_id,
+                    self.dimension_key,
+                )[:1024]
+
+    def _to_generated_patch(self):
+        pass
+
+class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param start_time: Required. the start timestamp of feedback timerange.
     :type start_time: ~datetime.datetime
     :param end_time: Required. the end timestamp of feedback timerange, when equals to startTime
@@ -3026,13 +3078,12 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         value,
         **kwargs
     ):
-        super(AnomalyFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'Anomaly'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(AnomalyFeedback, self).__init__(
+            feedback_type='Anomaly',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3090,26 +3141,22 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
             anomaly_detection_configuration_snapshot=self.anomaly_detection_configuration_snapshot
         )
 
-class ChangePointFeedback(msrest.serialization.Model):
+class ChangePointFeedback(MetricFeedback):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param start_time: Required. the start timestamp of feedback timerange.
     :type start_time: ~datetime.datetime
     :param end_time: Required. the end timestamp of feedback timerange, when equals to startTime
@@ -3140,13 +3187,12 @@ class ChangePointFeedback(msrest.serialization.Model):
         value,
         **kwargs
     ):
-        super(ChangePointFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'ChangePoint'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(ChangePointFeedback, self).__init__(
+            feedback_type='ChangePoint',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3195,26 +3241,22 @@ class ChangePointFeedback(msrest.serialization.Model):
             value=value,
         )
 
-class CommentFeedback(msrest.serialization.Model):
+class CommentFeedback(MetricFeedback):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param start_time: the start timestamp of feedback timerange.
     :type start_time: ~datetime.datetime
     :param end_time: the end timestamp of feedback timerange, when equals to startTime means only
@@ -3245,13 +3287,12 @@ class CommentFeedback(msrest.serialization.Model):
         value,
         **kwargs
     ):
-        super(CommentFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'Comment'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(CommentFeedback, self).__init__(
+            feedback_type='Comment',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3300,26 +3341,22 @@ class CommentFeedback(msrest.serialization.Model):
             value=value,
         )
 
-class PeriodFeedback(msrest.serialization.Model):
+class PeriodFeedback(MetricFeedback):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param value: Required.
     :type value: int
     :param period_type: Required. the type of setting period. Possible values include:
@@ -3346,13 +3383,12 @@ class PeriodFeedback(msrest.serialization.Model):
         period_type,
         **kwargs
     ):
-        super(PeriodFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'Period'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(PeriodFeedback, self).__init__(
+            feedback_type='Period',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.value = value
         self.period_type = period_type
 
@@ -3404,7 +3440,7 @@ class DatasourceCredential(dict):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3447,7 +3483,7 @@ class DatasourceSqlConnectionString(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3519,7 +3555,7 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3591,7 +3627,7 @@ class DatasourceServicePrincipal(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3683,7 +3719,7 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
