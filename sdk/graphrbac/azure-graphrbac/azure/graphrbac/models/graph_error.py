@@ -34,7 +34,7 @@ class GraphError(Model):
 
 
 class GraphErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'GraphError'.
+    """Server responded with exception of type: 'GraphError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.

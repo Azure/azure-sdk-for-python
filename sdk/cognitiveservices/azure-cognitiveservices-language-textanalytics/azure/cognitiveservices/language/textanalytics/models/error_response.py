@@ -43,7 +43,7 @@ class ErrorResponse(Model):
 
 
 class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
+    """Server responded with exception of type: 'ErrorResponse'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
