@@ -944,16 +944,16 @@ class AnomalyDetectionConfiguration(object):
 class DataFeedSource(dict):
     """DataFeedSource base class
 
-    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
-    :keyword authentication_type: authentication type for corresponding data source. Possible values
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :paramtype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
-    :keyword str credential_id: The datasource credential id.
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
+    :ivar str credential_id: The datasource credential id.
     """
     def __init__(self, data_source_type, **kwargs):
         # type: (str, **Any) -> None
@@ -969,7 +969,7 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1037,7 +1037,7 @@ class AzureBlobDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1106,7 +1106,7 @@ class AzureCosmosDbDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1183,7 +1183,7 @@ class AzureDataExplorerDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1255,7 +1255,7 @@ class AzureTableDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1317,7 +1317,7 @@ class AzureEventHubsDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1373,7 +1373,7 @@ class InfluxDbDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1447,7 +1447,7 @@ class MySqlDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1503,7 +1503,7 @@ class PostgreSqlDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1559,7 +1559,7 @@ class SqlServerDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1635,7 +1635,7 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1736,7 +1736,7 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
@@ -1824,7 +1824,7 @@ class MongoDbDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".

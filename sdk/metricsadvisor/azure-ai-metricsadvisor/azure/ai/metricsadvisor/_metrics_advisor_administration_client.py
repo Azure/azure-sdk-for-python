@@ -1110,7 +1110,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :keyword str data_feed_name: filter data feed by its name.
         :keyword data_source_type: filter data feed by its source type.
-        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
         :keyword granularity_type: filter data feed by its granularity.
         :paramtype granularity_type: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
         :keyword status: filter data feed by its status.

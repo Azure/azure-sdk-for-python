@@ -27,7 +27,7 @@
 from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_enums import (
     SnoozeScope,
     Severity as AnomalySeverity,
-    DataSourceType,
+    DataSourceType as DatasourceType,
     ViewMode as DataFeedAccessMode,
     RollUpMethod as DataFeedAutoRollupMethod,
     FillMissingPointType as DataSourceMissingDataPointFillType,
@@ -169,7 +169,7 @@ __all__ = (
     "MetricSeriesGroupDetectionCondition",
     "MetricSingleSeriesDetectionCondition",
     "SeverityCondition",
-    "DataSourceType",
+    "DatasourceType",
     "MetricAnomalyAlertScopeType",
     "AnomalyDetectorDirection",
     "NotificationHook",
