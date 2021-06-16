@@ -69,7 +69,7 @@ class TillageDataOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TillageDataListResponse"]:
         """Returns a paginated list of tillage data resources under a particular farm.
 
@@ -277,7 +277,7 @@ class TillageDataOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TillageDataListResponse"]:
         """Returns a paginated list of tillage data resources across all farmers.
 
@@ -458,7 +458,7 @@ class TillageDataOperations:
         self,
         farmer_id: str,
         tillage_data_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TillageData":
         """Get a specified tillage data resource under a particular farmer.
 
@@ -517,8 +517,8 @@ class TillageDataOperations:
         self,
         farmer_id: str,
         tillage_data_id: str,
-        body: Optional["_models.TillageData"] = None,
-        **kwargs
+        tillage_data: Optional["_models.TillageData"] = None,
+        **kwargs: Any
     ) -> "_models.TillageData":
         """Creates or updates an tillage data resource under a particular farmer.
 
@@ -526,8 +526,8 @@ class TillageDataOperations:
         :type farmer_id: str
         :param tillage_data_id: ID of the tillage data resource.
         :type tillage_data_id: str
-        :param body: Tillage data resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.TillageData
+        :param tillage_data: Tillage data resource payload to create or update.
+        :type tillage_data: ~azure.agrifood.farming.models.TillageData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TillageData, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.TillageData
@@ -561,8 +561,8 @@ class TillageDataOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'TillageData')
+        if tillage_data is not None:
+            body_content = self._serialize.body(tillage_data, 'TillageData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -591,7 +591,7 @@ class TillageDataOperations:
         self,
         farmer_id: str,
         tillage_data_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified tillage data resource under a particular farmer.
 

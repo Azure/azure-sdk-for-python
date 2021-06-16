@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ConfigurationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,10 +48,10 @@ class ConfigurationOperations(object):
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        parameters,  # type: "models.ClusterQuotaConfigurationProperties"
+        parameters,  # type: "_models.ClusterQuotaConfigurationProperties"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ClusterQuotaConfigurationProperties"]
+        # type: (...) -> Optional["_models.ClusterQuotaConfigurationProperties"]
         """Replace all specified Event Hubs Cluster settings with those contained in the request body.
         Leaves the settings not specified in the request body unmodified.
 
@@ -66,7 +66,7 @@ class ConfigurationOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ClusterQuotaConfigurationProperties"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ClusterQuotaConfigurationProperties"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class ConfigurationOperations(object):
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -124,7 +124,7 @@ class ConfigurationOperations(object):
         cluster_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ClusterQuotaConfigurationProperties"
+        # type: (...) -> "_models.ClusterQuotaConfigurationProperties"
         """Get all Event Hubs Cluster settings - a collection of key/value pairs which represent the
         quotas and settings imposed on the cluster.
 
@@ -137,7 +137,7 @@ class ConfigurationOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterQuotaConfigurationProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterQuotaConfigurationProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,7 +168,7 @@ class ConfigurationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ClusterQuotaConfigurationProperties', pipeline_response)

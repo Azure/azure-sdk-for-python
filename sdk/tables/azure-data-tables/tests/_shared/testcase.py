@@ -20,7 +20,7 @@ from azure.data.tables import (
     EdmType,
     TableEntity,
     TableAnalyticsLogging,
-    Metrics,
+    TableMetrics,
     TableServiceClient,
 )
 
@@ -99,8 +99,10 @@ class TableTestCase(object):
         return table
 
     def _delete_all_tables(self, ts):
-        for table in ts.list_tables():
-            ts.delete_table(table.name)
+        if self.is_live:
+            for table in ts.list_tables():
+                ts.delete_table(table.name)
+            self.sleep(10)
 
     def _create_pk_rk(self, pk, rk):
         try:
@@ -137,6 +139,7 @@ class TableTestCase(object):
             "optional": None,
             "ratio": 3.1,
             "evenratio": 3.0,
+            "double": (5, EdmType.DOUBLE),
             "large": 933311100,
             "Birthday": datetime(1973, 10, 4, tzinfo=tzutc()),
             "birthday": datetime(1970, 10, 4, tzinfo=tzutc()),
@@ -173,14 +176,16 @@ class TableTestCase(object):
         assert not "optional" in entity
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity["binary"].value == b"binary"
+        assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
-        assert entity.metadata["etag"]
-        assert entity.metadata["timestamp"]
+        assert entity.metadata.pop("etag", None)
+        assert isinstance(entity.metadata.pop("timestamp", None), datetime)
+        assert not entity.metadata, "Found metadata: {}".format(entity.metadata)
 
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         """
@@ -194,14 +199,16 @@ class TableTestCase(object):
         assert not "aquarius" in entity
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity["binary"].value == b"binary"
+        assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
-        assert entity.metadata["etag"]
-        assert entity.metadata["timestamp"]
+        assert entity.metadata.pop("etag", None)
+        assert isinstance(entity.metadata.pop("timestamp", None), datetime)
+        assert sorted(list(entity.metadata.keys())) == ['editLink', 'id', 'type'], "Found metadata: {}".format(entity.metadata)
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         """
@@ -215,6 +222,7 @@ class TableTestCase(object):
         assert not "aquarius" in entity
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"].startswith("1973-10-04T00:00:00")
         assert entity["birthday"].startswith("1970-10-04T00:00:00")
@@ -223,8 +231,9 @@ class TableTestCase(object):
         assert entity["binary"] == b64encode(b"binary").decode("utf-8")
         assert entity["other"] == 20
         assert entity["clsid"] == "c9da6455-213d-42c9-9a79-3e9149a57833"
-        assert entity.metadata["etag"]
-        assert entity.metadata["timestamp"]
+        assert entity.metadata.pop("etag", None)
+        assert isinstance(entity.metadata.pop("timestamp", None), datetime)
+        assert not entity.metadata
 
     def _assert_updated_entity(self, entity):
         """
@@ -238,6 +247,7 @@ class TableTestCase(object):
         assert not "optional" in entity
         assert not "ratio" in entity
         assert not "evenratio" in entity
+        assert not "double" in entity
         assert not "large" in entity
         assert not "Birthday" in entity
         assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
@@ -258,6 +268,7 @@ class TableTestCase(object):
         assert entity["deceased"] == False
         assert entity["ratio"] == 3.1
         assert entity["evenratio"] == 3.0
+        assert entity["double"] == 5.0
         assert entity["large"] == 933311100
         assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
         assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
@@ -281,9 +292,18 @@ class TableTestCase(object):
         assert prop is not None
 
         self._assert_logging_equal(prop["analytics_logging"], TableAnalyticsLogging())
-        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
-        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_metrics_equal(prop["hour_metrics"], TableMetrics())
+        self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
         self._assert_cors_equal(prop["cors"], list())
+
+    def _assert_policy_datetime(self, val1, val2):
+        assert isinstance(val2, datetime)
+        assert val1.year == val2.year
+        assert val1.month == val2.month
+        assert val1.day == val2.day
+        assert val1.hour == val2.hour
+        assert val1.minute == val2.minute
+        assert val1.second == val2.second
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -336,15 +356,14 @@ class TableTestCase(object):
             return
 
         assert len(cors1) == len(cors2)
-
         for i in range(0, len(cors1)):
             rule1 = cors1[i]
             rule2 = cors2[i]
-            assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
-            assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
+            assert sorted(rule1.allowed_origins) == sorted(rule2.allowed_origins)
+            assert sorted(rule1.allowed_methods) == sorted(rule2.allowed_methods)
             assert rule1.max_age_in_seconds == rule2.max_age_in_seconds
-            assert len(rule1.exposed_headers) == len(rule2.exposed_headers)
-            assert len(rule1.allowed_headers) == len(rule2.allowed_headers)
+            assert sorted(rule1.exposed_headers) == sorted(rule2.exposed_headers)
+            assert sorted(rule1.allowed_headers) == sorted(rule2.allowed_headers)
 
     def _assert_retention_equal(self, ret1, ret2):
         assert ret1.enabled == ret2.enabled
@@ -354,8 +373,6 @@ class TableTestCase(object):
         if is_live():
             self._delete_all_tables(self.ts)
             self.test_tables = []
-            if self.ts._cosmos_endpoint:
-                self.sleep(SLEEP_DELAY)
             self.ts.close()
 
     def _create_query_table(self, entity_count):

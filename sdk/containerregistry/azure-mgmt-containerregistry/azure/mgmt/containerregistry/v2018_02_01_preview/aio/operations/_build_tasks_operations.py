@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class BuildTasksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,8 +49,8 @@ class BuildTasksOperations:
         registry_name: str,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.BuildTaskListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.BuildTaskListResult"]:
         """Lists all the build tasks for a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -68,7 +68,7 @@ class BuildTasksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildTaskListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildTaskListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,8 +134,8 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        **kwargs
-    ) -> "models.BuildTask":
+        **kwargs: Any
+    ) -> "_models.BuildTask":
         """Get the properties of a specified build task.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -150,7 +150,7 @@ class BuildTasksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTask
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildTask"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildTask"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -197,10 +197,10 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        build_task_create_parameters: "models.BuildTask",
-        **kwargs
-    ) -> "models.BuildTask":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildTask"]
+        build_task_create_parameters: "_models.BuildTask",
+        **kwargs: Any
+    ) -> "_models.BuildTask":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildTask"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -256,9 +256,9 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        build_task_create_parameters: "models.BuildTask",
-        **kwargs
-    ) -> AsyncLROPoller["models.BuildTask"]:
+        build_task_create_parameters: "_models.BuildTask",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.BuildTask"]:
         """Creates a build task for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -272,8 +272,8 @@ class BuildTasksOperations:
         :type build_task_create_parameters: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTask
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BuildTask or the result of cls(response)
@@ -281,7 +281,7 @@ class BuildTasksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildTask"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildTask"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -307,7 +307,14 @@ class BuildTasksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'buildTaskName': self._serialize.url("build_task_name", build_task_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -326,7 +333,7 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -370,7 +377,7 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a specified build task.
 
@@ -383,8 +390,8 @@ class BuildTasksOperations:
         :type build_task_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -414,7 +421,14 @@ class BuildTasksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'buildTaskName': self._serialize.url("build_task_name", build_task_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -433,10 +447,10 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        build_task_update_parameters: "models.BuildTaskUpdateParameters",
-        **kwargs
-    ) -> "models.BuildTask":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildTask"]
+        build_task_update_parameters: "_models.BuildTaskUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.BuildTask":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildTask"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -492,9 +506,9 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        build_task_update_parameters: "models.BuildTaskUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.BuildTask"]:
+        build_task_update_parameters: "_models.BuildTaskUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.BuildTask"]:
         """Updates a build task with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -508,8 +522,8 @@ class BuildTasksOperations:
         :type build_task_update_parameters: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BuildTask or the result of cls(response)
@@ -517,7 +531,7 @@ class BuildTasksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BuildTask"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BuildTask"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -543,7 +557,14 @@ class BuildTasksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'buildTaskName': self._serialize.url("build_task_name", build_task_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -562,8 +583,8 @@ class BuildTasksOperations:
         resource_group_name: str,
         registry_name: str,
         build_task_name: str,
-        **kwargs
-    ) -> "models.SourceRepositoryProperties":
+        **kwargs: Any
+    ) -> "_models.SourceRepositoryProperties":
         """Get the source control properties for a build task.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -578,7 +599,7 @@ class BuildTasksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceRepositoryProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceRepositoryProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceRepositoryProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

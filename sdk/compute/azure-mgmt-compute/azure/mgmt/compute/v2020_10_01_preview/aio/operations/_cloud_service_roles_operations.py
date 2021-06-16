@@ -46,7 +46,7 @@ class CloudServiceRolesOperations:
         role_name: str,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudServiceRole":
         """Gets a role from a cloud service.
 
@@ -107,7 +107,7 @@ class CloudServiceRolesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CloudServiceRoleListResult"]:
         """Gets a list of all roles in a cloud service. Use nextLink property in the response to get the
         next page of roles. Do this till nextLink is null to fetch all the roles.

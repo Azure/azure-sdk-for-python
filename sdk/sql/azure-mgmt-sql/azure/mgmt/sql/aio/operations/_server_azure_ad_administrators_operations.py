@@ -48,7 +48,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, "_models.AdministratorName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerAzureADAdministrator":
         """Gets a Azure Active Directory administrator.
 
@@ -112,7 +112,7 @@ class ServerAzureADAdministratorsOperations:
         server_name: str,
         administrator_name: Union[str, "_models.AdministratorName"],
         parameters: "_models.ServerAzureADAdministrator",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ServerAzureADAdministrator"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerAzureADAdministrator"]]
         error_map = {
@@ -172,7 +172,7 @@ class ServerAzureADAdministratorsOperations:
         server_name: str,
         administrator_name: Union[str, "_models.AdministratorName"],
         parameters: "_models.ServerAzureADAdministrator",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServerAzureADAdministrator"]:
         """Creates or updates an existing Azure Active Directory administrator.
 
@@ -187,8 +187,8 @@ class ServerAzureADAdministratorsOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerAzureADAdministrator or the result of cls(response)
@@ -248,7 +248,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, "_models.AdministratorName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -292,7 +292,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, "_models.AdministratorName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Azure Active Directory administrator with the given name.
 
@@ -305,8 +305,8 @@ class ServerAzureADAdministratorsOperations:
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -361,7 +361,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AdministratorListResult"]:
         """Gets a list of Azure Active Directory administrators in a server.
 

@@ -41,7 +41,7 @@ def get_decorator(hsm_only=False, vault_only=False, **kwargs):
 def get_test_parameters(hsm_only=False, vault_only=False):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
-    hsm_supported_versions = {ApiVersion.V7_2_preview}
+    hsm_supported_versions = {ApiVersion.V7_2}
     for api_version in ApiVersion:
         if not vault_only and api_version in hsm_supported_versions:
             combinations.append([api_version, True])

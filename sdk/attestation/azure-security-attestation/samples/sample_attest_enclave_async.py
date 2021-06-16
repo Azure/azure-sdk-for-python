@@ -22,7 +22,15 @@ DESCRIPTION:
     5) ATTESTATION_CLIENT_ID - Client identity for authentication.
     6) ATTESTATION_CLIENT_SECRET - Secret used to identify the client.
 
+Usage:
+    python asample_attest_enclave_async.py
 
+This sample performs attestation of sample SGX collateral with both the
+`attest_sgx_enclave` and `attest_open_enclave` APIs. It also demonstrates 
+retrieving properties from the resulting attestation operation, providing draft
+attestation policies (which can be used to test/verify the behavior of 
+attestation policies) and shows how to use a validation callback to perform
+additional token validations as a part of the `attest_sgx_enclave` API call. 
 
 """
 

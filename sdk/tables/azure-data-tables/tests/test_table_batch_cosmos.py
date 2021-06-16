@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import sys
 
@@ -14,6 +14,7 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import (
     EdmType,
@@ -24,15 +25,16 @@ from azure.data.tables import (
     TableEntity,
     UpdateMode,
     TransactionOperation,
-    RequestTooLargeError
+    RequestTooLargeError,
+    TableSasPermissions,
+    TableServiceClient,
+    generate_table_sas,
+    TableErrorCode
 )
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
-#------------------------------------------------------------------------------
-TEST_TABLE_PREFIX = 'table'
-#------------------------------------------------------------------------------
 
 class StorageTableClientTest(AzureTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
@@ -184,8 +186,10 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 sent_entity1,
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -463,14 +467,65 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             received.metadata["etag"] = good_etag
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
             resp = self.table.submit_transaction(batch)
 
             assert resp is not None
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only
+    @cosmos_decorator
+    def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            token = self.generate_sas(
+                generate_table_sas,
+                tables_primary_cosmos_account_key,
+                self.table_name,
+                permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
+            )
+            token = AzureSasCredential(token)
+
+            # Act
+            service = TableServiceClient(
+                self.account_url(tables_cosmos_account_name, "cosmos"),
+                credential=token,
+            )
+            table = service.get_table_client(self.table_name)
+
+            entity = TableEntity()
+            entity['PartitionKey'] = 'batch_inserts'
+            entity['test'] = EntityProperty(True, EdmType.BOOLEAN)
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
+
+            batch = []
+            transaction_count = 0
+            for i in range(10):
+                entity['RowKey'] = str(i)
+                batch.append(('create', entity.copy()))
+                transaction_count += 1
+            transaction_result = table.submit_transaction(batch)
+
+            assert transaction_result
+
+            total_entities = 0
+            for e in table.list_entities():
+                total_entities += 1
+
+            assert total_entities == transaction_count
         finally:
             self._tear_down()
 

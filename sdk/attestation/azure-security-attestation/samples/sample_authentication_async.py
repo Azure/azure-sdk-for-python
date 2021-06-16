@@ -25,6 +25,18 @@ USAGE:
     4) ATTESTATION_TENANT_ID - Tenant Instance for authentication.
     5) ATTESTATION_CLIENT_ID - Client identity for authentication.
     6) ATTESTATION_CLIENT_SECRET - Secret used to identify the client.
+
+
+Usage:
+    python sample_authentication_async.py
+
+This sample demonstrates establishing a connection to the attestation service
+using client secrets stored in environment variables. 
+
+To verify that the connection completed successfully, it also calls the 
+`get_openidmetadata` API on the client to retrieve the OpenID metadata discovery 
+document for the attestation service instance.
+
 """
 
 

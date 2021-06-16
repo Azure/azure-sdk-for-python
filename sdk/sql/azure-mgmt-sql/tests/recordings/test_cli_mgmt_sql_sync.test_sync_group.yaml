@@ -14,28 +14,1238 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"UpsertLogicalServer","startTime":"2021-05-13T09:31:58.237Z"}'
+      string: '{"operation":"UpsertLogicalServer","startTime":"2021-05-24T06:55:10.48Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '74'
+      - '73'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:31:58 GMT
+      - Mon, 24 May 2021 06:55:10 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:55:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:56:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:56:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:56:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:57:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:57:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:57:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:57:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:58:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:58:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:58:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:58:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:59:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:59:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:59:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 06:59:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:00:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:00:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"InProgress","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:00:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/b1c919a7-55ae-469d-a735-a6e3a6dbf460?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"name":"b1c919a7-55ae-469d-a735-a6e3a6dbf460","status":"Succeeded","startTime":"2021-05-24T06:55:10.48Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:00:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"kind":"v12.0","properties":{"administratorLogin":"dummylogin","version":"12.0","state":"Ready","fullyQualifiedDomainName":"myserverxpxy.database.windows.net","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy","name":"myserverxpxy","type":"Microsoft.Sql/servers"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '498'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:00:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase?api-version=2021-02-01-preview
+  response:
+    body:
+      string: '{"operation":"CreateLogicalDatabase","startTime":"2021-05-24T07:00:48.597Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/55bd9872-83cc-43b2-a1cf-3989ce4b5378?api-version=2021-02-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '76'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:00:48 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/55bd9872-83cc-43b2-a1cf-3989ce4b5378?api-version=2021-02-01-preview
       pragma:
       - no-cache
       server:
@@ -59,13 +1269,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/55bd9872-83cc-43b2-a1cf-3989ce4b5378?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
+      string: '{"name":"55bd9872-83cc-43b2-a1cf-3989ce4b5378","status":"InProgress","startTime":"2021-05-24T07:00:48.597Z"}'
     headers:
       cache-control:
       - no-cache
@@ -74,7 +1284,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:31:59 GMT
+      - Mon, 24 May 2021 07:01:03 GMT
       expires:
       - '-1'
       pragma:
@@ -102,13 +1312,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/55bd9872-83cc-43b2-a1cf-3989ce4b5378?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
+      string: '{"name":"55bd9872-83cc-43b2-a1cf-3989ce4b5378","status":"InProgress","startTime":"2021-05-24T07:00:48.597Z"}'
     headers:
       cache-control:
       - no-cache
@@ -117,7 +1327,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:32:00 GMT
+      - Mon, 24 May 2021 07:01:18 GMT
       expires:
       - '-1'
       pragma:
@@ -145,13 +1355,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/55bd9872-83cc-43b2-a1cf-3989ce4b5378?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
+      string: '{"name":"55bd9872-83cc-43b2-a1cf-3989ce4b5378","status":"InProgress","startTime":"2021-05-24T07:00:48.597Z"}'
     headers:
       cache-control:
       - no-cache
@@ -160,7 +1370,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:32:01 GMT
+      - Mon, 24 May 2021 07:01:33 GMT
       expires:
       - '-1'
       pragma:
@@ -188,1002 +1398,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/55bd9872-83cc-43b2-a1cf-3989ce4b5378?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:32:02 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:32:23 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:32:43 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:33:04 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:33:19 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:33:34 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:33:50 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:34:05 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:34:20 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:34:35 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:34:50 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:35:06 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:35:21 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:35:36 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:35:51 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:36:07 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:36:22 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:36:37 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:36:52 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:37:07 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:37:22 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:37:37 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"InProgress","startTime":"2021-05-13T09:31:58.237Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:37:53 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/56af225d-2fb5-48bb-91de-1131817a7643?api-version=2020-11-01-preview
-  response:
-    body:
-      string: '{"name":"56af225d-2fb5-48bb-91de-1131817a7643","status":"Succeeded","startTime":"2021-05-13T09:31:58.237Z"}'
+      string: '{"name":"55bd9872-83cc-43b2-a1cf-3989ce4b5378","status":"Succeeded","startTime":"2021-05-24T07:00:48.597Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1192,7 +1413,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:38:08 GMT
+      - Mon, 24 May 2021 07:01:48 GMT
       expires:
       - '-1'
       pragma:
@@ -1220,22 +1441,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"kind":"v12.0","properties":{"administratorLogin":"dummylogin","version":"12.0","state":"Ready","fullyQualifiedDomainName":"myserverxpxy.database.windows.net","privateEndpointConnections":[],"publicNetworkAccess":"Enabled"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy","name":"myserverxpxy","type":"Microsoft.Sql/servers"}'
+      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"9b4271d5-706a-4329-86c7-6464fc64eea5","creationDate":"2021-05-24T07:01:36.05Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default","isLedgerOn":false,"isInfraEncryptionEnabled":false},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase","name":"mydatabase","type":"Microsoft.Sql/servers/databases"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '498'
+      - '1258'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:38:08 GMT
+      - Mon, 24 May 2021 07:01:48 GMT
       expires:
       - '-1'
       pragma:
@@ -1267,16 +1488,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"operation":"CreateLogicalDatabase","startTime":"2021-05-13T09:38:10.247Z"}'
+      string: '{"operation":"CreateLogicalDatabase","startTime":"2021-05-24T07:01:49.973Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/c1d016d8-6cef-4b87-b0ee-25cdc29f2830?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e9d05729-7d0f-4ce1-9800-53cbf16060de?api-version=2021-02-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -1284,11 +1505,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:38:10 GMT
+      - Mon, 24 May 2021 07:01:49 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/c1d016d8-6cef-4b87-b0ee-25cdc29f2830?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/e9d05729-7d0f-4ce1-9800-53cbf16060de?api-version=2021-02-01-preview
       pragma:
       - no-cache
       server:
@@ -1312,13 +1533,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/c1d016d8-6cef-4b87-b0ee-25cdc29f2830?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e9d05729-7d0f-4ce1-9800-53cbf16060de?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"c1d016d8-6cef-4b87-b0ee-25cdc29f2830","status":"InProgress","startTime":"2021-05-13T09:38:10.247Z"}'
+      string: '{"name":"e9d05729-7d0f-4ce1-9800-53cbf16060de","status":"InProgress","startTime":"2021-05-24T07:01:49.973Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1327,7 +1548,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:38:25 GMT
+      - Mon, 24 May 2021 07:02:05 GMT
       expires:
       - '-1'
       pragma:
@@ -1355,13 +1576,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/c1d016d8-6cef-4b87-b0ee-25cdc29f2830?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e9d05729-7d0f-4ce1-9800-53cbf16060de?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"c1d016d8-6cef-4b87-b0ee-25cdc29f2830","status":"InProgress","startTime":"2021-05-13T09:38:10.247Z"}'
+      string: '{"name":"e9d05729-7d0f-4ce1-9800-53cbf16060de","status":"InProgress","startTime":"2021-05-24T07:01:49.973Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1370,7 +1591,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:38:40 GMT
+      - Mon, 24 May 2021 07:02:20 GMT
       expires:
       - '-1'
       pragma:
@@ -1398,13 +1619,56 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/c1d016d8-6cef-4b87-b0ee-25cdc29f2830?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e9d05729-7d0f-4ce1-9800-53cbf16060de?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"c1d016d8-6cef-4b87-b0ee-25cdc29f2830","status":"Succeeded","startTime":"2021-05-13T09:38:10.247Z"}'
+      string: '{"name":"e9d05729-7d0f-4ce1-9800-53cbf16060de","status":"InProgress","startTime":"2021-05-24T07:01:49.973Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '108'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:02:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e9d05729-7d0f-4ce1-9800-53cbf16060de?api-version=2021-02-01-preview
+  response:
+    body:
+      string: '{"name":"e9d05729-7d0f-4ce1-9800-53cbf16060de","status":"Succeeded","startTime":"2021-05-24T07:01:49.973Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1413,7 +1677,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:38:54 GMT
+      - Mon, 24 May 2021 07:02:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1441,286 +1705,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"efe8e082-3f11-4d26-91d4-a068580f5c2a","creationDate":"2021-05-13T09:38:53.997Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase","name":"mydatabase","type":"Microsoft.Sql/servers/databases"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1207'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:38:55 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"location": "eastus"}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '22'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"operation":"CreateLogicalDatabase","startTime":"2021-05-13T09:38:57.077Z"}'
-    headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e3cd81b6-3d26-478c-b72e-2ba2d8342c4c?api-version=2021-02-01-preview
-      cache-control:
-      - no-cache
-      content-length:
-      - '76'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:38:56 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/e3cd81b6-3d26-478c-b72e-2ba2d8342c4c?api-version=2021-02-01-preview
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e3cd81b6-3d26-478c-b72e-2ba2d8342c4c?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"name":"e3cd81b6-3d26-478c-b72e-2ba2d8342c4c","status":"InProgress","startTime":"2021-05-13T09:38:57.077Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:39:12 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e3cd81b6-3d26-478c-b72e-2ba2d8342c4c?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"name":"e3cd81b6-3d26-478c-b72e-2ba2d8342c4c","status":"InProgress","startTime":"2021-05-13T09:38:57.077Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:39:27 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e3cd81b6-3d26-478c-b72e-2ba2d8342c4c?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"name":"e3cd81b6-3d26-478c-b72e-2ba2d8342c4c","status":"InProgress","startTime":"2021-05-13T09:38:57.077Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '108'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:39:41 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
-        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/e3cd81b6-3d26-478c-b72e-2ba2d8342c4c?api-version=2021-02-01-preview
-  response:
-    body:
-      string: '{"name":"e3cd81b6-3d26-478c-b72e-2ba2d8342c4c","status":"Succeeded","startTime":"2021-05-13T09:38:57.077Z"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '107'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 13 May 2021 09:39:56 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"32d87a99-5174-4a0e-821d-a1d117c542c3","creationDate":"2021-05-13T09:39:45.92Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default"},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase","name":"mysyncdatabase","type":"Microsoft.Sql/servers/databases"}'
+      string: '{"sku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"kind":"v12.0,user,vcore","properties":{"collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":34359738368,"status":"Online","databaseId":"8fb9a209-6e33-4cac-b894-bb0fa01ae563","creationDate":"2021-05-24T07:02:37.533Z","currentServiceObjectiveName":"GP_Gen5_2","requestedServiceObjectiveName":"GP_Gen5_2","defaultSecondaryLocation":"westus","catalogCollation":"SQL_Latin1_General_CP1_CI_AS","zoneRedundant":false,"licenseType":"LicenseIncluded","maxLogSizeBytes":68719476736,"readScale":"Disabled","currentSku":{"name":"GP_Gen5","tier":"GeneralPurpose","family":"Gen5","capacity":2},"currentBackupStorageRedundancy":"Geo","requestedBackupStorageRedundancy":"Geo","maintenanceConfigurationId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default","isLedgerOn":false,"isInfraEncryptionEnabled":false},"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase","name":"mysyncdatabase","type":"Microsoft.Sql/servers/databases"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1214'
+      - '1267'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:39:57 GMT
+      - Mon, 24 May 2021 07:02:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1754,13 +1754,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-13T09:39:58.077Z"}'
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:02:50.503Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1769,11 +1769,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:39:57 GMT
+      - Mon, 24 May 2021 07:02:49 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/f9634c6a-2063-4065-9984-388109369703?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -1783,7 +1783,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1196'
     status:
       code: 202
       message: Accepted
@@ -1797,13 +1797,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/f9634c6a-2063-4065-9984-388109369703?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-13T09:39:58.077Z"}'
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:02:50.503Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1812,11 +1812,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:40:13 GMT
+      - Mon, 24 May 2021 07:03:05 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/f9634c6a-2063-4065-9984-388109369703?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -1838,13 +1838,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/f9634c6a-2063-4065-9984-388109369703?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-13T09:39:58.077Z"}'
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:02:50.503Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1853,11 +1853,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:40:28 GMT
+      - Mon, 24 May 2021 07:03:20 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/f9634c6a-2063-4065-9984-388109369703?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -1879,10 +1879,133 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/f9634c6a-2063-4065-9984-388109369703?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:02:50.503Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '70'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:03:35 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:02:50.503Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '70'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:03:51 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
+  response:
+    body:
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:02:50.503Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '70'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 24 May 2021 07:04:06 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/98292d65-e034-4a2a-8e8b-cd1dde12034d?api-version=2020-11-01-preview
   response:
     body:
       string: '{"properties":{"interval":-1,"lastSyncTime":"0001-01-01T00:00:00Z","conflictResolutionPolicy":"HubWin","syncDatabaseId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase","syncState":"Good","enableConflictLogging":false,"conflictLoggingRetentionInDays":30,"usePrivateLinkConnection":false,"privateEndpointName":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup","name":"mysyncgroup","type":"Microsoft.Sql/servers/databases/syncGroups"}'
@@ -1894,7 +2017,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:40:43 GMT
+      - Mon, 24 May 2021 07:04:21 GMT
       expires:
       - '-1'
       pragma:
@@ -1918,7 +2041,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup?api-version=2020-11-01-preview
@@ -1933,7 +2056,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:40:43 GMT
+      - Mon, 24 May 2021 07:04:21 GMT
       expires:
       - '-1'
       pragma:
@@ -1963,13 +2086,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup/refreshHubSchema?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"RefrehSyncHubFullSchema","startTime":"2021-05-13T09:40:44.593Z"}'
+      string: '{"operation":"RefrehSyncHubFullSchema","startTime":"2021-05-24T07:04:22.457Z"}'
     headers:
       cache-control:
       - no-cache
@@ -1978,11 +2101,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:40:44 GMT
+      - Mon, 24 May 2021 07:04:21 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup/refreshHubSchemaOperationResults/f15bdeca-3825-446b-87c0-205b4d6807ee?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup/refreshHubSchemaOperationResults/4ef4f061-75ee-45db-ba4f-2b340e87cdcd?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -2006,10 +2129,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup/refreshHubSchemaOperationResults/f15bdeca-3825-446b-87c0-205b4d6807ee?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup/refreshHubSchemaOperationResults/4ef4f061-75ee-45db-ba4f-2b340e87cdcd?api-version=2020-11-01-preview
   response:
     body:
       string: ''
@@ -2019,7 +2142,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 13 May 2021 09:40:59 GMT
+      - Mon, 24 May 2021 07:04:37 GMT
       expires:
       - '-1'
       pragma:
@@ -2050,13 +2173,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-13T09:41:00.22Z"}'
+      string: '{"operation":"UpsertSyncGroup","startTime":"2021-05-24T07:04:37.77Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2065,11 +2188,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:40:59 GMT
+      - Mon, 24 May 2021 07:04:37 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/b3306107-d593-4250-954f-d9a7bce272ba?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/2856772b-bf81-4f12-92c6-7e802ef31975?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -2079,7 +2202,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1195'
     status:
       code: 202
       message: Accepted
@@ -2093,10 +2216,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/b3306107-d593-4250-954f-d9a7bce272ba?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/2856772b-bf81-4f12-92c6-7e802ef31975?api-version=2020-11-01-preview
   response:
     body:
       string: '{"properties":{"interval":-1,"lastSyncTime":"0001-01-01T00:00:00Z","conflictResolutionPolicy":"HubWin","syncDatabaseId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups//providers/Microsoft.Sql/servers//databases/","syncState":"Good","usePrivateLinkConnection":false,"privateEndpointName":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup","name":"mysyncgroup","type":"Microsoft.Sql/servers/databases/syncGroups"}'
@@ -2108,7 +2231,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:41:14 GMT
+      - Mon, 24 May 2021 07:04:52 GMT
       expires:
       - '-1'
       pragma:
@@ -2138,7 +2261,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup/cancelSync?api-version=2020-11-01-preview
@@ -2151,7 +2274,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 13 May 2021 09:41:15 GMT
+      - Mon, 24 May 2021 07:04:53 GMT
       expires:
       - '-1'
       pragma:
@@ -2179,26 +2302,26 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"DropSyncGroup","startTime":"2021-05-13T09:41:16.25Z"}'
+      string: '{"operation":"DropSyncGroup","startTime":"2021-05-24T07:04:53.567Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '67'
+      - '68'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:41:15 GMT
+      - Mon, 24 May 2021 07:04:53 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/852cffd3-cff0-4e26-8449-b27d47cb0410?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/11b911f5-1e29-4a54-93d3-3ea0e0944da3?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -2222,10 +2345,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/852cffd3-cff0-4e26-8449-b27d47cb0410?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/syncGroupOperationResults/11b911f5-1e29-4a54-93d3-3ea0e0944da3?api-version=2020-11-01-preview
   response:
     body:
       string: '{"properties":{"lastSyncTime":"0001-01-01T00:00:00Z","syncState":"NotReady"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase/syncGroups/mysyncgroup","name":"mysyncgroup","type":"Microsoft.Sql/servers/databases/syncGroups"}'
@@ -2237,7 +2360,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:41:31 GMT
+      - Mon, 24 May 2021 07:05:07 GMT
       expires:
       - '-1'
       pragma:
@@ -2267,28 +2390,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mydatabase?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"operation":"DropLogicalDatabase","startTime":"2021-05-13T09:41:31.75Z"}'
+      string: '{"operation":"DropLogicalDatabase","startTime":"2021-05-24T07:05:08.863Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/9cc4bca9-92d0-46fc-8c90-45e52b5aa229?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/fac71a31-020f-4a1a-8283-422150f394e5?api-version=2021-02-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '73'
+      - '74'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:41:31 GMT
+      - Mon, 24 May 2021 07:05:08 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/9cc4bca9-92d0-46fc-8c90-45e52b5aa229?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/fac71a31-020f-4a1a-8283-422150f394e5?api-version=2021-02-01-preview
       pragma:
       - no-cache
       server:
@@ -2312,22 +2435,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/9cc4bca9-92d0-46fc-8c90-45e52b5aa229?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/fac71a31-020f-4a1a-8283-422150f394e5?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"9cc4bca9-92d0-46fc-8c90-45e52b5aa229","status":"Succeeded","startTime":"2021-05-13T09:41:31.75Z"}'
+      string: '{"name":"fac71a31-020f-4a1a-8283-422150f394e5","status":"Succeeded","startTime":"2021-05-24T07:05:08.863Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '106'
+      - '107'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:41:46 GMT
+      - Mon, 24 May 2021 07:05:23 GMT
       expires:
       - '-1'
       pragma:
@@ -2357,28 +2480,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy/databases/mysyncdatabase?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"operation":"DropLogicalDatabase","startTime":"2021-05-13T09:41:47.343Z"}'
+      string: '{"operation":"DropLogicalDatabase","startTime":"2021-05-24T07:05:24.16Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/04749064-2f21-4abd-bf27-eda57be26f29?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/71ae13b5-e5d3-4fd8-9df2-2f9e464de010?api-version=2021-02-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '74'
+      - '73'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:41:47 GMT
+      - Mon, 24 May 2021 07:05:24 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/04749064-2f21-4abd-bf27-eda57be26f29?api-version=2021-02-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseOperationResults/71ae13b5-e5d3-4fd8-9df2-2f9e464de010?api-version=2021-02-01-preview
       pragma:
       - no-cache
       server:
@@ -2402,22 +2525,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/04749064-2f21-4abd-bf27-eda57be26f29?api-version=2021-02-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/databaseAzureAsyncOperation/71ae13b5-e5d3-4fd8-9df2-2f9e464de010?api-version=2021-02-01-preview
   response:
     body:
-      string: '{"name":"04749064-2f21-4abd-bf27-eda57be26f29","status":"Succeeded","startTime":"2021-05-13T09:41:47.343Z"}'
+      string: '{"name":"71ae13b5-e5d3-4fd8-9df2-2f9e464de010","status":"Succeeded","startTime":"2021-05-24T07:05:24.16Z"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '107'
+      - '106'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:42:01 GMT
+      - Mon, 24 May 2021 07:05:38 GMT
       expires:
       - '-1'
       pragma:
@@ -2447,16 +2570,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/servers/myserverxpxy?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"operation":"DropLogicalServer","startTime":"2021-05-13T09:42:02.797Z"}'
+      string: '{"operation":"DropLogicalServer","startTime":"2021-05-24T07:05:39.427Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/054c2308-4479-4935-bce4-a66b0c65abda?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/01ab0397-5137-4aaf-b045-0312005edd52?api-version=2020-11-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -2464,11 +2587,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:42:02 GMT
+      - Mon, 24 May 2021 07:05:39 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/054c2308-4479-4935-bce4-a66b0c65abda?api-version=2020-11-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverOperationResults/01ab0397-5137-4aaf-b045-0312005edd52?api-version=2020-11-01-preview
       pragma:
       - no-cache
       server:
@@ -2492,13 +2615,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-sql/2.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-sql/0.0.0 Python/3.8.10 (Linux-5.4.0-1047-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/054c2308-4479-4935-bce4-a66b0c65abda?api-version=2020-11-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/eastus/serverAzureAsyncOperation/01ab0397-5137-4aaf-b045-0312005edd52?api-version=2020-11-01-preview
   response:
     body:
-      string: '{"name":"054c2308-4479-4935-bce4-a66b0c65abda","status":"Succeeded","startTime":"2021-05-13T09:42:02.797Z"}'
+      string: '{"name":"01ab0397-5137-4aaf-b045-0312005edd52","status":"Succeeded","startTime":"2021-05-24T07:05:39.427Z"}'
     headers:
       cache-control:
       - no-cache
@@ -2507,7 +2630,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 09:42:17 GMT
+      - Mon, 24 May 2021 07:05:53 GMT
       expires:
       - '-1'
       pragma:

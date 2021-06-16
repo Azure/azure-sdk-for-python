@@ -45,7 +45,7 @@ class ChatOperations:
         self,
         create_chat_thread_request: "_models.CreateChatThreadRequest",
         repeatability_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CreateChatThreadResult":
         """Creates a chat thread.
 
@@ -120,7 +120,7 @@ class ChatOperations:
         self,
         max_page_size: Optional[int] = None,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ChatThreadsItemCollection"]:
         """Gets the list of chat threads of a user.
 
@@ -207,7 +207,7 @@ class ChatOperations:
     async def delete_chat_thread(
         self,
         chat_thread_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a thread.
 

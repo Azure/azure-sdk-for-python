@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -214,12 +214,16 @@ class Backup(msrest.serialization.Model):
     :vartype size: long
     :param label: Label for backup.
     :type label: str
-    :ivar backup_type: Type of backup adhoc or scheduled.
-    :vartype backup_type: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Possible values include: "Manual",
+     "Scheduled".
+    :vartype backup_type: str or ~azure.mgmt.netapp.models.BackupType
     :ivar failure_reason: Failure reason.
     :vartype failure_reason: str
     :ivar volume_name: Volume name.
     :vartype volume_name: str
+    :param use_existing_snapshot: Manual backup an already existing snapshot. This will always be
+     false for scheduled backups and true/false for manual backups.
+    :type use_existing_snapshot: bool
     """
 
     _validation = {
@@ -249,6 +253,7 @@ class Backup(msrest.serialization.Model):
         'backup_type': {'key': 'properties.backupType', 'type': 'str'},
         'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
         'volume_name': {'key': 'properties.volumeName', 'type': 'str'},
+        'use_existing_snapshot': {'key': 'properties.useExistingSnapshot', 'type': 'bool'},
     }
 
     def __init__(
@@ -256,6 +261,7 @@ class Backup(msrest.serialization.Model):
         *,
         location: str,
         label: Optional[str] = None,
+        use_existing_snapshot: Optional[bool] = False,
         **kwargs
     ):
         super(Backup, self).__init__(**kwargs)
@@ -271,6 +277,7 @@ class Backup(msrest.serialization.Model):
         self.backup_type = None
         self.failure_reason = None
         self.volume_name = None
+        self.use_existing_snapshot = use_existing_snapshot
 
 
 class BackupPatch(msrest.serialization.Model):
@@ -290,12 +297,16 @@ class BackupPatch(msrest.serialization.Model):
     :vartype size: long
     :param label: Label for backup.
     :type label: str
-    :ivar backup_type: Type of backup adhoc or scheduled.
-    :vartype backup_type: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Possible values include: "Manual",
+     "Scheduled".
+    :vartype backup_type: str or ~azure.mgmt.netapp.models.BackupType
     :ivar failure_reason: Failure reason.
     :vartype failure_reason: str
     :ivar volume_name: Volume name.
     :vartype volume_name: str
+    :param use_existing_snapshot: Manual backup an already existing snapshot. This will always be
+     false for scheduled backups and true/false for manual backups.
+    :type use_existing_snapshot: bool
     """
 
     _validation = {
@@ -318,6 +329,7 @@ class BackupPatch(msrest.serialization.Model):
         'backup_type': {'key': 'properties.backupType', 'type': 'str'},
         'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
         'volume_name': {'key': 'properties.volumeName', 'type': 'str'},
+        'use_existing_snapshot': {'key': 'properties.useExistingSnapshot', 'type': 'bool'},
     }
 
     def __init__(
@@ -325,6 +337,7 @@ class BackupPatch(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         label: Optional[str] = None,
+        use_existing_snapshot: Optional[bool] = False,
         **kwargs
     ):
         super(BackupPatch, self).__init__(**kwargs)
@@ -337,6 +350,7 @@ class BackupPatch(msrest.serialization.Model):
         self.backup_type = None
         self.failure_reason = None
         self.volume_name = None
+        self.use_existing_snapshot = use_existing_snapshot
 
 
 class BackupPoliciesList(msrest.serialization.Model):
@@ -1779,7 +1793,7 @@ class ReplicationStatus(msrest.serialization.Model):
 
 
 class ResourceIdentity(msrest.serialization.Model):
-    """ResourceIdentity.
+    """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2192,7 +2206,7 @@ class SnapshotPolicyVolumeList(msrest.serialization.Model):
     """Volumes associated with snapshot policy.
 
     :param value: List of volumes.
-    :type value: list[object]
+    :type value: list[any]
     """
 
     _attribute_map = {
@@ -2202,7 +2216,7 @@ class SnapshotPolicyVolumeList(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List[object]] = None,
+        value: Optional[List[Any]] = None,
         **kwargs
     ):
         super(SnapshotPolicyVolumeList, self).__init__(**kwargs)
@@ -2379,7 +2393,7 @@ class Volume(msrest.serialization.Model):
     :type usage_threshold: long
     :param export_policy: Set of export policy rules.
     :type export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
-    :param protocol_types: Set of protocol types, default NFSv3, CIFS fro SMB protocol.
+    :param protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
     :type protocol_types: list[str]
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -2704,20 +2718,25 @@ class VolumePatchPropertiesDataProtection(msrest.serialization.Model):
 
     :param backup: Backup Properties.
     :type backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
+    :param snapshot: Snapshot properties.
+    :type snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
     """
 
     _attribute_map = {
         'backup': {'key': 'backup', 'type': 'VolumeBackupProperties'},
+        'snapshot': {'key': 'snapshot', 'type': 'VolumeSnapshotProperties'},
     }
 
     def __init__(
         self,
         *,
         backup: Optional["VolumeBackupProperties"] = None,
+        snapshot: Optional["VolumeSnapshotProperties"] = None,
         **kwargs
     ):
         super(VolumePatchPropertiesDataProtection, self).__init__(**kwargs)
         self.backup = backup
+        self.snapshot = snapshot
 
 
 class VolumePatchPropertiesExportPolicy(msrest.serialization.Model):

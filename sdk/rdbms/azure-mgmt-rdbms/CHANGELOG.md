@@ -1,5 +1,9 @@
 # Release History
 
+## 8.1.0 (2021-06-08)
+
+ - New models and operations for mariadb 
+
 ## 8.1.0b4 (2021-04-29)
 
 **Features**

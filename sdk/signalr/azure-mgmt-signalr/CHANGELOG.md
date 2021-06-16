@@ -1,5 +1,16 @@
 # Release History
 
+## 1.0.0b2 (2021-05-20)
+
+**Features**
+
+  - Model SignalRResource has a new parameter shared_private_link_resources
+  - Model SignalRResource has a new parameter system_data
+  - Model PrivateLinkResource has a new parameter shareable_private_link_resource_types
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Added operation SignalRPrivateEndpointConnectionsOperations.list
+  - Added operation group SignalRSharedPrivateLinkResourcesOperations
+
 ## 1.0.0b1 (2020-12-02)
 
 This is beta preview version.

@@ -27,7 +27,7 @@ jobs:
     displayName: 'Run AutoRest'
 
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-20.04'
 
     steps:
       - task: NodeTool@0

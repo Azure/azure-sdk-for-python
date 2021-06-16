@@ -18,12 +18,14 @@ DEFAULT_DEST_FOLDER = "./dist"
 
 def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     # a package will exist in either one, or the other folder. this is why we can resolve both at the same time.
-    absdirs = [os.path.dirname(package) for package in
-               (glob.glob('{}/setup.py'.format(name)) + glob.glob('sdk/*/{}/setup.py'.format(name)))]
+    absdirs = [
+        os.path.dirname(package)
+        for package in (glob.glob("{}/setup.py".format(name)) + glob.glob("sdk/*/{}/setup.py".format(name)))
+    ]
 
     absdirpath = os.path.abspath(absdirs[0])
-    check_call(['python', 'setup.py', 'bdist_wheel', '-d', dest_folder], cwd=absdirpath)
-    check_call(['python', 'setup.py', "sdist", "--format", "zip", '-d', dest_folder], cwd=absdirpath)
+    check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
+    check_call(["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder], cwd=absdirpath)
 
 
 def get_package_names(sdk_folder):
@@ -35,6 +37,7 @@ def get_package_names(sdk_folder):
 
 def change_log_generate(package_name, last_version):
     from pypi_tools.pypi import PyPIClient
+
     client = PyPIClient()
     try:
         last_version[-1] = str(client.get_ordered_versions(package_name)[-1])
@@ -45,52 +48,48 @@ def change_log_generate(package_name, last_version):
 
 
 def _extract_breaking_change(changelog):
-    log = changelog.split('\n')
+    log = changelog.split("\n")
     breaking_change = []
     for i in range(0, len(log)):
-        if log[i].find('Breaking changes') > -1:
-            breaking_change = log[min(i + 2, len(log) - 1):]
+        if log[i].find("Breaking changes") > -1:
+            breaking_change = log[min(i + 2, len(log) - 1) :]
             break
-    return sorted([x.replace('  - ', '') for x in breaking_change])
+    return sorted([x.replace("  - ", "") for x in breaking_change])
 
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
 
-    sdk_folder = '.'
-    result = {
-        'packages': []
-    }
+    sdk_folder = "."
+    result = {"packages": []}
     for package in data.values():
-        package_name = package['packageName']
+        package_name = package["packageName"]
         # Changelog
-        last_version = ['first release']
+        last_version = ["first release"]
         md_output = change_log_generate(package_name, last_version)
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking changes" in md_output,
-            "breakingChangeItems": _extract_breaking_change(md_output)
+            "breakingChangeItems": _extract_breaking_change(md_output),
         }
         package["version"] = last_version[-1]
 
-        _LOGGER.info(f'[PACKAGE]({package_name})[CHANGELOG]:{md_output}')
+        _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Built package
         create_package(package_name)
-        folder_name = package['path'][0]
+        folder_name = package["path"][0]
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
-        package["artifacts"] = [
-            str(dist_path / package_file) for package_file in os.listdir(dist_path)
-        ]
+        package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artificats.",
-            "lite": f"pip install {package_name}"
+            "lite": f"pip install {package_name}",
         }
         package["result"]: "success"
         # to distinguish with track1
-        package['packageName'] = 'track2_' + package['packageName']            
-        result['packages'].append(package)
+        package["packageName"] = "track2_" + package["packageName"]
+        result["packages"].append(package)
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
@@ -100,21 +99,13 @@ def generate_main():
     """Main method"""
 
     parser = argparse.ArgumentParser(
-        description='Build SDK using Autorest, offline version.',
-        formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('generate_input',
-                        help='Generate input file path')
-    parser.add_argument('generate_output',
-                        help='Generate output file path')
-    parser.add_argument("-v", "--verbose",
-                        dest="verbose", action="store_true",
-                        help="Verbosity in INFO mode")
-    parser.add_argument("--debug",
-                        dest="debug", action="store_true",
-                        help="Verbosity in DEBUG mode")
-    parser.add_argument("-c", "--codegen",
-                        dest="debug", action="store_true",
-                        help="Verbosity in DEBUG mode")
+        description="Build SDK using Autorest, offline version.", formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("generate_input", help="Generate input file path")
+    parser.add_argument("generate_output", help="Generate output file path")
+    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
+    parser.add_argument("-c", "--codegen", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
 
     args = parser.parse_args()
     main_logger = logging.getLogger()

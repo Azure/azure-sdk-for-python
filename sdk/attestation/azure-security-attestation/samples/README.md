@@ -36,7 +36,7 @@ Service Mode | Instance Creation  | Attestation | Policy Get | Policy Set | Sign
 Shared | No | Yes | Yes (default always)| No | No | No
 AAD | Yes | Yes | Yes | Yes | Optional | No
 Isolated | Yes| Yes | Yes | Yes | Yes | Yes
-------
+
 
 ### Shared Mode
 
@@ -47,8 +47,7 @@ That instance is limited in what actions it can perform: The shared instance has
 a "default" attestation policy which simply attests the correctness of the SGX
 attestation collateral. It cannot be used for attestation types like `TPM` which
 require that the customer provide an attestation policy. However, for customers
-who simply need to perform attestation operations, they can use the shared
-instance without creating their own instance.
+who simply need to perform attestation operations on an SGX enclave, they can use the shared instance without creating their own instance.
 
 Examples of shared instances are:
 
@@ -94,9 +93,9 @@ into the attestation service instance because they use [DefaultAzureCredential](
 
 **File Name** | **Description**
 |-----|-------|
-| [sample_authentication.py](https://aka.ms/azsdk/guideline/links) and [sample_authentication_async.py](https://aka.ms/azsdk/guideline/links) | Authenticate a connection with the attestation service.|
-| [sample_attest_enclave.py](https://aka.ms/azsdk/guideline/links) and [sample_attest_enclave_async.py](https://aka.ms/azsdk/guideline/links) | Attest an SGX and OpenEnclave enclave with the attestation service. Also shows how to use the TokenValidationOptions to perform additional validation of the returned attestation token and validation keys.|
-|[sample_get_set_policy.py](https://aka.ms/azsdk/guideline/links) and [sample_get_set_policy_async.py](https://aka.ms/azsdk/guideline/links) | Policy manipulation operations - Get, Set, Reset on different attestation types.|
+| [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_authentication.py) and [sample_authentication_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_authentication_async.py) | Authenticate a connection with the attestation service (also retrieves the OpenID metadata configuration for the service instance).|
+| [sample_attest_enclave.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_attest_enclave.py) and [sample_attest_enclave_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_attest_enclave_async.py) | Attest an SGX and OpenEnclave enclave with the attestation service. Also shows how to use the TokenValidationOptions to perform additional validation of the returned attestation token and validation keys.|
+|[sample_get_set_policy.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/attestation/azure-security-attestation/samples/sample_get_set_policy.py) and [sample_get_set_policy_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/attestation/azure-security-attestation/samples) | Policy manipulation operations - Get, Set, Reset on different attestation types.|
 
 ### Prerequisites
 

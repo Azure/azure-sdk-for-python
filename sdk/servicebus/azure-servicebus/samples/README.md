@@ -35,6 +35,9 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - Receive dead-lettered messages
 - [receive_iterator_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_iterator_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/receive_iterator_queue_async.py)) - Examples to receive messages from a service bus queue by iterating over ServiceBusReceiver:
     - Receive messages by iterating over ServiceBusReceiver
+- [send_and_receive_amqp_annotated_message.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_and_receive_amqp_annotated_message.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/send_and_receive_amqp_annotated_message_async.py)) - Examples to send AMQPAnnotatedMessage to and receive messages from a service bus queue and parse the body:
+    - Send AMQPAnnotatedMessage of different body types.
+    - Receive messages and parse the body according to the body type.
 - [session_pool_receive.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/session_pool_receive_async.py)) - Examples to receive messages from multiple available sessions in parallel with a thread pool:
     - Receive messages from multiple available sessions in parallel with a thread pool
     - Automatically renew the lock on the session through AutoLockRenewer

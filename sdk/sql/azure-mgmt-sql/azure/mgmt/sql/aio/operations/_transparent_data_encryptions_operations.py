@@ -47,7 +47,7 @@ class TransparentDataEncryptionsOperations:
         database_name: str,
         transparent_data_encryption_name: Union[str, "_models.TransparentDataEncryptionName"],
         parameters: "_models.TransparentDataEncryption",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TransparentDataEncryption":
         """Creates or updates a database's transparent data encryption configuration.
 
@@ -128,7 +128,7 @@ class TransparentDataEncryptionsOperations:
         server_name: str,
         database_name: str,
         transparent_data_encryption_name: Union[str, "_models.TransparentDataEncryptionName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TransparentDataEncryption":
         """Gets a database's transparent data encryption configuration.
 

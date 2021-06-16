@@ -1,6 +1,23 @@
 # Release History
 
-## 3.1.0 (Unreleased)
+## 3.1.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 3.1.1 (2021-06-08)
+
+**Bug Fixes**
+
+- Handles invoices that do not have sub-line item fields detected.
+
+## 3.1.0 (2021-05-26)
 
 This version of the SDK defaults to the latest supported API version, which currently is v2.1
 

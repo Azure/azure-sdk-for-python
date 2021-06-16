@@ -72,6 +72,7 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
 
         return nic_info.id
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vm(self, resource_group):
 

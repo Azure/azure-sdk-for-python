@@ -58,7 +58,7 @@ class ScenesOperations:
         image_formats: Optional[List[str]] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SceneListResponse"]:
         """Returns a paginated list of scene resources.
 
@@ -183,8 +183,8 @@ class ScenesOperations:
     async def _create_satellite_data_ingestion_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.SatelliteDataIngestionJob"] = None,
-        **kwargs
+        job: Optional["_models.SatelliteDataIngestionJob"] = None,
+        **kwargs: Any
     ) -> "_models.SatelliteDataIngestionJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteDataIngestionJob"]
         error_map = {
@@ -213,8 +213,8 @@ class ScenesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'SatelliteDataIngestionJob')
+        if job is not None:
+            body_content = self._serialize.body(job, 'SatelliteDataIngestionJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -238,15 +238,15 @@ class ScenesOperations:
     async def begin_create_satellite_data_ingestion_job(
         self,
         job_id: str,
-        body: Optional["_models.SatelliteDataIngestionJob"] = None,
-        **kwargs
+        job: Optional["_models.SatelliteDataIngestionJob"] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SatelliteDataIngestionJob"]:
         """Create a satellite data ingestion job.
 
         :param job_id: JobId provided by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.agrifood.farming.models.SatelliteDataIngestionJob
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.agrifood.farming.models.SatelliteDataIngestionJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -267,7 +267,7 @@ class ScenesOperations:
         if cont_token is None:
             raw_result = await self._create_satellite_data_ingestion_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -304,11 +304,11 @@ class ScenesOperations:
     async def get_satellite_data_ingestion_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SatelliteDataIngestionJob":
         """Get a satellite data ingestion job.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SatelliteDataIngestionJob, or the result of cls(response)
@@ -359,7 +359,7 @@ class ScenesOperations:
     async def download(
         self,
         file_path: str,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Downloads and returns file stream as response for the given input filePath.
 

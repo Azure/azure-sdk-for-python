@@ -47,7 +47,7 @@ class DatabaseOperationsOperations:
         server_name: str,
         database_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels the asynchronous operation on the database.
 
@@ -108,7 +108,7 @@ class DatabaseOperationsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseOperationListResult"]:
         """Gets a list of operations performed on the database.
 

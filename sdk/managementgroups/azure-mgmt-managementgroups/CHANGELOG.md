@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0 (2021-05-21)
+
+**Features**
+
+  - Model ManagementGroupDetails has a new parameter path
+  - Model ManagementGroupDetails has a new parameter management_group_ancestors
+  - Model ManagementGroupDetails has a new parameter management_group_ancestors_chain
+
+**Breaking changes**
+
+  - Operation ManagementGroupSubscriptionsOperations.get_subscriptions_under_management_group has a new signature
+  - Operation ManagementGroupsOperations.list has a new signature
+  - Operation EntitiesOperations.list has a new signature
+  - Operation ManagementGroupsOperations.get_descendants has a new signature
+  - Model ManagementGroup no longer has parameter path
+
 ## 1.0.0b1 (2020-12-09)
 
 This is beta preview version.

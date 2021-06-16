@@ -117,10 +117,10 @@ class SearchClient(HeadersMixin):
         """Search the Azure search index for documents.
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
-        match all documents.
+         match all documents.
         :keyword bool include_total_count: A value that specifies whether to fetch the total count of
-        results. Default is false. Setting this value to true may have a performance impact. Note that
-        the count returned is an approximation.
+         results. Default is false. Setting this value to true may have a performance impact. Note that
+         the count returned is an approximation.
         :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.

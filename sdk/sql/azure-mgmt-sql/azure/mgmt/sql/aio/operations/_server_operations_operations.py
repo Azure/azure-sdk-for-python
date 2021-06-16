@@ -45,7 +45,7 @@ class ServerOperationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerOperationListResult"]:
         """Gets a list of operations performed on the server.
 

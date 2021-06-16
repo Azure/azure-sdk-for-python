@@ -14,16 +14,20 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import (
     BodyReplacerProcessor, ResponseReplacerProcessor
 )
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from _shared.utils import get_http_logging_policy
+
+SKIP_INT_SMS_TESTS = os.getenv("COMMUNICATION_SKIP_INT_SMS_TEST", "false") == "true"
+INT_SMS_TEST_SKIP_REASON = "SMS does not support in INT. Skip these tests in INT."
 
 class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
+    async def get_token(self, *args):
         return self.token
 
+@pytest.mark.skipif(SKIP_INT_SMS_TESTS, reason=INT_SMS_TEST_SKIP_REASON)
 class SMSClientTestAsync(AsyncCommunicationTestCase):
     def __init__(self, method_name):
         super(SMSClientTestAsync, self).__init__(method_name)

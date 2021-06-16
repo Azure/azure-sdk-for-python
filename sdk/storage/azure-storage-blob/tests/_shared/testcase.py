@@ -5,10 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import copy
-import inspect
-import os
 import os.path
 import time
 from datetime import datetime, timedelta
@@ -21,7 +17,7 @@ except ImportError:
 import zlib
 import math
 import sys
-import string
+import os
 import random
 import re
 import logging
@@ -38,18 +34,24 @@ try:
 except ImportError:
     from io import StringIO
 
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 try:
+    # Running locally - use configuration in settings_real.py
     from .settings_real import *
 except ImportError:
+    # Running on the pipeline - use fake values in order to create rg, etc.
     from .settings_fake import *
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
+
+from .service_versions import service_version_map
 
 import pytest
 
@@ -123,6 +125,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_key': StorageTestCase._STORAGE_KEY,
             'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
@@ -310,6 +313,32 @@ class StorageTestCase(AzureMgmtTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def _get_service_version(self, **kwargs):
+        env_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION","LATEST"))
+        return kwargs.pop("service_version", env_version)
+
+    def create_storage_client(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client(*args, **kwargs)
+
+    def create_storage_client_from_conn_str(self, client, *args, **kwargs):
+        kwargs["api_version"] = self._get_service_version(**kwargs)
+        kwargs["_additional_pipeline_policies"] = [ApiVersionAssertPolicy(kwargs["api_version"])]
+        return client.from_connection_string(*args, **kwargs)
+
+
+class ApiVersionAssertPolicy(SansIOHTTPPolicy):
+    """
+    Assert the ApiVersion is set properly on the response
+    """
+
+    def __init__(self, api_version):
+        self.api_version = api_version
+
+    def on_request(self, request):
+        assert request.http_request.headers['x-ms-version'] == self.api_version
+
 
 def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
@@ -472,7 +501,15 @@ def storage_account():
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
-                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                for i in range(5):
+                    try:
+                        time.sleep(i) if i == 0 else time.sleep(2 ** i)
+                        storage_name, storage_kwargs = storage_preparer._prepare_create_resource(
+                            test_case, **rg_kwargs)
+                        break
+                        # Some tests may be running on the storage account and a conflict may occur. Backoff & Retry.
+                    except HttpResponseError:
+                        continue
                 storage_account = storage_kwargs['storage_account']
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
@@ -489,5 +526,9 @@ def storage_account():
                 )
     finally:
         if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
+            try:
+                rg_preparer.remove_resource(rg_name)
+            # This covers the case where another test had already removed the resource group
+            except ResourceNotFoundError:
+                pass
         StorageTestCase._RESOURCE_GROUP = None

@@ -47,7 +47,7 @@ class SnapshotPoliciesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotPoliciesList"]:
         """List snapshot policy.
 
@@ -65,7 +65,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -122,7 +122,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SnapshotPolicy":
         """Get a snapshot Policy.
 
@@ -142,7 +142,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL
@@ -185,7 +185,7 @@ class SnapshotPoliciesOperations:
         account_name: str,
         snapshot_policy_name: str,
         body: "_models.SnapshotPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SnapshotPolicy":
         """Create a snapshot policy.
 
@@ -207,7 +207,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -259,14 +259,14 @@ class SnapshotPoliciesOperations:
         account_name: str,
         snapshot_policy_name: str,
         body: "_models.SnapshotPolicyPatch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SnapshotPolicy":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -318,7 +318,7 @@ class SnapshotPoliciesOperations:
         account_name: str,
         snapshot_policy_name: str,
         body: "_models.SnapshotPolicyPatch",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SnapshotPolicy"]:
         """Patch a snapshot policy.
 
@@ -332,8 +332,8 @@ class SnapshotPoliciesOperations:
         :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SnapshotPolicy or the result of cls(response)
@@ -393,14 +393,14 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -437,7 +437,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete snapshot policy.
 
@@ -449,8 +449,8 @@ class SnapshotPoliciesOperations:
         :type snapshot_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -506,7 +506,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SnapshotPolicyVolumeList":
         """Get volumes for snapshot policy.
 
@@ -528,7 +528,7 @@ class SnapshotPoliciesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-02-01"
         accept = "application/json"
 
         # Construct URL

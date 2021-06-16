@@ -16,7 +16,7 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any
 
     from azure.core.credentials import TokenCredential
 
@@ -29,21 +29,11 @@ class ManagementGroupsAPIConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param skip: Number of entities to skip over when retrieving results. Passing this in will override $skipToken.
-    :type skip: int
-    :param top: Number of elements to return when retrieving results. Passing this in will override $skipToken.
-    :type top: int
-    :param skiptoken: Page continuation token is only used if a previous operation returned a partial result. 
-If a previous response contains a nextLink element, the value of the nextLink element will include a token parameter that specifies a starting point to use for subsequent calls.
-    :type skiptoken: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        skip=None,  # type: Optional[int]
-        top=None,  # type: Optional[int]
-        skiptoken=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -52,10 +42,7 @@ If a previous response contains a nextLink element, the value of the nextLink el
         super(ManagementGroupsAPIConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.skip = skip
-        self.top = top
-        self.skiptoken = skiptoken
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-04-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-managementgroups/{}'.format(VERSION))
         self._configure(**kwargs)

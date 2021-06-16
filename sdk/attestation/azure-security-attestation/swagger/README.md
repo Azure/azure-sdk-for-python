@@ -1,4 +1,4 @@
-# Azure Mixed Reality Authentication Service client library for Python
+# Azure Attestation Service client library for Python
 
 ## Setup
 

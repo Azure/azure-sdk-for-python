@@ -23,10 +23,10 @@ To use this package, you must have:
 * Opentelemetry SDK - [Opentelemtry SDK for Python][ot_sdk_python]
 * Python 3.5 or later - [Install Python][python]
 
-### Authenticate the client
+### Instantiate the client
 
 Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class. You will need a **connection_string** to instantiate the object.
-Please find the samples linked below for demonstration as to how to authenticate using a connection string.
+Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
 #### [Create Exporter from connection string][sample_authenticate_client_connstr]
 

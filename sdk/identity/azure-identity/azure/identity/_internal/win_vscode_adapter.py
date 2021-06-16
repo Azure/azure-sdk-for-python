@@ -57,31 +57,19 @@ def _read_credential(service_name, account_name):
     return None
 
 
-def _get_user_settings_path():
-    app_data_folder = os.environ["APPDATA"]
-    return os.path.join(app_data_folder, "Code", "User", "settings.json")
-
-
-def _get_user_settings():
-    path = _get_user_settings_path()
+def get_user_settings():
     try:
+        path = os.path.join(os.environ["APPDATA"], "Code", "User", "settings.json")
         with open(path) as file:
-            data = json.load(file)
-            environment_name = data.get("azure.cloud", "AzureCloud")
-            return environment_name
-    except IOError:
-        return "AzureCloud"
+            return json.load(file)
+    except Exception as ex:  # pylint:disable=broad-except
+        _LOGGER.debug('Exception reading VS Code user settings: "%s"', ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
+        return {}
 
 
-def _get_refresh_token(service_name, account_name):
-    return _read_credential(service_name, account_name)
-
-
-def get_credentials():
+def get_refresh_token(cloud_name):
     try:
-        environment_name = _get_user_settings()
-        credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
-        return credentials
+        return _read_credential(VSCODE_CREDENTIALS_SECTION, cloud_name)
     except Exception as ex:  # pylint: disable=broad-except
         _LOGGER.debug(
             'Exception retrieving VS Code credentials: "%s"', ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG)

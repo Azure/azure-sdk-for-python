@@ -43,22 +43,22 @@ class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
 
-    :param str base_url: base url of the service
+    :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
-    :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :keyword ~azure.core.pipeline.AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
+    :keyword ~azure.core.pipeline.transport.AsyncHttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[~azure.core.pipeline.policies.AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 
     """
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        instance_url,  # type: str
-        **kwargs  # type: Any
-    ): # type(...) -> None
+        credential,  # type: 'AsyncTokenCredential'
+        instance_url, #type: str
+        **kwargs #type: Any
+    ): #type: (...) -> None
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
@@ -67,17 +67,26 @@ class AttestationClient(object):
         self._signing_certificates = None
 
     @distributed_trace_async
-    async def get_openidmetadata(self):
+    async def get_openidmetadata(
+        self, 
+        **kwargs #type: Any
+        ): #type: (...) -> Any
         """ Retrieves the OpenID metadata configuration document for this attestation instance.
+
+        :return: OpenId Metadata document for the attestation service instance.
+        :rtype: Any
         """
-        return await self._client.metadata_configuration.get()
+        return await self._client.metadata_configuration.get(**kwargs)
 
     @distributed_trace_async
-    async def get_signing_certificates(self, **kwargs) -> List[AttestationSigner]:
-        #type:(Dict[str,Any])->AttestationSigner
+    async def get_signing_certificates(
+        self, 
+        **kwargs #type: Any
+        ): #type: (...) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
 
-        :return list[azure.security.attestation.AttestationSigner]: A list of :class:`azure.security.attestation.AttestationSigner` objects.
+        :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
+        :rtype: list[azure.security.attestation.AttestationSigner]
 
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
@@ -89,20 +98,29 @@ class AttestationClient(object):
         return signers
 
     @distributed_trace_async
-    async def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
+    async def attest_sgx_enclave(
+        self,
+        quote : bytes,
+        inittime_data=None, #type: AttestationData
+        runtime_data=None, #type: AttestationData
+        **kwargs #type:Any
+        ): #type: (...) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :keyword azure.security.attestation.AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :keyword azure.security.attestation.AttestationData runtime_data: Data presented at the time that the SGX quote was created.
-        :keyword str draft_policy: "draft" or "experimental" policy to be used with
+        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :type inittime_data: azure.security.attestation.AttestationData
+        :param runtime_data: Data presented at the time that the SGX quote was created.
+        :type runtime_data: azure.security.attestation.AttestationData
+        :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
+        :paramtype draft_policy: str
 
-        :return azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+        :return: Attestation service response encapsulating an :class:`AttestationResult`.
+        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -132,19 +150,29 @@ class AttestationClient(object):
         return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace_async
-    async def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, **kwargs):
-        # type:(bytes, AttestationData, AttestationData, Dict[str, Any]) -> AttestationResponse[AttestationResult]
+    async def attest_open_enclave(
+        self,
+        report : bytes,
+        inittime_data=None, #type: AttestationData
+        runtime_data=None, #type: AttestationData
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :keyword azure.security.attestation.AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :keyword azure.security.attestation.AttestationData runtime_data: Data presented at the time that the open_enclave report was created.
-        :keyword str draft_policy: "draft" or "experimental" policy to be used with
+        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :type inittime_data: azure.security.attestation.AttestationData
+        :param runtime_data: Data presented at the time that the open_enclave report was created.
+        :type runtime_data: azure.security.attestation.AttestationData
+        :keyword draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
-        :return azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+
+        :paramtype draft_policy: str
+        :return: Attestation service response encapsulating an :class:`AttestationResult`.
+        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.AttestationResult]
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -173,21 +201,24 @@ class AttestationClient(object):
         return AttestationResponse[AttestationResult](token, AttestationResult._from_generated(token.get_body()))
 
     @distributed_trace_async
-    async def attest_tpm(self, request, **kwargs):
-        #type:(TpmAttestationRequest, **Any) -> TpmAttestationResponse
+    async def attest_tpm(
+        self, 
+        request, #type: TpmAttestationRequest
+        **kwargs #type: Any
+        ): #type: (...) -> TpmAttestationResponse
         """ Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param azure.security.attestation.TpmAttestationRequest request: Incoming request to send to the TPM attestation service.
-        :returns azure.security.attestation.TpmAttestationResponse: A structure containing the response from the TPM attestation.
-
+        :param request: Incoming request to send to the TPM attestation service.
+        :type request: azure.security.attestation.TpmAttestationRequest 
+        :returns: A structure containing the response from the TPM attestation.
+        :rtype: azure.security.attestation.TpmAttestationResponse
         """
         response = await self._client.attestation.attest_tpm(request.data, **kwargs)
         return TpmAttestationResponse(response.data)
 
-    async def _get_signers(self, **kwargs):
-        # type:(Any) -> list[AttestationSigner]
+    async def _get_signers(self, **kwargs: Any): #type: (Any) -> list[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 

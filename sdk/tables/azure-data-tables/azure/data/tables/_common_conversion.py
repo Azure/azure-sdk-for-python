@@ -89,12 +89,12 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
 
 
 def _is_cosmos_endpoint(url):
-    if ".table.cosmodb." in url:
+    if ".table.cosmosdb." in url.hostname:
         return True
-
-    if ".table.cosmos." in url:
+    if ".table.cosmos." in url.hostname:
         return True
-
+    if url.hostname == "localhost" and url.port != 10002:
+        return True
     return False
 
 

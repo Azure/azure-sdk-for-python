@@ -140,9 +140,14 @@ class TestHealth(AsyncTextAnalyticsTest):
                 response.append(r)
 
         expected_order = ["56", "0", "22", "19", "1"]
-        actual_order = [x.id for x in response]
+        num_error = 0
         for idx, resp in enumerate(response):
-            self.assertEqual(resp.id, expected_order[idx])
+            assert resp.id == expected_order[idx]
+            if resp.is_error:
+                num_error += 1
+                continue
+            assert not resp.statistics
+        assert num_error == 1
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -153,24 +158,34 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
+        def callback(resp):
+            assert resp.raw_response
+            stats = resp.raw_response['results']['statistics']
+            assert stats['documentsCount'] == 5
+            assert stats['validDocumentsCount'] == 4
+            assert stats['erroneousDocumentsCount'] == 1
+            assert stats['transactionsCount'] == 4
+
         async with client:
             response = await (await client.begin_analyze_healthcare_entities(
                 docs,
                 show_stats=True,
                 model_version="2021-01-11",
-                polling_interval=self._interval()
+                polling_interval=self._interval(),
+                raw_response_hook=callback,
             )).result()
 
-        self.assertIsNotNone(response)
-        assert response.model_version    # commenting out bc of service error, always uses latest https://github.com/Azure/azure-sdk-for-python/issues/17160
-        self.assertEqual(response.statistics.documents_count, 5)
-        self.assertEqual(response.statistics.transactions_count, 4)
-        self.assertEqual(response.statistics.valid_documents_count, 4)
-        self.assertEqual(response.statistics.erroneous_documents_count, 1)
+        assert response
+        assert not hasattr(response, "statistics")
 
+        num_error = 0
         async for doc in response:
-            if not doc.is_error:
-                self.assertIsNotNone(doc.statistics)
+            if doc.is_error:
+                num_error += 1
+                continue
+            assert doc.statistics.characters_count
+            assert doc.statistics.transactions_count
+        assert num_error == 1
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
