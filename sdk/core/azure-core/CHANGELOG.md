@@ -1,6 +1,8 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.16.0 (Unreleased)
+
+- Add `azure.core.rest`
 
 
 ## 1.15.0 (2021-06-04)

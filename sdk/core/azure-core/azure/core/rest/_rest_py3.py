@@ -368,6 +368,11 @@ class HttpResponse(_HttpResponseBase):
         return self
 
     def close(self) -> None:
+        """Close the response
+
+        :return: None
+        :rtype: None
+        """
         self.is_closed = True
         self.internal_response.close()
 
@@ -376,9 +381,10 @@ class HttpResponse(_HttpResponseBase):
         self.internal_response.__exit__(*args)
 
     def read(self) -> bytes:
-        """
-        Read the response's bytes.
+        """Read the response's bytes.
 
+        :return: The read in bytes
+        :rtype: bytes
         """
         if not self._has_content():
             self._set_content(b"".join(self.iter_bytes()))
@@ -402,14 +408,22 @@ class HttpResponse(_HttpResponseBase):
             yield part
 
     def iter_raw(self, chunk_size: Optional[int] = None) -> Iterator[bytes]:
-        """Iterate over the raw response bytes
+        """Iterates over the response's bytes. Will not decompress in the process
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
         """
         for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
             yield raw_bytes
         self.close()
 
     def iter_bytes(self, chunk_size: Optional[int] = None) -> Iterator[bytes]:
-        """Iterate over the response bytes
+        """Iterates over the response's bytes. Will decompress in the process
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
         """
         if self._has_content():
             if chunk_size is None:
@@ -422,13 +436,23 @@ class HttpResponse(_HttpResponseBase):
         self.close()
 
     def iter_text(self, chunk_size: int = None) -> Iterator[str]:
-        """Iterate over the response text
+        """Iterates over the text in the response.
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An iterator of string. Each string chunk will be a text from the response
+        :rtype: Iterator[str]
         """
         for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
 
     def iter_lines(self, chunk_size: int = None) -> Iterator[str]:
+        """Iterates over the lines in the response.
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An iterator of string. Each string chunk will be a line from the response
+        :rtype: Iterator[str]
+        """
         for text in self.iter_text(chunk_size):
             lines = parse_lines_from_text(text)
             for line in lines:
@@ -445,9 +469,10 @@ class HttpResponse(_HttpResponseBase):
 class AsyncHttpResponse(_HttpResponseBase):
 
     async def read(self) -> bytes:
-        """
-        Read the response's bytes.
+        """Read the response's bytes into memory.
 
+        :return: The response's bytes
+        :rtype: bytes
         """
         if not self._has_content():
             parts = []
@@ -474,14 +499,22 @@ class AsyncHttpResponse(_HttpResponseBase):
             yield part
 
     async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
-        """Iterate over the raw response bytes
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
         """
         async for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
             yield raw_bytes
         await self.close()
 
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
-        """Iterate over the bytes in the response stream
+        """Asynchronously iterates over the response's bytes. Will decompress in the process
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
         """
         content = self._get_content()
         if content is not None:
@@ -495,19 +528,34 @@ class AsyncHttpResponse(_HttpResponseBase):
         await self.close()
 
     async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
-        """Iterate over the response text
+        """Asynchronously iterates over the text in the response.
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An async iterator of string. Each string chunk will be a text from the response
+        :rtype: AsyncIterator[str]
         """
         async for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
 
     async def iter_lines(self, chunk_size: int = None) -> AsyncIterator[str]:
+        """Asynchronously iterates over the lines in the response.
+
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An async iterator of string. Each string chunk will be a line from the response
+        :rtype: AsyncIterator[str]
+        """
         async for text in self.iter_text(chunk_size):
             lines = parse_lines_from_text(text)
             for line in lines:
                 yield line
 
     async def close(self) -> None:
+        """Close the response.
+
+        :return: None
+        :rtype: None
+        """
         self.is_closed = True
         self.internal_response.close()
         await asyncio.sleep(0)
