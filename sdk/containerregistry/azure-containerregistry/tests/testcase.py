@@ -165,22 +165,23 @@ class ContainerRegistryTestClass(AzureTestCase):
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        if "azurecr.io" in endpoint:
-            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+        authority = get_authority(endpoint)
+        if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=authority), **kwargs)
             try:
                 logger.warning("Public cloud endpoint, {}".format(c._credential.authority))
             except AttributeError:
                 pass
             return c
-        if "azurecr.cn" in endpoint:
-            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_CHINA), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
+        if authority == AzureAuthorityHosts.AZURE_CHINA:
+            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=authority), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
             try:
                 logger.warning("China endpoint, {}".format(c._credential.authority))
             except AttributeError:
                 pass
             return c
-        if "azurecr.us" in endpoint:
-            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
+        if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
+            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=authority), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
             try:
                 logger.warning("UsGov endpoint, {}".format(c._credential.authority))
             except AttributeError:
