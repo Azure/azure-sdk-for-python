@@ -15,16 +15,11 @@ class KeyVaultBackupClientPolling(OperationResourcePolling):
         return None
 
     def set_initial_status(self, pipeline_response):
-        self._request = pipeline_response.http_response.request
         response = pipeline_response.http_response
+        self._async_url = response.headers["azure-asyncoperation"]
 
-        self._set_async_url_if_present(response)
-
-        if response.status_code in {200, 201, 202, 204} and self._async_url:
-            try:
-                return self.get_status(pipeline_response)
-            except BadResponse:
-                return "InProgress"
+        if response.status_code in {200, 201, 202, 204}:
+            return self.get_status(pipeline_response)
         raise OperationFailed("Operation failed or canceled")
 
 
