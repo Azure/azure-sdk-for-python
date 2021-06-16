@@ -5,6 +5,7 @@
 # ------------------------------------
 import copy
 import json
+import logging
 import os
 import pytest
 import six
@@ -29,6 +30,7 @@ from azure_devtools.scenario_tests import RecordingProcessor
 
 
 REDACTED = "REDACTED"
+logger = logging.getLogger()
 
 
 class OAuthRequestResponsesFilterACR(RecordingProcessor):
@@ -163,10 +165,13 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def create_registry_client(self, endpoint, **kwargs):
         if "azurecr.io" in endpoint:
+            logger.warning("Public cloud endpoint")
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
         if "azurecr.cn" in endpoint:
+            logger.warning("China endpoint")
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_CHINA), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
         if "azurecr.us" in endpoint:
+            logger.warning("UsGov endpoint")
             return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
         else:
             raise ValueError("The endpoint was not understood: {}".format(endpoint))
