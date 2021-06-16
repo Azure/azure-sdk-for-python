@@ -15,7 +15,7 @@ import json
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
@@ -45,13 +45,13 @@ class TestAnalyze(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             response = client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_dict_key_phrase_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
@@ -76,7 +76,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert "Microsoft" in document_result.key_phrases
                 assert document_result.id is not None
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_dict_sentiment_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
@@ -116,7 +116,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.sentences[0].text == "The restaurant had really good food."
                 assert document_result.sentences[1].text == "I recommend you try it."
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_sentiment_analysis_task_with_opinion_mining(self, client):
         documents = [
@@ -191,7 +191,7 @@ class TestAnalyze(TextAnalyticsTest):
                     self.assertEqual('negative', food_target.sentiment)
                     self.assertEqual(0.0, food_target.confidence_scores.neutral)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_text_document_input_entities_task(self, client):
         docs = [
@@ -225,7 +225,7 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_all_successful_passing_string_pii_entities_task(self, client):
 
@@ -259,7 +259,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert entity.offset is not None
                 assert entity.confidence_score is not None
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_request_on_empty_document(self, client):
         docs = [u""]
@@ -271,9 +271,9 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "",
+        "textanalytics_test_api_key": "",
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -289,9 +289,9 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "xxxxxxxxxxxx",
+        "textanalytics_test_api_key": "xxxxxxxxxxxx",
     })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -307,7 +307,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_out_of_order_ids_multiple_tasks(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -344,7 +344,7 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertEqual(document_result.id, document_order[doc_idx])
                 self.assertEqual(self.document_result_to_action_type(document_result), action_order[action_idx])
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version_multiple_tasks(self, client):
 
@@ -404,7 +404,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.character_count
                 assert document_result.statistics.transaction_count
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_poller_metadata(self, client):
         docs = [{"id": "56", "text": ":)"}]
@@ -432,7 +432,7 @@ class TestAnalyze(TextAnalyticsTest):
 
     ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
     # def test_whole_batch_language_hint(self, client):
     #     def callback(resp):
@@ -463,7 +463,7 @@ class TestAnalyze(TextAnalyticsTest):
     #         for doc in document_result.document_results:
     #             self.assertFalse(doc.is_error)
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer(client_kwargs={
     #     "default_language": "en"
     # })
@@ -498,7 +498,7 @@ class TestAnalyze(TextAnalyticsTest):
     #         for doc in document_result.document_results:
     #             assert not doc.is_error
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_invalid_language_hint_method(self, client):
         response = list(client.begin_analyze_actions(
@@ -518,7 +518,7 @@ class TestAnalyze(TextAnalyticsTest):
             for doc in document_results:
                 assert doc.is_error
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -536,7 +536,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -554,7 +554,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, client):
         docs = []
@@ -572,14 +572,14 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze_actions(None, None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
@@ -594,7 +594,7 @@ class TestAnalyze(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
@@ -635,7 +635,7 @@ class TestAnalyze(TextAnalyticsTest):
         for document_results in action_type_to_document_results.values():
             assert len(document_results) == len(docs)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
@@ -654,7 +654,7 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert excinfo.value.status_code == 400
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_disable_service_logs(self, client):
         actions = [
