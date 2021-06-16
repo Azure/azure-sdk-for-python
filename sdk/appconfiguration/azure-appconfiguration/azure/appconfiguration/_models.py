@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import six
 from typing import Dict, Optional, Any, List, Union
+import six
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
