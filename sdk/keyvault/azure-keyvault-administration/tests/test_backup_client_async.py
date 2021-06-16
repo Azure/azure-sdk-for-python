@@ -133,11 +133,6 @@ class BackupClientTests(KeyVaultTestCase):
         assert rehydrated.status() == "InProgress"
         assert not rehydrated.done() or rehydrated.polling_method().finished()
 
-        await backup_poller.polling_method().update_status()
-        assert backup_poller.status() == "InProgress"
-        await rehydrated.polling_method().update_status()
-        assert rehydrated.status() == "InProgress"
-
         backup_operation = await backup_poller.result()
         assert backup_poller.status() == "Succeeded" and backup_poller.polling_method().status() == "Succeeded"
         rehydrated_operation = await rehydrated.result()
@@ -146,7 +141,6 @@ class BackupClientTests(KeyVaultTestCase):
 
         # rehydrate a poller with a continuation token of a completed operation
         late_rehydrated = await backup_client.begin_backup(container_uri, sas_token, continuation_token=token)
-        assert late_rehydrated.status() == "InProgress"
         await late_rehydrated.polling_method().update_status()
         assert late_rehydrated.status() == "Succeeded"
 
@@ -162,11 +156,6 @@ class BackupClientTests(KeyVaultTestCase):
         assert not restore_poller.done() or restore_poller.polling_method().finished()
         assert rehydrated.status() == "InProgress"
         assert not rehydrated.done() or rehydrated.polling_method().finished()
-
-        await rehydrated.polling_method().update_status()
-        assert rehydrated.status() == "InProgress"
-        await restore_poller.polling_method().update_status()
-        assert restore_poller.status() == "InProgress"
 
         await rehydrated.wait()
         assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"

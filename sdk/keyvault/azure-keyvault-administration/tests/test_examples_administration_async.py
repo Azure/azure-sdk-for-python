@@ -58,7 +58,7 @@ class TestExamplesTests(KeyVaultTestCase):
         # check if the backup completed
         done = backup_poller.done()
 
-        # block until the backup completes
+        # yield until the backup completes
         # result() returns an object with a URL of the backup
         backup_operation = await backup_poller.result()
         # [END begin_backup]

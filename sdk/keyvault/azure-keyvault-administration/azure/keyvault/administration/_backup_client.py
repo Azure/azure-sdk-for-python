@@ -7,6 +7,7 @@ import functools
 import pickle
 from typing import TYPE_CHECKING
 
+from six import raise_from
 from six.moves.urllib_parse import urlparse
 
 from ._models import KeyVaultBackupOperation
@@ -60,19 +61,22 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
         status_response = None
         if continuation_token:
+            status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
             try:
-                job_id = _parse_status_url(base64.b64decode(continuation_token.encode()).decode("ascii"))
-            except:  # pylint: disable=broad-except
-                raise ValueError(
-                    "The provided continuation_token is malformed. A valid token can be obtained from the operation "
-                    + "poller's continuation_token() method"
+                job_id = _parse_status_url(status_url)
+            except Exception as ex:  # pylint: disable=broad-except
+                raise_from(
+                    ValueError(
+                        "The provided continuation_token is malformed. A valid token can be obtained from the operation "
+                        + "poller's continuation_token() method"
+                    ),
+                    ex,
                 )
 
             pipeline_response = self._client.full_backup_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
             )
             if "azure-asyncoperation" not in pipeline_response.http_response.headers:
-                status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
                 pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
             status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
@@ -122,19 +126,22 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
         status_response = None
         if continuation_token:
+            status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
             try:
-                job_id = _parse_status_url(base64.b64decode(continuation_token.encode()).decode("ascii"))
-            except:  # pylint: disable=broad-except
-                raise ValueError(
-                    "The provided continuation_token is malformed. A valid token can be obtained from the operation "
-                    + "poller's continuation_token() method"
+                job_id = _parse_status_url(status_url)
+            except Exception as ex:  # pylint: disable=broad-except
+                raise_from(
+                    ValueError(
+                        "The provided continuation_token is malformed. A valid token can be obtained from the operation "
+                        + "poller's continuation_token() method"
+                    ),
+                    ex,
                 )
 
             pipeline_response = self._client.restore_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
             )
             if "azure-asyncoperation" not in pipeline_response.http_response.headers:
-                status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
                 pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
             status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
