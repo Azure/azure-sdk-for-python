@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-import logging
+from mock import Mock
 import pickle
 try:
     from unittest import mock
@@ -56,6 +56,7 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HTTPPolicy,
 )
+from azure.core.pipeline._backcompat import SupportedFormat
 
 def test_pipeline_context():
     kwargs={
@@ -94,7 +95,8 @@ def test_request_history():
             raise ValueError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'}, content=body)
+    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'})
+    request._data = body  # we don't accept this type of body content on initialization, following httpx
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
@@ -106,7 +108,8 @@ def test_request_history_type_error():
             raise TypeError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'}, content=body)
+    request = HttpRequest('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'})
+    request._data = body  # we don't accept this type of body content on initialization, following httpx
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
@@ -184,7 +187,9 @@ def test_retry_without_http_response():
             raise AzureError('boo')
 
     policies = [RetryPolicy(), NaughtyPolicy()]
-    pipeline = Pipeline(policies=policies, transport=None)
+    transport = Mock()
+    transport.supported_formats = [SupportedFormat.REST]
+    pipeline = Pipeline(policies=policies, transport=transport)
     with pytest.raises(AzureError):
         pipeline.run(HttpRequest('GET', url='https://foo.bar'))
 
