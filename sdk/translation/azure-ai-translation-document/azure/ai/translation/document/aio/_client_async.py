@@ -374,7 +374,7 @@ class DocumentTranslationClient(object):
         return DocumentStatus._from_generated(document_status)
 
     @distributed_trace_async
-    async def get_glossary_formats(self, **kwargs):
+    async def get_supported_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 

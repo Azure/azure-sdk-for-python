@@ -367,7 +367,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_glossary_formats(self, **kwargs):
+    def get_supported_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 

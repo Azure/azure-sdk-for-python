@@ -27,7 +27,7 @@ class TestSupportedFormats(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     async def test_supported_glossary_formats(self, client):
         # get supported formats
-        supported_glossary_formats = await client.get_glossary_formats()
+        supported_glossary_formats = await client.get_supported_glossary_formats()
         self.assertIsNotNone(supported_glossary_formats)
         # validate
         for glossary_format in supported_glossary_formats:

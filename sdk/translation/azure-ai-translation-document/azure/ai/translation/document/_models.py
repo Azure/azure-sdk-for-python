@@ -22,10 +22,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         the glossary file in the storage blob container. If the translation language pair is
         not present in the glossary, it will not be applied.
     :param str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
@@ -33,10 +33,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         the glossary file in the storage blob container. If the translation language pair is
         not present in the glossary, it will not be applied.
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
