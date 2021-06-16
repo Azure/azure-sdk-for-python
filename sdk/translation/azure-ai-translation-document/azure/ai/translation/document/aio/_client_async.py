@@ -17,7 +17,7 @@ from .._models import (
     TranslationStatusResult,
     DocumentTranslationInput,
     FileFormat,
-    DocumentStatusResult,
+    DocumentStatus,
 )
 from .._helpers import (
     get_http_logging_policy,
@@ -107,13 +107,13 @@ class DocumentTranslationClient(object):
     @overload
     async def begin_translation(
         self, source_url: str, target_url: str, target_language_code: str, **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatusResult]]:
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         ...
 
     @overload
     async def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
-    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatusResult]]:
+    ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         ...
 
     @distributed_trace_async
@@ -141,9 +141,9 @@ class DocumentTranslationClient(object):
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
-            object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
+        :rtype: AsyncDocumentTranslationLROPoller[AsyncItemPaged[~azure.ai.translation.document.DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -294,7 +294,7 @@ class DocumentTranslationClient(object):
 
     @distributed_trace
     def list_all_document_statuses(self, translation_id, **kwargs):
-        # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
+        # type: (str, **Any) -> AsyncItemPaged[DocumentStatus]
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
@@ -311,8 +311,8 @@ class DocumentTranslationClient(object):
         :keyword list[str] order_by: the sorting query for the documents.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: A pageable of DocumentStatusResult.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
+        :return: A pageable of DocumentStatus.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -337,7 +337,7 @@ class DocumentTranslationClient(object):
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
-            return DocumentStatusResult._from_generated(generated_model)
+            return DocumentStatus._from_generated(generated_model)
 
         model_conversion_function = kwargs.pop(
             "cls",
@@ -358,20 +358,20 @@ class DocumentTranslationClient(object):
 
     @distributed_trace_async
     async def get_document_status(self, translation_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusResult
+        # type: (str, str, **Any) -> DocumentStatus
         """Get the status of an individual document within a translation operation.
 
         :param str translation_id: The translation operation ID.
         :param str document_id: The ID for the document.
-        :return: A DocumentStatusResult with information on the status of the document.
-        :rtype: ~azure.ai.translation.document.DocumentStatusResult
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
         document_status = await self._client.document_translation.get_document_status(
             translation_id, document_id, **kwargs
         )
         # pylint: disable=protected-access
-        return DocumentStatusResult._from_generated(document_status)
+        return DocumentStatus._from_generated(document_status)
 
     @distributed_trace_async
     async def get_glossary_formats(self, **kwargs):

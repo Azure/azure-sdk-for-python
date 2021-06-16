@@ -328,7 +328,7 @@ class TranslationStatusResult(
         )
 
 
-class DocumentStatusResult(
+class DocumentStatus(
     object
 ):  # pylint: disable=useless-object-inheritance, R0903, R0902
     """Status information about a particular document within a translation operation.
@@ -393,7 +393,7 @@ class DocumentStatusResult(
     def __repr__(self):
         # pylint: disable=line-too-long
         return (
-            "DocumentStatusResult(id={}, source_document_url={}, "
+            "DocumentStatus(id={}, source_document_url={}, "
             "translated_document_url={}, created_on={}, last_updated_on={}, "
             "status={}, translated_to={}, error={}, translation_progress={}, "
             "characters_charged={})".format(

@@ -14,7 +14,7 @@ from ._polling import DocumentTranslationLROPoller
 from ._models import (
     TranslationTarget,
     TranslationStatusResult,
-    DocumentStatusResult,
+    DocumentStatus,
     DocumentTranslationError,
     TranslationGlossary,
     DocumentTranslationInput,
@@ -33,7 +33,7 @@ __all__ = [
     "FileFormat",
     "TranslationTarget",
     "TranslationStatusResult",
-    "DocumentStatusResult",
+    "DocumentStatus",
     "DocumentTranslationError",
     "DocumentTranslationLROPoller",
 ]

@@ -21,7 +21,7 @@ _FAILED = frozenset(["validationfailed"])
 
 class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
     @property
     def id(self) -> str:

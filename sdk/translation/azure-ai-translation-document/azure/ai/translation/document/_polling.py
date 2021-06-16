@@ -39,7 +39,7 @@ _FAILED = frozenset(["validationfailed"])
 
 class DocumentTranslationLROPoller(LROPoller):
     """A custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
     @property
     def id(self):
