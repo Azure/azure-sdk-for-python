@@ -157,7 +157,6 @@ class ContainerRegistryTestClass(AzureTestCase):
         if not self.is_live:
             return
         authority = get_authority(endpoint)
-        logger.warning("Authority: {}".format(authority))
         import_image(authority, repository, tags)
 
     def get_credential(self, **kwargs):
@@ -199,20 +198,26 @@ class ContainerRegistryTestClass(AzureTestCase):
 
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
+        logger.warning("Public cloud Authority:")
         return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
     if ".azurecr.cn" in endpoint:
+        logger.warning("China Authority:")
         return AzureAuthorityHosts.AZURE_CHINA
     if ".azurecr.us" in endpoint:
+        logger.warning("US Gov Authority:")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
 
 def get_authorization_scope(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+        logger.warning("Public auth scope")
         return "https://management.core.windows.net/.default"
     if authority == AzureAuthorityHosts.AZURE_CHINA:
+        logger.warning("China scope")
         return "https://management.chinacloudapi.cn/.default"
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
+        logger.warning("US Gov scope")
         return "https://management.usgovcloudapi.net/.default"
 
 
