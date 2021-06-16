@@ -279,6 +279,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._current_content = None
         self._file_size = None
         self._response = None
+        self._etag = None
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
