@@ -151,12 +151,13 @@ class ContainerRegistryTestClass(AzureTestCase):
         if self.is_live:
             time.sleep(t)
 
-    def import_image(self, repository, tags):
+    def import_image(self, endpoint, repository, tags):
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
             return
-        import_image(repository, tags)
+        authority = get_authority(endpoint)
+        import_image(authority, repository, tags)
 
     def get_credential(self, **kwargs):
         if self.is_live:
@@ -165,14 +166,26 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def create_registry_client(self, endpoint, **kwargs):
         if "azurecr.io" in endpoint:
-            logger.warning("Public cloud endpoint")
-            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+            try:
+                logger.warning("Public cloud endpoint, {}".format(c._credential.authority))
+            except AttributeError:
+                pass
+            return c
         if "azurecr.cn" in endpoint:
-            logger.warning("China endpoint")
-            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_CHINA), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
+            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_CHINA), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
+            try:
+                logger.warning("China endpoint, {}".format(c._credential.authority))
+            except AttributeError:
+                pass
+            return c
         if "azurecr.us" in endpoint:
-            logger.warning("UsGov endpoint")
-            return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
+            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
+            try:
+                logger.warning("UsGov endpoint, {}".format(c._credential.authority))
+            except AttributeError:
+                pass
+            return c
         else:
             raise ValueError("The endpoint was not understood: {}".format(endpoint))
 
@@ -201,10 +214,20 @@ class ContainerRegistryTestClass(AzureTestCase):
         )
 
 
+def get_authority(endpoint):
+    if "azurecr.io" in endpoint:
+        return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
+    if "azurecr.cn" in endpoint:
+        return AzureAuthorityHosts.AZURE_CHINA
+    if "azurecr.us" in endpoint:
+        return AzureAuthorityHosts.AZURE_GOVERNMENT
+    raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
+
+
 # Moving this out of testcase so the fixture and individual tests can use it
-def import_image(repository, tags):
+def import_image(authority, repository, tags):
     mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
+        DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
@@ -225,7 +248,7 @@ def import_image(repository, tags):
 
     # Do the same for anonymous
     mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
+        DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
@@ -249,6 +272,7 @@ def import_image(repository, tags):
 def load_registry():
     if not is_live():
         return
+    authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
     repos = [
         "library/hello-world",
         "library/alpine",
@@ -267,6 +291,6 @@ def load_registry():
     ]
     for repo, tag in zip(repos, tags):
         try:
-            import_image(repo, tag)
+            import_image(authority, repo, tag)
         except Exception as e:
             print(e)
