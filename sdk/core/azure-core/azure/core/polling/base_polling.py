@@ -26,7 +26,7 @@
 import abc
 import base64
 import json
-from typing import TYPE_CHECKING, Optional, Any, Union
+from typing import TYPE_CHECKING, Optional, Any, Type, Union
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -91,8 +91,14 @@ def _as_json(response):
 
     :raises: DecodeError if response body contains invalid json data.
     """
+    response_text = response.text
     try:
-        return json.loads(response.text())
+        response_text = response_text()
+    except TypeError:
+        pass
+
+    try:
+        return json.loads(response_text)
     except ValueError:
         raise DecodeError("Error occurred in deserializing the response body.")
 
@@ -121,7 +127,10 @@ def _is_empty(response):
 
     :rtype: bool
     """
-    return not bool(response.body())
+    try:
+        return not bool(response.content)
+    except AttributeError:
+        return not bool(response.body())
 
 
 class LongRunningOperation(ABC):

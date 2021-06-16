@@ -56,6 +56,11 @@ ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecod
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 
+def _get_request_body(request):
+    if hasattr(request, "body"):
+        return request.body
+    return request.content
+
 
 class HeadersPolicy(SansIOHTTPPolicy):
     """A simple policy that sends the given headers with the request.
@@ -284,17 +289,17 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Request body:")
 
                 # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType):
+                if isinstance(_get_request_body(http_request), types.GeneratorType):
                     _LOGGER.debug("File upload")
                     return
                 try:
-                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                    if isinstance(_get_request_body(http_request), types.AsyncGeneratorType):
                         _LOGGER.debug("File upload")
                         return
                 except AttributeError:
                     pass
-                if http_request.body:
-                    _LOGGER.debug(str(http_request.body))
+                if _get_request_body(http_request):
+                    _LOGGER.debug(str(_get_request_body(http_request)))
                     return
                 _LOGGER.debug("This request has no body")
             except Exception as err:  # pylint: disable=broad-except
@@ -422,16 +427,16 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             for header, value in http_request.headers.items():
                 value = self._redact_header(header, value)
                 logger.info("    %r: %r", header, value)
-            if isinstance(http_request.body, types.GeneratorType):
+            if isinstance(_get_request_body(http_request), types.GeneratorType):
                 logger.info("File upload")
                 return
             try:
-                if isinstance(http_request.body, types.AsyncGeneratorType):
+                if isinstance(_get_request_body(http_request), types.AsyncGeneratorType):
                     logger.info("File upload")
                     return
             except AttributeError:
                 pass
-            if http_request.body:
+            if _get_request_body(http_request):
                 logger.info("A body is sent with the request")
                 return
             logger.info("No body was attached to the request")

@@ -182,11 +182,9 @@ def _shared_set_content_body(content):
         return set_xml_body(content)
     if isinstance(content, (str, bytes)):
         headers = {}
+        body = content
         if isinstance(content, six.string_types):
-            body = content.encode("utf-8")
             headers["Content-Type"] = "text/plain"
-        else:
-            body = content
         if body:
             headers["Content-Length"] = str(len(body))
         return headers, body
