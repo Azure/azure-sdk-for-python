@@ -231,7 +231,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         )
 
 
-class TranslationStatusResult(
+class TranslationStatus(
     object
 ):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Status information about the translation operation.
@@ -307,7 +307,7 @@ class TranslationStatusResult(
 
     def __repr__(self):
         return (
-            "TranslationStatusResult(id={}, created_on={}, "
+            "TranslationStatus(id={}, created_on={}, "
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "

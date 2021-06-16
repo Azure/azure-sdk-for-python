@@ -13,7 +13,7 @@ from ._api_version import DocumentTranslationApiVersion
 from ._polling import DocumentTranslationLROPoller
 from ._models import (
     TranslationTarget,
-    TranslationStatusResult,
+    TranslationStatus,
     DocumentStatus,
     DocumentTranslationError,
     TranslationGlossary,
@@ -32,7 +32,7 @@ __all__ = [
     "StorageInputType",
     "FileFormat",
     "TranslationTarget",
-    "TranslationStatusResult",
+    "TranslationStatus",
     "DocumentStatus",
     "DocumentTranslationError",
     "DocumentTranslationLROPoller",

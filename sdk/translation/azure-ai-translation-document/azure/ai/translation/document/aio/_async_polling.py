@@ -12,7 +12,7 @@ from azure.core.polling.base_polling import (
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.models import TranslationStatus
-from .._models import TranslationStatusResult
+from .._models import TranslationStatus
 
 PollingReturnType = TypeVar("PollingReturnType")
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
@@ -38,12 +38,12 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
         )
 
     @property
-    def details(self) -> TranslationStatusResult:
+    def details(self) -> TranslationStatus:
         """The details for the translation operation
 
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+        return TranslationStatus._from_generated(  # pylint: disable=protected-access
             self._polling_method._current_body  # pylint: disable=protected-access
         )
 

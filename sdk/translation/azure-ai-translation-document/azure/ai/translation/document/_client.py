@@ -11,7 +11,7 @@ from ._generated import (
     BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
 )
 from ._models import (
-    TranslationStatusResult,
+    TranslationStatus,
     DocumentStatus,
     DocumentTranslationInput,
     FileFormat,
@@ -185,22 +185,22 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_translation_status(self, translation_id, **kwargs):
-        # type: (str, **Any) -> TranslationStatusResult
+        # type: (str, **Any) -> TranslationStatus
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
         the documents that are being translated as part of that translation operation.
 
         :param str translation_id: The translation operation ID.
-        :return: A TranslationStatusResult with information on the status of the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :return: A TranslationStatus with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
         translation_status = self._client.document_translation.get_translation_status(
             translation_id, **kwargs
         )
-        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+        return TranslationStatus._from_generated(  # pylint: disable=protected-access
             translation_status
         )
 
@@ -223,7 +223,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def list_all_translation_statuses(self, **kwargs):
-        # type: (**Any) -> ItemPaged[TranslationStatusResult]
+        # type: (**Any) -> ItemPaged[TranslationStatus]
         """List all the submitted translation operations under the Document Translation resource.
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
@@ -239,8 +239,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword list[str] order_by: the sorting query for the operations returned.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: A pageable of TranslationStatusResult.
-        :rtype: ~azure.core.paging.ItemPaged[TranslationStatusResult]
+        :return: A pageable of TranslationStatus.
+        :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -262,7 +262,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         def _convert_from_generated_model(
             generated_model,
         ):  # pylint: disable=protected-access
-            return TranslationStatusResult._from_generated(
+            return TranslationStatus._from_generated(
                 generated_model
             )  # pylint: disable=protected-access
 

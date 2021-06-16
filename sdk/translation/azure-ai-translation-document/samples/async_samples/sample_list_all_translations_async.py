@@ -35,7 +35,7 @@ async def sample_list_all_translations_async():
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
     async with client:
-        operations = client.list_all_translation_statuses()  # type: AsyncItemPaged[TranslationStatusResult]
+        operations = client.list_all_translation_statuses()  # type: AsyncItemPaged[TranslationStatus]
 
         async for operation in operations:
             print("ID: {}".format(operation.id))

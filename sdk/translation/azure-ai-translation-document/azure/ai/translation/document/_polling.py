@@ -18,7 +18,7 @@ from azure.core.polling.base_polling import (
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from ._generated.models import TranslationStatus
-from ._models import TranslationStatusResult
+from ._models import TranslationStatus
 
 
 if TYPE_CHECKING:
@@ -58,12 +58,12 @@ class DocumentTranslationLROPoller(LROPoller):
 
     @property
     def details(self):
-        # type: () -> TranslationStatusResult
+        # type: () -> TranslationStatus
         """The details for the translation operation
 
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+        return TranslationStatus._from_generated(  # pylint: disable=protected-access
             self._polling_method._current_body  # pylint: disable=protected-access
         )
 
