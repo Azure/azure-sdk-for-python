@@ -157,6 +157,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         if not self.is_live:
             return
         authority = get_authority(endpoint)
+        logger.warning("Authority: {}".format(authority))
         import_image(authority, repository, tags)
 
     def get_credential(self, **kwargs):
@@ -166,29 +167,10 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def create_registry_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=authority), **kwargs)
-            try:
-                logger.warning("Public cloud endpoint, {}".format(c._credential.authority))
-            except AttributeError:
-                pass
-            return c
-        if authority == AzureAuthorityHosts.AZURE_CHINA:
-            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=authority), authorization_scope="https://management.chinacloudapi.cn/.default", **kwargs)
-            try:
-                logger.warning("China endpoint, {}".format(c._credential.authority))
-            except AttributeError:
-                pass
-            return c
-        if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-            c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(authority=authority), authorization_scope="https://management.usgovcloudapi.net/.default", **kwargs)
-            try:
-                logger.warning("UsGov endpoint, {}".format(c._credential.authority))
-            except AttributeError:
-                pass
-            return c
-        else:
-            raise ValueError("The endpoint was not understood: {}".format(endpoint))
+        authorization_scope = get_authorization_scope(authority)
+        credential = self.get_credential(authority=authority)
+        logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, authorization_scope))
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, authorization_scope=authorization_scope, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
@@ -216,13 +198,22 @@ class ContainerRegistryTestClass(AzureTestCase):
 
 
 def get_authority(endpoint):
-    if "azurecr.io" in endpoint:
+    if ".azurecr.io" in endpoint:
         return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-    if "azurecr.cn" in endpoint:
+    if ".azurecr.cn" in endpoint:
         return AzureAuthorityHosts.AZURE_CHINA
-    if "azurecr.us" in endpoint:
+    if ".azurecr.us" in endpoint:
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
+
+
+def get_authorization_scope(authority):
+    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+        return "https://management.core.windows.net/.default"
+    if authority == AzureAuthorityHosts.AZURE_CHINA:
+        return "https://management.chinacloudapi.cn/.default"
+    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
+        return "https://management.usgovcloudapi.net/.default"
 
 
 # Moving this out of testcase so the fixture and individual tests can use it
