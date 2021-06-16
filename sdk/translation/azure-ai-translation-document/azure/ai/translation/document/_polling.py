@@ -17,7 +17,7 @@ from azure.core.polling.base_polling import (
 )
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
-from ._generated.models import TranslationStatus
+from ._generated.models import TranslationStatus as _TranslationStatus
 from ._models import TranslationStatus
 
 
@@ -89,8 +89,8 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
     @property
     def _current_body(self):
-        # type: () -> TranslationStatus
-        return TranslationStatus.deserialize(self._pipeline_response)
+        # type: () -> _TranslationStatus
+        return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self):
         # type: () -> str

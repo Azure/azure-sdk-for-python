@@ -11,7 +11,7 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from .._generated.models import TranslationStatus
+from .._generated.models import TranslationStatus as _TranslationStatus
 from .._models import TranslationStatus
 
 PollingReturnType = TypeVar("PollingReturnType")
@@ -72,8 +72,8 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         super(AsyncDocumentTranslationLROPollingMethod, self).__init__(*args, **kwargs)
 
     @property
-    def _current_body(self) -> TranslationStatus:
-        return TranslationStatus.deserialize(self._pipeline_response)
+    def _current_body(self) -> _TranslationStatus:
+        return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:
         return self._pipeline_response.http_response.headers[
