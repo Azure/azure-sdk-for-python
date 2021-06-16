@@ -17,7 +17,7 @@ class TestSupportedFormats(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_supported_document_formats(self, client):
         # get supported formats
-        supported_doc_formats = client.get_document_formats()
+        supported_doc_formats = client.get_supported_document_formats()
         self.assertIsNotNone(supported_doc_formats)
         # validate
         for doc_format in supported_doc_formats:

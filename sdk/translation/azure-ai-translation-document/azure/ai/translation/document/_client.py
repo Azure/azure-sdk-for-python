@@ -384,7 +384,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_document_formats(self, **kwargs):
+    def get_supported_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the document formats supported by the Document Translation service.
 
