@@ -1,5 +1,5 @@
 from ._version import VERSION
-from .template_code import template_main
+from ._client import QuestionAnsweringClient
 
-__all__ = ['template_main']
+__all__ = ['QuestionAnsweringClient']
 __version__ = VERSION
