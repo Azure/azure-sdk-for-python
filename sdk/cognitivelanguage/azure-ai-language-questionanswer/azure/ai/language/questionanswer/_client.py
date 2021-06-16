@@ -1,8 +1,10 @@
-# coding=utf-8
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+
+# coding: utf-8
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 from typing import (
     Union,
     Any,
@@ -53,6 +55,8 @@ class QuestionAnsweringClient(object):
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+        if not endpoint.startswith('http'):
+            endpoint = "https://" + endpoint
         self._client = MicrosoftCognitiveLanguageService(
             endpoint=endpoint,
             credential=credential,
@@ -90,4 +94,4 @@ class QuestionAnsweringClient(object):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        return self._client.send_request(request, **kwargs)
+        return self._client._send_request(request, **kwargs)

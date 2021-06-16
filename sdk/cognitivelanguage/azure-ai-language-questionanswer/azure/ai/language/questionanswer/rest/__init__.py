@@ -5,6 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-VERSION = "0.0.18b3"
+from .._generated._rest import (
+    question_answering_knowledgebase,
+    question_answering_text
+)
 
-USER_AGENT = "ai-language-questionanswering/{}".format(VERSION)
+__all__ = ['question_answering_text', 'question_answering_knowledgebase']
