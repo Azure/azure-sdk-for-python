@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 from functools import partial
 import time
 
@@ -11,7 +10,7 @@ from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.administration._internal import HttpChallengeCache
-from azure.keyvault.administration import KeyVaultBackupClient, KeyVaultBackupOperation
+from azure.keyvault.administration import KeyVaultBackupClient
 from azure.keyvault.administration._internal import parse_folder_url
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
