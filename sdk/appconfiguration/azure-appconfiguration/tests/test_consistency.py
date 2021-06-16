@@ -56,7 +56,7 @@ class AppConfigurationClientTest(AzureTestCase):
             assert key1.enabled == key2.enabled
             assert len(key1.filters) == len(key2.filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
-            assert key1.secret_uri == key2.secret_uri
+            assert key1.secret_id == key2.secret_id
         else:
             assert key1.value == key2.value
 

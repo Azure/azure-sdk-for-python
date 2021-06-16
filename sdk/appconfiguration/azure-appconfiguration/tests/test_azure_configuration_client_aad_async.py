@@ -507,7 +507,7 @@ class AppConfigurationClientTest(AzureTestCase):
             assert key1.enabled == key2.enabled
             assert len(key1.filters) == len(key2.filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
-            assert key1.secret_uri == key2.secret_uri
+            assert key1.secret_id == key2.secret_id
         else:
             assert key1.value == key2.value
 
@@ -547,22 +547,22 @@ class AppConfigurationClientTest(AzureTestCase):
         set_flag = client.set_configuration_setting(secret_reference)
         self._assert_same_keys(secret_reference, set_flag)
 
-        set_flag.secret_uri = "https://test-test.vault.azure.net/new_secrets/connectionString"
+        set_flag.secret_id = "https://test-test.vault.azure.net/new_secrets/connectionString"
         updated_flag = client.set_configuration_setting(set_flag)
         self._assert_same_keys(set_flag, updated_flag)
 
         assert isinstance(updated_flag, SecretReferenceConfigurationSetting)
         new_uri = "https://aka.ms/azsdk"
         new_uri2 = "https://aka.ms/azsdk/python"
-        updated_flag.secret_uri = new_uri
+        updated_flag.secret_id = new_uri
         assert updated_flag.value['secret_uri'] == new_uri
 
         updated_flag.value = {'secret_uri': new_uri2}
-        assert updated_flag.secret_uri == new_uri2
+        assert updated_flag.secret_id == new_uri2
 
         with pytest.raises(ValueError):
             set_flag.value = "bad_value"
-            _ = set_flag.secret_uri
+            _ = set_flag.secret_id
 
         client.delete_configuration_setting(secret_reference.key)
 

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+import six
 from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
@@ -270,8 +271,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype etag: str
     :ivar key:
     :vartype key: str
-    :ivar secret_uri:
-    :vartype secret_uri: str
+    :ivar secret_id:
+    :vartype secret_id: str
     :param label:
     :type label: str
     :param content_type:
@@ -301,9 +302,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key, secret_uri, label=None, **kwargs):
+    def __init__(self, key, secret_id, label=None, **kwargs):
         # type: (str, str, Optional[str], **Any) -> None
-        self._secret_uri = secret_uri
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = label
@@ -314,16 +314,18 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
-        self.value = {"secret_uri": self._secret_uri}
+        self.value = secret_id
+        if not isinstance(secret_id, dict) and isinstance(secret_id, six.string_types):
+            self.value = {"secret_uri": secret_id}
 
     @property
-    def secret_uri(self):
+    def secret_id(self):
         # type: () -> str
         self._validate()
         return self.value['secret_uri']
 
-    @secret_uri.setter
-    def secret_uri(self, value):
+    @secret_id.setter
+    def secret_id(self, value):
         if self.value is None or isinstance(self.value, dict):
             if self.value is None:
                 self.value = {}
@@ -349,7 +351,6 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
         return cls(
             key=key_value.key,
-            secret_uri=key_value.value[u"secret_uri"],
             label=key_value.label,
             secret_id=key_value.value,
             last_modified=key_value.last_modified,
