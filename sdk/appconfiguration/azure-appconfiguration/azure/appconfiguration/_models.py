@@ -113,8 +113,8 @@ class FeatureFlagConfigurationSetting(
 
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :ivar key:
-    :vartype key: str
+    :ivar feature_id:
+    :vartype feature_id: str
     :ivar value: The value of the configuration setting
     :vartype value: str
     :ivar enabled:
@@ -139,7 +139,7 @@ class FeatureFlagConfigurationSetting(
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
-        "key": {"key": "key", "type": "str"},
+        "feature_id": {"key": "key", "type": "str"},
         "label": {"key": "label", "type": "str"},
         "content_type": {"key": "content_type", "type": "str"},
         "value": {"key": "value", "type": "str"},
@@ -158,7 +158,7 @@ class FeatureFlagConfigurationSetting(
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         if not feature_id.startswith(self.key_prefix):
             feature_id = self.key_prefix + feature_id
-        self.key = feature_id
+        self.feature_id = feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -171,7 +171,7 @@ class FeatureFlagConfigurationSetting(
 
     def _validate(self):
         # type: () -> None
-        if not self.key.startswith(self.key_prefix):
+        if not self.feature_id.startswith(self.key_prefix):
             raise ValueError("All FeatureFlagConfigurationSettings should be prefixed with {}.".format(self.key_prefix))
         if not (self.value is None or isinstance(self.value, dict)):
             raise ValueError("Expect 'value' to be a dictionary.")
@@ -250,7 +250,7 @@ class FeatureFlagConfigurationSetting(
         # type: () -> KeyValue
 
         return KeyValue(
-            key=self.key,
+            key=self.feature_id,
             label=self.label,
             value=json.dumps(self.value),  # NOTE: This has to be added for valid json
             content_type=self.content_type,

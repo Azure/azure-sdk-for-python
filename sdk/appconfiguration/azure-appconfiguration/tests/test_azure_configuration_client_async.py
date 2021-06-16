@@ -565,7 +565,7 @@ class AppConfigurationClientTest(AzureTestCase):
             set_flag.value = "bad_value"
             _ = set_flag.enabled
 
-        client.delete_configuration_setting(changed_flag.key)
+        client.delete_configuration_setting(changed_flag.feature_id)
 
     @app_config_decorator
     def test_config_setting_secret_reference(self, client):
@@ -651,7 +651,7 @@ class AppConfigurationClientTest(AzureTestCase):
         self._assert_same_keys(sent_config, updated_sent_config)
         assert len(sent_config.filters) == 3
 
-        client.delete_configuration_setting(updated_sent_config.key)
+        client.delete_configuration_setting(updated_sent_config.feature_id)
 
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
@@ -676,7 +676,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        client.delete_configuration_setting(new_sent.key)
+        client.delete_configuration_setting(new_sent.feature_id)
 
     @app_config_decorator
     def test_feature_filter_custom(self, client):
@@ -701,7 +701,7 @@ class AppConfigurationClientTest(AzureTestCase):
         new_sent = client.set_configuration_setting(sent)
         self._assert_same_keys(sent, new_sent)
 
-        client.delete_configuration_setting(new_sent.key)
+        client.delete_configuration_setting(new_sent.feature_id)
 
     @app_config_decorator
     def test_feature_filter_multiple(self, client):
@@ -749,7 +749,7 @@ class AppConfigurationClientTest(AzureTestCase):
         assert new_sent.filters[1]["parameters"]["Start"] == "Wed, 10 Mar 2021 08:00:00 GMT"
         assert new_sent.filters[2]["parameters"]["Audience"]["DefaultRolloutPercentage"] == 100
 
-        client.delete_configuration_setting(new_sent.key)
+        client.delete_configuration_setting(new_sent.feature_id)
 class TestAppConfig(object):
 
     @pytest.mark.live_test_only
