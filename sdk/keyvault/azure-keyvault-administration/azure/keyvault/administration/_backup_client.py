@@ -67,8 +67,8 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             except Exception as ex:  # pylint: disable=broad-except
                 raise_from(
                     ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the operation "
-                        + "poller's continuation_token() method"
+                        "The provided continuation_token is malformed. A valid token can be obtained from the "
+                        + "operation poller's continuation_token() method"
                     ),
                     ex,
                 )
@@ -132,8 +132,8 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             except Exception as ex:  # pylint: disable=broad-except
                 raise_from(
                     ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the operation "
-                        + "poller's continuation_token() method"
+                        "The provided continuation_token is malformed. A valid token can be obtained from the "
+                        + "operation poller's continuation_token() method"
                     ),
                     ex,
                 )
