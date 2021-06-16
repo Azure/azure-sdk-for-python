@@ -182,7 +182,7 @@ class MetricAnomalyAlertConfigurationsOperator(str, Enum):
     XOR = "XOR"
 
 
-class DetectionConditionsOperator(str, Enum):
+class DetectionConditionOperator(str, Enum):
 
     AND = "AND"
     OR = "OR"
@@ -253,7 +253,7 @@ class DataFeedMissingDataPointFillSettings(object):
     :keyword fill_type: The type of fill missing point for anomaly detection. Possible
         values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
         "SmartFilling".
-    :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
+    :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
     :keyword float custom_fill_value: The value of fill missing point for anomaly detection
         if "CustomValue" fill type is specified.
     """
@@ -777,7 +777,7 @@ class AnomalyAlertConfiguration(object):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-    :keyword list[str] dimensions_to_split_alerts: dimensions used to split alert.
+    :keyword list[str] dimensions_to_split_alert: dimensions used to split alert.
 
     """
     def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
@@ -788,18 +788,18 @@ class AnomalyAlertConfiguration(object):
         self.id = kwargs.get('id', None)
         self.description = kwargs.get('description', None)
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
-        self.dimensions_to_split_alerts = kwargs.get('dimensions_to_split_alerts', None)
+        self.dimensions_to_split_alert = kwargs.get('dimensions_to_split_alert', None)
 
     def __repr__(self):
         return "AnomalyAlertConfiguration(id={}, name={}, description={}, cross_metrics_operator={}, hook_ids={}, " \
-               "metric_alert_configurations={}, dimensions_to_split_alerts={})".format(
+               "metric_alert_configurations={}, dimensions_to_split_alert={})".format(
             self.id,
             self.name,
             self.description,
             self.cross_metrics_operator,
             self.hook_ids,
             repr(self.metric_alert_configurations),
-            self.dimensions_to_split_alerts
+            self.dimensions_to_split_alert
         )[:1024]
 
     @classmethod
@@ -814,7 +814,7 @@ class AnomalyAlertConfiguration(object):
                 MetricAlertConfiguration._from_generated(c)
                 for c in config.metric_alerting_configurations
             ],
-            dimensions_to_split_alerts=config.split_alert_by_dimensions
+            dimensions_to_split_alert=config.split_alert_by_dimensions
         )
 
     def _to_generated(self):
@@ -826,7 +826,7 @@ class AnomalyAlertConfiguration(object):
             hook_ids=self.hook_ids,
             cross_metrics_operator=self.cross_metrics_operator,
             description=self.description,
-            split_alert_by_dimensions=self.dimensions_to_split_alerts
+            split_alert_by_dimensions=self.dimensions_to_split_alert
         )
 
     def _to_generated_patch(
@@ -845,7 +845,7 @@ class AnomalyAlertConfiguration(object):
             hook_ids=hook_ids or self.hook_ids,
             cross_metrics_operator=cross_metrics_operator or self.cross_metrics_operator,
             description=description or self.description,
-            split_alert_by_dimensions=self.dimensions_to_split_alerts
+            split_alert_by_dimensions=self.dimensions_to_split_alert
         )
 
 
@@ -2087,7 +2087,7 @@ class MetricDetectionCondition(object):
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :paramtype condition_operator: str or
-     ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+     ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2383,7 +2383,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
     :paramtype condition_operator: str or
-        ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+        ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2439,7 +2439,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
     :paramtype condition_operator: str or
-        ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+        ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:

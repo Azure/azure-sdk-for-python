@@ -660,7 +660,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword fill_type: The type of fill missing point for anomaly detection. Possible
             values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
             "SmartFilling".
-        :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
+        :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
         :keyword float custom_fill_value: The value of fill missing point for anomaly detection
             if "CustomValue" fill type is specified.
         :keyword list[str] admin_emails: Data feed administrator emails.
