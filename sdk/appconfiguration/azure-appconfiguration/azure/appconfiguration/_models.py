@@ -123,6 +123,10 @@ class FeatureFlagConfigurationSetting(
     :type filters: list[dict[str, Any]]
     :param label:
     :type label: str
+    :param display_name:
+    :type display_name: str
+    :param description:
+    :type description: str
     :param content_type:
     :type content_type: str
     :ivar last_modified:
