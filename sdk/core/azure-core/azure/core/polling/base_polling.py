@@ -34,7 +34,11 @@ from ..pipeline.policies._utils import get_retry_after
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
-    from azure.core.rest import HttpResponse, AsyncHttpResponse, HttpRequest
+    from azure.core.pipeline.transport import (
+        HttpResponse,
+        AsyncHttpResponse,
+        HttpRequest,
+    )
 
     ResponseType = Union[HttpResponse, AsyncHttpResponse]
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
@@ -88,7 +92,7 @@ def _as_json(response):
     :raises: DecodeError if response body contains invalid json data.
     """
     try:
-        return response.json()
+        return json.loads(response.text())
     except ValueError:
         raise DecodeError("Error occurred in deserializing the response body.")
 
@@ -117,10 +121,7 @@ def _is_empty(response):
 
     :rtype: bool
     """
-    try:
-        return not bool(response.content)
-    except Exception:
-        a = "b"
+    return not bool(response.body())
 
 
 class LongRunningOperation(ABC):
