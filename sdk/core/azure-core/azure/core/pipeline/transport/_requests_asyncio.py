@@ -42,8 +42,14 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
+from .._backcompat import SupportedFormat
+from ...rest import (
+    AsyncHttpResponse as RestAsyncHttpResponse,
+    StreamClosedError,
+    StreamConsumedError,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,6 +87,15 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+
+    def format_to_response_type(self, format):
+        if format == SupportedFormat.PIPELINE_TRANSPORT:
+            return AsyncioRequestsTransportResponse
+        return RestAsyncioRequestsTransportResponse
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
@@ -145,7 +160,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = kwargs.pop("chunk_size", None) or response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -179,10 +194,17 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             self.response.internal_response.close()
             raise
 
-
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
+
+class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
+
+    @property
+    def _stream_download_generator(self):
+        return AsyncioStreamDownloadGenerator

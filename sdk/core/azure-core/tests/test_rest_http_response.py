@@ -85,7 +85,7 @@ def test_response_repr(send_request):
     response = send_request(
         request=HttpRequest("GET", "http://localhost:5000/basic/string")
     )
-    assert repr(response) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
+    assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
 def test_response_content_type_encoding(send_request):
     """

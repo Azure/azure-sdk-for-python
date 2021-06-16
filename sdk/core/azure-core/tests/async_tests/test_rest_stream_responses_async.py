@@ -8,7 +8,7 @@ import functools
 import os
 import json
 import pytest
-from azure.core.rest import StreamConsumedError, HttpRequest, ResponseClosedError, StreamConsumedError
+from azure.core.rest import StreamConsumedError, HttpRequest, StreamClosedError, StreamConsumedError
 
 @pytest.mark.asyncio
 async def test_iter_raw(client):
@@ -197,6 +197,6 @@ async def test_cannot_read_after_response_closed(client):
     async with client.send_request(request, stream=True) as response:
         pass
 
-    with pytest.raises(ResponseClosedError) as ex:
+    with pytest.raises(StreamClosedError) as ex:
         await response.read()
     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)

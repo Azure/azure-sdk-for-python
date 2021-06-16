@@ -36,7 +36,7 @@ from .._utils import _case_insensitive_dict
 
 from ._helpers import (
     FilesType,
-    ResponseClosedError,
+    StreamClosedError,
     ResponseNotReadError,
     StreamConsumedError,
     lookup_encoding,
@@ -336,7 +336,7 @@ class _HttpResponseBase(object):
         if self.is_stream_consumed:
             raise StreamConsumedError()
         if self.is_closed:
-            raise ResponseClosedError()
+            raise StreamClosedError()
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
 
@@ -363,11 +363,44 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
             self._set_content(b"".join(self.iter_bytes()))
         return self.content
 
-    def iter_bytes(self, chunk_size=None):
-        # type: (int) -> Iterator[bytes]
-        """Iterate over the bytes in the response stream
+    def _stream_download_helper(self, decompress, chunk_size=None):
+        if self.is_stream_consumed:
+            raise StreamConsumedError()
+        if self.is_closed:
+            raise StreamClosedError()
+
+        self.is_stream_consumed = True
+        stream_download = self._stream_download_generator(
+            pipeline=None,
+            response=self,
+            chunk_size=chunk_size or self._connection_data_block_size,
+            decompress=decompress,
+        )
+        for part in stream_download:
+            self._num_bytes_downloaded += len(part)
+            yield part
+
+    def iter_raw(self, chunk_size=None):
+        # type: (Optional[int]) -> Iterator[bytes]
+        """Iterate over the raw response bytes
         """
-        raise NotImplementedError()
+        for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
+            yield raw_bytes
+        self.close()
+
+    def iter_bytes(self, chunk_size=None):
+        # type: (Optional[int]) -> Iterator[bytes]
+        """Iterate over the response bytes
+        """
+        if self._has_content():
+            if chunk_size is None:
+                chunk_size = len(self.content)
+            for i in range(0, len(self.content), chunk_size):
+                yield self.content[i: i + chunk_size]
+        else:
+            for part in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
+                yield part
+        self.close()
 
     def iter_text(self, chunk_size=None):
         # type: (int) -> Iterator[str]
@@ -388,9 +421,3 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
         # type: (...) -> None
         self.is_stream_consumed = True
         self.close()
-
-    def iter_raw(self, chunk_size=None):
-        # type: (int) -> Iterator[bytes]
-        """Iterate over the raw response bytes
-        """
-        raise NotImplementedError()

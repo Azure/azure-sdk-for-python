@@ -93,7 +93,7 @@ async def test_response_repr(send_request):
     response = await send_request(
         HttpRequest("GET", "http://localhost:5000/basic/string")
     )
-    assert repr(response) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
+    assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain; charset=utf-8>"
 
 @pytest.mark.asyncio
 async def test_response_content_type_encoding(send_request):

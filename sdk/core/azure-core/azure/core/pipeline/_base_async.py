@@ -27,9 +27,17 @@ import abc
 
 from typing import Any, Union, List, Generic, TypeVar, Dict
 
+from attr.setters import pipe
+
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from ._backcompat import (
+    SupportedFormat,
+    request_to_format,
+    get_request_from_format,
+    get_response_from_format,
+)
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -196,6 +204,26 @@ class AsyncPipeline(
         await self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
+    async def _response_based_on_format(self, format: str, **kwargs: Any) -> None:
+        # type: (str, Any) -> None
+        pipeline_response = kwargs.pop("pipeline_response")
+        if format == SupportedFormat.PIPELINE_TRANSPORT:
+            return
+
+        response = get_response_from_format(
+            format,
+            transport=self._transport,
+            response=pipeline_response.http_response,
+            **kwargs
+        )
+        if not kwargs.get("stream", False):
+            # in this case, the pipeline transport response already called .load_body(), so
+            # the body is loaded. instead of doing response.read(), going to set the body
+            # to the internal content
+            response._content = pipeline_response.http_response._body
+            await response.close()
+        pipeline_response.http_response = response
+
     async def run(self, request: HTTPRequestType, **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
@@ -204,12 +232,21 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await self._prepare_multipart(request)
+        format = request_to_format(request)
+        modified_request = get_request_from_format(format=format, request=request, transport=self._transport, **kwargs)
+        await self._prepare_multipart(modified_request)
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(request, context)
+        pipeline_request = PipelineRequest(modified_request, context)
         first_node = (
             self._impl_policies[0]
             if self._impl_policies
             else _AsyncTransportRunner(self._transport)
         )
-        return await first_node.send(pipeline_request)
+        pipeline_response = await first_node.send(pipeline_request)
+        await self._response_based_on_format(
+            format=format,
+            pipeline_response=pipeline_response,
+            request=request,
+            **kwargs
+        )
+        return pipeline_response

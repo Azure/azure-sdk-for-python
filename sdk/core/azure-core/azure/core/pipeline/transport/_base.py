@@ -75,6 +75,7 @@ from azure.core.pipeline import (
 )
 from .._tools import await_result as _await_result
 from ..._utils import _case_insensitive_dict
+from .._backcompat import SupportedFormat
 
 
 if TYPE_CHECKING:
@@ -184,6 +185,15 @@ class HttpTransport(
 
     def sleep(self, duration):  # pylint: disable=no-self-use
         time.sleep(duration)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT]
+
+    def format_to_response_type(self, format, **kwargs):
+        # type: (str, Any) -> Any
+        """Create the response from the format of your input"""
+        return SupportedFormat.PIPELINE_TRANSPORT
 
 
 class HttpRequest(object):

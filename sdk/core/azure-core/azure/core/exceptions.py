@@ -309,7 +309,7 @@ class HttpResponseError(AzureError):
         # - parameter "message", OR
         # - generic meassage using "reason"
         try:
-            parsed_body = self._parse_odata_body(response.json())
+            parsed_body = self._parse_odata_body()
             if not parsed_body:
                 # want same behavior as in exception handling, so throwing
                 raise Exception
@@ -331,12 +331,9 @@ class HttpResponseError(AzureError):
         if not self._error:
             if not self.response:
                 return None
-            response_json = None
-            try:
-                response_json = self.response.json()
-            except ValueError:
-                pass
-            self._error = self._parse_odata_body(response_json)
+            if hasattr(self.response, "content"):
+                self.response.content  # this is to trigger ResponseNotReadError in azure.core.rest
+            self._error = self._parse_odata_body()
         return self._error
 
     @error.setter
@@ -353,10 +350,16 @@ class HttpResponseError(AzureError):
     def model(self, val):
         self._model = val
 
-    def _parse_odata_body(self, response_json):
+    def _parse_odata_body(self):
         # type: (...) -> Optional[ODataV4Format]
+        response_text = self.response.text
         try:
-            return self._error_format(response_json)
+            response_text = response_text()
+        except TypeError:
+            pass
+        try:
+            odata_json = json.loads(response_text)
+            return self._error_format(odata_json)
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass
@@ -370,7 +373,6 @@ class HttpResponseError(AzureError):
             )
         except Exception:  # pylint: disable=broad-except
             return super(HttpResponseError, self).__str__()
-
 
 
 class DecodeError(HttpResponseError):

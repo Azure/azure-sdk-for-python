@@ -42,8 +42,14 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
+from .._backcompat import SupportedFormat
+from ...rest import (
+    AsyncHttpResponse as RestAsyncHttpResponse,
+    StreamClosedError,
+    StreamConsumedError,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -107,6 +113,13 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         """
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
+class RestTrioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
+    @property
+    def _stream_download_generator(self):
+        return TrioStreamDownloadGenerator
+
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
@@ -129,6 +142,15 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+
+    def format_to_response_type(self, format):
+        if format == SupportedFormat.PIPELINE_TRANSPORT:
+            return TrioRequestsTransportResponse
+        return RestTrioRequestsTransportResponse
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.

@@ -34,6 +34,12 @@ from azure.core.pipeline import (
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
 from ._tools import await_result as _await_result
+from ._backcompat import (
+    SupportedFormat,
+    request_to_format,
+    get_request_from_format,
+    get_response_from_format,
+)
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -189,6 +195,23 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
+    def _response_based_on_format(self, format, **kwargs):
+        # type: (str, Any) -> None
+        pipeline_response = kwargs.pop("pipeline_response")
+        if format == SupportedFormat.PIPELINE_TRANSPORT:
+            return
+
+        response = get_response_from_format(
+            format,
+            transport=self._transport,
+            response=pipeline_response.http_response,
+            **kwargs
+        )
+        if not kwargs.get("stream", False):
+            response.read()
+            response.close()
+        pipeline_response.http_response = response
+
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
         """Runs the HTTP Request through the chained policies.
@@ -198,14 +221,23 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        self._prepare_multipart(request)
+        format = request_to_format(request)
+        modified_request = get_request_from_format(format=format, request=request, transport=self._transport, **kwargs)
+        self._prepare_multipart(modified_request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(
-            request, context
+            modified_request, context
         )  # type: PipelineRequest[HTTPRequestType]
         first_node = (
             self._impl_policies[0]
             if self._impl_policies
             else _TransportRunner(self._transport)
         )
-        return first_node.send(pipeline_request)  # type: ignore
+        pipeline_response = first_node.send(pipeline_request)  # type: ignore
+        self._response_based_on_format(
+            pipeline_response=pipeline_response,
+            format=format,
+            request=request,
+            **kwargs
+        )
+        return pipeline_response

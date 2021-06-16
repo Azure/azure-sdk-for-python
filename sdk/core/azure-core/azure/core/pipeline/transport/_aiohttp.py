@@ -46,6 +46,12 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
+from .._backcompat import SupportedFormat
+from ...rest import (
+    AsyncHttpResponse as RestAsyncHttpResponse,
+    StreamClosedError,
+    StreamConsumedError as RestStreamConsumedError,
+)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -106,6 +112,15 @@ class AioHttpTransport(AsyncHttpTransport):
             await self.session.close()
             self._session_owner = False
             self.session = None
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+
+    def format_to_response_type(self, format):
+        if format == SupportedFormat.PIPELINE_TRANSPORT:
+            return AioHttpTransportResponse
+        return RestAioHttpTransportResponse
 
     def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None
@@ -211,11 +226,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, chunk_size=None, decompress=True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = chunk_size or response.block_size
         self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
@@ -352,6 +367,79 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw
         self.body()
+
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+        return state
+
+class RestAioHttpTransportResponse(RestAsyncHttpResponse):
+    def __init__(
+        self,
+        *,
+        request: HttpRequest,
+        internal_response,
+        **kwargs
+    ):
+        super().__init__(request=request, internal_response=internal_response, **kwargs)
+        self.status_code = internal_response.status
+        self.headers = CIMultiDict(internal_response.headers)
+        self.reason = internal_response.reason
+        self.content_type = internal_response.headers.get('content-type')
+        self._content = None
+
+    @property
+    def text(self) -> str:
+        content = self.content
+        encoding = self.encoding
+        ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
+        mimetype = aiohttp.helpers.parse_mimetype(ctype)
+
+        encoding = mimetype.parameters.get("charset")
+        if encoding:
+            try:
+                codecs.lookup(encoding)
+            except LookupError:
+                encoding = None
+        if not encoding:
+            if mimetype.type == "application" and (
+                    mimetype.subtype == "json" or mimetype.subtype == "rdap"
+            ):
+                # RFC 7159 states that the default encoding is UTF-8.
+                # RFC 7483 defines application/rdap+json
+                encoding = "utf-8"
+            elif content is None:
+                raise RuntimeError(
+                    "Cannot guess the encoding of a not yet read content"
+                )
+            else:
+                encoding = chardet.detect(content)["encoding"]
+        if not encoding:
+            encoding = "utf-8-sig"
+
+        return content.decode(encoding)
+
+    @property
+    def _stream_download_generator(self):
+        return AioHttpStreamDownloadGenerator
+
+    def _get_content(self):
+        """Return the internal response's content"""
+        return self._content
+
+    def _set_content(self, val):
+        """Set the internal response's content"""
+        self._content = val
+
+    def _has_content(self):
+        """How to check if your internal response has content"""
+        return self._content is not None
+
+    def __getstate__(self):
+        # Be sure body is loaded in memory, otherwise not pickable and let it throw
+        # TODO: fix
+        # await self.read()
 
         state = self.__dict__.copy()
         # Remove the unpicklable entries.

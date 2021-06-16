@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-from azure.core.rest import HttpRequest, ResponseClosedError, StreamConsumedError
+from azure.core.rest import HttpRequest, StreamClosedError, StreamConsumedError
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
 def _assert_stream_state(response, open):
@@ -182,6 +182,6 @@ def test_cannot_read_after_response_closed(client):
 
     with client.send_request(request, stream=True) as response:
         response.close()
-        with pytest.raises(ResponseClosedError) as ex:
+        with pytest.raises(StreamClosedError) as ex:
             response.read()
     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)

@@ -46,6 +46,14 @@ from ._base import (
     _HttpResponseBase
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
+from .._backcompat import SupportedFormat
+from ...rest import (
+    _HttpResponseBase as _RestHttpResponseBase,
+    HttpResponse as RestHttpResponse,
+    ResponseNotReadError,
+    StreamConsumedError,
+    StreamClosedError,
+)
 
 PipelineType = TypeVar("PipelineType")
 
@@ -70,6 +78,9 @@ def _read_raw_stream(response, chunk_size=1):
             if not chunk:
                 break
             yield chunk
+
+    # following behavior from requests iter_content, we set content consumed to True
+    response._content_consumed = True
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -114,6 +125,56 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
 
         return self.internal_response.text
 
+class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
+    def __init__(self, **kwargs):
+        super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
+        self.status_code = self.internal_response.status_code
+        self.headers = self.internal_response.headers
+        self.reason = self.internal_response.reason
+        self.content_type = self.internal_response.headers.get('content-type')
+
+    def _get_content(self):
+        """Return the internal response's content"""
+        if not self.internal_response._content_consumed:
+            # if we just call .content, requests will read in the content.
+            # we want to read it in our own way
+            return None
+        try:
+            return self.internal_response.content
+        except RuntimeError:
+            # requests throws a RuntimeError if the content for a response is already consumed
+            return None
+
+    def _set_content(self, val):
+        """Set the internal response's content"""
+        self.internal_response._content = val
+
+    def _has_content(self):
+        return self._get_content() is not None
+
+    @_RestHttpResponseBase.encoding.setter
+    def encoding(self, value):
+        # type: (str) -> None
+        self._encoding = value
+        encoding = value
+        if not encoding:
+            # There is a few situation where "requests" magic doesn't fit us:
+            # - https://github.com/psf/requests/issues/654
+            # - https://github.com/psf/requests/issues/1737
+            # - https://github.com/psf/requests/issues/2086
+            from codecs import BOM_UTF8
+            if self.internal_response.content[:3] == BOM_UTF8:
+                encoding = "utf-8-sig"
+        if encoding:
+            if encoding == "utf-8":
+                encoding = "utf-8-sig"
+        self.internal_response.encoding = encoding
+
+    @property
+    def text(self):
+        if not self._has_content():
+            raise ResponseNotReadError()
+        return self.internal_response.text
 
 class StreamDownloadGenerator(object):
     """Generator for streaming response data.
@@ -127,7 +188,7 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = kwargs.pop("chunk_size", None) or response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -168,6 +229,12 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         # type: (PipelineType, **Any) -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self, **kwargs)
+
+class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
+
+    @property
+    def _stream_download_generator(self):
+        return StreamDownloadGenerator
 
 
 class RequestsTransport(HttpTransport):
@@ -234,6 +301,15 @@ class RequestsTransport(HttpTransport):
             self.session.close()
             self._session_owner = False
             self.session = None
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+
+    def format_to_response_type(self, format):
+        if format == SupportedFormat.PIPELINE_TRANSPORT:
+            return RequestsTransportResponse
+        return RestRequestsTransportResponse
 
     def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse

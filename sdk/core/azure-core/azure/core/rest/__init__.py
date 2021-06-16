@@ -27,7 +27,7 @@ import sys
 from ._helpers import (
     ResponseNotReadError,
     StreamConsumedError,
-    ResponseClosedError,
+    StreamClosedError,
 )
 try:
     from ._rest_py3 import (
@@ -47,7 +47,7 @@ __all__ = [
     "HttpResponse",
     "StreamConsumedError",
     "ResponseNotReadError",
-    "ResponseClosedError",
+    "StreamClosedError",
     "_HttpResponseBase",
 ]
 
