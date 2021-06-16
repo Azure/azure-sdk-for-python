@@ -13,7 +13,7 @@ from testcase import (
     QuestionAnsweringClientPreparer
 )
 
-from azure.ai.language.questionanswer import QuestionAnsweringClient
+from azure.ai.language.questionanswer.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswer.rest import question_answering_knowledgebase
 
 
@@ -23,7 +23,7 @@ class QnATests(QuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
-    def test_query_knowledgebase_llc(self, client, question_answering_project):
+    async def test_query_knowledgebase_llc(self, client, question_answering_project):
         json_content = {
             "question": "Ports and connectors",
             "top": 3,
@@ -37,8 +37,8 @@ class QnATests(QuestionAnsweringTest):
             project_name=question_answering_project,
             deployment_name='test'
         )
-        with client:
-            response = client.send_request(request)
+        async with client:
+            response = await client.send_request(request)
             assert response.status_code == 200
 
         output = response.json()
