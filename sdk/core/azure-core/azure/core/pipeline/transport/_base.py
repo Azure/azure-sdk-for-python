@@ -193,7 +193,6 @@ class HttpTransport(
     def format_to_response_type(self, format, **kwargs):
         # type: (str, Any) -> Any
         """Create the response from the format of your input"""
-        return SupportedFormat.PIPELINE_TRANSPORT
 
 
 class HttpRequest(object):

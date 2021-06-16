@@ -77,14 +77,13 @@ def get_response_from_format(format, **kwargs):
     request = kwargs.pop("request")
     pipeline_transport_response = kwargs.pop("response")
     transport = kwargs.pop("transport")
-    try:
-        response_type = transport.format_to_response_type(format)
-    except AttributeError:
+    if not hasattr(transport, "format_to_response_type") or transport.format_to_response_type(format) is None:
         raise ValueError(
             "Your response is of format {}, while your transport can only support ".format(type(pipeline_transport_response)) +
             "azure.core.pipeline.transport.HttpResponse"
         )
 
+    response_type = transport.format_to_response_type(format)
     # we know response type (for now) is azure.core.rest
     response = response_type(
         request=request,

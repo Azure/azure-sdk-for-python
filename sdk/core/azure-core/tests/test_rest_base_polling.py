@@ -317,7 +317,7 @@ class TestBasePolling(object):
             headers = {}
         response = Response()
         response._content_consumed = True
-        response._content = json.dumps(body).encode('ascii') if body is not None else None
+        response._content = json.dumps(body).encode('ascii') if body is not None else ""  # switch None to "" bc through real pipelines, we read if it's not a stream, which will never give None, just empty string
         response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
@@ -378,14 +378,10 @@ class TestBasePolling(object):
         else:
             raise Exception('URL does not match')
 
-        request = CLIENT._request(
-            response.request.method,
-            response.request.url,
-            None,  # params
-            {}, # request has no headers
-            None, # Request has no body
-            None,  # form_content
-            None  # stream_content
+        request = HttpRequest(
+            method=response.request.method,
+            url=response.request.url,
+            headers={},
         )
 
         return PipelineResponse(

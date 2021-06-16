@@ -37,6 +37,7 @@ from ._base import (
     PipelineResponse,
 )
 from .._tools_async import await_result as _await_result
+from .._backcompat import SupportedFormat
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -183,3 +184,11 @@ class AsyncHttpTransport(
 
     async def sleep(self, duration):
         await asyncio.sleep(duration)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT]
+
+    def format_to_response_type(self, format, **kwargs):
+        # type: (str, Any) -> Any
+        """Create the response from the format of your input"""

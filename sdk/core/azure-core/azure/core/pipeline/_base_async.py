@@ -220,7 +220,7 @@ class AsyncPipeline(
             # in this case, the pipeline transport response already called .load_body(), so
             # the body is loaded. instead of doing response.read(), going to set the body
             # to the internal content
-            response._content = pipeline_response.http_response._body
+            response._content = pipeline_response.http_response.body()
             await response.close()
         pipeline_response.http_response = response
 

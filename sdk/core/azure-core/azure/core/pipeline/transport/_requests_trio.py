@@ -67,7 +67,10 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        block_size = kwargs.pop("chunk_size", None)
+        if not block_size and hasattr(response, "block_size"):
+            block_size = response.block_size
+        self.block_size = block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -119,6 +122,11 @@ class RestTrioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTran
     @property
     def _stream_download_generator(self):
         return TrioStreamDownloadGenerator
+
+    async def close(self) -> None:
+        self.is_closed = True
+        self.internal_response.close()
+        await trio.sleep(0)
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore

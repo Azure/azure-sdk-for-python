@@ -230,7 +230,10 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = chunk_size or response.block_size
+        block_size = chunk_size
+        if not block_size and hasattr(response, "block_size"):
+            block_size = response.block_size
+        self.block_size = block_size
         self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
@@ -387,7 +390,6 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
         self.headers = CIMultiDict(internal_response.headers)
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
-        self._content = None
 
     @property
     def text(self) -> str:
@@ -423,18 +425,6 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
     @property
     def _stream_download_generator(self):
         return AioHttpStreamDownloadGenerator
-
-    def _get_content(self):
-        """Return the internal response's content"""
-        return self._content
-
-    def _set_content(self, val):
-        """Set the internal response's content"""
-        self._content = val
-
-    def _has_content(self):
-        """How to check if your internal response has content"""
-        return self._content is not None
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw

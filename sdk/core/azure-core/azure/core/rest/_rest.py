@@ -228,6 +228,7 @@ class _HttpResponseBase(object):
         self.content_type = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._connection_data_block_size = None
+        self._content = None
 
     @property
     def url(self):
@@ -248,15 +249,15 @@ class _HttpResponseBase(object):
 
     def _get_content(self):
         """Return the internal response's content"""
-        raise NotImplementedError()
+        return self._content
 
     def _set_content(self, val):
         """Set the internal response's content"""
-        raise NotImplementedError()
+        self._content = val
 
     def _has_content(self):
         """How to check if your internal response has content"""
-        raise NotImplementedError()
+        return self._content is not None
 
     @property
     def encoding(self):
@@ -327,8 +328,8 @@ class _HttpResponseBase(object):
         content_type_str = (
             ", Content-Type: {}".format(self.content_type) if self.content_type else ""
         )
-        return "<{}: {} {}{}>".format(
-            type(self).__name__, self.status_code, self.reason, content_type_str
+        return "<HttpResponse: {} {}{}>".format(
+            self.status_code, self.reason, content_type_str
         )
 
     def _validate_streaming_access(self):

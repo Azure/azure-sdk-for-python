@@ -23,7 +23,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline._backcompat import SupportedFormat
-from azure.core.pipeline.transport import HttpTransport
+from azure.core.pipeline.transport import HttpTransport, HttpResponse as PipelineTransportHttpResponse
 from azure.core.rest import HttpRequest, HttpResponse
 import tempfile
 import os
@@ -110,14 +110,20 @@ def test_retry_on_429():
 
         def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
-            response = HttpResponse(request=request, internal_response=None)
+            response = PipelineTransportHttpResponse(request=request, internal_response=None)
             response.status_code = 429
             return response
+
+        @property
+        def supported_formats(self):
+            return [SupportedFormat.REST]
+
+        def format_to_response_type(self, format, **kwargs):
+            return HttpResponse
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     http_retry = RetryPolicy(retry_total = 1)
     transport = MockTransport()
-    transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
     pipeline = Pipeline(transport, [http_retry])
     pipeline.run(http_request)
     assert transport._count == 2

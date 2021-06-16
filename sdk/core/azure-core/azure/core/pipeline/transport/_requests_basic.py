@@ -188,7 +188,10 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = kwargs.pop("chunk_size", None) or response.block_size
+        block_size = kwargs.pop("chunk_size", None)
+        if not block_size and hasattr(response, "block_size"):
+            block_size = response.block_size
+        self.block_size = block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))

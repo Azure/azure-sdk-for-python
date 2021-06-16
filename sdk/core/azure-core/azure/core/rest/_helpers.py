@@ -194,7 +194,7 @@ def _shared_set_content_body(content):
 
 def set_content_body(content):
     headers, body = _shared_set_content_body(content)
-    if body:
+    if body is not None:
         return headers, body
     raise TypeError(
         "Unexpected type for 'content': '{}'. ".format(type(content)) +

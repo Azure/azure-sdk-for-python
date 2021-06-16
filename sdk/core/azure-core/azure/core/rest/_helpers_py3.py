@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import collections
+import collections.abc
 from typing import AsyncIterable, Dict, Iterable, Tuple, Union
 
 from six import Iterator
@@ -38,7 +38,7 @@ def set_content_body(content: ContentType) -> Tuple[
     headers, body = _shared_set_content_body(content)
     if body is not None:
         return headers, body
-    if isinstance(content, collections.AsyncIterable):
+    if isinstance(content, collections.abc.AsyncIterable):
         return {"Transfer-Encoding": "chunked"}, content
     raise TypeError(
         "Unexpected type for 'content': '{}'. ".format(type(content)) +

@@ -270,6 +270,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self.content_type = None
         self._connection_data_block_size = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
+        self._content = None
 
     @property
     def url(self) -> str:
@@ -289,15 +290,15 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
 
     def _get_content(self):
         """Return the internal response's content"""
-        raise NotImplementedError()
+        return self._content
 
     def _set_content(self, val):
         """Set the internal response's content"""
-        raise NotImplementedError()
+        self._content = val
 
     def _has_content(self):
         """How to check if your internal response has content"""
-        raise NotImplementedError()
+        return self._content is not None
 
     @property
     def encoding(self) -> Optional[str]:

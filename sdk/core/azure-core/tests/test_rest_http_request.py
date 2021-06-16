@@ -117,20 +117,20 @@ def test_empty_content():
 def test_string_content():
     request = HttpRequest("PUT", "http://example.org", content="Hello, world!")
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
-    assert request.content == b"Hello, world!"
+    assert request.content == "Hello, world!"
 
     # Support 'data' for compat with requests.
     request = HttpRequest("PUT", "http://example.org", data="Hello, world!")
 
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
-    assert request.content == b"Hello, world!"
+    assert request.content == "Hello, world!"
 
     # content length should not be set for GET requests
 
     request = HttpRequest("GET", "http://example.org", data="Hello, world!")
 
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
-    assert request.content == b"Hello, world!"
+    assert request.content == "Hello, world!"
 
 @pytest.mark.skipif(sys.version_info < (3, 0),
                     reason="In 2.7, b'' is the same as a string, so will have text/plain content type")

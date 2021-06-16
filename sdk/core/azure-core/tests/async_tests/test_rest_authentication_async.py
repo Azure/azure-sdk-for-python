@@ -12,6 +12,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
+from azure.core.pipeline._backcompat import SupportedFormat
 import pytest
 
 pytestmark = pytest.mark.asyncio
@@ -35,7 +36,9 @@ async def test_bearer_policy_adds_header():
 
     fake_credential = Mock(get_token=get_token)
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
-    pipeline = AsyncPipeline(transport=Mock(), policies=policies)
+    mock = Mock()
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    pipeline = AsyncPipeline(transport=mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"), context=None)
     assert get_token_calls == 1
@@ -50,13 +53,19 @@ async def test_bearer_policy_send():
     expected_request = HttpRequest("GET", "https://spam.eggs")
     expected_response = Mock()
 
-    async def verify_request(request):
-        assert request.http_request is expected_request
+    async def verify_request(pipeline_request):
+        # since we switch to pipeline.transport for that actual pipeline, can't do an assert is the same, but can check if some values are
+        request = pipeline_request.http_request
+        assert request.url == "https://spam.eggs"
+        assert request.method == "GET"
         return expected_response
 
     fake_credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("", 0)))
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
-    response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
+
+    mock = Mock()
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    response = await AsyncPipeline(transport=mock, policies=policies).run(expected_request)
 
     assert response is expected_response
 
@@ -76,7 +85,10 @@ async def test_bearer_policy_token_caching():
         AsyncBearerTokenCredentialPolicy(credential, "scope"),
         Mock(send=Mock(return_value=get_completed_future(Mock()))),
     ]
-    pipeline = AsyncPipeline(transport=Mock, policies=policies)
+
+    mock = Mock()
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    pipeline = AsyncPipeline(transport=mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert get_token_calls == 1  # policy has no token at first request -> it should call get_token
@@ -91,7 +103,10 @@ async def test_bearer_policy_token_caching():
         AsyncBearerTokenCredentialPolicy(credential, "scope"),
         Mock(send=lambda _: get_completed_future(Mock())),
     ]
-    pipeline = AsyncPipeline(transport=Mock(), policies=policies)
+
+    mock = Mock()
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    pipeline = AsyncPipeline(transport=mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
     assert get_token_calls == 1
@@ -108,8 +123,11 @@ async def test_bearer_policy_optionally_enforces_https():
         return Mock()
 
     credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("***", 42)))
+
+    mock = Mock(send=assert_option_popped)
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
     pipeline = AsyncPipeline(
-        transport=Mock(send=assert_option_popped), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")]
+        transport=mock, policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")]
     )
 
     # by default and when enforce_https=True, the policy should raise when given an insecure request
@@ -138,7 +156,10 @@ async def test_bearer_policy_preserves_enforce_https_opt_out():
     get_token = get_completed_future(AccessToken("***", 42))
     credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
-    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future(Mock())), policies=policies)
+
+    mock = Mock(send=lambda *_, **__: get_completed_future(Mock()))
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    pipeline = AsyncPipeline(transport=mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
 
@@ -154,7 +175,10 @@ async def test_bearer_policy_context_unmodified_by_default():
     get_token = get_completed_future(AccessToken("***", 42))
     credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
-    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future(Mock())), policies=policies)
+
+    mock = Mock(send=lambda *_, **__: get_completed_future(Mock()))
+    mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    pipeline = AsyncPipeline(transport=mock, policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://secure"))
 
@@ -177,7 +201,7 @@ async def test_bearer_policy_calls_sansio_methods():
     credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", int(time.time()) + 3600))))
     policy = TestPolicy(credential, "scope")
     transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
-
+    transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     await pipeline.run(HttpRequest("GET", "https://localhost"))
 
@@ -189,6 +213,7 @@ async def test_bearer_policy_calls_sansio_methods():
         pass
 
     transport = Mock(send=Mock(side_effect=TestException))
+    transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
     policy = TestPolicy(credential, "scope")
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     with pytest.raises(TestException):
