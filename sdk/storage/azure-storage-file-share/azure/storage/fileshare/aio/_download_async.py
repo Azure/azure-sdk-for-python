@@ -94,6 +94,8 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 download_stream_current=self.progress_total,
                 **self.request_options
             )
+            if response.properties.etag != self.etag:
+                raise ValueError("The file has been modified while downloading.")
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -317,6 +319,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         # If file size is large, download the rest of the file in chunks.
         if response.properties.size == self.size:
             self._download_complete = True
+        self._etag = response.properties.etag
         return response
 
     def chunks(self):
@@ -344,6 +347,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 validate_content=self._validate_content,
                 encryption_options=self._encryption_options,
                 use_location=self._location_mode,
+                etag=self._etag,
                 **self._request_options)
         return _AsyncChunkIterator(
             size=self.size,
@@ -444,6 +448,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             validate_content=self._validate_content,
             encryption_options=self._encryption_options,
             use_location=self._location_mode,
+            etag=self._etag,
             **self._request_options)
 
         dl_tasks = downloader.get_chunk_offsets()
