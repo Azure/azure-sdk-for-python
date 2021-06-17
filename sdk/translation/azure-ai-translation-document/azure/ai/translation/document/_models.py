@@ -22,10 +22,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         the glossary file in the storage blob container. If the translation language pair is
         not present in the glossary, it will not be applied.
     :param str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
@@ -33,10 +33,10 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
         the glossary file in the storage blob container. If the translation language pair is
         not present in the glossary, it will not be applied.
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_glossary_formats()` client method.
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :ivar str storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
@@ -231,7 +231,7 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
         )
 
 
-class TranslationStatusResult(
+class TranslationStatus(
     object
 ):  # pylint: disable=useless-object-inheritance, too-many-instance-attributes
     """Status information about the translation operation.
@@ -307,7 +307,7 @@ class TranslationStatusResult(
 
     def __repr__(self):
         return (
-            "TranslationStatusResult(id={}, created_on={}, "
+            "TranslationStatus(id={}, created_on={}, "
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
             "documents_failed_count={}, documents_succeeded_count={}, "
             "documents_in_progress_count={}, documents_not_yet_started_count={}, "
@@ -328,7 +328,7 @@ class TranslationStatusResult(
         )
 
 
-class DocumentStatusResult(
+class DocumentStatus(
     object
 ):  # pylint: disable=useless-object-inheritance, R0903, R0902
     """Status information about a particular document within a translation operation.
@@ -393,7 +393,7 @@ class DocumentStatusResult(
     def __repr__(self):
         # pylint: disable=line-too-long
         return (
-            "DocumentStatusResult(id={}, source_document_url={}, "
+            "DocumentStatus(id={}, source_document_url={}, "
             "translated_document_url={}, created_on={}, last_updated_on={}, "
             "status={}, translated_to={}, error={}, translation_progress={}, "
             "characters_charged={})".format(
