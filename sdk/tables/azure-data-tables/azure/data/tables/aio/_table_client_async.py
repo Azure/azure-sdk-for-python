@@ -61,11 +61,12 @@ class TableClient(AsyncTablesBaseClient):
         :param str table_name: The table name.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
-            or AzureSasCredential from azure-core.
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
+            AzureSasCredential, or TokenCredential from azure-core.
         :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+            :class:`~azure.core.credentials.AzureSasCredential` or
+            :class:`~azure.core.credentials.TokenCredential`
 
         :returns: None
         """
