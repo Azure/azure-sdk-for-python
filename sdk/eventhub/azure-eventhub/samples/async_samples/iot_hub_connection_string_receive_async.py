@@ -24,9 +24,7 @@ from urllib.parse import urlencode, quote_plus
 from uamqp import ReceiveClient, Source
 from uamqp.errors import LinkRedirect
 
-from provisioningserviceclient import ProvisioningServiceClient
-from provisioningserviceclient.models import IndividualEnrollment, AttestationMechanism
-from azure.iot.device.aio import ProvisioningDeviceClient, IoTHubDeviceClient
+from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
@@ -51,45 +49,8 @@ def generate_sas_token(uri, policy, key, expiry=None):
         result['skn'] = policy
     return 'SharedAccessSignature ' + urlencode(result)
 
-async def send_messages_with_provisioned_iot_device(iothub_conn_str):
-    #dps_conn_str = 'HostName=swathip-test-iot-provisioning.azure-devices-provisioning.net;SharedAccessKeyName=provisioningserviceowner;SharedAccessKey=eR3Vnxivm9R40MbtgAJ9slsh7TQdYzYj7Dgdohg28kE='
-    ##os.environ["DPS_SERVICE_CONNECTION_STR"]
-    #endorsement_key = 'AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAtW6MOyCu/Nih47atIIoZtlYkhLeCTiSrtRN3q6hqgOllA979No4BOcDWF90OyzJvjQknMfXS/Dx/IJIBnORgCg1YX/j4EEtO7Ase29Xd63HjvG8M94+u2XINu79rkTxeueqW7gPeRZQPnl1xYmqawYcyzJS6GKWKdoIdS+UWu6bJr58V3xwvOQI4NibXKD7htvz07jLItWTFhsWnTdZbJ7PnmfCa2vbRH/9pZIow+CcAL9mNTNNN4FdzYwapNVO+6SY/W4XU0Q+dLMCKYarqVNH5GzAWDfKT8nKzg69yQejJM8oeUWag/8odWOfbszA+iFjw3wVNrA5n8grUieRkPQ=='
-    ##os.environ["DPS_ENDORSEMENT_KEY"]
-    #registration_id = 'test_registration_id'
-    ##os.environ["DPS_REGISTRATION_ID"]
-    #provisioning_host = os.getenv("PROVISIONING_HOST")
-    #id_scope = os.getenv("PROVISIONING_IDSCOPE")
-    #provisioning_service_client = ProvisioningServiceClient.create_from_connection_string(dps_conn_str)
-    ##registration_id = os.getenv("PROVISIONING_REGISTRATION_ID")
-    ##symmetric_key = os.getenv("PROVISIONING_SYMMETRIC_KEY")
-    #att_mech = AttestationMechanism.create_with_tpm(endorsement_key)
-    #individual_enrollment = IndividualEnrollment.create(registration_id, att_mech, device_id='test-device-id')
-    ##provisioning_service_client.delete(individual_enrollment)
-    #individual_enrollment = provisioning_service_client.create_or_update(individual_enrollment)
-
-    ##provisioning_device_client = ProvisioningDeviceClient.create_from_symmetric_key(
-    ##    provisioning_host=provisioning_host,
-    ##    registration_id=registration_id,
-    ##    id_scope=id_scope,
-    ##    symmetric_key=symmetric_key,
-    ##)
-
-    #print(dir(individual_enrollment))
-    #registration_state = individual_enrollment.registration_state
-    #print(dir(registration_state))
-    #registration_result = await provisioning_service_client.register()
-
-    #print("The complete registration result is")
-    #print(registration_result.registration_state.device_id)
-
-    #if registration_result.status == "assigned":
-    #device_client = IoTHubDeviceClient.create_from_symmetric_key(
-    #    symmetric_key=symmetric_key,
-    #    hostname=registration_result.registration_state.assigned_hub,
-    #    device_id=registration_result.registration_state.device_id,
-    #)
-    device_client = IoTHubDeviceClient.create_from_connection_string('HostName=swathip-test-iot-hub-aaaaaaaaaa.azure-devices.net;DeviceId=swathip-test-device-id;SharedAccessKey=5ho6Stu6VHIjmzz+bZl8w0EfvwhlXprup2HePcy0f20=')
+async def send_messages_with_provisioned_iot_device(device_conn_str):
+    device_client = IoTHubDeviceClient.create_from_connection_string(device_conn_str)
     # Connect the client.
     await device_client.connect()
 
@@ -102,8 +63,6 @@ async def send_messages_with_provisioned_iot_device(iothub_conn_str):
 
     # finally, disconnect
     await device_client.disconnect()
-    #else:
-    #    print("Can not send messages from the provisioned device")
 
 def parse_iot_conn_str(iothub_conn_str):
     hostname = None
@@ -137,16 +96,12 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
         # Once a redirect error is received, close the original client and recreate a new one to the re-directed address
         receive_client.close()
         fully_qualified_name = redirect.hostname.decode("utf-8")
-        print("NAME:")
-        print(iot_hub_name)
-        print(iot_hub_name[:25])
-        conn_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={}".format(
+        conn_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
             fully_qualified_name,
             shared_access_key_name,
-            shared_access_key
-            #iot_hub_name[:25]
+            shared_access_key,
+            iot_hub_name[:25]
         )
-        print(conn_str)
         return conn_str
     except Exception as exp:
         raise ValueError(
@@ -174,11 +129,9 @@ async def receive_events_from_iothub(iothub_conn_str):
         )
 
 async def main():
-    iothub_conn_str = 'HostName=swathip-test-iot-hub-aaaaaaaaaa.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=u1Lxmqh/gViXrP0cbImpIrxb5eT1R9HOZg97Xuei/do='#HostName=swathip-test-iot.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=VNq0G9TZV+ndgqS8lOZ1OmWuinoO7TKZ+r4cVeSmek4='
-    #iothub_conn_str = os.environ["IOTHUB_CONNECTION_STR"]
-    #device_id = 'swathip-test-iot-device-sample'
-    #device_id = os.environ["IOTHUB_DEVICE"]
-    await send_messages_with_provisioned_iot_device(iothub_conn_str)
+    iothub_conn_str = os.environ["IOTHUB_CONNECTION_STR"]
+    device_conn_str = os.environ["IOT_DEVICE_CONNECTION_STR"]
+    await send_messages_with_provisioned_iot_device(device_conn_str)
     await receive_events_from_iothub(iothub_conn_str)
 
 loop = asyncio.get_event_loop()
