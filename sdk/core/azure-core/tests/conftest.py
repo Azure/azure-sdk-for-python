@@ -45,9 +45,12 @@ def terminate_testserver(process):
 @pytest.fixture(scope="session")
 def testserver():
     """Start the Autorest testserver."""
-    server = start_testserver()
-    yield
-    terminate_testserver(server)
+    if not os.environ.get("FLASK_PID"):
+        server = start_testserver()
+        yield
+        terminate_testserver(server)
+    else:
+        yield
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []
