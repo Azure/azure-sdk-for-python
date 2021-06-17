@@ -698,30 +698,6 @@ class AutomaticTuningServerReason(str, Enum):
     auto_configured = "AutoConfigured"
 
 
-class ServerPublicNetworkAccess(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class ServerWorkspaceFeature(str, Enum):
-
-    connected = "Connected"
-    disconnected = "Disconnected"
-
-
-class StorageKeyType(str, Enum):
-
-    shared_access_key = "SharedAccessKey"
-    storage_access_key = "StorageAccessKey"
-
-
-class CheckNameAvailabilityReason(str, Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
 class SyncAgentState(str, Enum):
 
     online = "Online"
@@ -868,10 +844,57 @@ class CurrentBackupStorageRedundancy(str, Enum):
     zone = "Zone"
 
 
+class StorageKeyType(str, Enum):
+
+    shared_access_key = "SharedAccessKey"
+    storage_access_key = "StorageAccessKey"
+
+
 class LedgerDigestUploadsState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class ReplicationRole(str, Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+    non_readable_secondary = "NonReadableSecondary"
+    source = "Source"
+    copy = "Copy"
+
+
+class ReplicationState(str, Enum):
+
+    pending = "PENDING"
+    seeding = "SEEDING"
+    catch_up = "CATCH_UP"
+    suspended = "SUSPENDED"
+
+
+class ReplicationLinkType(str, Enum):
+
+    geo = "GEO"
+    named = "NAMED"
+
+
+class ServerNetworkAccessFlag(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ServerWorkspaceFeature(str, Enum):
+
+    connected = "Connected"
+    disconnected = "Disconnected"
+
+
+class CheckNameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class VulnerabilityAssessmentPolicyBaselineName(str, Enum):

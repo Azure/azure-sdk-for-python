@@ -24,7 +24,6 @@ from ._elastic_pool_database_activities_operations import ElasticPoolDatabaseAct
 from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from ._transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from ._server_usages_operations import ServerUsagesOperations
-from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from ._extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
 from ._server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
@@ -106,7 +105,6 @@ from ._server_dev_ops_audit_settings_operations import ServerDevOpsAuditSettings
 from ._server_dns_aliases_operations import ServerDnsAliasesOperations
 from ._server_keys_operations import ServerKeysOperations
 from ._server_operations import ServerOperations
-from ._servers_operations import ServersOperations
 from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._server_trust_groups_operations import ServerTrustGroupsOperations
 from ._server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
@@ -121,6 +119,7 @@ from ._virtual_clusters_operations import VirtualClustersOperations
 from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
 from ._workload_classifiers_operations import WorkloadClassifiersOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
+from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._database_extensions_operations import DatabaseExtensionsOperations
 from ._database_operations import DatabaseOperations
 from ._database_usages_operations import DatabaseUsagesOperations
@@ -128,6 +127,7 @@ from ._ledger_digest_uploads_operations import LedgerDigestUploadsOperations
 from ._outbound_firewall_rules_operations import OutboundFirewallRulesOperations
 from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
+from ._servers_operations import ServersOperations
 from ._usages_operations import UsagesOperations
 
 __all__ = [
@@ -146,7 +146,6 @@ __all__ = [
     'TransparentDataEncryptionsOperations',
     'TransparentDataEncryptionActivitiesOperations',
     'ServerUsagesOperations',
-    'BackupShortTermRetentionPoliciesOperations',
     'ExtendedDatabaseBlobAuditingPoliciesOperations',
     'ExtendedServerBlobAuditingPoliciesOperations',
     'ServerBlobAuditingPoliciesOperations',
@@ -228,7 +227,6 @@ __all__ = [
     'ServerDnsAliasesOperations',
     'ServerKeysOperations',
     'ServerOperations',
-    'ServersOperations',
     'ServerSecurityAlertPoliciesOperations',
     'ServerTrustGroupsOperations',
     'ServerVulnerabilityAssessmentsOperations',
@@ -243,6 +241,7 @@ __all__ = [
     'VirtualNetworkRulesOperations',
     'WorkloadClassifiersOperations',
     'WorkloadGroupsOperations',
+    'BackupShortTermRetentionPoliciesOperations',
     'DatabaseExtensionsOperations',
     'DatabaseOperations',
     'DatabaseUsagesOperations',
@@ -250,5 +249,6 @@ __all__ = [
     'OutboundFirewallRulesOperations',
     'RestorableDroppedDatabasesOperations',
     'RestorableDroppedManagedDatabasesOperations',
+    'ServersOperations',
     'UsagesOperations',
 ]
