@@ -223,6 +223,7 @@ def get_authorization_scope(authority):
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
+    logger.warning("Import image authority: {}".format(authority))
     mgmt_client = ContainerRegistryManagementClient(
         DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
     )
