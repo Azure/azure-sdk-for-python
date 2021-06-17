@@ -3,6 +3,7 @@
 ## 12.0.1 (Unreleased)
 
 ### Features Added
+* `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
 
 ### Breaking Changes
 
