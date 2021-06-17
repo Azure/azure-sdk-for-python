@@ -23,9 +23,9 @@
   },
   "variables": {
     "apiVersion": "2020-11-01-preview",
-    "endpointValue": "[format('https://{0}.{1}', parameters('baseName'), parameters('containerRegistryEndpointSuffix'))]",
+    "endpointValue": "[format('https://{0}{1}', parameters('baseName'), parameters('containerRegistryEndpointSuffix'))]",
     "anonRegistryName": "[format('{0}anon', parameters('baseName'))]",
-    "anonEndpointValue": "[format('https://{0}.{1}', variables('anonRegistryName'), parameters('containerRegistryEndpointSuffix'))]"
+    "anonEndpointValue": "[format('https://{0}{1}', variables('anonRegistryName'), parameters('containerRegistryEndpointSuffix'))]"
   },
   "resources": [
     {
