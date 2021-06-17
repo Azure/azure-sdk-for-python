@@ -79,7 +79,7 @@ class ManagedPrivateEndpointsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -139,7 +139,7 @@ class ManagedPrivateEndpointsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -184,7 +184,7 @@ class ManagedPrivateEndpointsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
