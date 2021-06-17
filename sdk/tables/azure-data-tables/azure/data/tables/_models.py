@@ -80,13 +80,13 @@ class TableAccessPolicy(GenAccessPolicy):
 
     def __str__(self):
         # type: () -> str
-        return "start={}, expiry={}, permission={}".format(
-            self.start, self.expiry, self.permission
-        )
+        return
 
     def __repr__(self):
         # type: () -> str
-        return "TableAccessPolicy({})".format(self.__str__())[1024:]
+        return "TableAccessPolicy(start={}, expiry={}, permission={}".format(
+            self.start, self.expiry, self.permission
+        )[1024:]
 
 
 class TableAnalyticsLogging(GeneratedLogging):
@@ -124,15 +124,11 @@ class TableAnalyticsLogging(GeneratedLogging):
             )
         )
 
-    def __str__(self):
-        # type: () -> str
-        return "version={}, delete={}, read={}, write={}, retention_policy={}".format(
-            self.version, self.delete, self.read, self.write, self.retention_policy
-        )
-
     def __repr__(self):
         # type: () -> str
-        return "TableAnalyticsLogging({})".format(self.__str__())[1024:]
+        return "TableAnalyticsLogging(version={}, delete={}, read={}, write={}, retention_policy={})".format(
+            self.version, self.delete, self.read, self.write, self.retention_policy
+        )[1024:]
 
 
 class TableMetrics(GeneratedMetrics):
@@ -173,15 +169,11 @@ class TableMetrics(GeneratedMetrics):
             )
         )
 
-    def __str__(self):
-        # type: () -> str
-        return "version={}, enabled={}, include_apis={}, retention_policy={}".format(
-            self.version, self.enabled, self.include_apis, self.retention_policy
-        )
-
     def __repr__(self):
         # type: () -> str
-        return "TableMetrics({})".format(self.__str__())[1024:]
+        return "TableMetrics(version={}, enabled={}, include_apis={}, retention_policy={})".format(
+            self.version, self.enabled, self.include_apis, self.retention_policy
+        )[1024:]
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
@@ -220,14 +212,9 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             enabled=generated.enabled,
             days=generated.days,
         )
-
-    def __str__(self):
-        # type: () -> str
-        return "enabled={}, days={}".format(self.enabled, self.days)
-
     def __repr__(self):
         # type; () -> str
-        return "TableRetentionPolicy({})".format(self.__str__())[1024:]
+        return "TableRetentionPolicy(enabled={}, days={}".format(self.enabled, self.days)[1024:]
 
 
 class TableCorsRule(object):
@@ -294,15 +281,11 @@ class TableCorsRule(object):
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
-    def __str__(self):
-        # type: () -> str
-        return "allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={}".format(
-            self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds
-        )
-
     def __repr__(self):
         # type: () -> str
-        return "TableCorsRules({})".format(self.__str__())[1024:]
+        return "TableCorsRules(allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={})".format(
+            self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds
+        )[1024:]
 
 
 class TablePropertiesPaged(PageIterator):
@@ -535,13 +518,9 @@ class TableItem(object):
         # type: (TableQueryResponse, Any) -> TableItem
         return cls(generated.table_name)  # type: ignore
 
-    def __str__(self):
-        # type: () -> str
-        return "name={}".format(self.name)
-
     def __repr__(self):
         # type: () -> str
-        return "TableItem({})".format(self.__str__())[1024:]
+        return "TableItem(name={})".format(self.name)[1024:]
 
 
 class TablePayloadFormat(object):
@@ -607,13 +586,9 @@ class ResourceTypes(object):
         self.object = kwargs.get('object', False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
-    def __str__(self):
-        # type: () -> str
-        return "service={}, object={}".format(self.service, self.object)
-
     def __repr__(self):
         # type: () -> str
-        return "ResourceTypes({})".format(self.__str__())[1024:]
+        return "ResourceTypes(service={}, object={})".format(self.service, self.object)[1024:]
 
     @classmethod
     def from_string(cls, string):
@@ -683,15 +658,11 @@ class AccountSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
-        # type: () -> str
-        return "read={}, write={}, delete={}, list={}, add={}, create={}, update={}, process={}".format(
-            self.read, self.write, self.delete, self.list, self.add, self.create, self.update, self.process
-        )
-
     def __repr__(self):
         # type: () -> str
-        return "AccountSasPermissions({})".format(self.__str__())[1024:]
+        return "AccountSasPermissions(read={}, write={}, delete={}, list={}, add={}, create={}, update={}, process={})".format(
+            self.read, self.write, self.delete, self.list, self.add, self.create, self.update, self.process
+        )[1024:]
 
     @classmethod
     def from_string(cls, permission, **kwargs):
