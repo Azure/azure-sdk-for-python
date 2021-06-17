@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -310,7 +310,7 @@ class BlobItemInternal(msrest.serialization.Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal'},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata'},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags'},
-        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}'},
+        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}'},
     }
     _xml_map = {
         'name': 'Blob'
@@ -462,8 +462,8 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type access_tier: str or ~azure.storage.blob.models.AccessTier
     :param access_tier_inferred:
     :type access_tier_inferred: bool
-    :param archive_status:  Possible values include: "rehydrate-pending-to-hot", "rehydrate-
-     pending-to-cool".
+    :param archive_status:  Possible values include: "rehydrate-pending-to-hot",
+     "rehydrate-pending-to-cool".
     :type archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :param customer_provided_key_sha256:
     :type customer_provided_key_sha256: str
@@ -522,7 +522,7 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         'incremental_copy': {'key': 'IncrementalCopy', 'type': 'bool'},
         'destination_snapshot': {'key': 'DestinationSnapshot', 'type': 'str'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
-        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'remaining_retention_days': {'key': 'remainingRetentionDays', 'type': 'int'},
         'access_tier': {'key': 'AccessTier', 'type': 'str'},
         'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool'},
         'archive_status': {'key': 'ArchiveStatus', 'type': 'str'},
@@ -935,9 +935,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
-    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
-     container.
-    :type is_version_level_worm_enabled: bool
+    :param is_immutable_storage_with_versioning_enabled: Indicates if version level worm is enabled
+     on this container.
+    :type is_immutable_storage_with_versioning_enabled: bool
     """
 
     _validation = {
@@ -957,8 +957,8 @@ class ContainerProperties(msrest.serialization.Model):
         'default_encryption_scope': {'key': 'DefaultEncryptionScope', 'type': 'str'},
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
-        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
-        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
+        'remaining_retention_days': {'key': 'remainingRetentionDays', 'type': 'int'},
+        'is_immutable_storage_with_versioning_enabled': {'key': 'ImmutableStorageWithVersioningEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -976,7 +976,7 @@ class ContainerProperties(msrest.serialization.Model):
         prevent_encryption_scope_override: Optional[bool] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
-        is_version_level_worm_enabled: Optional[bool] = None,
+        is_immutable_storage_with_versioning_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(ContainerProperties, self).__init__(**kwargs)
@@ -992,7 +992,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = prevent_encryption_scope_override
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
-        self.is_version_level_worm_enabled = is_version_level_worm_enabled
+        self.is_immutable_storage_with_versioning_enabled = is_immutable_storage_with_versioning_enabled
 
 
 class CorsRule(msrest.serialization.Model):
@@ -1413,29 +1413,22 @@ class JsonTextConfiguration(msrest.serialization.Model):
 class KeyInfo(msrest.serialization.Model):
     """Key information.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param start: Required. The date-time the key is active in ISO 8601 UTC time.
+    :param start: The date-time the key is active in ISO 8601 UTC time.
     :type start: str
-    :param expiry: Required. The date-time the key expires in ISO 8601 UTC time.
+    :param expiry: The date-time the key expires in ISO 8601 UTC time.
     :type expiry: str
     """
 
-    _validation = {
-        'start': {'required': True},
-        'expiry': {'required': True},
-    }
-
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
+        'start': {'key': 'start', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        start: str,
-        expiry: str,
+        start: Optional[str] = None,
+        expiry: Optional[str] = None,
         **kwargs
     ):
         super(KeyInfo, self).__init__(**kwargs)
@@ -1865,7 +1858,7 @@ class QueryFormat(msrest.serialization.Model):
     :param arrow_configuration: arrow configuration.
     :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
     :param parquet_text_configuration: Any object.
-    :type parquet_text_configuration: object
+    :type parquet_text_configuration: any
     """
 
     _attribute_map = {
@@ -1883,7 +1876,7 @@ class QueryFormat(msrest.serialization.Model):
         delimited_text_configuration: Optional["DelimitedTextConfiguration"] = None,
         json_text_configuration: Optional["JsonTextConfiguration"] = None,
         arrow_configuration: Optional["ArrowConfiguration"] = None,
-        parquet_text_configuration: Optional[object] = None,
+        parquet_text_configuration: Optional[Any] = None,
         **kwargs
     ):
         super(QueryFormat, self).__init__(**kwargs)
@@ -1901,7 +1894,7 @@ class QueryRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar query_type: Required. the query type. Default value: "SQL".
+    :ivar query_type: the query type. Has constant value: "SQL".
     :vartype query_type: str
     :param expression: Required. a query statement.
     :type expression: str
@@ -2174,7 +2167,7 @@ class StorageError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(
@@ -2267,55 +2260,42 @@ class StorageServiceStats(msrest.serialization.Model):
 class UserDelegationKey(msrest.serialization.Model):
     """A user delegation key.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param signed_oid: Required. The Azure Active Directory object ID in GUID format.
+    :param signed_oid: The Azure Active Directory object ID in GUID format.
     :type signed_oid: str
-    :param signed_tid: Required. The Azure Active Directory tenant ID in GUID format.
+    :param signed_tid: The Azure Active Directory tenant ID in GUID format.
     :type signed_tid: str
-    :param signed_start: Required. The date-time the key is active.
+    :param signed_start: The date-time the key is active.
     :type signed_start: ~datetime.datetime
-    :param signed_expiry: Required. The date-time the key expires.
+    :param signed_expiry: The date-time the key expires.
     :type signed_expiry: ~datetime.datetime
-    :param signed_service: Required. Abbreviation of the Azure Storage service that accepts the
-     key.
+    :param signed_service: Abbreviation of the Azure Storage service that accepts the key.
     :type signed_service: str
-    :param signed_version: Required. The service version that created the key.
+    :param signed_version: The service version that created the key.
     :type signed_version: str
-    :param value: Required. The key as a base64 string.
+    :param value: The key as a base64 string.
     :type value: str
     """
 
-    _validation = {
-        'signed_oid': {'required': True},
-        'signed_tid': {'required': True},
-        'signed_start': {'required': True},
-        'signed_expiry': {'required': True},
-        'signed_service': {'required': True},
-        'signed_version': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
-        'signed_oid': {'key': 'SignedOid', 'type': 'str'},
-        'signed_tid': {'key': 'SignedTid', 'type': 'str'},
-        'signed_start': {'key': 'SignedStart', 'type': 'iso-8601'},
-        'signed_expiry': {'key': 'SignedExpiry', 'type': 'iso-8601'},
-        'signed_service': {'key': 'SignedService', 'type': 'str'},
-        'signed_version': {'key': 'SignedVersion', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        'signed_oid': {'key': 'signedOid', 'type': 'str'},
+        'signed_tid': {'key': 'signedTid', 'type': 'str'},
+        'signed_start': {'key': 'signedStart', 'type': 'iso-8601'},
+        'signed_expiry': {'key': 'signedExpiry', 'type': 'iso-8601'},
+        'signed_service': {'key': 'signedService', 'type': 'str'},
+        'signed_version': {'key': 'signedVersion', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        signed_oid: str,
-        signed_tid: str,
-        signed_start: datetime.datetime,
-        signed_expiry: datetime.datetime,
-        signed_service: str,
-        signed_version: str,
-        value: str,
+        signed_oid: Optional[str] = None,
+        signed_tid: Optional[str] = None,
+        signed_start: Optional[datetime.datetime] = None,
+        signed_expiry: Optional[datetime.datetime] = None,
+        signed_service: Optional[str] = None,
+        signed_version: Optional[str] = None,
+        value: Optional[str] = None,
         **kwargs
     ):
         super(UserDelegationKey, self).__init__(**kwargs)
