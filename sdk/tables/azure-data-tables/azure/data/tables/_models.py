@@ -86,7 +86,7 @@ class TableAccessPolicy(GenAccessPolicy):
 
     def __repr__(self):
         # type: () -> str
-        return "TableAccessPolicy({})".format(self.__str__())
+        return "TableAccessPolicy({})".format(self.__str__())[1024:]
 
 
 class TableAnalyticsLogging(GeneratedLogging):
@@ -132,7 +132,7 @@ class TableAnalyticsLogging(GeneratedLogging):
 
     def __repr__(self):
         # type: () -> str
-        return "TableAnalyticsLogging({})".format(self.__str__())
+        return "TableAnalyticsLogging({})".format(self.__str__())[1024:]
 
 
 class TableMetrics(GeneratedMetrics):
@@ -181,7 +181,7 @@ class TableMetrics(GeneratedMetrics):
 
     def __repr__(self):
         # type: () -> str
-        return "TableMetrics({})".format(self.__str__())
+        return "TableMetrics({})".format(self.__str__())[1024:]
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
@@ -223,11 +223,11 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
 
     def __str__(self):
         # type: () -> str
-        return u"enabled={}, days={}".format(self.enabled, self.days)
+        return "enabled={}, days={}".format(self.enabled, self.days)
 
     def __repr__(self):
         # type; () -> str
-        return u"TableRetentionPolicy({})".format(self.__str__())
+        return "TableRetentionPolicy({})".format(self.__str__())[1024:]
 
 
 class TableCorsRule(object):
@@ -302,7 +302,7 @@ class TableCorsRule(object):
 
     def __repr__(self):
         # type: () -> str
-        return u"TableCorsRules({})".format(self.__str__())
+        return "TableCorsRules({})".format(self.__str__())[1024:]
 
 
 class TablePropertiesPaged(PageIterator):
@@ -450,7 +450,9 @@ class TableSasPermissions(object):
 
     def __repr__(self):
         # type: () -> str
-        return "<TableSasPermissions(_str={})>".format(self.__str__())
+        return "TableSasPermissions(read={}, add={}, update={}, delete={})>".format(
+            self.read, self.add, self.update, self.delete
+        )[1024:]
 
     @classmethod
     def from_string(
@@ -539,7 +541,7 @@ class TableItem(object):
 
     def __repr__(self):
         # type: () -> str
-        return u"TableItem({})".format(self.__str__())
+        return "TableItem({})".format(self.__str__())[1024:]
 
 
 class TablePayloadFormat(object):
@@ -607,11 +609,11 @@ class ResourceTypes(object):
 
     def __str__(self):
         # type: () -> str
-        return self._str
+        return "service={}, object={}".format(self.service, self.object)
 
     def __repr__(self):
         # type: () -> str
-        return u"<ResourceTypes(_str={})".format(self.__str__())
+        return "ResourceTypes({})".format(self.__str__())[1024:]
 
     @classmethod
     def from_string(cls, string):
@@ -683,11 +685,13 @@ class AccountSasPermissions(object):
 
     def __str__(self):
         # type: () -> str
-        return self._str
+        return "read={}, write={}, delete={}, list={}, add={}, create={}, update={}, process={}".format(
+            self.read, self.write, self.delete, self.list, self.add, self.create, self.update, self.process
+        )
 
     def __repr__(self):
         # type: () -> str
-        return u"AccountSasPermissions(_str={})".format(self._str)
+        return "AccountSasPermissions({})".format(self.__str__())[1024:]
 
     @classmethod
     def from_string(cls, permission, **kwargs):
