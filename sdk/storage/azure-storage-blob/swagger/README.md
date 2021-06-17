@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/142f7bf59dff110e71b991344b574843ca7d3eb1/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
+input-file: C:/Projects/azure-rest-api-specs/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
 output-folder: ../azure/storage/blob/_generated
 namespace: azure.storage.blob
 no-namespace-folders: true

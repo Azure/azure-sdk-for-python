@@ -47,6 +47,8 @@ class AppendBlobOperations(object):
     def create(
         self,
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
@@ -66,6 +68,10 @@ class AppendBlobOperations(object):
 
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -156,6 +162,8 @@ class AppendBlobOperations(object):
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -245,6 +253,8 @@ class AppendBlobOperations(object):
     def append_block(
         self,
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         body,  # type: IO
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
@@ -264,6 +274,10 @@ class AppendBlobOperations(object):
 
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -338,6 +352,8 @@ class AppendBlobOperations(object):
         url = self.append_block.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -419,6 +435,8 @@ class AppendBlobOperations(object):
         self,
         source_url,  # type: str
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         source_range=None,  # type: Optional[str]
         source_content_md5=None,  # type: Optional[bytearray]
         source_contentcrc64=None,  # type: Optional[bytearray]
@@ -443,6 +461,10 @@ class AppendBlobOperations(object):
         :type source_url: str
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param source_range: Bytes of source data in the specified range.
         :type source_range: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
@@ -530,6 +552,8 @@ class AppendBlobOperations(object):
         url = self.append_block_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -618,6 +642,8 @@ class AppendBlobOperations(object):
 
     def seal(
         self,
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -629,6 +655,10 @@ class AppendBlobOperations(object):
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -676,6 +706,8 @@ class AppendBlobOperations(object):
         url = self.seal.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

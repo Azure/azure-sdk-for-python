@@ -48,6 +48,8 @@ class PageBlobOperations(object):
         self,
         content_length,  # type: int
         blob_content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         tier=None,  # type: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]]
         metadata=None,  # type: Optional[str]
@@ -72,6 +74,10 @@ class PageBlobOperations(object):
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
          TB. The page blob size must be aligned to a 512-byte boundary.
         :type blob_content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -168,6 +174,8 @@ class PageBlobOperations(object):
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -262,6 +270,8 @@ class PageBlobOperations(object):
     def upload_pages(
         self,
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         body,  # type: IO
         transactional_content_md5=None,  # type: Optional[bytearray]
         transactional_content_crc64=None,  # type: Optional[bytearray]
@@ -280,6 +290,10 @@ class PageBlobOperations(object):
 
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param body: Initial data.
         :type body: IO
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
@@ -359,6 +373,8 @@ class PageBlobOperations(object):
         url = self.upload_pages.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -443,6 +459,8 @@ class PageBlobOperations(object):
     def clear_pages(
         self,
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         range=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
@@ -458,6 +476,10 @@ class PageBlobOperations(object):
 
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -528,6 +550,8 @@ class PageBlobOperations(object):
         url = self.clear_pages.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -605,6 +629,8 @@ class PageBlobOperations(object):
         source_range,  # type: str
         content_length,  # type: int
         range,  # type: str
+        container_name,  # type: str
+        blob,  # type: str
         source_content_md5=None,  # type: Optional[bytearray]
         source_contentcrc64=None,  # type: Optional[bytearray]
         timeout=None,  # type: Optional[int]
@@ -631,6 +657,10 @@ class PageBlobOperations(object):
         :param range: The range of bytes to which the source range would be written. The range should
          be 512 aligned and range-end is required.
         :type range: str
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source.
         :type source_content_md5: bytearray
@@ -716,6 +746,8 @@ class PageBlobOperations(object):
         url = self.upload_pages_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -804,6 +836,8 @@ class PageBlobOperations(object):
 
     def get_page_ranges(
         self,
+        container_name,  # type: str
+        blob,  # type: str
         snapshot=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         range=None,  # type: Optional[str]
@@ -816,6 +850,10 @@ class PageBlobOperations(object):
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -868,6 +906,8 @@ class PageBlobOperations(object):
         url = self.get_page_ranges.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -927,6 +967,8 @@ class PageBlobOperations(object):
 
     def get_page_ranges_diff(
         self,
+        container_name,  # type: str
+        blob,  # type: str
         snapshot=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         prevsnapshot=None,  # type: Optional[str]
@@ -941,6 +983,10 @@ class PageBlobOperations(object):
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -1005,6 +1051,8 @@ class PageBlobOperations(object):
         url = self.get_page_ranges_diff.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1069,6 +1117,8 @@ class PageBlobOperations(object):
     def resize(
         self,
         blob_content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -1083,6 +1133,10 @@ class PageBlobOperations(object):
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
          TB. The page blob size must be aligned to a 512-byte boundary.
         :type blob_content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1141,6 +1195,8 @@ class PageBlobOperations(object):
         url = self.resize.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1204,6 +1260,8 @@ class PageBlobOperations(object):
     def update_sequence_number(
         self,
         sequence_number_action,  # type: Union[str, "_models.SequenceNumberActionType"]
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         blob_sequence_number=0,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
@@ -1218,6 +1276,10 @@ class PageBlobOperations(object):
          request. This property applies to page blobs only. This property indicates how the service
          should modify the blob's sequence number.
         :type sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1266,6 +1328,8 @@ class PageBlobOperations(object):
         url = self.update_sequence_number.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1323,6 +1387,8 @@ class PageBlobOperations(object):
     def copy_incremental(
         self,
         copy_source,  # type: str
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
@@ -1340,6 +1406,10 @@ class PageBlobOperations(object):
          would appear in a request URI. The source blob must either be public or must be authenticated
          via a shared access signature.
         :type copy_source: str
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1379,6 +1449,8 @@ class PageBlobOperations(object):
         url = self.copy_incremental.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

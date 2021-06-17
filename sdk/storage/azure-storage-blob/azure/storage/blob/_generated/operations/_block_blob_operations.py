@@ -47,6 +47,8 @@ class BlockBlobOperations(object):
     def upload(
         self,
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         body,  # type: IO
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
@@ -73,6 +75,10 @@ class BlockBlobOperations(object):
 
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -171,6 +177,8 @@ class BlockBlobOperations(object):
         url = self.upload.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -268,6 +276,8 @@ class BlockBlobOperations(object):
         self,
         content_length,  # type: int
         copy_source,  # type: str
+        container_name,  # type: str
+        blob,  # type: str
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
         metadata=None,  # type: Optional[str]
@@ -298,6 +308,10 @@ class BlockBlobOperations(object):
          would appear in a request URI. The source blob must either be public or must be authenticated
          via a shared access signature.
         :type copy_source: str
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -405,6 +419,8 @@ class BlockBlobOperations(object):
         url = self.put_blob_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -508,6 +524,8 @@ class BlockBlobOperations(object):
         self,
         block_id,  # type: str
         content_length,  # type: int
+        container_name,  # type: str
+        blob,  # type: str
         body,  # type: IO
         transactional_content_md5=None,  # type: Optional[bytearray]
         transactional_content_crc64=None,  # type: Optional[bytearray]
@@ -527,6 +545,10 @@ class BlockBlobOperations(object):
         :type block_id: str
         :param content_length: The length of the request.
         :type content_length: long
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param body: Initial data.
         :type body: IO
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
@@ -581,6 +603,8 @@ class BlockBlobOperations(object):
         url = self.stage_block.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -646,6 +670,8 @@ class BlockBlobOperations(object):
         block_id,  # type: str
         content_length,  # type: int
         source_url,  # type: str
+        container_name,  # type: str
+        blob,  # type: str
         source_range=None,  # type: Optional[str]
         source_content_md5=None,  # type: Optional[bytearray]
         source_contentcrc64=None,  # type: Optional[bytearray]
@@ -669,6 +695,10 @@ class BlockBlobOperations(object):
         :type content_length: long
         :param source_url: Specify a URL to the copy source.
         :type source_url: str
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param source_range: Bytes of source data in the specified range.
         :type source_range: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
@@ -733,6 +763,8 @@ class BlockBlobOperations(object):
         url = self.stage_block_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -803,6 +835,8 @@ class BlockBlobOperations(object):
 
     def commit_block_list(
         self,
+        container_name,  # type: str
+        blob,  # type: str
         blocks,  # type: "_models.BlockLookupList"
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
@@ -830,6 +864,10 @@ class BlockBlobOperations(object):
         or from the uncommitted block list, or to commit the most recently uploaded version of the
         block, whichever list it may belong to.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param blocks:
         :type blocks: ~azure.storage.blob.models.BlockLookupList
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -931,6 +969,8 @@ class BlockBlobOperations(object):
         url = self.commit_block_list.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'containerName': self._serialize.url("container_name", container_name, 'str'),
+            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
