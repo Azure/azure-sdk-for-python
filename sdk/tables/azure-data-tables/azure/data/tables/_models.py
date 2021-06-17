@@ -78,6 +78,16 @@ class TableAccessPolicy(GenAccessPolicy):
         self.expiry = kwargs.get('expiry')
         self.permission = kwargs.get('permission')
 
+    def __str__(self):
+        # type: () -> str
+        return "start={}, expiry={}, permission={}".format(
+            self.start, self.expiry, self.permission
+        )
+
+    def __repr__(self):
+        # type: () -> str
+        return "TableAccessPolicy({})".format(self.__str__())
+
 
 class TableAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
@@ -113,6 +123,16 @@ class TableAnalyticsLogging(GeneratedLogging):
                 generated.retention_policy
             )
         )
+
+    def __str__(self):
+        # type: () -> str
+        return "version={}, delete={}, read={}, write={}, retention_policy={}".format(
+            self.version, self.delete, self.read, self.write, self.retention_policy
+        )
+
+    def __repr__(self):
+        # type: () -> str
+        return "TableAnalyticsLogging({})".format(self.__str__())
 
 
 class TableMetrics(GeneratedMetrics):
@@ -153,6 +173,16 @@ class TableMetrics(GeneratedMetrics):
             )
         )
 
+    def __str__(self):
+        # type: () -> str
+        return "version={}, enabled={}, include_apis={}, retention_policy={}".format(
+            self.version, self.enabled, self.include_apis, self.retention_policy
+        )
+
+    def __repr__(self):
+        # type: () -> str
+        return "TableMetrics({})".format(self.__str__())
+
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
@@ -190,6 +220,14 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             enabled=generated.enabled,
             days=generated.days,
         )
+
+    def __str__(self):
+        # type: () -> str
+        return u"enabled={}, days={}".format(self.enabled, self.days)
+
+    def __repr__(self):
+        # type; () -> str
+        return u"TableRetentionPolicy({})".format(self.__str__())
 
 
 class TableCorsRule(object):
@@ -255,6 +293,16 @@ class TableCorsRule(object):
             exposed_headers=exposedheaders,
             max_age_in_seconds=generated.max_age_in_seconds,
         )
+
+    def __str__(self):
+        # type: () -> str
+        return "allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={}".format(
+            self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds
+        )
+
+    def __repr__(self):
+        # type: () -> str
+        return u"TableCorsRules({})".format(self.__str__())
 
 
 class TablePropertiesPaged(PageIterator):
@@ -400,6 +448,10 @@ class TableSasPermissions(object):
             + ("d" if self.delete else "")
         )
 
+    def __repr__(self):
+        # type: () -> str
+        return "<TableSasPermissions(_str={})>".format(self.__str__())
+
     @classmethod
     def from_string(
         cls,
@@ -481,6 +533,14 @@ class TableItem(object):
         # type: (TableQueryResponse, Any) -> TableItem
         return cls(generated.table_name)  # type: ignore
 
+    def __str__(self):
+        # type: () -> str
+        return "name={}".format(self.name)
+
+    def __repr__(self):
+        # type: () -> str
+        return u"TableItem({})".format(self.__str__())
+
 
 class TablePayloadFormat(object):
     """
@@ -546,7 +606,12 @@ class ResourceTypes(object):
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
     def __str__(self):
+        # type: () -> str
         return self._str
+
+    def __repr__(self):
+        # type: () -> str
+        return u"<ResourceTypes(_str={})".format(self.__str__())
 
     @classmethod
     def from_string(cls, string):
@@ -617,7 +682,12 @@ class AccountSasPermissions(object):
         )
 
     def __str__(self):
+        # type: () -> str
         return self._str
+
+    def __repr__(self):
+        # type: () -> str
+        return u"AccountSasPermissions(_str={})".format(self._str)
 
     @classmethod
     def from_string(cls, permission, **kwargs):
