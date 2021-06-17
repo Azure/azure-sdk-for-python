@@ -3,64 +3,64 @@
 trigger:
   branches:
     include:
-    - master
-    - main
-    - hotfix/*
-    - release/*
-    - restapi*
+      - master
+      - main
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/core/
-    - eng/
-    - tools/
+      - sdk/core/
+      - eng/
+      - tools/
 
 pr:
   branches:
     include:
-    - master
-    - main
-    - feature/*
-    - hotfix/*
-    - release/*
-    - restapi*
+      - master
+      - main
+      - feature/*
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/core/
-    - eng/
-    - tools/
+      - sdk/core/
+      - eng/
+      - tools/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: core
     Artifacts:
-    - name: azure-core
-      safeName: azurecore
-    - name: azure-mgmt-core
-      safeName: azuremgmtcore
-    - name: azure-core-tracing-opencensus
-      safeName: azurecorecoretracingopencensus
-    - name: azure-core-tracing-opentelemetry
-      safeName: azurecorecoretracingtelemetry
-    - name: azure-common
-      safeName: azurecommon
+      - name: azure-core
+        safeName: azurecore
+      - name: azure-mgmt-core
+        safeName: azuremgmtcore
+      - name: azure-core-tracing-opencensus
+        safeName: azurecorecoretracingopencensus
+      - name: azure-core-tracing-opentelemetry
+        safeName: azurecorecoretracingtelemetry
+      - name: azure-common
+        safeName: azurecommon
     BeforeTestSteps:
       - task: PythonScript@0
         inputs:
-          scriptSource: 'scripts/devops_tasks/start_coretestserver.py'
+          scriptPath: "scripts/devops_tasks/start_coretestserver.py"
         displayName: "Start CoreTestServer"
     AfterTestSteps:
       - task: PythonScript@0
         inputs:
-          scriptSource: 'scripts/devops_tasks/end_coretestserver.py'
+          scriptPath: "scripts/devops_tasks/end_coretestserver.py"
           arguments: >-
             -p $(FLASK_PID)
         displayName: "Shut down CoreTestServer"
     CondaArtifacts:
-    - name: azure-core
-      meta_source: conda-recipe/meta.yaml
-      common_root: azure
-      checkout:
-        - package: azure-core
-          checkout_path: sdk/core
-          version: 1.12.0
+      - name: azure-core
+        meta_source: conda-recipe/meta.yaml
+        common_root: azure
+        checkout:
+          - package: azure-core
+            checkout_path: sdk/core
+            version: 1.12.0
