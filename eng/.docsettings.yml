@@ -70,6 +70,7 @@ known_content_issues:
   - ['sdk/core/azure-servicemanagement-legacy/README.md', '#4554']
   - ['sdk/eventgrid/azure-eventgrid/README.md', '#4554']
   - ['sdk/monitor/azure-monitor-query/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor-query/samples/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']

@@ -166,7 +166,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     granularity=DataFeedGranularity(
                         granularity_type="Custom",
-                        custom_granularity_value=20
+                        custom_granularity_value=400
                     ),
                     schema=DataFeedSchema(
                         metrics=[
@@ -207,7 +207,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.data_source_type, "SqlServer")
                 self.assertIsNotNone(data_feed.source.query)
                 self.assertEqual(data_feed.granularity.granularity_type, "Custom")
-                self.assertEqual(data_feed.granularity.custom_granularity_value, 20)
+                self.assertEqual(data_feed.granularity.custom_granularity_value, 400)
                 self.assertEqual(data_feed.schema.metrics[0].name, "cost")
                 self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
                 self.assertEqual(data_feed.schema.metrics[0].display_name, "display cost")

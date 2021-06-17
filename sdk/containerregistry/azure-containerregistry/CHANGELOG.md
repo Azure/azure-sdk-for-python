@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+
 ## 1.0.0b3 (2021-06-08)
 * Removes `DeleteRepositoryResult`. `ContainerRegistryClient.delete_repository` now returns `None`
 * Removed `writeable_properties` objects, placing `can_delete/read/write/list` properties on the immediate `Repository/Tag/ArtifactManifestProperties` objects

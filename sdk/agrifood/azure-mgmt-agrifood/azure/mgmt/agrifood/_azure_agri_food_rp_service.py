@@ -8,46 +8,73 @@
 
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
-from .operations import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._configuration import AzureAgriFoodRPServiceConfiguration
+from .operations import ExtensionsOperations
+from .operations import FarmBeatsExtensionsOperations
+from .operations import FarmBeatsModelsOperations
+from .operations import LocationsOperations
+from .operations import Operations
 from . import models
 
 
-class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin):
-    """Azure Cognitive Service Metrics Advisor REST API (OpenAPI v2).
+class AzureAgriFoodRPService(object):
+    """APIs documentation for Azure AgriFood Resource Provider Service.
 
+    :ivar extensions: ExtensionsOperations operations
+    :vartype extensions: azure.mgmt.agrifood.operations.ExtensionsOperations
+    :ivar farm_beats_extensions: FarmBeatsExtensionsOperations operations
+    :vartype farm_beats_extensions: azure.mgmt.agrifood.operations.FarmBeatsExtensionsOperations
+    :ivar farm_beats_models: FarmBeatsModelsOperations operations
+    :vartype farm_beats_models: azure.mgmt.agrifood.operations.FarmBeatsModelsOperations
+    :ivar locations: LocationsOperations operations
+    :vartype locations: azure.mgmt.agrifood.operations.LocationsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.agrifood.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
-    :type endpoint: str
+    :param subscription_id: The ID of the target subscription.
+    :type subscription_id: str
+    :param str base_url: Service URL
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        endpoint,  # type: str
+        subscription_id,  # type: str
+        base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = AzureAgriFoodRPServiceConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.extensions = ExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.farm_beats_extensions = FarmBeatsExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.farm_beats_models = FarmBeatsModelsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -60,7 +87,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
@@ -72,7 +99,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(AzureCognitiveServiceM
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2
+        # type: () -> AzureAgriFoodRPService
         self._client.__enter__()
         return self
 

@@ -1,5 +1,14 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+**Breaking changes**
+
+- `TranslationStatusResult` was renamed to `TranslationStatus`.
+- `DocumentStatusResult` was renamed to `DocumentStatus`.
+- `get_document_formats` was renamed to `get_supported_document_formats`.
+- `get_glossary_formats` was renamed to `get_supported_glossary_formats`.
+
 ## 1.0.0b2 (2021-06-08)
 
 This version of the SDK defaults to the latest supported service version, which currently is v1.0

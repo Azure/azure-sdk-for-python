@@ -311,16 +311,42 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         table = self._create_table(ts)
         try:
-            # Act
-            table.set_table_access_policy(signed_identifiers={'empty': None})
-            # Assert
+            dt = datetime(2021, 6, 8, 2, 10, 9)
+            signed_identifiers={
+                'null': None,
+                'empty': TableAccessPolicy(start=None, expiry=None, permission=None),
+                'partial': TableAccessPolicy(permission='r'),
+                'full': TableAccessPolicy(start=dt, expiry=dt, permission='r')
+                }
+            table.set_table_access_policy(signed_identifiers)
             acl = table.get_table_access_policy()
             assert acl is not None
-            assert len(acl) ==  1
-            assert acl['empty'] is not None
-            assert acl['empty'].permission is None
-            assert acl['empty'].expiry is None
-            assert acl['empty'].start is None
+            assert len(acl) ==  4
+            assert acl['null'] is None
+            assert acl['empty'] is None
+            assert acl['partial'] is not None
+            assert acl['partial'].permission == 'r'
+            assert acl['partial'].expiry is None
+            assert acl['partial'].start is None
+            assert acl['full'] is not None
+            assert acl['full'].permission == 'r'
+            self._assert_policy_datetime(dt, acl['full'].expiry)
+            self._assert_policy_datetime(dt, acl['full'].start)
+
+            signed_identifiers.pop('empty')
+            signed_identifiers['partial'] = None   
+
+            table.set_table_access_policy(signed_identifiers)
+            acl = table.get_table_access_policy()
+            assert acl is not None
+            assert len(acl) ==  3
+            assert 'empty' not in acl
+            assert acl['null'] is None
+            assert acl['partial'] is None
+            assert acl['full'] is not None
+            assert acl['full'].permission == 'r'
+            self._assert_policy_datetime(dt, acl['full'].expiry)
+            self._assert_policy_datetime(dt, acl['full'].start)
         finally:
             ts.delete_table(table.table_name)
 
@@ -335,17 +361,19 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         client = ts.get_table_client(table_name=table.table_name)
 
         # Act
-        identifiers = dict()
-        identifiers['testid'] = TableAccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
-                                             expiry=datetime.utcnow() + timedelta(hours=1),
-                                             permission='r')
+        start = datetime(2021, 6, 8, 2, 10, 9) - timedelta(minutes=5)
+        expiry = datetime(2021, 6, 8, 2, 10, 9) + timedelta(hours=1)
+        identifiers = {'testid': TableAccessPolicy(start=start, expiry=expiry, permission='r')}
         try:
             client.set_table_access_policy(signed_identifiers=identifiers)
             # Assert
             acl = client.get_table_access_policy()
             assert acl is not None
             assert len(acl) ==  1
-            assert 'testid' in acl
+            assert acl.get('testid')
+            self._assert_policy_datetime(start, acl['testid'].start)
+            self._assert_policy_datetime(expiry, acl['testid'].expiry)
+            assert acl['testid'].permission == 'r'
         finally:
             ts.delete_table(table.table_name)
 

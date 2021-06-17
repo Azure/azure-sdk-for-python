@@ -296,6 +296,15 @@ class TableTestCase(object):
         self._assert_metrics_equal(prop["minute_metrics"], TableMetrics())
         self._assert_cors_equal(prop["cors"], list())
 
+    def _assert_policy_datetime(self, val1, val2):
+        assert isinstance(val2, datetime)
+        assert val1.year == val2.year
+        assert val1.month == val2.month
+        assert val1.day == val2.day
+        assert val1.hour == val2.hour
+        assert val1.minute == val2.minute
+        assert val1.second == val2.second
+
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
             assert log1 == log2

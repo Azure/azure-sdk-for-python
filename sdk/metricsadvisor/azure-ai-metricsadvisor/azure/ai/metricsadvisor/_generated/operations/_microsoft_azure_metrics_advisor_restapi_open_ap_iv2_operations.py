@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin(object):
+class MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin(object):
 
     def get_active_series_count(
         self,

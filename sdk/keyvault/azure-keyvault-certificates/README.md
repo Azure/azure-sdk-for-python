@@ -109,6 +109,8 @@ az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --certificate-
 ```
 > Possible certificate permissions: backup, create, delete, deleteissuers, get, getissuers, import, list, listissuers, managecontacts, manageissuers, purge, recover, restore, setissuers, update
 
+If you have enabled role-based access control (RBAC) for Key Vault instead, you can find roles like "Key Vault Certificates Officer" in our [RBAC guide][rbac_guide].
+
 #### Create a client
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 **AZURE_TENANT_ID** environment variables are set,
@@ -431,6 +433,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [pypi_package_certificates]: https://pypi.org/project/azure-keyvault-certificates/
 [certificate_client_docs]: https://aka.ms/azsdk/python/keyvault-certificates/docs#azure.keyvault.certificates.CertificateClient
+[rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-certificates/docs
 [certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/azure/keyvault/certificates
 [certificates_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples
