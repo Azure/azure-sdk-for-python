@@ -84,7 +84,7 @@
     },
     "variables": {
         "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
-        "hsmApiVersion": "2020-04-01-preview",
+        "hsmApiVersion": "2021-04-01-preview",
         "hsmName": "[concat(parameters('baseName'), 'hsm')]",
         "mgmtApiVersion": "2019-04-01",
         "blobContainerName": "backup",
@@ -189,12 +189,19 @@
                 "name": "Standard_B1"
             },
             "properties": {
-                "tenantId": "[parameters('tenantId')]",
-                "initialAdminObjectIds": [
+                "TenantId": "[parameters('tenantId')]",
+                "InitialAdminObjectIds": [
                     "[parameters('testApplicationOid')]"
                 ],
-                "enablePurgeProtection": false,
-                "enableSoftDelete": "[parameters('enableSoftDelete')]"
+                "EnablePurgeProtection": false,
+                "EnableSoftDelete": "[parameters('enableSoftDelete')]",
+                "PublicNetworkAccess": "Enabled",
+                "NetworkAcls": {
+                    "Bypass": "AzureServices",
+                    "DefaultAction": "Allow",
+                    "IpRules": [],
+                    "VirtualNetworkRules": []
+                }
             }
         },
         {
