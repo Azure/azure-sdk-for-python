@@ -15,7 +15,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryClient, LogsQueryRequest
-from tests.preparers import logs_decorator
+from preparers import logs_decorator
 
 
 class LogsSingleQueryTest(AzureTestCase):
