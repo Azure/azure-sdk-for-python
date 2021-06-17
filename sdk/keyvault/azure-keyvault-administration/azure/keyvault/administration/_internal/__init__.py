@@ -20,7 +20,7 @@ __all__ = [
     "KeyVaultClientBase",
 ]
 
-_VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])  # type: ignore
+_VaultId = namedtuple("_VaultId", ["vault_url", "collection", "name", "version"])
 
 
 def parse_vault_id(url):
