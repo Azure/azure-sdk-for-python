@@ -48,7 +48,7 @@ class JobStepsOperations:
         job_agent_name: str,
         job_name: str,
         job_version: int,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobStepListResult"]:
         """Gets all job steps in the specified job version.
 
@@ -136,7 +136,7 @@ class JobStepsOperations:
         job_name: str,
         job_version: int,
         step_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobStep":
         """Gets the specified version of a job step.
 
@@ -209,7 +209,7 @@ class JobStepsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobStepListResult"]:
         """Gets all job steps for a job's current version.
 
@@ -293,7 +293,7 @@ class JobStepsOperations:
         job_agent_name: str,
         job_name: str,
         step_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobStep":
         """Gets a job step in a job's current version.
 
@@ -365,7 +365,7 @@ class JobStepsOperations:
         job_name: str,
         step_name: str,
         parameters: "_models.JobStep",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobStep":
         """Creates or updates a job step. This will implicitly create a new job version.
 
@@ -447,7 +447,7 @@ class JobStepsOperations:
         job_agent_name: str,
         job_name: str,
         step_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a job step. This will implicitly create a new job version.
 

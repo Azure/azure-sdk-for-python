@@ -340,8 +340,8 @@ class AppServicePlansOperations(object):
         :type app_service_plan: ~azure.mgmt.web.v2016_09_01.models.AppServicePlan
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either AppServicePlan or the result of cls(response)
@@ -1341,7 +1341,7 @@ class AppServicePlansOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Gets all selectable SKUs for a given App Service Plan.
 
         Gets all selectable SKUs for a given App Service Plan.
@@ -1351,11 +1351,11 @@ class AppServicePlansOperations(object):
         :param name: Name of App Service Plan.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -47,7 +47,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExtendedServerBlobAuditingPolicy":
         """Gets an extended server's blob auditing policy.
 
@@ -109,7 +109,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ExtendedServerBlobAuditingPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ExtendedServerBlobAuditingPolicy"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ExtendedServerBlobAuditingPolicy"]]
         error_map = {
@@ -166,7 +166,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ExtendedServerBlobAuditingPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExtendedServerBlobAuditingPolicy"]:
         """Creates or updates an extended server's blob auditing policy.
 
@@ -179,8 +179,8 @@ class ExtendedServerBlobAuditingPoliciesOperations:
         :type parameters: ~azure.mgmt.sql.models.ExtendedServerBlobAuditingPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExtendedServerBlobAuditingPolicy or the result of cls(response)
@@ -238,7 +238,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExtendedServerBlobAuditingPolicyListResult"]:
         """Lists extended auditing settings of a server.
 

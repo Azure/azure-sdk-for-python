@@ -22,7 +22,7 @@ The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
 ### Install the package
 Install the Azure Data Tables client library for Python with [pip][pip_link]:
 ```bash
-pip install --pre azure-data-tables
+pip install azure-data-tables
 ```
 
 #### Create the client
@@ -59,8 +59,12 @@ az storage account keys list -g MyResourceGroup -n MyStorageAccount
 
 Use the key as the credential parameter to authenticate the client:
 ```python
-    from azure.data.tables import TableServiceClient
-    service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential="<account_access_key>")
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.data.tables import TableServiceClient
+
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+
+service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=credential)
 ```
 
 ##### Creating the client from a connection string
@@ -72,9 +76,9 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ```python
-    from azure.data.tables import TableServiceClient
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
-    service = TableServiceClient.from_connection_string(conn_str=connection_string)
+from azure.data.tables import TableServiceClient
+connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
+service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
 ##### Creating the client from a SAS token
@@ -82,18 +86,19 @@ To use a [shared access signature (SAS) token][azure_sas_token], provide the tok
    functions to create a sas token for the account or table:
 
 ```python
-    from datetime import datetime, timedelta
-    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+from datetime import datetime, timedelta
+from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
-    sas_token = generate_account_sas(
-        account_name="<account-name>",
-        account_key="<account-access-key>",
-        resource_types=ResourceTypes(service=True),
-        permission=AccountSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+sas_token = generate_account_sas(
+    credential,
+    resource_types=ResourceTypes(service=True),
+    permission=AccountSasPermissions(read=True),
+    expiry=datetime.utcnow() + timedelta(hours=1),
+)
 
-    table_service_client = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=sas_token)
+table_service_client = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=AzureSasCredential(sas_token))
 ```
 
 

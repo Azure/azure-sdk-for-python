@@ -8,7 +8,7 @@
 FILE: sample_translation_with_glossaries.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a translation job and apply custom glossaries to the translation.
+    This sample demonstrates how to translate documents and apply custom glossaries to the translation.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
@@ -56,27 +56,27 @@ def sample_translation_with_glossaries():
                 ]
             )
 
-    job = client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
 
-    job_result = client.wait_until_done(job.id)  # type: JobStatusResult
+    poller = client.begin_translation(inputs=[inputs])
 
-    print("Job status: {}".format(job_result.status))
-    print("Job created on: {}".format(job_result.created_on))
-    print("Job last updated on: {}".format(job_result.last_updated_on))
-    print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+    result = poller.result()
+
+    print("Status: {}".format(poller.status()))
+    print("Created on: {}".format(poller.details.created_on))
+    print("Last updated on: {}".format(poller.details.last_updated_on))
+    print("Total number of translations on documents: {}".format(poller.details.documents_total_count))
 
     print("\nOf total documents...")
-    print("{} failed".format(job_result.documents_failed_count))
-    print("{} succeeded".format(job_result.documents_succeeded_count))
+    print("{} failed".format(poller.details.documents_failed_count))
+    print("{} succeeded".format(poller.details.documents_succeeded_count))
 
-    doc_results = client.list_all_document_statuses(job_result.id)  # type: ItemPaged[DocumentStatusResult]
-    for document in doc_results:
+    for document in result:
         print("Document ID: {}".format(document.id))
         print("Document status: {}".format(document.status))
         if document.status == "Succeeded":
             print("Source document location: {}".format(document.source_document_url))
             print("Translated document location: {}".format(document.translated_document_url))
-            print("Translated to language: {}\n".format(document.translate_to))
+            print("Translated to language: {}\n".format(document.translated_to))
         else:
             print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
 

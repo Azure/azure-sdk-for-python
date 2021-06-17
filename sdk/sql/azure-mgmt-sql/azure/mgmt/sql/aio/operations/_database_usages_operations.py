@@ -46,7 +46,7 @@ class DatabaseUsagesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseUsageListResult"]:
         """Gets database usages.
 

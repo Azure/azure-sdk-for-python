@@ -26,18 +26,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class ErrorCodeV2(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enums containing high level error codes.
-    """
-
-    INVALID_REQUEST = "InvalidRequest"
-    INVALID_ARGUMENT = "InvalidArgument"
-    INTERNAL_SERVER_ERROR = "InternalServerError"
-    SERVICE_UNAVAILABLE = "ServiceUnavailable"
-    RESOURCE_NOT_FOUND = "ResourceNotFound"
-    UNAUTHORIZED = "Unauthorized"
-    REQUEST_RATE_TOO_HIGH = "RequestRateTooHigh"
-
 class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """List of possible statuses for job or document
     """
@@ -62,3 +50,15 @@ class StorageSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     AZURE_BLOB = "AzureBlob"
+
+class TranslationErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enums containing high level error codes.
+    """
+
+    INVALID_REQUEST = "InvalidRequest"
+    INVALID_ARGUMENT = "InvalidArgument"
+    INTERNAL_SERVER_ERROR = "InternalServerError"
+    SERVICE_UNAVAILABLE = "ServiceUnavailable"
+    RESOURCE_NOT_FOUND = "ResourceNotFound"
+    UNAUTHORIZED = "Unauthorized"
+    REQUEST_RATE_TOO_HIGH = "RequestRateTooHigh"

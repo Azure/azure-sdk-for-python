@@ -45,7 +45,7 @@ class OrganizationOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OrganizationResourceListResult"]:
         """List all organizations under the specified subscription.
 
@@ -61,7 +61,7 @@ class OrganizationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -101,7 +101,7 @@ class OrganizationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -115,7 +115,7 @@ class OrganizationOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OrganizationResourceListResult"]:
         """List all Organizations under the specified resource group.
 
@@ -133,7 +133,7 @@ class OrganizationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -174,7 +174,7 @@ class OrganizationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ResourceProviderDefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -189,7 +189,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OrganizationResource":
         """Get the properties of a specific Organization resource.
 
@@ -209,7 +209,7 @@ class OrganizationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -235,7 +235,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('OrganizationResource', pipeline_response)
@@ -251,14 +251,14 @@ class OrganizationOperations:
         resource_group_name: str,
         organization_name: str,
         body: Optional["_models.OrganizationResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OrganizationResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OrganizationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -292,7 +292,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -312,7 +312,7 @@ class OrganizationOperations:
         resource_group_name: str,
         organization_name: str,
         body: Optional["_models.OrganizationResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OrganizationResource"]:
         """Create Organization resource.
 
@@ -326,8 +326,8 @@ class OrganizationOperations:
         :type body: ~azure.mgmt.confluent.models.OrganizationResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OrganizationResource or the result of cls(response)
@@ -385,7 +385,7 @@ class OrganizationOperations:
         resource_group_name: str,
         organization_name: str,
         body: Optional["_models.OrganizationResourceUpdate"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OrganizationResource":
         """Update Organization resource.
 
@@ -407,7 +407,7 @@ class OrganizationOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -441,7 +441,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('OrganizationResource', pipeline_response)
@@ -456,14 +456,14 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -489,7 +489,7 @@ class OrganizationOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ResourceProviderDefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ResourceProviderDefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -501,7 +501,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete Organization resource.
 
@@ -513,8 +513,8 @@ class OrganizationOperations:
         :type organization_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

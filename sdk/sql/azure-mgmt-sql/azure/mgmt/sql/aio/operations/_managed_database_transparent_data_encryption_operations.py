@@ -47,7 +47,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         managed_instance_name: str,
         database_name: str,
         tde_name: Union[str, "_models.TransparentDataEncryptionName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedTransparentDataEncryption":
         """Gets a managed database's transparent data encryption.
 
@@ -116,7 +116,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         database_name: str,
         tde_name: Union[str, "_models.TransparentDataEncryptionName"],
         parameters: "_models.ManagedTransparentDataEncryption",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedTransparentDataEncryption":
         """Updates a database's transparent data encryption configuration.
 
@@ -194,7 +194,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedTransparentDataEncryptionListResult"]:
         """Gets a list of managed database's transparent data encryptions.
 

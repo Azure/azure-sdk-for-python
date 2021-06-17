@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class TasksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class TasksOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.TaskListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TaskListResult"]:
         """Lists all the tasks for a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -61,7 +61,7 @@ class TasksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2019_04_01.models.TaskListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,8 +123,8 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        **kwargs
-    ) -> "models.Task":
+        **kwargs: Any
+    ) -> "_models.Task":
         """Get the properties of a specified task.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -139,7 +139,7 @@ class TasksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2019_04_01.models.Task
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Task"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Task"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -186,10 +186,10 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        task_create_parameters: "models.Task",
-        **kwargs
-    ) -> "models.Task":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Task"]
+        task_create_parameters: "_models.Task",
+        **kwargs: Any
+    ) -> "_models.Task":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Task"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -245,9 +245,9 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        task_create_parameters: "models.Task",
-        **kwargs
-    ) -> AsyncLROPoller["models.Task"]:
+        task_create_parameters: "_models.Task",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Task"]:
         """Creates a task for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -261,8 +261,8 @@ class TasksOperations:
         :type task_create_parameters: ~azure.mgmt.containerregistry.v2019_04_01.models.Task
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Task or the result of cls(response)
@@ -270,7 +270,7 @@ class TasksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Task"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Task"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -296,7 +296,14 @@ class TasksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'taskName': self._serialize.url("task_name", task_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -315,7 +322,7 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -359,7 +366,7 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a specified task.
 
@@ -372,8 +379,8 @@ class TasksOperations:
         :type task_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -403,7 +410,14 @@ class TasksOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'taskName': self._serialize.url("task_name", task_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -422,10 +436,10 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        task_update_parameters: "models.TaskUpdateParameters",
-        **kwargs
-    ) -> "models.Task":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Task"]
+        task_update_parameters: "_models.TaskUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.Task":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Task"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -481,9 +495,9 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        task_update_parameters: "models.TaskUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.Task"]:
+        task_update_parameters: "_models.TaskUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Task"]:
         """Updates a task with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -497,8 +511,8 @@ class TasksOperations:
         :type task_update_parameters: ~azure.mgmt.containerregistry.v2019_04_01.models.TaskUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Task or the result of cls(response)
@@ -506,7 +520,7 @@ class TasksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Task"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Task"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -532,7 +546,14 @@ class TasksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'taskName': self._serialize.url("task_name", task_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-_]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -551,8 +572,8 @@ class TasksOperations:
         resource_group_name: str,
         registry_name: str,
         task_name: str,
-        **kwargs
-    ) -> "models.Task":
+        **kwargs: Any
+    ) -> "_models.Task":
         """Returns a task with extended information that includes all secrets.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -567,7 +588,7 @@ class TasksOperations:
         :rtype: ~azure.mgmt.containerregistry.v2019_04_01.models.Task
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Task"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Task"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

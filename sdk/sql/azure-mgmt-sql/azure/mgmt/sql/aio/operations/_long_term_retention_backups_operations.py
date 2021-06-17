@@ -50,7 +50,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.CopyLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LongTermRetentionBackupOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongTermRetentionBackupOperationResult"]]
         error_map = {
@@ -109,7 +109,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.CopyLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LongTermRetentionBackupOperationResult"]:
         """Copy an existing long term retention backup.
 
@@ -125,8 +125,8 @@ class LongTermRetentionBackupsOperations:
         :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LongTermRetentionBackupOperationResult or the result of cls(response)
@@ -190,7 +190,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.UpdateLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LongTermRetentionBackupOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongTermRetentionBackupOperationResult"]]
         error_map = {
@@ -249,7 +249,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.UpdateLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LongTermRetentionBackupOperationResult"]:
         """Updates an existing long term retention backup.
 
@@ -265,8 +265,8 @@ class LongTermRetentionBackupsOperations:
         :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LongTermRetentionBackupOperationResult or the result of cls(response)
@@ -329,7 +329,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LongTermRetentionBackup":
         """Gets a long term retention backup.
 
@@ -395,7 +395,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -441,7 +441,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a long term retention backup.
 
@@ -455,8 +455,8 @@ class LongTermRetentionBackupsOperations:
         :type backup_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -516,7 +516,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackupListResult"]:
         """Lists all long term retention backups for a database.
 
@@ -604,7 +604,7 @@ class LongTermRetentionBackupsOperations:
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for a given location.
 
@@ -687,7 +687,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for a given server.
 
@@ -775,7 +775,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.CopyLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LongTermRetentionBackupOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongTermRetentionBackupOperationResult"]]
         error_map = {
@@ -836,7 +836,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.CopyLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LongTermRetentionBackupOperationResult"]:
         """Copy an existing long term retention backup to a different server.
 
@@ -855,8 +855,8 @@ class LongTermRetentionBackupsOperations:
         :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LongTermRetentionBackupOperationResult or the result of cls(response)
@@ -923,7 +923,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.UpdateLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LongTermRetentionBackupOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongTermRetentionBackupOperationResult"]]
         error_map = {
@@ -984,7 +984,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         backup_name: str,
         parameters: "_models.UpdateLongTermRetentionBackupParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LongTermRetentionBackupOperationResult"]:
         """Updates an existing long term retention backup.
 
@@ -1003,8 +1003,8 @@ class LongTermRetentionBackupsOperations:
         :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LongTermRetentionBackupOperationResult or the result of cls(response)
@@ -1070,7 +1070,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LongTermRetentionBackup":
         """Gets a long term retention backup.
 
@@ -1141,7 +1141,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1189,7 +1189,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a long term retention backup.
 
@@ -1206,8 +1206,8 @@ class LongTermRetentionBackupsOperations:
         :type backup_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1270,7 +1270,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_database_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackupListResult"]:
         """Lists all long term retention backups for a database.
 
@@ -1363,7 +1363,7 @@ class LongTermRetentionBackupsOperations:
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for a given location.
 
@@ -1451,7 +1451,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackupListResult"]:
         """Lists the long term retention backups for a given server.
 

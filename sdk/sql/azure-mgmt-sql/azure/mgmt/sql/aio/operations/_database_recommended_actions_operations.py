@@ -46,7 +46,7 @@ class DatabaseRecommendedActionsOperations:
         server_name: str,
         database_name: str,
         advisor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.RecommendedAction"]:
         """Gets list of Database Recommended Actions.
 
@@ -114,7 +114,7 @@ class DatabaseRecommendedActionsOperations:
         database_name: str,
         advisor_name: str,
         recommended_action_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendedAction":
         """Gets a database recommended action.
 
@@ -186,7 +186,7 @@ class DatabaseRecommendedActionsOperations:
         advisor_name: str,
         recommended_action_name: str,
         parameters: "_models.RecommendedAction",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecommendedAction":
         """Updates a database recommended action.
 

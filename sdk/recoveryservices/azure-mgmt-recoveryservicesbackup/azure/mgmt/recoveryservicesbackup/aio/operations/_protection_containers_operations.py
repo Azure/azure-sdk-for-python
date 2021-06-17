@@ -46,7 +46,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProtectionContainerResource":
         """Gets details of the specific container registered to your Recovery Services Vault.
 
@@ -69,7 +69,7 @@ class ProtectionContainersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -114,7 +114,7 @@ class ProtectionContainersOperations:
         fabric_name: str,
         container_name: str,
         parameters: "_models.ProtectionContainerResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProtectionContainerResource"]:
         """Registers the container with Recovery Services vault.
         This is an asynchronous operation. To track the operation status, use location header to call
@@ -142,7 +142,7 @@ class ProtectionContainersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -193,7 +193,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Unregisters the given container from your Recovery Services Vault. This is an asynchronous
         operation. To determine
@@ -220,7 +220,7 @@ class ProtectionContainersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -262,7 +262,7 @@ class ProtectionContainersOperations:
         fabric_name: str,
         container_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Inquires all the protectable items under the given container.
 
@@ -290,7 +290,7 @@ class ProtectionContainersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -333,7 +333,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Discovers all the containers in the subscription that can be backed up to Recovery Services
         Vault. This is an
@@ -359,7 +359,7 @@ class ProtectionContainersOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

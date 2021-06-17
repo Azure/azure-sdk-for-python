@@ -5,52 +5,52 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
+    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
         H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
         NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns4PzifZbj6djuXP8VWxnFVXzXiZt3d/t0XeZnj7x+nD
-        /F3e3P3d8mVbtNcfjQxYanBBMH/fj3beHTx9uPvkyd6zJ7tPPz198OT3/YhaLbNFTl/P6otflJ83
-        F/TJLD/P1mX7elrVxfLiZV2dFyU1Wa7LcvTReZGXs+ajR9/7xebNedXm5dmMXmyvV/jgdLYYv27x
-        Ln0mOGcTQDjPyiYHiLLNa/mordf0SZ1T8/zS/6ip6tb/+zyb0kC8D97m1+ZXHvrxMiuvf5DXBlHp
-        uPtp1vm7uV5Wy+vFF9kKY/r+LxmFw3qB328emKDxoeNS8vDA9PeflZHN8mZaF6u2qJY0jvcfm+K2
-        cXDa5mdhdB/ly3G5nuZLTMytBvmsppb/nxvmeX2bYU6zNr+oaoj7+49QPtk4QPnbG5988MHDk7+H
-        x0U6qyH8dUwnVVnmU8zllhveHfpeuvExe8/x6Rh++ANcZfVbGsTZclquZ3lHez6pqjLPIJ3SjWCm
-        6LznCOXvH/4Am0WFAR6XZXWV//9wfGXWtK/yZXWZgS+fkhzScLwx4pM3xSL/8vy8yVv6TjoUHBWx
-        /48MtaYhsjrxhne2bO/t0UcCW9BRHP4/MqqyIuVJU0eD8Mb1eV5d1Nlqfv2yKpY/S9OmYH7WR5jN
-        ZnXeeHoUAzypFqsyf/cGnxBWPXeuaes8b49jr4repc8EMRmMjs4jiQ5pI020zc8BUabiHL//sOST
-        jaOSv71ByQc/62NqWlI25KhfFsspZvX/V4ObVutl+/8/D2dV0ayVJ9Xs/ycT5o+trqqFpzs67pun
-        geDD9VWQ57vT9woEb96SNjq4jcTRNh519JMPJs+PAhR/mDysrzM6+eQ9ByctPnhs8vfwoCZZk78i
-        lUuD8Ab2tFoDCXqRwQtGisb/Z0aWz75knvTEF2P7/8GkNWWer5oTWBMahze2b86VNW/98Mf2Qwq2
-        zFs/9AH+/zQfQP/Rh0GiFV/YYS8Jat6AX8/XSx7w8cVFnV9I4ELzvl7Qd5I1lh5MOwHDtpWTmEG8
-        Q5FNXq+qUv6mrwp0RF8ofWcF+SbiSk4q8lM+erQ33iHYhMt8ibBAO1tkF8uipfyF+cC++OgXf1Tn
-        53md0x8cSb3MakKDuiXwi2vCxcCmkT+1b+3u7Ix3fgnhgZQ1QAqFiECNUUv8MRFtfXFBlMlr+oQG
-        qvTi/LVMxRfwrCgG4hmgTs6W58W7L7J2Oqc/0Kpa19P8GQgEEL49pm9d9pcRECg5d0Z/ttXbfFl0
-        /n7GnKafEBPWwQdEiPqaof9eYCUdRLEoyqxGREIE03y9zsGPf1FM66qpztvx8Q/WdT5+zcMaP/li
-        7/5r9x6x5q4BN5Fffskv+X8AjMCaw1MYAAA=
+        /F3e3P3d8mVbtNcfjQxYanBBMH/fj3beHTx9uLt7+vDg3u6Dp8fHJ7/vR9RqmS1y+npWX/yi/Ly5
+        oE9m+Xm2LtvX06oulhcv6+q8KKnJcl2Wo4/Oi7ycNR89+t4vNm/OqzYvz2b0Ynu9wgens8X4dYt3
+        6TPBOZsAwnlWNjlAlG1ey0dtvaZP6pya55f+R01Vt/7f59mUBuJ98Da/Nr/y0I+XWXn9g7w2iErH
+        3U+zzt/Lql5kZeF90lwvq+X14otshVF+/5eMwoG+wO83D1UQ+9CRKsF4qPr7D2mss7yZ1sWqLaol
+        jez9R6vYbhyutvlZGO9H+XJcrqf5ElP1NYf9rKZ3/z838PP66w18mrX5RVVDbbz/mOWTjUOWv70R
+        ywcfPGD5+31GStqwoRHpKE+qssynmO8tN+A79L107OP6niPWUf2/YcirrH5LwzpbTsv1LO9o6idV
+        VeYZpFw6FlwVwfccs/z9/4YhN4sKQz4uy+oq/3kx4jJr2lf5srrMwM1PSZ5pgN6o8cmbYpF/eX7e
+        5C19JygI1orq/2cHX9OgWVF5Az5btvf26CPpTRBUrP4/O86yIkVN00vD8kb6eV5d1Nlqfv2yKpY/
+        S1OrYH4OxpzNZnXeeDobQz6pFqsyf/cGnxCePae0aes8b49jr4qOp88EVRmejtcjkg5yI5W0zf8r
+        yDQVp//9ByqfbByn/O0NUz74ORhl05Iao5DkslhOMfP/Px/utFov258PXtmqopktT6rZ/28n1R9t
+        XVULTyt1nFBPt8ET7Ss3L0qh7xUI3rwltXS4G8mlbTx66ScfTLAfBWfvO3Ae6NcZr3zynsOVFh88
+        Wvn7fYY5yZr8Fal3GpY31KfVGmjRi9yh4KiI/X94rPnsS+ZkTw1gtP+/nNimzPNVcwJbRiPzRvvN
+        uejmrf83jPaHFHqat/5fMOSfNzkV+o8+DBLj+MISYkn95A24/Hy9ZBIcX1zU+YUEbcQb6wV9J1l+
+        6cG0EzBs6znFHMR6FNXl9aoq5W/6qkBH9IVSfFaQ9yQO8aQiT+qjR3vjHYJNuMyXCIC0s0V2sSxa
+        ygGZD+yLj37xR3V+ntc5/cFR5MusJjSoWwK/uCZcDGwa+VP71u7OznjnlxAeWGIASKEQEagx6o0/
+        JqKtLy6IMnlNn9BAlV683iCT8wV8P4r2eE6ok7PlefHui6ydzukPtKrW9TR/BgIBhO8N0LcuN88I
+        CJScO6M/3cTqB231Nl92/37GzKifEJ/WwQdEmfqau/u9wG06qmJRlFmN0IsoqAsuOik//kUxraum
+        Om/Hxz9Y1/n4NY9z/OSLvfuv3XvEvbsG3ER++SW/5P8Bd/RZ3hQaAAA=
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '1166'
+      content-length: '1181'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:16:21 GMT
-      elapsed-time: '54'
-      etag: W/"0x8D91BB2FB1D6E7B"
+      date: Sat, 08 May 2021 06:21:31 GMT
+      elapsed-time: '30'
+      etag: W/"0x8D911E98317DAAC"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 18c951d8-b98f-11eb-aafa-a0481ca055a9
+      request-id: a0962c27-afc5-11eb-b740-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
+    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
 - request:
     body: '{"value": [{"hotelId": "1000", "@search.action": "delete"}, {"hotelId":
       "4", "@search.action": "delete"}]}'
@@ -62,9 +62,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -77,28 +77,28 @@ interactions:
       content-encoding: gzip
       content-length: '193'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:16:21 GMT
-      elapsed-time: '97'
+      date: Sat, 08 May 2021 06:21:30 GMT
+      elapsed-time: '85'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 18eb0a5c-b98f-11eb-88bf-a0481ca055a9
+      request-id: a0c3c5f4-afc5-11eb-926d-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -110,67 +110,67 @@ interactions:
       content-encoding: gzip
       content-length: '126'
       content-type: text/plain
-      date: Thu, 20 May 2021 17:16:25 GMT
-      elapsed-time: '21'
+      date: Sat, 08 May 2021 06:21:34 GMT
+      elapsed-time: '4'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 1aecd095-b98f-11eb-bab0-a0481ca055a9
+      request-id: a2c3b69b-afc5-11eb-ae9b-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=none
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 20 May 2021 17:16:25 GMT
-      elapsed-time: '4'
-      expires: '-1'
-      pragma: no-cache
-      request-id: 1b0f3326-b98f-11eb-aaaf-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-    status:
-      code: 404
-      message: Not Found
-    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=none
-      User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control: no-cache
-      content-length: '0'
-      date: Thu, 20 May 2021 17:16:25 GMT
+      date: Sat, 08 May 2021 06:21:34 GMT
       elapsed-time: '3'
       expires: '-1'
       pragma: no-cache
-      request-id: 1b168623-b98f-11eb-8f79-a0481ca055a9
+      request-id: a2e99527-afc5-11eb-bdef-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404
       message: Not Found
-    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      User-Agent:
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Sat, 08 May 2021 06:21:34 GMT
+      elapsed-time: '3'
+      expires: '-1'
+      pragma: no-cache
+      request-id: a2f3ede6-afc5-11eb-b4e9-a0481ca055a9
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 404
+      message: Not Found
+    url: https://search8fba1ecc.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
 version: 1

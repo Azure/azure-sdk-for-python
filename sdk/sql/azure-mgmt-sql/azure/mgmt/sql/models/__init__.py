@@ -239,6 +239,7 @@ try:
     from ._models_py3 import ReplicationLink
     from ._models_py3 import ReplicationLinksListResult
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceIdentityWithUserAssignedIdentities
     from ._models_py3 import ResourceMoveDefinition
     from ._models_py3 import ResourceWithWritableName
@@ -580,6 +581,7 @@ except (SyntaxError, ImportError):
     from ._models import ReplicationLink  # type: ignore
     from ._models import ReplicationLinksListResult  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import ResourceIdentity  # type: ignore
     from ._models import ResourceIdentityWithUserAssignedIdentities  # type: ignore
     from ._models import ResourceMoveDefinition  # type: ignore
     from ._models import ResourceWithWritableName  # type: ignore
@@ -1059,6 +1061,7 @@ __all__ = [
     'ReplicationLink',
     'ReplicationLinksListResult',
     'Resource',
+    'ResourceIdentity',
     'ResourceIdentityWithUserAssignedIdentities',
     'ResourceMoveDefinition',
     'ResourceWithWritableName',

@@ -23,7 +23,7 @@ from ._generated.models import (
     SeriesIdentity,
     FeedbackDimensionFilter,
 )
-from ._generated import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._helpers import convert_to_sub_feedback, convert_datetime, get_authentication_policy
 from .models._models import (
     AnomalyIncident,
@@ -31,7 +31,11 @@ from .models._models import (
     MetricSeriesData,
     AnomalyAlert,
     IncidentRootCause,
-    MetricEnrichedSeriesData
+    MetricEnrichedSeriesData,
+    AnomalyFeedback,
+    ChangePointFeedback,
+    CommentFeedback,
+    PeriodFeedback
 )
 from ._version import SDK_MONIKER
 
@@ -42,14 +46,16 @@ if TYPE_CHECKING:
         MetricSeriesItem as MetricSeriesDefinition,
         TimeMode as AlertQueryTimeMode,
     )
-    from .models._models import (
-        AnomalyFeedback,
-        ChangePointFeedback,
-        CommentFeedback,
-        PeriodFeedback
-    )
+    from .models._models import MetricFeedback
     from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from azure.core.paging import ItemPaged
+
+FeedbackUnion = Union[
+    AnomalyFeedback,
+    ChangePointFeedback,
+    CommentFeedback,
+    PeriodFeedback,
+]
 
 class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
@@ -106,7 +112,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def add_feedback(self, feedback, **kwargs):
-        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], Any) -> None
+        # type: (FeedbackUnion, Any) -> None
 
         """Create a new metric feedback.
 
@@ -133,13 +139,14 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, Any) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
+        # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
 
         """Get a metric feedback by its id.
 
         :param str feedback_id: the id of the feedback.
         :return: The feedback object
-        :rtype: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+        :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback or
+            ~azure.ai.metricsadvisor.models.AnomalyFeedback or
             ~azure.ai.metricsadvisor.models.ChangePointFeedback or
             ~azure.ai.metricsadvisor.models.CommentFeedback or
             ~azure.ai.metricsadvisor.models.PeriodFeedback
@@ -161,7 +168,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_feedback(self, metric_id, **kwargs):
-        # type: (str, Any) -> ItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+        # type: (str, Any) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]
 
         """List feedback on the given metric.
 
@@ -179,7 +186,7 @@ class MetricsAdvisorClient(object):
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         :return: Pageable list of MetricFeedback
         :rtype: ~azure.core.paging.ItemPaged[
-            Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+            Union[MetricFeedback, AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -687,11 +694,11 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(self,
+    def list_metric_series_data(self,
                                  metric_id,     # type: str
+                                 series_keys,  # type: List[Dict[str, str]]
                                  start_time,    # type: Union[str, datetime.datetime]
                                  end_time,  # type: Union[str, datetime.datetime]
-                                 series_to_filter,  # type: List[Dict[str, str]]
                                  **kwargs   # type: Any
                                  ):
         # type: (...) -> ItemPaged[MetricSeriesData]
@@ -700,10 +707,10 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: metric unique id.
         :type metric_id: str
+        :param series_keys: query specific series.
+        :type series_keys: list[dict[str, str]]
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
-        :param series_to_filter: query specific series.
-        :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -711,8 +718,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metrics_series_data]
-                :end-before: [END list_metrics_series_data]
+                :start-after: [START list_metric_series_data]
+                :end-before: [END list_metric_series_data]
                 :language: python
                 :dedent: 4
                 :caption: Query metrics series data.
@@ -724,7 +731,7 @@ class MetricsAdvisorClient(object):
         metric_data_query_options = MetricDataQueryOptions(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            series=series_to_filter,
+            series=series_keys,
         )
 
         return self._client.get_metric_data(  # type: ignore
@@ -745,8 +752,6 @@ class MetricsAdvisorClient(object):
          yyyy-MM-ddTHH:mm:ssZ.
         :type active_since: datetime.datetime
         :keyword int skip:
-        :keyword datetime.datetime active_since: query series ingested after this time, the format should be
-                 yyyy-MM-ddTHH:mm:ssZ.
         :keyword dimension_filter: filter specfic dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         :return: Series (dimension combinations) from metric.

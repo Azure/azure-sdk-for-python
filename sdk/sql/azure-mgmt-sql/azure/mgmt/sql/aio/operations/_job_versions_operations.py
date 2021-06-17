@@ -47,7 +47,7 @@ class JobVersionsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobVersionListResult"]:
         """Gets all versions of a job.
 
@@ -131,7 +131,7 @@ class JobVersionsOperations:
         job_agent_name: str,
         job_name: str,
         job_version: int,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobVersion":
         """Gets a job version.
 

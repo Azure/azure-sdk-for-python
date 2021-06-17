@@ -46,7 +46,7 @@ class DataMaskingPoliciesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.DataMaskingPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMaskingPolicy":
         """Creates or updates a database data masking policy.
 
@@ -118,7 +118,7 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMaskingPolicy":
         """Gets a database data masking policy.
 

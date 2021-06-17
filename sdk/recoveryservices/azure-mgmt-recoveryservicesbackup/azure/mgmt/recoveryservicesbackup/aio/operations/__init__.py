@@ -6,12 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._protection_intent_operations import ProtectionIntentOperations
-from ._backup_status_operations import BackupStatusOperations
-from ._feature_support_operations import FeatureSupportOperations
-from ._backup_protection_intent_operations import BackupProtectionIntentOperations
-from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
-from ._operations import Operations
 from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._backup_resource_encryption_configs_operations import BackupResourceEncryptionConfigsOperations
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
@@ -49,6 +43,7 @@ from ._backup_protectable_items_operations import BackupProtectableItemsOperatio
 from ._backup_protection_containers_operations import BackupProtectionContainersOperations
 from ._security_pins_operations import SecurityPINsOperations
 from ._recovery_points_recommended_for_move_operations import RecoveryPointsRecommendedForMoveOperations
+from ._backup_usage_summaries_crr_operations import BackupUsageSummariesCRROperations
 from ._aad_properties_operations import AadPropertiesOperations
 from ._cross_region_restore_operations import CrossRegionRestoreOperations
 from ._backup_crr_job_details_operations import BackupCrrJobDetailsOperations
@@ -58,14 +53,14 @@ from ._crr_operation_status_operations import CrrOperationStatusOperations
 from ._backup_resource_storage_configs_operations import BackupResourceStorageConfigsOperations
 from ._recovery_points_crr_operations import RecoveryPointsCrrOperations
 from ._backup_protected_items_crr_operations import BackupProtectedItemsCrrOperations
+from ._protection_intent_operations import ProtectionIntentOperations
+from ._backup_status_operations import BackupStatusOperations
+from ._feature_support_operations import FeatureSupportOperations
+from ._backup_protection_intent_operations import BackupProtectionIntentOperations
+from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
+from ._operations import Operations
 
 __all__ = [
-    'ProtectionIntentOperations',
-    'BackupStatusOperations',
-    'FeatureSupportOperations',
-    'BackupProtectionIntentOperations',
-    'BackupUsageSummariesOperations',
-    'Operations',
     'BackupResourceVaultConfigsOperations',
     'BackupResourceEncryptionConfigsOperations',
     'PrivateEndpointConnectionOperations',
@@ -103,6 +98,7 @@ __all__ = [
     'BackupProtectionContainersOperations',
     'SecurityPINsOperations',
     'RecoveryPointsRecommendedForMoveOperations',
+    'BackupUsageSummariesCRROperations',
     'AadPropertiesOperations',
     'CrossRegionRestoreOperations',
     'BackupCrrJobDetailsOperations',
@@ -112,4 +108,10 @@ __all__ = [
     'BackupResourceStorageConfigsOperations',
     'RecoveryPointsCrrOperations',
     'BackupProtectedItemsCrrOperations',
+    'ProtectionIntentOperations',
+    'BackupStatusOperations',
+    'FeatureSupportOperations',
+    'BackupProtectionIntentOperations',
+    'BackupUsageSummariesOperations',
+    'Operations',
 ]

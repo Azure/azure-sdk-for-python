@@ -49,6 +49,26 @@ class ComputerVisionInnerErrorCodeValue(str, Enum):
     storage_exception = "StorageException"
 
 
+class OperationStatusCodes(str, Enum):
+
+    not_started = "notStarted"
+    running = "running"
+    failed = "failed"
+    succeeded = "succeeded"
+
+
+class TextRecognitionResultDimensionUnit(str, Enum):
+
+    pixel = "pixel"
+    inch = "inch"
+
+
+class TextStyle(str, Enum):
+
+    other = "other"
+    handwriting = "handwriting"
+
+
 class DescriptionExclude(str, Enum):
 
     celebrities = "Celebrities"
@@ -97,32 +117,6 @@ class VisualFeatureTypes(str, Enum):
     description = "Description"
     objects = "Objects"
     brands = "Brands"
-
-
-class Details(str, Enum):
-
-    celebrities = "Celebrities"
-    landmarks = "Landmarks"
-
-
-class OperationStatusCodes(str, Enum):
-
-    not_started = "notStarted"
-    running = "running"
-    failed = "failed"
-    succeeded = "succeeded"
-
-
-class TextRecognitionResultDimensionUnit(str, Enum):
-
-    pixel = "pixel"
-    inch = "inch"
-
-
-class TextStyle(str, Enum):
-
-    other = "other"
-    handwriting = "handwriting"
 
 
 class OcrDetectionLanguage(str, Enum):
@@ -200,3 +194,9 @@ class OcrDetectionLanguage(str, Enum):
     zh_hans = "zh-Hans"
     zh_hant = "zh-Hant"
     zu = "zu"
+
+
+class Details(str, Enum):
+
+    celebrities = "Celebrities"
+    landmarks = "Landmarks"

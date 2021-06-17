@@ -47,7 +47,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerListResult"]:
         """Gets a list of servers in a resource groups.
 
@@ -124,7 +124,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Server":
         """Gets a server.
 
@@ -188,7 +188,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.Server",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Server"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Server"]]
         error_map = {
@@ -246,7 +246,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.Server",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Server"]:
         """Creates or updates a server.
 
@@ -259,8 +259,8 @@ class ServersOperations:
         :type parameters: ~azure.mgmt.sql.models.Server
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Server or the result of cls(response)
@@ -317,7 +317,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -359,7 +359,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a server.
 
@@ -370,8 +370,8 @@ class ServersOperations:
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -425,7 +425,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Server"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Server"]]
         error_map = {
@@ -480,7 +480,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Server"]:
         """Updates a server.
 
@@ -493,8 +493,8 @@ class ServersOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Server or the result of cls(response)
@@ -550,7 +550,7 @@ class ServersOperations:
     def list(
         self,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerListResult"]:
         """Gets a list of all servers in the subscription.
 
@@ -623,7 +623,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ImportNewDatabaseDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ImportExportOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ImportExportOperationResult"]]
         error_map = {
@@ -678,7 +678,7 @@ class ServersOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ImportNewDatabaseDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ImportExportOperationResult"]:
         """Imports a bacpac into a new database.
 
@@ -691,8 +691,8 @@ class ServersOperations:
         :type parameters: ~azure.mgmt.sql.models.ImportNewDatabaseDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the result of cls(response)
@@ -748,7 +748,7 @@ class ServersOperations:
     async def check_name_availability(
         self,
         parameters: "_models.CheckNameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResponse":
         """Determines whether a resource can be created with the specified name.
 

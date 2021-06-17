@@ -1,5 +1,32 @@
 # Release History
 
+## 9.0.0 (2021-05-25)
+
+**Features**
+
+  - Model NetworkRuleSet has a new parameter system_data
+  - Model ConsumerGroup has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model EHNamespace has a new parameter system_data
+  - Model EHNamespace has a new parameter private_endpoint_connections
+  - Model ArmDisasterRecovery has a new parameter system_data
+  - Model Identity has a new parameter user_assigned_identities
+  - Model Eventhub has a new parameter system_data
+  - Model KeyVaultProperties has a new parameter identity
+  - Model AuthorizationRule has a new parameter system_data
+  - Model Encryption has a new parameter require_infrastructure_encryption
+
+**Breaking changes**
+
+  - Removed operation NamespacesOperations.list_ip_filter_rules
+  - Removed operation NamespacesOperations.delete_virtual_network_rule
+  - Removed operation NamespacesOperations.delete_ip_filter_rule
+  - Removed operation NamespacesOperations.list_virtual_network_rules
+  - Removed operation NamespacesOperations.create_or_update_virtual_network_rule
+  - Removed operation NamespacesOperations.get_virtual_network_rule
+  - Removed operation NamespacesOperations.create_or_update_ip_filter_rule
+  - Removed operation NamespacesOperations.get_ip_filter_rule
+
 ## 8.0.0 (2020-09-16)
 
 **Features**

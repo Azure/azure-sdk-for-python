@@ -45,7 +45,7 @@ class DatabaseAutomaticTuningOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAutomaticTuning":
         """Gets a database's automatic tuning.
 
@@ -109,7 +109,7 @@ class DatabaseAutomaticTuningOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.DatabaseAutomaticTuning",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAutomaticTuning":
         """Update automatic tuning properties for target database.
 

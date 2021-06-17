@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2
-__all__ = ['AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2']
+from ._microsoft_azure_metrics_advisor_restapi_open_ap_iv2 import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2
+__all__ = ['MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2']
 
 try:
     from ._patch import patch_sdk  # type: ignore

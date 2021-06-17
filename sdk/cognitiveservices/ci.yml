@@ -32,20 +32,14 @@ extends:
     Artifacts:
     - name: azure-cognitiveservices-anomalydetector
       safeName: azurecognitiveservicesanomalydetector
-    - name: azure-cognitiveservices-knowledge-nspkg
-      safeName: azurecognitiveservicesknowledgenspkg
     - name: azure-cognitiveservices-knowledge-qnamaker
       safeName: azurecognitiveservicesknowledgeqnamaker
     - name: azure-cognitiveservices-language-luis
       safeName: azurecognitiveserviceslanguageluis
-    - name: azure-cognitiveservices-language-nspkg
-      safeName: azurecognitiveserviceslanguagenspkg
     - name: azure-cognitiveservices-language-spellcheck
       safeName: azurecognitiveserviceslanguagespellcheck
     - name: azure-cognitiveservices-language-textanalytics
       safeName: azurecognitiveserviceslanguagetextanalytics
-    - name: azure-cognitiveservices-nspkg
-      safeName: azurecognitiveservicesnspkg
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
     - name: azure-cognitiveservices-search-autosuggest

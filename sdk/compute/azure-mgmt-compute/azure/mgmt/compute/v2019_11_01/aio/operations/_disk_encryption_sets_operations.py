@@ -48,7 +48,7 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: "_models.DiskEncryptionSet",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskEncryptionSet":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         error_map = {
@@ -105,7 +105,7 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: "_models.DiskEncryptionSet",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DiskEncryptionSet"]:
         """Creates or updates a disk encryption set.
 
@@ -120,8 +120,8 @@ class DiskEncryptionSetsOperations:
         :type disk_encryption_set: ~azure.mgmt.compute.v2019_11_01.models.DiskEncryptionSet
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DiskEncryptionSet or the result of cls(response)
@@ -179,7 +179,7 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: "_models.DiskEncryptionSetUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskEncryptionSet":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskEncryptionSet"]
         error_map = {
@@ -236,7 +236,7 @@ class DiskEncryptionSetsOperations:
         resource_group_name: str,
         disk_encryption_set_name: str,
         disk_encryption_set: "_models.DiskEncryptionSetUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DiskEncryptionSet"]:
         """Updates (patches) a disk encryption set.
 
@@ -251,8 +251,8 @@ class DiskEncryptionSetsOperations:
         :type disk_encryption_set: ~azure.mgmt.compute.v2019_11_01.models.DiskEncryptionSetUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DiskEncryptionSet or the result of cls(response)
@@ -309,7 +309,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskEncryptionSet":
         """Gets information about a disk encryption set.
 
@@ -369,7 +369,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -413,7 +413,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a disk encryption set.
 
@@ -425,8 +425,8 @@ class DiskEncryptionSetsOperations:
         :type disk_encryption_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -478,7 +478,7 @@ class DiskEncryptionSetsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskEncryptionSetList"]:
         """Lists all the disk encryption sets under a resource group.
 
@@ -547,7 +547,7 @@ class DiskEncryptionSetsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskEncryptionSetList"]:
         """Lists all the disk encryption sets under a subscription.
 

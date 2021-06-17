@@ -143,10 +143,10 @@ class SearchClient(HeadersMixin):
         """Search the Azure search index for documents.
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
-        match all documents.
+         match all documents.
         :keyword bool include_total_count: A value that specifies whether to fetch the total count of
-        results. Default is false. Setting this value to true may have a performance impact. Note that
-        the count returned is an approximation.
+         results. Default is false. Setting this value to true may have a performance impact. Note that
+         the count returned is an approximation.
         :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
@@ -183,6 +183,15 @@ class SearchClient(HeadersMixin):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Possible values
+         include: "none", "en-us".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Possible values include: "none", "lexicon".
+        :paramtype speller: str or ~azure.search.documents.models.Speller
+        :keyword answers: A value that specifies whether answers should be returned as part of the search
+         response. Possible values include: "none", "extractive".
+        :paramtype answers: str or ~azure.search.documents.models.Answers
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -235,6 +244,9 @@ class SearchClient(HeadersMixin):
         search_fields = kwargs.pop("search_fields", None)
         search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
+        query_language = kwargs.pop("query_language", None)
+        speller = kwargs.pop("speller", None)
+        answers = kwargs.pop("answers", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
@@ -253,6 +265,9 @@ class SearchClient(HeadersMixin):
             scoring_profile=scoring_profile,
             search_fields=search_fields_str,
             search_mode=search_mode,
+            query_language=query_language,
+            speller=speller,
+            answers=answers,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top

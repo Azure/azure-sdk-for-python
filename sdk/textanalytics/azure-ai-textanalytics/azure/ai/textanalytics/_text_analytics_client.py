@@ -4,9 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import copy
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Union,
-    Optional,
     Any,
     List,
     Dict,
@@ -14,7 +13,6 @@ from typing import (  # pylint: disable=unused-import
 )
 from functools import partial
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
@@ -33,14 +31,13 @@ from ._response_handlers import (
     pii_entities_result,
     healthcare_paged_result,
     analyze_paged_result,
-    _get_deserialize
 )
 
-from ._models import AnalyzeActionsType
+from ._models import _AnalyzeActionsType
 
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
-    AnalyzeBatchActionsLROPollingMethod,
+    AnalyzeActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
 )
 
@@ -61,9 +58,9 @@ if TYPE_CHECKING:
         RecognizeLinkedEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
-        AnalyzeHealthcareEntitiesResultItem,
-        AnalyzeActionsResult,
+        AnalyzeHealthcareEntitiesResult,
     )
+    from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -120,7 +117,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_index_type_default = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
-        self._deserialize = _get_deserialize()
 
 
     @distributed_trace
@@ -493,8 +489,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").HealthcareJobState,
+        healthcare_result = self._client.models(api_version="v3.1-preview.5").HealthcareJobState.deserialize(
             raw_response
         )
         return healthcare_paged_result(
@@ -511,7 +506,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareEntitiesResultItem]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -556,10 +551,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem`.
+            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult`.
         :rtype:
-            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResultItem]]
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -810,8 +805,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.5").AnalyzeJobState, # pylint: disable=protected-access
+        analyze_result = self._client.models(api_version="v3.1-preview.5").AnalyzeJobState.deserialize(
             raw_response
         )
         return analyze_paged_result(
@@ -830,8 +824,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeActionsResult]]
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
+
+        We recommend you use this function if you're looking to analyze larger documents, and / or
+        combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
+        the action specific endpoints, for example :func:`analyze_sentiment`:
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -857,12 +855,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a pageable heterogeneous list of the action results in the order
-            the actions were sent in this method.
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the poller
+            object to return a pageable heterogeneous list of lists. This list of lists is first ordered
+            by the documents you input, then ordered by the actions you input. For example,
+            if you have documents input ["Hello", "world"], and actions
+            :class:`~azure.ai.textanalytics.RecognizeEntitiesAction` and
+            :class:`~azure.ai.textanalytics.AnalyzeSentimentAction`, when iterating over the list of lists,
+            you will first iterate over the action results for the "Hello" document, getting the
+            :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` of "Hello",
+            then the :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "Hello".
+            Then, you will get the :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
+            :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
-            ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeActionsResult]]
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            list[
+            RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult
+            ]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -893,26 +902,26 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES]
                 ],
                 entity_recognition_pii_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
                 ],
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.EXTRACT_KEY_PHRASES]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES]
                 ],
                 entity_linking_tasks=[
                     t.to_generated() for t in
                     [
                         a for a in actions
-                        if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+                        if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                     ]
                 ],
                 sentiment_analysis_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(
@@ -925,7 +934,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", partial(
                     self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
                 )),
-                polling=AnalyzeBatchActionsLROPollingMethod(
+                polling=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

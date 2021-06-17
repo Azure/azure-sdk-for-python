@@ -46,9 +46,9 @@ class AttestationClient(object):
     :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
-    :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
-    :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :keyword ~azure.core.pipeline.AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
+    :keyword ~azure.core.pipeline.transport.AsyncHttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[~azure.core.pipeline.policies.AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
 

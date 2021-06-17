@@ -46,7 +46,7 @@ class SyncGroupsOperations:
     def list_sync_database_ids(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SyncDatabaseIdListResult"]:
         """Gets a collection of sync database ids.
 
@@ -119,7 +119,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -165,7 +165,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Refreshes a hub database schema.
 
@@ -180,8 +180,8 @@ class SyncGroupsOperations:
         :type sync_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -240,7 +240,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SyncFullSchemaPropertiesListResult"]:
         """Gets a collection of hub database schemas.
 
@@ -327,7 +327,7 @@ class SyncGroupsOperations:
         end_time: str,
         type: Union[str, "_models.Enum81"],
         continuation_token_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SyncGroupLogListResult"]:
         """Gets a collection of sync group logs.
 
@@ -423,7 +423,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a sync group synchronization.
 
@@ -485,7 +485,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Triggers a sync group synchronization.
 
@@ -547,7 +547,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SyncGroup":
         """Gets a sync group.
 
@@ -615,7 +615,7 @@ class SyncGroupsOperations:
         database_name: str,
         sync_group_name: str,
         parameters: "_models.SyncGroup",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SyncGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SyncGroup"]]
         error_map = {
@@ -677,7 +677,7 @@ class SyncGroupsOperations:
         database_name: str,
         sync_group_name: str,
         parameters: "_models.SyncGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SyncGroup"]:
         """Creates or updates a sync group.
 
@@ -694,8 +694,8 @@ class SyncGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.SyncGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SyncGroup or the result of cls(response)
@@ -758,7 +758,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -804,7 +804,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a sync group.
 
@@ -819,8 +819,8 @@ class SyncGroupsOperations:
         :type sync_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -880,7 +880,7 @@ class SyncGroupsOperations:
         database_name: str,
         sync_group_name: str,
         parameters: "_models.SyncGroup",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SyncGroup"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SyncGroup"]]
         error_map = {
@@ -939,7 +939,7 @@ class SyncGroupsOperations:
         database_name: str,
         sync_group_name: str,
         parameters: "_models.SyncGroup",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SyncGroup"]:
         """Updates a sync group.
 
@@ -956,8 +956,8 @@ class SyncGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.SyncGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SyncGroup or the result of cls(response)
@@ -1019,7 +1019,7 @@ class SyncGroupsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SyncGroupListResult"]:
         """Lists sync groups under a hub database.
 

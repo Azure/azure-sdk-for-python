@@ -43,6 +43,7 @@ class MgmtRegistryTest(AzureMgmtTestCase):
             api_version="2019-12-01-preview"  # test the latest version
         )
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_replications(self, resource_group):
 
@@ -114,6 +115,7 @@ class MgmtRegistryTest(AzureMgmtTestCase):
         result = self.mgmt_client.registries.begin_delete(resource_group_name=RESOURCE_GROUP, registry_name=REGISTRY_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_webhooks(self, resource_group):
 
@@ -205,6 +207,7 @@ class MgmtRegistryTest(AzureMgmtTestCase):
         result = self.mgmt_client.registries.begin_delete(resource_group_name=RESOURCE_GROUP, registry_name=REGISTRY_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_agent_pools(self, resource_group):
 
@@ -284,6 +287,7 @@ class MgmtRegistryTest(AzureMgmtTestCase):
         result = self.mgmt_client.registries.begin_delete(resource_group_name=RESOURCE_GROUP, registry_name=REGISTRY_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_scope_maps_and_tokens(self, resource_group):
 
@@ -419,6 +423,7 @@ class MgmtRegistryTest(AzureMgmtTestCase):
         result = self.mgmt_client.registries.begin_delete(resource_group_name=RESOURCE_GROUP, registry_name=REGISTRY_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_registries(self, resource_group):
 

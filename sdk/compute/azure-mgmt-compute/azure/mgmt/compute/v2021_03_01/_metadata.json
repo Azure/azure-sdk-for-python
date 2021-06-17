@@ -10,8 +10,8 @@
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -102,12 +102,30 @@
         "cloud_service_roles": "CloudServiceRolesOperations",
         "cloud_services": "CloudServicesOperations",
         "cloud_services_update_domain": "CloudServicesUpdateDomainOperations",
-        "cloud_service_operating_systems": "CloudServiceOperatingSystemsOperations"
-    },
-    "operation_mixins": {
-        "sync_imports": "None",
-        "async_imports": "None",
-        "operations": {
-        }
+        "cloud_service_operating_systems": "CloudServiceOperatingSystemsOperations",
+        "operations": "Operations",
+        "availability_sets": "AvailabilitySetsOperations",
+        "proximity_placement_groups": "ProximityPlacementGroupsOperations",
+        "dedicated_host_groups": "DedicatedHostGroupsOperations",
+        "dedicated_hosts": "DedicatedHostsOperations",
+        "ssh_public_keys": "SshPublicKeysOperations",
+        "virtual_machine_extension_images": "VirtualMachineExtensionImagesOperations",
+        "virtual_machine_extensions": "VirtualMachineExtensionsOperations",
+        "virtual_machine_images": "VirtualMachineImagesOperations",
+        "virtual_machine_images_edge_zone": "VirtualMachineImagesEdgeZoneOperations",
+        "usage": "UsageOperations",
+        "virtual_machines": "VirtualMachinesOperations",
+        "virtual_machine_scale_sets": "VirtualMachineScaleSetsOperations",
+        "virtual_machine_sizes": "VirtualMachineSizesOperations",
+        "images": "ImagesOperations",
+        "restore_point_collections": "RestorePointCollectionsOperations",
+        "restore_points": "RestorePointsOperations",
+        "virtual_machine_scale_set_extensions": "VirtualMachineScaleSetExtensionsOperations",
+        "virtual_machine_scale_set_rolling_upgrades": "VirtualMachineScaleSetRollingUpgradesOperations",
+        "virtual_machine_scale_set_vm_extensions": "VirtualMachineScaleSetVMExtensionsOperations",
+        "virtual_machine_scale_set_vms": "VirtualMachineScaleSetVMsOperations",
+        "log_analytics": "LogAnalyticsOperations",
+        "virtual_machine_run_commands": "VirtualMachineRunCommandsOperations",
+        "virtual_machine_scale_set_vm_run_commands": "VirtualMachineScaleSetVMRunCommandsOperations"
     }
 }
