@@ -6,7 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
 import sys
 
 from devtools_testutils import AzureTestCase
@@ -22,13 +22,14 @@ from azure.data.tables import (
     EdmType,
     TableEntity,
     TransactionOperation,
-    UpdateMode
+    UpdateMode,
 )
 
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator, tables_decorator
 
 # ------------------------------------------------------------------------------
+
 
 class StorageTableTest(AzureTestCase, TableTestCase):
     @tables_decorator
@@ -86,7 +87,9 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
             table_name = self._get_table_reference()
-            table_client = TableClient(credential=self.get_token_credential(), endpoint=account_url, table_name=table_name)
+            table_client = TableClient(
+                credential=self.get_token_credential(), endpoint=account_url, table_name=table_name
+            )
             table_client.create_table()
 
             if table_name not in [t.name for t in ts.list_tables()]:
@@ -116,9 +119,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             # have to wait for return to service
             ts.set_service_properties(
                 minute_metrics=TableMetrics(
-                    enabled=True,
-                    include_apis=True,
-                    retention_policy=TableRetentionPolicy(enabled=True, days=5)
+                    enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5)
                 )
             )
 
@@ -128,7 +129,9 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_aad_table_service_stats(self, tables_storage_account_name):
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=self.get_token_credential())
+        tsc = TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"), credential=self.get_token_credential()
+        )
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         self._assert_stats_default(stats)
 
@@ -139,9 +142,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         try:
             entity = self._create_random_entity_dict()
 
-
             resp = self.table.create_entity(entity=entity)
-
 
             self._assert_valid_metadata(resp)
         finally:
@@ -154,11 +155,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         try:
             entity, _ = self._insert_two_opposite_entities()
 
-
-            entities = self.table.query_entities(
-                "married eq @my_param",
-                parameters={'my_param': entity['married']}
-            )
+            entities = self.table.query_entities("married eq @my_param", parameters={"my_param": entity["married"]})
 
             assert entities is not None
             length = 0
@@ -178,65 +175,63 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         try:
 
             entity = TableEntity()
-            entity['PartitionKey'] = '003'
-            entity['RowKey'] = 'batch_all_operations_together-1'
-            entity['test'] = EntityProperty(True, EdmType.BOOLEAN)
-            entity['test2'] = 'value'
-            entity['test3'] = 3
-            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
-            entity['test5'] = datetime.utcnow()
+            entity["PartitionKey"] = "003"
+            entity["RowKey"] = "batch_all_operations_together-1"
+            entity["test"] = EntityProperty(True, EdmType.BOOLEAN)
+            entity["test2"] = "value"
+            entity["test3"] = 3
+            entity["test4"] = EntityProperty(1234567890, EdmType.INT32)
+            entity["test5"] = datetime.utcnow()
 
             self.table.create_entity(entity)
-            entity['RowKey'] = 'batch_all_operations_together-2'
+            entity["RowKey"] = "batch_all_operations_together-2"
             self.table.create_entity(entity)
-            entity['RowKey'] = 'batch_all_operations_together-3'
+            entity["RowKey"] = "batch_all_operations_together-3"
             self.table.create_entity(entity)
-            entity['RowKey'] = 'batch_all_operations_together-4'
+            entity["RowKey"] = "batch_all_operations_together-4"
             self.table.create_entity(entity)
             transaction_count = 0
 
             batch = []
-            entity['RowKey'] = 'batch_all_operations_together'
+            entity["RowKey"] = "batch_all_operations_together"
             batch.append((TransactionOperation.CREATE, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-1'
+            entity["RowKey"] = "batch_all_operations_together-1"
             batch.append((TransactionOperation.DELETE, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-2'
-            entity['test3'] = 10
+            entity["RowKey"] = "batch_all_operations_together-2"
+            entity["test3"] = 10
             batch.append((TransactionOperation.UPDATE, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-3'
-            entity['test3'] = 100
-            batch.append((TransactionOperation.UPDATE, entity.copy(), {'mode': UpdateMode.REPLACE}))
+            entity["RowKey"] = "batch_all_operations_together-3"
+            entity["test3"] = 100
+            batch.append((TransactionOperation.UPDATE, entity.copy(), {"mode": UpdateMode.REPLACE}))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-4'
-            entity['test3'] = 10
+            entity["RowKey"] = "batch_all_operations_together-4"
+            entity["test3"] = 10
             batch.append((TransactionOperation.UPSERT, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-5'
-            batch.append((TransactionOperation.UPSERT, entity.copy(), {'mode': UpdateMode.REPLACE}))
+            entity["RowKey"] = "batch_all_operations_together-5"
+            batch.append((TransactionOperation.UPSERT, entity.copy(), {"mode": UpdateMode.REPLACE}))
             transaction_count += 1
 
             transaction_result = self.table.submit_transaction(batch)
 
-
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
-            assert 'etag' in transaction_result[0]
-            assert 'etag' not in transaction_result[1]
-            assert 'etag' in transaction_result[2]
-            assert 'etag' in transaction_result[3]
-            assert 'etag' in transaction_result[4]
-            assert 'etag' in transaction_result[5]
-
+            assert "etag" in transaction_result[0]
+            assert "etag" not in transaction_result[1]
+            assert "etag" in transaction_result[2]
+            assert "etag" in transaction_result[3]
+            assert "etag" in transaction_result[4]
+            assert "etag" in transaction_result[5]
 
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
-            assert 5 ==  len(entities)
+            assert 5 == len(entities)
         finally:
             self._tear_down()
 
@@ -260,7 +255,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             self.table.delete_entity(entity)
 
             with pytest.raises(ResourceNotFoundError):
-                self.table.get_entity(entity['PartitionKey'], entity["RowKey"])
+                self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
 
         finally:
             self._tear_down()
@@ -272,11 +267,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         try:
             entity, _ = self._insert_two_opposite_entities()
 
-
-            entities = self.table.query_entities(
-                "married eq @my_param",
-                parameters={'my_param': entity['married']}
-            )
+            entities = self.table.query_entities("married eq @my_param", parameters={"my_param": entity["married"]})
 
             assert entities is not None
             length = 0
@@ -295,11 +286,9 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         try:
             table = self._create_query_table(2)
 
-
             entities = list(table.list_entities())
 
-
-            assert len(entities) ==  2
+            assert len(entities) == 2
             for entity in entities:
                 self._assert_default_entity(entity)
         finally:
@@ -311,13 +300,11 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         try:
             entity, _ = self._insert_random_entity()
 
-
-            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
+            sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
             resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
-
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            received_entity = self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()

@@ -6,16 +6,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
 import sys
 
 from devtools_testutils import AzureTestCase
 
-from azure.data.tables.aio import (
-    TableServiceClient,
-    TableClient
-)
-from azure.identity.aio import DefaultAzureCredential
+from azure.data.tables.aio import TableServiceClient, TableClient
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.data.tables import (
@@ -26,13 +22,12 @@ from azure.data.tables import (
     EdmType,
     TableEntity,
     TransactionOperation,
-    UpdateMode
+    UpdateMode,
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
 
-# ------------------------------------------------------------------------------
 
 class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     @tables_decorator_async
@@ -90,7 +85,9 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
             table_name = self._get_table_reference()
-            table_client = TableClient(credential=self.get_token_credential(), endpoint=account_url, table_name=table_name)
+            table_client = TableClient(
+                credential=self.get_token_credential(), endpoint=account_url, table_name=table_name
+            )
             await table_client.create_table()
 
             if table_name not in [t.name async for t in ts.list_tables()]:
@@ -120,9 +117,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             # have to wait async for return to service
             await ts.set_service_properties(
                 minute_metrics=TableMetrics(
-                    enabled=True,
-                    include_apis=True,
-                    retention_policy=TableRetentionPolicy(enabled=True, days=5)
+                    enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=5)
                 )
             )
 
@@ -132,7 +127,9 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     async def test_aad_table_service_stats(self, tables_storage_account_name):
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=self.get_token_credential())
+        tsc = TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"), credential=self.get_token_credential()
+        )
         stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         self._assert_stats_default(stats)
 
@@ -155,11 +152,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
-
-            entities = self.table.query_entities(
-                "married eq @my_param",
-                parameters={'my_param': entity['married']}
-            )
+            entities = self.table.query_entities("married eq @my_param", parameters={"my_param": entity["married"]})
 
             assert entities is not None
             length = 0
@@ -178,60 +171,60 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         try:
 
             entity = TableEntity()
-            entity['PartitionKey'] = '003'
-            entity['RowKey'] = 'batch_all_operations_together-1'
-            entity['test'] = EntityProperty(True, EdmType.BOOLEAN)
-            entity['test2'] = 'value'
-            entity['test3'] = 3
-            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
-            entity['test5'] = datetime.utcnow()
+            entity["PartitionKey"] = "003"
+            entity["RowKey"] = "batch_all_operations_together-1"
+            entity["test"] = EntityProperty(True, EdmType.BOOLEAN)
+            entity["test2"] = "value"
+            entity["test3"] = 3
+            entity["test4"] = EntityProperty(1234567890, EdmType.INT32)
+            entity["test5"] = datetime.utcnow()
 
             await self.table.create_entity(entity)
-            entity['RowKey'] = 'batch_all_operations_together-2'
+            entity["RowKey"] = "batch_all_operations_together-2"
             await self.table.create_entity(entity)
-            entity['RowKey'] = 'batch_all_operations_together-3'
+            entity["RowKey"] = "batch_all_operations_together-3"
             await self.table.create_entity(entity)
-            entity['RowKey'] = 'batch_all_operations_together-4'
+            entity["RowKey"] = "batch_all_operations_together-4"
             await self.table.create_entity(entity)
             transaction_count = 0
 
             batch = []
-            entity['RowKey'] = 'batch_all_operations_together'
+            entity["RowKey"] = "batch_all_operations_together"
             batch.append((TransactionOperation.CREATE, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-1'
+            entity["RowKey"] = "batch_all_operations_together-1"
             batch.append((TransactionOperation.DELETE, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-2'
-            entity['test3'] = 10
+            entity["RowKey"] = "batch_all_operations_together-2"
+            entity["test3"] = 10
             batch.append((TransactionOperation.UPDATE, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-3'
-            entity['test3'] = 100
-            batch.append((TransactionOperation.UPDATE, entity.copy(), {'mode': UpdateMode.REPLACE}))
+            entity["RowKey"] = "batch_all_operations_together-3"
+            entity["test3"] = 100
+            batch.append((TransactionOperation.UPDATE, entity.copy(), {"mode": UpdateMode.REPLACE}))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-4'
-            entity['test3'] = 10
+            entity["RowKey"] = "batch_all_operations_together-4"
+            entity["test3"] = 10
             batch.append((TransactionOperation.UPSERT, entity.copy()))
             transaction_count += 1
 
-            entity['RowKey'] = 'batch_all_operations_together-5'
-            batch.append((TransactionOperation.UPSERT, entity.copy(), {'mode': UpdateMode.REPLACE}))
+            entity["RowKey"] = "batch_all_operations_together-5"
+            batch.append((TransactionOperation.UPSERT, entity.copy(), {"mode": UpdateMode.REPLACE}))
             transaction_count += 1
 
             transaction_result = await self.table.submit_transaction(batch)
 
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
-            assert 'etag' in transaction_result[0]
-            assert 'etag' not in transaction_result[1]
-            assert 'etag' in transaction_result[2]
-            assert 'etag' in transaction_result[3]
-            assert 'etag' in transaction_result[4]
-            assert 'etag' in transaction_result[5]
+            assert "etag" in transaction_result[0]
+            assert "etag" not in transaction_result[1]
+            assert "etag" in transaction_result[2]
+            assert "etag" in transaction_result[3]
+            assert "etag" in transaction_result[4]
+            assert "etag" in transaction_result[5]
 
             entity_count = 0
             async for e in self.table.query_entities("PartitionKey eq '003'"):
@@ -260,7 +253,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self.table.delete_entity(entity)
 
             with pytest.raises(ResourceNotFoundError):
-                await self.table.get_entity(entity['PartitionKey'], entity["RowKey"])
+                await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
 
         finally:
             await self._tear_down()
@@ -272,11 +265,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         try:
             entity, _ = await self._insert_two_opposite_entities()
 
-
-            entities = self.table.query_entities(
-                "married eq @my_param",
-                parameters={'my_param': entity['married']}
-            )
+            entities = self.table.query_entities("married eq @my_param", parameters={"my_param": entity["married"]})
 
             assert entities is not None
             length = 0
@@ -310,12 +299,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         try:
             entity, _ = await self._insert_random_entity()
 
-            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
+            sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
             resp = await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
-
             self._assert_valid_metadata(resp)
-            received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            received_entity = await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
