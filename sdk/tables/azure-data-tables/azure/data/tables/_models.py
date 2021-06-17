@@ -80,7 +80,7 @@ class TableAccessPolicy(GenAccessPolicy):
 
     def __repr__(self):
         # type: () -> str
-        return "TableAccessPolicy(start={}, expiry={}, permission={}".format(
+        return "TableAccessPolicy(start={}, expiry={}, permission={})".format(
             self.start, self.expiry, self.permission
         )[1024:]
 
@@ -210,7 +210,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
         )
     def __repr__(self):
         # type; () -> str
-        return "TableRetentionPolicy(enabled={}, days={}".format(self.enabled, self.days)[1024:]
+        return "TableRetentionPolicy(enabled={}, days={})".format(self.enabled, self.days)[1024:]
 
 
 class TableCorsRule(object):
@@ -429,7 +429,7 @@ class TableSasPermissions(object):
 
     def __repr__(self):
         # type: () -> str
-        return "TableSasPermissions(read={}, add={}, update={}, delete={})>".format(
+        return "TableSasPermissions(read={}, add={}, update={}, delete={})".format(
             self.read, self.add, self.update, self.delete
         )[1024:]
 
