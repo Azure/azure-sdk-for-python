@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from six import raise_from
 from six.moves.urllib_parse import urlparse
 
-from ._models import KeyVaultBackupOperation
+from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
 from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
 
@@ -36,7 +36,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access
     def begin_backup(self, blob_storage_url, sas_token, **kwargs):
-        # type: (str, str, **Any) -> LROPoller[KeyVaultBackupOperation]
+        # type: (str, str, **Any) -> LROPoller[KeyVaultBackupResult]
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
@@ -44,8 +44,8 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
-            operation to complete and get a :class:`KeyVaultBackupOperation`.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupOperation]
+            operation to complete and get a :class:`KeyVaultBackupResult`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupResult]
 
         Example:
             .. literalinclude:: ../tests/test_examples_administration.py
@@ -83,7 +83,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         return self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=KeyVaultBackupOperation._from_generated,
+            cls=KeyVaultBackupResult._from_generated,
             continuation_token=status_response,
             polling=KeyVaultBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
@@ -98,7 +98,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
 
         :param str folder_url: URL of the blob holding the backup. This would be the `folder_url` of a
-            :class:`KeyVaultBackupOperation` returned by :func:`begin_backup`, for example
+            :class:`KeyVaultBackupResult` returned by :func:`begin_backup`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
