@@ -97,7 +97,7 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
         # Once a redirect error is received, close the original client and recreate a new one to the re-directed address
         receive_client.close()
         fully_qualified_name = redirect.hostname.decode("utf-8")
-        # Get IoT Hub name from redirect address, in case name has been modified by service during creation
+        # Use regular expression to parse the Event Hub name from the IoT Hub redirection address
         iot_hub_name = re.search(":\d+\/.*/ConsumerGroups", str(redirect.address)).group(0).split("/")[1]
         conn_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
             fully_qualified_name,
