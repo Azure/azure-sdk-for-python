@@ -82,7 +82,8 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
         receive_client.close()
         fully_qualified_name = redirect.hostname.decode("utf-8")
         # Use regular expression to parse the Event Hub name from the IoT Hub redirection address
-        iot_hub_name = re.search(":\d+\/.*/ConsumerGroups", str(redirect.address)).group(0).split("/")[1]
+        if redirect.address:
+            iot_hub_name = re.search(":\d+\/.*/ConsumerGroups", str(redirect.address)).group(0).split("/")[1]
         return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
             fully_qualified_name,
             shared_access_key_name,
