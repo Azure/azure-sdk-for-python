@@ -46,7 +46,7 @@ async def sample_document_status_checks_async():
         poller = await client.begin_translation(source_container_url, target_container_url, "es")
 
         completed_docs = []
-        while not poller.done():
+        while poller.status() in ["Running", "NotStarted"]:
             await asyncio.sleep(30)
 
             doc_statuses = client.list_all_document_statuses(poller.id)

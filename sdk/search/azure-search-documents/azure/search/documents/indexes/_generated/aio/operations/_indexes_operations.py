@@ -44,7 +44,7 @@ class IndexesOperations:
         self,
         index: "_models.SearchIndex",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndex":
         """Creates a new search index.
 
@@ -66,7 +66,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -112,7 +112,7 @@ class IndexesOperations:
         self,
         select: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> AsyncIterable["_models.ListIndexesResult"]:
         """Lists all indexes available for a search service.
 
@@ -136,7 +136,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -203,7 +203,7 @@ class IndexesOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndex":
         """Creates a new search index or updates an index if it already exists.
 
@@ -240,7 +240,7 @@ class IndexesOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -300,7 +300,7 @@ class IndexesOperations:
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Deletes a search index and all the documents it contains. This operation is permanent, with no
         recovery option. Make sure you have a master copy of your index definition, data ingestion
@@ -330,7 +330,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -373,7 +373,7 @@ class IndexesOperations:
         self,
         index_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.SearchIndex":
         """Retrieves an index definition.
 
@@ -395,7 +395,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -437,7 +437,7 @@ class IndexesOperations:
         self,
         index_name: str,
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.GetIndexStatisticsResult":
         """Returns statistics for the given index, including a document count and storage usage.
 
@@ -459,7 +459,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -502,7 +502,7 @@ class IndexesOperations:
         index_name: str,
         request: "_models.AnalyzeRequest",
         request_options: Optional["_models.RequestOptions"] = None,
-        **kwargs: Any
+        **kwargs
     ) -> "_models.AnalyzeResult":
         """Shows how an analyzer breaks text into tokens.
 
@@ -526,7 +526,7 @@ class IndexesOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30"
+        api_version = "2020-06-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

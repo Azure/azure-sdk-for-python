@@ -170,7 +170,6 @@ class Granularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DAILY = "Daily"
     HOURLY = "Hourly"
     MINUTELY = "Minutely"
-    SECONDLY = "Secondly"
     CUSTOM = "Custom"
 
 class HookType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

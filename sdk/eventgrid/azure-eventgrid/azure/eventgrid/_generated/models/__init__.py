@@ -37,21 +37,6 @@ try:
     from ._models_py3 import AcsSmsDeliveryReportReceivedEventData
     from ._models_py3 import AcsSmsEventBaseProperties
     from ._models_py3 import AcsSmsReceivedEventData
-    from ._models_py3 import AgriFoodFarmingApplicationDataChangedEventData
-    from ._models_py3 import AgriFoodFarmingBoundaryChangedEventData
-    from ._models_py3 import AgriFoodFarmingCropChangedEventData
-    from ._models_py3 import AgriFoodFarmingCropVarietyChangedEventData
-    from ._models_py3 import AgriFoodFarmingFarmChangedEventData
-    from ._models_py3 import AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData
-    from ._models_py3 import AgriFoodFarmingFarmerChangedEventData
-    from ._models_py3 import AgriFoodFarmingFieldChangedEventData
-    from ._models_py3 import AgriFoodFarmingHarvestDataChangedEventData
-    from ._models_py3 import AgriFoodFarmingPlantingDataChangedEventData
-    from ._models_py3 import AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData
-    from ._models_py3 import AgriFoodFarmingSeasonChangedEventData
-    from ._models_py3 import AgriFoodFarmingSeasonalFieldChangedEventData
-    from ._models_py3 import AgriFoodFarmingTillageDataChangedEventData
-    from ._models_py3 import AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData
     from ._models_py3 import AppConfigurationKeyValueDeletedEventData
     from ._models_py3 import AppConfigurationKeyValueModifiedEventData
     from ._models_py3 import AppEventTypeDetail
@@ -217,21 +202,6 @@ except (SyntaxError, ImportError):
     from ._models import AcsSmsDeliveryReportReceivedEventData  # type: ignore
     from ._models import AcsSmsEventBaseProperties  # type: ignore
     from ._models import AcsSmsReceivedEventData  # type: ignore
-    from ._models import AgriFoodFarmingApplicationDataChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingBoundaryChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingCropChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingCropVarietyChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingFarmChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingFarmerChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingFieldChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingHarvestDataChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingPlantingDataChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingSeasonChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingSeasonalFieldChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingTillageDataChangedEventData  # type: ignore
-    from ._models import AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueDeletedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueModifiedEventData  # type: ignore
     from ._models import AppEventTypeDetail  # type: ignore
@@ -368,8 +338,6 @@ except (SyntaxError, ImportError):
     from ._models import WebSlotSwapWithPreviewStartedEventData  # type: ignore
 
 from ._event_grid_publisher_client_enums import (
-    AgriFoodFarmingJobStatus,
-    AgriFoodFarmingResourceActionType,
     AppAction,
     AppServicePlanAction,
     AsyncStatus,
@@ -412,21 +380,6 @@ __all__ = [
     'AcsSmsDeliveryReportReceivedEventData',
     'AcsSmsEventBaseProperties',
     'AcsSmsReceivedEventData',
-    'AgriFoodFarmingApplicationDataChangedEventData',
-    'AgriFoodFarmingBoundaryChangedEventData',
-    'AgriFoodFarmingCropChangedEventData',
-    'AgriFoodFarmingCropVarietyChangedEventData',
-    'AgriFoodFarmingFarmChangedEventData',
-    'AgriFoodFarmingFarmOperationDataIngestionJobStatusChangedEventData',
-    'AgriFoodFarmingFarmerChangedEventData',
-    'AgriFoodFarmingFieldChangedEventData',
-    'AgriFoodFarmingHarvestDataChangedEventData',
-    'AgriFoodFarmingPlantingDataChangedEventData',
-    'AgriFoodFarmingSatelliteDataIngestionJobStatusChangedEventData',
-    'AgriFoodFarmingSeasonChangedEventData',
-    'AgriFoodFarmingSeasonalFieldChangedEventData',
-    'AgriFoodFarmingTillageDataChangedEventData',
-    'AgriFoodFarmingWeatherDataIngestionJobStatusChangedEventData',
     'AppConfigurationKeyValueDeletedEventData',
     'AppConfigurationKeyValueModifiedEventData',
     'AppEventTypeDetail',
@@ -561,8 +514,6 @@ __all__ = [
     'WebSlotSwapStartedEventData',
     'WebSlotSwapWithPreviewCancelledEventData',
     'WebSlotSwapWithPreviewStartedEventData',
-    'AgriFoodFarmingJobStatus',
-    'AgriFoodFarmingResourceActionType',
     'AppAction',
     'AppServicePlanAction',
     'AsyncStatus',

@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
+import os
 import functools
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AccessToken
@@ -29,9 +30,9 @@ class AsyncTextAnalyticsTest(TextAnalyticsTest):
         if self.is_live:
             from azure.identity.aio import ClientSecretCredential
             return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
+                os.getenv("TEXTANALYTICS_TENANT_ID"),
+                os.getenv("TEXTANALYTICS_CLIENT_ID"),
+                os.getenv("TEXTANALYTICS_CLIENT_SECRET"),
             )
         return self.generate_fake_token()
 

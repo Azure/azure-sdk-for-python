@@ -11,6 +11,12 @@ parameters:
 - name: TestPipeline
   type: boolean
   default: false
+- name: BeforeTestSteps
+  type: object
+  default: []
+- name: AfterTestSteps
+  type: object
+  default: []
 - name: BeforePublishSteps
   type: object
   default: []
@@ -74,6 +80,8 @@ stages:
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         BuildTargetingString: $(BuildTargetingStringValue)

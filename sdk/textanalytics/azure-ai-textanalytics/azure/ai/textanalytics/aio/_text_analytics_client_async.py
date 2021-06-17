@@ -41,8 +41,7 @@ from .._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    AnalyzeActionsResult,
-    AnalyzeActionsType,
+    _AnalyzeActionsType,
     RecognizeLinkedEntitiesAction,
     AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
@@ -808,8 +807,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         actions: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]], # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[AnalyzeActionsResult]]:
+    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult]]]]:  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
+
+        We recommend you use this function if you're looking to analyze larger documents, and / or
+        combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
+        the action specific endpoints, for example :func:`analyze_sentiment`:
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -835,12 +838,23 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the poller
-            object to return a pageable heterogeneous list of the action results in the order
-            the actions were sent in this method.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a pageable heterogeneous list of lists. This list of lists is first ordered
+            by the documents you input, then ordered by the actions you input. For example,
+            if you have documents input ["Hello", "world"], and actions
+            :class:`~azure.ai.textanalytics.RecognizeEntitiesAction` and
+            :class:`~azure.ai.textanalytics.AnalyzeSentimentAction`, when iterating over the list of lists,
+            you will first iterate over the action results for the "Hello" document, getting the
+            :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` of "Hello",
+            then the :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "Hello".
+            Then, you will get the :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
+            :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
-            ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            ~azure.ai.textanalytics.AnalyzeActionsResult]]
+            ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            list[
+            RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult
+            ]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -871,26 +885,26 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES]
                 ],
                 entity_recognition_pii_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
                 ],
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.EXTRACT_KEY_PHRASES]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES]
                 ],
                 entity_linking_tasks=[
                     t.to_generated() for t in
                     [
                         a for a in actions if \
-                        _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+                        _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                     ]
                 ],
                 sentiment_analysis_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT]
+                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(

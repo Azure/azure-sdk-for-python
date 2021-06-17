@@ -25,6 +25,15 @@ class LogsQueryClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
     :paramtype endpoint: str
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/sample_log_query_client.py
+        :start-after: [START client_auth_with_token_cred]
+        :end-before: [END client_auth_with_token_cred]
+        :language: python
+        :dedent: 0
+        :caption: Creating the LogsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential, **kwargs):
@@ -78,6 +87,15 @@ class LogsQueryClient(object):
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_log_query_client.py
+            :start-after: [START send_logs_query]
+            :end-before: [END send_logs_query]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for a single Log Query
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
@@ -126,6 +144,15 @@ class LogsQueryClient(object):
         :return: BatchResponse, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsBatchResults
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_batch_query.py
+            :start-after: [START send_batch_query]
+            :end-before: [END send_batch_query]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for multiple Log Queries.
         """
         try:
             queries = [LogsQueryRequest(**q) for q in queries]

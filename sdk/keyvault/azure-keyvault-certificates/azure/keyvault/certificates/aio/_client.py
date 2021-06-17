@@ -23,6 +23,7 @@ from .. import (
     IssuerProperties,
 )
 from ._polling_async import CreateCertificatePollerAsync
+from .._client import NO_SAN_OR_SUBJECT
 from .._shared import AsyncKeyVaultClientBase
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared.exceptions import error_map as _error_map
@@ -62,17 +63,20 @@ class CertificateClient(AsyncKeyVaultClientBase):
         an :class:`~azure.core.exceptions.HttpResponseError`
 
         :param str certificate_name: The name of the certificate.
-        :param policy: The management policy for the certificate.
+        :param policy: The management policy for the certificate. Either subject or one of the subject alternative
+            name properties are required.
         :type policy:
-         ~azure.keyvault.certificates.CertificatePolicy
+            ~azure.keyvault.certificates.CertificatePolicy
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
-         returns the created KeyVaultCertificate if creation is successful, the CertificateOperation if not.
+            returns the created KeyVaultCertificate if creation is successful, the CertificateOperation if not.
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate or
-         ~azure.keyvault.certificates.CertificateOperation
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+            ~azure.keyvault.certificates.CertificateOperation
+        :raises:
+            :class:`ValueError` if the certificate policy is invalid,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
@@ -82,6 +86,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
+        if not (policy.san_emails or policy.san_user_principal_names or policy.san_dns_names or policy.subject):
+            raise ValueError(NO_SAN_OR_SUBJECT)
+
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
@@ -95,7 +102,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         parameters = self._models.CertificateCreateParameters(
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         cert_bundle = await self._client.create_certificate(
@@ -435,8 +442,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             attributes = None
 
         parameters = self._models.CertificateUpdateParameters(
-            certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            certificate_attributes=attributes, tags=kwargs.pop("tags", None)
         )
 
         bundle = await self._client.update_certificate(
@@ -774,9 +780,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             attributes = None
 
         parameters = self._models.CertificateMergeParameters(
-            x509_certificates=x509_certificates,
-            certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            x509_certificates=x509_certificates, certificate_attributes=attributes, tags=kwargs.pop("tags", None)
         )
 
         bundle = await self._client.merge_certificate(
@@ -861,9 +865,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             admin_details = None
         if organization_id or admin_details:
-            organization_details = self._models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details
-            )
+            organization_details = self._models.OrganizationDetails(id=organization_id, admin_details=admin_details)
         else:
             organization_details = None
         if enabled is not None:
@@ -879,11 +881,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
         issuer_bundle = await self._client.set_certificate_issuer(
-            vault_base_url=self.vault_url,
-            issuer_name=issuer_name,
-            parameter=parameters,
-            error_map=_error_map,
-            **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, parameter=parameters, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -928,9 +926,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             admin_details = None
         if organization_id or admin_details:
-            organization_details = self._models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details
-            )
+            organization_details = self._models.OrganizationDetails(id=organization_id, admin_details=admin_details)
         else:
             organization_details = None
         if enabled is not None:
@@ -942,15 +938,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
             provider=kwargs.pop("provider", None),
             credentials=issuer_credentials,
             organization_details=organization_details,
-            attributes=issuer_attributes
+            attributes=issuer_attributes,
         )
 
         issuer_bundle = await self._client.update_certificate_issuer(
-            vault_base_url=self.vault_url,
-            issuer_name=issuer_name,
-            parameter=parameters,
-            error_map=_error_map,
-            **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, parameter=parameters, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
