@@ -11,8 +11,8 @@ from ._generated import (
     BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
 )
 from ._models import (
-    TranslationStatusResult,
-    DocumentStatusResult,
+    TranslationStatus,
+    DocumentStatus,
     DocumentTranslationInput,
     FileFormat,
 )
@@ -100,12 +100,12 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @overload
     def begin_translation(self, source_url, target_url, target_language_code, **kwargs):
-        # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatusResult]]
+        # type: (str, str, str, **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
     @overload
     def begin_translation(self, inputs, **kwargs):
-        # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatusResult]]
+        # type: (List[DocumentTranslationInput], **Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]
         pass
 
     def begin_translation(
@@ -132,9 +132,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
             for the destination to write translated documents.
         :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
-            object to return a pageable of DocumentStatusResult. A DocumentStatusResult will be
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
-        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatusResult]]
+        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -185,22 +185,22 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_translation_status(self, translation_id, **kwargs):
-        # type: (str, **Any) -> TranslationStatusResult
+        # type: (str, **Any) -> TranslationStatus
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
         the documents that are being translated as part of that translation operation.
 
         :param str translation_id: The translation operation ID.
-        :return: A TranslationStatusResult with information on the status of the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :return: A TranslationStatus with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
         translation_status = self._client.document_translation.get_translation_status(
             translation_id, **kwargs
         )
-        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+        return TranslationStatus._from_generated(  # pylint: disable=protected-access
             translation_status
         )
 
@@ -223,7 +223,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def list_all_translation_statuses(self, **kwargs):
-        # type: (**Any) -> ItemPaged[TranslationStatusResult]
+        # type: (**Any) -> ItemPaged[TranslationStatus]
         """List all the submitted translation operations under the Document Translation resource.
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
@@ -239,8 +239,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword list[str] order_by: the sorting query for the operations returned.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: A pageable of TranslationStatusResult.
-        :rtype: ~azure.core.paging.ItemPaged[TranslationStatusResult]
+        :return: A pageable of TranslationStatus.
+        :rtype: ~azure.core.paging.ItemPaged[TranslationStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -262,7 +262,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         def _convert_from_generated_model(
             generated_model,
         ):  # pylint: disable=protected-access
-            return TranslationStatusResult._from_generated(
+            return TranslationStatus._from_generated(
                 generated_model
             )  # pylint: disable=protected-access
 
@@ -284,7 +284,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def list_all_document_statuses(self, translation_id, **kwargs):
-        # type: (str, **Any) -> ItemPaged[DocumentStatusResult]
+        # type: (str, **Any) -> ItemPaged[DocumentStatus]
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
@@ -301,8 +301,8 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword list[str] order_by: the sorting query for the documents.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
-        :return: A pageable of DocumentStatusResult.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentStatusResult]
+        :return: A pageable of DocumentStatus.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -326,7 +326,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         document_ids = kwargs.pop("document_ids", None)
 
         def _convert_from_generated_model(generated_model):
-            return DocumentStatusResult._from_generated(  # pylint: disable=protected-access
+            return DocumentStatus._from_generated(  # pylint: disable=protected-access
                 generated_model
             )
 
@@ -349,25 +349,25 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
     @distributed_trace
     def get_document_status(self, translation_id, document_id, **kwargs):
-        # type: (str, str, **Any) -> DocumentStatusResult
+        # type: (str, str, **Any) -> DocumentStatus
         """Get the status of an individual document within a translation operation.
 
         :param str translation_id: The translation operation ID.
         :param str document_id: The ID for the document.
-        :return: A DocumentStatusResult with information on the status of the document.
-        :rtype: ~azure.ai.translation.document.DocumentStatusResult
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
         """
 
         document_status = self._client.document_translation.get_document_status(
             translation_id, document_id, **kwargs
         )
-        return DocumentStatusResult._from_generated(  # pylint: disable=protected-access
+        return DocumentStatus._from_generated(  # pylint: disable=protected-access
             document_status
         )
 
     @distributed_trace
-    def get_glossary_formats(self, **kwargs):
+    def get_supported_glossary_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the glossary formats supported by the Document Translation service.
 
@@ -384,7 +384,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         )
 
     @distributed_trace
-    def get_document_formats(self, **kwargs):
+    def get_supported_document_formats(self, **kwargs):
         # type: (**Any) -> List[FileFormat]
         """Get the list of the document formats supported by the Document Translation service.
 
