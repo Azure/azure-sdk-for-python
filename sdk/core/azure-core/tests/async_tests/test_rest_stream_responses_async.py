@@ -8,7 +8,7 @@ import functools
 import os
 import json
 import pytest
-from azure.core.rest import StreamConsumedError, HttpRequest, StreamClosedError, StreamConsumedError
+from azure.core.rest import StreamConsumedError, HttpRequest, StreamClosedError, StreamConsumedError, ResponseNotReadError
 
 @pytest.mark.asyncio
 async def test_iter_raw(client):
@@ -62,7 +62,7 @@ async def test_iter_raw_with_chunksize(client):
         parts = []
         async for part in response.iter_raw(chunk_size=5):
             parts.append(part)
-        assert parts == [b"Hello", b", wor", b"ld!"]
+        assert parts == [b'Hello', b', wor', b'ld!']
 
     async with client.send_request(request, stream=True) as response:
         parts = []
@@ -200,3 +200,50 @@ async def test_cannot_read_after_response_closed(client):
     with pytest.raises(StreamClosedError) as ex:
         await response.read()
     assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
+
+@pytest.mark.asyncio
+async def test_decompress_plain_no_header(client):
+    # thanks to Xiang Yan for this test!
+    account_name = "coretests"
+    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
+    request = HttpRequest("GET", url)
+    async with client:
+        response = await client.send_request(request, stream=True)
+        with pytest.raises(ResponseNotReadError):
+            response.content
+        await response.read()
+        assert response.content == b"test"
+
+@pytest.mark.asyncio
+async def test_compress_plain_no_header(client):
+    # thanks to Xiang Yan for this test!
+    account_name = "coretests"
+    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
+    request = HttpRequest("GET", url)
+    async with client:
+        response = await client.send_request(request, stream=True)
+        iter = response.iter_raw()
+        data = b""
+        async for d in iter:
+            data += d
+        assert data == b"test"
+
+@pytest.mark.asyncio
+async def test_iter_read_back_and_forth(client):
+    # thanks to McCoy Patiño for this test!
+
+    # while this test may look like it's exposing buggy behavior, this is httpx's behavior
+    # the reason why the code flow is like this, is because the 'iter_x' functions don't
+    # actually read the contents into the response, the output them. Once they're yielded,
+    # the stream is closed, so you have to catch the output when you iterate through it
+    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+
+    async with client.send_request(request, stream=True) as response:
+        async for line in response.iter_lines():
+            assert line
+        with pytest.raises(ResponseNotReadError):
+            response.text
+        with pytest.raises(StreamConsumedError):
+            await response.read()
+        with pytest.raises(ResponseNotReadError):
+            response.text

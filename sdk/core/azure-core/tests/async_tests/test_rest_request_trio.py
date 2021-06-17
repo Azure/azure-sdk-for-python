@@ -7,7 +7,7 @@ import json
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import TrioRequestsTransport
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, ResponseNotReadError, StreamConsumedError
 
 import pytest
 
@@ -41,3 +41,27 @@ async def test_send_data():
         response = await pipeline.run(req)
 
         assert response.http_response.json()['data'] == "azerty"
+
+
+@pytest.mark.trio
+async def test_iter_read_back_and_forth():
+    # thanks to McCoy Patiño for this test!
+
+    # while this test may look like it's exposing buggy behavior, this is httpx's behavior
+    # the reason why the code flow is like this, is because the 'iter_x' functions don't
+    # actually read the contents into the response, the output them. Once they're yielded,
+    # the stream is closed, so you have to catch the output when you iterate through it
+    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+
+    async with TrioRequestsTransport() as transport:
+        pipeline = AsyncPipeline(transport=transport)
+        req = HttpRequest("GET", "http://localhost:5000/basic/lines")
+        response = (await pipeline.run(req, stream=True)).http_response
+        async for line in response.iter_lines():
+            assert line
+        with pytest.raises(ResponseNotReadError):
+            response.text
+        with pytest.raises(StreamConsumedError):
+            await response.read()
+        with pytest.raises(ResponseNotReadError):
+            response.text

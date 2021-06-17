@@ -252,6 +252,31 @@ def test_read_content(assert_iterator_body):
     # in this case, request._data is what we end up passing to the requests transport
     assert isinstance(request._data, collections.Iterable)
 
+
+def test_complicated_json(client):
+    # thanks to Sean Kane for this test!
+    input = {
+        'EmptyByte': '',
+        'EmptyUnicode': '',
+        'SpacesOnlyByte': '   ',
+        'SpacesOnlyUnicode': '   ',
+        'SpacesBeforeByte': '   Text',
+        'SpacesBeforeUnicode': '   Text',
+        'SpacesAfterByte': 'Text   ',
+        'SpacesAfterUnicode': 'Text   ',
+        'SpacesBeforeAndAfterByte': '   Text   ',
+        'SpacesBeforeAndAfterUnicode': '   Text   ',
+        '啊齄丂狛': 'ꀕ',
+        'RowKey': 'test2',
+        '啊齄丂狛狜': 'hello',
+        "singlequote": "a''''b",
+        "doublequote": 'a""""b',
+        "None": None,
+    }
+    request = HttpRequest("POST", "http://localhost:5000/basic/complicated-json", json=input)
+    r = client.send_request(request)
+    r.raise_for_status()
+
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():
 #     files = [
