@@ -7,15 +7,22 @@
 # --------------------------------------------------------------------------
 import pytest
 from datetime import datetime, timedelta
+import sys
 
 from devtools_testutils import AzureTestCase
 
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.data.tables import (
     TableServiceClient,
     TableClient,
     TableAnalyticsLogging,
     TableMetrics,
-    TableRetentionPolicy
+    TableRetentionPolicy,
+    EntityProperty,
+    EdmType,
+    TableEntity,
+    TransactionOperation,
+    UpdateMode
 )
 
 from _shared.testcase import TableTestCase
@@ -98,10 +105,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             account_url = self.account_url(tables_storage_account_name, "table")
             ts = TableServiceClient(credential=self.get_token_credential(), endpoint=account_url)
             table_name = self._get_table_reference()
-            # Act
             created = ts.create_table(table_name)
 
-            # Assert
             assert created.table_name == table_name
 
             properties = ts.get_service_properties()
@@ -129,27 +134,27 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
     @tables_decorator
     def test_aad_insert_entity_dictionary(self, tables_storage_account_name):
-        # Arrange
+
         self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
             entity = self._create_random_entity_dict()
 
-            # Act
+
             resp = self.table.create_entity(entity=entity)
 
-            # Assert
+
             self._assert_valid_metadata(resp)
         finally:
             self._tear_down()
 
     @tables_decorator
     def test_aad_query_user_filter(self, tables_storage_account_name):
-        # Arrange
+
         self._set_up(tables_storage_account_name, self.get_token_credential())
         try:
             entity, _ = self._insert_two_opposite_entities()
 
-            # Act
+
             entities = self.table.query_entities(
                 "married eq @my_param",
                 parameters={'my_param': entity['married']}
@@ -162,5 +167,157 @@ class StorageTableTest(AzureTestCase, TableTestCase):
                 length += 1
 
             assert length == 1
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @tables_decorator
+    def test_aad_batch_all_operations_together(self, tables_storage_account_name):
+
+        self._set_up(tables_storage_account_name, self.get_token_credential())
+        try:
+
+            entity = TableEntity()
+            entity['PartitionKey'] = '003'
+            entity['RowKey'] = 'batch_all_operations_together-1'
+            entity['test'] = EntityProperty(True, EdmType.BOOLEAN)
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
+            entity['test5'] = datetime.utcnow()
+
+            self.table.create_entity(entity)
+            entity['RowKey'] = 'batch_all_operations_together-2'
+            self.table.create_entity(entity)
+            entity['RowKey'] = 'batch_all_operations_together-3'
+            self.table.create_entity(entity)
+            entity['RowKey'] = 'batch_all_operations_together-4'
+            self.table.create_entity(entity)
+            transaction_count = 0
+
+            batch = []
+            entity['RowKey'] = 'batch_all_operations_together'
+            batch.append((TransactionOperation.CREATE, entity.copy()))
+            transaction_count += 1
+
+            entity['RowKey'] = 'batch_all_operations_together-1'
+            batch.append((TransactionOperation.DELETE, entity.copy()))
+            transaction_count += 1
+
+            entity['RowKey'] = 'batch_all_operations_together-2'
+            entity['test3'] = 10
+            batch.append((TransactionOperation.UPDATE, entity.copy()))
+            transaction_count += 1
+
+            entity['RowKey'] = 'batch_all_operations_together-3'
+            entity['test3'] = 100
+            batch.append((TransactionOperation.UPDATE, entity.copy(), {'mode': UpdateMode.REPLACE}))
+            transaction_count += 1
+
+            entity['RowKey'] = 'batch_all_operations_together-4'
+            entity['test3'] = 10
+            batch.append((TransactionOperation.UPSERT, entity.copy()))
+            transaction_count += 1
+
+            entity['RowKey'] = 'batch_all_operations_together-5'
+            batch.append((TransactionOperation.UPSERT, entity.copy(), {'mode': UpdateMode.REPLACE}))
+            transaction_count += 1
+
+            transaction_result = self.table.submit_transaction(batch)
+
+
+            self._assert_valid_batch_transaction(transaction_result, transaction_count)
+            assert 'etag' in transaction_result[0]
+            assert 'etag' not in transaction_result[1]
+            assert 'etag' in transaction_result[2]
+            assert 'etag' in transaction_result[3]
+            assert 'etag' in transaction_result[4]
+            assert 'etag' in transaction_result[5]
+
+
+            entities = list(self.table.query_entities("PartitionKey eq '003'"))
+            assert 5 ==  len(entities)
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_aad_access_policy_error(self, tables_storage_account_name):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self._get_table_reference()
+        table_client = TableClient(credential=self.get_token_credential(), endpoint=account_url, table_name=table_name)
+
+        with pytest.raises(HttpResponseError):
+            table_client.get_table_access_policy()
+
+        with pytest.raises(HttpResponseError):
+            table_client.set_table_access_policy(signed_identifiers={})
+
+    @tables_decorator
+    def test_aad_delete_entities(self, tables_storage_account_name):
+        self._set_up(tables_storage_account_name, self.get_token_credential())
+        try:
+            entity, _ = self._insert_random_entity()
+            self.table.delete_entity(entity)
+
+            with pytest.raises(ResourceNotFoundError):
+                self.table.get_entity(entity['PartitionKey'], entity["RowKey"])
+
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_aad_query_user_filter(self, tables_storage_account_name):
+
+        self._set_up(tables_storage_account_name, self.get_token_credential())
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+
+            entities = self.table.query_entities(
+                "married eq @my_param",
+                parameters={'my_param': entity['married']}
+            )
+
+            assert entities is not None
+            length = 0
+            for e in entities:
+                self._assert_default_entity(e)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_aad_list_entities(self, tables_storage_account_name):
+
+        self._set_up(tables_storage_account_name, self.get_token_credential())
+        try:
+            table = self._create_query_table(2)
+
+
+            entities = list(table.list_entities())
+
+
+            assert len(entities) ==  2
+            for entity in entities:
+                self._assert_default_entity(entity)
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_merge_entity(self, tables_storage_account_name):
+        self._set_up(tables_storage_account_name, self.get_token_credential())
+        try:
+            entity, _ = self._insert_random_entity()
+
+
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+
+
+            self._assert_valid_metadata(resp)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()

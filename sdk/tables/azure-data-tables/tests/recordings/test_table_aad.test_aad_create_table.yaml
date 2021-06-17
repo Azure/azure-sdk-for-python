@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "pytablesync38230f90"}'
+    body: '{"TableName": "pytablesyncaad0e5a"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -9,33 +9,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '36'
+      - '35'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Jun 2021 16:53:19 GMT
+      - Thu, 17 Jun 2021 16:53:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Jun 2021 16:53:19 GMT
+      - Thu, 17 Jun 2021 16:53:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesync38230f90"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesyncaad0e5a"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 17 Jun 2021 16:53:21 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       location:
-      - https://fake_table_account.table.core.windows.net/Tables('pytablesync38230f90')
+      - https://fake_table_account.table.core.windows.net/Tables('pytablesyncaad0e5a')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -59,25 +59,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Jun 2021 16:53:21 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Jun 2021 16:53:21 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytablesync38230f90"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytablesyncaad0e5a"}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -101,15 +101,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesync38230f90')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesyncaad0e5a')
   response:
     body:
       string: ''
@@ -119,7 +119,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -141,11 +141,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -159,7 +159,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -183,26 +183,26 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Jun 2021 16:53:23 GMT
+      - Thu, 17 Jun 2021 16:53:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesync38230f90')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesyncaad0e5a')
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:f3a2b694-f002-0051-7c99-6375f9000000\nTime:2021-06-17T16:53:24.4928295Z"}}}'
+        specified resource does not exist.\nRequestId:b55256a6-f002-008a-6b99-63b3c4000000\nTime:2021-06-17T16:53:20.6526501Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 17 Jun 2021 16:53:24 GMT
+      - Thu, 17 Jun 2021 16:53:20 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
