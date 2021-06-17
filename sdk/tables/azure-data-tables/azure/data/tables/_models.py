@@ -78,10 +78,6 @@ class TableAccessPolicy(GenAccessPolicy):
         self.expiry = kwargs.get('expiry')
         self.permission = kwargs.get('permission')
 
-    def __str__(self):
-        # type: () -> str
-        return
-
     def __repr__(self):
         # type: () -> str
         return "TableAccessPolicy(start={}, expiry={}, permission={}".format(
