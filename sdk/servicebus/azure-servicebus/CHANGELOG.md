@@ -4,7 +4,7 @@
 
 **Bug Fixes**
 
-* Fixed a bug when setting the `partition_key` on `ServiceBusMessage` that should ensure that the session ID has been set before checking that the value passed in is equivalent to the session ID (PR #19233, thanks @bishnu-shb).
+* Fixed a bug that when setting `ServiceBusMessage.partition_key`, input value should be not validated against `session_id` of None (PR #19233, thanks @bishnu-shb).
 
 ## 7.3.0 (2021-06-08)
 
