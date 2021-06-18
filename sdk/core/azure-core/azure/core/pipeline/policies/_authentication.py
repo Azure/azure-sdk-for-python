@@ -21,26 +21,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
-def _enforce_https(request):
-    # type: (PipelineRequest) -> None
-    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify "enforce_https=False"
-    """
-
-    # move 'enforce_https' from options to context so it persists
-    # across retries but isn't passed to a transport implementation
-    option = request.context.options.pop("enforce_https", None)
-
-    # True is the default setting; we needn't preserve an explicit opt in to the default behavior
-    if option is False:
-        request.context["enforce_https"] = option
-
-    enforce_https = request.context.get("enforce_https", True)
-    if enforce_https and not request.http_request.url.lower().startswith("https"):
-        raise ServiceRequestError(
-            "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-        )
-
-
 # pylint:disable=too-few-public-methods
 class _BearerTokenCredentialPolicyBase(object):
     """Base class for a Bearer Token Credential Policy.
@@ -60,7 +40,22 @@ class _BearerTokenCredentialPolicyBase(object):
     @staticmethod
     def _enforce_https(request):
         # type: (PipelineRequest) -> None
-        return _enforce_https(request)
+        """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify "enforce_https=False"
+        """
+
+        # move 'enforce_https' from options to context so it persists
+        # across retries but isn't passed to a transport implementation
+        option = request.context.options.pop("enforce_https", None)
+
+        # True is the default setting; we needn't preserve an explicit opt in to the default behavior
+        if option is False:
+            request.context["enforce_https"] = option
+
+        enforce_https = request.context.get("enforce_https", True)
+        if enforce_https and not request.http_request.url.lower().startswith("https"):
+            raise ServiceRequestError(
+                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+            )
 
     @staticmethod
     def _update_headers(headers, token):
