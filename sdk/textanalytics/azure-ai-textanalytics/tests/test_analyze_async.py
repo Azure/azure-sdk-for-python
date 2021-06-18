@@ -715,7 +715,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             polling_interval=self._interval(),
         )).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_pii_action_categories_filter(self, client):
 

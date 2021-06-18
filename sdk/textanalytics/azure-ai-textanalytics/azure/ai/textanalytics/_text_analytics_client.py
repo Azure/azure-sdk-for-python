@@ -515,10 +515,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         We also extract the relations found between entities, for example in "The subject took 100 mg of ibuprofen",
         we would extract the relationship between the "100 mg" dosage and the "ibuprofen" medication.
 
-        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
-        for you to use this endpoint. More information about that here:
-        https://aka.ms/text-analytics-health-request-access
-
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of

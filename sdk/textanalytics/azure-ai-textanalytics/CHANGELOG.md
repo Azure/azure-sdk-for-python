@@ -1,6 +1,10 @@
 # Release History
 
-## 5.1.0b8 (Unreleased)
+## 5.1.0 (Unreleased)
+
+This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
+
+Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
 **Breaking Changes**
 

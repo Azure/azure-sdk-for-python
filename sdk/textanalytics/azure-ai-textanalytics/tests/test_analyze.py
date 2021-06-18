@@ -681,7 +681,7 @@ class TestAnalyze(TextAnalyticsTest):
             raw_response_hook=callback,
         ).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     def test_pii_action_categories_filter(self, client):
 
