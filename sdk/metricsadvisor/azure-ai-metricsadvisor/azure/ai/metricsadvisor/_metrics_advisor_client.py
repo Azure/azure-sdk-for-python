@@ -379,14 +379,14 @@ class MetricsAdvisorClient(object):
         # type: (...) -> ItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop('skip', None)
-        filter_condition = kwargs.pop('filter', None)
-        filter = filter_condition._to_generated() if filter_condition else None
+        condition = kwargs.pop('filter', None)
+        filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            filter=filter,
+            filter=filter_condition,
         )
 
         return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
@@ -514,15 +514,15 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        dimension_filter = kwargs.pop('dimension_filter', None)
-        filter = DimensionGroupIdentity(dimension=dimension_filter)
+        dimension = kwargs.pop('dimension_filter', None)
+        dimension_filter = DimensionGroupIdentity(dimension=dimension)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
             dimension_name=dimension_name,
-            dimension_filter=filter,
+            dimension_filter=dimension_filter,
         )
 
         return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(  # type: ignore
@@ -546,15 +546,15 @@ class MetricsAdvisorClient(object):
     def _list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
 
-        filter_condition = kwargs.pop('filter', None)
-        filter = filter_condition._to_generated() if filter_condition else None
+        condition = kwargs.pop('filter', None)
+        filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            filter=filter,
+            filter=filter_condition,
         )
 
         return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
