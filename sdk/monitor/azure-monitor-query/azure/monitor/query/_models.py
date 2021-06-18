@@ -151,6 +151,8 @@ class LogsQueryRequest(InternalLogQueryRequest):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :param workspace_id: Workspace Id to be included in the query.
+    :type workspace_id: str
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
@@ -161,59 +163,29 @@ class LogsQueryRequest(InternalLogQueryRequest):
      with either end_time or duration.
     :keyword datetime end_time: The end time till which to query the data. This should be accompanied
      with either start_time or duration.
-    :param workspace: Workspace Id to be included in the query.
-    :type workspace: str
+    :keyword additional_workspaces: A list of workspaces that are included in the query.
+     These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+    :paramtype additional_workspaces: list[str]
     :keyword request_id: The error details.
     :paramtype request_id: str
     :keyword headers: Dictionary of :code:`<string>`.
     :paramtype headers: dict[str, str]
     """
 
-    def __init__(self, query, workspace, duration=None, **kwargs):
+    def __init__(self, query, workspace_id, duration=None, **kwargs):
         # type: (str, str, Optional[str], Any) -> None
         super(LogsQueryRequest, self).__init__(**kwargs)
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
         timespan = construct_iso8601(start, end, duration)
+        additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = kwargs.get("request_id", str(uuid.uuid4()))
         self.headers = kwargs.get("headers", None)
         self.body = {
-            "query": query, "timespan": timespan
+            "query": query, "timespan": timespan, "workspaces": additional_workspaces
         }
-        self.workspace = workspace
+        self.workspace = workspace_id
 
-
-class LogsQueryBody(InternalQueryBody):
-    """The Analytics query. Learn more about the
-    `Analytics query syntax <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param query: Required. The query to execute.
-    :type query: str
-    :keyword timespan: Optional. The timespan over which to query data. This is an ISO8601 time
-     period value.  This timespan is applied in addition to any that are specified in the query
-     expression.
-    :paramtype timespan: str
-    :keyword workspaces: A list of workspaces that are included in the query.
-    :paramtype workspaces: list[str]
-    :keyword qualified_names: A list of qualified workspace names that are included in the query.
-    :paramtype qualified_names: list[str]
-    :keyword workspace_ids: A list of workspace IDs that are included in the query.
-    :paramtype workspace_ids: list[str]
-    :keyword azure_resource_ids: A list of Azure resource IDs that are included in the query.
-    :paramtype azure_resource_ids: list[str]
-    """
-
-    def __init__(self, query, timespan=None, **kwargs):
-        # type: (str, Optional[str], Any) -> None
-        kwargs.setdefault("query", query)
-        kwargs.setdefault("timespan", timespan)
-        super(LogsQueryBody, self).__init__(**kwargs)
-        self.workspaces = kwargs.get("workspaces", None)
-        self.qualified_names = kwargs.get("qualified_names", None)
-        self.workspace_ids = kwargs.get("workspace_ids", None)
-        self.azure_resource_ids = kwargs.get("azure_resource_ids", None)
 
 class LogsQueryResult(object):
     """The LogsQueryResult.

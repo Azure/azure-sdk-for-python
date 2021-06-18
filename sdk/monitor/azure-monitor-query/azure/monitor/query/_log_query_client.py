@@ -10,9 +10,9 @@ from azure.core.exceptions import HttpResponseError
 
 from ._generated._monitor_query_client import MonitorQueryClient
 
-from ._generated.models import BatchRequest
+from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from ._helpers import get_authentication_policy, process_error, construct_iso8601
-from ._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
+from ._models import LogsQueryResults, LogsQueryRequest, LogsBatchResults
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -76,14 +76,9 @@ class LogsQueryClient(object):
         :keyword bool include_render: In the query language, it is possible to specify different render options.
          By default, the API does not return information regarding the type of visualization to show.
          If your client requires this information, specify the preference
-        :keyword workspaces: A list of workspaces that are included in the query.
-        :paramtype workspaces: list[str]
-        :keyword qualified_names: A list of qualified workspace names that are included in the query.
-        :paramtype qualified_names: list[str]
-        :keyword workspace_ids: A list of workspace IDs that are included in the query.
-        :paramtype workspace_ids: list[str]
-        :keyword azure_resource_ids: A list of Azure resource IDs that are included in the query.
-        :paramtype azure_resource_ids: list[str]
+        :keyword additional_workspaces: A list of workspaces that are included in the query.
+         These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+        :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -103,6 +98,7 @@ class LogsQueryClient(object):
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
         server_timeout = kwargs.pop("server_timeout", None)
+        workspaces = kwargs.pop("additional_workspaces", None)
 
         prefer = ""
         if server_timeout:
@@ -119,6 +115,7 @@ class LogsQueryClient(object):
         body = LogsQueryBody(
             query=query,
             timespan=timespan,
+            workspaces=workspaces,
             **kwargs
         )
 
