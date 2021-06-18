@@ -64,13 +64,35 @@ class PerfStressRunner:
             usage='{} {} [<args>]'.format(__file__, args.test))
 
         # Global args
-        per_test_arg_parser.add_argument('-p', '--parallel', nargs='?', type=int, help='Degree of parallelism to run with.  Default is 1.', default=1)
-        per_test_arg_parser.add_argument('-d', '--duration', nargs='?', type=int, help='Duration of the test in seconds.  Default is 10.', default=10)
-        per_test_arg_parser.add_argument('-i', '--iterations', nargs='?', type=int, help='Number of iterations in the main test loop.  Default is 1.', default=1)
-        per_test_arg_parser.add_argument('-w', '--warmup', nargs='?', type=int, help='Duration of warmup in seconds.  Default is 5.', default=5)
-        per_test_arg_parser.add_argument('--no-cleanup', action='store_true', help='Do not run cleanup logic.  Default is false.', default=False)
-        per_test_arg_parser.add_argument('--sync', action='store_true', help='Run tests in sync mode.  Default is False.', default=False)
-        per_test_arg_parser.add_argument('--profile', action='store_true', help='Run tests with profiler.  Default is False.', default=False)
+        per_test_arg_parser.add_argument(
+            "-p", "--parallel", nargs="?", type=int, help="Degree of parallelism to run with.  Default is 1.", default=1
+        )
+        per_test_arg_parser.add_argument(
+            "-d", "--duration", nargs="?", type=int, help="Duration of the test in seconds.  Default is 10.", default=10
+        )
+        per_test_arg_parser.add_argument(
+            "-i",
+            "--iterations",
+            nargs="?",
+            type=int,
+            help="Number of iterations in the main test loop.  Default is 1.",
+            default=1,
+        )
+        per_test_arg_parser.add_argument(
+            "-w", "--warmup", nargs="?", type=int, help="Duration of warmup in seconds.  Default is 5.", default=5
+        )
+        per_test_arg_parser.add_argument(
+            "--no-cleanup", action="store_true", help="Do not run cleanup logic.  Default is false.", default=False
+        )
+        per_test_arg_parser.add_argument(
+            "--sync", action="store_true", help="Run tests in sync mode.  Default is False.", default=False
+        )
+        per_test_arg_parser.add_argument(
+            "--profile", action="store_true", help="Run tests with profiler.  Default is False.", default=False
+        )
+        per_test_arg_parser.add_argument(
+            "-x", "--test-proxy", help="URI of TestProxy Server"
+        )
 
         # Per-test args
         self._test_class_to_run.add_arguments(per_test_arg_parser)
@@ -112,8 +134,12 @@ class PerfStressRunner:
                 await tests[0].global_setup()
                 try:
                     await asyncio.gather(*[test.setup() for test in tests])
-
                     self.logger.info("")
+
+                    if self.per_test_args.test_proxy:
+                        self.logger.info("=== Record and Start Playback ===")
+                        await asyncio.gather(*[test.record_and_start_playback() for test in tests])
+                        self.logger.info("")
 
                     if self.per_test_args.warmup > 0:
                         await self._run_tests(tests, self.per_test_args.warmup, "Warmup")
@@ -130,6 +156,11 @@ class PerfStressRunner:
                 except Exception as e:
                     print("Exception: " + str(e))
                 finally:
+                    if self.per_test_args.test_proxy:
+                        self.logger.info("=== Stop Playback ===")
+                        await asyncio.gather(*[test.stop_playback() for test in tests])
+                        self.logger.info("")
+
                     if not self.per_test_args.no_cleanup:
                         self.logger.info("=== Cleanup ===")
                         await asyncio.gather(*[test.cleanup() for test in tests])
