@@ -6,6 +6,7 @@ parameters:
   Artifacts: []
   TestPipeline: false
   VerifyAutorest: false
+  ValidateFormatting: false
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
@@ -102,6 +103,12 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - template: run_black.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()

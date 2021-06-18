@@ -19,6 +19,7 @@ codecov==2.1.0
 beautifulsoup4==4.9.1
 pkginfo==1.5.0.1
 pip==20.2
+black==21.6b0
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
