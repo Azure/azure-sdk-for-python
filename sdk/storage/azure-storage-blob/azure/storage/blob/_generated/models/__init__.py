@@ -33,7 +33,6 @@ try:
     from ._models_py3 import DataLakeStorageError
     from ._models_py3 import DataLakeStorageErrorError
     from ._models_py3 import DelimitedTextConfiguration
-    from ._models_py3 import DirectoryHttpHeaders
     from ._models_py3 import FilterBlobItem
     from ._models_py3 import FilterBlobSegment
     from ._models_py3 import GeoReplication
@@ -87,7 +86,6 @@ except (SyntaxError, ImportError):
     from ._models import DataLakeStorageError  # type: ignore
     from ._models import DataLakeStorageErrorError  # type: ignore
     from ._models import DelimitedTextConfiguration  # type: ignore
-    from ._models import DirectoryHttpHeaders  # type: ignore
     from ._models import FilterBlobItem  # type: ignore
     from ._models import FilterBlobSegment  # type: ignore
     from ._models import GeoReplication  # type: ignore
@@ -171,7 +169,6 @@ __all__ = [
     'DataLakeStorageError',
     'DataLakeStorageErrorError',
     'DelimitedTextConfiguration',
-    'DirectoryHttpHeaders',
     'FilterBlobItem',
     'FilterBlobSegment',
     'GeoReplication',

@@ -1064,41 +1064,6 @@ class DelimitedTextConfiguration(msrest.serialization.Model):
         self.headers_present = kwargs['headers_present']
 
 
-class DirectoryHttpHeaders(msrest.serialization.Model):
-    """Parameter group.
-
-    :param cache_control: Cache control for given resource.
-    :type cache_control: str
-    :param content_type: Content type for given resource.
-    :type content_type: str
-    :param content_encoding: Content encoding for given resource.
-    :type content_encoding: str
-    :param content_language: Content language for given resource.
-    :type content_language: str
-    :param content_disposition: Content disposition for given resource.
-    :type content_disposition: str
-    """
-
-    _attribute_map = {
-        'cache_control': {'key': 'cacheControl', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'content_encoding': {'key': 'contentEncoding', 'type': 'str'},
-        'content_language': {'key': 'contentLanguage', 'type': 'str'},
-        'content_disposition': {'key': 'contentDisposition', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DirectoryHttpHeaders, self).__init__(**kwargs)
-        self.cache_control = kwargs.get('cache_control', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.content_encoding = kwargs.get('content_encoding', None)
-        self.content_language = kwargs.get('content_language', None)
-        self.content_disposition = kwargs.get('content_disposition', None)
-
-
 class FilterBlobItem(msrest.serialization.Model):
     """Blob info from a Filter Blobs API call.
 

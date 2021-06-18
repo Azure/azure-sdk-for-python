@@ -42,9 +42,9 @@ class AppendBlobOperations:
 
     async def create(
         self,
-        content_length: int,
         container_name: str,
         blob: str,
+        content_length: int,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
@@ -61,12 +61,12 @@ class AppendBlobOperations:
     ) -> None:
         """The Create Append Blob operation creates a new append blob.
 
-        :param content_length: The length of the request.
-        :type content_length: long
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param content_length: The length of the request.
+        :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -247,9 +247,9 @@ class AppendBlobOperations:
 
     async def append_block(
         self,
-        content_length: int,
         container_name: str,
         blob: str,
+        content_length: int,
         body: IO,
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
@@ -266,12 +266,12 @@ class AppendBlobOperations:
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
 
-        :param content_length: The length of the request.
-        :type content_length: long
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param content_length: The length of the request.
+        :type content_length: long
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -427,10 +427,10 @@ class AppendBlobOperations:
 
     async def append_block_from_url(
         self,
-        source_url: str,
-        content_length: int,
         container_name: str,
         blob: str,
+        source_url: str,
+        content_length: int,
         source_range: Optional[str] = None,
         source_content_md5: Optional[bytearray] = None,
         source_contentcrc64: Optional[bytearray] = None,
@@ -450,14 +450,14 @@ class AppendBlobOperations:
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
         version 2015-02-21 version or later.
 
-        :param source_url: Specify a URL to the copy source.
-        :type source_url: str
-        :param content_length: The length of the request.
-        :type content_length: long
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param source_url: Specify a URL to the copy source.
+        :type source_url: str
+        :param content_length: The length of the request.
+        :type content_length: long
         :param source_range: Bytes of source data in the specified range.
         :type source_range: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read

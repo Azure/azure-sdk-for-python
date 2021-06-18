@@ -46,10 +46,10 @@ class PageBlobOperations(object):
 
     def create(
         self,
-        content_length,  # type: int
-        blob_content_length,  # type: int
         container_name,  # type: str
         blob,  # type: str
+        content_length,  # type: int
+        blob_content_length,  # type: int
         timeout=None,  # type: Optional[int]
         tier=None,  # type: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]]
         metadata=None,  # type: Optional[str]
@@ -69,15 +69,15 @@ class PageBlobOperations(object):
         # type: (...) -> None
         """The Create operation creates a new page blob.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
          TB. The page blob size must be aligned to a 512-byte boundary.
         :type blob_content_length: long
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -269,9 +269,9 @@ class PageBlobOperations(object):
 
     def upload_pages(
         self,
-        content_length,  # type: int
         container_name,  # type: str
         blob,  # type: str
+        content_length,  # type: int
         body,  # type: IO
         transactional_content_md5=None,  # type: Optional[bytearray]
         transactional_content_crc64=None,  # type: Optional[bytearray]
@@ -288,12 +288,12 @@ class PageBlobOperations(object):
         # type: (...) -> None
         """The Upload Pages operation writes a range of pages to a page blob.
 
-        :param content_length: The length of the request.
-        :type content_length: long
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param content_length: The length of the request.
+        :type content_length: long
         :param body: Initial data.
         :type body: IO
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
@@ -458,9 +458,9 @@ class PageBlobOperations(object):
 
     def clear_pages(
         self,
-        content_length,  # type: int
         container_name,  # type: str
         blob,  # type: str
+        content_length,  # type: int
         timeout=None,  # type: Optional[int]
         range=None,  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
@@ -474,12 +474,12 @@ class PageBlobOperations(object):
         # type: (...) -> None
         """The Clear Pages operation clears a set of pages from a page blob.
 
-        :param content_length: The length of the request.
-        :type content_length: long
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param content_length: The length of the request.
+        :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -625,12 +625,12 @@ class PageBlobOperations(object):
 
     def upload_pages_from_url(
         self,
+        container_name,  # type: str
+        blob,  # type: str
         source_url,  # type: str
         source_range,  # type: str
         content_length,  # type: int
         range,  # type: str
-        container_name,  # type: str
-        blob,  # type: str
         source_content_md5=None,  # type: Optional[bytearray]
         source_contentcrc64=None,  # type: Optional[bytearray]
         timeout=None,  # type: Optional[int]
@@ -647,6 +647,10 @@ class PageBlobOperations(object):
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param source_url: Specify a URL to the copy source.
         :type source_url: str
         :param source_range: Bytes of source data in the specified range. The length of this range
@@ -657,10 +661,6 @@ class PageBlobOperations(object):
         :param range: The range of bytes to which the source range would be written. The range should
          be 512 aligned and range-end is required.
         :type range: str
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
          from the copy source.
         :type source_content_md5: bytearray
@@ -1116,9 +1116,9 @@ class PageBlobOperations(object):
 
     def resize(
         self,
-        blob_content_length,  # type: int
         container_name,  # type: str
         blob,  # type: str
+        blob_content_length,  # type: int
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
@@ -1130,13 +1130,13 @@ class PageBlobOperations(object):
         # type: (...) -> None
         """Resize the Blob.
 
-        :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
-         TB. The page blob size must be aligned to a 512-byte boundary.
-        :type blob_content_length: long
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
+         TB. The page blob size must be aligned to a 512-byte boundary.
+        :type blob_content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1259,9 +1259,9 @@ class PageBlobOperations(object):
 
     def update_sequence_number(
         self,
-        sequence_number_action,  # type: Union[str, "_models.SequenceNumberActionType"]
         container_name,  # type: str
         blob,  # type: str
+        sequence_number_action,  # type: Union[str, "_models.SequenceNumberActionType"]
         timeout=None,  # type: Optional[int]
         blob_sequence_number=0,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
@@ -1272,14 +1272,14 @@ class PageBlobOperations(object):
         # type: (...) -> None
         """Update the sequence number of the blob.
 
-        :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
-         request. This property applies to page blobs only. This property indicates how the service
-         should modify the blob's sequence number.
-        :type sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :param container_name: The container name.
         :type container_name: str
         :param blob: The blob name.
         :type blob: str
+        :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
+         request. This property applies to page blobs only. This property indicates how the service
+         should modify the blob's sequence number.
+        :type sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1386,9 +1386,9 @@ class PageBlobOperations(object):
 
     def copy_incremental(
         self,
-        copy_source,  # type: str
         container_name,  # type: str
         blob,  # type: str
+        copy_source,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
@@ -1401,15 +1401,15 @@ class PageBlobOperations(object):
         the original snapshot and can be read or copied from as usual. This API is supported since REST
         version 2016-05-31.
 
+        :param container_name: The container name.
+        :type container_name: str
+        :param blob: The blob name.
+        :type blob: str
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
          via a shared access signature.
         :type copy_source: str
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
