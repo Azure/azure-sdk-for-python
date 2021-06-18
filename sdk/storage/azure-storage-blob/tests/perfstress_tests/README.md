@@ -45,6 +45,7 @@ These options are available for all perf tests:
 - `--sync` Whether to run the tests in sync or async. Default is False (async). This flag must be used for Storage legacy tests, which do not support async.
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
 - `-x --test-proxy` Whether to run the tests against the test proxy server. Specfiy the URL for the proxy endpoint (e.g. "https://localhost:5001"). WARNING: When using with Legacy tests - only HTTPS is supported.
+- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
 
 ### Common Blob command line options
 The options are available for all Blob perf tests:
