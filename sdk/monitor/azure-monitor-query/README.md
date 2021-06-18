@@ -198,7 +198,7 @@ for response in response.responses:
 
 ### Get logs with server timeout
 
-This sample shows setting a server timeout in seconds. A GateWay timeout is raised if the query takes more time than the mentioned timeout. The default is 180 seconds and can be set uptio 10 minutes (600 seconds).
+This sample shows setting a server timeout in seconds. A GateWay timeout is raised if the query takes more time than the mentioned timeout. The default is 180 seconds and can be set up to 10 minutes (600 seconds).
 
 ```Python
 import os
