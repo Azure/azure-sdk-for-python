@@ -9,5 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "12.0.0"
+from ._configuration import ContainerServiceClientConfiguration
+from ._container_service_client import ContainerServiceClient
+__all__ = ['ContainerServiceClient', 'ContainerServiceClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
 

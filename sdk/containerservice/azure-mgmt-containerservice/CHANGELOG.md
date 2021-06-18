@@ -1,5 +1,21 @@
 # Release History
 
+## 12.0.0 (2021-06-17)
+
+**Features**
+
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter enable_private_cluster_public_fqdn
+  - Model AgentPool has a new parameter enable_ultra_ssd
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_ultra_ssd
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_ultra_ssd
+  - Added operation ManagedClustersOperations.list_outbound_network_dependencies_endpoints
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_monitoring_user_credentials has a new signature
+  - Operation ManagedClustersOperations.list_cluster_user_credentials has a new signature
+
 ## 11.2.0 (2021-04-07)
 
 **Features**
