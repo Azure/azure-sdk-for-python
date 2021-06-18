@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -26,14 +26,14 @@ class TenantsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~subscription_client.models
+    :type models: ~azure.mgmt.subscription.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,16 +43,16 @@ class TenantsOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.TenantListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TenantListResult"]:
         """Gets the tenants for your account.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TenantListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~subscription_client.models.TenantListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.subscription.models.TenantListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TenantListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TenantListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

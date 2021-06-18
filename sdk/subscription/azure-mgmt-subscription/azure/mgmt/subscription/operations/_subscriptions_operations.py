@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -30,14 +30,14 @@ class SubscriptionsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~subscription_client.models
+    :type models: ~azure.mgmt.subscription.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class SubscriptionsOperations(object):
         subscription_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LocationListResult"]
+        # type: (...) -> Iterable["_models.LocationListResult"]
         """Gets all available geo-locations.
 
         This operation provides all the locations that are available for resource providers; however,
@@ -60,10 +60,10 @@ class SubscriptionsOperations(object):
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LocationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~subscription_client.models.LocationListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.subscription.models.LocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,17 +123,17 @@ class SubscriptionsOperations(object):
         subscription_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Subscription"
+        # type: (...) -> "_models.Subscription"
         """Gets details about a specified subscription.
 
         :param subscription_id: The ID of the target subscription.
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Subscription, or the result of cls(response)
-        :rtype: ~subscription_client.models.Subscription
+        :rtype: ~azure.mgmt.subscription.models.Subscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Subscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Subscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,15 +176,15 @@ class SubscriptionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SubscriptionListResult"]
+        # type: (...) -> Iterable["_models.SubscriptionListResult"]
         """Gets all subscriptions for a tenant.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SubscriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~subscription_client.models.SubscriptionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.subscription.models.SubscriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

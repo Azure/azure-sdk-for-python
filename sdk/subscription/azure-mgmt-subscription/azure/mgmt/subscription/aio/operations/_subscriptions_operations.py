@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -26,14 +26,14 @@ class SubscriptionsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~subscription_client.models
+    :type models: ~azure.mgmt.subscription.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,8 +44,8 @@ class SubscriptionsOperations:
     def list_locations(
         self,
         subscription_id: str,
-        **kwargs
-    ) -> AsyncIterable["models.LocationListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.LocationListResult"]:
         """Gets all available geo-locations.
 
         This operation provides all the locations that are available for resource providers; however,
@@ -55,10 +55,10 @@ class SubscriptionsOperations:
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LocationListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~subscription_client.models.LocationListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.subscription.models.LocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -116,18 +116,18 @@ class SubscriptionsOperations:
     async def get(
         self,
         subscription_id: str,
-        **kwargs
-    ) -> "models.Subscription":
+        **kwargs: Any
+    ) -> "_models.Subscription":
         """Gets details about a specified subscription.
 
         :param subscription_id: The ID of the target subscription.
         :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Subscription, or the result of cls(response)
-        :rtype: ~subscription_client.models.Subscription
+        :rtype: ~azure.mgmt.subscription.models.Subscription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Subscription"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Subscription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,16 +168,16 @@ class SubscriptionsOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.SubscriptionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SubscriptionListResult"]:
         """Gets all subscriptions for a tenant.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SubscriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~subscription_client.models.SubscriptionListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.subscription.models.SubscriptionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SubscriptionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubscriptionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
