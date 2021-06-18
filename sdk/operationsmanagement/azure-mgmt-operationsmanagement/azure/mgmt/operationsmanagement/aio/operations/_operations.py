@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResult"]:
         """Lists all of the available OperationsManagement Rest API operations.
 

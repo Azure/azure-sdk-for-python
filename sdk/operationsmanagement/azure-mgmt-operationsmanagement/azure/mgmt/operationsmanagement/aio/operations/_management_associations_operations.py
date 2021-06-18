@@ -42,7 +42,7 @@ class ManagementAssociationsOperations:
 
     async def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementAssociationPropertiesList":
         """Retrieves the ManagementAssociations list for the subscription.
 
@@ -82,7 +82,7 @@ class ManagementAssociationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementAssociationPropertiesList', pipeline_response)
@@ -98,7 +98,7 @@ class ManagementAssociationsOperations:
         resource_group_name: str,
         management_association_name: str,
         parameters: "_models.ManagementAssociation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementAssociation":
         """Create/Update ManagementAssociation.
 
@@ -155,7 +155,7 @@ class ManagementAssociationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementAssociation', pipeline_response)
@@ -170,7 +170,7 @@ class ManagementAssociationsOperations:
         self,
         resource_group_name: str,
         management_association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the ManagementAssociation.
 
@@ -220,7 +220,7 @@ class ManagementAssociationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -232,7 +232,7 @@ class ManagementAssociationsOperations:
         self,
         resource_group_name: str,
         management_association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagementAssociation":
         """Retrieve ManagementAssociation.
 
@@ -282,7 +282,7 @@ class ManagementAssociationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.CodeMessageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.CodeMessageError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementAssociation', pipeline_response)

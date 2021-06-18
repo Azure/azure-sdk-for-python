@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import OperationsManagementClientConfiguration
 from .operations import SolutionsOperations
@@ -79,6 +80,27 @@ class OperationsManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'providerName': self._serialize.url("self._config.provider_name", self._config.provider_name, 'str'),
+            'resourceType': self._serialize.url("self._config.resource_type", self._config.resource_type, 'str'),
+            'resourceName': self._serialize.url("self._config.resource_name", self._config.resource_name, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None
