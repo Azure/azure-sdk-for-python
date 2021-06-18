@@ -224,7 +224,7 @@ class ChallengeAuthenticationPolicy(HTTPPolicy):
 
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
-        _enforce_https(request)
+        _BearerTokenCredentialPolicyBase._enforce_https(request)
 
         self.on_request(request)
 
