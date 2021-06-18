@@ -197,7 +197,7 @@
                 "EnableSoftDelete": "[parameters('enableSoftDelete')]",
                 "PublicNetworkAccess": "Enabled",
                 "NetworkAcls": {
-                    "Bypass": "AzureServices",
+                    "Bypass": "None",
                     "DefaultAction": "Allow",
                     "IpRules": [],
                     "VirtualNetworkRules": []
