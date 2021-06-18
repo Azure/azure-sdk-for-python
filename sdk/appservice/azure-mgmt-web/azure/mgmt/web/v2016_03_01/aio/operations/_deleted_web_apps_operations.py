@@ -43,7 +43,7 @@ class DeletedWebAppsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeletedWebAppCollection"]:
         """Get all deleted apps for a subscription.
 

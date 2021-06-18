@@ -20,12 +20,14 @@ from azure.keyvault.certificates import (
     KeyType,
     KeyCurveName,
     KeyUsageType,
+    KeyVaultCertificateIdentifier,
     CertificateContentType,
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
-    parse_key_vault_certificate_id
+    WellKnownIssuerNames
 )
+from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
 import pytest
 
 from _shared.test_case import KeyVaultTestCase
@@ -88,7 +90,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(original_cert_policy.issuer_name, pending_cert_operation.issuer_name)
-        pending_id = parse_key_vault_certificate_id(pending_cert_operation.id)
+        pending_id = KeyVaultCertificateIdentifier(pending_cert_operation.id)
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
@@ -349,7 +351,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # validate all our deleted certificates are returned by list_deleted_certificates
-        deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultCertificateIdentifier(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates (test resources have a "livekvtest" prefix)
@@ -364,7 +366,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             time.sleep(50)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
-        deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [KeyVaultCertificateIdentifier(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
@@ -678,6 +680,19 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
             [_ for _ in client.list_deleted_certificates(include_pending=True)]
 
         assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+
+def test_policy_expected_errors_for_create_cert():
+    """Either a subject or subject alternative name property are required for creating a certificate"""
+    client = CertificateClient("...", object())
+
+    with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
+        policy = CertificatePolicy()
+        client.begin_create_certificate("...", policy=policy)
+
+    with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
+        policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self)
+        client.begin_create_certificate("...", policy=policy)
 
 
 def test_service_headers_allowed_in_logs():

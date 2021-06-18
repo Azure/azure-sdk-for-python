@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ManagedInstanceAdministratorsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class ManagedInstanceAdministratorsOperations(object):
         managed_instance_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedInstanceAdministratorListResult"]
+        # type: (...) -> Iterable["_models.ManagedInstanceAdministratorListResult"]
         """Gets a list of managed instance administrators.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -66,12 +66,12 @@ class ManagedInstanceAdministratorsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ManagedInstanceAdministratorListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceAdministratorListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceAdministratorListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -127,9 +127,10 @@ class ManagedInstanceAdministratorsOperations(object):
         self,
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
+        administrator_name,  # type: Union[str, "_models.AdministratorName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedInstanceAdministrator"
+        # type: (...) -> "_models.ManagedInstanceAdministrator"
         """Gets a managed instance administrator.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -137,18 +138,19 @@ class ManagedInstanceAdministratorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
+        :param administrator_name:
+        :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedInstanceAdministrator, or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedInstanceAdministrator
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceAdministrator"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceAdministrator"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        administrator_name = "ActiveDirectory"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -189,17 +191,17 @@ class ManagedInstanceAdministratorsOperations(object):
         self,
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
-        parameters,  # type: "models.ManagedInstanceAdministrator"
+        administrator_name,  # type: Union[str, "_models.AdministratorName"]
+        parameters,  # type: "_models.ManagedInstanceAdministrator"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ManagedInstanceAdministrator"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ManagedInstanceAdministrator"]]
+        # type: (...) -> Optional["_models.ManagedInstanceAdministrator"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedInstanceAdministrator"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        administrator_name = "ActiveDirectory"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -250,10 +252,11 @@ class ManagedInstanceAdministratorsOperations(object):
         self,
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
-        parameters,  # type: "models.ManagedInstanceAdministrator"
+        administrator_name,  # type: Union[str, "_models.AdministratorName"]
+        parameters,  # type: "_models.ManagedInstanceAdministrator"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ManagedInstanceAdministrator"]
+        # type: (...) -> LROPoller["_models.ManagedInstanceAdministrator"]
         """Creates or updates a managed instance administrator.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -261,12 +264,14 @@ class ManagedInstanceAdministratorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
+        :param administrator_name:
+        :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :param parameters: The requested administrator parameters.
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdministrator
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ManagedInstanceAdministrator or the result of cls(response)
@@ -274,7 +279,7 @@ class ManagedInstanceAdministratorsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedInstanceAdministrator"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedInstanceAdministrator"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -284,6 +289,7 @@ class ManagedInstanceAdministratorsOperations(object):
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
+                administrator_name=administrator_name,
                 parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -299,7 +305,14 @@ class ManagedInstanceAdministratorsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -317,6 +330,7 @@ class ManagedInstanceAdministratorsOperations(object):
         self,
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
+        administrator_name,  # type: Union[str, "_models.AdministratorName"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -325,8 +339,7 @@ class ManagedInstanceAdministratorsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        administrator_name = "ActiveDirectory"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -362,6 +375,7 @@ class ManagedInstanceAdministratorsOperations(object):
         self,
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
+        administrator_name,  # type: Union[str, "_models.AdministratorName"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -372,10 +386,12 @@ class ManagedInstanceAdministratorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
+        :param administrator_name:
+        :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -393,6 +409,7 @@ class ManagedInstanceAdministratorsOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 managed_instance_name=managed_instance_name,
+                administrator_name=administrator_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -404,7 +421,14 @@ class ManagedInstanceAdministratorsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
+            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

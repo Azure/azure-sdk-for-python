@@ -46,7 +46,7 @@ extends:
       safeName: azurecommon
     CondaArtifacts:
     - name: azure-core
-      meta_source: meta.yaml
+      meta_source: conda-recipe/meta.yaml
       common_root: azure
       checkout:
         - package: azure-core

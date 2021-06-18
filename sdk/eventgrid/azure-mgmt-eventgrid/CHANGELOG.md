@@ -1,5 +1,51 @@
 # Release History
 
+## 9.0.0 (2021-05-24)
+
+**Features**
+
+  - Model EventHubEventSubscriptionDestination has a new parameter delivery_attribute_mappings
+  - Model StorageQueueEventSubscriptionDestination has a new parameter queue_message_time_to_live_in_seconds
+  - Model TopicTypeInfo has a new parameter supported_scopes_for_source
+  - Model Topic has a new parameter extended_location
+  - Model Topic has a new parameter kind
+  - Model Topic has a new parameter system_data
+  - Model Topic has a new parameter identity
+  - Model Topic has a new parameter sku
+  - Model EventSubscriptionFilter has a new parameter enable_advanced_filtering_on_arrays
+  - Model AzureFunctionEventSubscriptionDestination has a new parameter delivery_attribute_mappings
+  - Model EventSubscriptionUpdateParameters has a new parameter dead_letter_with_resource_identity
+  - Model EventSubscriptionUpdateParameters has a new parameter delivery_with_resource_identity
+  - Model ServiceBusQueueEventSubscriptionDestination has a new parameter delivery_attribute_mappings
+  - Model DomainTopic has a new parameter system_data
+  - Model DomainUpdateParameters has a new parameter sku
+  - Model DomainUpdateParameters has a new parameter identity
+  - Model HybridConnectionEventSubscriptionDestination has a new parameter delivery_attribute_mappings
+  - Model TopicUpdateParameters has a new parameter sku
+  - Model TopicUpdateParameters has a new parameter identity
+  - Model ServiceBusTopicEventSubscriptionDestination has a new parameter delivery_attribute_mappings
+  - Model Domain has a new parameter sku
+  - Model Domain has a new parameter system_data
+  - Model Domain has a new parameter identity
+  - Model EventSubscription has a new parameter dead_letter_with_resource_identity
+  - Model EventSubscription has a new parameter system_data
+  - Model EventSubscription has a new parameter delivery_with_resource_identity
+  - Model WebHookEventSubscriptionDestination has a new parameter delivery_attribute_mappings
+  - Added operation TopicsOperations.begin_regenerate_key
+  - Added operation EventSubscriptionsOperations.get_delivery_attributes
+  - Added operation group PartnerRegistrationsOperations
+  - Added operation group SystemTopicsOperations
+  - Added operation group EventChannelsOperations
+  - Added operation group PartnerNamespacesOperations
+  - Added operation group ExtensionTopicsOperations
+  - Added operation group PartnerTopicsOperations
+  - Added operation group PartnerTopicEventSubscriptionsOperations
+  - Added operation group SystemTopicEventSubscriptionsOperations
+
+**Breaking changes**
+
+  - Removed operation TopicsOperations.regenerate_key
+
 ## 8.0.0 (2020-12-21)
 
 **Breaking changes**

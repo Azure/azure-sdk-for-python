@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class DatabasesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,396 +43,14 @@ class DatabasesOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def _import_method_initial(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        parameters: "models.ImportRequest",
-        **kwargs
-    ) -> Optional["models.ImportExportResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ImportExportResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self._import_method_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'ImportRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImportExportResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    _import_method_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/import'}  # type: ignore
-
-    async def begin_import_method(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        parameters: "models.ImportRequest",
-        **kwargs
-    ) -> AsyncLROPoller["models.ImportExportResponse"]:
-        """Imports a bacpac into a new database.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param parameters: The required parameters for importing a Bacpac into a database.
-        :type parameters: ~azure.mgmt.sql.models.ImportRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ImportExportResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImportExportResponse"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._import_method_initial(
-                resource_group_name=resource_group_name,
-                server_name=server_name,
-                parameters=parameters,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ImportExportResponse', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_import_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/import'}  # type: ignore
-
-    async def _create_import_operation_initial(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        extension_name: Union[str, "models.ExtensionName"],
-        parameters: "models.ImportExtensionRequest",
-        **kwargs
-    ) -> Optional["models.ImportExportResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ImportExportResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self._create_import_operation_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'ImportExtensionRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 201:
-            deserialized = self._deserialize('ImportExportResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    _create_import_operation_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extensions/{extensionName}'}  # type: ignore
-
-    async def begin_create_import_operation(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        extension_name: Union[str, "models.ExtensionName"],
-        parameters: "models.ImportExtensionRequest",
-        **kwargs
-    ) -> AsyncLROPoller["models.ImportExportResponse"]:
-        """Creates an import operation that imports a bacpac into an existing database. The existing
-        database must be empty.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database to import into.
-        :type database_name: str
-        :param extension_name: The name of the operation to perform.
-        :type extension_name: str or ~azure.mgmt.sql.models.ExtensionName
-        :param parameters: The required parameters for importing a Bacpac into a database.
-        :type parameters: ~azure.mgmt.sql.models.ImportExtensionRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ImportExportResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImportExportResponse"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._create_import_operation_initial(
-                resource_group_name=resource_group_name,
-                server_name=server_name,
-                database_name=database_name,
-                extension_name=extension_name,
-                parameters=parameters,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ImportExportResponse', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_import_operation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extensions/{extensionName}'}  # type: ignore
-
-    async def _export_initial(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        parameters: "models.ExportRequest",
-        **kwargs
-    ) -> Optional["models.ImportExportResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ImportExportResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2014-04-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self._export_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'ExportRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImportExportResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    _export_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export'}  # type: ignore
-
-    async def begin_export(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        parameters: "models.ExportRequest",
-        **kwargs
-    ) -> AsyncLROPoller["models.ImportExportResponse"]:
-        """Exports a database to a bacpac.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param database_name: The name of the database to be exported.
-        :type database_name: str
-        :param parameters: The required parameters for exporting a database.
-        :type parameters: ~azure.mgmt.sql.models.ExportRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ImportExportResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ImportExportResponse"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._export_initial(
-                resource_group_name=resource_group_name,
-                server_name=server_name,
-                database_name=database_name,
-                parameters=parameters,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ImportExportResponse', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_export.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export'}  # type: ignore
-
     def list_metrics(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
         filter: str,
-        **kwargs
-    ) -> AsyncIterable["models.MetricListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.MetricListResult"]:
         """Returns database metrics.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -449,7 +67,7 @@ class DatabasesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.MetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -513,8 +131,8 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.MetricDefinitionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.MetricDefinitionListResult"]:
         """Returns database metric definitions.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -529,7 +147,7 @@ class DatabasesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.MetricDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -591,8 +209,9 @@ class DatabasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.DatabaseListResult"]:
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Gets a list of databases.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -600,17 +219,19 @@ class DatabasesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param skip_token:
+        :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DatabaseListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.DatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -629,6 +250,8 @@ class DatabasesOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -667,8 +290,8 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> "models.Database":
+        **kwargs: Any
+    ) -> "_models.Database":
         """Gets a database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -683,12 +306,12 @@ class DatabasesOperations:
         :rtype: ~azure.mgmt.sql.models.Database
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -730,15 +353,15 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.Database",
-        **kwargs
-    ) -> Optional["models.Database"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Database"]]
+        parameters: "_models.Database",
+        **kwargs: Any
+    ) -> Optional["_models.Database"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -790,9 +413,9 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.Database",
-        **kwargs
-    ) -> AsyncLROPoller["models.Database"]:
+        parameters: "_models.Database",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Database"]:
         """Creates a new database or updates an existing database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -806,8 +429,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.Database
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -815,7 +438,7 @@ class DatabasesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -841,7 +464,14 @@ class DatabasesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -860,14 +490,14 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -904,7 +534,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the database.
 
@@ -917,8 +547,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -948,7 +578,14 @@ class DatabasesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -967,15 +604,15 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.DatabaseUpdate",
-        **kwargs
-    ) -> Optional["models.Database"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Database"]]
+        parameters: "_models.DatabaseUpdate",
+        **kwargs: Any
+    ) -> Optional["_models.Database"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1024,9 +661,9 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.DatabaseUpdate",
-        **kwargs
-    ) -> AsyncLROPoller["models.Database"]:
+        parameters: "_models.DatabaseUpdate",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Database"]:
         """Updates an existing database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -1040,8 +677,8 @@ class DatabasesOperations:
         :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -1049,7 +686,7 @@ class DatabasesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1075,7 +712,14 @@ class DatabasesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1094,8 +738,8 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.DatabaseListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DatabaseListResult"]:
         """Gets a list of databases in an elastic pool.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -1110,12 +754,12 @@ class DatabasesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.DatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1168,19 +812,215 @@ class DatabasesOperations:
         )
     list_by_elastic_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/databases'}  # type: ignore
 
+    async def _failover_initial(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-02-01-preview"
+
+        # Construct URL
+        url = self._failover_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if replica_type is not None:
+            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _failover_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover'}  # type: ignore
+
+    async def begin_failover(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Failovers a database.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database to failover.
+        :type database_name: str
+        :param replica_type: The type of replica to be failed over.
+        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._failover_initial(
+                resource_group_name=resource_group_name,
+                server_name=server_name,
+                database_name=database_name,
+                replica_type=replica_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover'}  # type: ignore
+
+    def list_inaccessible_by_server(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DatabaseListResult"]:
+        """Gets a list of inaccessible databases in a logical server.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either DatabaseListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.DatabaseListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-02-01-preview"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_inaccessible_by_server.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('DatabaseListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_inaccessible_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/inaccessibleDatabases'}  # type: ignore
+
     async def _pause_initial(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> Optional["models.Database"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Database"]]
+        **kwargs: Any
+    ) -> Optional["_models.Database"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1224,8 +1064,8 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.Database"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Database"]:
         """Pauses a database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -1237,8 +1077,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -1246,7 +1086,7 @@ class DatabasesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1271,7 +1111,14 @@ class DatabasesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1290,14 +1137,14 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> Optional["models.Database"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Database"]]
+        **kwargs: Any
+    ) -> Optional["_models.Database"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Database"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1341,8 +1188,8 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.Database"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Database"]:
         """Resumes a database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -1354,8 +1201,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of cls(response)
@@ -1363,7 +1210,7 @@ class DatabasesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1388,7 +1235,14 @@ class DatabasesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1407,14 +1261,14 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
 
         # Construct URL
         url = self._upgrade_data_warehouse_initial.metadata['url']  # type: ignore
@@ -1451,7 +1305,7 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Upgrades a data warehouse.
 
@@ -1464,8 +1318,8 @@ class DatabasesOperations:
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1495,7 +1349,14 @@ class DatabasesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1514,8 +1375,8 @@ class DatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.ResourceMoveDefinition",
-        **kwargs
+        parameters: "_models.ResourceMoveDefinition",
+        **kwargs: Any
     ) -> None:
         """Renames a database.
 
@@ -1538,7 +1399,7 @@ class DatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2021-02-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1575,23 +1436,25 @@ class DatabasesOperations:
 
     rename.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move'}  # type: ignore
 
-    async def _failover_initial(
+    async def _import_method_initial(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replica_type: Optional[Union[str, "models.ReplicaType"]] = None,
-        **kwargs
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        parameters: "_models.ImportExistingDatabaseDefinition",
+        **kwargs: Any
+    ) -> Optional["_models.ImportExportOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ImportExportOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2021-02-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
-        url = self._failover_initial.metadata['url']  # type: ignore
+        url = self._import_method_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -1602,14 +1465,17 @@ class DatabasesOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if replica_type is not None:
-            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.post(url, query_parameters, header_parameters)
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'ImportExistingDatabaseDefinition')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -1617,53 +1483,58 @@ class DatabasesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ImportExportOperationResult', pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
 
-    _failover_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover'}  # type: ignore
+        return deserialized
+    _import_method_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import'}  # type: ignore
 
-    async def begin_failover(
+    async def begin_import_method(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replica_type: Optional[Union[str, "models.ReplicaType"]] = None,
-        **kwargs
-    ) -> AsyncLROPoller[None]:
-        """Failovers a database.
+        parameters: "_models.ImportExistingDatabaseDefinition",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ImportExportOperationResult"]:
+        """Imports a bacpac into a new database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database to failover.
+        :param database_name: The name of the database.
         :type database_name: str
-        :param replica_type: The type of replica to be failed over.
-        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
+        :param parameters: The database import request parameters.
+        :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportExportOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._failover_initial(
+            raw_result = await self._import_method_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
-                replica_type=replica_type,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -1672,10 +1543,20 @@ class DatabasesOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
+            deserialized = self._deserialize('ImportExportOperationResult', pipeline_response)
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1687,4 +1568,138 @@ class DatabasesOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover'}  # type: ignore
+    begin_import_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import'}  # type: ignore
+
+    async def _export_initial(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        parameters: "_models.ExportDatabaseDefinition",
+        **kwargs: Any
+    ) -> Optional["_models.ImportExportOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ImportExportOperationResult"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-02-01-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._export_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'ExportDatabaseDefinition')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ImportExportOperationResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _export_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export'}  # type: ignore
+
+    async def begin_export(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        parameters: "_models.ExportDatabaseDefinition",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ImportExportOperationResult"]:
+        """Exports a database.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param parameters: The database export request parameters.
+        :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ImportExportOperationResult"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._export_initial(
+                resource_group_name=resource_group_name,
+                server_name=server_name,
+                database_name=database_name,
+                parameters=parameters,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('ImportExportOperationResult', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_export.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export'}  # type: ignore

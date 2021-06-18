@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class SyncAgentsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        **kwargs
-    ) -> "models.SyncAgent":
+        **kwargs: Any
+    ) -> "_models.SyncAgent":
         """Gets a sync agent.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,12 +64,12 @@ class SyncAgentsOperations:
         :rtype: ~azure.mgmt.sql.models.SyncAgent
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncAgent"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncAgent"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -111,15 +111,15 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        parameters: "models.SyncAgent",
-        **kwargs
-    ) -> Optional["models.SyncAgent"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.SyncAgent"]]
+        parameters: "_models.SyncAgent",
+        **kwargs: Any
+    ) -> Optional["_models.SyncAgent"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SyncAgent"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -171,9 +171,9 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        parameters: "models.SyncAgent",
-        **kwargs
-    ) -> AsyncLROPoller["models.SyncAgent"]:
+        parameters: "_models.SyncAgent",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.SyncAgent"]:
         """Creates or updates a sync agent.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -187,8 +187,8 @@ class SyncAgentsOperations:
         :type parameters: ~azure.mgmt.sql.models.SyncAgent
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SyncAgent or the result of cls(response)
@@ -196,7 +196,7 @@ class SyncAgentsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncAgent"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncAgent"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -222,7 +222,14 @@ class SyncAgentsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'syncAgentName': self._serialize.url("sync_agent_name", sync_agent_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -241,14 +248,14 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -285,7 +292,7 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a sync agent.
 
@@ -298,8 +305,8 @@ class SyncAgentsOperations:
         :type sync_agent_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -329,7 +336,14 @@ class SyncAgentsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'syncAgentName': self._serialize.url("sync_agent_name", sync_agent_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,8 +361,8 @@ class SyncAgentsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.SyncAgentListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SyncAgentListResult"]:
         """Lists sync agents in a server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -361,12 +375,12 @@ class SyncAgentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.SyncAgentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncAgentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncAgentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -423,8 +437,8 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        **kwargs
-    ) -> "models.SyncAgentKeyProperties":
+        **kwargs: Any
+    ) -> "_models.SyncAgentKeyProperties":
         """Generates a sync agent key.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -439,12 +453,12 @@ class SyncAgentsOperations:
         :rtype: ~azure.mgmt.sql.models.SyncAgentKeyProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncAgentKeyProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncAgentKeyProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -486,8 +500,8 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.SyncAgentLinkedDatabaseListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.SyncAgentLinkedDatabaseListResult"]:
         """Lists databases linked to a sync agent.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -502,12 +516,12 @@ class SyncAgentsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.SyncAgentLinkedDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SyncAgentLinkedDatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SyncAgentLinkedDatabaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

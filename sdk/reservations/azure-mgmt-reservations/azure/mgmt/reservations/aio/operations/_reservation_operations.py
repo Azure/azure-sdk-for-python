@@ -48,7 +48,7 @@ class ReservationOperations:
         reservation_order_id: str,
         reservation_id: str,
         body: "_models.AvailableScopeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AvailableScopeProperties":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableScopeProperties"]
         error_map = {
@@ -85,7 +85,7 @@ class ReservationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AvailableScopeProperties', pipeline_response)
@@ -101,7 +101,7 @@ class ReservationOperations:
         reservation_order_id: str,
         reservation_id: str,
         body: "_models.AvailableScopeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AvailableScopeProperties"]:
         """Get Available Scopes for ``Reservation``.
 
@@ -115,8 +115,8 @@ class ReservationOperations:
         :type body: ~azure.mgmt.reservations.models.AvailableScopeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AvailableScopeProperties or the result of cls(response)
@@ -172,7 +172,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         body: "_models.SplitRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional[List["_models.ReservationResponse"]]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[List["_models.ReservationResponse"]]]
         error_map = {
@@ -208,7 +208,7 @@ class ReservationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -225,7 +225,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         body: "_models.SplitRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[List["_models.ReservationResponse"]]:
         """Split the ``Reservation``.
 
@@ -237,8 +237,8 @@ class ReservationOperations:
         :type body: ~azure.mgmt.reservations.models.SplitRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either list of ReservationResponse or the result of cls(response)
@@ -292,7 +292,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         body: "_models.MergeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional[List["_models.ReservationResponse"]]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[List["_models.ReservationResponse"]]]
         error_map = {
@@ -328,7 +328,7 @@ class ReservationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -345,7 +345,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         body: "_models.MergeRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[List["_models.ReservationResponse"]]:
         """Merges two ``Reservation``\ s.
 
@@ -358,8 +358,8 @@ class ReservationOperations:
         :type body: ~azure.mgmt.reservations.models.MergeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either list of ReservationResponse or the result of cls(response)
@@ -412,7 +412,7 @@ class ReservationOperations:
     def list(
         self,
         reservation_order_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationList"]:
         """Get ``Reservation``\ s in a given reservation Order.
 
@@ -470,7 +470,7 @@ class ReservationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -486,7 +486,7 @@ class ReservationOperations:
         reservation_id: str,
         reservation_order_id: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReservationResponse":
         """Get ``Reservation`` details.
 
@@ -535,7 +535,7 @@ class ReservationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ReservationResponse', pipeline_response)
@@ -551,7 +551,7 @@ class ReservationOperations:
         reservation_order_id: str,
         reservation_id: str,
         parameters: "_models.Patch",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ReservationResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ReservationResponse"]]
         error_map = {
@@ -588,7 +588,7 @@ class ReservationOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -606,7 +606,7 @@ class ReservationOperations:
         reservation_order_id: str,
         reservation_id: str,
         parameters: "_models.Patch",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ReservationResponse"]:
         """Updates a ``Reservation``.
 
@@ -620,8 +620,8 @@ class ReservationOperations:
         :type parameters: ~azure.mgmt.reservations.models.Patch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ReservationResponse or the result of cls(response)
@@ -677,7 +677,7 @@ class ReservationOperations:
         self,
         reservation_id: str,
         reservation_order_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationList"]:
         """Get ``Reservation`` revisions.
 
@@ -738,7 +738,7 @@ class ReservationOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

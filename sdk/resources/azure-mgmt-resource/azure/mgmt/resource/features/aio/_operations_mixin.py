@@ -23,7 +23,7 @@ class FeatureClientOperationsMixin(object):
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.OperationListResult"]:
         """Lists all of the available Microsoft.Features REST API operations.
 

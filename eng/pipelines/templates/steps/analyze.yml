@@ -32,11 +32,19 @@ steps:
     # target is based on data available per-package the --always-succeed should
     # be removed so this script can help enforce correct practices
     # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
+
+
+  - pwsh: |
+     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+    displayName: 'Install Necessary Dependencies'
+    condition: succeededOrFailed()
+
   - script: |
       cd eng/versioning
       pip install -r requirements.txt
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
+    condition: succeededOrFailed()
 
   - pwsh: |
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |

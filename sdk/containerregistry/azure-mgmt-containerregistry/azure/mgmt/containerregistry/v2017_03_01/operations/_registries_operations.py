@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class RegistriesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class RegistriesOperations(object):
 
     def check_name_availability(
         self,
-        registry_name_check_request,  # type: "models.RegistryNameCheckRequest"
+        registry_name_check_request,  # type: "_models.RegistryNameCheckRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RegistryNameStatus"
+        # type: (...) -> "_models.RegistryNameStatus"
         """Checks whether the container registry name is available for use. The name must contain only
         alphanumeric characters, be globally unique, and between 5 and 50 characters in length.
 
@@ -64,7 +64,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryNameStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryNameStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryNameStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -114,7 +114,7 @@ class RegistriesOperations(object):
         registry_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Registry"
+        # type: (...) -> "_models.Registry"
         """Gets the properties of the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -127,7 +127,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.Registry
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -172,11 +172,11 @@ class RegistriesOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        registry_create_parameters,  # type: "models.RegistryCreateParameters"
+        registry_create_parameters,  # type: "_models.RegistryCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.Registry"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Registry"]]
+        # type: (...) -> Optional["_models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Registry"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -228,10 +228,10 @@ class RegistriesOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        registry_create_parameters,  # type: "models.RegistryCreateParameters"
+        registry_create_parameters,  # type: "_models.RegistryCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Registry"]
+        # type: (...) -> LROPoller["_models.Registry"]
         """Creates a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -243,8 +243,8 @@ class RegistriesOperations(object):
         :type registry_create_parameters: ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Registry or the result of cls(response)
@@ -252,7 +252,7 @@ class RegistriesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -277,7 +277,13 @@ class RegistriesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -350,10 +356,10 @@ class RegistriesOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        registry_update_parameters,  # type: "models.RegistryUpdateParameters"
+        registry_update_parameters,  # type: "_models.RegistryUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Registry"
+        # type: (...) -> "_models.Registry"
         """Updates a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -368,7 +374,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.Registry
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -419,7 +425,7 @@ class RegistriesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RegistryListResult"]
+        # type: (...) -> Iterable["_models.RegistryListResult"]
         """Lists all the container registries under the specified resource group.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -430,7 +436,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2017_03_01.models.RegistryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -490,7 +496,7 @@ class RegistriesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RegistryListResult"]
+        # type: (...) -> Iterable["_models.RegistryListResult"]
         """Lists all the container registries under the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -498,7 +504,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2017_03_01.models.RegistryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -559,7 +565,7 @@ class RegistriesOperations(object):
         registry_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RegistryListCredentialsResult"
+        # type: (...) -> "_models.RegistryListCredentialsResult"
         """Lists the login credentials for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -572,7 +578,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListCredentialsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListCredentialsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -617,10 +623,10 @@ class RegistriesOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        regenerate_credential_parameters,  # type: "models.RegenerateCredentialParameters"
+        regenerate_credential_parameters,  # type: "_models.RegenerateCredentialParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RegistryListCredentialsResult"
+        # type: (...) -> "_models.RegistryListCredentialsResult"
         """Regenerates one of the login credentials for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -636,7 +642,7 @@ class RegistriesOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2017_03_01.models.RegistryListCredentialsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListCredentialsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListCredentialsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

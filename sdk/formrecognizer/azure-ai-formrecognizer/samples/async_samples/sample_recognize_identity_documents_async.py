@@ -33,7 +33,7 @@ class RecognizeIdDocumentsSampleAsync(object):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./../sample_forms/id_documents/license.jpg"))
 
-        # [START recognize_identity_documents]
+        # [START recognize_identity_documents_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
@@ -78,7 +78,7 @@ class RecognizeIdDocumentsSampleAsync(object):
                 region = id_document.fields.get("Region")
                 if region:
                     print("Region: {} has confidence: {}".format(region.value, region.confidence))
-        # [END recognize_identity_documents]
+        # [END recognize_identity_documents_async]
 
 async def main():
     sample = RecognizeIdDocumentsSampleAsync()

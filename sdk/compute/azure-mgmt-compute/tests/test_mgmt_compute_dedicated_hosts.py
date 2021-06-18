@@ -25,6 +25,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             azure.mgmt.compute.ComputeManagementClient
         )
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_dedicated_hosts(self, resource_group):
         HOST_GROUP_NAME = self.get_resource_name("hostgroup")

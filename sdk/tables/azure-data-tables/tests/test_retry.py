@@ -3,32 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 
 from devtools_testutils import AzureTestCase
-
 
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ClientAuthenticationError
 )
 from azure.core.pipeline.policies import RetryMode
-from azure.core.pipeline.transport import(
-    RequestsTransport
-)
-
-from azure.data.tables import (
-    TableServiceClient,
-    LocationMode
-)
+from azure.core.pipeline.transport import RequestsTransport
+from azure.data.tables import TableServiceClient
 
 from _shared.testcase import (
     TableTestCase,
     ResponseCallback,
-    RetryCounter
 )
 
 from preparers import tables_decorator
@@ -64,6 +54,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
         self.query_tables = []
 
+    # TODO: Figure out why this is needed by the "test_retry_on_socket_timeout" test
     def _tear_down(self, **kwargs):
         if self.is_live:
             try:
@@ -126,18 +117,13 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             retry_mode=RetryMode.Fixed,
             retry_backoff_factor=1)
 
-        new_table_name = self.get_resource_name('uttable')
-        try:
-            with pytest.raises(AzureError) as error:
-                self.ts.get_service_properties()
+        with pytest.raises(AzureError) as error:
+            self.ts.get_service_properties()
 
-            # 3 retries + 1 original == 4
-            assert retry_transport.count == 4
-            # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
-
-        finally:
-            self._tear_down()
+        # 3 retries + 1 original == 4
+        assert retry_transport.count == 4
+        # This call should succeed on the server side, but fail on the client side due to socket timeout
+        self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
 
     @tables_decorator
     def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):

@@ -1,11 +1,23 @@
 # Release History
 
-## 1.15.0b1 (2021-05-13)
+## 1.15.1 (Unreleased)
 
 ### New Features
 
 - Added `azure.core.pipeline.policies.ChallengeAuthenticationPolicy` and
   `.AsyncChallengeAuthenticationPolicy`
+
+## 1.15.0 (2021-06-04)
+
+### New Features
+
+- Added `BearerTokenCredentialPolicy.on_challenge` and `.authorize_request` to allow subclasses to optionally handle authentication challenges
+
+### Bug Fixes
+
+- Retry policies don't sleep after operations time out
+- The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
+
 
 ## 1.14.0 (2021-05-13)
 

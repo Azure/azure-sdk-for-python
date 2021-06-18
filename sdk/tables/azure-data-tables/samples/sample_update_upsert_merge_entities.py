@@ -144,14 +144,14 @@ class TableEntitySamples(object):
                 insert_entity = table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
                 print("Inserted entity: {}".format(insert_entity))
 
-                created["text"] = "NewMarker"
+                created[u"text"] = u"NewMarker"
                 merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print("Merged entity: {}".format(merged_entity))
                 # [END upsert_entity]
 
                 # [START update_entity]
                 # Update the entity
-                created["text"] = "NewMarker"
+                created[u"text"] = u"NewMarker"
                 table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
@@ -159,7 +159,7 @@ class TableEntitySamples(object):
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
-                replaced["color"] = "Blue"
+                replaced[u"color"] = u"Blue"
                 table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity

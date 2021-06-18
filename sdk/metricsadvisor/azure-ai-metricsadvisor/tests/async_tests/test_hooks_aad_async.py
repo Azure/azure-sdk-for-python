@@ -190,7 +190,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
-                self.assertEqual(updated.password, "password")
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -216,7 +215,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
-                self.assertEqual(updated.password, "password")
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -247,7 +245,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
-                self.assertEqual(updated.password, "password")
 
             finally:
                 await self.admin_client.delete_hook(hook.id)

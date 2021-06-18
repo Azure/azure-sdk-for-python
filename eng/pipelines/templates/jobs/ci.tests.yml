@@ -8,6 +8,12 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
@@ -74,7 +80,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
 
     - pwsh: |
-        $toxenvvar = "whl,sdist"
+        $toxenvvar = "whl,sdist,mindependency"
         if ('$(System.TeamProject)' -eq 'internal') {
           $toxenvvar = "whl,sdist,depends,latestdependency,mindependency,whl_no_aio"
         }
@@ -110,3 +116,7 @@ jobs:
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          
+          - ${{ each step in parameters.BeforeTestSteps }}:
+            -  ${{ step }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}

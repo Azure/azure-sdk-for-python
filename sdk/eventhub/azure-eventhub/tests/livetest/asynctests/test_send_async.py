@@ -217,6 +217,8 @@ async def test_send_list_wrong_data_async(connection_str, to_send, exception_typ
 
 
 @pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
+@pytest.mark.liveTest
+@pytest.mark.asyncio
 async def test_send_batch_pid_pk_async(invalid_hostname, partition_id, partition_key):
     # Use invalid_hostname because this is not a live test.
     client = EventHubProducerClient.from_connection_string(invalid_hostname)

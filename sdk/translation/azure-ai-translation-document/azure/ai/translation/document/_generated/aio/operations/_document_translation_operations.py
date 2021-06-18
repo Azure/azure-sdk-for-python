@@ -9,12 +9,12 @@ import datetime
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
+from ....aio._async_polling import AsyncDocumentTranslationLROPollingMethod, AsyncDocumentTranslationLROPoller
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
 
 from ... import models as _models
 
@@ -43,29 +43,29 @@ class DocumentTranslationOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def _submit_batch_request_initial(
+    async def _start_translation_initial(
         self,
         inputs: List["_models.BatchRequest"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _body = _models.BatchSubmissionRequest(inputs=inputs)
+        _body = _models.StartTranslationDetails(inputs=inputs)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self._submit_batch_request_initial.metadata['url']  # type: ignore
+        url = self._start_translation_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -80,10 +80,7 @@ class DocumentTranslationOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if _body is not None:
-            body_content = self._serialize.body(_body, 'BatchSubmissionRequest')
-        else:
-            body_content = None
+        body_content = self._serialize.body(_body, 'StartTranslationDetails')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -99,13 +96,13 @@ class DocumentTranslationOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _submit_batch_request_initial.metadata = {'url': '/batches'}  # type: ignore
+    _start_translation_initial.metadata = {'url': '/batches'}  # type: ignore
 
-    async def begin_submit_batch_request(
+    async def begin_start_translation(
         self,
         inputs: List["_models.BatchRequest"],
-        **kwargs
-    ) -> AsyncLROPoller[None]:
+        **kwargs: Any
+    ) -> AsyncDocumentTranslationLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
 
         Use this API to submit a bulk (batch) translation request to the Document Translation service.
@@ -127,15 +124,15 @@ class DocumentTranslationOperations:
         :type inputs: list[~azure.ai.translation.document.models.BatchRequest]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncDocumentTranslationLROPollingMethod.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncDocumentTranslationLROPoller that returns either None or the result of cls(response)
+        :rtype: ~....aio._async_polling.AsyncDocumentTranslationLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -143,7 +140,7 @@ class DocumentTranslationOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._submit_batch_request_initial(
+            raw_result = await self._start_translation_initial(
                 inputs=inputs,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -160,21 +157,21 @@ class DocumentTranslationOperations:
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncDocumentTranslationLROPollingMethod(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncDocumentTranslationLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_submit_batch_request.metadata = {'url': '/batches'}  # type: ignore
+            return AsyncDocumentTranslationLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_start_translation.metadata = {'url': '/batches'}  # type: ignore
 
-    def get_operations(
+    def get_translations_status(
         self,
         top: Optional[int] = None,
         skip: Optional[int] = 0,
@@ -184,8 +181,8 @@ class DocumentTranslationOperations:
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         order_by: Optional[List[str]] = None,
-        **kwargs
-    ) -> AsyncIterable["_models.BatchStatusResponse"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TranslationsStatus"]:
         """Returns a list of batch requests submitted and the status for each request.
 
         Returns a list of batch requests submitted and the status for each request.
@@ -266,19 +263,19 @@ class DocumentTranslationOperations:
          'CreatedDateTimeUtc desc').
         :type order_by: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BatchStatusResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.document.models.BatchStatusResponse]
+        :return: An iterator like instance of either TranslationsStatus or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.document.models.TranslationsStatus]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TranslationsStatus"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
@@ -290,7 +287,7 @@ class DocumentTranslationOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.get_operations.metadata['url']  # type: ignore
+                url = self.get_translations_status.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
@@ -326,7 +323,7 @@ class DocumentTranslationOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('BatchStatusResponse', pipeline_response)
+            deserialized = self._deserialize('TranslationsStatus', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -347,14 +344,14 @@ class DocumentTranslationOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    get_operations.metadata = {'url': '/batches'}  # type: ignore
+    get_translations_status.metadata = {'url': '/batches'}  # type: ignore
 
     async def get_document_status(
         self,
         id: str,
         document_id: str,
-        **kwargs
-    ) -> "_models.DocumentStatusDetail":
+        **kwargs: Any
+    ) -> "_models.DocumentStatus":
         """Returns the status for a specific document.
 
         Returns the translation status for a specific document based on the request Id and document Id.
@@ -364,18 +361,18 @@ class DocumentTranslationOperations:
         :param document_id: Format - uuid.  The document id.
         :type document_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DocumentStatusDetail, or the result of cls(response)
-        :rtype: ~azure.ai.translation.document.models.DocumentStatusDetail
+        :return: DocumentStatus, or the result of cls(response)
+        :rtype: ~azure.ai.translation.document.models.DocumentStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DocumentStatusDetail"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DocumentStatus"]
         error_map = {
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
@@ -407,7 +404,7 @@ class DocumentTranslationOperations:
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        deserialized = self._deserialize('DocumentStatusDetail', pipeline_response)
+        deserialized = self._deserialize('DocumentStatus', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -415,11 +412,11 @@ class DocumentTranslationOperations:
         return deserialized
     get_document_status.metadata = {'url': '/batches/{id}/documents/{documentId}'}  # type: ignore
 
-    async def get_operation_status(
+    async def get_translation_status(
         self,
         id: str,
-        **kwargs
-    ) -> "_models.BatchStatusDetail":
+        **kwargs: Any
+    ) -> "_models.TranslationStatus":
         """Returns the status for a document translation request.
 
         Returns the status for a document translation request.
@@ -429,24 +426,24 @@ class DocumentTranslationOperations:
         :param id: Format - uuid.  The operation id.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BatchStatusDetail, or the result of cls(response)
-        :rtype: ~azure.ai.translation.document.models.BatchStatusDetail
+        :return: TranslationStatus, or the result of cls(response)
+        :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchStatusDetail"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TranslationStatus"]
         error_map = {
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
         # Construct URL
-        url = self.get_operation_status.metadata['url']  # type: ignore
+        url = self.get_translation_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str'),
@@ -471,24 +468,24 @@ class DocumentTranslationOperations:
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        deserialized = self._deserialize('BatchStatusDetail', pipeline_response)
+        deserialized = self._deserialize('TranslationStatus', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_operation_status.metadata = {'url': '/batches/{id}'}  # type: ignore
+    get_translation_status.metadata = {'url': '/batches/{id}'}  # type: ignore
 
-    async def cancel_operation(
+    async def cancel_translation(
         self,
         id: str,
-        **kwargs
-    ) -> "_models.BatchStatusDetail":
-        """Cancel a currently processing or queued operation.
+        **kwargs: Any
+    ) -> "_models.TranslationStatus":
+        """Cancel a currently processing or queued translation.
 
-        Cancel a currently processing or queued operation.
-        Cancel a currently processing or queued operation.
-        An operation will not be cancelled if it is already completed or failed or cancelling. A bad
+        Cancel a currently processing or queued translation.
+        Cancel a currently processing or queued translation.
+        A translation will not be cancelled if it is already completed or failed or cancelling. A bad
         request will be returned.
         All documents that have completed translation will not be cancelled and will be charged.
         All pending documents will be cancelled if possible.
@@ -496,24 +493,24 @@ class DocumentTranslationOperations:
         :param id: Format - uuid.  The operation-id.
         :type id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BatchStatusDetail, or the result of cls(response)
-        :rtype: ~azure.ai.translation.document.models.BatchStatusDetail
+        :return: TranslationStatus, or the result of cls(response)
+        :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchStatusDetail"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TranslationStatus"]
         error_map = {
             409: ResourceExistsError,
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
         # Construct URL
-        url = self.cancel_operation.metadata['url']  # type: ignore
+        url = self.cancel_translation.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str'),
@@ -535,15 +532,15 @@ class DocumentTranslationOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('BatchStatusDetail', pipeline_response)
+        deserialized = self._deserialize('TranslationStatus', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    cancel_operation.metadata = {'url': '/batches/{id}'}  # type: ignore
+    cancel_translation.metadata = {'url': '/batches/{id}'}  # type: ignore
 
-    def get_operation_documents_status(
+    def get_documents_status(
         self,
         id: str,
         top: Optional[int] = None,
@@ -554,8 +551,8 @@ class DocumentTranslationOperations:
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
         order_by: Optional[List[str]] = None,
-        **kwargs
-    ) -> AsyncIterable["_models.DocumentStatusResponse"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.DocumentsStatus"]:
         """Returns the status for all documents in a batch document translation request.
 
         Returns the status for all documents in a batch document translation request.
@@ -635,19 +632,19 @@ class DocumentTranslationOperations:
          'CreatedDateTimeUtc desc').
         :type order_by: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DocumentStatusResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.document.models.DocumentStatusResponse]
+        :return: An iterator like instance of either DocumentsStatus or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.translation.document.models.DocumentsStatus]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DocumentStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DocumentsStatus"]
         error_map = {
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
@@ -659,7 +656,7 @@ class DocumentTranslationOperations:
 
             if not next_link:
                 # Construct URL
-                url = self.get_operation_documents_status.metadata['url']  # type: ignore
+                url = self.get_documents_status.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                     'id': self._serialize.url("id", id, 'str'),
@@ -697,7 +694,7 @@ class DocumentTranslationOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('DocumentStatusResponse', pipeline_response)
+            deserialized = self._deserialize('DocumentsStatus', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -718,12 +715,12 @@ class DocumentTranslationOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    get_operation_documents_status.metadata = {'url': '/batches/{id}/documents'}  # type: ignore
+    get_documents_status.metadata = {'url': '/batches/{id}/documents'}  # type: ignore
 
-    async def get_document_formats(
+    async def get_supported_document_formats(
         self,
-        **kwargs
-    ) -> "_models.FileFormatListResult":
+        **kwargs: Any
+    ) -> "_models.SupportedFileFormats":
         """Returns a list of supported document formats.
 
         The list of supported document formats supported by the Document Translation service.
@@ -731,24 +728,24 @@ class DocumentTranslationOperations:
         API.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FileFormatListResult, or the result of cls(response)
-        :rtype: ~azure.ai.translation.document.models.FileFormatListResult
+        :return: SupportedFileFormats, or the result of cls(response)
+        :rtype: ~azure.ai.translation.document.models.SupportedFileFormats
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileFormatListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SupportedFileFormats"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
         # Construct URL
-        url = self.get_document_formats.metadata['url']  # type: ignore
+        url = self.get_supported_document_formats.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -771,42 +768,42 @@ class DocumentTranslationOperations:
 
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-        deserialized = self._deserialize('FileFormatListResult', pipeline_response)
+        deserialized = self._deserialize('SupportedFileFormats', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_document_formats.metadata = {'url': '/documents/formats'}  # type: ignore
+    get_supported_document_formats.metadata = {'url': '/documents/formats'}  # type: ignore
 
-    async def get_glossary_formats(
+    async def get_supported_glossary_formats(
         self,
-        **kwargs
-    ) -> "_models.FileFormatListResult":
+        **kwargs: Any
+    ) -> "_models.SupportedFileFormats":
         """Returns the list of supported glossary formats.
 
         The list of supported glossary formats supported by the Document Translation service.
         The list includes the common file extension used.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FileFormatListResult, or the result of cls(response)
-        :rtype: ~azure.ai.translation.document.models.FileFormatListResult
+        :return: SupportedFileFormats, or the result of cls(response)
+        :rtype: ~azure.ai.translation.document.models.SupportedFileFormats
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileFormatListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SupportedFileFormats"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
         # Construct URL
-        url = self.get_glossary_formats.metadata['url']  # type: ignore
+        url = self.get_supported_glossary_formats.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -829,41 +826,41 @@ class DocumentTranslationOperations:
 
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-        deserialized = self._deserialize('FileFormatListResult', pipeline_response)
+        deserialized = self._deserialize('SupportedFileFormats', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_glossary_formats.metadata = {'url': '/glossaries/formats'}  # type: ignore
+    get_supported_glossary_formats.metadata = {'url': '/glossaries/formats'}  # type: ignore
 
-    async def get_document_storage_source(
+    async def get_supported_storage_sources(
         self,
-        **kwargs
-    ) -> "_models.StorageSourceListResult":
+        **kwargs: Any
+    ) -> "_models.SupportedStorageSources":
         """Returns a list of supported storage sources.
 
         Returns a list of storage sources/options supported by the Document Translation service.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: StorageSourceListResult, or the result of cls(response)
-        :rtype: ~azure.ai.translation.document.models.StorageSourceListResult
+        :return: SupportedStorageSources, or the result of cls(response)
+        :rtype: ~azure.ai.translation.document.models.SupportedStorageSources
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageSourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SupportedStorageSources"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponseV2, response)),
+            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
+            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TranslationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
         # Construct URL
-        url = self.get_document_storage_source.metadata['url']  # type: ignore
+        url = self.get_supported_storage_sources.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -886,10 +883,10 @@ class DocumentTranslationOperations:
 
         response_headers = {}
         response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-        deserialized = self._deserialize('StorageSourceListResult', pipeline_response)
+        deserialized = self._deserialize('SupportedStorageSources', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_document_storage_source.metadata = {'url': '/storagesources'}  # type: ignore
+    get_supported_storage_sources.metadata = {'url': '/storagesources'}  # type: ignore

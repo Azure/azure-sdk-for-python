@@ -11,7 +11,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?showStats=false
   response:
@@ -24,13 +24,13 @@ interactions:
         size to: 5120 text elements. For additional details on the data limitations
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2021-01-05"}'
     headers:
-      apim-request-id: 1b45d9e4-0220-45b5-9a22-f97a3fbe2192
+      apim-request-id: 362245b7-0d97-42d1-90ad-91151903d3c3
       content-type: application/json; charset=utf-8
-      date: Sat, 08 May 2021 06:59:26 GMT
+      date: Tue, 18 May 2021 17:47:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 200
       message: OK

@@ -147,6 +147,7 @@ class FormRecognizerTest(AzureTestCase):
         self.identity_document_url_jpg_passport = self.get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
         self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
         self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
+        self.invoice_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "sample_invoice.jpg")
         self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
         self.form_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "Form_1.jpg")
         self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
@@ -155,6 +156,7 @@ class FormRecognizerTest(AzureTestCase):
         self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
         self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
         self.multipage_receipt_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
+        self.invoice_no_sub_line_item = self.get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -166,6 +168,7 @@ class FormRecognizerTest(AzureTestCase):
         self.identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
         self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
+        self.invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
         self.blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
         self.multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))

@@ -22,7 +22,6 @@ import unittest
 from cryptography.hazmat.primitives import hashes
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 import functools
-import cryptography
 import cryptography.x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
@@ -37,6 +36,7 @@ from azure.security.attestation import (
     StoredAttestationPolicy,
     AttestationToken,
     AttestationSigningKey,
+    PolicyModification,
     CertificateModification)
 
 class PolicyGetSetTests(AzureTestCase):
@@ -83,12 +83,34 @@ class PolicyGetSetTests(AzureTestCase):
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert policy_get_response.value == attestation_policy
 
-        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('utf-8')))
+        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
         assert expected_hash == policy_set_response.value.policy_token_hash
+
+    @AttestationPreparer()
+    def test_aad_reset_policy_sgx_unsecured(self, attestation_aad_url):
+
+        attest_client = self.create_admin_client(attestation_aad_url)
+        policy_set_response = attest_client.reset_policy(AttestationType.SGX_ENCLAVE)
+
+        assert None == policy_set_response.value.policy_token_hash
+        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+
+    @AttestationPreparer()
+    @pytest.mark.live_test_only
+    def test_aad_reset_policy_sgx_secured(self, attestation_aad_url, attestation_policy_signing_key0, attestation_policy_signing_certificate0):
+        signing_certificate = base64.b64decode(attestation_policy_signing_certificate0)
+        key = base64.b64decode(attestation_policy_signing_key0)
+
+        attest_client = self.create_admin_client(attestation_aad_url)
+        policy_set_response = attest_client.reset_policy(AttestationType.SGX_ENCLAVE, signing_key=AttestationSigningKey(key, signing_certificate))
+
+        assert None == policy_set_response.value.policy_token_hash
+        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
+
 
 
     @AttestationPreparer()
@@ -106,7 +128,7 @@ class PolicyGetSetTests(AzureTestCase):
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert policy_get_response.value == attestation_policy
 
-        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('ascii')), signer=AttestationSigningKey(key, signing_certificate))
+        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy), signer=AttestationSigningKey(key, signing_certificate))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
@@ -129,12 +151,24 @@ class PolicyGetSetTests(AzureTestCase):
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert policy_get_response.value == attestation_policy
 
-        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('ascii')), signer=AttestationSigningKey(key, decoded_cert))
+        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy), signer=AttestationSigningKey(key, decoded_cert))
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.serialize().encode('utf-8'))
         expected_hash = hasher.finalize()
 
         assert expected_hash == policy_set_response.value.policy_token_hash
+
+    @AttestationPreparer()
+    @pytest.mark.live_test_only
+    def test_isolated_reset_policy_sgx_secured(self, attestation_aad_url, attestation_isolated_signing_key, attestation_isolated_signing_certificate):
+        signing_certificate = base64.b64decode(attestation_isolated_signing_certificate)
+        key = base64.b64decode(attestation_isolated_signing_key)
+
+        attest_client = self.create_admin_client(attestation_aad_url)
+        policy_set_response = attest_client.reset_policy(AttestationType.SGX_ENCLAVE, signing_key=AttestationSigningKey(key, signing_certificate))
+
+        assert None == policy_set_response.value.policy_token_hash
+        assert policy_set_response.value.policy_resolution == PolicyModification.REMOVED
 
 
     def _test_get_policy_management_certificates(self, base_uri, expected_certificate):

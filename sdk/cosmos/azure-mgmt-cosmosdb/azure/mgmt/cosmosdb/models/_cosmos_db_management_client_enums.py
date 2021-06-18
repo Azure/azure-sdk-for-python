@@ -26,40 +26,12 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to indicate the API type of the restorable database account.
-    """
-
-    MONGO_DB = "MongoDB"
-    GREMLIN = "Gremlin"
-    CASSANDRA = "Cassandra"
-    TABLE = "Table"
-    SQL = "Sql"
-    GREMLIN_V2 = "GremlinV2"
-
-class AuthenticationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Which authentication method Cassandra should use to authenticate clients. 'None' turns off
-    authentication, so should not be used except in emergencies. 'Cassandra' is the default
-    password based authentication. The default is 'Cassandra'.
-    """
-
-    NONE = "None"
-    CASSANDRA = "Cassandra"
-
 class BackupPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the mode of backups.
     """
 
     PERIODIC = "Periodic"
     CONTINUOUS = "Continuous"
-
-class BackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to indicate type of backup storage redundancy.
-    """
-
-    GEO = "Geo"
-    LOCAL = "Local"
-    ZONE = "Zone"
 
 class CompositePathSortOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sort order for composite paths.
@@ -80,22 +52,6 @@ class ConnectorOffer(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     SMALL = "Small"
-
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to indicate the mode of account creation.
-    """
-
-    DEFAULT = "Default"
-    RESTORE = "Restore"
 
 class DatabaseAccountKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of database account. This can only be set at database account creation.
@@ -151,17 +107,6 @@ class KeyKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PRIMARY_READONLY = "primaryReadonly"
     SECONDARY_READONLY = "secondaryReadonly"
 
-class ManagedCassandraProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the resource at the time the operation was called.
-    """
-
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-
 class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates what services are allowed to bypass firewall checks.
     """
@@ -169,35 +114,9 @@ class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     AZURE_SERVICES = "AzureServices"
 
-class NodeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the node in relation to the cluster.
-    """
-
-    NORMAL = "Normal"
-    LEAVING = "Leaving"
-    JOINING = "Joining"
-    MOVING = "Moving"
-    STOPPED = "Stopped"
-
-class NodeStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether the node is functioning or not.
-    """
-
-    UP = "Up"
-    DOWN = "Down"
-
 class NotebookWorkspaceName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "default"
-
-class OperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to indicate the operation type of the event.
-    """
-
-    CREATE = "Create"
-    REPLACE = "Replace"
-    DELETE = "Delete"
-    SYSTEM_OPERATION = "SystemOperation"
 
 class PartitionKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the kind of algorithm used for partitioning. For MultiHash, multiple partition keys
@@ -237,12 +156,6 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     NONE = "None"
 
-class RestoreMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the mode of the restore.
-    """
-
-    POINT_IN_TIME = "PointInTime"
-
 class RoleDefinitionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether the Role Definition was built-in or user created.
     """
@@ -257,32 +170,6 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     THREE2 = "3.2"
     THREE6 = "3.6"
     FOUR0 = "4.0"
-
-class ServiceSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Instance type for the service.
-    """
-
-    COSMOS_D4_S = "Cosmos.D4s"
-    COSMOS_D8_S = "Cosmos.D8s"
-    COSMOS_D16_S = "Cosmos.D16s"
-
-class ServiceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the status of a service.
-    """
-
-    CREATING = "Creating"
-    RUNNING = "Running"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    ERROR = "Error"
-    STOPPED = "Stopped"
-
-class ServiceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ServiceType for the service.
-    """
-
-    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
-    DATA_TRANSFER = "DataTransfer"
 
 class SpatialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the spatial type of index.

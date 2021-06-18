@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=true&stringIndexType=UnicodeCodePoint
   response:
@@ -28,13 +28,13 @@ interactions:
         998.214.865-68 your Brazilian CPF number?","id":"3","statistics":{"charactersCount":44,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - 230cb384-6d0a-4de4-852b-63ae757e27bc
+      - 74cf16d1-877d-4816-a25f-58efc6bf2ea4
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Sat, 08 May 2021 07:01:58 GMT
+      - Tue, 18 May 2021 17:48:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '30'
+      - '35'
     status:
       code: 200
       message: OK

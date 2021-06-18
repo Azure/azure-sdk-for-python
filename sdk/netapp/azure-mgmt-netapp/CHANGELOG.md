@@ -1,5 +1,20 @@
 # Release History
 
+## 3.0.0 (2021-05-21)
+
+**Features**
+
+  - Model Backup has a new parameter use_existing_snapshot
+  - Model VolumePatchPropertiesDataProtection has a new parameter snapshot
+  - Model BackupPatch has a new parameter use_existing_snapshot
+  - Added operation BackupPoliciesOperations.begin_update
+  - Added operation BackupsOperations.get_status
+
+**Breaking changes**
+
+  - Removed operation BackupPoliciesOperations.update
+  - Removed operation group VolumeBackupStatusOperations
+
 ## 2.0.0 (2021-03-16)
 
 **Features**

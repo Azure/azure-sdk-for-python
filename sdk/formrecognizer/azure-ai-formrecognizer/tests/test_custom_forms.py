@@ -168,7 +168,6 @@ class TestCustomForms(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("service regression - bounding box not returned for unlabeled tables")
     def test_custom_form_unlabeled_transform(self, client, formrecognizer_storage_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 

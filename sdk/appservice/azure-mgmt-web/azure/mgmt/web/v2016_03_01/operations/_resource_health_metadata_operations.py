@@ -104,7 +104,7 @@ class ResourceHealthMetadataOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -178,7 +178,7 @@ class ResourceHealthMetadataOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -256,7 +256,7 @@ class ResourceHealthMetadataOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -318,7 +318,7 @@ class ResourceHealthMetadataOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceHealthMetadata', pipeline_response)
@@ -400,7 +400,7 @@ class ResourceHealthMetadataOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -466,7 +466,7 @@ class ResourceHealthMetadataOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceHealthMetadata', pipeline_response)

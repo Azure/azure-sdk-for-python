@@ -17,7 +17,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
@@ -25,11 +25,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - d91f4be1-3243-4580-a129-22a4ea9cf6fe
+      - c6dfad06-ade2-4bb5-a764-fa888f8ea250
       date:
-      - Sat, 08 May 2021 06:52:04 GMT
+      - Tue, 18 May 2021 17:46:48 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/67af0f3c-4493-4514-926e-6f958efd17d1
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/b46ab431-165a-47ef-b86e-b704d96fc995
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '158'
+      - '157'
     status:
       code: 202
       message: Accepted
@@ -51,87 +51,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/67af0f3c-4493-4514-926e-6f958efd17d1?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/b46ab431-165a-47ef-b86e-b704d96fc995?showStats=True
   response:
     body:
-      string: '{"jobId":"67af0f3c-4493-4514-926e-6f958efd17d1","lastUpdateDateTime":"2021-05-08T06:52:05Z","createdDateTime":"2021-05-08T06:52:05Z","expirationDateTime":"2021-05-09T06:52:05Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-08T06:52:05Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"b46ab431-165a-47ef-b86e-b704d96fc995","lastUpdateDateTime":"2021-05-18T17:46:49Z","createdDateTime":"2021-05-18T17:46:48Z","expirationDateTime":"2021-05-19T17:46:48Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-18T17:46:49Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 1196d425-1fe3-47c2-93aa-62573f896390
+      - aa1a0102-0c41-4ba2-b0d8-d21898a84f46
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 08 May 2021 06:52:10 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '6'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/67af0f3c-4493-4514-926e-6f958efd17d1?showStats=True
-  response:
-    body:
-      string: '{"jobId":"67af0f3c-4493-4514-926e-6f958efd17d1","lastUpdateDateTime":"2021-05-08T06:52:05Z","createdDateTime":"2021-05-08T06:52:05Z","expirationDateTime":"2021-05-09T06:52:05Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-08T06:52:05Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id:
-      - 332a90a8-9d5d-4cb3-80b9-d6028b756d90
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Sat, 08 May 2021 06:52:15 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '8'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/67af0f3c-4493-4514-926e-6f958efd17d1?showStats=True
-  response:
-    body:
-      string: '{"jobId":"67af0f3c-4493-4514-926e-6f958efd17d1","lastUpdateDateTime":"2021-05-08T06:52:05Z","createdDateTime":"2021-05-08T06:52:05Z","expirationDateTime":"2021-05-09T06:52:05Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-08T06:52:05Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id:
-      - 4a589d6c-5460-4567-9d30-6e09393a9a88
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Sat, 08 May 2021 06:52:20 GMT
+      - Tue, 18 May 2021 17:46:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -153,19 +85,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/67af0f3c-4493-4514-926e-6f958efd17d1?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/b46ab431-165a-47ef-b86e-b704d96fc995?showStats=True
   response:
     body:
-      string: '{"jobId":"67af0f3c-4493-4514-926e-6f958efd17d1","lastUpdateDateTime":"2021-05-08T06:52:05Z","createdDateTime":"2021-05-08T06:52:05Z","expirationDateTime":"2021-05-09T06:52:05Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-08T06:52:05Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"b46ab431-165a-47ef-b86e-b704d96fc995","lastUpdateDateTime":"2021-05-18T17:46:49Z","createdDateTime":"2021-05-18T17:46:48Z","expirationDateTime":"2021-05-19T17:46:48Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-18T17:46:49Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 745a561f-f8ba-4e10-b461-eea59f2fa358
+      - 61b46b27-56b6-4dfb-9009-7e7213a45ca6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 08 May 2021 06:52:25 GMT
+      - Tue, 18 May 2021 17:46:57 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -173,7 +105,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5'
+      - '16'
     status:
       code: 200
       message: OK
@@ -187,19 +119,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/67af0f3c-4493-4514-926e-6f958efd17d1?showStats=True
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/b46ab431-165a-47ef-b86e-b704d96fc995?showStats=True
   response:
     body:
-      string: '{"jobId":"67af0f3c-4493-4514-926e-6f958efd17d1","lastUpdateDateTime":"2021-05-08T06:52:28Z","createdDateTime":"2021-05-08T06:52:05Z","expirationDateTime":"2021-05-09T06:52:05Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-08T06:52:28Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-05-08T06:52:28.8089183Z","name":"NA","state":"succeeded","results":{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}]}}'
+      string: '{"jobId":"b46ab431-165a-47ef-b86e-b704d96fc995","lastUpdateDateTime":"2021-05-18T17:46:59Z","createdDateTime":"2021-05-18T17:46:48Z","expirationDateTime":"2021-05-19T17:46:48Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-05-18T17:46:59Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-05-18T17:46:59.4582662Z","name":"NA","state":"succeeded","results":{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}]}}'
     headers:
       apim-request-id:
-      - f2bce436-f9a4-470a-bc18-27b15ab68080
+      - 9a2ade01-8f20-4d46-a29b-9adb9303ae38
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 08 May 2021 06:52:30 GMT
+      - Tue, 18 May 2021 17:47:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -207,7 +139,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '31'
+      - '48'
     status:
       code: 200
       message: OK

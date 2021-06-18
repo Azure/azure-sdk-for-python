@@ -33,7 +33,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, Callable, List, Optional, Union
+    from typing import Any, Callable, Dict, List, Optional, Union
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpTransport, HttpRequest
@@ -43,11 +43,11 @@ if TYPE_CHECKING:
 
 class ManagedIdentityClientBase(ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
-    def __init__(self, request_factory, client_id=None, **kwargs):
-        # type: (Callable[[str, dict], HttpRequest], Optional[str], **Any) -> None
+    def __init__(self, request_factory, client_id=None, identity_config=None, **kwargs):
+        # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[Dict], **Any) -> None
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
-        self._identity_config = kwargs.pop("_identity_config", None) or {}
+        self._identity_config = identity_config or {}
         if client_id:
             self._identity_config["client_id"] = client_id
 

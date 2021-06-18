@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ComputeOperationListResult"]:
         """Gets a list of compute operations.
 

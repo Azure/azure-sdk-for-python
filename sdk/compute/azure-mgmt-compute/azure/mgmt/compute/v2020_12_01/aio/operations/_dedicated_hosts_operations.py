@@ -49,7 +49,7 @@ class DedicatedHostsOperations:
         host_group_name: str,
         host_name: str,
         parameters: "_models.DedicatedHost",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DedicatedHost":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         error_map = {
@@ -108,7 +108,7 @@ class DedicatedHostsOperations:
         host_group_name: str,
         host_name: str,
         parameters: "_models.DedicatedHost",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DedicatedHost"]:
         """Create or update a dedicated host .
 
@@ -122,8 +122,8 @@ class DedicatedHostsOperations:
         :type parameters: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHost
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DedicatedHost or the result of cls(response)
@@ -184,7 +184,7 @@ class DedicatedHostsOperations:
         host_group_name: str,
         host_name: str,
         parameters: "_models.DedicatedHostUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DedicatedHost":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DedicatedHost"]
         error_map = {
@@ -239,7 +239,7 @@ class DedicatedHostsOperations:
         host_group_name: str,
         host_name: str,
         parameters: "_models.DedicatedHostUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DedicatedHost"]:
         """Update an dedicated host .
 
@@ -253,8 +253,8 @@ class DedicatedHostsOperations:
         :type parameters: ~azure.mgmt.compute.v2020_12_01.models.DedicatedHostUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DedicatedHost or the result of cls(response)
@@ -314,7 +314,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -358,7 +358,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a dedicated host.
 
@@ -370,8 +370,8 @@ class DedicatedHostsOperations:
         :type host_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -428,7 +428,7 @@ class DedicatedHostsOperations:
         host_group_name: str,
         host_name: str,
         expand: Optional[str] = "instanceView",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DedicatedHost":
         """Retrieves information about a dedicated host.
 
@@ -493,7 +493,7 @@ class DedicatedHostsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DedicatedHostListResult"]:
         """Lists all of the dedicated hosts in the specified dedicated host group. Use the nextLink
         property in the response to get the next page of dedicated hosts.

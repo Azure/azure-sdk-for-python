@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "commonPrefix": {
+      "type": "string",
+      "defaultValue": "sdk-live-test",
+      "metadata": {
+        "description": "Common prefix for all live test resources."
+      }
+    },
+    "baseName": {
+      "type": "string",
+      "metadata": {
+        "description": "A distinct identifier for each run. Used as resource name suffix."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location for the test resource. Defaults to resource group's location."
+      }
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "A0",
+      "metadata": {
+        "description": "The SKU of the test resource. Defaults to A0."
+      }
+    },
+    "testApplicationOid": {
+      "type": "string",
+      "metadata": {
+        "description": "The client OID to grant access to test resources."
+      }
+    }
+  },
+  "variables": {
+    "serviceAdminRoleId": "f8da80de-1ff9-4747-ad80-a19b7f6079e3",
+    "resourceName": "[format('{0}-{1}', parameters('commonPrefix'), parameters('baseName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.AgFoodPlatform/farmbeats",
+      "apiVersion": "2020-05-12-preview",
+      "name": "[variables('resourceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('sku')]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2019-04-01-preview",
+      "name": "[guid(resourceGroup().id, deployment().name, parameters('commonPrefix'), parameters('baseName'), parameters('testApplicationOid'))]",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('serviceAdminRoleId'))]",
+        "principalId": "[parameters('testApplicationOid')]",
+        "scope": "[resourceGroup().id]"
+      }
+    }
+  ],
+  "outputs": {
+    "AGRIFOOD_ENDPOINT": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.AgFoodPlatform/farmbeats', variables('resourceName'))).instanceUri]"
+    }
+  }
+}

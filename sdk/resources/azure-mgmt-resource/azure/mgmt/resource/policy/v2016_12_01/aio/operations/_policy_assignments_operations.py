@@ -45,7 +45,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PolicyAssignment"]:
         """Deletes a policy assignment.
 
@@ -105,7 +105,7 @@ class PolicyAssignmentsOperations:
         scope: str,
         policy_assignment_name: str,
         parameters: "_models.PolicyAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Creates a policy assignment.
 
@@ -172,7 +172,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Gets a policy assignment.
 
@@ -229,7 +229,7 @@ class PolicyAssignmentsOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Gets policy assignments for the resource group.
 
@@ -308,7 +308,7 @@ class PolicyAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Gets policy assignments for a resource.
 
@@ -395,7 +395,7 @@ class PolicyAssignmentsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Gets all the policy assignments for a subscription.
 
@@ -466,7 +466,7 @@ class PolicyAssignmentsOperations:
     async def delete_by_id(
         self,
         policy_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Deletes a policy assignment by ID.
 
@@ -527,7 +527,7 @@ class PolicyAssignmentsOperations:
         self,
         policy_assignment_id: str,
         parameters: "_models.PolicyAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Creates a policy assignment by ID.
 
@@ -596,7 +596,7 @@ class PolicyAssignmentsOperations:
     async def get_by_id(
         self,
         policy_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Gets a policy assignment by ID.
 

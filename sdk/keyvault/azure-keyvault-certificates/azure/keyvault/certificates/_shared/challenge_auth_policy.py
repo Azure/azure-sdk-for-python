@@ -31,9 +31,9 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
-    from azure.core.pipeline.transport import HttpResponse
+    from azure.core.pipeline import PipelineResponse
 
 
 def _enforce_tls(request):
@@ -61,7 +61,7 @@ def _get_challenge_request(request):
 
 
 def _update_challenge(request, challenger):
-    # type: (HttpRequest, HttpResponse) -> HttpChallenge
+    # type: (PipelineRequest, PipelineResponse) -> HttpChallenge
     """parse challenge from challenger, cache it, return it"""
 
     challenge = HttpChallenge(
@@ -95,7 +95,7 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
         super(ChallengeAuthPolicy, self).__init__(**kwargs)
 
     def send(self, request):
-        # type: (PipelineRequest) -> HttpResponse
+        # type: (PipelineRequest) -> PipelineResponse
         _enforce_tls(request)
 
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)

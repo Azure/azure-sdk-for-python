@@ -1,5 +1,11 @@
 # Release History
 
+## 18.0.0 (2021-05-19)
+
+**Breaking changes**
+
+  - Operation ResourceGroupsOperations.begin_delete has a new signature
+
 ## 17.0.0 (2021-05-13)
 
 **Features**

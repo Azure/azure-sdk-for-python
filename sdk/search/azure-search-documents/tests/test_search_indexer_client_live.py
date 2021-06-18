@@ -89,7 +89,7 @@ class SearchIndexersClientTest(AzureMgmtTestCase):
         result = client.create_indexer(indexer)
         assert len(client.get_indexers()) == 1
         result = client.reset_indexer("sample-indexer")
-        assert client.get_indexer_status("sample-indexer").last_result.status in ('InProgress', 'reset')
+        assert client.get_indexer_status("sample-indexer").last_result.status.lower() in ('inprogress', 'reset')
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

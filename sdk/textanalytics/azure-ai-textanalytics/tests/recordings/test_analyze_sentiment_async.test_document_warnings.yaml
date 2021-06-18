@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -18,14 +18,14 @@ interactions:
       string: '{"documents":[{"id":"1","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.02,"negative":0.98},"offset":0,"length":40,"text":"This
         won''t actually create a warning :''("}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 02409cc6-3300-4881-8242-1672f4d419c4
+      apim-request-id: 17d1a122-1ede-4e89-b4eb-5f05135bf475
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
-      date: Sat, 08 May 2021 06:58:31 GMT
+      date: Tue, 18 May 2021 17:47:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '86'
+      x-envoy-upstream-service-time: '166'
     status:
       code: 200
       message: OK

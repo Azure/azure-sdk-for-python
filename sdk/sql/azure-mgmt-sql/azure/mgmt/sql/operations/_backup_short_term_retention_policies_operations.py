@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,10 +52,10 @@ class BackupShortTermRetentionPoliciesOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        policy_name,  # type: Union[str, "models.ShortTermRetentionPolicyName"]
+        policy_name,  # type: Union[str, "_models.ShortTermRetentionPolicyName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupShortTermRetentionPolicy"
+        # type: (...) -> "_models.BackupShortTermRetentionPolicy"
         """Gets a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -72,12 +72,12 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :rtype: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupShortTermRetentionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupShortTermRetentionPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -120,17 +120,17 @@ class BackupShortTermRetentionPoliciesOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        policy_name,  # type: Union[str, "models.ShortTermRetentionPolicyName"]
-        parameters,  # type: "models.BackupShortTermRetentionPolicy"
+        policy_name,  # type: Union[str, "_models.ShortTermRetentionPolicyName"]
+        parameters,  # type: "_models.BackupShortTermRetentionPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.BackupShortTermRetentionPolicy"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BackupShortTermRetentionPolicy"]]
+        # type: (...) -> Optional["_models.BackupShortTermRetentionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BackupShortTermRetentionPolicy"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -180,11 +180,11 @@ class BackupShortTermRetentionPoliciesOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        policy_name,  # type: Union[str, "models.ShortTermRetentionPolicyName"]
-        parameters,  # type: "models.BackupShortTermRetentionPolicy"
+        policy_name,  # type: Union[str, "_models.ShortTermRetentionPolicyName"]
+        parameters,  # type: "_models.BackupShortTermRetentionPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.BackupShortTermRetentionPolicy"]
+        # type: (...) -> LROPoller["_models.BackupShortTermRetentionPolicy"]
         """Updates a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -200,8 +200,8 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either BackupShortTermRetentionPolicy or the result of cls(response)
@@ -209,7 +209,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupShortTermRetentionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupShortTermRetentionPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -236,7 +236,15 @@ class BackupShortTermRetentionPoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'policyName': self._serialize.url("policy_name", policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -255,17 +263,17 @@ class BackupShortTermRetentionPoliciesOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        policy_name,  # type: Union[str, "models.ShortTermRetentionPolicyName"]
-        parameters,  # type: "models.BackupShortTermRetentionPolicy"
+        policy_name,  # type: Union[str, "_models.ShortTermRetentionPolicyName"]
+        parameters,  # type: "_models.BackupShortTermRetentionPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.BackupShortTermRetentionPolicy"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BackupShortTermRetentionPolicy"]]
+        # type: (...) -> Optional["_models.BackupShortTermRetentionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BackupShortTermRetentionPolicy"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -315,11 +323,11 @@ class BackupShortTermRetentionPoliciesOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        policy_name,  # type: Union[str, "models.ShortTermRetentionPolicyName"]
-        parameters,  # type: "models.BackupShortTermRetentionPolicy"
+        policy_name,  # type: Union[str, "_models.ShortTermRetentionPolicyName"]
+        parameters,  # type: "_models.BackupShortTermRetentionPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.BackupShortTermRetentionPolicy"]
+        # type: (...) -> LROPoller["_models.BackupShortTermRetentionPolicy"]
         """Updates a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -335,8 +343,8 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either BackupShortTermRetentionPolicy or the result of cls(response)
@@ -344,7 +352,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupShortTermRetentionPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupShortTermRetentionPolicy"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -371,7 +379,15 @@ class BackupShortTermRetentionPoliciesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'policyName': self._serialize.url("policy_name", policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -392,7 +408,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BackupShortTermRetentionPolicyListResult"]
+        # type: (...) -> Iterable["_models.BackupShortTermRetentionPolicyListResult"]
         """Gets a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -407,12 +423,12 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.BackupShortTermRetentionPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupShortTermRetentionPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupShortTermRetentionPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

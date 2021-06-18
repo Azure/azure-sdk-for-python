@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PipelineRunsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class PipelineRunsOperations:
         resource_group_name: str,
         registry_name: str,
         pipeline_run_name: str,
-        **kwargs
-    ) -> "models.PipelineRun":
+        **kwargs: Any
+    ) -> "_models.PipelineRun":
         """Gets the detailed information for a given pipeline run.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -64,7 +64,7 @@ class PipelineRunsOperations:
         :rtype: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class PipelineRunsOperations:
         resource_group_name: str,
         registry_name: str,
         pipeline_run_name: str,
-        pipeline_run_create_parameters: "models.PipelineRun",
-        **kwargs
-    ) -> "models.PipelineRun":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRun"]
+        pipeline_run_create_parameters: "_models.PipelineRun",
+        **kwargs: Any
+    ) -> "_models.PipelineRun":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,9 +170,9 @@ class PipelineRunsOperations:
         resource_group_name: str,
         registry_name: str,
         pipeline_run_name: str,
-        pipeline_run_create_parameters: "models.PipelineRun",
-        **kwargs
-    ) -> AsyncLROPoller["models.PipelineRun"]:
+        pipeline_run_create_parameters: "_models.PipelineRun",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.PipelineRun"]:
         """Creates a pipeline run for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -186,8 +186,8 @@ class PipelineRunsOperations:
         :type pipeline_run_create_parameters: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRun
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PipelineRun or the result of cls(response)
@@ -195,7 +195,7 @@ class PipelineRunsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRun"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -221,7 +221,14 @@ class PipelineRunsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'pipelineRunName': self._serialize.url("pipeline_run_name", pipeline_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -240,7 +247,7 @@ class PipelineRunsOperations:
         resource_group_name: str,
         registry_name: str,
         pipeline_run_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -284,7 +291,7 @@ class PipelineRunsOperations:
         resource_group_name: str,
         registry_name: str,
         pipeline_run_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a pipeline run from a container registry.
 
@@ -297,8 +304,8 @@ class PipelineRunsOperations:
         :type pipeline_run_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -328,7 +335,14 @@ class PipelineRunsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'pipelineRunName': self._serialize.url("pipeline_run_name", pipeline_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -346,8 +360,8 @@ class PipelineRunsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.PipelineRunListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PipelineRunListResult"]:
         """Lists all the pipeline runs for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -360,7 +374,7 @@ class PipelineRunsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PipelineRunListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PipelineRunListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

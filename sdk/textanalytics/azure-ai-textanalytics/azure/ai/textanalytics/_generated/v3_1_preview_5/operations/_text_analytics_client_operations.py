@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from ...._lro import AnalyzeBatchActionsLROPoller, AnalyzeBatchActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
+from ...._lro import AnalyzeActionsLROPoller, AnalyzeActionsLROPollingMethod, AnalyzeHealthcareEntitiesLROPoller, AnalyzeHealthcareEntitiesLROPollingMethod
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -92,7 +92,7 @@ class TextAnalyticsClientOperationsMixin(object):
         body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> AnalyzeBatchActionsLROPoller["_models.AnalyzeJobState"]
+        # type: (...) -> AnalyzeActionsLROPoller["_models.AnalyzeJobState"]
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -102,12 +102,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AnalyzeBatchActionsLROPollingMethod.
+        :keyword polling: By default, your polling method will be AnalyzeActionsLROPollingMethod.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~...._lro.AnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
+        :return: An instance of AnalyzeActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
+        :rtype: ~...._lro.AnalyzeActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -138,18 +138,18 @@ class TextAnalyticsClientOperationsMixin(object):
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = AnalyzeBatchActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AnalyzeActionsLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
-            return AnalyzeBatchActionsLROPoller.from_continuation_token(
+            return AnalyzeActionsLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return AnalyzeBatchActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AnalyzeActionsLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_analyze.metadata = {'url': '/analyze'}  # type: ignore
 
     def analyze_status(

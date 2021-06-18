@@ -1,5 +1,38 @@
 # Release History
 
+## 7.0.0 (2021-06-03)
+
+**Features**
+
+  - Model Asset has a new parameter system_data
+  - Model StreamingPolicy has a new parameter system_data
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter is_data_action
+  - Model JobInputAsset has a new parameter input_definitions
+  - Model AccountFilter has a new parameter system_data
+  - Model FaceDetectorPreset has a new parameter mode
+  - Model FaceDetectorPreset has a new parameter blur_type
+  - Model LiveEvent has a new parameter system_data
+  - Model MediaService has a new parameter key_delivery
+  - Model MediaService has a new parameter system_data
+  - Model Job has a new parameter system_data
+  - Model StreamingLocator has a new parameter system_data
+  - Model StreamingEndpoint has a new parameter system_data
+  - Model ContentKeyPolicy has a new parameter system_data
+  - Model JobInputClip has a new parameter input_definitions
+  - Model JobInputHttp has a new parameter input_definitions
+  - Model MetricSpecification has a new parameter lock_aggregation_type
+  - Model MetricSpecification has a new parameter supported_time_grain_types
+  - Model MetricSpecification has a new parameter source_mdm_namespace
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model AssetFilter has a new parameter system_data
+  - Model Transform has a new parameter system_data
+
+**Breaking changes**
+
+  - Removed operation MediaservicesOperations.get_by_subscription
+
 ## 7.0.0b1 (2020-12-01)
 
 This is beta preview version.

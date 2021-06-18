@@ -5,7 +5,8 @@ stages:
     parameters:
       AllocateResourceGroup: false
       ServiceDirectory: template
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       EnvVars:
         TEMPLATE_CONFIG_CONNECTION: $(python-template-connection-string) # Add variables/mappings as appropriate for your service.
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

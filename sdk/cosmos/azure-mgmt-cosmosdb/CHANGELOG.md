@@ -1,5 +1,55 @@
 # Release History
 
+## 6.3.0 (2021-05-14)
+
+**Breaking changes**
+
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model PeriodicModeProperties no longer has parameter backup_storage_redundancy
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter create_mode
+  - Model DatabaseAccountGetResults no longer has parameter restore_parameters
+  - Model DatabaseAccountGetResults no longer has parameter instance_id
+  - Model DatabaseAccountGetResults no longer has parameter system_data
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Removed operation SqlResourcesOperations.begin_retrieve_continuous_backup_information
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+  - Removed operation group RestorableDatabaseAccountsOperations
+  - Removed operation group RestorableMongodbCollectionsOperations
+  - Removed operation group CosmosDBManagementClientOperationsMixin
+  - Removed operation group RestorableSqlResourcesOperations
+  - Removed operation group RestorableMongodbDatabasesOperations
+  - Removed operation group CassandraClustersOperations
+  - Removed operation group RestorableMongodbResourcesOperations
+  - Removed operation group RestorableSqlContainersOperations
+  - Removed operation group CassandraDataCentersOperations
+  - Removed operation group RestorableSqlDatabasesOperations
+  - Removed operation group ServiceOperations
+
 ## 6.3.0b1 (2021-05-10)
 
 **Features**

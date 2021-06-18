@@ -17,7 +17,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
@@ -33,14 +33,14 @@ interactions:
         rooms but bathrooms were old and the toilet was dirty when we arrived.","targets":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":5,"length":5,"text":"rooms","relations":[{"relationType":"assessment","ref":"#/documents/5/sentences/0/assessments/0"}]},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":15,"length":9,"text":"bathrooms","relations":[{"relationType":"assessment","ref":"#/documents/5/sentences/0/assessments/1"}]},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":42,"length":6,"text":"toilet","relations":[{"relationType":"assessment","ref":"#/documents/5/sentences/0/assessments/2"}]}],"assessments":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"negative":0.0},"offset":0,"length":4,"text":"nice","isNegated":false},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":30,"length":3,"text":"old","isNegated":false},{"sentiment":"negative","confidenceScores":{"positive":0.0,"negative":1.0},"offset":53,"length":5,"text":"dirty","isNegated":false}]}],"warnings":[]},{"id":"6","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.63,"negative":0.34},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.63,"negative":0.34},"offset":0,"length":19,"text":"The
         toilet smelled.","targets":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":4,"length":6,"text":"toilet","relations":[{"relationType":"assessment","ref":"#/documents/6/sentences/0/assessments/0"}]}],"assessments":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":11,"length":7,"text":"smelled","isNegated":false}]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 6b0850c5-5b83-4be4-9312-d95e5a1a652b
+      apim-request-id: 936668d6-fd1d-4b6c-9601-2057962febdd
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=7,CognitiveServices.TextAnalytics.TextRecords=7
-      date: Sat, 08 May 2021 06:58:37 GMT
+      date: Tue, 18 May 2021 17:47:40 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2595'
+      x-envoy-upstream-service-time: '2583'
     status:
       code: 200
       message: OK

@@ -108,6 +108,10 @@ For complete list of recognizable system topics, visit [System Topics](https://d
 
  For more information about the key concepts on Event Grid, see [Concepts in Azure Event Grid][publisher-service-doc].
 
+## Event Grid on Kubernetes with Azure Arc
+
+Event Grid on Kubernetes with Azure Arc is an offering that allows you to run Event Grid on your own Kubernetes cluster. This capability is enabled by the use of Azure Arc enabled Kubernetes. Through Azure Arc enabled Kubernetes, a supported Kubernetes cluster connects to Azure. Once connected, you are able to install Event Grid on it. Learn more about it [here](https://docs.microsoft.com/azure/event-grid/kubernetes/overview).
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Event Grid tasks, including:

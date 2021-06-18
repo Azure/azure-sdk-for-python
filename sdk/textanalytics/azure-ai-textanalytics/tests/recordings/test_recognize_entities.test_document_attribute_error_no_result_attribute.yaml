@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -23,11 +23,11 @@ interactions:
         text is empty."}}}],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - 0a01a06f-5efd-4c3f-af1e-dd13b2efa0f1
+      - 45c755bf-7a7b-4249-a4bb-ee0fbe717842
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 08 May 2021 07:00:37 GMT
+      - Tue, 18 May 2021 17:47:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

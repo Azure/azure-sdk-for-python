@@ -26,7 +26,7 @@ class Operations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.hybridkubernetes.models
+    :type models: ~connected_kubernetes_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -49,7 +49,7 @@ class Operations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hybridkubernetes.models.OperationList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~connected_kubernetes_client.models.OperationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationList"]
@@ -57,7 +57,7 @@ class Operations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-01-preview"
+        api_version = "2021-03-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -93,7 +93,7 @@ class Operations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

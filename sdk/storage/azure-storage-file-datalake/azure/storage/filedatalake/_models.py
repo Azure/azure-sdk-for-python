@@ -203,9 +203,6 @@ class PathProperties(object):
     """
 
     def __init__(self, **kwargs):
-        super(PathProperties, self).__init__(
-            **kwargs
-        )
         self.name = kwargs.pop('name', None)
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)

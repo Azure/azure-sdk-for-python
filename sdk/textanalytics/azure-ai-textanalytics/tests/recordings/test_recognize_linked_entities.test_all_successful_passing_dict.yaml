@@ -15,7 +15,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/linking?showStats=true&stringIndexType=UnicodeCodePoint
   response:
@@ -31,13 +31,13 @@ interactions:
         Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 8525c140-6738-4c77-a7f1-5667f78d08fc
+      - 04b35fa8-2b6c-4760-ad3d-527a9ba72933
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2
       date:
-      - Tue, 27 Apr 2021 20:11:38 GMT
+      - Tue, 18 May 2021 17:48:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -45,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5025'
+      - '2536'
     status:
       code: 200
       message: OK

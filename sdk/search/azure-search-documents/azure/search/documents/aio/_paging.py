@@ -51,7 +51,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
 
     async def get_coverage(self):
         # type: () -> float
-        """Return the covereage percentage, if `minimum_coverage` was
+        """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
         """
@@ -118,6 +118,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     @_ensure_response
     async def get_facets(self):
+        self.continuation_token = None
         facets = self._response.facets
         if facets is not None and self._facets is None:
             self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
@@ -125,12 +126,15 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     @_ensure_response
     async def get_coverage(self):
+        self.continuation_token = None
         return self._response.coverage
 
     @_ensure_response
     async def get_count(self):
+        self.continuation_token = None
         return self._response.count
 
     @_ensure_response
     async def get_answers(self):
+        self.continuation_token = None
         return self._response.answers

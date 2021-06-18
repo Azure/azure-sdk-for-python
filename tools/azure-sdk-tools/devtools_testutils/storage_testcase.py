@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import functools
 import logging
-import os
 from time import sleep
 
 # let this import fail, this package is used intentionally without the presence of azure-core
@@ -76,15 +75,10 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                 },
             )
             self.resource = storage_async_operation.result()
-            storage_keys = {
-                v.key_name: v.value
-                for v in self.client.storage_accounts.list_keys(group.name, name).keys
-            }
+            storage_keys = {v.key_name: v.value for v in self.client.storage_accounts.list_keys(group.name, name).keys}
             self.storage_key = storage_keys["key1"]
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name, self.resource_moniker
-            )
+            self.test_class_instance.scrubber.register_name_pair(name, self.resource_moniker)
         else:
             self.resource = StorageAccount(
                 location=self.location,
@@ -92,18 +86,10 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             self.resource.name = name
             self.resource.id = name
             self.resource.primary_endpoints = Endpoints()
-            self.resource.primary_endpoints.blob = (
-                "https://{}.{}.core.windows.net".format(name, "blob")
-            )
-            self.resource.primary_endpoints.queue = (
-                "https://{}.{}.core.windows.net".format(name, "queue")
-            )
-            self.resource.primary_endpoints.table = (
-                "https://{}.{}.core.windows.net".format(name, "table")
-            )
-            self.resource.primary_endpoints.file = (
-                "https://{}.{}.core.windows.net".format(name, "file")
-            )
+            self.resource.primary_endpoints.blob = "https://{}.{}.core.windows.net".format(name, "blob")
+            self.resource.primary_endpoints.queue = "https://{}.{}.core.windows.net".format(name, "queue")
+            self.resource.primary_endpoints.table = "https://{}.{}.core.windows.net".format(name, "table")
+            self.resource.primary_endpoints.file = "https://{}.{}.core.windows.net".format(name, "file")
             self.storage_key = "ZmFrZV9hY29jdW50X2tleQ=="
         return {
             self.parameter_name: self.resource,
@@ -151,6 +137,4 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
 
-CachedStorageAccountPreparer = functools.partial(
-    StorageAccountPreparer, use_cache=True, random_name_enabled=True
-)
+CachedStorageAccountPreparer = functools.partial(StorageAccountPreparer, use_cache=True, random_name_enabled=True)

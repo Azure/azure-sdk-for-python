@@ -303,11 +303,11 @@ class DeploymentExportResult(msrest.serialization.Model):
     """The deployment export result.
 
     :param template: The template content.
-    :type template: str
+    :type template: any
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
     }
 
     def __init__(
@@ -562,7 +562,7 @@ class DeploymentProperties(msrest.serialization.Model):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :type template: str
+    :type template: any
     :param template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :type template_link: ~azure.mgmt.resource.resources.v2020_10_01.models.TemplateLink
@@ -570,7 +570,7 @@ class DeploymentProperties(msrest.serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :type parameters: str
+    :type parameters: any
     :param parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -598,9 +598,9 @@ class DeploymentProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
@@ -640,7 +640,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar duration: The duration of the template deployment.
     :vartype duration: str
     :ivar outputs: Key/value pairs that represent deployment output.
-    :vartype outputs: str
+    :vartype outputs: any
     :ivar providers: The list of resource providers needed for the deployment.
     :vartype providers: list[~azure.mgmt.resource.resources.v2020_10_01.models.Provider]
     :ivar dependencies: The list of deployment dependencies.
@@ -648,7 +648,7 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar template_link: The URI referencing the template.
     :vartype template_link: ~azure.mgmt.resource.resources.v2020_10_01.models.TemplateLink
     :ivar parameters: Deployment parameters.
-    :vartype parameters: str
+    :vartype parameters: any
     :ivar parameters_link: The URI referencing the parameters.
     :vartype parameters_link: ~azure.mgmt.resource.resources.v2020_10_01.models.ParametersLink
     :ivar mode: The deployment mode. Possible values are Incremental and Complete. Possible values
@@ -696,11 +696,11 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'duration': {'key': 'duration', 'type': 'str'},
-        'outputs': {'key': 'outputs', 'type': 'str'},
+        'outputs': {'key': 'outputs', 'type': 'object'},
         'providers': {'key': 'providers', 'type': '[Provider]'},
         'dependencies': {'key': 'dependencies', 'type': '[Dependency]'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
@@ -803,7 +803,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :type template: str
+    :type template: any
     :param template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :type template_link: ~azure.mgmt.resource.resources.v2020_10_01.models.TemplateLink
@@ -811,7 +811,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :type parameters: str
+    :type parameters: any
     :param parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -842,9 +842,9 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     }
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
@@ -890,7 +890,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -900,7 +900,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -1066,7 +1066,7 @@ class GenericResource(Resource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2020_10_01.models.Plan
     :param properties: The resource properties.
-    :type properties: str
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -1090,7 +1090,7 @@ class GenericResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
@@ -1128,7 +1128,7 @@ class GenericResourceExpanded(GenericResource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2020_10_01.models.Plan
     :param properties: The resource properties.
-    :type properties: str
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -1164,7 +1164,7 @@ class GenericResourceExpanded(GenericResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
@@ -1215,11 +1215,11 @@ class HttpMessage(msrest.serialization.Model):
     """HTTP message.
 
     :param content: HTTP message content.
-    :type content: str
+    :type content: any
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
+        'content': {'key': 'content', 'type': 'object'},
     }
 
     def __init__(
@@ -1753,13 +1753,13 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     """Resource group export result.
 
     :param template: The template content.
-    :type template: str
+    :type template: any
     :param error: The template export error.
     :type error: ~azure.mgmt.resource.resources.v2020_10_01.models.ErrorResponse
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
         'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
@@ -2446,9 +2446,9 @@ class WhatIfChange(msrest.serialization.Model):
      "NoChange", "Modify".
     :type change_type: str or ~azure.mgmt.resource.resources.v2020_10_01.models.ChangeType
     :param before: The snapshot of the resource before the deployment is executed.
-    :type before: str
+    :type before: any
     :param after: The predicted snapshot of the resource after the deployment is executed.
-    :type after: str
+    :type after: any
     :param delta: The predicted changes to resource properties.
     :type delta: list[~azure.mgmt.resource.resources.v2020_10_01.models.WhatIfPropertyChange]
     """
@@ -2461,8 +2461,8 @@ class WhatIfChange(msrest.serialization.Model):
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'change_type': {'key': 'changeType', 'type': 'str'},
-        'before': {'key': 'before', 'type': 'str'},
-        'after': {'key': 'after', 'type': 'str'},
+        'before': {'key': 'before', 'type': 'object'},
+        'after': {'key': 'after', 'type': 'object'},
         'delta': {'key': 'delta', 'type': '[WhatIfPropertyChange]'},
     }
 
@@ -2517,9 +2517,9 @@ class WhatIfPropertyChange(msrest.serialization.Model):
     :type property_change_type: str or
      ~azure.mgmt.resource.resources.v2020_10_01.models.PropertyChangeType
     :param before: The value of the property before the deployment is executed.
-    :type before: str
+    :type before: any
     :param after: The value of the property after the deployment is executed.
-    :type after: str
+    :type after: any
     :param children: Nested property changes.
     :type children: list[~azure.mgmt.resource.resources.v2020_10_01.models.WhatIfPropertyChange]
     """
@@ -2532,8 +2532,8 @@ class WhatIfPropertyChange(msrest.serialization.Model):
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'property_change_type': {'key': 'propertyChangeType', 'type': 'str'},
-        'before': {'key': 'before', 'type': 'str'},
-        'after': {'key': 'after', 'type': 'str'},
+        'before': {'key': 'before', 'type': 'object'},
+        'after': {'key': 'after', 'type': 'object'},
         'children': {'key': 'children', 'type': '[WhatIfPropertyChange]'},
     }
 

@@ -9,6 +9,40 @@
 import msrest.serialization
 
 
+class CloudErrorBody(msrest.serialization.Model):
+    """An error response from the Batch service.
+
+    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+     programmatically.
+    :type code: str
+    :param message: A message describing the error, intended to be suitable for display in a user
+     interface.
+    :type message: str
+    :param target: The target of the particular error. For example, the name of the property in
+     error.
+    :type target: str
+    :param details: A list of additional details about the error.
+    :type details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+
+
 class DisableSerialConsoleResult(msrest.serialization.Model):
     """Returns whether or not Serial Console is disabled.
 
@@ -68,6 +102,73 @@ class GetSerialConsoleSubscriptionNotFound(msrest.serialization.Model):
         super(GetSerialConsoleSubscriptionNotFound, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+
+
+class Resource(msrest.serialization.Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
 
 
 class SerialConsoleOperations(msrest.serialization.Model):
@@ -164,3 +265,78 @@ class SerialConsoleStatus(msrest.serialization.Model):
     ):
         super(SerialConsoleStatus, self).__init__(**kwargs)
         self.disabled = kwargs.get('disabled', None)
+
+
+class SerialPort(ProxyResource):
+    """Represents the serial port of the parent resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param state: Specifies whether the port is enabled for a serial console connection. Possible
+     values include: "enabled", "disabled".
+    :type state: str or ~azure.mgmt.serialconsole.models.SerialPortState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SerialPort, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+
+
+class SerialPortConnectResult(msrest.serialization.Model):
+    """Returns a connection string to the serial port of the resource.
+
+    :param connection_string: Connection string to the serial port of the resource.
+    :type connection_string: str
+    """
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SerialPortConnectResult, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+
+
+class SerialPortListResult(msrest.serialization.Model):
+    """The list serial ports operation response.
+
+    :param value: The list of serial ports.
+    :type value: list[~azure.mgmt.serialconsole.models.SerialPort]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SerialPort]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SerialPortListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

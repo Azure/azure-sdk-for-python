@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0 (2021-05-20)
+
+**Features**
+
+  - Model BotProperties has a new parameter schema_transformation_version
+  - Model BotProperties has a new parameter cmek_key_vault_url
+  - Model BotProperties has a new parameter is_isolated
+  - Model BotProperties has a new parameter is_cmek_enabled
+  - Added operation group HostSettingsOperations
+
 ## 1.0.0b1 (2020-11-20)
 
 This is beta preview version.

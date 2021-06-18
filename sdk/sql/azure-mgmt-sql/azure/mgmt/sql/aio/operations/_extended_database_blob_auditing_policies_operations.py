@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> "models.ExtendedDatabaseBlobAuditingPolicy":
+        **kwargs: Any
+    ) -> "_models.ExtendedDatabaseBlobAuditingPolicy":
         """Gets an extended database's blob auditing policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -62,13 +62,13 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedDatabaseBlobAuditingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedDatabaseBlobAuditingPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         blob_auditing_policy_name = "default"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -111,9 +111,9 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.ExtendedDatabaseBlobAuditingPolicy",
-        **kwargs
-    ) -> "models.ExtendedDatabaseBlobAuditingPolicy":
+        parameters: "_models.ExtendedDatabaseBlobAuditingPolicy",
+        **kwargs: Any
+    ) -> "_models.ExtendedDatabaseBlobAuditingPolicy":
         """Creates or updates an extended database's blob auditing policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -130,13 +130,13 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedDatabaseBlobAuditingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedDatabaseBlobAuditingPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         blob_auditing_policy_name = "default"
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -188,8 +188,8 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ExtendedDatabaseBlobAuditingPolicyListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ExtendedDatabaseBlobAuditingPolicyListResult"]:
         """Lists extended auditing settings of a database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -204,12 +204,12 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExtendedDatabaseBlobAuditingPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtendedDatabaseBlobAuditingPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

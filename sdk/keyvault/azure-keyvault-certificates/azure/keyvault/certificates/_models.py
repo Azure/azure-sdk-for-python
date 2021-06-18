@@ -147,7 +147,7 @@ class CertificateProperties(object):
         # type: (**Any) -> None
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
-        self._vault_id = parse_key_vault_id(self._id)
+        self._vault_id = KeyVaultCertificateIdentifier(self._id)
         self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
         self._tags = kwargs.pop("tags", None)
 
@@ -392,6 +392,45 @@ class KeyVaultCertificate(object):
         return self._cer
 
 
+class KeyVaultCertificateIdentifier(object):
+    """Information about a KeyVaultCertificate parsed from a certificate ID.
+
+    :param str source_id: the full original identifier of a certificate
+    :raises ValueError: if the certificate ID is improperly formatted
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_key_vault_certificate_id]
+            :end-before: [END parse_key_vault_certificate_id]
+            :language: python
+            :caption: Parse a certificate's ID
+            :dedent: 8
+    """
+
+    def __init__(self, source_id):
+        # type: (str) -> None
+        self._resource_id = parse_key_vault_id(source_id)
+
+    @property
+    def source_id(self):
+        # type: () -> str
+        return self._resource_id.source_id
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        return self._resource_id.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        return self._resource_id.name
+
+    @property
+    def version(self):
+        # type: () -> Optional[str]
+        return self._resource_id.version
+
+
 class CertificateOperation(object):
     # pylint:disable=too-many-instance-attributes
     """A certificate operation is returned in case of long running requests.
@@ -579,17 +618,19 @@ class CertificateOperation(object):
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
-    :param str issuer_name: Name of the referenced issuer object or reserved names; for example,
-        'Self' or 'Unknown"
+    :param Optional[str] issuer_name: Optional. Name of the referenced issuer object or reserved names; for example,
+        :attr:`~azure.keyvault.certificates.WellKnownIssuerNames.self` or
+        :attr:`~azure.keyvault.certificates.WellKnownIssuerNames.unknown`
     :keyword str subject: The subject name of the certificate. Should be a valid X509
-        distinguished name. Either subject or one of the subject alternative name parameters
-        are required.
+        distinguished name. Either subject or one of the subject alternative name parameters are required for
+        creating a certificate. This will be ignored when importing a certificate; the subject will be parsed from
+        the imported certificate.
     :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Either
-        subject or one of the subject alternative name parameters are required.
+        subject or one of the subject alternative name parameters are required for creating a certificate.
     :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
-        subject or one of the subject alternative name parameters are required.
+        subject or one of the subject alternative name parameters are required for creating a certificate.
     :keyword Iterable[str] san_user_principal_names: Subject alternative user principal names of the X509 object.
-        Either subject or one of the subject alternative name parameters are required.
+        Either subject or one of the subject alternative name parameters are required for creating a certificate.
     :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
     :keyword key_type: The type of key pair to be used for the certificate.
@@ -604,7 +645,8 @@ class CertificatePolicy(object):
     :paramtype enhanced_key_usage: list[str]
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
-    :keyword content_type: The media type (MIME type) of the secret backing the certificate.
+    :keyword content_type: The media type (MIME type) of the secret backing the certificate.  If not specified,
+        :attr:`CertificateContentType.pkcs12` is assumed.
     :paramtype content_type: str or ~azure.keyvault.certificates.CertificateContentType
     :keyword int validity_in_months: The duration that the certificate is valid in months.
     :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime
@@ -619,7 +661,7 @@ class CertificatePolicy(object):
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
-        issuer_name,  # type: str
+        issuer_name=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -641,12 +683,6 @@ class CertificatePolicy(object):
         self._san_emails = kwargs.pop("san_emails", None) or None
         self._san_dns_names = kwargs.pop("san_dns_names", None) or None
         self._san_user_principal_names = kwargs.pop("san_user_principal_names", None) or None
-
-        if not (
-            self._san_emails or self._san_user_principal_names or self._san_dns_names or self._subject
-        ):
-            raise ValueError("You need to set either subject or one of the subject alternative names " +
-                            "parameters")
 
     @classmethod
     def get_default(cls):
@@ -947,7 +983,7 @@ class CertificatePolicy(object):
 
     @property
     def issuer_name(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """Name of the referenced issuer object or reserved names for the issuer
         of the certificate.
 

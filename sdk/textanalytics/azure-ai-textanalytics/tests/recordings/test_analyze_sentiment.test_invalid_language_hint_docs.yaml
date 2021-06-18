@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -22,14 +22,14 @@ interactions:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: de,en,es,fr,hi,it,ja,ko,nl,no,pt-BR,pt-PT,tr,zh-Hans,zh-Hant.
-        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}'
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 85c06d15-ec6c-44b4-9429-096f0c7e758d
+      - 56fa0569-d0bd-4495-820a-50c623342445
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 08 May 2021 06:58:00 GMT
+      - Tue, 18 May 2021 17:47:36 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

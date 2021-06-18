@@ -3,6 +3,7 @@ parameters:
   TestMarkArgument: ''
   EnvVars: {}
   ServiceDirectory: ''
+  CloudName: ''
   PythonVersion: ''
   OSVmImage: ''
   BeforeTestSteps: []
@@ -14,7 +15,6 @@ parameters:
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
-  TestSamples: false
 
 steps:
   - pwsh: |
@@ -85,16 +85,16 @@ steps:
     condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
-      testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
+      testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
-  - ${{ if eq(parameters['TestSamples'], true) }}:
-    - task: PythonScript@0
-      displayName: 'Test Samples'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-        arguments: >-
-          "${{ parameters.BuildTargetingString }}"
-          --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="samples"
-      env: ${{ parameters.EnvVars }}
+  - task: PythonScript@0
+    displayName: 'Test Samples'
+    condition: eq(variables['TestSamples'], 'true')
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="samples"
+    env: ${{ parameters.EnvVars }}
