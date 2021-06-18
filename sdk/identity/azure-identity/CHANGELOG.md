@@ -5,6 +5,11 @@
 - `InteractiveBrowserCredential` keyword argument `login_hint` enables
   pre-filling the username/email address field on the login page
   ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
+- `CertificateCredential` and `ClientSecretCredential` support regional STS
+  configuration by either keyword argument `regional_authority` or environment
+  variable `AZURE_REGIONAL_AUTHORITY_NAME`. See `azure.identity.RegionalAuthority`
+  for possible values.
+  ([#19301](https://github.com/Azure/azure-sdk-for-python/issues/19301))
 
 ## 1.7.0b1 (2021-06-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
