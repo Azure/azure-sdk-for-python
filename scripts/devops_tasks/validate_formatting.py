@@ -63,5 +63,6 @@ if __name__ == "__main__":
 
     if bool(args.validate):
         run_black(args.service_directory)
+        check_diff("sdk/{}".format(args.service_directory))
     else:
         print("Skipping formatting validation")
