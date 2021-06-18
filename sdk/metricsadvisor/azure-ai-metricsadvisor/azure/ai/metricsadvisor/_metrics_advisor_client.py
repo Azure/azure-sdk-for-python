@@ -22,6 +22,7 @@ from ._generated.models import (
     EnrichmentStatusQueryOption,
     SeriesIdentity,
     FeedbackDimensionFilter,
+    DimensionGroupIdentity,
 )
 from ._generated import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._helpers import convert_to_sub_feedback, convert_datetime, get_authentication_policy
@@ -379,12 +380,13 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
         filter_condition = kwargs.pop('filter', None)
+        filter = filter_condition._to_generated() if filter_condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            filter=filter_condition,
+            filter=filter,
         )
 
         return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
@@ -496,7 +498,7 @@ class MetricsAdvisorClient(object):
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
+        :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -513,13 +515,14 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
+        filter = DimensionGroupIdentity(dimension=dimension_filter)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
             dimension_name=dimension_name,
-            dimension_filter=dimension_filter,
+            dimension_filter=filter,
         )
 
         return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(  # type: ignore
@@ -544,13 +547,14 @@ class MetricsAdvisorClient(object):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
 
         filter_condition = kwargs.pop('filter', None)
+        filter = filter_condition._to_generated() if filter_condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            filter=filter_condition,
+            filter=filter,
         )
 
         return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore

@@ -94,6 +94,7 @@ from .._generated.models import (
     ServicePrincipalInKVParamPatch as _ServicePrincipalInKVParamPatch,
     ServicePrincipalInKVCredential as _ServicePrincipalInKVCredential,
     ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
+    DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
 )
 
 if TYPE_CHECKING:
@@ -3840,4 +3841,41 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
             data_source_credential_name=self.name,
             data_source_credential_description=self.description,
             parameters=param_patch,
+        )
+
+class DetectionAnomalyFilterCondition(msrest.serialization.Model):
+    """DetectionAnomalyFilterCondition.
+
+    :param series_group_key: dimension filter.
+    :type series_group_key: dict[str, str]
+    :param severity_filter:
+    :type severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
+    """
+
+    _attribute_map = {
+        'series_group_key': {'key': 'seriesGroupKey', 'type': '{str}'},
+        'severity_filter': {'key': 'severityFilter', 'type': 'SeverityFilterCondition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
+        self.series_group_key = kwargs.get('series_group_key', None)
+        self.severity_filter = kwargs.get('severity_filter', None)
+
+    @classmethod
+    def _from_generated(cls, source):
+        series_group_key = source.dimension_filter.dimension if source.dimension_filter else None
+        return cls(
+            series_group_key=series_group_key,
+            severity_filter=source.severity_filter.key_vault_endpoint
+        )
+
+    def _to_generated(self):
+        dimension_filter = _DimensionGroupIdentity(dimension=self.series_group_key)
+        return _DetectionAnomalyFilterCondition(
+            dimension_filter=dimension_filter,
+            severity_filter=self.severity_filter
         )
