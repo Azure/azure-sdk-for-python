@@ -33,7 +33,7 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 
 from .._utils import _case_insensitive_dict
-
+from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from ._helpers import (
     FilesType,
     StreamClosedError,
@@ -193,6 +193,20 @@ class HttpRequest(object):
             )
         except (ValueError, TypeError):
             return copy.copy(self)
+
+    def _to_pipeline_transport_request(self):
+        request = PipelineTransportHttpRequest(
+            method=self.method,
+            url=self.url,
+            headers=self.headers,
+            files=self._files,
+            data=self._data,
+        )
+        # following pipeline.transport, we pop the content-type if there are files
+        # this is bc we want an empty content type so the transport, i.e. requests,
+        # will set our boundary for us
+        request.headers.pop("Content-Type", None)
+        return request
 
 
 class _HttpResponseBase(object):

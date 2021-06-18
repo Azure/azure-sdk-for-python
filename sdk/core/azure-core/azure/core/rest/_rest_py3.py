@@ -59,6 +59,7 @@ from ._helpers import (
     format_parameters,
 )
 from ._helpers_py3 import set_content_body
+from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
@@ -222,6 +223,20 @@ class HttpRequest:
             )
         except (ValueError, TypeError):
             return copy.copy(self)
+
+    def _to_pipeline_transport_request(self):
+        request = PipelineTransportHttpRequest(
+            method=self.method,
+            url=self.url,
+            headers=self.headers,
+            files=self._files,
+            data=self._data,
+        )
+        # following pipeline.transport, we pop the content-type if there are files
+        # this is bc we want an empty content type so the transport, i.e. requests,
+        # will set our boundary for us
+        request.headers.pop("Content-Type", None)
+        return request
 
 class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     """Base class for HttpResponse and AsyncHttpResponse.

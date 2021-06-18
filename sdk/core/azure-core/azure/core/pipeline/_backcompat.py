@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 from enum import Enum
-from ..rest import HttpRequest as CoreRestHttpRequest
 
 if TYPE_CHECKING:
     from typing import Union
@@ -33,17 +32,6 @@ if TYPE_CHECKING:
 class SupportedFormat(str, Enum):
     PIPELINE_TRANSPORT = "pipeline_transport"
     REST = "rest"
-
-def _to_pipeline_transport_request(**kwargs):
-    from .transport._base import HttpRequest as PipelineTransportHttpRequest
-    request=kwargs.pop("request")
-    return PipelineTransportHttpRequest(
-        method=request.method,
-        url=request.url,
-        headers=request.headers,
-        files=request._files,
-        data=request._data,
-    )
 
 def get_request_from_format(format, **kwargs):
     request = kwargs.pop("request")
@@ -60,7 +48,7 @@ def get_request_from_format(format, **kwargs):
         )
     if format != SupportedFormat.PIPELINE_TRANSPORT:
         # for backcompat reasons, our pipeline runs azure.core.pipeline.transport.HttpRequests
-        request = _to_pipeline_transport_request(request=request)
+        request = request._to_pipeline_transport_request()
     return request
 
 def request_to_format(request):
