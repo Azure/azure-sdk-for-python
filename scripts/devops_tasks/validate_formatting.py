@@ -55,9 +55,13 @@ if __name__ == "__main__":
         "--service_directory", help="Directory of the package being tested"
     )
 
-    args = parser.parse_args()
-    folders = run_black(args.service_directory)
+    parser.add_argument(
+        "--validate", help=("Flag that enables formatting validation."), action="store_true"
+    )
 
-    if len(folders):
-        for folder in folders:
-            check_diff(folder)
+    args = parser.parse_args()
+
+    if args.validate:
+        run_black(args.service_directory)
+    else:
+        print("Skipping formatting validation")

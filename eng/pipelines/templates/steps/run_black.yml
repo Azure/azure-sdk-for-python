@@ -1,7 +1,7 @@
 parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
-  TestMarkArgument: ''
+  ValidateFormatting: false
   EnvVars: {}
 
 steps:
@@ -22,5 +22,6 @@ steps:
       scriptPath: 'scripts/devops_tasks/validate_formatting.py'
       arguments: >-
         --service_directory="${{ parameters.ServiceDirectory }}"
+        --validate="${{ parameters.ValidateFormatting }}"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
