@@ -5727,15 +5727,6 @@
       "createdDate": "2021-01-29 23:26:49Z",
       "expirationDate": null,
       "type": null
-    },
-    "abcdef": {
-      "tool": "Credential Scanner",
-      "suppressions": [
-        {
-          "placeholder": ":code:``<pfx-file-password>``”,
-          "_justification": "[[your justification here]]"
-        }
-      ]
     }
   }
 }

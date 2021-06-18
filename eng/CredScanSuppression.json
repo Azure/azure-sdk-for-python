@@ -44,6 +44,12 @@
                 "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py"
             ],
             "_justification": "File contains private key used by test code."
+        },
+            {
+              "placeholder": ":code:``<pfx-file-password>``",
+              "_justification": "Password in docstrings"
+            }
+          ]
         }
     ]
 }
