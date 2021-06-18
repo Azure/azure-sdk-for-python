@@ -23,7 +23,7 @@ SWAGGER_FOLDER = "swagger"
 def run_black(service_dir):
     logging.info("Running black for {}".format(service_dir))
 
-    command = [sys.executable, "-m", "black", "-l", "120", "sdk/{}".foramt(service_dir)]
+    command = [sys.executable, "-m", "black", "-l", "120", "sdk/{}".format(service_dir)]
 
     run_check_call(command, root_dir)
 
@@ -56,12 +56,12 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--validate", help=("Flag that enables formatting validation."), action="store_true"
+        "--validate", help=("Flag that enables formatting validation.")
     )
 
     args = parser.parse_args()
 
-    if args.validate:
+    if bool(args.validate):
         run_black(args.service_directory)
     else:
         print("Skipping formatting validation")
