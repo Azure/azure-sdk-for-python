@@ -24,12 +24,13 @@ class PerfStressTest:
     def __init__(self, arguments):
         self.args = arguments
         self._session = None
-        if self.args.test_proxy:
-            self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False))
         self._test_proxy_policy = None
         self._client_kwargs = {}
         self._recording_id = None
+
         if self.args.test_proxy:
+            self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False))
+
             # SSL will be disabled for the test proxy requests, so suppress warnings
             import warnings
             from urllib3.exceptions import InsecureRequestWarning
@@ -44,7 +45,7 @@ class PerfStressTest:
 
     async def global_cleanup(self):
         return
-    
+
     async def record_and_start_playback(self):
         await self._start_recording()
         self._test_proxy_policy.recording_id = self._recording_id
@@ -60,7 +61,7 @@ class PerfStressTest:
         await self._start_playback()
         self._test_proxy_policy.recording_id = self._recording_id
         self._test_proxy_policy.mode = "playback"
-    
+
     async def stop_playback(self):
         headers = {
             "x-recording-id": self._recording_id,
@@ -69,7 +70,7 @@ class PerfStressTest:
         url = self.args.test_proxy + "/playback/stop"
         async with self._session.post(url, headers=headers) as resp:
             assert resp.status == 200
-        
+
         self._test_proxy_policy.recording_id = None
         self._test_proxy_policy.mode = None
 
@@ -94,13 +95,13 @@ class PerfStressTest:
         async with self._session.post(url) as resp:
             assert resp.status == 200
             self._recording_id = resp.headers["x-recording-id"]
-    
+
     async def _stop_recording(self):
         headers = {"x-recording-id": self._recording_id}
         url = self.args.test_proxy + "/record/stop"
         async with self._session.post(url, headers=headers) as resp:
             assert resp.status == 200
-    
+
     async def _start_playback(self):
         headers = {"x-recording-id": self._recording_id}
         url = self.args.test_proxy + "/playback/start"

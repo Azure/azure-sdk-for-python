@@ -232,7 +232,7 @@ class PerfStressRunner:
                 runtime = time.time() - start
                 self._completed_operations[id] += 1
                 self._last_completion_times[id] = runtime
-            
+
             if profile:
                 # Store only profile for final iteration
                 profile_name = "{}/cProfile-{}-{}-sync.pstats".format(os.getcwd(), test.__class__.__name__, id)
@@ -261,7 +261,7 @@ class PerfStressRunner:
                 runtime = time.time() - start
                 self._completed_operations[id] += 1
                 self._last_completion_times[id] = runtime
-            
+
             if profile:
                 # Store only profile for final iteration
                 profile_name = "{}/cProfile-{}-{}-async.pstats".format(os.getcwd(), test.__class__.__name__, id)
