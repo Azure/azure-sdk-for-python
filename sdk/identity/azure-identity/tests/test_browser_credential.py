@@ -287,9 +287,10 @@ def test_login_hint():
     with patch("msal.PublicClientApplication", Mock(return_value=mock_msal_app)):
         with patch(WEBBROWSER_OPEN, lambda _: True):
             credential.authenticate(scopes=["scope"])
-        assert mock_msal_app.initiate_auth_code_flow.call_count == 1
-        _, kwargs = mock_msal_app.initiate_auth_code_flow.call_args
-        assert kwargs["login_hint"] == expected_username
+
+    assert mock_msal_app.initiate_auth_code_flow.call_count == 1
+    _, kwargs = mock_msal_app.initiate_auth_code_flow.call_args
+    assert kwargs["login_hint"] == expected_username
 
 
 @pytest.mark.parametrize(
