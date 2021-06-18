@@ -28,7 +28,6 @@ from .operations import ElasticPoolDatabaseActivitiesOperations
 from .operations import TransparentDataEncryptionsOperations
 from .operations import TransparentDataEncryptionActivitiesOperations
 from .operations import ServerUsagesOperations
-from .operations import BackupShortTermRetentionPoliciesOperations
 from .operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .operations import ExtendedServerBlobAuditingPoliciesOperations
 from .operations import ServerBlobAuditingPoliciesOperations
@@ -110,7 +109,6 @@ from .operations import ServerDevOpsAuditSettingsOperations
 from .operations import ServerDnsAliasesOperations
 from .operations import ServerKeysOperations
 from .operations import ServerOperations
-from .operations import ServersOperations
 from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import ServerTrustGroupsOperations
 from .operations import ServerVulnerabilityAssessmentsOperations
@@ -125,6 +123,7 @@ from .operations import VirtualClustersOperations
 from .operations import VirtualNetworkRulesOperations
 from .operations import WorkloadClassifiersOperations
 from .operations import WorkloadGroupsOperations
+from .operations import BackupShortTermRetentionPoliciesOperations
 from .operations import DatabaseExtensionsOperations
 from .operations import DatabaseOperations
 from .operations import DatabaseUsagesOperations
@@ -132,6 +131,7 @@ from .operations import LedgerDigestUploadsOperations
 from .operations import OutboundFirewallRulesOperations
 from .operations import RestorableDroppedDatabasesOperations
 from .operations import RestorableDroppedManagedDatabasesOperations
+from .operations import ServersOperations
 from .operations import UsagesOperations
 from . import models
 
@@ -172,8 +172,6 @@ class SqlManagementClient(SDKClient):
     :vartype transparent_data_encryption_activities: azure.mgmt.sql.operations.TransparentDataEncryptionActivitiesOperations
     :ivar server_usages: ServerUsages operations
     :vartype server_usages: azure.mgmt.sql.operations.ServerUsagesOperations
-    :ivar backup_short_term_retention_policies: BackupShortTermRetentionPolicies operations
-    :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPolicies operations
     :vartype extended_database_blob_auditing_policies: azure.mgmt.sql.operations.ExtendedDatabaseBlobAuditingPoliciesOperations
     :ivar extended_server_blob_auditing_policies: ExtendedServerBlobAuditingPolicies operations
@@ -336,8 +334,6 @@ class SqlManagementClient(SDKClient):
     :vartype server_keys: azure.mgmt.sql.operations.ServerKeysOperations
     :ivar server_operations: ServerOperations operations
     :vartype server_operations: azure.mgmt.sql.operations.ServerOperations
-    :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
     :vartype server_security_alert_policies: azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
     :ivar server_trust_groups: ServerTrustGroups operations
@@ -366,6 +362,8 @@ class SqlManagementClient(SDKClient):
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
     :ivar workload_groups: WorkloadGroups operations
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
+    :ivar backup_short_term_retention_policies: BackupShortTermRetentionPolicies operations
+    :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensions operations
     :vartype database_extensions: azure.mgmt.sql.operations.DatabaseExtensionsOperations
     :ivar database_operations: DatabaseOperations operations
@@ -380,6 +378,8 @@ class SqlManagementClient(SDKClient):
     :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
     :ivar restorable_dropped_managed_databases: RestorableDroppedManagedDatabases operations
     :vartype restorable_dropped_managed_databases: azure.mgmt.sql.operations.RestorableDroppedManagedDatabasesOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
 
@@ -431,8 +431,6 @@ class SqlManagementClient(SDKClient):
         self.transparent_data_encryption_activities = TransparentDataEncryptionActivitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_usages = ServerUsagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.extended_database_blob_auditing_policies = ExtendedDatabaseBlobAuditingPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -596,8 +594,6 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.server_operations = ServerOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_trust_groups = ServerTrustGroupsOperations(
@@ -626,6 +622,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workload_groups = WorkloadGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.database_extensions = DatabaseExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
@@ -639,6 +637,8 @@ class SqlManagementClient(SDKClient):
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_managed_databases = RestorableDroppedManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)

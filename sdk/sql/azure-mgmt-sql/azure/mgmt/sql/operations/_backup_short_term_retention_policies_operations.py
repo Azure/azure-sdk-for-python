@@ -28,7 +28,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar policy_name: The policy name. Should always be "default". Constant value: "default".
-    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2021-02-01-preview".
     """
 
     models = models
@@ -39,7 +39,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.policy_name = "default"
-        self.api_version = "2020-11-01-preview"
+        self.api_version = "2021-02-01-preview"
 
         self.config = config
 
@@ -113,8 +113,8 @@ class BackupShortTermRetentionPoliciesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, server_name, database_name, retention_days=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.BackupShortTermRetentionPolicy(retention_days=retention_days)
+            self, resource_group_name, server_name, database_name, retention_days=None, diff_backup_interval_in_hours=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.BackupShortTermRetentionPolicy(retention_days=retention_days, diff_backup_interval_in_hours=diff_backup_interval_in_hours)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -166,7 +166,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, database_name, retention_days=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, database_name, retention_days=None, diff_backup_interval_in_hours=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
@@ -180,6 +180,11 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :param retention_days: The backup retention period in days. This is
          how many days Point-in-Time Restore will be supported.
         :type retention_days: int
+        :param diff_backup_interval_in_hours: The differential backup interval
+         in hours. This is how many interval hours between each differential
+         backup will be supported. This is only applicable to live databases
+         but not dropped databases.
+        :type diff_backup_interval_in_hours: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -199,6 +204,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
             server_name=server_name,
             database_name=database_name,
             retention_days=retention_days,
+            diff_backup_interval_in_hours=diff_backup_interval_in_hours,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -224,8 +230,8 @@ class BackupShortTermRetentionPoliciesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, server_name, database_name, retention_days=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.BackupShortTermRetentionPolicy(retention_days=retention_days)
+            self, resource_group_name, server_name, database_name, retention_days=None, diff_backup_interval_in_hours=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.BackupShortTermRetentionPolicy(retention_days=retention_days, diff_backup_interval_in_hours=diff_backup_interval_in_hours)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -277,7 +283,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, server_name, database_name, retention_days=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, database_name, retention_days=None, diff_backup_interval_in_hours=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a database's short term retention policy.
 
         :param resource_group_name: The name of the resource group that
@@ -291,6 +297,11 @@ class BackupShortTermRetentionPoliciesOperations(object):
         :param retention_days: The backup retention period in days. This is
          how many days Point-in-Time Restore will be supported.
         :type retention_days: int
+        :param diff_backup_interval_in_hours: The differential backup interval
+         in hours. This is how many interval hours between each differential
+         backup will be supported. This is only applicable to live databases
+         but not dropped databases.
+        :type diff_backup_interval_in_hours: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -310,6 +321,7 @@ class BackupShortTermRetentionPoliciesOperations(object):
             server_name=server_name,
             database_name=database_name,
             retention_days=retention_days,
+            diff_backup_interval_in_hours=diff_backup_interval_in_hours,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

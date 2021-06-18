@@ -321,6 +321,11 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     :param retention_days: The backup retention period in days. This is how
      many days Point-in-Time Restore will be supported.
     :type retention_days: int
+    :param diff_backup_interval_in_hours: The differential backup interval in
+     hours. This is how many interval hours between each differential backup
+     will be supported. This is only applicable to live databases but not
+     dropped databases.
+    :type diff_backup_interval_in_hours: int
     """
 
     _validation = {
@@ -334,11 +339,13 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'diff_backup_interval_in_hours': {'key': 'properties.diffBackupIntervalInHours', 'type': 'int'},
     }
 
-    def __init__(self, *, retention_days: int=None, **kwargs) -> None:
+    def __init__(self, *, retention_days: int=None, diff_backup_interval_in_hours: int=None, **kwargs) -> None:
         super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = retention_days
+        self.diff_backup_interval_in_hours = diff_backup_interval_in_hours
 
 
 class CheckNameAvailabilityRequest(Model):
@@ -9357,10 +9364,12 @@ class ReplicationLink(ProxyResource):
     :vartype partner_database: str
     :ivar partner_location: Resource partner location.
     :vartype partner_location: str
-    :ivar role: Local replication role.
-    :vartype role: str
-    :ivar partner_role: Partner replication role.
-    :vartype partner_role: str
+    :ivar role: Local replication role. Possible values include: 'Primary',
+     'Secondary', 'NonReadableSecondary', 'Source', 'Copy'
+    :vartype role: str or ~azure.mgmt.sql.models.ReplicationRole
+    :ivar partner_role: Partner replication role. Possible values include:
+     'Primary', 'Secondary', 'NonReadableSecondary', 'Source', 'Copy'
+    :vartype partner_role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar replication_mode: Replication mode.
     :vartype replication_mode: str
     :ivar start_time: Time at which the link was created.
@@ -9368,13 +9377,15 @@ class ReplicationLink(ProxyResource):
     :ivar percent_complete: Seeding completion percentage for the link.
     :vartype percent_complete: int
     :ivar replication_state: Replication state (PENDING, SEEDING, CATCHUP,
-     SUSPENDED).
-    :vartype replication_state: str
+     SUSPENDED). Possible values include: 'PENDING', 'SEEDING', 'CATCH_UP',
+     'SUSPENDED'
+    :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     :ivar is_termination_allowed: Whether the user is currently allowed to
      terminate the link.
     :vartype is_termination_allowed: bool
-    :ivar link_type: Link type (GEO, NAMED).
-    :vartype link_type: str
+    :ivar link_type: Link type (GEO, NAMED). Possible values include: 'GEO',
+     'NAMED'
+    :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
     """
 
     _validation = {
@@ -9401,8 +9412,8 @@ class ReplicationLink(ProxyResource):
         'partner_server': {'key': 'properties.partnerServer', 'type': 'str'},
         'partner_database': {'key': 'properties.partnerDatabase', 'type': 'str'},
         'partner_location': {'key': 'properties.partnerLocation', 'type': 'str'},
-        'role': {'key': 'properties.role', 'type': 'str'},
-        'partner_role': {'key': 'properties.partnerRole', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'ReplicationRole'},
+        'partner_role': {'key': 'properties.partnerRole', 'type': 'ReplicationRole'},
         'replication_mode': {'key': 'properties.replicationMode', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'percent_complete': {'key': 'properties.percentComplete', 'type': 'int'},
@@ -10081,7 +10092,7 @@ class Server(TrackedResource):
      allowed for this server.  Value is optional but if passed in, must be
      'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
-     ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+     ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace
      created and if it allows connection from workspace. Possible values
      include: 'Connected', 'Disconnected'
@@ -10090,10 +10101,19 @@ class Server(TrackedResource):
     :param primary_user_assigned_identity_id: The resource id of a user
      assigned identity to be used by default.
     :type primary_user_assigned_identity_id: str
+    :param federated_client_id: The Client id used for cross tenant CMK
+     scenario
+    :type federated_client_id: str
     :param key_id: A CMK URI of the key to use for encryption.
     :type key_id: str
     :param administrators: The Azure Active Directory identity of the server.
     :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :param restrict_outbound_network_access: Whether or not to restrict
+     outbound network access for this server.  Value is optional but if passed
+     in, must be 'Enabled' or 'Disabled'. Possible values include: 'Enabled',
+     'Disabled'
+    :type restrict_outbound_network_access: str or
+     ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     """
 
     _validation = {
@@ -10126,11 +10146,13 @@ class Server(TrackedResource):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, public_network_access=None, primary_user_assigned_identity_id: str=None, key_id: str=None, administrators=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, public_network_access=None, primary_user_assigned_identity_id: str=None, federated_client_id: str=None, key_id: str=None, administrators=None, restrict_outbound_network_access=None, **kwargs) -> None:
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.kind = None
@@ -10144,8 +10166,10 @@ class Server(TrackedResource):
         self.public_network_access = public_network_access
         self.workspace_feature = None
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
+        self.federated_client_id = federated_client_id
         self.key_id = key_id
         self.administrators = administrators
+        self.restrict_outbound_network_access = restrict_outbound_network_access
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -11140,7 +11164,7 @@ class ServerUpdate(Model):
      allowed for this server.  Value is optional but if passed in, must be
      'Enabled' or 'Disabled'. Possible values include: 'Enabled', 'Disabled'
     :type public_network_access: str or
-     ~azure.mgmt.sql.models.ServerPublicNetworkAccess
+     ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace
      created and if it allows connection from workspace. Possible values
      include: 'Connected', 'Disconnected'
@@ -11149,10 +11173,19 @@ class ServerUpdate(Model):
     :param primary_user_assigned_identity_id: The resource id of a user
      assigned identity to be used by default.
     :type primary_user_assigned_identity_id: str
+    :param federated_client_id: The Client id used for cross tenant CMK
+     scenario
+    :type federated_client_id: str
     :param key_id: A CMK URI of the key to use for encryption.
     :type key_id: str
     :param administrators: The Azure Active Directory identity of the server.
     :type administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
+    :param restrict_outbound_network_access: Whether or not to restrict
+     outbound network access for this server.  Value is optional but if passed
+     in, must be 'Enabled' or 'Disabled'. Possible values include: 'Enabled',
+     'Disabled'
+    :type restrict_outbound_network_access: str or
+     ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -11176,12 +11209,14 @@ class ServerUpdate(Model):
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'workspace_feature': {'key': 'properties.workspaceFeature', 'type': 'str'},
         'primary_user_assigned_identity_id': {'key': 'properties.primaryUserAssignedIdentityId', 'type': 'str'},
+        'federated_client_id': {'key': 'properties.federatedClientId', 'type': 'str'},
         'key_id': {'key': 'properties.keyId', 'type': 'str'},
         'administrators': {'key': 'properties.administrators', 'type': 'ServerExternalAdministrator'},
+        'restrict_outbound_network_access': {'key': 'properties.restrictOutboundNetworkAccess', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, public_network_access=None, primary_user_assigned_identity_id: str=None, key_id: str=None, administrators=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, minimal_tls_version: str=None, public_network_access=None, primary_user_assigned_identity_id: str=None, federated_client_id: str=None, key_id: str=None, administrators=None, restrict_outbound_network_access=None, tags=None, **kwargs) -> None:
         super(ServerUpdate, self).__init__(**kwargs)
         self.identity = identity
         self.administrator_login = administrator_login
@@ -11194,8 +11229,10 @@ class ServerUpdate(Model):
         self.public_network_access = public_network_access
         self.workspace_feature = None
         self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
+        self.federated_client_id = federated_client_id
         self.key_id = key_id
         self.administrators = administrators
+        self.restrict_outbound_network_access = restrict_outbound_network_access
         self.tags = tags
 
 
