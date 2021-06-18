@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-schema-registry-avro-serializer
+  - azure-event-hubs
 urlFragment: schemaregistry-avroserializer-samples
 ---
 

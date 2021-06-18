@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MaintenanceClientConfiguration(Configuration):
-    """Configuration for MaintenanceClient.
+class MaintenanceManagementClientConfiguration(Configuration):
+    """Configuration for MaintenanceManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -44,11 +44,11 @@ class MaintenanceClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(MaintenanceClientConfiguration, self).__init__(**kwargs)
+        super(MaintenanceManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-07-01-preview"
+        self.api_version = "2021-05-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-maintenance/{}'.format(VERSION))
         self._configure(**kwargs)

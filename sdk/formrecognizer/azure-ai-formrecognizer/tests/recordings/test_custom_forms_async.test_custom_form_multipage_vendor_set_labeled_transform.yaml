@@ -6,40 +6,40 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '285'
+      - '297'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: ad618f96-1c13-4056-9754-a1321004e713
+      apim-request-id: 48cf754e-8dc9-46c4-a605-e7f73013bf87
       content-length: '0'
-      date: Fri, 19 Mar 2021 19:24:00 GMT
-      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850
+      date: Tue, 11 May 2021 01:52:17 GMT
+      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '272'
+      x-envoy-upstream-service-time: '103'
     status:
       code: 201
       message: Created
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "e7d82482-8d09-4648-a815-83c8f6984850", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-19T19:24:00Z",
-        "lastUpdatedDateTime": "2021-03-19T19:24:03Z"}, "trainResult": {"averageModelAccuracy":
+      string: '{"modelInfo": {"modelId": "f9edf891-8f01-462b-bd00-32d8f2bdf63c", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-05-11T01:52:17Z",
+        "lastUpdatedDateTime": "2021-05-11T01:52:20Z"}, "trainResult": {"averageModelAccuracy":
         0.971, "trainingDocuments": [{"documentName": "multi1.pdf", "pages": 2, "status":
         "succeeded"}, {"documentName": "multi2.pdf", "pages": 2, "status": "succeeded"},
         {"documentName": "multi3.pdf", "pages": 2, "status": "succeeded"}, {"documentName":
@@ -50,17 +50,17 @@ interactions:
         "Gold", "accuracy": 0.995}, {"fieldName": "Half", "accuracy": 0.995}, {"fieldName":
         "Silver", "accuracy": 0.995}], "errors": []}}'
     headers:
-      apim-request-id: 27995541-0dfa-480d-8401-fff04087d238
+      apim-request-id: ec9a2ae4-ebf1-4ad4-a109-270e65093aad
       content-length: '874'
       content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 19:24:04 GMT
+      date: Tue, 11 May 2021 01:52:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '18'
+      x-envoy-upstream-service-time: '29'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850?includeKeys=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c?includeKeys=true
 - request:
     body: '!!! The request body has been omitted from the recording because its size
       711607 is larger than 128KB. !!!'
@@ -70,58 +70,35 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 39eaa7d9-ef88-477b-b9ea-318427f007b7
+      apim-request-id: 18b6ee3c-0727-450b-932f-69a8bdefe465
       content-length: '0'
-      date: Fri, 19 Mar 2021 19:24:07 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyzeresults/c3a6a155-58d4-4822-92b3-7b8752589eff
+      date: Tue, 11 May 2021 01:52:24 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c/analyzeresults/c696d14c-175d-4fcc-952d-e14f9e8b1db9
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '136'
+      x-envoy-upstream-service-time: '258'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyze?includeTextDetails=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c/analyze?includeTextDetails=true
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyzeresults/c3a6a155-58d4-4822-92b3-7b8752589eff
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c/analyzeresults/c696d14c-175d-4fcc-952d-e14f9e8b1db9
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2021-03-19T19:24:07Z",
-        "lastUpdatedDateTime": "2021-03-19T19:24:12Z"}'
-    headers:
-      apim-request-id: fb5feece-e9a9-49af-9b14-d7382c1eae4f
-      content-length: '109'
-      content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 19:24:12 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '26'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyzeresults/c3a6a155-58d4-4822-92b3-7b8752589eff
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyzeresults/c3a6a155-58d4-4822-92b3-7b8752589eff
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T19:24:07Z",
-        "lastUpdatedDateTime": "2021-03-19T19:24:15Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T01:52:24Z",
+        "lastUpdatedDateTime": "2021-05-11T01:52:29Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [6.1276, 1.0667, 7.4833, 1.0667,
         7.4833, 1.2403, 6.1276, 1.2403], "text": "Vendor #:121", "appearance": {"style":
@@ -267,89 +244,60 @@ interactions:
         1}}, "words": [{"boundingBox": [1.0857, 4.9086, 1.3842, 4.9086, 1.3842, 5.0247,
         1.0857, 5.0247], "text": "Gold", "confidence": 1}, {"boundingBox": [1.4423,
         4.915, 1.9831, 4.915, 1.9831, 5.0528, 1.4423, 5.0528], "text": "Sponsor",
-        "confidence": 1}]}, {"boundingBox": [2.9586, 4.954, 3.018, 4.954, 3.018, 5.0145,
-        2.9586, 5.0145], "text": "\uf0b7", "appearance": {"style": {"name": "other",
-        "confidence": 1}}, "words": [{"boundingBox": [2.9586, 4.954, 3.018, 4.954,
-        3.018, 5.0145, 2.9586, 5.0145], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox":
-        [3.214, 4.9169, 3.8726, 4.9169, 3.8726, 5.033, 3.214, 5.033], "text": "Full
-        booth", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
-        [{"boundingBox": [3.214, 4.9169, 3.4295, 4.9169, 3.4295, 5.033, 3.214, 5.033],
-        "text": "Full", "confidence": 1}, {"boundingBox": [3.492, 4.9169, 3.8726,
-        4.9169, 3.8726, 5.033, 3.492, 5.033], "text": "booth", "confidence": 1}]},
-        {"boundingBox": [5.8328, 4.8977, 6.2829, 4.8977, 6.2829, 5.0468, 5.8328, 5.0468],
-        "text": "$1,500", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [5.8328, 4.8977, 6.2829, 4.8977, 6.2829, 5.0468,
-        5.8328, 5.0468], "text": "$1,500", "confidence": 1}]}, {"boundingBox": [2.9586,
-        5.1673, 3.018, 5.1673, 3.018, 5.2279, 2.9586, 5.2279], "text": "\uf0b7", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [2.9586,
-        5.1673, 3.018, 5.1673, 3.018, 5.2279, 2.9586, 5.2279], "text": "\uf0b7", "confidence":
-        1}]}, {"boundingBox": [3.214, 5.1302, 4.7267, 5.1302, 4.7267, 5.2744, 3.214,
-        5.2744], "text": "Pre-keynote thank you", "appearance": {"style": {"name":
-        "other", "confidence": 1}}, "words": [{"boundingBox": [3.214, 5.1302, 4.0183,
-        5.1302, 4.0183, 5.2744, 3.214, 5.2744], "text": "Pre-keynote", "confidence":
-        1}, {"boundingBox": [4.0665, 5.1302, 4.4475, 5.1302, 4.4475, 5.2463, 4.0665,
-        5.2463], "text": "thank", "confidence": 1}, {"boundingBox": [4.4903, 5.165,
-        4.7267, 5.165, 4.7267, 5.2744, 4.4903, 5.2744], "text": "you", "confidence":
-        1}]}, {"boundingBox": [2.9586, 5.379, 3.018, 5.379, 3.018, 5.4395, 2.9586,
-        5.4395], "text": "\uf0b7", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [2.9586, 5.379, 3.018, 5.379, 3.018, 5.4395,
-        2.9586, 5.4395], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox": [3.214,
-        5.3495, 4.2093, 5.3495, 4.2093, 5.4861, 3.214, 5.4861], "text": "Logo on poster",
-        "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [3.214, 5.3495, 3.5163, 5.3495, 3.5163, 5.4861, 3.214, 5.4861], "text": "Logo",
-        "confidence": 1}, {"boundingBox": [3.5686, 5.3767, 3.7244, 5.3767, 3.7244,
-        5.458, 3.5686, 5.458], "text": "on", "confidence": 1}, {"boundingBox": [3.7888,
-        5.358, 4.2093, 5.358, 4.2093, 5.4861, 3.7888, 5.4861], "text": "poster", "confidence":
-        1}]}, {"boundingBox": [2.9586, 5.5923, 3.018, 5.5923, 3.018, 5.6529, 2.9586,
-        5.6529], "text": "\uf0b7", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [2.9586, 5.5923, 3.018, 5.5923, 3.018, 5.6529,
-        2.9586, 5.6529], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox": [3.214,
-        5.5552, 5.201, 5.5552, 5.201, 5.6994, 3.214, 5.6994], "text": "Full page ad
-        in program guide", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [3.214, 5.5552, 3.4295, 5.5552, 3.4295, 5.6713,
-        3.214, 5.6713], "text": "Full", "confidence": 1}, {"boundingBox": [3.492,
-        5.59, 3.7989, 5.59, 3.7989, 5.6994, 3.492, 5.6994], "text": "page", "confidence":
-        1}, {"boundingBox": [3.8519, 5.5556, 3.9991, 5.5556, 3.9991, 5.6713, 3.8519,
-        5.6713], "text": "ad", "confidence": 1}, {"boundingBox": [4.0599, 5.5605,
-        4.1626, 5.5605, 4.1626, 5.6703, 4.0599, 5.6703], "text": "in", "confidence":
-        1}, {"boundingBox": [4.2248, 5.59, 4.7839, 5.59, 4.7839, 5.6994, 4.2248, 5.6994],
-        "text": "program", "confidence": 1}, {"boundingBox": [4.8367, 5.5556, 5.201,
-        5.5556, 5.201, 5.6994, 4.8367, 5.6994], "text": "guide", "confidence": 1}]},
-        {"boundingBox": [2.9586, 5.804, 3.018, 5.804, 3.018, 5.8645, 2.9586, 5.8645],
-        "text": "\uf0b7", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [2.9586, 5.804, 3.018, 5.804, 3.018, 5.8645,
-        2.9586, 5.8645], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox": [1.0842,
-        5.9786, 2.0339, 5.9786, 2.0339, 6.1228, 1.0842, 6.1228], "text": "Silver Sponsor",
-        "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [1.0842, 5.9786, 1.4443, 5.9786, 1.4443, 6.0947, 1.0842, 6.0947], "text":
-        "Silver", "confidence": 1}, {"boundingBox": [1.4904, 5.985, 2.0339, 5.985,
-        2.0339, 6.1228, 1.4904, 6.1228], "text": "Sponsor", "confidence": 1}]}, {"boundingBox":
-        [2.9586, 6.024, 3.018, 6.024, 3.018, 6.0845, 2.9586, 6.0845], "text": "\uf0b7",
-        "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [2.9586, 6.024, 3.018, 6.024, 3.018, 6.0845, 2.9586, 6.0845], "text": "\uf0b7",
-        "confidence": 1}]}, {"boundingBox": [3.214, 5.9869, 3.8726, 5.9869, 3.8726,
-        6.103, 3.214, 6.103], "text": "Full booth", "appearance": {"style": {"name":
-        "other", "confidence": 1}}, "words": [{"boundingBox": [3.214, 5.9869, 3.4295,
-        5.9869, 3.4295, 6.103, 3.214, 6.103], "text": "Full", "confidence": 1}, {"boundingBox":
-        [3.492, 5.9869, 3.8726, 5.9869, 3.8726, 6.103, 3.492, 6.103], "text": "booth",
-        "confidence": 1}]}, {"boundingBox": [5.8328, 5.9677, 6.2829, 5.9677, 6.2829,
-        6.1168, 5.8328, 6.1168], "text": "$1,200", "appearance": {"style": {"name":
-        "other", "confidence": 1}}, "words": [{"boundingBox": [5.8328, 5.9677, 6.2829,
-        5.9677, 6.2829, 6.1168, 5.8328, 6.1168], "text": "$1,200", "confidence": 1}]},
-        {"boundingBox": [2.9586, 6.2356, 3.018, 6.2356, 3.018, 6.2962, 2.9586, 6.2962],
-        "text": "\uf0b7", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [2.9586, 6.2356, 3.018, 6.2356, 3.018, 6.2962,
-        2.9586, 6.2962], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox": [3.214,
-        6.1986, 4.7938, 6.1986, 4.7938, 6.3428, 3.214, 6.3428], "text": "Post-keynote
-        thank you", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
-        [{"boundingBox": [3.214, 6.1986, 4.0878, 6.1986, 4.0878, 6.3428, 3.214, 6.3428],
-        "text": "Post-keynote", "confidence": 1}, {"boundingBox": [4.1348, 6.1986,
-        4.5158, 6.1986, 4.5158, 6.3147, 4.1348, 6.3147], "text": "thank", "confidence":
-        1}, {"boundingBox": [4.5586, 6.2333, 4.7938, 6.2333, 4.7938, 6.3428, 4.5586,
-        6.3428], "text": "you", "confidence": 1}]}, {"boundingBox": [2.9586, 6.4473,
-        3.018, 6.4473, 3.018, 6.5079, 2.9586, 6.5079], "text": "\uf0b7", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [2.9586,
-        6.4473, 3.018, 6.4473, 3.018, 6.5079, 2.9586, 6.5079], "text": "\uf0b7", "confidence":
+        "confidence": 1}]}, {"boundingBox": [3.214, 4.9169, 3.8726, 4.9169, 3.8726,
+        5.033, 3.214, 5.033], "text": "Full booth", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [3.214, 4.9169, 3.4295,
+        4.9169, 3.4295, 5.033, 3.214, 5.033], "text": "Full", "confidence": 1}, {"boundingBox":
+        [3.492, 4.9169, 3.8726, 4.9169, 3.8726, 5.033, 3.492, 5.033], "text": "booth",
+        "confidence": 1}]}, {"boundingBox": [5.8328, 4.8977, 6.2829, 4.8977, 6.2829,
+        5.0468, 5.8328, 5.0468], "text": "$1,500", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [5.8328, 4.8977, 6.2829,
+        4.8977, 6.2829, 5.0468, 5.8328, 5.0468], "text": "$1,500", "confidence": 1}]},
+        {"boundingBox": [3.214, 5.1302, 4.7267, 5.1302, 4.7267, 5.2744, 3.214, 5.2744],
+        "text": "Pre-keynote thank you", "appearance": {"style": {"name": "other",
+        "confidence": 1}}, "words": [{"boundingBox": [3.214, 5.1302, 4.0183, 5.1302,
+        4.0183, 5.2744, 3.214, 5.2744], "text": "Pre-keynote", "confidence": 1}, {"boundingBox":
+        [4.0665, 5.1302, 4.4475, 5.1302, 4.4475, 5.2463, 4.0665, 5.2463], "text":
+        "thank", "confidence": 1}, {"boundingBox": [4.4903, 5.165, 4.7267, 5.165,
+        4.7267, 5.2744, 4.4903, 5.2744], "text": "you", "confidence": 1}]}, {"boundingBox":
+        [3.214, 5.3495, 4.2093, 5.3495, 4.2093, 5.4861, 3.214, 5.4861], "text": "Logo
+        on poster", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
+        [{"boundingBox": [3.214, 5.3495, 3.5163, 5.3495, 3.5163, 5.4861, 3.214, 5.4861],
+        "text": "Logo", "confidence": 1}, {"boundingBox": [3.5686, 5.3767, 3.7244,
+        5.3767, 3.7244, 5.458, 3.5686, 5.458], "text": "on", "confidence": 1}, {"boundingBox":
+        [3.7888, 5.358, 4.2093, 5.358, 4.2093, 5.4861, 3.7888, 5.4861], "text": "poster",
+        "confidence": 1}]}, {"boundingBox": [3.214, 5.5552, 5.201, 5.5552, 5.201,
+        5.6994, 3.214, 5.6994], "text": "Full page ad in program guide", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.214,
+        5.5552, 3.4295, 5.5552, 3.4295, 5.6713, 3.214, 5.6713], "text": "Full", "confidence":
+        1}, {"boundingBox": [3.492, 5.59, 3.7989, 5.59, 3.7989, 5.6994, 3.492, 5.6994],
+        "text": "page", "confidence": 1}, {"boundingBox": [3.8519, 5.5556, 3.9991,
+        5.5556, 3.9991, 5.6713, 3.8519, 5.6713], "text": "ad", "confidence": 1}, {"boundingBox":
+        [4.0599, 5.5605, 4.1626, 5.5605, 4.1626, 5.6703, 4.0599, 5.6703], "text":
+        "in", "confidence": 1}, {"boundingBox": [4.2248, 5.59, 4.7839, 5.59, 4.7839,
+        5.6994, 4.2248, 5.6994], "text": "program", "confidence": 1}, {"boundingBox":
+        [4.8367, 5.5556, 5.201, 5.5556, 5.201, 5.6994, 4.8367, 5.6994], "text": "guide",
+        "confidence": 1}]}, {"boundingBox": [1.0842, 5.9786, 2.0339, 5.9786, 2.0339,
+        6.1228, 1.0842, 6.1228], "text": "Silver Sponsor", "appearance": {"style":
+        {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [1.0842, 5.9786,
+        1.4443, 5.9786, 1.4443, 6.0947, 1.0842, 6.0947], "text": "Silver", "confidence":
+        1}, {"boundingBox": [1.4904, 5.985, 2.0339, 5.985, 2.0339, 6.1228, 1.4904,
+        6.1228], "text": "Sponsor", "confidence": 1}]}, {"boundingBox": [3.214, 5.9869,
+        3.8726, 5.9869, 3.8726, 6.103, 3.214, 6.103], "text": "Full booth", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.214,
+        5.9869, 3.4295, 5.9869, 3.4295, 6.103, 3.214, 6.103], "text": "Full", "confidence":
+        1}, {"boundingBox": [3.492, 5.9869, 3.8726, 5.9869, 3.8726, 6.103, 3.492,
+        6.103], "text": "booth", "confidence": 1}]}, {"boundingBox": [5.8328, 5.9677,
+        6.2829, 5.9677, 6.2829, 6.1168, 5.8328, 6.1168], "text": "$1,200", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [5.8328,
+        5.9677, 6.2829, 5.9677, 6.2829, 6.1168, 5.8328, 6.1168], "text": "$1,200",
+        "confidence": 1}]}, {"boundingBox": [3.214, 6.1986, 4.7938, 6.1986, 4.7938,
+        6.3428, 3.214, 6.3428], "text": "Post-keynote thank you", "appearance": {"style":
+        {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.214, 6.1986,
+        4.0878, 6.1986, 4.0878, 6.3428, 3.214, 6.3428], "text": "Post-keynote", "confidence":
+        1}, {"boundingBox": [4.1348, 6.1986, 4.5158, 6.1986, 4.5158, 6.3147, 4.1348,
+        6.3147], "text": "thank", "confidence": 1}, {"boundingBox": [4.5586, 6.2333,
+        4.7938, 6.2333, 4.7938, 6.3428, 4.5586, 6.3428], "text": "you", "confidence":
         1}]}, {"boundingBox": [3.214, 6.4179, 4.2093, 6.4179, 4.2093, 6.5544, 3.214,
         6.5544], "text": "Logo on poster", "appearance": {"style": {"name": "other",
         "confidence": 1}}, "words": [{"boundingBox": [3.214, 6.4179, 3.5163, 6.4179,
@@ -357,86 +305,65 @@ interactions:
         [3.5686, 6.445, 3.7244, 6.445, 3.7244, 6.5263, 3.5686, 6.5263], "text": "on",
         "confidence": 1}, {"boundingBox": [3.7888, 6.4264, 4.2093, 6.4264, 4.2093,
         6.5544, 3.7888, 6.5544], "text": "poster", "confidence": 1}]}, {"boundingBox":
-        [2.9586, 6.6606, 3.018, 6.6606, 3.018, 6.7212, 2.9586, 6.7212], "text": "\uf0b7",
+        [3.214, 6.6229, 5.2314, 6.6229, 5.2314, 6.7678, 3.214, 6.7678], "text": "Half
+        page ad in program guide", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [3.214, 6.6229, 3.4739, 6.6229, 3.4739, 6.7397,
+        3.214, 6.7397], "text": "Half", "confidence": 1}, {"boundingBox": [3.5224,
+        6.6583, 3.8326, 6.6583, 3.8326, 6.7678, 3.5224, 6.7678], "text": "page", "confidence":
+        1}, {"boundingBox": [3.8843, 6.6239, 4.0315, 6.6239, 4.0315, 6.7397, 3.8843,
+        6.7397], "text": "ad", "confidence": 1}, {"boundingBox": [4.0923, 6.6289,
+        4.195, 6.6289, 4.195, 6.7387, 4.0923, 6.7387], "text": "in", "confidence":
+        1}, {"boundingBox": [4.2563, 6.6583, 4.8148, 6.6583, 4.8148, 6.7678, 4.2563,
+        6.7678], "text": "program", "confidence": 1}, {"boundingBox": [4.8695, 6.6239,
+        5.2314, 6.6239, 5.2314, 6.7678, 4.8695, 6.7678], "text": "guide", "confidence":
+        1}]}, {"boundingBox": [1.0923, 6.84, 2.1362, 6.84, 2.1362, 6.9778, 1.0923,
+        6.9778], "text": "Bronze Sponsor", "appearance": {"style": {"name": "other",
+        "confidence": 1}}, "words": [{"boundingBox": [1.0923, 6.8417, 1.545, 6.8417,
+        1.545, 6.9497, 1.0923, 6.9497], "text": "Bronze", "confidence": 1}, {"boundingBox":
+        [1.5951, 6.84, 2.1362, 6.84, 2.1362, 6.9778, 1.5951, 6.9778], "text": "Sponsor",
+        "confidence": 1}]}, {"boundingBox": [3.214, 6.8419, 3.8726, 6.8419, 3.8726,
+        6.958, 3.214, 6.958], "text": "Full booth", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [3.214, 6.8419, 3.4295,
+        6.8419, 3.4295, 6.958, 3.214, 6.958], "text": "Full", "confidence": 1}, {"boundingBox":
+        [3.492, 6.8419, 3.8726, 6.8419, 3.8726, 6.958, 3.492, 6.958], "text": "booth",
+        "confidence": 1}]}, {"boundingBox": [5.8328, 6.8227, 6.2829, 6.8227, 6.2829,
+        6.9718, 5.8328, 6.9718], "text": "$1,000", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [5.8328, 6.8227, 6.2829,
+        6.8227, 6.2829, 6.9718, 5.8328, 6.9718], "text": "$1,000", "confidence": 1}]},
+        {"boundingBox": [3.214, 7.0629, 4.2093, 7.0629, 4.2093, 7.1994, 3.214, 7.1994],
+        "text": "Logo on poster", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [3.214, 7.0629, 3.5163, 7.0629, 3.5163, 7.1994,
+        3.214, 7.1994], "text": "Logo", "confidence": 1}, {"boundingBox": [3.5686,
+        7.09, 3.7244, 7.09, 3.7244, 7.1713, 3.5686, 7.1713], "text": "on", "confidence":
+        1}, {"boundingBox": [3.7888, 7.0714, 4.2093, 7.0714, 4.2093, 7.1994, 3.7888,
+        7.1994], "text": "poster", "confidence": 1}]}, {"boundingBox": [3.2082, 7.2672,
+        5.3419, 7.2672, 5.3419, 7.4111, 3.2082, 7.4111], "text": "50% discount on
+        program guide", "appearance": {"style": {"name": "other", "confidence": 1}},
+        "words": [{"boundingBox": [3.2082, 7.2717, 3.4817, 7.2717, 3.4817, 7.3845,
+        3.2082, 7.3845], "text": "50%", "confidence": 1}, {"boundingBox": [3.533,
+        7.2672, 4.1018, 7.2672, 4.1018, 7.383, 3.533, 7.383], "text": "discount",
+        "confidence": 1}, {"boundingBox": [4.1512, 7.3017, 4.307, 7.3017, 4.307, 7.383,
+        4.1512, 7.383], "text": "on", "confidence": 1}, {"boundingBox": [4.3682, 7.3017,
+        4.9253, 7.3017, 4.9253, 7.4111, 4.3682, 7.4111], "text": "program", "confidence":
+        1}, {"boundingBox": [4.981, 7.2672, 5.3419, 7.2672, 5.3419, 7.4111, 4.981,
+        7.4111], "text": "guide", "confidence": 1}]}, {"boundingBox": [3.2075, 7.4706,
+        4.2429, 7.4706, 4.2429, 7.5863, 3.2075, 7.5863], "text": "advertisements",
         "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [2.9586, 6.6606, 3.018, 6.6606, 3.018, 6.7212, 2.9586, 6.7212], "text": "\uf0b7",
-        "confidence": 1}]}, {"boundingBox": [3.214, 6.6229, 5.2314, 6.6229, 5.2314,
-        6.7678, 3.214, 6.7678], "text": "Half page ad in program guide", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.214,
-        6.6229, 3.4739, 6.6229, 3.4739, 6.7397, 3.214, 6.7397], "text": "Half", "confidence":
-        1}, {"boundingBox": [3.5224, 6.6583, 3.8326, 6.6583, 3.8326, 6.7678, 3.5224,
-        6.7678], "text": "page", "confidence": 1}, {"boundingBox": [3.8843, 6.6239,
-        4.0315, 6.6239, 4.0315, 6.7397, 3.8843, 6.7397], "text": "ad", "confidence":
-        1}, {"boundingBox": [4.0923, 6.6289, 4.195, 6.6289, 4.195, 6.7387, 4.0923,
-        6.7387], "text": "in", "confidence": 1}, {"boundingBox": [4.2563, 6.6583,
-        4.8148, 6.6583, 4.8148, 6.7678, 4.2563, 6.7678], "text": "program", "confidence":
-        1}, {"boundingBox": [4.8695, 6.6239, 5.2314, 6.6239, 5.2314, 6.7678, 4.8695,
-        6.7678], "text": "guide", "confidence": 1}]}, {"boundingBox": [1.0923, 6.84,
-        2.1362, 6.84, 2.1362, 6.9778, 1.0923, 6.9778], "text": "Bronze Sponsor", "appearance":
+        [3.2075, 7.4706, 4.2429, 7.4706, 4.2429, 7.5863, 3.2075, 7.5863], "text":
+        "advertisements", "confidence": 1}]}, {"boundingBox": [1.0923, 7.6819, 1.7537,
+        7.6819, 1.7537, 7.798, 1.0923, 7.798], "text": "Full Booth", "appearance":
         {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [1.0923,
-        6.8417, 1.545, 6.8417, 1.545, 6.9497, 1.0923, 6.9497], "text": "Bronze", "confidence":
-        1}, {"boundingBox": [1.5951, 6.84, 2.1362, 6.84, 2.1362, 6.9778, 1.5951, 6.9778],
-        "text": "Sponsor", "confidence": 1}]}, {"boundingBox": [2.9586, 6.879, 3.018,
-        6.879, 3.018, 6.9395, 2.9586, 6.9395], "text": "\uf0b7", "appearance": {"style":
-        {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [2.9586, 6.879,
-        3.018, 6.879, 3.018, 6.9395, 2.9586, 6.9395], "text": "\uf0b7", "confidence":
-        1}]}, {"boundingBox": [3.214, 6.8419, 3.8726, 6.8419, 3.8726, 6.958, 3.214,
-        6.958], "text": "Full booth", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [3.214, 6.8419, 3.4295, 6.8419, 3.4295, 6.958,
-        3.214, 6.958], "text": "Full", "confidence": 1}, {"boundingBox": [3.492, 6.8419,
-        3.8726, 6.8419, 3.8726, 6.958, 3.492, 6.958], "text": "booth", "confidence":
-        1}]}, {"boundingBox": [5.8328, 6.8227, 6.2829, 6.8227, 6.2829, 6.9718, 5.8328,
-        6.9718], "text": "$1,000", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [5.8328, 6.8227, 6.2829, 6.8227, 6.2829, 6.9718,
-        5.8328, 6.9718], "text": "$1,000", "confidence": 1}]}, {"boundingBox": [2.9586,
-        7.0923, 3.018, 7.0923, 3.018, 7.1529, 2.9586, 7.1529], "text": "\uf0b7", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [2.9586,
-        7.0923, 3.018, 7.0923, 3.018, 7.1529, 2.9586, 7.1529], "text": "\uf0b7", "confidence":
-        1}]}, {"boundingBox": [3.214, 7.0629, 4.2093, 7.0629, 4.2093, 7.1994, 3.214,
-        7.1994], "text": "Logo on poster", "appearance": {"style": {"name": "other",
-        "confidence": 1}}, "words": [{"boundingBox": [3.214, 7.0629, 3.5163, 7.0629,
-        3.5163, 7.1994, 3.214, 7.1994], "text": "Logo", "confidence": 1}, {"boundingBox":
-        [3.5686, 7.09, 3.7244, 7.09, 3.7244, 7.1713, 3.5686, 7.1713], "text": "on",
-        "confidence": 1}, {"boundingBox": [3.7888, 7.0714, 4.2093, 7.0714, 4.2093,
-        7.1994, 3.7888, 7.1994], "text": "poster", "confidence": 1}]}, {"boundingBox":
-        [2.9586, 7.304, 3.018, 7.304, 3.018, 7.3645, 2.9586, 7.3645], "text": "\uf0b7",
-        "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [2.9586, 7.304, 3.018, 7.304, 3.018, 7.3645, 2.9586, 7.3645], "text": "\uf0b7",
-        "confidence": 1}]}, {"boundingBox": [3.2082, 7.2672, 5.3419, 7.2672, 5.3419,
-        7.4111, 3.2082, 7.4111], "text": "50% discount on program guide", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.2082,
-        7.2717, 3.4817, 7.2717, 3.4817, 7.3845, 3.2082, 7.3845], "text": "50%", "confidence":
-        1}, {"boundingBox": [3.533, 7.2672, 4.1018, 7.2672, 4.1018, 7.383, 3.533,
-        7.383], "text": "discount", "confidence": 1}, {"boundingBox": [4.1512, 7.3017,
-        4.307, 7.3017, 4.307, 7.383, 4.1512, 7.383], "text": "on", "confidence": 1},
-        {"boundingBox": [4.3682, 7.3017, 4.9253, 7.3017, 4.9253, 7.4111, 4.3682, 7.4111],
-        "text": "program", "confidence": 1}, {"boundingBox": [4.981, 7.2672, 5.3419,
-        7.2672, 5.3419, 7.4111, 4.981, 7.4111], "text": "guide", "confidence": 1}]},
-        {"boundingBox": [3.2075, 7.4706, 4.2429, 7.4706, 4.2429, 7.5863, 3.2075, 7.5863],
-        "text": "advertisements", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [3.2075, 7.4706, 4.2429, 7.4706, 4.2429, 7.5863,
-        3.2075, 7.5863], "text": "advertisements", "confidence": 1}]}, {"boundingBox":
-        [1.0923, 7.6819, 1.7537, 7.6819, 1.7537, 7.798, 1.0923, 7.798], "text": "Full
-        Booth", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
-        [{"boundingBox": [1.0923, 7.6819, 1.3079, 7.6819, 1.3079, 7.798, 1.0923, 7.798],
-        "text": "Full", "confidence": 1}, {"boundingBox": [1.3718, 7.6819, 1.7537,
-        7.6819, 1.7537, 7.798, 1.3718, 7.798], "text": "Booth", "confidence": 1}]},
-        {"boundingBox": [2.9586, 7.7273, 3.018, 7.7273, 3.018, 7.7879, 2.9586, 7.7879],
-        "text": "\uf0b7", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [2.9586, 7.7273, 3.018, 7.7273, 3.018, 7.7879,
-        2.9586, 7.7879], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox": [3.214,
-        7.6902, 3.8726, 7.6902, 3.8726, 7.8063, 3.214, 7.8063], "text": "Full booth",
-        "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [3.214, 7.6902, 3.4295, 7.6902, 3.4295, 7.8063, 3.214, 7.8063], "text": "Full",
-        "confidence": 1}, {"boundingBox": [3.492, 7.6902, 3.8726, 7.6902, 3.8726,
-        7.8063, 3.492, 7.8063], "text": "booth", "confidence": 1}]}, {"boundingBox":
-        [5.8328, 7.6711, 6.1586, 7.6711, 6.1586, 7.8165, 5.8328, 7.8165], "text":
-        "$600", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
-        [{"boundingBox": [5.8328, 7.6711, 6.1586, 7.6711, 6.1586, 7.8165, 5.8328,
-        7.8165], "text": "$600", "confidence": 1}]}, {"boundingBox": [2.9586, 7.939,
-        3.018, 7.939, 3.018, 7.9995, 2.9586, 7.9995], "text": "\uf0b7", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [2.9586,
-        7.939, 3.018, 7.939, 3.018, 7.9995, 2.9586, 7.9995], "text": "\uf0b7", "confidence":
+        7.6819, 1.3079, 7.6819, 1.3079, 7.798, 1.0923, 7.798], "text": "Full", "confidence":
+        1}, {"boundingBox": [1.3718, 7.6819, 1.7537, 7.6819, 1.7537, 7.798, 1.3718,
+        7.798], "text": "Booth", "confidence": 1}]}, {"boundingBox": [3.214, 7.6902,
+        3.8726, 7.6902, 3.8726, 7.8063, 3.214, 7.8063], "text": "Full booth", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.214,
+        7.6902, 3.4295, 7.6902, 3.4295, 7.8063, 3.214, 7.8063], "text": "Full", "confidence":
+        1}, {"boundingBox": [3.492, 7.6902, 3.8726, 7.6902, 3.8726, 7.8063, 3.492,
+        7.8063], "text": "booth", "confidence": 1}]}, {"boundingBox": [5.8328, 7.6711,
+        6.1586, 7.6711, 6.1586, 7.8165, 5.8328, 7.8165], "text": "$600", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [5.8328,
+        7.6711, 6.1586, 7.6711, 6.1586, 7.8165, 5.8328, 7.8165], "text": "$600", "confidence":
         1}]}, {"boundingBox": [3.2082, 7.9022, 5.3419, 7.9022, 5.3419, 8.0461, 3.2082,
         8.0461], "text": "50% discount on program guide", "appearance": {"style":
         {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.2082, 7.9067,
@@ -456,208 +383,188 @@ interactions:
         [{"boundingBox": [1.0923, 8.3162, 1.3522, 8.3162, 1.3522, 8.433, 1.0923, 8.433],
         "text": "Half", "confidence": 1}, {"boundingBox": [1.4022, 8.3169, 1.7854,
         8.3169, 1.7854, 8.433, 1.4022, 8.433], "text": "Booth", "confidence": 1}]},
-        {"boundingBox": [2.9586, 8.3623, 3.018, 8.3623, 3.018, 8.4229, 2.9586, 8.4229],
-        "text": "\uf0b7", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [2.9586, 8.3623, 3.018, 8.3623, 3.018, 8.4229,
-        2.9586, 8.4229], "text": "\uf0b7", "confidence": 1}]}, {"boundingBox": [3.214,
-        8.3252, 3.8726, 8.3252, 3.8726, 8.4413, 3.214, 8.4413], "text": "Full booth",
+        {"boundingBox": [3.214, 8.3252, 3.8726, 8.3252, 3.8726, 8.4413, 3.214, 8.4413],
+        "text": "Full booth", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [3.214, 8.3252, 3.4295, 8.3252, 3.4295, 8.4413,
+        3.214, 8.4413], "text": "Full", "confidence": 1}, {"boundingBox": [3.492,
+        8.3252, 3.8726, 8.3252, 3.8726, 8.4413, 3.492, 8.4413], "text": "booth", "confidence":
+        1}]}, {"boundingBox": [5.8328, 8.3061, 6.1586, 8.3061, 6.1586, 8.4515, 5.8328,
+        8.4515], "text": "$350", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [5.8328, 8.3061, 6.1586, 8.3061, 6.1586, 8.4515,
+        5.8328, 8.4515], "text": "$350", "confidence": 1}]}, {"boundingBox": [3.2093,
+        8.5372, 5.3419, 8.5372, 5.3419, 8.6811, 3.2093, 8.6811], "text": "25% discount
+        on program guide", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [3.2093, 8.5417, 3.4817, 8.5417, 3.4817, 8.6545,
+        3.2093, 8.6545], "text": "25%", "confidence": 1}, {"boundingBox": [3.533,
+        8.5372, 4.1018, 8.5372, 4.1018, 8.653, 3.533, 8.653], "text": "discount",
+        "confidence": 1}, {"boundingBox": [4.1512, 8.5717, 4.307, 8.5717, 4.307, 8.653,
+        4.1512, 8.653], "text": "on", "confidence": 1}, {"boundingBox": [4.3682, 8.5717,
+        4.9253, 8.5717, 4.9253, 8.6811, 4.3682, 8.6811], "text": "program", "confidence":
+        1}, {"boundingBox": [4.981, 8.5372, 5.3419, 8.5372, 5.3419, 8.6811, 4.981,
+        8.6811], "text": "guide", "confidence": 1}]}, {"boundingBox": [3.2075, 8.7406,
+        4.2429, 8.7406, 4.2429, 8.8563, 3.2075, 8.8563], "text": "advertisements",
         "appearance": {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox":
-        [3.214, 8.3252, 3.4295, 8.3252, 3.4295, 8.4413, 3.214, 8.4413], "text": "Full",
-        "confidence": 1}, {"boundingBox": [3.492, 8.3252, 3.8726, 8.3252, 3.8726,
-        8.4413, 3.492, 8.4413], "text": "booth", "confidence": 1}]}, {"boundingBox":
-        [5.8328, 8.3061, 6.1586, 8.3061, 6.1586, 8.4515, 5.8328, 8.4515], "text":
-        "$350", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
-        [{"boundingBox": [5.8328, 8.3061, 6.1586, 8.3061, 6.1586, 8.4515, 5.8328,
-        8.4515], "text": "$350", "confidence": 1}]}, {"boundingBox": [2.9586, 8.574,
-        3.018, 8.574, 3.018, 8.6345, 2.9586, 8.6345], "text": "\uf0b7", "appearance":
-        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [2.9586,
-        8.574, 3.018, 8.574, 3.018, 8.6345, 2.9586, 8.6345], "text": "\uf0b7", "confidence":
-        1}]}, {"boundingBox": [3.2093, 8.5372, 5.3419, 8.5372, 5.3419, 8.6811, 3.2093,
-        8.6811], "text": "25% discount on program guide", "appearance": {"style":
-        {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [3.2093, 8.5417,
-        3.4817, 8.5417, 3.4817, 8.6545, 3.2093, 8.6545], "text": "25%", "confidence":
-        1}, {"boundingBox": [3.533, 8.5372, 4.1018, 8.5372, 4.1018, 8.653, 3.533,
-        8.653], "text": "discount", "confidence": 1}, {"boundingBox": [4.1512, 8.5717,
-        4.307, 8.5717, 4.307, 8.653, 4.1512, 8.653], "text": "on", "confidence": 1},
-        {"boundingBox": [4.3682, 8.5717, 4.9253, 8.5717, 4.9253, 8.6811, 4.3682, 8.6811],
-        "text": "program", "confidence": 1}, {"boundingBox": [4.981, 8.5372, 5.3419,
-        8.5372, 5.3419, 8.6811, 4.981, 8.6811], "text": "guide", "confidence": 1}]},
-        {"boundingBox": [3.2075, 8.7406, 4.2429, 8.7406, 4.2429, 8.8563, 3.2075, 8.8563],
-        "text": "advertisements", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [3.2075, 8.7406, 4.2429, 8.7406, 4.2429, 8.8563,
-        3.2075, 8.8563], "text": "advertisements", "confidence": 1}]}]}, {"page":
-        2, "angle": 0, "width": 8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox":
-        [6.1276, 1.0667, 7.4833, 1.0667, 7.4833, 1.2403, 6.1276, 1.2403], "text":
-        "Vendor #:121", "appearance": {"style": {"name": "other", "confidence": 1}},
-        "words": [{"boundingBox": [6.1276, 1.0667, 6.8657, 1.0667, 6.8657, 1.2403,
-        6.1276, 1.2403], "text": "Vendor", "confidence": 1}, {"boundingBox": [6.9307,
-        1.0759, 7.4833, 1.0759, 7.4833, 1.2391, 6.9307, 1.2391], "text": "#:121",
-        "confidence": 1}]}, {"boundingBox": [1.0044, 2.1771, 2.35, 2.1771, 2.35, 2.3315,
-        1.0044, 2.3315], "text": "Vendor Details:", "appearance": {"style": {"name":
-        "other", "confidence": 1}}, "words": [{"boundingBox": [1.0044, 2.1778, 1.6496,
-        2.1778, 1.6496, 2.3315, 1.0044, 2.3315], "text": "Vendor", "confidence": 1},
-        {"boundingBox": [1.7239, 2.1771, 2.35, 2.1771, 2.35, 2.3315, 1.7239, 2.3315],
-        "text": "Details:", "confidence": 1}]}, {"boundingBox": [1.0065, 2.7686, 3.3477,
-        2.7686, 3.3477, 2.9128, 1.0065, 2.9128], "text": "Company Name: Southridge
-        Video", "appearance": {"style": {"name": "other", "confidence": 1}}, "words":
-        [{"boundingBox": [1.0065, 2.7749, 1.651, 2.7749, 1.651, 2.9126, 1.0065, 2.9126],
-        "text": "Company", "confidence": 1}, {"boundingBox": [1.7019, 2.7764, 2.1376,
-        2.7764, 2.1376, 2.885, 1.7019, 2.885], "text": "Name:", "confidence": 1},
-        {"boundingBox": [2.1925, 2.7686, 2.9184, 2.7686, 2.9184, 2.9128, 2.1925, 2.9128],
-        "text": "Southridge", "confidence": 1}, {"boundingBox": [2.9691, 2.7689, 3.3477,
-        2.7689, 3.3477, 2.8847, 2.9691, 2.8847], "text": "Video", "confidence": 1}]},
-        {"boundingBox": [1.0065, 3.0986, 3.5766, 3.0986, 3.5766, 3.2428, 1.0065, 3.2428],
-        "text": "Contact: Jamie@southridgevideo.com", "appearance": {"style": {"name":
-        "other", "confidence": 1}}, "words": [{"boundingBox": [1.0065, 3.1049, 1.5706,
-        3.1049, 1.5706, 3.215, 1.0065, 3.215], "text": "Contact:", "confidence": 1},
-        {"boundingBox": [1.6205, 3.0986, 3.5766, 3.0986, 3.5766, 3.2428, 1.6205, 3.2428],
-        "text": "Jamie@southridgevideo.com", "confidence": 1}]}, {"boundingBox": [1.0115,
-        3.4296, 2.6542, 3.4296, 2.6542, 3.5744, 1.0115, 3.5744], "text": "Preferred
-        Package: Gold", "appearance": {"style": {"name": "other", "confidence": 1}},
-        "words": [{"boundingBox": [1.0115, 3.4296, 1.6499, 3.4296, 1.6499, 3.5467,
-        1.0115, 3.5467], "text": "Preferred", "confidence": 1}, {"boundingBox": [1.7092,
-        3.4302, 2.2978, 3.4302, 2.2978, 3.5744, 1.7092, 3.5744], "text": "Package:",
-        "confidence": 1}, {"boundingBox": [2.3557, 3.4302, 2.6542, 3.4302, 2.6542,
-        3.5463, 2.3557, 3.5463], "text": "Gold", "confidence": 1}]}, {"boundingBox":
-        [1.0052, 3.7537, 2.4783, 3.7537, 2.4783, 3.9043, 1.0052, 3.9043], "text":
-        "Special Requests: N/a", "appearance": {"style": {"name": "other", "confidence":
-        1}}, "words": [{"boundingBox": [1.0052, 3.7602, 1.475, 3.7602, 1.475, 3.9043,
-        1.0052, 3.9043], "text": "Special", "confidence": 1}, {"boundingBox": [1.5342,
-        3.7684, 2.1899, 3.7684, 2.1899, 3.9043, 1.5342, 3.9043], "text": "Requests:",
-        "confidence": 1}, {"boundingBox": [2.254, 3.7537, 2.4783, 3.7537, 2.4783,
-        3.8976, 2.254, 3.8976], "text": "N/a", "confidence": 1}]}]}], "pageResults":
-        [{"page": 1, "tables": [{"rows": 13, "columns": 4, "cells": [{"rowIndex":
-        0, "columnIndex": 0, "text": "Package", "boundingBox": [0.9975, 4.6436, 2.6168,
-        4.6436, 2.6168, 4.8578, 0.9975, 4.8578], "elements": ["#/readResults/0/lines/10/words/0"]},
-        {"rowIndex": 0, "columnIndex": 1, "columnSpan": 2, "text": "Included", "boundingBox":
-        [2.6168, 4.6436, 5.7422, 4.6436, 5.7422, 4.8578, 2.6168, 4.8578], "elements":
-        ["#/readResults/0/lines/11/words/0"]}, {"rowIndex": 0, "columnIndex": 3, "text":
-        "Price", "boundingBox": [5.7422, 4.6436, 7.4882, 4.6436, 7.4882, 4.8513, 5.7422,
-        4.8578], "elements": ["#/readResults/0/lines/12/words/0"]}, {"rowIndex": 1,
-        "columnIndex": 0, "text": "Gold Sponsor", "boundingBox": [0.9975, 4.8578,
-        2.6168, 4.8578, 2.6168, 5.0849, 0.9975, 5.0914], "elements": ["#/readResults/0/lines/13/words/0",
-        "#/readResults/0/lines/13/words/1"]}, {"rowIndex": 1, "columnIndex": 1, "text":
-        "\uf0b7", "boundingBox": [2.6168, 4.8578, 3.15, 4.8578, 3.15, 5.0849, 2.6168,
-        5.0849], "elements": ["#/readResults/0/lines/14/words/0"]}, {"rowIndex": 1,
-        "columnIndex": 2, "text": "Full booth", "boundingBox": [3.15, 4.8578, 5.7422,
-        4.8578, 5.7422, 5.0849, 3.15, 5.0849], "elements": ["#/readResults/0/lines/15/words/0",
-        "#/readResults/0/lines/15/words/1"]}, {"rowIndex": 1, "columnIndex": 3, "text":
-        "$1,500", "boundingBox": [5.7422, 4.8578, 7.4882, 4.8513, 7.4882, 5.0849,
-        5.7422, 5.0849], "elements": ["#/readResults/0/lines/16/words/0"]}, {"rowIndex":
-        2, "columnIndex": 0, "rowSpan": 3, "text": "", "boundingBox": [0.9975, 5.0914,
-        2.6168, 5.0849, 2.6168, 5.9222, 0.9975, 5.9222], "elements": []}, {"rowIndex":
-        2, "columnIndex": 1, "text": "\uf0b7 \uf0b7", "boundingBox": [2.6168, 5.0849,
-        3.15, 5.0849, 3.15, 5.5198, 2.6168, 5.5198], "elements": ["#/readResults/0/lines/17/words/0",
-        "#/readResults/0/lines/19/words/0"]}, {"rowIndex": 2, "columnIndex": 2, "text":
-        "Pre-keynote thank you Logo on poster", "boundingBox": [3.15, 5.0849, 5.7422,
-        5.0849, 5.7489, 5.5133, 3.15, 5.5198], "elements": ["#/readResults/0/lines/18/words/0",
-        "#/readResults/0/lines/18/words/1", "#/readResults/0/lines/18/words/2", "#/readResults/0/lines/20/words/0",
-        "#/readResults/0/lines/20/words/1", "#/readResults/0/lines/20/words/2"]},
-        {"rowIndex": 2, "columnIndex": 3, "text": "", "boundingBox": [5.7422, 5.0849,
-        7.4882, 5.0849, 7.4882, 5.5198, 5.7489, 5.5133], "elements": []}, {"rowIndex":
-        3, "columnIndex": 1, "columnSpan": 2, "text": "\uf0b7 Full page ad in program
-        guide", "boundingBox": [2.6168, 5.5198, 5.7489, 5.5133, 5.7489, 5.7404, 2.6168,
-        5.7534], "elements": ["#/readResults/0/lines/21/words/0", "#/readResults/0/lines/22/words/0",
-        "#/readResults/0/lines/22/words/1", "#/readResults/0/lines/22/words/2", "#/readResults/0/lines/22/words/3",
-        "#/readResults/0/lines/22/words/4", "#/readResults/0/lines/22/words/5"]},
-        {"rowIndex": 3, "columnIndex": 3, "text": "", "boundingBox": [5.7489, 5.5133,
-        7.4882, 5.5198, 7.4882, 5.7469, 5.7489, 5.7404], "elements": []}, {"rowIndex":
-        4, "columnIndex": 1, "columnSpan": 2, "text": "\uf0b7", "boundingBox": [2.6168,
-        5.7534, 5.7489, 5.7404, 5.7489, 5.9222, 2.6168, 5.9222], "elements": ["#/readResults/0/lines/23/words/0"]},
-        {"rowIndex": 4, "columnIndex": 3, "text": "", "boundingBox": [5.7489, 5.7404,
-        7.4882, 5.7469, 7.4948, 5.9222, 5.7489, 5.9222], "elements": []}, {"rowIndex":
-        5, "columnIndex": 0, "rowSpan": 2, "text": "Silver Sponsor", "boundingBox":
-        [0.9975, 5.9222, 2.6168, 5.9222, 2.6168, 6.7853, 0.9975, 6.7788], "elements":
-        ["#/readResults/0/lines/24/words/0", "#/readResults/0/lines/24/words/1"]},
-        {"rowIndex": 5, "columnIndex": 1, "rowSpan": 2, "text": "\uf0b7 \uf0b7 \uf0b7
-        \uf0b7", "boundingBox": [2.6168, 5.9222, 3.15, 5.9222, 3.15, 6.7853, 2.6168,
-        6.7853], "elements": ["#/readResults/0/lines/25/words/0", "#/readResults/0/lines/28/words/0",
-        "#/readResults/0/lines/30/words/0", "#/readResults/0/lines/32/words/0"]},
-        {"rowIndex": 5, "columnIndex": 2, "rowSpan": 2, "text": "Full booth Post-keynote
-        thank you Logo on poster Half page ad in program guide", "boundingBox": [3.15,
-        5.9222, 5.7489, 5.9222, 5.7489, 6.7853, 3.15, 6.7853], "elements": ["#/readResults/0/lines/26/words/0",
-        "#/readResults/0/lines/26/words/1", "#/readResults/0/lines/29/words/0", "#/readResults/0/lines/29/words/1",
-        "#/readResults/0/lines/29/words/2", "#/readResults/0/lines/31/words/0", "#/readResults/0/lines/31/words/1",
-        "#/readResults/0/lines/31/words/2", "#/readResults/0/lines/33/words/0", "#/readResults/0/lines/33/words/1",
-        "#/readResults/0/lines/33/words/2", "#/readResults/0/lines/33/words/3", "#/readResults/0/lines/33/words/4",
-        "#/readResults/0/lines/33/words/5"]}, {"rowIndex": 5, "columnIndex": 3, "rowSpan":
-        2, "text": "$1,200", "boundingBox": [5.7489, 5.9222, 7.4948, 5.9222, 7.4948,
-        6.7788, 5.7489, 6.7853], "elements": ["#/readResults/0/lines/27/words/0"]},
-        {"rowIndex": 7, "columnIndex": 0, "rowSpan": 2, "text": "Bronze Sponsor",
-        "boundingBox": [0.9975, 6.7788, 2.6168, 6.7853, 2.6168, 7.6355, 0.9975, 7.629],
-        "elements": ["#/readResults/0/lines/34/words/0", "#/readResults/0/lines/34/words/1"]},
-        {"rowIndex": 7, "columnIndex": 1, "text": "\uf0b7", "boundingBox": [2.6168,
-        6.7853, 3.15, 6.7853, 3.15, 7.019, 2.6168, 7.019], "elements": ["#/readResults/0/lines/35/words/0"]},
-        {"rowIndex": 7, "columnIndex": 2, "rowSpan": 2, "text": "Full booth Logo on
-        poster 50% discount on program guide advertisements", "boundingBox": [3.15,
-        6.7853, 5.7489, 6.7853, 5.7489, 7.6355, 3.1433, 7.6355], "elements": ["#/readResults/0/lines/36/words/0",
-        "#/readResults/0/lines/36/words/1", "#/readResults/0/lines/39/words/0", "#/readResults/0/lines/39/words/1",
-        "#/readResults/0/lines/39/words/2", "#/readResults/0/lines/41/words/0", "#/readResults/0/lines/41/words/1",
-        "#/readResults/0/lines/41/words/2", "#/readResults/0/lines/41/words/3", "#/readResults/0/lines/41/words/4",
-        "#/readResults/0/lines/42/words/0"]}, {"rowIndex": 7, "columnIndex": 3, "rowSpan":
-        2, "text": "$1,000", "boundingBox": [5.7489, 6.7853, 7.4948, 6.7788, 7.4948,
-        7.6355, 5.7489, 7.6355], "elements": ["#/readResults/0/lines/37/words/0"]},
-        {"rowIndex": 8, "columnIndex": 1, "text": "\uf0b7 \uf0b7", "boundingBox":
-        [2.6168, 7.019, 3.15, 7.019, 3.1433, 7.6355, 2.6168, 7.6355], "elements":
-        ["#/readResults/0/lines/38/words/0", "#/readResults/0/lines/40/words/0"]},
-        {"rowIndex": 9, "columnIndex": 0, "rowSpan": 2, "text": "Full Booth", "boundingBox":
-        [0.9975, 7.629, 2.6168, 7.6355, 2.6102, 8.2651, 0.9975, 8.2651], "elements":
-        ["#/readResults/0/lines/43/words/0", "#/readResults/0/lines/43/words/1"]},
-        {"rowIndex": 9, "columnIndex": 1, "rowSpan": 2, "columnSpan": 2, "text": "\uf0b7
-        Full booth \uf0b7 50% discount on program guide advertisements", "boundingBox":
-        [2.6168, 7.6355, 5.7489, 7.6355, 5.7489, 8.2651, 2.6102, 8.2651], "elements":
-        ["#/readResults/0/lines/44/words/0", "#/readResults/0/lines/45/words/0", "#/readResults/0/lines/45/words/1",
-        "#/readResults/0/lines/47/words/0", "#/readResults/0/lines/48/words/0", "#/readResults/0/lines/48/words/1",
-        "#/readResults/0/lines/48/words/2", "#/readResults/0/lines/48/words/3", "#/readResults/0/lines/48/words/4",
-        "#/readResults/0/lines/49/words/0"]}, {"rowIndex": 9, "columnIndex": 3, "rowSpan":
-        2, "text": "$600", "boundingBox": [5.7489, 7.6355, 7.4948, 7.6355, 7.4948,
-        8.2651, 5.7489, 8.2651], "elements": ["#/readResults/0/lines/46/words/0"]},
+        [3.2075, 8.7406, 4.2429, 8.7406, 4.2429, 8.8563, 3.2075, 8.8563], "text":
+        "advertisements", "confidence": 1}]}], "selectionMarks": [{"boundingBox":
+        [2.9426, 6.645, 3.0304, 6.645, 3.0304, 6.7283, 2.9426, 6.7283], "confidence":
+        0.223, "state": "unselected"}]}, {"page": 2, "angle": 0, "width": 8.5, "height":
+        11, "unit": "inch", "lines": [{"boundingBox": [6.1276, 1.0667, 7.4833, 1.0667,
+        7.4833, 1.2403, 6.1276, 1.2403], "text": "Vendor #:121", "appearance": {"style":
+        {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [6.1276, 1.0667,
+        6.8657, 1.0667, 6.8657, 1.2403, 6.1276, 1.2403], "text": "Vendor", "confidence":
+        1}, {"boundingBox": [6.9307, 1.0759, 7.4833, 1.0759, 7.4833, 1.2391, 6.9307,
+        1.2391], "text": "#:121", "confidence": 1}]}, {"boundingBox": [1.0044, 2.1771,
+        2.35, 2.1771, 2.35, 2.3315, 1.0044, 2.3315], "text": "Vendor Details:", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [1.0044,
+        2.1778, 1.6496, 2.1778, 1.6496, 2.3315, 1.0044, 2.3315], "text": "Vendor",
+        "confidence": 1}, {"boundingBox": [1.7239, 2.1771, 2.35, 2.1771, 2.35, 2.3315,
+        1.7239, 2.3315], "text": "Details:", "confidence": 1}]}, {"boundingBox": [1.0065,
+        2.7686, 3.3477, 2.7686, 3.3477, 2.9128, 1.0065, 2.9128], "text": "Company
+        Name: Southridge Video", "appearance": {"style": {"name": "other", "confidence":
+        1}}, "words": [{"boundingBox": [1.0065, 2.7749, 1.651, 2.7749, 1.651, 2.9126,
+        1.0065, 2.9126], "text": "Company", "confidence": 1}, {"boundingBox": [1.7019,
+        2.7764, 2.1376, 2.7764, 2.1376, 2.885, 1.7019, 2.885], "text": "Name:", "confidence":
+        1}, {"boundingBox": [2.1925, 2.7686, 2.9184, 2.7686, 2.9184, 2.9128, 2.1925,
+        2.9128], "text": "Southridge", "confidence": 1}, {"boundingBox": [2.9691,
+        2.7689, 3.3477, 2.7689, 3.3477, 2.8847, 2.9691, 2.8847], "text": "Video",
+        "confidence": 1}]}, {"boundingBox": [1.0065, 3.0986, 3.5766, 3.0986, 3.5766,
+        3.2428, 1.0065, 3.2428], "text": "Contact: Jamie@southridgevideo.com", "appearance":
+        {"style": {"name": "other", "confidence": 1}}, "words": [{"boundingBox": [1.0065,
+        3.1049, 1.5706, 3.1049, 1.5706, 3.215, 1.0065, 3.215], "text": "Contact:",
+        "confidence": 1}, {"boundingBox": [1.6205, 3.0986, 3.5766, 3.0986, 3.5766,
+        3.2428, 1.6205, 3.2428], "text": "Jamie@southridgevideo.com", "confidence":
+        1}]}, {"boundingBox": [1.0115, 3.4296, 2.6542, 3.4296, 2.6542, 3.5744, 1.0115,
+        3.5744], "text": "Preferred Package: Gold", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [1.0115, 3.4296, 1.6499,
+        3.4296, 1.6499, 3.5467, 1.0115, 3.5467], "text": "Preferred", "confidence":
+        1}, {"boundingBox": [1.7092, 3.4302, 2.2978, 3.4302, 2.2978, 3.5744, 1.7092,
+        3.5744], "text": "Package:", "confidence": 1}, {"boundingBox": [2.3557, 3.4302,
+        2.6542, 3.4302, 2.6542, 3.5463, 2.3557, 3.5463], "text": "Gold", "confidence":
+        1}]}, {"boundingBox": [1.0052, 3.7537, 2.4783, 3.7537, 2.4783, 3.9043, 1.0052,
+        3.9043], "text": "Special Requests: N/a", "appearance": {"style": {"name":
+        "other", "confidence": 1}}, "words": [{"boundingBox": [1.0052, 3.7602, 1.475,
+        3.7602, 1.475, 3.9043, 1.0052, 3.9043], "text": "Special", "confidence": 1},
+        {"boundingBox": [1.5342, 3.7684, 2.1899, 3.7684, 2.1899, 3.9043, 1.5342, 3.9043],
+        "text": "Requests:", "confidence": 1}, {"boundingBox": [2.254, 3.7537, 2.4783,
+        3.7537, 2.4783, 3.8976, 2.254, 3.8976], "text": "N/a", "confidence": 1}]}]}],
+        "pageResults": [{"page": 1, "tables": [{"rows": 13, "columns": 3, "cells":
+        [{"rowIndex": 0, "columnIndex": 0, "text": "Package", "boundingBox": [0.9975,
+        4.6436, 2.6235, 4.6436, 2.6235, 4.8578, 0.9975, 4.8578], "elements": ["#/readResults/0/lines/10/words/0"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 1, "text": "Included", "boundingBox":
+        [2.6235, 4.6436, 5.7489, 4.6436, 5.7489, 4.8578, 2.6235, 4.8578], "elements":
+        ["#/readResults/0/lines/11/words/0"], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        2, "text": "Price", "boundingBox": [5.7489, 4.6436, 7.4948, 4.6436, 7.4948,
+        4.8578, 5.7489, 4.8578], "elements": ["#/readResults/0/lines/12/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "rowSpan": 2, "text":
+        "Gold Sponsor", "boundingBox": [0.9975, 4.8578, 2.6235, 4.8578, 2.6235, 5.9286,
+        0.9975, 5.9222], "elements": ["#/readResults/0/lines/13/words/0", "#/readResults/0/lines/13/words/1"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "Full booth",
+        "boundingBox": [2.6235, 4.8578, 5.7489, 4.8578, 5.7489, 5.0914, 2.6235, 5.0914],
+        "elements": ["#/readResults/0/lines/14/words/0", "#/readResults/0/lines/14/words/1"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 2, "text": "$1,500", "boundingBox":
+        [5.7489, 4.8578, 7.4948, 4.8578, 7.4948, 5.0914, 5.7489, 5.0914], "elements":
+        ["#/readResults/0/lines/15/words/0"], "isHeader": false}, {"rowIndex": 2,
+        "columnIndex": 1, "text": "Pre-keynote thank you Logo on poster Full page
+        ad in program guide", "boundingBox": [2.6235, 5.0914, 5.7489, 5.0914, 5.7422,
+        5.9286, 2.6235, 5.9286], "elements": ["#/readResults/0/lines/16/words/0",
+        "#/readResults/0/lines/16/words/1", "#/readResults/0/lines/16/words/2", "#/readResults/0/lines/17/words/0",
+        "#/readResults/0/lines/17/words/1", "#/readResults/0/lines/17/words/2", "#/readResults/0/lines/18/words/0",
+        "#/readResults/0/lines/18/words/1", "#/readResults/0/lines/18/words/2", "#/readResults/0/lines/18/words/3",
+        "#/readResults/0/lines/18/words/4", "#/readResults/0/lines/18/words/5"], "isHeader":
+        false}, {"rowIndex": 2, "columnIndex": 2, "text": "", "boundingBox": [5.7489,
+        5.0914, 7.4948, 5.0914, 7.4948, 5.9222, 5.7422, 5.9286], "elements": [], "isHeader":
+        false}, {"rowIndex": 3, "columnIndex": 0, "rowSpan": 3, "text": "Silver Sponsor",
+        "boundingBox": [0.9975, 5.9222, 2.6235, 5.9286, 2.6235, 6.7788, 0.9975, 6.7788],
+        "elements": ["#/readResults/0/lines/19/words/0", "#/readResults/0/lines/19/words/1"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 1, "text": "Full booth",
+        "boundingBox": [2.6235, 5.9286, 5.7422, 5.9286, 5.7422, 6.1623, 2.6235, 6.1558],
+        "elements": ["#/readResults/0/lines/20/words/0", "#/readResults/0/lines/20/words/1"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 2, "rowSpan": 3, "text":
+        "$1,200", "boundingBox": [5.7422, 5.9286, 7.4948, 5.9222, 7.4948, 6.7788,
+        5.7422, 6.7788], "elements": ["#/readResults/0/lines/21/words/0"], "isHeader":
+        false}, {"rowIndex": 4, "columnIndex": 1, "text": "Post-keynote thank you",
+        "boundingBox": [2.6235, 6.1558, 5.7422, 6.1623, 5.7422, 6.383, 2.6235, 6.3765],
+        "elements": ["#/readResults/0/lines/22/words/0", "#/readResults/0/lines/22/words/1",
+        "#/readResults/0/lines/22/words/2"], "isHeader": false}, {"rowIndex": 5, "columnIndex":
+        1, "text": "Logo on poster Half page ad in program guide", "boundingBox":
+        [2.6235, 6.3765, 5.7422, 6.383, 5.7422, 6.7788, 2.6235, 6.7788], "elements":
+        ["#/readResults/0/lines/23/words/0", "#/readResults/0/lines/23/words/1", "#/readResults/0/lines/23/words/2",
+        "#/readResults/0/lines/24/words/0", "#/readResults/0/lines/24/words/1", "#/readResults/0/lines/24/words/2",
+        "#/readResults/0/lines/24/words/3", "#/readResults/0/lines/24/words/4", "#/readResults/0/lines/24/words/5",
+        "#/readResults/0/selectionMarks/0"], "isHeader": false}, {"rowIndex": 6, "columnIndex":
+        0, "rowSpan": 3, "text": "Bronze Sponsor", "boundingBox": [0.9975, 6.7788,
+        2.6235, 6.7788, 2.6235, 7.629, 0.9975, 7.629], "elements": ["#/readResults/0/lines/25/words/0",
+        "#/readResults/0/lines/25/words/1"], "isHeader": false}, {"rowIndex": 6, "columnIndex":
+        1, "text": "Full booth", "boundingBox": [2.6235, 6.7788, 5.7422, 6.7788, 5.7422,
+        7.019, 2.6235, 7.019], "elements": ["#/readResults/0/lines/26/words/0", "#/readResults/0/lines/26/words/1"],
+        "isHeader": false}, {"rowIndex": 6, "columnIndex": 2, "text": "$1,000", "boundingBox":
+        [5.7422, 6.7788, 7.4948, 6.7788, 7.4948, 7.019, 5.7422, 7.019], "elements":
+        ["#/readResults/0/lines/27/words/0"], "isHeader": false}, {"rowIndex": 7,
+        "columnIndex": 1, "rowSpan": 2, "text": "Logo on poster 50% discount on program
+        guide advertisements", "boundingBox": [2.6235, 7.019, 5.7422, 7.019, 5.7422,
+        7.629, 2.6235, 7.629], "elements": ["#/readResults/0/lines/28/words/0", "#/readResults/0/lines/28/words/1",
+        "#/readResults/0/lines/28/words/2", "#/readResults/0/lines/29/words/0", "#/readResults/0/lines/29/words/1",
+        "#/readResults/0/lines/29/words/2", "#/readResults/0/lines/29/words/3", "#/readResults/0/lines/29/words/4",
+        "#/readResults/0/lines/30/words/0"], "isHeader": false}, {"rowIndex": 7, "columnIndex":
+        2, "rowSpan": 2, "text": "", "boundingBox": [5.7422, 7.019, 7.4948, 7.019,
+        7.4948, 7.629, 5.7422, 7.629], "elements": [], "isHeader": false}, {"rowIndex":
+        9, "columnIndex": 0, "rowSpan": 2, "text": "Full Booth", "boundingBox": [0.9975,
+        7.629, 2.6235, 7.629, 2.6235, 8.2651, 0.9908, 8.2651], "elements": ["#/readResults/0/lines/31/words/0",
+        "#/readResults/0/lines/31/words/1"], "isHeader": false}, {"rowIndex": 9, "columnIndex":
+        1, "rowSpan": 2, "text": "Full booth 50% discount on program guide advertisements",
+        "boundingBox": [2.6235, 7.629, 5.7422, 7.629, 5.7422, 8.2651, 2.6235, 8.2651],
+        "elements": ["#/readResults/0/lines/32/words/0", "#/readResults/0/lines/32/words/1",
+        "#/readResults/0/lines/34/words/0", "#/readResults/0/lines/34/words/1", "#/readResults/0/lines/34/words/2",
+        "#/readResults/0/lines/34/words/3", "#/readResults/0/lines/34/words/4", "#/readResults/0/lines/35/words/0"],
+        "isHeader": false}, {"rowIndex": 9, "columnIndex": 2, "rowSpan": 2, "text":
+        "$600", "boundingBox": [5.7422, 7.629, 7.4948, 7.629, 7.4948, 8.2651, 5.7422,
+        8.2651], "elements": ["#/readResults/0/lines/33/words/0"], "isHeader": false},
         {"rowIndex": 11, "columnIndex": 0, "rowSpan": 2, "text": "Half Booth", "boundingBox":
-        [0.9975, 8.2651, 2.6102, 8.2651, 2.6102, 8.9011, 0.9975, 8.9011], "elements":
-        ["#/readResults/0/lines/50/words/0", "#/readResults/0/lines/50/words/1"]},
-        {"rowIndex": 11, "columnIndex": 1, "rowSpan": 2, "columnSpan": 2, "text":
-        "\uf0b7 Full booth \uf0b7 25% discount on program guide advertisements", "boundingBox":
-        [2.6102, 8.2651, 5.7489, 8.2651, 5.7489, 8.9011, 2.6102, 8.9011], "elements":
-        ["#/readResults/0/lines/51/words/0", "#/readResults/0/lines/52/words/0", "#/readResults/0/lines/52/words/1",
-        "#/readResults/0/lines/54/words/0", "#/readResults/0/lines/55/words/0", "#/readResults/0/lines/55/words/1",
-        "#/readResults/0/lines/55/words/2", "#/readResults/0/lines/55/words/3", "#/readResults/0/lines/55/words/4",
-        "#/readResults/0/lines/56/words/0"]}, {"rowIndex": 11, "columnIndex": 3, "rowSpan":
-        2, "text": "$350", "boundingBox": [5.7489, 8.2651, 7.4948, 8.2651, 7.4948,
-        8.9011, 5.7489, 8.9011], "elements": ["#/readResults/0/lines/53/words/0"]}],
-        "boundingBox": [0.994, 4.6469, 7.4953, 4.6454, 7.4964, 8.9061, 0.9936, 8.9066]}]},
-        {"page": 2, "tables": []}], "documentResults": [{"docType": "custom:e7d82482-8d09-4648-a815-83c8f6984850",
-        "modelId": "e7d82482-8d09-4648-a815-83c8f6984850", "pageRange": [1, 2], "fields":
-        {"Full": {"type": "string", "valueString": "$600", "text": "$600", "page":
+        [0.9908, 8.2651, 2.6235, 8.2651, 2.6235, 8.9011, 0.9908, 8.9011], "elements":
+        ["#/readResults/0/lines/36/words/0", "#/readResults/0/lines/36/words/1"],
+        "isHeader": false}, {"rowIndex": 11, "columnIndex": 1, "rowSpan": 2, "text":
+        "Full booth 25% discount on program guide advertisements", "boundingBox":
+        [2.6235, 8.2651, 5.7422, 8.2651, 5.7422, 8.9011, 2.6235, 8.9011], "elements":
+        ["#/readResults/0/lines/37/words/0", "#/readResults/0/lines/37/words/1", "#/readResults/0/lines/39/words/0",
+        "#/readResults/0/lines/39/words/1", "#/readResults/0/lines/39/words/2", "#/readResults/0/lines/39/words/3",
+        "#/readResults/0/lines/39/words/4", "#/readResults/0/lines/40/words/0"], "isHeader":
+        false}, {"rowIndex": 11, "columnIndex": 2, "rowSpan": 2, "text": "$350", "boundingBox":
+        [5.7422, 8.2651, 7.4948, 8.2651, 7.4948, 8.9011, 5.7422, 8.9011], "elements":
+        ["#/readResults/0/lines/38/words/0"], "isHeader": false}], "boundingBox":
+        [0.994, 4.6469, 7.4953, 4.6454, 7.4964, 8.9061, 0.9936, 8.9066]}]}, {"page":
+        2, "tables": []}], "documentResults": [{"docType": "custom:f9edf891-8f01-462b-bd00-32d8f2bdf63c",
+        "modelId": "f9edf891-8f01-462b-bd00-32d8f2bdf63c", "pageRange": [1, 2], "fields":
+        {"Contact": {"type": "string", "valueString": "Jamie@southridgevideo.com",
+        "text": "Jamie@southridgevideo.com", "page": 2, "boundingBox": [1.62, 3.1,
+        3.575, 3.1, 3.575, 3.245, 1.62, 3.245], "confidence": 0.995, "elements": ["#/readResults/1/lines/3/words/1"]},
+        "Full": {"type": "string", "valueString": "$600", "text": "$600", "page":
         1, "boundingBox": [5.835, 7.67, 6.16, 7.67, 6.16, 7.815, 5.835, 7.815], "confidence":
-        0.995, "elements": ["#/readResults/0/lines/46/words/0"]}, "Contact": {"type":
-        "string", "valueString": "Jamie@southridgevideo.com", "text": "Jamie@southridgevideo.com",
-        "page": 2, "boundingBox": [1.62, 3.1, 3.575, 3.1, 3.575, 3.245, 1.62, 3.245],
-        "confidence": 0.995, "elements": ["#/readResults/1/lines/3/words/1"]}, "Bronze":
-        {"type": "string", "valueString": "$1,000", "text": "$1,000", "page": 1, "boundingBox":
-        [5.835, 6.825, 6.285, 6.825, 6.285, 6.97, 5.835, 6.97], "confidence": 0.995,
-        "elements": ["#/readResults/0/lines/37/words/0"]}, "Half": {"type": "string",
-        "valueString": "$350", "text": "$350", "page": 1, "boundingBox": [5.835, 8.305,
-        6.16, 8.305, 6.16, 8.45, 5.835, 8.45], "confidence": 0.995, "elements": ["#/readResults/0/lines/53/words/0"]},
-        "Silver": {"type": "string", "valueString": "$1,200", "text": "$1,200", "page":
-        1, "boundingBox": [5.835, 5.97, 6.285, 5.97, 6.285, 6.115, 5.835, 6.115],
-        "confidence": 0.995, "elements": ["#/readResults/0/lines/27/words/0"]}, "CompanyName":
-        {"type": "string", "valueString": "Southridge Video", "text": "Southridge
-        Video", "page": 2, "boundingBox": [2.19, 2.77, 3.35, 2.77, 3.35, 2.915, 2.19,
-        2.915], "confidence": 0.995, "elements": ["#/readResults/1/lines/2/words/2",
-        "#/readResults/1/lines/2/words/3"]}, "Gold": {"type": "string", "valueString":
+        0.995, "elements": ["#/readResults/0/lines/33/words/0"]}, "Half": {"type":
+        "string", "valueString": "$350", "text": "$350", "page": 1, "boundingBox":
+        [5.835, 8.305, 6.16, 8.305, 6.16, 8.45, 5.835, 8.45], "confidence": 0.995,
+        "elements": ["#/readResults/0/lines/38/words/0"]}, "Silver": {"type": "string",
+        "valueString": "$1,200", "text": "$1,200", "page": 1, "boundingBox": [5.835,
+        5.97, 6.285, 5.97, 6.285, 6.115, 5.835, 6.115], "confidence": 0.995, "elements":
+        ["#/readResults/0/lines/21/words/0"]}, "Gold": {"type": "string", "valueString":
         "$1,500", "text": "$1,500", "page": 1, "boundingBox": [5.835, 4.9, 6.285,
-        4.9, 6.285, 5.045, 5.835, 5.045], "confidence": 0.995, "elements": ["#/readResults/0/lines/16/words/0"]}},
-        "docTypeConfidence": 0.952}], "errors": []}}'
+        4.9, 6.285, 5.045, 5.835, 5.045], "confidence": 0.995, "elements": ["#/readResults/0/lines/15/words/0"]},
+        "CompanyName": {"type": "string", "valueString": "Southridge Video", "text":
+        "Southridge Video", "page": 2, "boundingBox": [2.19, 2.77, 3.35, 2.77, 3.35,
+        2.915, 2.19, 2.915], "confidence": 0.953, "elements": ["#/readResults/1/lines/2/words/2",
+        "#/readResults/1/lines/2/words/3"]}, "Bronze": {"type": "string", "valueString":
+        "$1,000", "text": "$1,000", "page": 1, "boundingBox": [5.835, 6.825, 6.285,
+        6.825, 6.285, 6.97, 5.835, 6.97], "confidence": 0.995, "elements": ["#/readResults/0/lines/27/words/0"]}},
+        "docTypeConfidence": 0.734}], "errors": []}}'
     headers:
-      apim-request-id: 9179f4b3-ddf1-434b-848c-9f608f8b0361
-      content-length: '37824'
+      apim-request-id: c29737ce-599f-4096-8d2e-87c1f386d6a4
+      content-length: '32966'
       content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 19:24:17 GMT
+      date: Tue, 11 May 2021 01:52:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '28'
+      x-envoy-upstream-service-time: '72'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/e7d82482-8d09-4648-a815-83c8f6984850/analyzeresults/c3a6a155-58d4-4822-92b3-7b8752589eff
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/f9edf891-8f01-462b-bd00-32d8f2bdf63c/analyzeresults/c696d14c-175d-4fcc-952d-e14f9e8b1db9
 version: 1

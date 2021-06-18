@@ -45,7 +45,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PolicyAssignment"]:
         """Deletes a policy assignment.
 
@@ -88,7 +88,7 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -106,7 +106,7 @@ class PolicyAssignmentsOperations:
         scope: str,
         policy_assignment_name: str,
         parameters: "_models.PolicyAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Creates a policy assignment.
 
@@ -159,7 +159,7 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
@@ -174,7 +174,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Gets a policy assignment.
 
@@ -217,7 +217,7 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
@@ -232,7 +232,7 @@ class PolicyAssignmentsOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Gets policy assignments for the resource group.
 
@@ -293,7 +293,7 @@ class PolicyAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -312,7 +312,7 @@ class PolicyAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Gets policy assignments for a resource.
 
@@ -386,7 +386,7 @@ class PolicyAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -400,7 +400,7 @@ class PolicyAssignmentsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignmentListResult"]:
         """Gets all the policy assignments for a subscription.
 
@@ -458,7 +458,7 @@ class PolicyAssignmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -472,14 +472,15 @@ class PolicyAssignmentsOperations:
     async def delete_by_id(
         self,
         policy_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Deletes a policy assignment by ID.
 
         When providing a scope for the assignment, use '/subscriptions/{subscription-id}/' for
         subscriptions, '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for
-        resource groups, and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-
-        name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}' for resources.
+        resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
 
         :param policy_assignment_id: The ID of the policy assignment to delete. Use the format
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
@@ -518,7 +519,7 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
@@ -533,7 +534,7 @@ class PolicyAssignmentsOperations:
         self,
         policy_assignment_id: str,
         parameters: "_models.PolicyAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Creates a policy assignment by ID.
 
@@ -541,8 +542,9 @@ class PolicyAssignmentsOperations:
         resource group that policy is assigned to all resources in the group. When providing a scope
         for the assignment, use '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for resource groups,
-        and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-
-        provider-namespace}/{resource-type}/{resource-name}' for resources.
+        and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
 
         :param policy_assignment_id: The ID of the policy assignment to create. Use the format
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
@@ -588,7 +590,7 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)
@@ -602,14 +604,15 @@ class PolicyAssignmentsOperations:
     async def get_by_id(
         self,
         policy_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyAssignment":
         """Gets a policy assignment by ID.
 
         When providing a scope for the assignment, use '/subscriptions/{subscription-id}/' for
         subscriptions, '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for
-        resource groups, and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-
-        name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}' for resources.
+        resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
 
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
@@ -648,7 +651,7 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PolicyAssignment', pipeline_response)

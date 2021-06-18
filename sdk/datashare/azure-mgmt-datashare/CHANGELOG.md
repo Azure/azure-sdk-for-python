@@ -1,5 +1,57 @@
 # Release History
 
+## 1.0.0 (2021-04-12)
+
+**Features**
+
+  - Model BlobContainerDataSetMapping has a new parameter system_data
+  - Model SqlDWTableDataSet has a new parameter system_data
+  - Model ADLSGen1FolderDataSet has a new parameter system_data
+  - Model KustoDatabaseDataSetMapping has a new parameter system_data
+  - Model ConsumerSourceDataSet has a new parameter system_data
+  - Model ScheduledTrigger has a new parameter system_data
+  - Model DataSet has a new parameter system_data
+  - Model KustoClusterDataSetMapping has a new parameter system_data
+  - Model BlobDataSet has a new parameter system_data
+  - Model SynchronizationSetting has a new parameter system_data
+  - Model BlobFolderDataSetMapping has a new parameter system_data
+  - Model OperationMetaMetricSpecification has a new parameter fill_gap_with_zero
+  - Model ConsumerInvitation has a new parameter expiration_date
+  - Model ConsumerInvitation has a new parameter system_data
+  - Model ProviderShareSubscription has a new parameter expiration_date
+  - Model ProviderShareSubscription has a new parameter system_data
+  - Model ProxyDto has a new parameter system_data
+  - Model BlobFolderDataSet has a new parameter system_data
+  - Model ADLSGen2FolderDataSet has a new parameter system_data
+  - Model ScheduledSynchronizationSetting has a new parameter system_data
+  - Model SqlDBTableDataSet has a new parameter system_data
+  - Model Trigger has a new parameter system_data
+  - Model ADLSGen2FileDataSetMapping has a new parameter system_data
+  - Model BlobContainerDataSet has a new parameter system_data
+  - Model BlobDataSetMapping has a new parameter system_data
+  - Model DefaultDto has a new parameter system_data
+  - Model DataSetMapping has a new parameter system_data
+  - Model KustoDatabaseDataSet has a new parameter system_data
+  - Model ShareSubscription has a new parameter expiration_date
+  - Model ShareSubscription has a new parameter system_data
+  - Model KustoClusterDataSet has a new parameter system_data
+  - Model SqlDBTableDataSetMapping has a new parameter system_data
+  - Model SqlDWTableDataSetMapping has a new parameter system_data
+  - Model Account has a new parameter system_data
+  - Model Share has a new parameter system_data
+  - Model Invitation has a new parameter expiration_date
+  - Model Invitation has a new parameter system_data
+  - Model ADLSGen2FileSystemDataSetMapping has a new parameter system_data
+  - Model ADLSGen2FolderDataSetMapping has a new parameter system_data
+  - Model ADLSGen2FileDataSet has a new parameter system_data
+  - Model ADLSGen1FileDataSet has a new parameter system_data
+  - Model ADLSGen2FileSystemDataSet has a new parameter system_data
+  - Added operation ProviderShareSubscriptionsOperations.adjust
+
+**Breaking changes**
+
+  - Operation ProviderShareSubscriptionsOperations.reinstate has a new signature
+
 ## 1.0.0b1 (2020-12-04)
 
 This is beta preview version.

@@ -29,7 +29,7 @@ class PerfStressRunner:
         handler.setLevel(level=logging.INFO)
         self.logger.addHandler(handler)
 
-        #NOTE: If you need to support registering multiple test locations, move this into Initialize, call lazily on Run, expose RegisterTestLocation function.
+        # NOTE: If you need to support registering multiple test locations, move this into Initialize, call lazily on Run, expose RegisterTestLocation function.
         self._discover_tests(test_folder_path)
         self._parse_args()
 
@@ -37,31 +37,37 @@ class PerfStressRunner:
         return sum(self._completed_operations)
 
     def _get_operations_per_second(self):
-        return sum(map(
-            lambda x: x[0] / x[1] if x[1] else 0,
-            zip(self._completed_operations, self._last_completion_times)))
+        return sum(
+            map(lambda x: x[0] / x[1] if x[1] else 0, zip(self._completed_operations, self._last_completion_times))
+        )
 
     def _parse_args(self):
         # First, detect which test we're running.
         arg_parser = argparse.ArgumentParser(
-            description='Python Perf Test Runner',
-            usage='{} <TEST> [<args>]'.format(__file__))
+            description="Python Perf Test Runner", usage="{} <TEST> [<args>]".format(__file__)
+        )
 
         # NOTE: remove this and add another help string to query for available tests
         # if/when # of classes become enough that this isn't practical.
-        arg_parser.add_argument('test', help='Which test to run.  Supported tests: {}'.format(" ".join(sorted(self._test_classes.keys()))))
+        arg_parser.add_argument(
+            "test", help="Which test to run.  Supported tests: {}".format(" ".join(sorted(self._test_classes.keys())))
+        )
 
         args = arg_parser.parse_args(sys.argv[1:2])
         try:
             self._test_class_to_run = self._test_classes[args.test]
         except KeyError as e:
-            self.logger.error("Invalid test: {}\n    Test must be one of: {}\n".format(args.test, " ".join(sorted(self._test_classes.keys()))))
+            self.logger.error(
+                "Invalid test: {}\n    Test must be one of: {}\n".format(
+                    args.test, " ".join(sorted(self._test_classes.keys()))
+                )
+            )
             raise
 
         # Next, parse args for that test.  We also do global args here too so as not to confuse the initial test parse.
         per_test_arg_parser = argparse.ArgumentParser(
-            description=self._test_class_to_run.__doc__ or args.test,
-            usage='{} {} [<args>]'.format(__file__, args.test))
+            description=self._test_class_to_run.__doc__ or args.test, usage="{} {} [<args>]".format(__file__, args.test)
+        )
 
         # Global args
         per_test_arg_parser.add_argument(
@@ -116,15 +122,15 @@ class PerfStressRunner:
                 continue
             for name, value in inspect.getmembers(module):
 
-                if name.startswith('_'):
+                if name.startswith("_"):
                     continue
                 if inspect.isclass(value) and issubclass(value, PerfStressTest) and value != PerfStressTest:
                     self.logger.info("Loaded test class: {}".format(name))
                     self._test_classes[name] = value
 
-    async def start(self):      
+    async def start(self):
         self.logger.info("=== Setup ===")
-       
+
         tests = []
         for _ in range(0, self.per_test_args.parallel):
             tests.append(self._test_class_to_run(self.per_test_args))
@@ -205,8 +211,11 @@ class PerfStressRunner:
         seconds_per_operation = 1 / operations_per_second
         weighted_average_seconds = total_operations / operations_per_second
 
-        self.logger.info("Completed {:,} operations in a weighted-average of {:,.2f}s ({:,.2f} ops/s, {:,.3f} s/op)".format(
-            total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation))
+        self.logger.info(
+            "Completed {:,} operations in a weighted-average of {:,.2f}s ({:,.2f} ops/s, {:,.3f} s/op)".format(
+                total_operations, weighted_average_seconds, operations_per_second, seconds_per_operation
+            )
+        )
         self.logger.info("")
 
     def _run_sync_loop(self, test, duration, id, with_profiler):

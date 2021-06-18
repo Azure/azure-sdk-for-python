@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._deployment_scripts_client import DeploymentScriptsClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['DeploymentScriptsClient']
 
 try:

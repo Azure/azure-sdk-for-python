@@ -26,6 +26,7 @@ from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor
 )
+from _shared.utils import get_http_logging_policy
 
 
 class ChatClientTest(CommunicationTestCase):
@@ -49,7 +50,11 @@ class ChatClientTest(CommunicationTestCase):
         self.token = tokenresponse.token
 
         # create ChatClient
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        self.chat_client = ChatClient(
+            self.endpoint, 
+            CommunicationTokenCredential(self.token), 
+            http_logging_policy=get_http_logging_policy()
+        )
 
     def tearDown(self):
         super(ChatClientTest, self).tearDown()
@@ -82,7 +87,11 @@ class ChatClientTest(CommunicationTestCase):
         """
 
         # create ChatClient
-        chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        chat_client = ChatClient(
+            self.endpoint, 
+            CommunicationTokenCredential(self.token),
+            http_logging_policy=get_http_logging_policy()
+        )
         raised = False
         try:
             # create chat thread

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ServerAzureADAdministratorsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,9 +47,9 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "models.AdministratorName"],
-        **kwargs
-    ) -> "models.ServerAzureADAdministrator":
+        administrator_name: Union[str, "_models.AdministratorName"],
+        **kwargs: Any
+    ) -> "_models.ServerAzureADAdministrator":
         """Gets a Azure Active Directory administrator.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,21 +64,21 @@ class ServerAzureADAdministratorsOperations:
         :rtype: ~azure.mgmt.sql.models.ServerAzureADAdministrator
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerAzureADAdministrator"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerAzureADAdministrator"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -110,26 +110,26 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "models.AdministratorName"],
-        parameters: "models.ServerAzureADAdministrator",
-        **kwargs
-    ) -> Optional["models.ServerAzureADAdministrator"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ServerAzureADAdministrator"]]
+        administrator_name: Union[str, "_models.AdministratorName"],
+        parameters: "_models.ServerAzureADAdministrator",
+        **kwargs: Any
+    ) -> Optional["_models.ServerAzureADAdministrator"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerAzureADAdministrator"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -170,10 +170,10 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "models.AdministratorName"],
-        parameters: "models.ServerAzureADAdministrator",
-        **kwargs
-    ) -> AsyncLROPoller["models.ServerAzureADAdministrator"]:
+        administrator_name: Union[str, "_models.AdministratorName"],
+        parameters: "_models.ServerAzureADAdministrator",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ServerAzureADAdministrator"]:
         """Creates or updates an existing Azure Active Directory administrator.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -187,8 +187,8 @@ class ServerAzureADAdministratorsOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerAzureADAdministrator or the result of cls(response)
@@ -196,7 +196,7 @@ class ServerAzureADAdministratorsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerAzureADAdministrator"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerAzureADAdministrator"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -222,7 +222,14 @@ class ServerAzureADAdministratorsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -240,23 +247,23 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "models.AdministratorName"],
-        **kwargs
+        administrator_name: Union[str, "_models.AdministratorName"],
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -284,8 +291,8 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "models.AdministratorName"],
-        **kwargs
+        administrator_name: Union[str, "_models.AdministratorName"],
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Azure Active Directory administrator with the given name.
 
@@ -298,8 +305,8 @@ class ServerAzureADAdministratorsOperations:
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -329,7 +336,14 @@ class ServerAzureADAdministratorsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,8 +361,8 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.AdministratorListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.AdministratorListResult"]:
         """Gets a list of Azure Active Directory administrators in a server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -361,12 +375,12 @@ class ServerAzureADAdministratorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.AdministratorListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AdministratorListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AdministratorListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -378,9 +392,9 @@ class ServerAzureADAdministratorsOperations:
                 # Construct URL
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

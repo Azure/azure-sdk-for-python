@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2021-05-20)
+
+**Features**
+
+  - Added operation group SerialPortsOperations
+
 ## 1.0.0b1 (2020-12-10)
 
 This is beta preview version.

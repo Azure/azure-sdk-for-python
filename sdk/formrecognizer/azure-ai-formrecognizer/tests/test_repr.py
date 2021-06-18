@@ -35,7 +35,7 @@ def form_word(bounding_box):
 
 @pytest.fixture
 def form_line(bounding_box, form_word):
-    appearance = _models.TextAppearance(style=_models.TextStyle(name="other", confidence=1.0))
+    appearance = _models.TextAppearance(style_name="other", style_confidence=1.0)
     model = _models.FormLine(text="Word Word", bounding_box=bounding_box[0], words=[form_word[0], form_word[0]], page_number=1, appearance=appearance)
     model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1, kind=line, appearance={})".format(bounding_box[1], form_word[1], form_word[1], appearance)[:1024]
     assert repr(model) == model_repr

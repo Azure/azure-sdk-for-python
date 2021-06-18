@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Any, Dict
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -59,8 +60,9 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
     """
 
     def __init__(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (**Any) -> None
         self._sync_token_header = "Sync-Token"
-        self._sync_tokens = dict()
+        self._sync_tokens = {}  # type: Dict[str, Any]
 
     def on_request(self, request):  # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest) -> None

@@ -1,7 +1,26 @@
 # Release History
 
-## 1.13.1 (Unreleased)
+## 1.15.1 (Unreleased)
 
+
+## 1.15.0 (2021-06-04)
+
+### New Features
+
+- Added `BearerTokenCredentialPolicy.on_challenge` and `.authorize_request` to allow subclasses to optionally handle authentication challenges
+
+### Bug Fixes
+
+- Retry policies don't sleep after operations time out
+- The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
+
+
+## 1.14.0 (2021-05-13)
+
+### New Features
+
+- Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Added `decompress` parameter for `stream_download` method. If it is set to `False`, will not do decompression upon the stream.    #17920
 
 ## 1.13.0 (2021-04-02)
 

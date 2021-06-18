@@ -46,7 +46,7 @@ class DeploymentOperationsOperations:
         group_id: str,
         deployment_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentOperation":
         """Gets a deployments operation.
 
@@ -107,7 +107,7 @@ class DeploymentOperationsOperations:
         group_id: str,
         deployment_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentOperationsListResult"]:
         """Gets all deployments operations for a deployment.
 
@@ -184,7 +184,7 @@ class DeploymentOperationsOperations:
         self,
         deployment_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentOperation":
         """Gets a deployments operation.
 
@@ -242,7 +242,7 @@ class DeploymentOperationsOperations:
         self,
         deployment_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentOperationsListResult"]:
         """Gets all deployments operations for a deployment.
 
@@ -318,7 +318,7 @@ class DeploymentOperationsOperations:
         resource_group_name: str,
         deployment_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentOperation":
         """Gets a deployments operation.
 
@@ -380,7 +380,7 @@ class DeploymentOperationsOperations:
         resource_group_name: str,
         deployment_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentOperationsListResult"]:
         """Gets all deployments operations for a deployment.
 

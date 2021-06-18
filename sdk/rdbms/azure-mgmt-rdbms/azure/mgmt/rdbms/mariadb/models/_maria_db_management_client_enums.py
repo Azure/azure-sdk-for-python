@@ -42,6 +42,15 @@ class GeoRedundantBackup(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class MinimalTlsVersionEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enforce a minimal Tls version for the server.
+    """
+
+    TLS1_0 = "TLS1_0"
+    TLS1_1 = "TLS1_1"
+    TLS1_2 = "TLS1_2"
+    TLS_ENFORCEMENT_DISABLED = "TLSEnforcementDisabled"
+
 class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation.
     """
@@ -113,8 +122,8 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The version of a server.
     """
 
-    FIVE6 = "5.6"
-    FIVE7 = "5.7"
+    TEN2 = "10.2"
+    TEN3 = "10.3"
 
 class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The tier of the particular SKU, e.g. Basic.

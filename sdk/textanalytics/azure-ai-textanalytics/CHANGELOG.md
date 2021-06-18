@@ -1,7 +1,29 @@
 # Release History
 
-## 5.1.0b7 (Unreleased)
+## 5.1.0b8 (Unreleased)
 
+**Breaking Changes**
+
+- Changed the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed
+- Removed `AnalyzeActionsType`
+- Removed `AnalyzeActionsResult`
+- Removed `AnalyzeActionsError`
+
+## 5.1.0b7 (2021-05-18)
+
+**Breaking Changes**
+- Renamed `begin_analyze_batch_actions` to `begin_analyze_actions`.
+- Renamed `AnalyzeBatchActionsType` to `AnalyzeActionsType`.
+- Renamed `AnalyzeBatchActionsResult` to `AnalyzeActionsResult`.
+- Renamed `AnalyzeBatchActionsError` to `AnalyzeActionsError`.
+- Renamed `AnalyzeHealthcareEntitiesResultItem` to `AnalyzeHealthcareEntitiesResult`.
+- Fixed `AnalyzeHealthcareEntitiesResult`'s `statistics` to be the correct type, `TextDocumentStatistics`
+- Remove `RequestStatistics`, use `TextDocumentBatchStatistics` instead
+
+**New Features**
+- Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
+- Added `AnalyzeSentimentAction` as a supported action type for `begin_analyze_batch_actions`.
+- Added kwarg `disable_service_logs`. If set to true, you opt-out of having your text input logged on the service side for troubleshooting.
 
 ## 5.1.0b6 (2021-03-09)
 
@@ -105,7 +127,7 @@ used in conjunction with the Bing Entity Search API to fetch additional relevant
 - Removed `grapheme_offset` and `grapheme_length` from `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`
 - `TextDocumentStatistics` attribute `grapheme_count` has been renamed to `character_count`
 
-## 1.0.0b5 
+## 1.0.0b5
 
 - This was a broken release
 

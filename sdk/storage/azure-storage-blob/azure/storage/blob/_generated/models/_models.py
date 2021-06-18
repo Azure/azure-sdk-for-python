@@ -437,6 +437,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :param last_accessed_on:
     :type last_accessed_on: ~datetime.datetime
+    :param immutability_policy_expires_on:
+    :type immutability_policy_expires_on: ~datetime.datetime
+    :param immutability_policy_mode:  Possible values include: "Unlocked", "Locked", "Mutable".
+    :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+    :param legal_hold:
+    :type legal_hold: bool
     """
 
     _validation = {
@@ -482,6 +488,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         'is_sealed': {'key': 'Sealed', 'type': 'bool'},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str'},
         'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
+        'immutability_policy_expires_on': {'key': 'ImmutabilityPolicyUntilDate', 'type': 'rfc-1123'},
+        'immutability_policy_mode': {'key': 'ImmutabilityPolicyMode', 'type': 'str'},
+        'legal_hold': {'key': 'LegalHold', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Properties'
@@ -529,6 +538,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         self.is_sealed = kwargs.get('is_sealed', None)
         self.rehydrate_priority = kwargs.get('rehydrate_priority', None)
         self.last_accessed_on = kwargs.get('last_accessed_on', None)
+        self.immutability_policy_expires_on = kwargs.get('immutability_policy_expires_on', None)
+        self.immutability_policy_mode = kwargs.get('immutability_policy_mode', None)
+        self.legal_hold = kwargs.get('legal_hold', None)
 
 
 class BlobTag(msrest.serialization.Model):
@@ -600,7 +612,7 @@ class Block(msrest.serialization.Model):
     :param name: Required. The base64 encoded block ID.
     :type name: str
     :param size: Required. The block size in bytes.
-    :type size: int
+    :type size: long
     """
 
     _validation = {
@@ -610,7 +622,7 @@ class Block(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
-        'size': {'key': 'Size', 'type': 'int'},
+        'size': {'key': 'Size', 'type': 'long'},
     }
 
     def __init__(
@@ -809,6 +821,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
+     container.
+    :type is_version_level_worm_enabled: bool
     """
 
     _validation = {
@@ -829,6 +844,7 @@ class ContainerProperties(msrest.serialization.Model):
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -848,6 +864,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', None)
         self.deleted_time = kwargs.get('deleted_time', None)
         self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
+        self.is_version_level_worm_enabled = kwargs.get('is_version_level_worm_enabled', None)
 
 
 class CorsRule(msrest.serialization.Model):
@@ -913,11 +930,16 @@ class CpkInfo(msrest.serialization.Model):
     :param encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
      if the x-ms-encryption-key header is provided.
     :type encryption_key_sha256: str
+    :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+     the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
+     provided. Possible values include: "None", "AES256".
+    :type encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
         'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
         'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
     }
 
     def __init__(
@@ -927,6 +949,7 @@ class CpkInfo(msrest.serialization.Model):
         super(CpkInfo, self).__init__(**kwargs)
         self.encryption_key = kwargs.get('encryption_key', None)
         self.encryption_key_sha256 = kwargs.get('encryption_key_sha256', None)
+        self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
 
 
 class CpkScopeInfo(msrest.serialization.Model):
@@ -955,12 +978,11 @@ class DataLakeStorageError(msrest.serialization.Model):
     """DataLakeStorageError.
 
     :param data_lake_storage_error_details: The service error response object.
-    :type data_lake_storage_error_details:
-     ~azure.storage.blob.models.DataLakeStorageErrorAutoGenerated
+    :type data_lake_storage_error_details: ~azure.storage.blob.models.DataLakeStorageErrorError
     """
 
     _attribute_map = {
-        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorAutoGenerated'},
+        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
     }
 
     def __init__(
@@ -971,7 +993,7 @@ class DataLakeStorageError(msrest.serialization.Model):
         self.data_lake_storage_error_details = kwargs.get('data_lake_storage_error_details', None)
 
 
-class DataLakeStorageErrorAutoGenerated(msrest.serialization.Model):
+class DataLakeStorageErrorError(msrest.serialization.Model):
     """The service error response object.
 
     :param code: The service error code.
@@ -989,7 +1011,7 @@ class DataLakeStorageErrorAutoGenerated(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(DataLakeStorageErrorAutoGenerated, self).__init__(**kwargs)
+        super(DataLakeStorageErrorError, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
 
@@ -1611,7 +1633,7 @@ class QueryFormat(msrest.serialization.Model):
     """QueryFormat.
 
     :param type: The quick query format type. Possible values include: "delimited", "json",
-     "arrow".
+     "arrow", "parquet".
     :type type: str or ~azure.storage.blob.models.QueryFormatType
     :param delimited_text_configuration: delimited text configuration.
     :type delimited_text_configuration: ~azure.storage.blob.models.DelimitedTextConfiguration
@@ -1619,6 +1641,8 @@ class QueryFormat(msrest.serialization.Model):
     :type json_text_configuration: ~azure.storage.blob.models.JsonTextConfiguration
     :param arrow_configuration: arrow configuration.
     :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
+    :param parquet_text_configuration: Any object.
+    :type parquet_text_configuration: object
     """
 
     _attribute_map = {
@@ -1626,6 +1650,7 @@ class QueryFormat(msrest.serialization.Model):
         'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration'},
         'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration'},
         'arrow_configuration': {'key': 'ArrowConfiguration', 'type': 'ArrowConfiguration'},
+        'parquet_text_configuration': {'key': 'ParquetTextConfiguration', 'type': 'object'},
     }
 
     def __init__(
@@ -1637,6 +1662,7 @@ class QueryFormat(msrest.serialization.Model):
         self.delimited_text_configuration = kwargs.get('delimited_text_configuration', None)
         self.json_text_configuration = kwargs.get('json_text_configuration', None)
         self.arrow_configuration = kwargs.get('arrow_configuration', None)
+        self.parquet_text_configuration = kwargs.get('parquet_text_configuration', None)
 
 
 class QueryRequest(msrest.serialization.Model):

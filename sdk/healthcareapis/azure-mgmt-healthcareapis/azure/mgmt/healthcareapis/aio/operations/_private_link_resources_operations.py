@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "_models.PrivateLinkResourceListResult":
+    ) -> "_models.PrivateLinkResourceListResultDescription":
         """Gets the private link resources that need to be created for a service.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
@@ -53,16 +53,16 @@ class PrivateLinkResourcesOperations:
         :param resource_name: The name of the service instance.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.healthcareapis.models.PrivateLinkResourceListResult
+        :return: PrivateLinkResourceListResultDescription, or the result of cls(response)
+        :rtype: ~azure.mgmt.healthcareapis.models.PrivateLinkResourceListResultDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResultDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         accept = "application/json"
 
         # Construct URL
@@ -88,10 +88,10 @@ class PrivateLinkResourcesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
+        deserialized = self._deserialize('PrivateLinkResourceListResultDescription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -105,7 +105,7 @@ class PrivateLinkResourcesOperations:
         resource_name: str,
         group_name: str,
         **kwargs
-    ) -> "_models.PrivateLinkResource":
+    ) -> "_models.PrivateLinkResourceDescription":
         """Gets a private link resource that need to be created for a service.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
@@ -115,16 +115,16 @@ class PrivateLinkResourcesOperations:
         :param group_name: The name of the private link resource group.
         :type group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.healthcareapis.models.PrivateLinkResource
+        :return: PrivateLinkResourceDescription, or the result of cls(response)
+        :rtype: ~azure.mgmt.healthcareapis.models.PrivateLinkResourceDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         accept = "application/json"
 
         # Construct URL
@@ -151,10 +151,10 @@ class PrivateLinkResourcesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
+        deserialized = self._deserialize('PrivateLinkResourceDescription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

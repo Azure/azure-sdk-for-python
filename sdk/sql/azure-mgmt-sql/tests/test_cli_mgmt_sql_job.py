@@ -33,6 +33,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
             azure.mgmt.sql.SqlManagementClient
         )
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_job(self, resource_group):
 

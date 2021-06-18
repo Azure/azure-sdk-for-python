@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline import AsyncPipeline
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -378,7 +378,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -581,6 +581,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
                 **kwargs)
+            return True
+        # Encrypted with CPK
+        except ResourceExistsError:
             return True
         except HttpResponseError as error:
             try:
@@ -2445,7 +2448,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self): # pylint: disable=client-method-missing-kwargs
+    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
         # type: (...) -> ContainerClient
         """Get a client to interact with the blob's parent container.
 

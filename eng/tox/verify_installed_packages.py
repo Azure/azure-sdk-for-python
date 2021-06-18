@@ -34,8 +34,15 @@ def verify_packages(package_file_path):
         sys.exit(1)
 
     # find installed and expected packages
-    installed = dict(p.split('==') for p in get_installed_packages() if "==" in p)
-    expected = dict(p.split('==') for p in packages)
+    installed = {}
+    for p in get_installed_packages():
+        if "==" in p:
+            [package, version] = p.split("==")
+            installed[package.upper()] = version
+    expected = {}
+    for p in packages:
+        [package, version] = p.split("==")
+        expected[package.upper()] = version
 
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]
 

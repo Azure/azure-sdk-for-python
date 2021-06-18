@@ -16,12 +16,15 @@ try:
     from ._models_py3 import OperationResultsDescription
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointConnectionDescription
+    from ._models_py3 import PrivateEndpointConnectionListResultDescription
     from ._models_py3 import PrivateLinkResource
-    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkResourceDescription
+    from ._models_py3 import PrivateLinkResourceListResultDescription
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Resource
     from ._models_py3 import ServiceAccessPolicyEntry
+    from ._models_py3 import ServiceAcrConfigurationInfo
     from ._models_py3 import ServiceAuthenticationConfigurationInfo
     from ._models_py3 import ServiceCorsConfigurationInfo
     from ._models_py3 import ServiceCosmosDbConfigurationInfo
@@ -33,6 +36,7 @@ try:
     from ._models_py3 import ServicesProperties
     from ._models_py3 import ServicesResource
     from ._models_py3 import ServicesResourceIdentity
+    from ._models_py3 import SystemData
 except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityParameters  # type: ignore
     from ._models import ErrorDetails  # type: ignore
@@ -43,12 +47,15 @@ except (SyntaxError, ImportError):
     from ._models import OperationResultsDescription  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointConnectionDescription  # type: ignore
+    from ._models import PrivateEndpointConnectionListResultDescription  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
-    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkResourceDescription  # type: ignore
+    from ._models import PrivateLinkResourceListResultDescription  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ServiceAccessPolicyEntry  # type: ignore
+    from ._models import ServiceAcrConfigurationInfo  # type: ignore
     from ._models import ServiceAuthenticationConfigurationInfo  # type: ignore
     from ._models import ServiceCorsConfigurationInfo  # type: ignore
     from ._models import ServiceCosmosDbConfigurationInfo  # type: ignore
@@ -60,8 +67,10 @@ except (SyntaxError, ImportError):
     from ._models import ServicesProperties  # type: ignore
     from ._models import ServicesResource  # type: ignore
     from ._models import ServicesResourceIdentity  # type: ignore
+    from ._models import SystemData  # type: ignore
 
 from ._healthcare_apis_management_client_enums import (
+    CreatedByType,
     Kind,
     ManagedServiceIdentityType,
     OperationResultStatus,
@@ -82,12 +91,15 @@ __all__ = [
     'OperationResultsDescription',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
-    'PrivateEndpointConnectionListResult',
+    'PrivateEndpointConnectionDescription',
+    'PrivateEndpointConnectionListResultDescription',
     'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
+    'PrivateLinkResourceDescription',
+    'PrivateLinkResourceListResultDescription',
     'PrivateLinkServiceConnectionState',
     'Resource',
     'ServiceAccessPolicyEntry',
+    'ServiceAcrConfigurationInfo',
     'ServiceAuthenticationConfigurationInfo',
     'ServiceCorsConfigurationInfo',
     'ServiceCosmosDbConfigurationInfo',
@@ -99,6 +111,8 @@ __all__ = [
     'ServicesProperties',
     'ServicesResource',
     'ServicesResourceIdentity',
+    'SystemData',
+    'CreatedByType',
     'Kind',
     'ManagedServiceIdentityType',
     'OperationResultStatus',

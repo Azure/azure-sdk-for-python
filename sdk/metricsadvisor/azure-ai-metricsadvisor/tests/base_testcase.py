@@ -18,7 +18,7 @@ from azure.ai.metricsadvisor import (
     MetricsAdvisorClient,
 )
 from azure.ai.metricsadvisor.models import (
-    SQLServerDataFeed,
+    SqlServerDataFeedSource,
     DataFeedSchema,
     DataFeedMetric,
     DataFeedDimension,
@@ -26,7 +26,6 @@ from azure.ai.metricsadvisor.models import (
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
-    DataFeedOptions,
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
     MetricAnomalyAlertConditions,
@@ -59,8 +58,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             self.azure_table_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_TABLE_CONNECTION_STRING")
             self.azure_blob_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_BLOB_CONNECTION_STRING")
             self.azure_cosmosdb_connection_string = self.get_settings_value("METRICS_ADVISOR_COSMOS_DB_CONNECTION_STRING")
-            self.http_request_get_url = self.get_settings_value("METRICS_ADVISOR_HTTP_GET_URL")
-            self.http_request_post_url = self.get_settings_value("METRICS_ADVISOR_HTTP_POST_URL")
             self.application_insights_api_key = self.get_settings_value("METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY")
             self.azure_data_explorer_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING")
             self.influxdb_connection_string = self.get_settings_value("METRICS_ADVISOR_INFLUX_DB_CONNECTION_STRING")
@@ -69,7 +66,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             self.mongodb_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_MONGO_DB_CONNECTION_STRING")
             self.mysql_connection_string = self.get_settings_value("METRICS_ADVISOR_MYSQL_CONNECTION_STRING")
             self.postgresql_connection_string = self.get_settings_value("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING")
-            self.elasticsearch_auth_header = self.get_settings_value("METRICS_ADVISOR_ELASTICSEARCH_AUTH_HEADER")
             self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
             self.data_feed_id = self.get_settings_value("METRICS_ADVISOR_DATA_FEED_ID")
             self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
@@ -87,14 +83,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             )
             self.scrubber.register_name_pair(
                 self.azure_cosmosdb_connection_string,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.http_request_get_url,
-                "connectionstring"
-            )
-            self.scrubber.register_name_pair(
-                self.http_request_post_url,
                 "connectionstring"
             )
             self.scrubber.register_name_pair(
@@ -130,11 +118,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 "connectionstring"
             )
             self.scrubber.register_name_pair(
-                self.elasticsearch_auth_header,
-                "connectionstring"
-            )
-
-            self.scrubber.register_name_pair(
                 self.metric_id,
                 "metric_id"
             )
@@ -154,8 +137,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             self.azure_table_connection_string = "AZURE_TABLE_CONNECTION_STRING"
             self.azure_blob_connection_string = "AZURE_BLOB_CONNECTION_STRING"
             self.azure_cosmosdb_connection_string = "COSMOS_DB_CONNECTION_STRING"
-            self.http_request_get_url = "METRICS_ADVISOR_HTTP_GET_URL"
-            self.http_request_post_url = "METRICS_ADVISOR_HTTP_POST_URL"
             self.application_insights_api_key = "METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY"
             self.azure_data_explorer_connection_string = "METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING"
             self.influxdb_connection_string = "METRICS_ADVISOR_INFLUXDB_CONNECTION_STRING"
@@ -164,7 +145,6 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             self.mongodb_connection_string = "METRICS_ADVISOR_AZURE_MONGODB_CONNECTION_STRING"
             self.mysql_connection_string = "METRICS_ADVISOR_MYSQL_CONNECTION_STRING"
             self.postgresql_connection_string = "METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING"
-            self.elasticsearch_auth_header = "METRICS_ADVISOR_ELASTICSEARCH_AUTH"
             self.anomaly_detection_configuration_id = "anomaly_detection_configuration_id"
             self.metric_id = "metric_id"
             self.data_feed_id = "data_feed_id"
@@ -175,7 +155,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=name,
-            source=SQLServerDataFeed(
+            source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query="select * from adsample2 where Timestamp = @StartTime"
             ),
@@ -205,8 +185,8 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     sensitivity=50,
                     anomaly_detector_direction="Both",
                     suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+                        min_number=5,
+                        min_ratio=5
                     )
                 )
             )
@@ -217,7 +197,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         data_feed_name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=data_feed_name,
-            source=SQLServerDataFeed(
+            source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query=u"select * from adsample2 where Timestamp = @StartTime"
             ),
@@ -242,22 +222,20 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 ingestion_start_offset=-1,
                 stop_retry_after=-1,
             ),
-            options=DataFeedOptions(
-                admin_emails=["yournamehere@microsoft.com"],
-                data_feed_description="my first data feed",
-                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                    fill_type="SmartFilling"
-                ),
-                rollup_settings=DataFeedRollupSettings(
-                    rollup_type="NoRollup",
-                    rollup_method="None",
-                ),
-                viewer_emails=["viewers"],
-                access_mode="Private",
-                action_link_template="action link template"
-            )
-
+            admin_emails=["yournamehere@microsoft.com"],
+            data_feed_description="my first data feed",
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type="SmartFilling"
+            ),
+            rollup_settings=DataFeedRollupSettings(
+                rollup_type="NoRollup",
+                rollup_method="None",
+            ),
+            viewer_emails=["viewers"],
+            access_mode="Private",
+            action_link_template="action link template"
         )
+
 
     def _create_alert_config_for_update(self, name):
         detection_config, data_feed = self._create_data_feed_and_detection_config(name)
@@ -323,13 +301,13 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             metric_id=data_feed.metric_ids['cost'],
             description="My test metric anomaly detection configuration",
             whole_series_detection_condition=MetricDetectionCondition(
-                cross_conditions_operator="AND",
+                condition_operator="AND",
                 smart_detection_condition=SmartDetectionCondition(
                     sensitivity=50,
                     anomaly_detector_direction="Both",
                     suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+                        min_number=5,
+                        min_ratio=5
                     )
                 ),
                 hard_threshold_condition=HardThresholdCondition(

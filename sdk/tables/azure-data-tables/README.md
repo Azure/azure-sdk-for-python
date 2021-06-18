@@ -22,14 +22,14 @@ The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
 ### Install the package
 Install the Azure Data Tables client library for Python with [pip][pip_link]:
 ```bash
-pip install --pre azure-data-tables
+pip install azure-data-tables
 ```
 
 #### Create the client
 The Azure Data Tables library allows you to interact with two types of resources:
 * the tables in your account
 * the entities within those tables.
-Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `account_url` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
+Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `endpoint` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
 
 ```bash
 # Get the table service URL for the account
@@ -39,7 +39,7 @@ az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryE
 Once you have the account URL, it can be used to create the service client:
 ```python
 from azure.data.tables import TableServiceClient
-service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net/", credential=credential)
+service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net/", credential=credential)
 ```
 
 For more information about table service URL's and how to configure custom domain names for Azure Storage check out the [official documentation][azure_portal_account_url]
@@ -59,8 +59,12 @@ az storage account keys list -g MyResourceGroup -n MyStorageAccount
 
 Use the key as the credential parameter to authenticate the client:
 ```python
-    from azure.data.tables import TableServiceClient
-    service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential="<account_access_key>")
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.data.tables import TableServiceClient
+
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+
+service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=credential)
 ```
 
 ##### Creating the client from a connection string
@@ -72,9 +76,9 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ```python
-    from azure.data.tables import TableServiceClient
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
-    service = TableServiceClient.from_connection_string(conn_str=connection_string)
+from azure.data.tables import TableServiceClient
+connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
+service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
 ##### Creating the client from a SAS token
@@ -82,18 +86,19 @@ To use a [shared access signature (SAS) token][azure_sas_token], provide the tok
    functions to create a sas token for the account or table:
 
 ```python
-    from datetime import datetime, timedelta
-    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+from datetime import datetime, timedelta
+from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
-    sas_token = generate_account_sas(
-        account_name="<account-name>",
-        account_key="<account-access-key>",
-        resource_types=ResourceTypes(service=True),
-        permission=AccountSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
+credential = AzureNamedKeyCredential("my_account_name", "my_access_key")
+sas_token = generate_account_sas(
+    credential,
+    resource_types=ResourceTypes(service=True),
+    permission=AccountSasPermissions(read=True),
+    expiry=datetime.utcnow() + timedelta(hours=1),
+)
 
-    table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
+table_service_client = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=AzureSasCredential(sas_token))
 ```
 
 
@@ -199,7 +204,7 @@ Querying entities in the table:
 from azure.data.tables import TableClient
 my_filter = "PartitionKey eq 'RedMarker'"
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entities = table_client.query_entities(filter=my_filter)
+entities = table_client.query_entities(my_filter)
 for entity in entities:
     for key in entity.keys():
         print("Key: {}, Value: {}".format(key, entity[key]))
@@ -307,9 +312,9 @@ These code samples show common scenario operations with the Azure Data tables cl
 * Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
 * List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
 * Insert and delete entities: [sample_insert_delete_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py))
-* Query and list entities: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
+* Query and list entities: [sample_query_table.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
 * Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
-* Committing many requests in a single batch: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
+* Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 
 ### Additional documentation
 For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation][Tables_product_doc] on docs.microsoft.com.

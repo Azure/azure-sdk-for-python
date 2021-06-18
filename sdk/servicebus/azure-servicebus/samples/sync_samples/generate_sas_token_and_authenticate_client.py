@@ -47,11 +47,11 @@ class CustomizedSASCredential(object):
         return AccessToken(self.token, self.expiry)
 
 FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
-SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 SAS_POLICY = os.environ['SERVICE_BUS_SAS_POLICY']
 SAS_KEY = os.environ['SERVICE_BUS_SAS_KEY']
 
-auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, SESSION_QUEUE_NAME)
+auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, QUEUE_NAME)
 token_ttl = 3000  # seconds
 
 sas_token = generate_sas_token(auth_uri, SAS_POLICY, SAS_KEY, token_ttl)

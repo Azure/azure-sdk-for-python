@@ -483,6 +483,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :param last_accessed_on:
     :type last_accessed_on: ~datetime.datetime
+    :param immutability_policy_expires_on:
+    :type immutability_policy_expires_on: ~datetime.datetime
+    :param immutability_policy_mode:  Possible values include: "Unlocked", "Locked", "Mutable".
+    :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+    :param legal_hold:
+    :type legal_hold: bool
     """
 
     _validation = {
@@ -528,6 +534,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         'is_sealed': {'key': 'Sealed', 'type': 'bool'},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str'},
         'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
+        'immutability_policy_expires_on': {'key': 'ImmutabilityPolicyUntilDate', 'type': 'rfc-1123'},
+        'immutability_policy_mode': {'key': 'ImmutabilityPolicyMode', 'type': 'str'},
+        'legal_hold': {'key': 'LegalHold', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Properties'
@@ -573,6 +582,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         is_sealed: Optional[bool] = None,
         rehydrate_priority: Optional[Union[str, "RehydratePriority"]] = None,
         last_accessed_on: Optional[datetime.datetime] = None,
+        immutability_policy_expires_on: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, "BlobImmutabilityPolicyMode"]] = None,
+        legal_hold: Optional[bool] = None,
         **kwargs
     ):
         super(BlobPropertiesInternal, self).__init__(**kwargs)
@@ -613,6 +625,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         self.is_sealed = is_sealed
         self.rehydrate_priority = rehydrate_priority
         self.last_accessed_on = last_accessed_on
+        self.immutability_policy_expires_on = immutability_policy_expires_on
+        self.immutability_policy_mode = immutability_policy_mode
+        self.legal_hold = legal_hold
 
 
 class BlobTag(msrest.serialization.Model):
@@ -689,7 +704,7 @@ class Block(msrest.serialization.Model):
     :param name: Required. The base64 encoded block ID.
     :type name: str
     :param size: Required. The block size in bytes.
-    :type size: int
+    :type size: long
     """
 
     _validation = {
@@ -699,7 +714,7 @@ class Block(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
-        'size': {'key': 'Size', 'type': 'int'},
+        'size': {'key': 'Size', 'type': 'long'},
     }
 
     def __init__(
@@ -920,6 +935,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
+     container.
+    :type is_version_level_worm_enabled: bool
     """
 
     _validation = {
@@ -940,6 +958,7 @@ class ContainerProperties(msrest.serialization.Model):
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -957,6 +976,7 @@ class ContainerProperties(msrest.serialization.Model):
         prevent_encryption_scope_override: Optional[bool] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
+        is_version_level_worm_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(ContainerProperties, self).__init__(**kwargs)
@@ -972,6 +992,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = prevent_encryption_scope_override
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
+        self.is_version_level_worm_enabled = is_version_level_worm_enabled
 
 
 class CorsRule(msrest.serialization.Model):
@@ -1043,11 +1064,16 @@ class CpkInfo(msrest.serialization.Model):
     :param encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
      if the x-ms-encryption-key header is provided.
     :type encryption_key_sha256: str
+    :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+     the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
+     provided. Possible values include: "None", "AES256".
+    :type encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
         'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
         'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
     }
 
     def __init__(
@@ -1055,11 +1081,13 @@ class CpkInfo(msrest.serialization.Model):
         *,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, "EncryptionAlgorithmType"]] = None,
         **kwargs
     ):
         super(CpkInfo, self).__init__(**kwargs)
         self.encryption_key = encryption_key
         self.encryption_key_sha256 = encryption_key_sha256
+        self.encryption_algorithm = encryption_algorithm
 
 
 class CpkScopeInfo(msrest.serialization.Model):
@@ -1090,25 +1118,24 @@ class DataLakeStorageError(msrest.serialization.Model):
     """DataLakeStorageError.
 
     :param data_lake_storage_error_details: The service error response object.
-    :type data_lake_storage_error_details:
-     ~azure.storage.blob.models.DataLakeStorageErrorAutoGenerated
+    :type data_lake_storage_error_details: ~azure.storage.blob.models.DataLakeStorageErrorError
     """
 
     _attribute_map = {
-        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorAutoGenerated'},
+        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
     }
 
     def __init__(
         self,
         *,
-        data_lake_storage_error_details: Optional["DataLakeStorageErrorAutoGenerated"] = None,
+        data_lake_storage_error_details: Optional["DataLakeStorageErrorError"] = None,
         **kwargs
     ):
         super(DataLakeStorageError, self).__init__(**kwargs)
         self.data_lake_storage_error_details = data_lake_storage_error_details
 
 
-class DataLakeStorageErrorAutoGenerated(msrest.serialization.Model):
+class DataLakeStorageErrorError(msrest.serialization.Model):
     """The service error response object.
 
     :param code: The service error code.
@@ -1129,7 +1156,7 @@ class DataLakeStorageErrorAutoGenerated(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
-        super(DataLakeStorageErrorAutoGenerated, self).__init__(**kwargs)
+        super(DataLakeStorageErrorError, self).__init__(**kwargs)
         self.code = code
         self.message = message
 
@@ -1829,7 +1856,7 @@ class QueryFormat(msrest.serialization.Model):
     """QueryFormat.
 
     :param type: The quick query format type. Possible values include: "delimited", "json",
-     "arrow".
+     "arrow", "parquet".
     :type type: str or ~azure.storage.blob.models.QueryFormatType
     :param delimited_text_configuration: delimited text configuration.
     :type delimited_text_configuration: ~azure.storage.blob.models.DelimitedTextConfiguration
@@ -1837,6 +1864,8 @@ class QueryFormat(msrest.serialization.Model):
     :type json_text_configuration: ~azure.storage.blob.models.JsonTextConfiguration
     :param arrow_configuration: arrow configuration.
     :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
+    :param parquet_text_configuration: Any object.
+    :type parquet_text_configuration: object
     """
 
     _attribute_map = {
@@ -1844,6 +1873,7 @@ class QueryFormat(msrest.serialization.Model):
         'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration'},
         'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration'},
         'arrow_configuration': {'key': 'ArrowConfiguration', 'type': 'ArrowConfiguration'},
+        'parquet_text_configuration': {'key': 'ParquetTextConfiguration', 'type': 'object'},
     }
 
     def __init__(
@@ -1853,6 +1883,7 @@ class QueryFormat(msrest.serialization.Model):
         delimited_text_configuration: Optional["DelimitedTextConfiguration"] = None,
         json_text_configuration: Optional["JsonTextConfiguration"] = None,
         arrow_configuration: Optional["ArrowConfiguration"] = None,
+        parquet_text_configuration: Optional[object] = None,
         **kwargs
     ):
         super(QueryFormat, self).__init__(**kwargs)
@@ -1860,6 +1891,7 @@ class QueryFormat(msrest.serialization.Model):
         self.delimited_text_configuration = delimited_text_configuration
         self.json_text_configuration = json_text_configuration
         self.arrow_configuration = arrow_configuration
+        self.parquet_text_configuration = parquet_text_configuration
 
 
 class QueryRequest(msrest.serialization.Model):

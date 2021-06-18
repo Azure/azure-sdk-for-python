@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import AsyncIterator
+
 from .._deserialize import from_blob_properties
 
 
@@ -29,6 +31,11 @@ class StorageStreamDownloader(object):
         return self.size
 
     def chunks(self):
+        # type: () -> AsyncIterator[bytes]
+        """Iterate over chunks in the download stream.
+
+        :rtype: AsyncIterator[bytes]
+        """
         return self._downloader.chunks()
 
     async def readall(self):

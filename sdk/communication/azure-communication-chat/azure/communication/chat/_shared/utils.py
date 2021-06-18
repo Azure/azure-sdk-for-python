@@ -6,19 +6,25 @@
 
 import base64
 import json
-import time
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
 from datetime import datetime
+import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
-
 def _convert_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
+    """
+    Converts DateTime in local time to the Epoch in UTC in second.
+
+    :param input_datetime: Input datetime
+    :type input_datetime: datetime
+    :return: Integer
+    :rtype: int
+    """
+    return int(calendar.timegm(expires_on.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -54,7 +60,7 @@ def get_current_utc_time():
 
 def get_current_utc_as_int():
     # type: () -> int
-    current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
+    current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 def create_access_token(token):
@@ -88,6 +94,7 @@ def create_access_token(token):
 def get_authentication_policy(
         endpoint, # type: str
         credential, # type: TokenCredential or str
+        decode_url=False, # type: bool
         is_async=False, # type: bool
 ):
     # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
@@ -106,12 +113,16 @@ def get_authentication_policy(
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if hasattr(credential, "get_token"):
+        if is_async:
+            from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+            return AsyncBearerTokenCredentialPolicy(
+                credential, "https://communication.azure.com//.default")
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
     if isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
-        return HMACCredentialsPolicy(endpoint, credential, decode_url=is_async)
+        return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))

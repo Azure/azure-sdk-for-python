@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+from datetime import datetime
+from typing import Any, Dict, Union
 
 try:
     from urllib.parse import urlparse, quote
@@ -212,12 +213,13 @@ class PathClient(StorageAccountHostsMixin):
         options = {
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
             'timeout': kwargs.pop('timeout', None)}
         options.update(kwargs)
         return options
 
     def _delete(self, **kwargs):
-        # type: (bool, **Any) -> None
+        # type: (**Any) -> Dict[Union[datetime, str]]
         """
         Marks the specified path for deletion.
 

@@ -2,3 +2,4 @@ include *.md
 include azure/__init__.py
 recursive-include tests *.py
 recursive-include samples *.py
+include azure/servicebus/py.typed

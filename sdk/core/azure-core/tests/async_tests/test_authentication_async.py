@@ -8,14 +8,15 @@ import time
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 import pytest
 
+pytestmark = pytest.mark.asyncio
 
-@pytest.mark.asyncio
+
 async def test_bearer_policy_adds_header():
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
@@ -23,6 +24,7 @@ async def test_bearer_policy_adds_header():
 
     async def verify_authorization_header(request):
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
+        return Mock()
 
     get_token_calls = 0
 
@@ -43,7 +45,6 @@ async def test_bearer_policy_adds_header():
     assert get_token_calls == 1
 
 
-@pytest.mark.asyncio
 async def test_bearer_policy_send():
     """The bearer token policy should invoke the next policy's send method and return the result"""
     expected_request = HttpRequest("GET", "https://spam.eggs")
@@ -60,7 +61,6 @@ async def test_bearer_policy_send():
     assert response is expected_response
 
 
-@pytest.mark.asyncio
 async def test_bearer_policy_token_caching():
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     expected_token = good_for_one_hour
@@ -74,7 +74,7 @@ async def test_bearer_policy_token_caching():
     credential = Mock(get_token=get_token)
     policies = [
         AsyncBearerTokenCredentialPolicy(credential, "scope"),
-        Mock(send=Mock(return_value=get_completed_future())),
+        Mock(send=Mock(return_value=get_completed_future(Mock()))),
     ]
     pipeline = AsyncPipeline(transport=Mock, policies=policies)
 
@@ -87,7 +87,10 @@ async def test_bearer_policy_token_caching():
     expired_token = AccessToken("token", time.time())
     get_token_calls = 0
     expected_token = expired_token
-    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=lambda _: get_completed_future())]
+    policies = [
+        AsyncBearerTokenCredentialPolicy(credential, "scope"),
+        Mock(send=lambda _: get_completed_future(Mock())),
+    ]
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))
@@ -97,12 +100,12 @@ async def test_bearer_policy_token_caching():
     assert get_token_calls == 2  # token expired -> policy should call get_token
 
 
-@pytest.mark.asyncio
 async def test_bearer_policy_optionally_enforces_https():
     """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
 
     async def assert_option_popped(request, **kwargs):
         assert "enforce_https" not in kwargs, "AsyncBearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
+        return Mock()
 
     credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("***", 42)))
     pipeline = AsyncPipeline(
@@ -124,36 +127,73 @@ async def test_bearer_policy_optionally_enforces_https():
     await pipeline.run(HttpRequest("GET", "https://secure"))
 
 
-@pytest.mark.asyncio
-async def test_preserves_enforce_https_opt_out():
+async def test_bearer_policy_preserves_enforce_https_opt_out():
     """The policy should use request context to preserve an opt out from https enforcement"""
 
     class ContextValidator(SansIOHTTPPolicy):
         def on_request(self, request):
             assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
+            return Mock()
 
     get_token = get_completed_future(AccessToken("***", 42))
     credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
-    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future()), policies=policies)
+    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future(Mock())), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "http://not.secure"), enforce_https=False)
 
 
-@pytest.mark.asyncio
-async def test_context_unmodified_by_default():
+async def test_bearer_policy_context_unmodified_by_default():
     """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
 
     class ContextValidator(SansIOHTTPPolicy):
         def on_request(self, request):
             assert not any(request.context), "the policy shouldn't add to the request's context"
+            return Mock()
 
     get_token = get_completed_future(AccessToken("***", 42))
     credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
-    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future()), policies=policies)
+    pipeline = AsyncPipeline(transport=Mock(send=lambda *_, **__: get_completed_future(Mock())), policies=policies)
 
     await pipeline.run(HttpRequest("GET", "https://secure"))
+
+
+async def test_bearer_policy_calls_sansio_methods():
+    """AsyncBearerTokenCredentialPolicy should call SansIOHttpPolicy methods as does _SansIOAsyncHTTPPolicyRunner"""
+
+    class TestPolicy(AsyncBearerTokenCredentialPolicy):
+        def __init__(self, *args, **kwargs):
+            super(TestPolicy, self).__init__(*args, **kwargs)
+            self.on_exception = Mock(return_value=False)
+            self.on_request = Mock()
+            self.on_response = Mock()
+
+        async def send(self, request):
+            self.request = request
+            self.response = await super(TestPolicy, self).send(request)
+            return self.response
+
+    credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", int(time.time()) + 3600))))
+    policy = TestPolicy(credential, "scope")
+    transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
+
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+    await pipeline.run(HttpRequest("GET", "https://localhost"))
+
+    policy.on_request.assert_called_once_with(policy.request)
+    policy.on_response.assert_called_once_with(policy.request, policy.response)
+
+    # the policy should call on_exception when next.send() raises
+    class TestException(Exception):
+        pass
+
+    transport = Mock(send=Mock(side_effect=TestException))
+    policy = TestPolicy(credential, "scope")
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+    with pytest.raises(TestException):
+        await pipeline.run(HttpRequest("GET", "https://localhost"))
+    policy.on_exception.assert_called_once_with(policy.request)
 
 
 def get_completed_future(result=None):

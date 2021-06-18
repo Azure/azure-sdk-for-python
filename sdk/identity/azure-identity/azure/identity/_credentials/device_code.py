@@ -27,8 +27,9 @@ class DeviceCodeCredential(InteractiveCredential):
     A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
     authenticates successfully, the credential receives an access token.
 
-    For more information about the device code flow, see Azure Active Directory documentation:
-    https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code
+    This credential is primarily useful for authenticating a user in an environment without a web browser, such as an
+    SSH session. If a web browser is available, :class:`~azure.identity.InteractiveBrowserCredential` is more
+    convenient because it automatically opens a browser to the login page.
 
     :param str client_id: client ID of the application users will authenticate to. When not specified users will
           authenticate to an Azure development application.

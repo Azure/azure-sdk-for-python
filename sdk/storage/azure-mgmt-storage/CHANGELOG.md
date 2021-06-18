@@ -1,5 +1,46 @@
 # Release History
 
+## 18.0.0 (2021-05-13)
+
+**Features**
+
+  - Model StorageAccountUpdateParameters has a new parameter allow_cross_tenant_replication
+  - Model BlobContainer has a new parameter immutable_storage_with_versioning
+  - Model FileShareItem has a new parameter lease_state
+  - Model FileShareItem has a new parameter lease_duration
+  - Model FileShareItem has a new parameter lease_status
+  - Model FileShareItem has a new parameter signed_identifiers
+  - Model FileShare has a new parameter lease_state
+  - Model FileShare has a new parameter lease_duration
+  - Model FileShare has a new parameter lease_status
+  - Model FileShare has a new parameter signed_identifiers
+  - Model StorageAccountCreateParameters has a new parameter allow_cross_tenant_replication
+  - Model AzureFilesIdentityBasedAuthentication has a new parameter default_share_permission
+  - Model StorageAccount has a new parameter allow_cross_tenant_replication
+  - Model ListContainerItem has a new parameter immutable_storage_with_versioning
+  - Added operation BlobContainersOperations.begin_object_level_worm
+  - Added operation FileSharesOperations.lease
+
+**Breaking changes**
+
+  - Operation FileSharesOperations.delete has a new signature
+  - Model BlobInventoryPolicySchema no longer has parameter destination
+  - Model BlobInventoryPolicyRule has a new required parameter destination
+  - Model BlobInventoryPolicyDefinition has a new signature
+
+## 17.1.0 (2021-04-13)
+
+**Features**
+
+  - Model StorageAccountKey has a new parameter creation_time
+  - Model StorageAccountUpdateParameters has a new parameter sas_policy
+  - Model StorageAccountUpdateParameters has a new parameter key_policy
+  - Model StorageAccountCreateParameters has a new parameter sas_policy
+  - Model StorageAccountCreateParameters has a new parameter key_policy
+  - Model StorageAccount has a new parameter sas_policy
+  - Model StorageAccount has a new parameter key_policy
+  - Model StorageAccount has a new parameter key_creation_time
+
 ## 17.0.0 (2021-02-20)
 
 **Features**

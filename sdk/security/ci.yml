@@ -32,5 +32,3 @@ extends:
     Artifacts:
     - name: azure-mgmt-security
       safeName: azuremgmtsecurity
-    - name: azure-security-nspkg
-      safeName: azuresecuritynspkg

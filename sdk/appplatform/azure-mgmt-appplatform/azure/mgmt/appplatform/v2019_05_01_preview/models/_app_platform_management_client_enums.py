@@ -34,6 +34,7 @@ class AppResourceProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str,
     FAILED = "Failed"
     CREATING = "Creating"
     UPDATING = "Updating"
+    DELETING = "Deleting"
 
 class ConfigServerState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """State of the config server.
@@ -53,6 +54,7 @@ class DeploymentResourceProvisioningState(with_metaclass(_CaseInsensitiveEnumMet
     UPDATING = "Updating"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+    DELETING = "Deleting"
 
 class DeploymentResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the Deployment
@@ -148,6 +150,13 @@ class TraceProxyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
+
+class TrafficDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The direction of required traffic
+    """
+
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
 
 class UserSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the source uploaded

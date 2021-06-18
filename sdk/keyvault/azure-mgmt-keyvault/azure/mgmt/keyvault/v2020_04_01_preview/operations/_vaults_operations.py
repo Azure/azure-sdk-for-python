@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VaultsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,16 +51,16 @@ class VaultsOperations(object):
         self,
         resource_group_name,  # type: str
         vault_name,  # type: str
-        parameters,  # type: "models.VaultCreateOrUpdateParameters"
+        parameters,  # type: "_models.VaultCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Vault"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        # type: (...) -> "_models.Vault"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -109,10 +109,10 @@ class VaultsOperations(object):
         self,
         resource_group_name,  # type: str
         vault_name,  # type: str
-        parameters,  # type: "models.VaultCreateOrUpdateParameters"
+        parameters,  # type: "_models.VaultCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Vault"]
+        # type: (...) -> LROPoller["_models.Vault"]
         """Create or update a key vault in the specified subscription.
 
         :param resource_group_name: The name of the Resource Group to which the server belongs.
@@ -123,8 +123,8 @@ class VaultsOperations(object):
         :type parameters: ~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultCreateOrUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Vault or the result of cls(response)
@@ -132,7 +132,7 @@ class VaultsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -157,7 +157,13 @@ class VaultsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -175,10 +181,10 @@ class VaultsOperations(object):
         self,
         resource_group_name,  # type: str
         vault_name,  # type: str
-        parameters,  # type: "models.VaultPatchParameters"
+        parameters,  # type: "_models.VaultPatchParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Vault"
+        # type: (...) -> "_models.Vault"
         """Update a key vault in the specified subscription.
 
         :param resource_group_name: The name of the Resource Group to which the server belongs.
@@ -192,12 +198,12 @@ class VaultsOperations(object):
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Vault
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -265,7 +271,8 @@ class VaultsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -282,6 +289,7 @@ class VaultsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -302,7 +310,7 @@ class VaultsOperations(object):
         vault_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Vault"
+        # type: (...) -> "_models.Vault"
         """Gets the specified Azure key vault.
 
         :param resource_group_name: The name of the Resource Group to which the vault belongs.
@@ -314,12 +322,12 @@ class VaultsOperations(object):
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Vault
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Vault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Vault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -359,11 +367,11 @@ class VaultsOperations(object):
         self,
         resource_group_name,  # type: str
         vault_name,  # type: str
-        operation_kind,  # type: Union[str, "models.AccessPolicyUpdateKind"]
-        parameters,  # type: "models.VaultAccessPolicyParameters"
+        operation_kind,  # type: Union[str, "_models.AccessPolicyUpdateKind"]
+        parameters,  # type: "_models.VaultAccessPolicyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VaultAccessPolicyParameters"
+        # type: (...) -> "_models.VaultAccessPolicyParameters"
         """Update access policies in a key vault in the specified subscription.
 
         :param resource_group_name: The name of the Resource Group to which the vault belongs.
@@ -379,12 +387,12 @@ class VaultsOperations(object):
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultAccessPolicyParameters
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VaultAccessPolicyParameters"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VaultAccessPolicyParameters"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -436,7 +444,7 @@ class VaultsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VaultListResult"]
+        # type: (...) -> Iterable["_models.VaultListResult"]
         """The List operation gets information about the vaults associated with the subscription and
         within the specified resource group.
 
@@ -449,12 +457,12 @@ class VaultsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VaultListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VaultListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -512,7 +520,7 @@ class VaultsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.VaultListResult"]
+        # type: (...) -> Iterable["_models.VaultListResult"]
         """The List operation gets information about the vaults associated with the subscription.
 
         :param top: Maximum number of results to return.
@@ -522,12 +530,12 @@ class VaultsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VaultListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VaultListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -583,7 +591,7 @@ class VaultsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedVaultListResult"]
+        # type: (...) -> Iterable["_models.DeletedVaultListResult"]
         """Gets information about the deleted vaults in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -591,12 +599,12 @@ class VaultsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.DeletedVaultListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedVaultListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedVaultListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -652,7 +660,7 @@ class VaultsOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedVault"
+        # type: (...) -> "_models.DeletedVault"
         """Gets the deleted Azure key vault.
 
         :param vault_name: The name of the vault.
@@ -664,12 +672,12 @@ class VaultsOperations(object):
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.DeletedVault
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedVault"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedVault"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -717,7 +725,8 @@ class VaultsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self._purge_deleted_initial.metadata['url']  # type: ignore
@@ -734,6 +743,7 @@ class VaultsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -763,8 +773,8 @@ class VaultsOperations(object):
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -793,7 +803,13 @@ class VaultsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
+            'location': self._serialize.url("location", location, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -812,7 +828,7 @@ class VaultsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ResourceListResult"]
+        # type: (...) -> Iterable["_models.ResourceListResult"]
         """The List operation gets information about the vaults associated with the subscription.
 
         :param top: Maximum number of results to return.
@@ -822,13 +838,13 @@ class VaultsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.ResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         filter = "resourceType eq 'Microsoft.KeyVault/vaults'"
-        api_version = "2015-11-01"
+        api_version = "2020-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -883,10 +899,10 @@ class VaultsOperations(object):
 
     def check_name_availability(
         self,
-        vault_name,  # type: "models.VaultCheckNameAvailabilityParameters"
+        vault_name,  # type: "_models.VaultCheckNameAvailabilityParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CheckNameAvailabilityResult"
+        # type: (...) -> "_models.CheckNameAvailabilityResult"
         """Checks that the vault name is valid and is not already in use.
 
         :param vault_name: The name of the vault.
@@ -896,12 +912,12 @@ class VaultsOperations(object):
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.CheckNameAvailabilityResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CheckNameAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameAvailabilityResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-09-01"
+        api_version = "2020-04-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

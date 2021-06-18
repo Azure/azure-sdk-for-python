@@ -11,7 +11,8 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
-from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._credentials.imds import IMDS_URL
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
@@ -460,9 +461,9 @@ async def test_imds():
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(url=Endpoints.IMDS),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
             Request(
-                base_url=Endpoints.IMDS,
+                base_url=IMDS_URL,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -496,14 +497,13 @@ async def test_imds_user_assigned_identity():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
-    url = Endpoints.IMDS
     scope = "scope"
     client_id = "some-guid"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=url),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
             Request(
-                base_url=url,
+                base_url=IMDS_URL,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "client_id": client_id, "resource": scope},

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._hybrid_compute_management_client import HybridComputeManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['HybridComputeManagementClient']
 
 try:

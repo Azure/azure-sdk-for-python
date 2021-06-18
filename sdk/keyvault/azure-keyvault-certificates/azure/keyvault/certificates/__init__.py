@@ -22,11 +22,10 @@ from ._models import(
     DeletedCertificate,
     IssuerProperties,
     LifetimeAction,
-    KeyVaultCertificate
+    KeyVaultCertificate,
+    KeyVaultCertificateIdentifier
 )
-from ._parse_id import parse_key_vault_certificate_id
 from ._shared.client_base import ApiVersion
-from ._shared import KeyVaultResourceId
 
 __all__ = [
     "ApiVersion",
@@ -44,14 +43,13 @@ __all__ = [
     "KeyCurveName",
     "KeyType",
     "KeyVaultCertificate",
+    "KeyVaultCertificateIdentifier",
     "KeyUsageType",
     "LifetimeAction",
     "CertificateContentType",
     "WellKnownIssuerNames",
     "CertificateIssuer",
-    "IssuerProperties",
-    "parse_key_vault_certificate_id",
-    "KeyVaultResourceId"
+    "IssuerProperties"
 ]
 
 from ._version import VERSION

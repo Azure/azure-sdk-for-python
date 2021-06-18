@@ -1,5 +1,14 @@
 # Release History
 
+## 6.0.0 (2021-04-08)
+
+**Features**
+
+  - Model MonitoringSettingProperties has a new parameter app_insights_agent_versions
+  - Model MonitoringSettingProperties has a new parameter app_insights_sampling_rate
+  - Model AppResourceProperties has a new parameter enable_end_to_end_tls
+  - Model NetworkProfile has a new parameter required_traffics
+
 ## 6.0.0b1 (2020-12-03)
 
 This is beta preview version.

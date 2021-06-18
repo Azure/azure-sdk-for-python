@@ -155,7 +155,7 @@ def edit_file_setup():
         list_in = file_in.readlines()
     new_line = f'#override azure-mgmt-{SERVICE_NAME} msrest>=0.6.21'
     for i in range(0, len(list_in)):
-        if list_in[i].find('new_line') > -1:
+        if list_in[i].find(f'{new_line}') > -1:
             return
     list_in.append(f'{new_line}\n')
     with open(f'shared_requirements.txt', 'w') as file_out:
@@ -279,18 +279,26 @@ def run_live_test():
         my_print('live test run done, do not find failure !!!')
 
 
-def edit_useless_file():
-    file = 'version.py' if TRACK == '1' else '_version.py'
-    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/azure/mgmt/{SERVICE_NAME}'
-    for folder in os.listdir(path):
-        if os.path.isdir(f'{path}/{folder}') and os.path.exists(f'{path}/{folder}/{file}'):
-            with open(f'{path}/{folder}/{file}', 'r') as file_in:
+def edit_recursion(path, file):
+    all_folder = os.listdir(path)
+    for folder in all_folder:
+        if file == folder:
+            tmp_file = f'{path}/{file}'
+            with open(tmp_file, 'r') as file_in:
                 list_in = file_in.readlines()
             for i in range(0, len(list_in)):
                 if list_in[i].find('VERSION') > -1:
                     list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
-            with open(f'{path}/{folder}/{file}', 'w') as file_out:
+            with open(tmp_file, 'w') as file_out:
                 file_out.writelines(list_in)
+        elif os.path.isdir(f'{path}/{folder}'):
+            edit_recursion(f'{path}/{folder}', file)
+
+
+def edit_useless_file():
+    file = 'version.py' if TRACK == '1' else '_version.py'
+    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
+    edit_recursion(path, file)
 
 
 def commit_test():

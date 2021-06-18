@@ -50,6 +50,7 @@ try:
     from ._models_py3 import PersistentDisk
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegenerateTestKeyRequestPayload
+    from ._models_py3 import RequiredTraffic
     from ._models_py3 import Resource
     from ._models_py3 import ResourceSku
     from ._models_py3 import ResourceSkuCapabilities
@@ -114,6 +115,7 @@ except (SyntaxError, ImportError):
     from ._models import PersistentDisk  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import RegenerateTestKeyRequestPayload  # type: ignore
+    from ._models import RequiredTraffic  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceSku  # type: ignore
     from ._models import ResourceSkuCapabilities  # type: ignore
@@ -150,6 +152,7 @@ from ._app_platform_management_client_enums import (
     SupportedRuntimeValue,
     TestKeyType,
     TraceProxyState,
+    TrafficDirection,
     UserSourceType,
 )
 
@@ -197,6 +200,7 @@ __all__ = [
     'PersistentDisk',
     'ProxyResource',
     'RegenerateTestKeyRequestPayload',
+    'RequiredTraffic',
     'Resource',
     'ResourceSku',
     'ResourceSkuCapabilities',
@@ -231,5 +235,6 @@ __all__ = [
     'SupportedRuntimeValue',
     'TestKeyType',
     'TraceProxyState',
+    'TrafficDirection',
     'UserSourceType',
 ]

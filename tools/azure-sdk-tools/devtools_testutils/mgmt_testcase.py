@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 from collections import namedtuple
 import inspect
+import re
+import six
 import os.path
 import zlib
 
@@ -17,6 +19,7 @@ from azure_devtools.scenario_tests import (
     DeploymentNameReplacer,
     RequestUrlNormalizer,
 )
+from azure_devtools.scenario_tests.utilities import is_text_payload
 from .azure_testcase import AzureTestCase
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
@@ -65,6 +68,7 @@ class AzureMgmtTestCase(AzureTestCase):
         **kwargs
     ):
         self.region = "westus"
+        self.re_replacer = RENameReplacer()
         super(AzureMgmtTestCase, self).__init__(
             method_name,
             config_file=config_file,
@@ -76,15 +80,14 @@ class AzureMgmtTestCase(AzureTestCase):
             replay_patches=replay_patches,
             **kwargs
         )
+        self.recording_processors.append(self.re_replacer)
 
     def _setup_scrubber(self):
         constants_to_scrub = ["SUBSCRIPTION_ID", "TENANT_ID"]
         for key in constants_to_scrub:
             key_value = self.get_settings_value(key)
             if key_value and hasattr(self._fake_settings, key):
-                self.scrubber.register_name_pair(
-                    key_value, getattr(self._fake_settings, key)
-                )
+                self.scrubber.register_name_pair(key_value, getattr(self._fake_settings, key))
 
     def setUp(self):
         # Every test uses a different resource group name calculated from its
@@ -119,9 +122,7 @@ class AzureMgmtTestCase(AzureTestCase):
         if not subscription_id:
             subscription_id = self.settings.SUBSCRIPTION_ID
 
-        return self.create_basic_client(
-            client_class, subscription_id=subscription_id, **kwargs
-        )
+        return self.create_basic_client(client_class, subscription_id=subscription_id, **kwargs)
 
 
 class AzureMgmtPreparer(AbstractPreparer):
@@ -134,9 +135,7 @@ class AzureMgmtPreparer(AbstractPreparer):
         client_kwargs=None,
         random_name_enabled=False,
     ):
-        super(AzureMgmtPreparer, self).__init__(
-            name_prefix, random_name_length, disable_recording=disable_recording
-        )
+        super(AzureMgmtPreparer, self).__init__(name_prefix, random_name_length, disable_recording=disable_recording)
         self.client = None
         self.resource = playback_fake_resource
         self.client_kwargs = client_kwargs or {}
@@ -174,6 +173,43 @@ class AzureMgmtPreparer(AbstractPreparer):
         if not subscription_id:
             subscription_id = self.test_class_instance.settings.SUBSCRIPTION_ID
 
-        return self.test_class_instance.create_basic_client(
-            client_class, subscription_id=subscription_id, **kwargs
-        )
+        return self.test_class_instance.create_basic_client(client_class, subscription_id=subscription_id, **kwargs)
+
+
+class RENameReplacer(GeneralNameReplacer):
+    def __init__(self):
+        super(RENameReplacer, self).__init__()
+        self.patterns = []
+
+    def register_pattern_pair(self, expr, new):
+        self.patterns.append((expr, new))
+
+    def process_request(self, request):
+        request = super(RENameReplacer, self).process_request(request)
+        for expr, new in self.patterns:
+            if is_text_payload(request) and request.body:
+                if isinstance(request.body, dict):
+                    continue
+
+                body = six.ensure_str(request.body)
+                for old in re.findall(expr, body):
+                    request.body = body.replace(old, new)
+        return request
+
+    def process_response(self, response):
+        response = super(RENameReplacer, self).process_response(response)
+        for expr, new in self.patterns:
+            if is_text_payload(response) and response["body"]["string"]:
+                if isinstance(response["body"]["string"], bytes):
+                    body = response["body"]["string"].decode("utf8", "backslashreplace")
+                else:
+                    body = response["body"]["string"]
+
+                for old in re.findall(expr, body):
+                    body = body.replace(old, new)
+
+                if isinstance(response["body"]["string"], bytes):
+                    response["body"]["string"] = body.encode("utf8", "backslashreplace")
+                else:
+                    response["body"]["string"] = body
+        return response

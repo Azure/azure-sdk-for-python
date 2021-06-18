@@ -45,7 +45,7 @@ class AppServiceEnvironmentsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppServiceEnvironmentCollection"]:
         """Get all App Service Environments for a subscription.
 
@@ -101,7 +101,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -115,7 +115,7 @@ class AppServiceEnvironmentsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppServiceEnvironmentCollection"]:
         """Get all App Service Environments in a resource group.
 
@@ -174,7 +174,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -189,7 +189,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppServiceEnvironmentResource":
         """Get the properties of an App Service Environment.
 
@@ -235,7 +235,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AppServiceEnvironmentResource', pipeline_response)
@@ -251,7 +251,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         hosting_environment_envelope: "_models.AppServiceEnvironmentResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppServiceEnvironmentResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AppServiceEnvironmentResource"]
         error_map = {
@@ -289,7 +289,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -312,7 +312,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         hosting_environment_envelope: "_models.AppServiceEnvironmentResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AppServiceEnvironmentResource"]:
         """Create or update an App Service Environment.
 
@@ -326,8 +326,8 @@ class AppServiceEnvironmentsOperations:
         :type hosting_environment_envelope: ~azure.mgmt.web.v2019_08_01.models.AppServiceEnvironmentResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServiceEnvironmentResource or the result of cls(response)
@@ -385,7 +385,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         force_delete: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -420,7 +420,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -433,7 +433,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         force_delete: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an App Service Environment.
 
@@ -448,8 +448,8 @@ class AppServiceEnvironmentsOperations:
         :type force_delete: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -504,7 +504,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         hosting_environment_envelope: "_models.AppServiceEnvironmentPatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AppServiceEnvironmentResource":
         """Create or update an App Service Environment.
 
@@ -557,7 +557,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -579,7 +579,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StampCapacityCollection"]:
         """Get the used, available, and total worker capacity an App Service Environment.
 
@@ -641,7 +641,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -656,7 +656,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AddressResponse":
         """Get IP addresses assigned to an App Service Environment.
 
@@ -702,7 +702,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AddressResponse', pipeline_response)
@@ -718,7 +718,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         vnet_info: "_models.VirtualNetworkProfile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebAppCollection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
@@ -756,7 +756,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -776,7 +776,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         vnet_info: "_models.VirtualNetworkProfile",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.WebAppCollection"]]:
         """Move an App Service Environment to a different VNET.
 
@@ -790,8 +790,8 @@ class AppServiceEnvironmentsOperations:
         :type vnet_info: ~azure.mgmt.web.v2019_08_01.models.VirtualNetworkProfile
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either WebAppCollection or the result of cls(response)
@@ -853,7 +853,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -911,7 +911,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.HostingEnvironmentDiagnostics"]:
         """Get diagnostic information for an App Service Environment.
 
@@ -957,7 +957,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[HostingEnvironmentDiagnostics]', pipeline_response)
@@ -973,7 +973,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         diagnostics_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostingEnvironmentDiagnostics":
         """Get a diagnostics item for an App Service Environment.
 
@@ -1022,7 +1022,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostingEnvironmentDiagnostics', pipeline_response)
@@ -1037,7 +1037,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InboundEnvironmentEndpointCollection"]:
         """Get the network endpoints of all inbound dependencies of an App Service Environment.
 
@@ -1100,7 +1100,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1115,7 +1115,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkerPoolCollection"]:
         """Get all multi-role pools.
 
@@ -1177,7 +1177,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1192,7 +1192,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkerPoolResource":
         """Get properties of a multi-role pool.
 
@@ -1238,7 +1238,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkerPoolResource', pipeline_response)
@@ -1254,7 +1254,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         multi_role_pool_envelope: "_models.WorkerPoolResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkerPoolResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
@@ -1292,7 +1292,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1312,7 +1312,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         multi_role_pool_envelope: "_models.WorkerPoolResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WorkerPoolResource"]:
         """Create or update a multi-role pool.
 
@@ -1326,8 +1326,8 @@ class AppServiceEnvironmentsOperations:
         :type multi_role_pool_envelope: ~azure.mgmt.web.v2019_08_01.models.WorkerPoolResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WorkerPoolResource or the result of cls(response)
@@ -1385,7 +1385,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         multi_role_pool_envelope: "_models.WorkerPoolResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkerPoolResource":
         """Create or update a multi-role pool.
 
@@ -1438,7 +1438,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1458,7 +1458,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         instance: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a specific instance of a multi-role pool of an App Service Environment.
 
@@ -1524,7 +1524,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1539,7 +1539,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a multi-role pool of an App Service Environment.
 
@@ -1601,7 +1601,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1616,7 +1616,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SkuInfoCollection"]:
         """Get available SKUs for scaling a multi-role pool.
 
@@ -1678,7 +1678,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1693,7 +1693,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageCollection"]:
         """Get usage metrics for a multi-role pool of an App Service Environment.
 
@@ -1755,7 +1755,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1770,7 +1770,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.Operation"]:
         """List all currently running operations on the App Service Environment.
 
@@ -1816,7 +1816,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[Operation]', pipeline_response)
@@ -1831,7 +1831,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OutboundEnvironmentEndpointCollection"]:
         """Get the network endpoints of all outbound dependencies of an App Service Environment.
 
@@ -1894,7 +1894,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1909,7 +1909,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reboot all machines in an App Service Environment.
 
@@ -1955,7 +1955,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1967,7 +1967,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebAppCollection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
@@ -2000,7 +2000,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2019,7 +2019,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.WebAppCollection"]]:
         """Resume an App Service Environment.
 
@@ -2031,8 +2031,8 @@ class AppServiceEnvironmentsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either WebAppCollection or the result of cls(response)
@@ -2086,7 +2086,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2143,7 +2143,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AppServicePlanCollection"]:
         """Get all App Service plans in an App Service Environment.
 
@@ -2205,7 +2205,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2221,7 +2221,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         properties_to_include: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppCollection"]:
         """Get all apps in an App Service Environment.
 
@@ -2287,7 +2287,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2302,7 +2302,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebAppCollection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebAppCollection"]
         error_map = {
@@ -2335,7 +2335,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2354,7 +2354,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[AsyncItemPaged["_models.WebAppCollection"]]:
         """Suspend an App Service Environment.
 
@@ -2366,8 +2366,8 @@ class AppServiceEnvironmentsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns an iterator like instance of either WebAppCollection or the result of cls(response)
@@ -2421,7 +2421,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2479,7 +2479,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmUsageQuotaCollection"]:
         """Get global usage metrics of an App Service Environment.
 
@@ -2548,7 +2548,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2563,7 +2563,7 @@ class AppServiceEnvironmentsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkerPoolCollection"]:
         """Get all worker pools of an App Service Environment.
 
@@ -2625,7 +2625,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -2641,7 +2641,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkerPoolResource":
         """Get properties of a worker pool.
 
@@ -2690,7 +2690,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkerPoolResource', pipeline_response)
@@ -2707,7 +2707,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         worker_pool_envelope: "_models.WorkerPoolResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkerPoolResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkerPoolResource"]
         error_map = {
@@ -2746,7 +2746,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2767,7 +2767,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         worker_pool_envelope: "_models.WorkerPoolResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WorkerPoolResource"]:
         """Create or update a worker pool.
 
@@ -2783,8 +2783,8 @@ class AppServiceEnvironmentsOperations:
         :type worker_pool_envelope: ~azure.mgmt.web.v2019_08_01.models.WorkerPoolResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WorkerPoolResource or the result of cls(response)
@@ -2845,7 +2845,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         worker_pool_envelope: "_models.WorkerPoolResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkerPoolResource":
         """Create or update a worker pool.
 
@@ -2901,7 +2901,7 @@ class AppServiceEnvironmentsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -2922,7 +2922,7 @@ class AppServiceEnvironmentsOperations:
         name: str,
         worker_pool_name: str,
         instance: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a specific instance of a worker pool of an App Service Environment.
 
@@ -2991,7 +2991,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3007,7 +3007,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceMetricDefinitionCollection"]:
         """Get metric definitions for a worker pool of an App Service Environment.
 
@@ -3072,7 +3072,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3088,7 +3088,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SkuInfoCollection"]:
         """Get available SKUs for scaling a worker pool.
 
@@ -3153,7 +3153,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3169,7 +3169,7 @@ class AppServiceEnvironmentsOperations:
         resource_group_name: str,
         name: str,
         worker_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageCollection"]:
         """Get usage metrics for a worker pool of an App Service Environment.
 
@@ -3234,7 +3234,7 @@ class AppServiceEnvironmentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

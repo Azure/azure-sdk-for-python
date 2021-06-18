@@ -215,7 +215,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             result = self.mgmtgroup_client.management_groups.delete(group_id)
             result = result.result()
 
-    # @unittest.skip("Forbidden")
+    @unittest.skip("hard to test")
     @RandomNameResourceGroupPreparer()
     def test_policy_definition(self, resource_group, location):
         policy_name = self.get_resource_name('pypolicy')

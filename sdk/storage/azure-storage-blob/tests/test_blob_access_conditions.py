@@ -27,7 +27,7 @@ from azure.storage.blob import (
     BlobSasPermissions,
     generate_account_sas,
     ResourceTypes,
-    AccountSasPermissions, generate_container_sas, ContainerClient,
+    AccountSasPermissions, generate_container_sas, ContainerClient, CustomerProvidedEncryptionKey,
 )
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
@@ -90,7 +90,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Get blob service client from container client
         bsc_props1 = bsc1.get_service_properties()
-        bsc2 = container_client1.get_blob_service_client()
+        bsc2 = container_client1._get_blob_service_client()
         bsc_props2 = bsc2.get_service_properties()
         self.assertDictEqual(bsc_props1, bsc_props2)
 
@@ -123,7 +123,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Upload data to blob and get container_client again
         blob_client1.upload_blob(b"this is test data")
         blob_client1_data = blob_client1.download_blob().readall()
-        container_client2 = blob_client1.get_container_client()
+        container_client2 = blob_client1._get_container_client()
 
         md2 = container_client2.get_container_properties().metadata
         self.assertEqual(md1, md2)
@@ -852,6 +852,21 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(blob_snapshot.exists(), True)
         self.assertEqual(blob.exists(), True)
+
+    @GlobalStorageAccountPreparer()
+    def test_if_blob_with_cpk_exists(self, resource_group, location, storage_account, storage_account_key):
+        container_name = self.get_resource_name("testcontainer1")
+        cc = ContainerClient(
+            self.account_url(storage_account, "blob"), credential=storage_account_key, container_name=container_name,
+            connection_data_block_size=4 * 1024)
+        cc.create_container()
+        self._setup()
+        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+        blob_client = cc.get_blob_client("test_blob")
+        blob_client.upload_blob(b"hello world", cpk=test_cpk)
+        # Act
+        self.assertTrue(blob_client.exists())
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):

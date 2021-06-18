@@ -1,7 +1,19 @@
 # Release History
 
-## 12.8.1b1 (Unreleased)
+## 12.9.0b1 (Unreleased)
 
+## 12.8.1 (2021-04-20)
+**Fixes**
+- Fixed retry on large block upload 
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed downloader.chunks() return chunks in different size (#9419, #15648)
+- Enabled `exists()` for CPK encrypted blobs (#18041)
+- Fixed the ability to upload from a generator (#17418)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
+- Fixed retries for blob download streams (#18164, #17974, #10572 (comment))
+- Added chunk streaming docstrings and samples (#17149, #11009)
+- Added retry for blob download (#17974, #10572)
+- Fixed encryption algorithm hardcoded setting (#17835)
 
 ## 12.8.0 (2021-03-01)
 **Stable release of preview features**

@@ -26,43 +26,26 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class Action(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The action of virtual network rule.
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
     """
 
-    ALLOW = "Allow"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
-class DefaultAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The default action of allow or deny when no other rules match.
+class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that last modified the resource.
     """
 
-    ALLOW = "Allow"
-    DENY = "Deny"
-
-class ImportMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """When Force, any existing target tags will be overwritten. When NoForce, any existing target
-    tags will fail the operation before any copying begins.
-    """
-
-    NO_FORCE = "NoForce"
-    FORCE = "Force"
-
-class PasswordName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The password name.
-    """
-
-    PASSWORD = "password"
-    PASSWORD2 = "password2"
-
-class PolicyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The value that indicates whether the policy is enabled or not.
-    """
-
-    ENABLED = "enabled"
-    DISABLED = "disabled"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the container registry at the time the operation was called.
+    """Provisioning state of the resource.
     """
 
     CREATING = "Creating"
@@ -71,31 +54,6 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
-
-class RegistryUsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of measurement.
-    """
-
-    COUNT = "Count"
-    BYTES = "Bytes"
-
-class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU name of the container registry. Required for registry creation.
-    """
-
-    CLASSIC = "Classic"
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    PREMIUM = "Premium"
-
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU tier based on the SKU name.
-    """
-
-    CLASSIC = "Classic"
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    PREMIUM = "Premium"
 
 class TokenCertificateName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -111,27 +69,6 @@ class TokenPasswordName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class TokenStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the token example enabled or disabled.
-    """
-
-    ENABLED = "enabled"
-    DISABLED = "disabled"
-
-class TrustPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of trust policy.
-    """
-
-    NOTARY = "Notary"
-
-class WebhookAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    PUSH = "push"
-    DELETE = "delete"
-    QUARANTINE = "quarantine"
-    CHART_PUSH = "chart_push"
-    CHART_DELETE = "chart_delete"
-
-class WebhookStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the webhook at the time the operation was called.
     """
 
     ENABLED = "enabled"

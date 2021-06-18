@@ -33,6 +33,9 @@ TIMEOUT_SAMPLES = {
 }
 """
 TIMEOUT_SAMPLES = {
+    "azure-eventgrid": {
+        "consume_cloud_events_from_storage_queue.py": (10),
+    },
     "azure-eventhub": {
         "receive_batch_with_checkpoint.py": (10),
         "recv.py": (10),
@@ -76,10 +79,7 @@ IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
-        "consume_eventgrid_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py",
-        "sample_publish_events_to_a_topic_using_sas_credential.py",
-        "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
+        "consume_eventgrid_events_from_service_bus_queue.py"],
     "azure-eventhub": [
         "connection_to_custom_endpoint_address.py",
         "proxy.py",
@@ -100,6 +100,24 @@ IGNORED_SAMPLES = {
         "mgmt_topic_async.py",
         "proxy_async.py",
         "receive_deferred_message_queue_async.py"
+    ],
+    "azure-communication-chat": [
+        "chat_client_sample_async.py",
+        "chat_client_sample.py",
+        "chat_thread_client_sample_async.py",
+        "chat_thread_client_sample.py"
+    ],
+    "azure-communication-phonenumbers": [
+        "purchase_phone_number_sample_async.py",
+        "purchase_phone_number_sample.py",
+        "release_phone_number_sample_async.py",
+        "release_phone_number_sample.py"
+    ],
+    "azure-ai-translation-document": [
+        "sample_list_document_statuses_with_filters_async.py",
+        "sample_list_translations_with_filters_async.py",
+        "sample_list_document_statuses_with_filters.py",
+        "sample_list_translations_with_filters.py",
     ]
 }
 

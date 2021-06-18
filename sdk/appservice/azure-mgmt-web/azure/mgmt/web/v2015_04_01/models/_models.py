@@ -533,8 +533,8 @@ class DomainControlCenterSsoRequest(msrest.serialization.Model):
     :vartype url: str
     :ivar post_parameter_key: Post parameter key.
     :vartype post_parameter_key: str
-    :ivar post_parameter_value: Post parameter value. Client should use 'application/x-www-form-
-     urlencoded' encoding for this value.
+    :ivar post_parameter_value: Post parameter value. Client should use
+     'application/x-www-form-urlencoded' encoding for this value.
     :vartype post_parameter_value: str
     """
 

@@ -1,7 +1,28 @@
 # Release History
 
-## 4.1.2 (Unreleased)
+## 4.3.1 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 4.3.0 (2021-06-09)
+
+  **New Features**
+  - Added new event names related to blob inventory to the `SystemEventNames` enum.
+
+  **Bug Fixes**
+  - Replaced the `ServiceBusDeadletterMessagesAvailableWithNoListenerEventName` with the right value.
+
+## 4.2.0 (2021-05-12)
+
+  **New Features**
+  - Added new event names to the `SystemEventNames` enum.
 
 ## 4.1.1 (2021-04-07)
 

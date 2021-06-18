@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class JobTargetExecutionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -62,7 +62,7 @@ class JobTargetExecutionsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobExecutionListResult"]
+        # type: (...) -> Iterable["_models.JobExecutionListResult"]
         """Lists target executions for all steps of a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -99,12 +99,12 @@ class JobTargetExecutionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecutionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -190,7 +190,7 @@ class JobTargetExecutionsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobExecutionListResult"]
+        # type: (...) -> Iterable["_models.JobExecutionListResult"]
         """Lists the target executions of a job step execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -229,12 +229,12 @@ class JobTargetExecutionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecutionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -315,7 +315,7 @@ class JobTargetExecutionsOperations(object):
         target_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobExecution"
+        # type: (...) -> "_models.JobExecution"
         """Gets a target execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -338,12 +338,12 @@ class JobTargetExecutionsOperations(object):
         :rtype: ~azure.mgmt.sql.models.JobExecution
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobExecution"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL

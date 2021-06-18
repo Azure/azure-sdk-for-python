@@ -1,5 +1,33 @@
 # Release History
 
+## 8.1.0 (2021-06-08)
+
+ - New models and operations for mariadb 
+
+## 8.1.0b4 (2021-04-29)
+
+**Features**
+
+  - Added operation ServerSecurityAlertPoliciesOperations.list_by_server
+  - Added operation ServerKeysOperations.list
+
+**Breaking changes**
+
+  - Removed operation ServerKeysOperations.list_by_server
+
+## 8.1.0b3 (2021-04-27)
+
+**Features**
+
+  - Model Server has a new parameter private_dns_zone_arguments
+  - Added operation ServerKeysOperations.list_by_server
+  - Added operation group GetPrivateDnsZoneSuffixOperations
+
+**Breaking changes**
+
+  - Removed operation ServerSecurityAlertPoliciesOperations.list_by_server
+  - Removed operation ServerKeysOperations.list
+
 ## 8.1.0b2 (2021-03-19)
 
 **Features**

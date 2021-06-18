@@ -17,9 +17,7 @@ from azure.storage.filedatalake import (
 
 from testcase import (
     StorageTestCase,
-    record,
-    TestMode
-)
+    DataLakePreparer)
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -116,10 +114,9 @@ CONVERTED_CSV_DATA = b"Service;Package;Version;RepoPath;MissingDocs.App Configur
 
 
 class StorageQuickQueryTest(StorageTestCase):
-    def setUp(self):
-        super(StorageQuickQueryTest, self).setUp()
-        url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, logging_enable=True)
+    def _setUp(self, account_name, account_key):
+        url = self._get_account_url(account_name)
+        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
         self.config = self.dsc._config
         self.filesystem_name = self.get_resource_name('utqqcontainer')
 
@@ -145,8 +142,9 @@ class StorageQuickQueryTest(StorageTestCase):
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
-    @record
-    def test_quick_query_readall(self):
+    @DataLakePreparer()
+    def test_quick_query_readall(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -166,8 +164,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n'))
 
-    @record
-    def test_quick_query_datalake_expression(self):
+    @DataLakePreparer()
+    def test_quick_query_datalake_expression(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -188,8 +187,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), len(DATALAKE_CSV_DATA))
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
 
-    @record
-    def test_quick_query_iter_records(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -210,8 +210,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
 
-    @record
-    def test_quick_query_readall_with_encoding(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_encoding(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -231,8 +232,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n').decode('utf-8'))
 
-    @record
-    def test_quick_query_iter_records_with_encoding(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_encoding(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -248,8 +250,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'').decode('utf-8'))
 
-    @record
-    def test_quick_query_iter_records_with_headers(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_headers(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -271,8 +274,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'')[44:])
 
-    @record
-    def test_quick_query_iter_records_with_progress(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_progress(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -291,8 +295,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
         self.assertEqual(progress, len(reader))
 
-    @record
-    def test_quick_query_readall_with_serialization_setting(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_serialization_setting(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -328,8 +333,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(CSV_DATA))
         self.assertEqual(query_result, CONVERTED_CSV_DATA)
 
-    @record
-    def test_quick_query_iter_records_with_serialization_setting(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_serialization_setting(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -363,8 +369,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(len(data), 33)
 
-    @record
-    def test_quick_query_readall_with_fatal_error_handler(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_fatal_error_handler(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
@@ -403,8 +410,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), 43)
         self.assertEqual(query_result, b'')
 
-    @record
-    def test_quick_query_iter_records_with_fatal_error_handler(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_fatal_error_handler(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
@@ -445,8 +453,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), 43)
         self.assertEqual(data, [b''])
 
-    @record
-    def test_quick_query_readall_with_fatal_error_handler_raise(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_fatal_error_handler_raise(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
@@ -482,8 +491,9 @@ class StorageQuickQueryTest(StorageTestCase):
         with pytest.raises(Exception):
             query_result = resp.readall()
 
-    @record
-    def test_quick_query_iter_records_with_fatal_error_handler_raise(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_fatal_error_handler_raise(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
@@ -521,8 +531,9 @@ class StorageQuickQueryTest(StorageTestCase):
             for record in resp.records():
                 print(record)
 
-    @record
-    def test_quick_query_readall_with_fatal_error_ignore(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_fatal_error_ignore(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
@@ -546,8 +557,9 @@ class StorageQuickQueryTest(StorageTestCase):
             output_format=output_format)
         query_result = resp.readall()
 
-    @record
-    def test_quick_query_iter_records_with_fatal_error_ignore(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_fatal_error_ignore(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
@@ -578,8 +590,9 @@ class StorageQuickQueryTest(StorageTestCase):
         for record in resp.records():
             print(record)
 
-    @record
-    def test_quick_query_readall_with_nonfatal_error_handler(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_nonfatal_error_handler(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -615,8 +628,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
 
-    @record
-    def test_quick_query_iter_records_with_nonfatal_error_handler(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_nonfatal_error_handler(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -652,8 +666,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(CSV_DATA))
         self.assertEqual(len(data), 32)
 
-    @record
-    def test_quick_query_readall_with_nonfatal_error_ignore(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_nonfatal_error_ignore(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -681,8 +696,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
 
-    @record
-    def test_quick_query_iter_records_with_nonfatal_error_ignore(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_nonfatal_error_ignore(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         # upload the csv file
         file_name = self._get_file_reference()
@@ -710,8 +726,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(CSV_DATA))
         self.assertEqual(len(data), 32)
 
-    @record
-    def test_quick_query_readall_with_json_serialization_setting(self):
+    @DataLakePreparer()
+    def test_quick_query_readall_with_json_serialization_setting(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
         data2 = b'{\"name2\": \"owner2\"}'
@@ -740,8 +757,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(data))
         self.assertEqual(query_result, b'{"name":"owner"};{};{"name":"owner"};')
 
-    @record
-    def test_quick_query_iter_records_with_json_serialization_setting(self):
+    @DataLakePreparer()
+    def test_quick_query_iter_records_with_json_serialization_setting(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
         data2 = b'{\"name2\": \"owner2\"}'
@@ -770,8 +788,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(data))
         self.assertEqual(listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}', b''])
 
-    @record
-    def test_quick_query_with_only_input_json_serialization_setting(self):
+    @DataLakePreparer()
+    def test_quick_query_with_only_input_json_serialization_setting(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
         data2 = b'{\"name2\": \"owner2\"}'
@@ -800,8 +819,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(resp), len(data))
         self.assertEqual(query_result, b'{"name":"owner"}\n{}\n{"name":"owner"}\n')
 
-    @record
-    def test_quick_query_output_in_arrow_format(self):
+    @DataLakePreparer()
+    def test_quick_query_output_in_arrow_format(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         data = b'100,200,300,400\n300,400,500,600\n'
 
@@ -827,8 +847,9 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(errors), 0)
         self.assertEqual(query_result, expected_result)
 
-    @record
-    def test_quick_query_input_in_arrow_format(self):
+    @DataLakePreparer()
+    def test_quick_query_input_in_arrow_format(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)

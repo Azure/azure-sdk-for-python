@@ -1,5 +1,30 @@
 # Release History
 
+## 1.0.0 (2021-06-03)
+
+**Features**
+
+  - Model ManagedCluster has a new parameter addon_features
+  - Model ManagedClusterUpdateParameters has a new parameter addon_features
+  - Added operation group ManagedclusterOperations
+  - Added operation group ApplicationOperations
+  - Added operation group NodetypeOperations
+
+**Breaking changes**
+
+  - Operation ApplicationTypesOperations.create_or_update has a new signature
+  - Operation NodeTypesOperations.begin_delete_node has a new signature
+  - Operation NodeTypesOperations.begin_reimage has a new signature
+  - Operation NodeTypesOperations.begin_restart has a new signature
+  - Operation NodeTypesOperations.begin_restart has a new signature
+  - Operation NodeTypesOperations.begin_reimage has a new signature
+  - Operation NodeTypesOperations.begin_delete_node has a new signature
+  - Operation ApplicationTypesOperations.create_or_update has a new signature
+  - Model ManagedCluster no longer has parameter cluster_upgrade_description
+  - Model ManagedCluster no longer has parameter cluster_upgrade_mode
+  - Model ManagedClusterUpdateParameters no longer has parameter cluster_upgrade_description
+  - Model ManagedClusterUpdateParameters no longer has parameter cluster_upgrade_mode
+
 ## 1.0.0b1 (2020-12-02)
 
 This is beta preview version.

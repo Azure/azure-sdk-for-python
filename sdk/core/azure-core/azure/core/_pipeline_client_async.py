@@ -34,6 +34,7 @@ from .pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     RequestIdPolicy,
+    AsyncRetryPolicy,
 )
 
 try:
@@ -73,7 +74,7 @@ class AsyncPipelineClient(PipelineClientBase):
     :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
     :paramtype per_retry_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
         list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
-    :keyword AsyncHttpTransport transport: If omitted, AioHttpTransport is used for synchronous transport.
+    :keyword AsyncHttpTransport transport: If omitted, AioHttpTransport is used for asynchronous transport.
     :return: An async pipeline object.
     :rtype: ~azure.core.pipeline.AsyncPipeline
 
@@ -109,10 +110,10 @@ class AsyncPipelineClient(PipelineClientBase):
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
+        per_call_policies = kwargs.get('per_call_policies', [])
+        per_retry_policies = kwargs.get('per_retry_policies', [])
 
         if policies is None:  # [] is a valid policy list
-            per_call_policies = kwargs.get('per_call_policies', [])
-            per_retry_policies = kwargs.get('per_retry_policies', [])
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
@@ -121,28 +122,46 @@ class AsyncPipelineClient(PipelineClientBase):
                 ContentDecodePolicy(**kwargs)
             ]
             if isinstance(per_call_policies, Iterable):
-                for policy in per_call_policies:
-                    policies.append(policy)
+                policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies = policies + [
-                config.redirect_policy,
-                config.retry_policy,
-                config.authentication_policy,
-                config.custom_hook_policy
-            ]
+            policies.extend([config.redirect_policy,
+                             config.retry_policy,
+                             config.authentication_policy,
+                             config.custom_hook_policy])
             if isinstance(per_retry_policies, Iterable):
-                for policy in per_retry_policies:
-                    policies.append(policy)
+                policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies = policies + [
-                config.logging_policy,
-                DistributedTracingPolicy(**kwargs),
-                config.http_logging_policy or HttpLoggingPolicy(**kwargs)
-            ]
+            policies.extend([config.logging_policy,
+                             DistributedTracingPolicy(**kwargs),
+                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+        else:
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies_list = list(per_call_policies)
+            else:
+                per_call_policies_list = [per_call_policies]
+            per_call_policies_list.extend(policies)
+            policies = per_call_policies_list
+            if isinstance(per_retry_policies, Iterable):
+                per_retry_policies_list = list(per_retry_policies)
+            else:
+                per_retry_policies_list = [per_retry_policies]
+            if len(per_retry_policies_list) > 0:
+                index_of_retry = -1
+                for index, policy in enumerate(policies):
+                    if isinstance(policy, AsyncRetryPolicy):
+                        index_of_retry = index
+                if index_of_retry == -1:
+                    raise ValueError("Failed to add per_retry_policies; "
+                                     "no RetryPolicy found in the supplied list of policies. ")
+                policies_1 = policies[:index_of_retry + 1]
+                policies_2 = policies[index_of_retry + 1:]
+                policies_1.extend(per_retry_policies_list)
+                policies_1.extend(policies_2)
+                policies = policies_1
 
         if not transport:
             from .pipeline.transport import AioHttpTransport

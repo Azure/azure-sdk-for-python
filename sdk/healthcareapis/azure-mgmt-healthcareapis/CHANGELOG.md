@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0 (2021-04-12)
+
+**Features**
+
+  - Model ServicesDescription has a new parameter system_data
+  - Model ServicesProperties has a new parameter acr_configuration
+
 ## 1.0.0b1 (2020-12-04)
 
 This is beta preview version.

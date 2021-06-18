@@ -12,9 +12,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 05 Mar 2021 19:37:50 GMT
+      - Tue, 13 Apr 2021 18:38:13 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,11 +28,11 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Fri, 05 Mar 2021 19:37:49 GMT
-      ms-cv: xW88NCGOnEqlhojCCdma4A.0
+      date: Tue, 13 Apr 2021 18:38:14 GMT
+      ms-cv: x7S22jrJvECxJVGZiDIbHA.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 520ms
+      x-processing-time: 565ms
     status:
       code: 202
       message: Accepted

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._dns_management_client import DnsManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['DnsManagementClient']
 
 try:

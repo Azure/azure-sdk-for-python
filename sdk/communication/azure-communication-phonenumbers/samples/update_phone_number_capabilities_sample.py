@@ -13,9 +13,9 @@ DESCRIPTION:
 USAGE:
     python update_phone_number_capabilities_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and 
         access key of your Azure Communication Service
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_UPDATE - The phone number you want to update
+    2) AZURE_PHONE_NUMBER - The phone number you want to update
 """
 
 import os
@@ -24,9 +24,9 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilityType
 )
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
 phone_number_to_update = os.getenv(
-    "AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER_TO_UPDATE" # e.g. "+15551234567"
+    "AZURE_PHONE_NUMBER" # e.g. "+15551234567"
 ) 
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 

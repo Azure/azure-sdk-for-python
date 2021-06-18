@@ -43,12 +43,12 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with tracer.start_as_current_span(name="MyApplication2"):
     with ServiceBusClient.from_connection_string(connstr) as client:
-        with client.get_queue_sender("new_queue") as sender:
+        with client.get_queue_sender(queue_name) as sender:
             #Sending a single message
             single_message = ServiceBusMessage("Single message")
             sender.send_messages(single_message)
         # continually receives new messages until it doesn't receive any new messages for 5 (max_wait_time) seconds.
-        with client.get_queue_receiver(queue_name="new_queue", max_wait_time=5) as receiver:
+        with client.get_queue_receiver(queue_name=queue_name, max_wait_time=5) as receiver:
             # Receive all messages
             for msg in receiver:
                 print("Received: " + str(msg))

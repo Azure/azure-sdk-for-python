@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._management_link_client import ManagementLinkClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ManagementLinkClient']
 
 try:

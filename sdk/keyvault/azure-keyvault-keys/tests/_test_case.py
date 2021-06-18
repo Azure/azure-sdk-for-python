@@ -2,18 +2,60 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 import os
 
 from azure.keyvault.keys._shared import HttpChallengeCache
+from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureTestCase
-from parameterized import parameterized
+from parameterized import parameterized, param
 import pytest
 from six.moves.urllib_parse import urlparse
 
 
+def client_setup(testcase_func):
+    """decorator that creates a client to be passed in to a test method"""
+    @functools.wraps(testcase_func)
+    def wrapper(test_class_instance, api_version, is_hsm=False, **kwargs):
+        test_class_instance._skip_if_not_configured(api_version, is_hsm)
+        endpoint_url = test_class_instance.managed_hsm_url if is_hsm else test_class_instance.vault_url
+        client = test_class_instance.create_key_client(endpoint_url, api_version=api_version, **kwargs)
+
+        if kwargs.get("is_async"):
+            import asyncio
+
+            coroutine = testcase_func(test_class_instance, client, is_hsm=is_hsm)
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(coroutine)
+        else:
+            testcase_func(test_class_instance, client, is_hsm=is_hsm)
+    return wrapper
+
+
+def get_decorator(hsm_only=False, vault_only=False, **kwargs):
+    """returns a test decorator for test parameterization"""
+    params = [param(api_version=p[0], is_hsm=p[1], **kwargs) for p in get_test_parameters(hsm_only, vault_only)]
+    return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
+
+
+def get_test_parameters(hsm_only=False, vault_only=False):
+    """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
+    combinations = []
+    hsm_supported_versions = {ApiVersion.V7_2}
+    for api_version in ApiVersion:
+        if not vault_only and api_version in hsm_supported_versions:
+            combinations.append([api_version, True])
+        if not hsm_only:
+            combinations.append([api_version, False])
+    return combinations
+
+
 def suffixed_test_name(testcase_func, param_num, param):
+    api_version = param.kwargs.get("api_version")
     suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
-    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(suffix))
+    return "{}_{}_{}".format(
+        testcase_func.__name__, parameterized.to_safe_name(api_version), parameterized.to_safe_name(suffix)
+    )
 
 
 class KeysTestCase(AzureTestCase):
@@ -69,6 +111,8 @@ class KeysTestCase(AzureTestCase):
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
 
-    def _skip_if_not_configured(self, is_hsm):
+    def _skip_if_not_configured(self, api_version, is_hsm):
+        if self.is_live and api_version != DEFAULT_VERSION:
+            pytest.skip("This test only uses the default API version for live tests")
         if self.is_live and is_hsm and self.managed_hsm_url is None:
             pytest.skip("No HSM endpoint for live testing")

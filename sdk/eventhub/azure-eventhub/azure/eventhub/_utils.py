@@ -91,7 +91,7 @@ def create_properties(user_agent=None):
         USER_AGENT_PREFIX, VERSION, framework, platform_str
     )
     if user_agent:
-        final_user_agent = "{} {}".format(final_user_agent, user_agent)
+        final_user_agent = "{} {}".format(user_agent, final_user_agent)
 
     if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
         raise ValueError(

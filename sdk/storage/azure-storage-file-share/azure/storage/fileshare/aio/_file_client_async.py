@@ -561,8 +561,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         length=None,  # type: Optional[int]
         **kwargs
     ):
-        # type: (...) -> Iterable[bytes]
-        """Downloads a file to a stream with automatic chunking.
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        """Downloads a file to the StorageStreamDownloader. The readall() method must
+        be used to read all the content or readinto() must be used to download the file into
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -590,7 +592,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A iterable data generator (stream)
+        :returns: A streaming object (StorageStreamDownloader)
+        :rtype: ~azure.storage.fileshare.aio.StorageStreamDownloader
 
         .. admonition:: Example:
 

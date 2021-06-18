@@ -5,6 +5,7 @@ from json_delta import diff
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class ChangeLog:
     def __init__(self, old_report, new_report):
         self.features = []
@@ -18,13 +19,13 @@ class ChangeLog:
             buffer.append("**Features**")
             buffer.append("")
             for feature in self.features:
-                buffer.append("  - "+feature)
+                buffer.append("  - " + feature)
             buffer.append("")
         if self.breaking_changes:
             buffer.append("**Breaking changes**")
             buffer.append("")
             for breaking_change in self.breaking_changes:
-                buffer.append("  - "+breaking_change)
+                buffer.append("  - " + breaking_change)
         return "\n".join(buffer).strip()
 
     @staticmethod
@@ -70,7 +71,6 @@ class ChangeLog:
         # So method signaure changed. Be vague for now
         self.breaking_changes.append(_SIGNATURE_CHANGE.format(operation_name, function_name))
 
-
     def models(self, diff_entry):
         path, is_deletion = self._unpack_diff_entry(diff_entry)
 
@@ -93,13 +93,15 @@ class ChangeLog:
             return
 
         _, *remaining_path = remaining_path
-        if not remaining_path: # This means massive signature changes, that we don't even try to list them
+        if not remaining_path:  # This means massive signature changes, that we don't even try to list them
             self.breaking_changes.append(_MODEL_SIGNATURE_CHANGE.format(model_name))
             return
 
         # This is a real model
         parameter_name, *remaining_path = remaining_path
-        is_required = lambda report, model_name, param_name: report["models"]["models"][model_name]["parameters"][param_name]["properties"]["required"]
+        is_required = lambda report, model_name, param_name: report["models"]["models"][model_name]["parameters"][
+            param_name
+        ]["properties"]["required"]
         if not remaining_path:
             if is_deletion:
                 self.breaking_changes.append(_MODEL_PARAM_DELETE.format(model_name, parameter_name))
@@ -136,6 +138,7 @@ _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
 _MODEL_PARAM_CHANGE_REQUIRED = "Parameter {} of model {} is now required"
 
+
 def build_change_log(old_report, new_report):
     change_log = ChangeLog(old_report, new_report)
 
@@ -150,14 +153,14 @@ def build_change_log(old_report, new_report):
 
     return change_log
 
+
 def get_report_from_parameter(input_parameter):
     if ":" in input_parameter:
         package_name, version = input_parameter.split(":")
         from .code_report import main
+
         result = main(
-            package_name,
-            version=version if version not in ["pypi", "latest"] else None,
-            last_pypi=version == "pypi"
+            package_name, version=version if version not in ["pypi", "latest"] else None, last_pypi=version == "pypi"
         )
         if not result:
             raise ValueError("Was not able to build a report")
@@ -187,16 +190,18 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description='ChangeLog computation',
+        description="ChangeLog computation",
     )
-    parser.add_argument('base',
-                        help='Base. Could be a file path, or <package_name>:<version>. Version can be pypi, latest or a real version')
-    parser.add_argument('latest',
-                        help='Latest. Could be a file path, or <package_name>:<version>. Version can be pypi, latest or a real version')
+    parser.add_argument(
+        "base",
+        help="Base. Could be a file path, or <package_name>:<version>. Version can be pypi, latest or a real version",
+    )
+    parser.add_argument(
+        "latest",
+        help="Latest. Could be a file path, or <package_name>:<version>. Version can be pypi, latest or a real version",
+    )
 
-    parser.add_argument("--debug",
-                        dest="debug", action="store_true",
-                        help="Verbosity in DEBUG mode")
+    parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
 
     args = parser.parse_args()
 

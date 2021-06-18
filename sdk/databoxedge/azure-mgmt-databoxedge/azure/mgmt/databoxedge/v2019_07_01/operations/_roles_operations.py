@@ -32,7 +32,7 @@ class RolesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databoxedge.models
+    :type models: ~azure.mgmt.databoxedge.v2019_07_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -62,7 +62,7 @@ class RolesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RoleList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.models.RoleList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.v2019_07_01.models.RoleList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleList"]
@@ -140,7 +140,7 @@ class RolesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Role, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.Role
+        :rtype: ~azure.mgmt.databoxedge.v2019_07_01.models.Role
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Role"]
@@ -261,15 +261,15 @@ class RolesOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param role: The role properties.
-        :type role: ~azure.mgmt.databoxedge.models.Role
+        :type role: ~azure.mgmt.databoxedge.v2019_07_01.models.Role
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Role or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Role]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.v2019_07_01.models.Role]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -385,8 +385,8 @@ class RolesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

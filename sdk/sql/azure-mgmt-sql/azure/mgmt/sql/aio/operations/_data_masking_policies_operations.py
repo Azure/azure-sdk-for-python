@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class DataMaskingPoliciesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,9 +45,9 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: "models.DataMaskingPolicy",
-        **kwargs
-    ) -> "models.DataMaskingPolicy":
+        parameters: "_models.DataMaskingPolicy",
+        **kwargs: Any
+    ) -> "_models.DataMaskingPolicy":
         """Creates or updates a database data masking policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,7 +64,7 @@ class DataMaskingPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.DataMaskingPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataMaskingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataMaskingPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,8 +118,8 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> "models.DataMaskingPolicy":
+        **kwargs: Any
+    ) -> "_models.DataMaskingPolicy":
         """Gets a database data masking policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -134,7 +134,7 @@ class DataMaskingPoliciesOperations:
         :rtype: ~azure.mgmt.sql.models.DataMaskingPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataMaskingPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataMaskingPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

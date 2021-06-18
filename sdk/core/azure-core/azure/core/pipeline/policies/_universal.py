@@ -337,7 +337,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                     if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
-                        _LOGGER.debug(response.http_response.text())
+                        _LOGGER.debug(http_response.text())
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 

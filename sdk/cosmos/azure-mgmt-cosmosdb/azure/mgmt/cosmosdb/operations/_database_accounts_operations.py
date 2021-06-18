@@ -70,7 +70,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         # Construct URL
@@ -119,7 +119,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -178,8 +178,8 @@ class DatabaseAccountsOperations(object):
         :type update_parameters: ~azure.mgmt.cosmosdb.models.DatabaseAccountUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DatabaseAccountGetResults or the result of cls(response)
@@ -245,7 +245,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -305,8 +305,8 @@ class DatabaseAccountsOperations(object):
         :type create_update_parameters: ~azure.mgmt.cosmosdb.models.DatabaseAccountCreateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DatabaseAccountGetResults or the result of cls(response)
@@ -371,7 +371,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -417,8 +417,8 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -480,7 +480,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -537,8 +537,8 @@ class DatabaseAccountsOperations(object):
         :type failover_parameters: ~azure.mgmt.cosmosdb.models.FailoverPolicies
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -605,7 +605,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -675,7 +675,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -749,7 +749,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         # Construct URL
@@ -808,7 +808,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         # Construct URL
@@ -857,7 +857,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -888,7 +888,7 @@ class DatabaseAccountsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -914,8 +914,8 @@ class DatabaseAccountsOperations(object):
         :type region_parameter_for_offline: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -978,7 +978,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1009,7 +1009,7 @@ class DatabaseAccountsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1035,8 +1035,8 @@ class DatabaseAccountsOperations(object):
         :type region_parameter_for_online: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1109,7 +1109,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         # Construct URL
@@ -1168,7 +1168,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         # Construct URL
@@ -1217,7 +1217,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1271,8 +1271,8 @@ class DatabaseAccountsOperations(object):
         :type key_to_regenerate: ~azure.mgmt.cosmosdb.models.DatabaseAccountRegenerateKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1344,7 +1344,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
 
         # Construct URL
         url = self.check_name_exists.metadata['url']  # type: ignore
@@ -1402,7 +1402,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1482,7 +1482,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1559,7 +1559,7 @@ class DatabaseAccountsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-04-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):

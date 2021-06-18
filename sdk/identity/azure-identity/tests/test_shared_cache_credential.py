@@ -736,7 +736,7 @@ def test_authentication_record_authenticating_tenant():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
 
     record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
@@ -750,6 +750,17 @@ def test_client_capabilities():
     assert PublicClientApplication.call_count == 1
     _, kwargs = PublicClientApplication.call_args
     assert kwargs["client_capabilities"] == ["CP1"]
+
+    credential = SharedTokenCacheCredential(
+        transport=transport, authentication_record=record, _cache=TokenCache()
+    )
+    with patch(SharedTokenCacheCredential.__module__ + ".PublicClientApplication") as PublicClientApplication:
+        with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+            credential._initialize()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] is None
 
 
 def test_claims_challenge():

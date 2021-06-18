@@ -30,6 +30,7 @@ from six.moves import urllib
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 
 try:
     from typing import TYPE_CHECKING
@@ -90,7 +91,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             namer = ctxt.pop('network_span_namer', self._network_span_namer)
             span_name = namer(request.http_request)
 
-            span = span_impl_type(name=span_name)
+            span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
             for attr, value in self._tracing_attributes.items():
                 span.add_attribute(attr, value)
             span.start()

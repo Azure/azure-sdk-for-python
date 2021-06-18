@@ -1,5 +1,56 @@
 # Release History
 
+## 8.0.0 (2021-05-25)
+
+**Features**
+
+  - Model PipelineRun has a new parameter system_data
+  - Model TaskRunRequest has a new parameter log_template
+  - Model TaskUpdateParameters has a new parameter log_template
+  - Model Token has a new parameter system_data
+  - Model EncodedTaskRunRequest has a new parameter log_template
+  - Model ScopeMap has a new parameter system_data
+  - Model AgentPool has a new parameter system_data
+  - Model RegistryUpdateParameters has a new parameter anonymous_pull_enabled
+  - Model RegistryUpdateParameters has a new parameter network_rule_bypass_options
+  - Model ExportPipeline has a new parameter system_data
+  - Model KeyVaultProperties has a new parameter key_rotation_enabled
+  - Model KeyVaultProperties has a new parameter last_key_rotation_timestamp
+  - Model Run has a new parameter log_artifact
+  - Model Run has a new parameter system_data
+  - Model FileTaskRunRequest has a new parameter log_template
+  - Model RunRequest has a new parameter log_template
+  - Model OperationServiceSpecificationDefinition has a new parameter log_specifications
+  - Model Webhook has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model TaskRun has a new parameter system_data
+  - Model DockerBuildRequest has a new parameter log_template
+  - Model Task has a new parameter is_system_task
+  - Model Task has a new parameter system_data
+  - Model Task has a new parameter log_template
+  - Model Registry has a new parameter zone_redundancy
+  - Model Registry has a new parameter anonymous_pull_enabled
+  - Model Registry has a new parameter system_data
+  - Model Registry has a new parameter network_rule_bypass_options
+  - Model ImportPipeline has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model Replication has a new parameter zone_redundancy
+  - Model Replication has a new parameter system_data
+  - Added operation group ConnectedRegistriesOperations
+
+**Breaking changes**
+
+  - Parameter type of model QuickBuildRequest is now required
+  - Parameter type of model BuildStepProperties is now required
+  - Parameter type of model BuildStepPropertiesUpdateParameters is now required
+  - Parameter type of model QueueBuildRequest is now required
+  - Parameter type of model BuildTaskBuildRequest is now required
+  - Model TokenCredentialsProperties no longer has parameter active_directory_object
+  - Model Registry no longer has parameter storage_account
+  - Removed operation RegistriesOperations.get_build_source_upload_url
+  - Removed operation RegistriesOperations.begin_schedule_run
+
 ## 8.0.0b1 (2020-10-12)
 
 This is beta preview version.

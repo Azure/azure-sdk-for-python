@@ -1,21 +1,15 @@
-# Microsoft Azure SDK for Python
+# Microsoft Azure Synapse SDK for Python
 
-This is the Microsoft Azure Synapse Client Library.
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
-For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all)
+This package was the Microsoft Azure Synapse bundle.
 
+It is deprecated. Please install the service specific packages prefixed by azure-synapse needed for your application.
 
-# Usage
+The complete list of available packages can be found at: https://aka.ms/azsdk/python/all
 
-For code examples, see [Synapse](https://docs.microsoft.com/python/api/overview/azure/)
-on docs.microsoft.com.
+Here's a non-exhaustive list of common packages:
 
-
-# Provide Feedback
-
-If you encounter any bugs or have suggestions, please file an issue in the
-[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
-
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-synapse%2FREADME.png)
+* [azure-synapse-accesscontrol](https://pypi.org/project/azure-synapse-accesscontrol/)
+* [azure-synapse-artifacts](https://pypi.org/project/azure-synapse-artifacts/)
+* [azure-synapse-spark](https://pypi.org/project/azure-synapse-spark/)
+* [azure-synapse-managedprivateendpoints](https://pypi.org/project/azure-synapse-managedprivateendpoints/)
+* [azure-synapse-monitoring](https://pypi.org/project/azure-synapse-monitoring/)

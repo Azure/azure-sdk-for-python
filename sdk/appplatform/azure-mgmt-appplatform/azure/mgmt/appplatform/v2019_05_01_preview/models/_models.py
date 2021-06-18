@@ -44,7 +44,39 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class AppResource(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AppResource(ProxyResource):
     """App resource payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -122,7 +154,7 @@ class AppResourceProperties(msrest.serialization.Model):
     :ivar url: URL of the App.
     :vartype url: str
     :ivar provisioning_state: Provisioning state of the App. Possible values include: "Succeeded",
-     "Failed", "Creating", "Updating".
+     "Failed", "Creating", "Updating", "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.AppResourceProvisioningState
     :param active_deployment_name: Name of the active deployment of the App.
@@ -223,7 +255,7 @@ class AvailableRuntimeVersions(msrest.serialization.Model):
         self.value = None
 
 
-class BindingResource(Resource):
+class BindingResource(ProxyResource):
     """Binding resource payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -412,7 +444,7 @@ class CertificateProperties(msrest.serialization.Model):
         self.dns_names = None
 
 
-class CertificateResource(Resource):
+class CertificateResource(ProxyResource):
     """Certificate resource payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -704,7 +736,7 @@ class CustomDomainProperties(msrest.serialization.Model):
         self.cert_name = kwargs.get('cert_name', None)
 
 
-class CustomDomainResource(Resource):
+class CustomDomainResource(ProxyResource):
     """Custom domain resource payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -856,7 +888,7 @@ class DeploymentInstance(msrest.serialization.Model):
         self.start_time = None
 
 
-class DeploymentResource(Resource):
+class DeploymentResource(ProxyResource):
     """Deployment resource payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -870,6 +902,8 @@ class DeploymentResource(Resource):
     :param properties: Properties of the Deployment resource.
     :type properties:
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProperties
+    :param sku: Sku of the Deployment resource.
+    :type sku: ~azure.mgmt.appplatform.v2019_05_01_preview.models.Sku
     """
 
     _validation = {
@@ -883,6 +917,7 @@ class DeploymentResource(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DeploymentResourceProperties'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(
@@ -891,6 +926,7 @@ class DeploymentResource(Resource):
     ):
         super(DeploymentResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)
 
 
 class DeploymentResourceCollection(msrest.serialization.Model):
@@ -930,7 +966,7 @@ class DeploymentResourceProperties(msrest.serialization.Model):
     :type deployment_settings:
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentSettings
     :ivar provisioning_state: Provisioning state of the Deployment. Possible values include:
-     "Creating", "Updating", "Succeeded", "Failed".
+     "Creating", "Updating", "Succeeded", "Failed", "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProvisioningState
     :ivar status: Status of the Deployment. Possible values include: "Unknown", "Stopped",
@@ -1202,11 +1238,15 @@ class MetricDimension(msrest.serialization.Model):
     :type name: str
     :param display_name: Localized friendly display name of the dimension.
     :type display_name: str
+    :param to_be_exported_for_shoebox: Whether this dimension should be included for the Shoebox
+     export scenario.
+    :type to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
     def __init__(
@@ -1216,6 +1256,7 @@ class MetricDimension(msrest.serialization.Model):
         super(MetricDimension, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display_name = kwargs.get('display_name', None)
+        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
 
 
 class MetricSpecification(msrest.serialization.Model):
@@ -1355,10 +1396,14 @@ class NetworkProfile(msrest.serialization.Model):
     :ivar outbound_i_ps: Desired outbound IP resources for Azure Spring Cloud instance.
     :vartype outbound_i_ps:
      ~azure.mgmt.appplatform.v2019_05_01_preview.models.NetworkProfileOutboundIPs
+    :ivar required_traffics: Required inbound or outbound traffics for Azure Spring Cloud instance.
+    :vartype required_traffics:
+     list[~azure.mgmt.appplatform.v2019_05_01_preview.models.RequiredTraffic]
     """
 
     _validation = {
         'outbound_i_ps': {'readonly': True},
+        'required_traffics': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1368,6 +1413,7 @@ class NetworkProfile(msrest.serialization.Model):
         'service_runtime_network_resource_group': {'key': 'serviceRuntimeNetworkResourceGroup', 'type': 'str'},
         'app_network_resource_group': {'key': 'appNetworkResourceGroup', 'type': 'str'},
         'outbound_i_ps': {'key': 'outboundIPs', 'type': 'NetworkProfileOutboundIPs'},
+        'required_traffics': {'key': 'requiredTraffics', 'type': '[RequiredTraffic]'},
     }
 
     def __init__(
@@ -1381,6 +1427,7 @@ class NetworkProfile(msrest.serialization.Model):
         self.service_runtime_network_resource_group = kwargs.get('service_runtime_network_resource_group', None)
         self.app_network_resource_group = kwargs.get('app_network_resource_group', None)
         self.outbound_i_ps = None
+        self.required_traffics = None
 
 
 class NetworkProfileOutboundIPs(msrest.serialization.Model):
@@ -1528,38 +1575,6 @@ class PersistentDisk(msrest.serialization.Model):
         self.mount_path = kwargs.get('mount_path', None)
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class RegenerateTestKeyRequestPayload(msrest.serialization.Model):
     """Regenerate test key request payload.
 
@@ -1584,6 +1599,52 @@ class RegenerateTestKeyRequestPayload(msrest.serialization.Model):
     ):
         super(RegenerateTestKeyRequestPayload, self).__init__(**kwargs)
         self.key_type = kwargs['key_type']
+
+
+class RequiredTraffic(msrest.serialization.Model):
+    """Required inbound or outbound traffic for Azure Spring Cloud instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar protocol: The protocol of required traffic.
+    :vartype protocol: str
+    :ivar port: The port of required traffic.
+    :vartype port: int
+    :ivar ips: The ip list of required traffic.
+    :vartype ips: list[str]
+    :ivar fqdns: The FQDN list of required traffic.
+    :vartype fqdns: list[str]
+    :ivar direction: The direction of required traffic. Possible values include: "Inbound",
+     "Outbound".
+    :vartype direction: str or ~azure.mgmt.appplatform.v2019_05_01_preview.models.TrafficDirection
+    """
+
+    _validation = {
+        'protocol': {'readonly': True},
+        'port': {'readonly': True},
+        'ips': {'readonly': True},
+        'fqdns': {'readonly': True},
+        'direction': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
+        'ips': {'key': 'ips', 'type': '[str]'},
+        'fqdns': {'key': 'fqdns', 'type': '[str]'},
+        'direction': {'key': 'direction', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RequiredTraffic, self).__init__(**kwargs)
+        self.protocol = None
+        self.port = None
+        self.ips = None
+        self.fqdns = None
+        self.direction = None
 
 
 class ResourceSku(msrest.serialization.Model):
@@ -1978,8 +2039,8 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
+        self.name = kwargs.get('name', "S0")
+        self.tier = kwargs.get('tier', "Standard")
         self.capacity = kwargs.get('capacity', None)
 
 

@@ -11,8 +11,6 @@ import time
 import logging
 from functools import partial
 
-from azure.core.exceptions import HttpResponseError
-
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.mgmt.resource import ResourceManagementClient
@@ -112,9 +110,9 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
                     self.client.resource_groups.begin_delete(name, polling=False)
-            except HttpResponseError as err:
+            except Exception as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
                 logging.info("Failed to delete resource group with name {}".format(name))
-                logging.info("{}".format(err.response))
+                logging.info("{}".format(err))
                 pass
 
 

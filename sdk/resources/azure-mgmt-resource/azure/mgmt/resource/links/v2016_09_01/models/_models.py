@@ -96,7 +96,7 @@ class ResourceLink(msrest.serialization.Model):
     :ivar name: The name of the resource link.
     :vartype name: str
     :ivar type: The resource link object.
-    :vartype type: object
+    :vartype type: any
     :param properties: Properties for resource link.
     :type properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
     """

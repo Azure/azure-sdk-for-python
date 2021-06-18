@@ -324,7 +324,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._setup(storage_account, storage_account_key)
 
         # Act
-        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
         data = requests.get(uri, stream=True)
         blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
         resp = blob.upload_blob(data=data.raw)
@@ -1348,7 +1348,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_abort_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
         # Act

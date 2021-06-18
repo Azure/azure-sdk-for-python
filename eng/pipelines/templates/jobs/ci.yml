@@ -5,6 +5,9 @@ parameters:
   - name: Artifacts
     type: object
     default: []
+  - name: CondaArtifacts
+    type: object
+    default: []
   - name: TestPipeline
     type: boolean
     default: false
@@ -14,6 +17,12 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
@@ -40,6 +49,9 @@ parameters:
   - name: MatrixReplace
     type: object
     default: []
+  - name: VerifyAutorest
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -48,8 +60,8 @@ jobs:
     - template: ../variables/globals.yml
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: ../steps/build-artifacts.yml
@@ -61,6 +73,12 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
@@ -70,10 +88,12 @@ jobs:
       - 'Build'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
+    - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
         ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -91,6 +111,7 @@ jobs:
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
@@ -106,10 +127,35 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
+
+  - ${{ if gt(length(parameters.CondaArtifacts), 0) }}:
+    - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+      parameters:
+        JobTemplatePath: /eng/pipelines/templates/jobs/ci.conda.tests.yml
+        GenerateJobName: generate_conda_matrix
+        DependsOn:
+          - 'Build'
+        MatrixConfigs:
+            - Name: Python_ci_conda_envs
+              Path: eng/pipelines/templates/stages/platform-matrix-conda-support.json
+              Selection: sparse
+              GenerateVMJobs: true
+        MatrixFilters: ${{ parameters.MatrixFilters }}
+        MatrixReplace: ${{ parameters.MatrixReplace }}
+        CloudConfig:
+          Cloud: Public
+        AdditionalParameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+          CondaArtifacts: ${{ parameters.CondaArtifacts}}
 
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
@@ -122,8 +168,8 @@ jobs:
       - 'Build'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: ../steps/test_regression.yml

@@ -16,31 +16,31 @@ class CreateEntityBatchTest(_TableTest):
 
     def run_sync(self):
         batch_size = 0
-        batch = self.table_client.create_batch()
+        batch = []
         for row in range(self.args.count):
             self.base_entity['RowKey'] = str(row)
-            batch.upsert_entity(self.base_entity)
+            batch.append(('upsert', self.base_entity))
             batch_size += 1
             if batch_size >= 100:
-                self.table_client.send_batch(batch)
-                batch = self.table_client.create_batch()
+                self.table_client.submit_transaction(batch)
+                batch = []
                 batch_size = 0
         if batch_size:
-            self.table_client.send_batch(batch)
+            self.table_client.submit_transaction(batch)
 
     async def run_async(self):
         batch_size = 0
-        batch = self.async_table_client.create_batch()
+        batch = []
         for row in range(self.args.count):
             self.base_entity['RowKey'] = str(row)
-            batch.upsert_entity(self.base_entity)
+            batch.append(('upsert', self.base_entity))
             batch_size += 1
             if batch_size >= 100:
-                await self.async_table_client.send_batch(batch)
-                batch = self.async_table_client.create_batch()
+                await self.async_table_client.submit_transaction(batch)
+                batch = []
                 batch_size = 0
         if batch_size:
-            await self.async_table_client.send_batch(batch)
+            await self.async_table_client.submit_transaction(batch)
 
     @staticmethod
     def add_arguments(parser):

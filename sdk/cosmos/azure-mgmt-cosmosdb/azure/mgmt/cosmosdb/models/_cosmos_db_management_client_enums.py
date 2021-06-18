@@ -156,6 +156,13 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     NONE = "None"
 
+class RoleDefinitionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether the Role Definition was built-in or user created.
+    """
+
+    BUILT_IN_ROLE = "BuiltInRole"
+    CUSTOM_ROLE = "CustomRole"
+
 class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the ServerVersion of an a MongoDB account.
     """

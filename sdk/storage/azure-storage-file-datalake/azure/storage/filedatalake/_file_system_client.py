@@ -3,26 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, Any
+import functools
+from typing import Optional, Any, Union
+
 
 try:
-    from urllib.parse import urlparse, quote
+    from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
-
+    from urllib2 import quote, unquote  # type: ignore
 import six
+
 from azure.core.pipeline import Pipeline
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import LocationMode, FileSystemProperties, PublicAccess, FileProperties, DirectoryProperties
+from ._list_paths_helper import DeletedPathPropertiesPaged
+from ._models import LocationMode, FileSystemProperties, PublicAccess, DeletedPathProperties, FileProperties, \
+    DirectoryProperties
 from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._generated import AzureDataLakeStorageRESTAPI
-from ._deserialize import deserialize_path_properties
+from ._generated.models import ListBlobsIncludeItem
+from ._deserialize import deserialize_path_properties, process_storage_error, is_file_path
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -99,6 +105,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
+                                                                               file_system=file_system_name,
+                                                                               pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
@@ -741,6 +750,53 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.delete_file(**kwargs)
         return file_client
 
+    def _undelete_path_options(self, deleted_path_name, deletion_id):
+        quoted_path = quote(unquote(deleted_path_name.strip('/')))
+
+        url_and_token = self.url.replace('.dfs.', '.blob.').split('?')
+        try:
+            url = url_and_token[0] + '/' + quoted_path + url_and_token[1]
+        except IndexError:
+            url = url_and_token[0] + '/' + quoted_path
+
+        undelete_source = quoted_path + '?deletionid={}'.format(deletion_id) if deletion_id else None
+
+        return quoted_path, url, undelete_source
+
+    def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
+        # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
+        """Restores soft-deleted path.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :param str deleted_path_name:
+            Specifies the path (file or directory) to restore.
+        :param str deletion_id:
+            Specifies the version of the deleted path to restore.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
+        """
+        _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
+
+        pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
+        path_client = AzureDataLakeStorageRESTAPI(
+            url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline)
+        try:
+            is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
+            if is_file:
+                return self.get_file_client(deleted_path_name)
+            return self.get_directory_client(deleted_path_name)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
     def _get_root_directory_client(self):
         # type: () -> DataLakeDirectoryClient
         """Get a client to interact with the root directory.
@@ -802,7 +858,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file_path: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -827,3 +883,35 @@ class FileSystemClient(StorageAccountHostsMixin):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
+
+    def list_deleted_paths(self, **kwargs):
+        # type: (Any) -> ItemPaged[DeletedPathProperties]
+        """Returns a generator to list the deleted (file or directory) paths under the specified file system.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2020-06-12'.
+
+        :keyword str path_prefix:
+            Filters the results to return only paths under the specified path.
+        :keyword int results_per_page:
+            An optional value that specifies the maximum number of items to return per page.
+            If omitted or greater than 5,000, the response will include up to 5,000 items per page.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of DeletedPathProperties.
+        :rtype:
+            ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
+        """
+        path_prefix = kwargs.pop('path_prefix', None)
+        timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
+        command = functools.partial(
+            self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
+            showonly=ListBlobsIncludeItem.deleted,
+            timeout=timeout,
+            **kwargs)
+        return ItemPaged(
+            command, prefix=path_prefix, page_iterator_class=DeletedPathPropertiesPaged,
+            results_per_page=results_per_page, **kwargs)

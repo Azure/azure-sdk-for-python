@@ -34,5 +34,3 @@ extends:
     Artifacts:
     - name: azure-ai-textanalytics
       safeName: azureaitextanalytics
-    - name: azure-ai-nspkg
-      safeName: azureainspkg

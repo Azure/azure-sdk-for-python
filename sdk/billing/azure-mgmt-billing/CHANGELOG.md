@@ -1,5 +1,26 @@
 # Release History
 
+## 6.0.0 (2021-05-12)
+
+**Features**
+
+  - Model InvoiceSectionListResult has a new parameter total_count
+  - Model OperationDisplay has a new parameter description
+  - Model BillingSubscriptionsListResult has a new parameter total_count
+  - Model BillingAccountUpdateRequest has a new parameter notification_email_address
+  - Model EnrollmentAccount has a new parameter account_owner_email
+  - Model CustomerListResult has a new parameter total_count
+  - Model Operation has a new parameter is_data_action
+  - Model BillingAccount has a new parameter notification_email_address
+  - Model AddressDetails has a new parameter middle_name
+  - Model BillingProfile has a new parameter tags
+  - Model EnrollmentPolicies has a new parameter marketplace_enabled
+  - Added operation group ReservationsOperations
+
+**Breaking changes**
+
+  - Model EnrollmentPolicies no longer has parameter marketplaces_enabled
+
 ## 6.0.0b1 (2020-11-20)
 
 This is beta preview version.

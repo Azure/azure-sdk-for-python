@@ -443,7 +443,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
+    def _get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
         # type: (...) -> BlobServiceClient
         """Get a client to interact with the container's parent service account.
 
@@ -891,7 +891,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         # type: (Union[str, BlobProperties], Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream.
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param blob: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.

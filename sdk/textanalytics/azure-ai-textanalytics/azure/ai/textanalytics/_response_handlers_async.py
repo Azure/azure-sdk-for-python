@@ -8,12 +8,7 @@
 import functools
 from urllib.parse import urlparse, parse_qsl
 
-from azure.core.async_paging import AsyncList
-from ._models import RequestStatistics
-from ._async_paging import (
-    AnalyzeHealthcareEntitiesResultAsync,
-    AnalyzeResultAsync
-)
+from azure.core.async_paging import AsyncList, AsyncItemPaged
 from ._response_handlers import healthcare_result, get_iter_items
 
 
@@ -35,17 +30,17 @@ async def lro_get_next_page_async(lro_status_callback, first_page, continuation_
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    if "showStats" in query_params:
+        query_params.pop("showStats")
     query_params["show_stats"] = show_stats
 
     return await lro_status_callback(job_id, **query_params)
 
 
 def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
-    return AnalyzeHealthcareEntitiesResultAsync(
+    return AsyncItemPaged(
         functools.partial(lro_get_next_page_async, health_status_callback, obj, show_stats=show_stats),
         functools.partial(healthcare_extract_page_data_async, doc_id_order, obj, response_headers),
-        model_version=obj.results.model_version,
-        statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None # pylint: disable=protected-access
     )
 
 async def analyze_extract_page_data_async(doc_id_order, task_order, response_headers, analyze_job_state):
@@ -55,7 +50,7 @@ async def analyze_extract_page_data_async(doc_id_order, task_order, response_hea
 def analyze_paged_result(
     doc_id_order, task_order, analyze_status_callback, response, obj, response_headers, show_stats=False # pylint: disable=unused-argument
 ):
-    return AnalyzeResultAsync(
+    return AsyncItemPaged(
         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
         functools.partial(analyze_extract_page_data_async, doc_id_order, task_order, response_headers),
     )

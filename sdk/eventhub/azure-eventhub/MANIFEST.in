@@ -3,3 +3,4 @@ include azure/__init__.py
 recursive-include tests *.py
 recursive-include samples *.py
 recursive-include doc *.rst
+include azure/eventhub/py.typed

@@ -1,5 +1,36 @@
 # Release History
 
+## 1.0.0 (2021-04-25)
+
+**Features**
+
+  - Model PeerAsn has a new parameter peer_contact_info
+  - Added operation group PeeringServicePrefixesOperations
+
+**Breaking changes**
+
+  - Operation PrefixesOperations.list_by_peering_service has a new signature
+  - Operation PeeringServiceLocationsOperations.list has a new signature
+  - Operation LegacyPeeringsOperations.list has a new signature
+  - Model DirectConnection no longer has parameter error_message
+  - Model DirectConnection no longer has parameter microsoft_tracking_id
+  - Model PeeringServicePrefix no longer has parameter events
+  - Model PeeringServicePrefix no longer has parameter error_message
+  - Model PeeringServicePrefix no longer has parameter peering_service_prefix_key
+  - Model ExchangeConnection no longer has parameter error_message
+  - Model PeerAsn no longer has parameter error_message
+  - Model PeerAsn no longer has parameter peer_contact_detail
+  - Model PeeringService no longer has parameter sku
+  - Model ErrorResponse has a new signature
+  - Removed operation PrefixesOperations.delete
+  - Removed operation PrefixesOperations.create_or_update
+  - Removed operation PrefixesOperations.get
+  - Removed operation group CdnPeeringPrefixesOperations
+  - Removed operation group ReceivedRoutesOperations
+  - Removed operation group RegisteredAsnsOperations
+  - Removed operation group PeeringServiceCountriesOperations
+  - Removed operation group RegisteredPrefixesOperations
+
 ## 1.0.0b1 (2020-12-07)
 
 This is beta preview version.

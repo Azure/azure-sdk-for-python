@@ -42,7 +42,5 @@ extends:
       safeName: azuresynapsemanagedprivateendpoints
     - name: azure-synapse
       safeName: azuresynapse
-    - name: azure-synapse-nspkg
-      safeName: azuresynapsenspkg
     - name: azure-mgmt-synapse
       safeName: azuremgmtsynapse

@@ -10,6 +10,66 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class AlignPolicy(msrest.serialization.Model):
+    """AlignPolicy.
+
+    :param align_mode: An optional field, indicates how we align different variables into the same
+     time-range which is required by the model.{Inner, Outer}. Possible values include: "Inner",
+     "Outer".
+    :type align_mode: str or ~azure.ai.anomalydetector.models.AlignMode
+    :param fill_na_method: An optional field, indicates how missed values will be filled with. Can
+     not be set to NotFill, when alignMode is Outer.{Previous, Subsequent, Linear, Zero, Fix,
+     NotFill}. Possible values include: "Previous", "Subsequent", "Linear", "Zero", "Pad",
+     "NotFill".
+    :type fill_na_method: str or ~azure.ai.anomalydetector.models.FillNAMethod
+    :param padding_value: optional field, only be useful if FillNAMethod is set to Pad.
+    :type padding_value: int
+    """
+
+    _attribute_map = {
+        'align_mode': {'key': 'alignMode', 'type': 'str'},
+        'fill_na_method': {'key': 'fillNAMethod', 'type': 'str'},
+        'padding_value': {'key': 'paddingValue', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AlignPolicy, self).__init__(**kwargs)
+        self.align_mode = kwargs.get('align_mode', None)
+        self.fill_na_method = kwargs.get('fill_na_method', None)
+        self.padding_value = kwargs.get('padding_value', None)
+
+
+class AnomalyContributor(msrest.serialization.Model):
+    """AnomalyContributor.
+
+    :param contribution_score: The higher the contribution score is, the more likely the variable
+     to be the root cause of a anomaly.
+    :type contribution_score: float
+    :param variable: Variable name of a contributor.
+    :type variable: str
+    """
+
+    _validation = {
+        'contribution_score': {'maximum': 2, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'contribution_score': {'key': 'contributionScore', 'type': 'float'},
+        'variable': {'key': 'variable', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnomalyContributor, self).__init__(**kwargs)
+        self.contribution_score = kwargs.get('contribution_score', None)
+        self.variable = kwargs.get('variable', None)
+
+
 class AnomalyDetectorError(msrest.serialization.Model):
     """Error information returned by the API.
 
@@ -35,6 +95,82 @@ class AnomalyDetectorError(msrest.serialization.Model):
         self.message = kwargs.get('message', None)
 
 
+class AnomalyState(msrest.serialization.Model):
+    """AnomalyState.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. timestamp.
+    :type timestamp: ~datetime.datetime
+    :param value:
+    :type value: ~azure.ai.anomalydetector.models.AnomalyValue
+    :param errors: Error message when inference this timestamp.
+    :type errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
+    """
+
+    _validation = {
+        'timestamp': {'required': True},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'value': {'key': 'value', 'type': 'AnomalyValue'},
+        'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnomalyState, self).__init__(**kwargs)
+        self.timestamp = kwargs['timestamp']
+        self.value = kwargs.get('value', None)
+        self.errors = kwargs.get('errors', None)
+
+
+class AnomalyValue(msrest.serialization.Model):
+    """AnomalyValue.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param contributors: If current timestamp is an anomaly, contributors will show potential root
+     cause for thus anomaly. Contributors can help us understand why current timestamp has been
+     detected as an anomaly.
+    :type contributors: list[~azure.ai.anomalydetector.models.AnomalyContributor]
+    :param is_anomaly: Required. To indicate whether current timestamp is anomaly or not.
+    :type is_anomaly: bool
+    :param severity: Required. anomaly score of the current timestamp, the more significant an
+     anomaly is, the higher the score will be.
+    :type severity: float
+    :param score: anomaly score of the current timestamp, the more significant an anomaly is, the
+     higher the score will be, score measures global significance.
+    :type score: float
+    """
+
+    _validation = {
+        'is_anomaly': {'required': True},
+        'severity': {'required': True, 'maximum': 1, 'minimum': 0},
+        'score': {'maximum': 2, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'contributors': {'key': 'contributors', 'type': '[AnomalyContributor]'},
+        'is_anomaly': {'key': 'isAnomaly', 'type': 'bool'},
+        'severity': {'key': 'severity', 'type': 'float'},
+        'score': {'key': 'score', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AnomalyValue, self).__init__(**kwargs)
+        self.contributors = kwargs.get('contributors', None)
+        self.is_anomaly = kwargs['is_anomaly']
+        self.severity = kwargs['severity']
+        self.score = kwargs.get('score', None)
+
+
 class ChangePointDetectRequest(msrest.serialization.Model):
     """ChangePointDetectRequest.
 
@@ -45,7 +181,8 @@ class ChangePointDetectRequest(msrest.serialization.Model):
     :type series: list[~azure.ai.anomalydetector.models.TimeSeriesPoint]
     :param granularity: Required. Can only be one of yearly, monthly, weekly, daily, hourly,
      minutely or secondly. Granularity is used for verify whether input series is valid. Possible
-     values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly".
+     values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly",
+     "microsecond", "none".
     :type granularity: str or ~azure.ai.anomalydetector.models.TimeGranularity
     :param custom_interval: Custom Interval is used to set non-standard time interval, for example,
      if the series is 5 minutes, request can be set as {"granularity":"minutely",
@@ -92,23 +229,21 @@ class ChangePointDetectRequest(msrest.serialization.Model):
 class ChangePointDetectResponse(msrest.serialization.Model):
     """ChangePointDetectResponse.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param period: Required. Frequency extracted from the series, zero means no recurrent pattern
-     has been found.
-    :type period: int
-    :param is_change_point: Required. isChangePoint contains change point properties for each input
-     point. True means an anomaly either negative or positive has been detected. The index of the
-     array is consistent with the input series.
+    :ivar period: Frequency extracted from the series, zero means no recurrent pattern has been
+     found.
+    :vartype period: int
+    :param is_change_point: isChangePoint contains change point properties for each input point.
+     True means an anomaly either negative or positive has been detected. The index of the array is
+     consistent with the input series.
     :type is_change_point: list[bool]
-    :param confidence_scores: Required. the change point confidence of each point.
+    :param confidence_scores: the change point confidence of each point.
     :type confidence_scores: list[float]
     """
 
     _validation = {
-        'period': {'required': True},
-        'is_change_point': {'required': True},
-        'confidence_scores': {'required': True},
+        'period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -122,9 +257,125 @@ class ChangePointDetectResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(ChangePointDetectResponse, self).__init__(**kwargs)
-        self.period = kwargs['period']
-        self.is_change_point = kwargs['is_change_point']
-        self.confidence_scores = kwargs['confidence_scores']
+        self.period = None
+        self.is_change_point = kwargs.get('is_change_point', None)
+        self.confidence_scores = kwargs.get('confidence_scores', None)
+
+
+class DetectionRequest(msrest.serialization.Model):
+    """Request to submit a detection.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. source file link of the input variables, each variable will be a csv
+     with two columns, the first column will be timestamp, the second column will be value.Besides
+     these variable csv files, a extra meta.json can be included in th zip file if you would like to
+     rename a variable.Be default, the file name of the variable will be used as the variable name.
+     The variables used in detection should be consistent with variables in the model used for
+     detection.
+    :type source: str
+    :param start_time: Required. A require field, start time of data be used for detection, should
+     be date-time.
+    :type start_time: ~datetime.datetime
+    :param end_time: Required. A require field, end time of data be used for detection, should be
+     date-time.
+    :type end_time: ~datetime.datetime
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'start_time': {'required': True},
+        'end_time': {'required': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionRequest, self).__init__(**kwargs)
+        self.source = kwargs['source']
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+
+
+class DetectionResult(msrest.serialization.Model):
+    """Anomaly Response of one detection corresponds to a resultId.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param result_id: Required.
+    :type result_id: str
+    :param summary: Required. Multivariate anomaly detection status.
+    :type summary: ~azure.ai.anomalydetector.models.DetectionResultSummary
+    :param results: Required. anomaly status of each timestamp.
+    :type results: list[~azure.ai.anomalydetector.models.AnomalyState]
+    """
+
+    _validation = {
+        'result_id': {'required': True},
+        'summary': {'required': True},
+        'results': {'required': True},
+    }
+
+    _attribute_map = {
+        'result_id': {'key': 'resultId', 'type': 'str'},
+        'summary': {'key': 'summary', 'type': 'DetectionResultSummary'},
+        'results': {'key': 'results', 'type': '[AnomalyState]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionResult, self).__init__(**kwargs)
+        self.result_id = kwargs['result_id']
+        self.summary = kwargs['summary']
+        self.results = kwargs['results']
+
+
+class DetectionResultSummary(msrest.serialization.Model):
+    """DetectionResultSummary.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. Multivariate anomaly detection status. Possible values include:
+     "CREATED", "RUNNING", "READY", "FAILED".
+    :type status: str or ~azure.ai.anomalydetector.models.DetectionStatus
+    :param errors: Error message when creating or training model fails.
+    :type errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
+    :param variable_states:
+    :type variable_states: list[~azure.ai.anomalydetector.models.VariableState]
+    :param setup_info: Required. Request when creating the model.
+    :type setup_info: ~azure.ai.anomalydetector.models.DetectionRequest
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'setup_info': {'required': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
+        'variable_states': {'key': 'variableStates', 'type': '[VariableState]'},
+        'setup_info': {'key': 'setupInfo', 'type': 'DetectionRequest'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionResultSummary, self).__init__(**kwargs)
+        self.status = kwargs['status']
+        self.errors = kwargs.get('errors', None)
+        self.variable_states = kwargs.get('variable_states', None)
+        self.setup_info = kwargs['setup_info']
 
 
 class DetectRequest(msrest.serialization.Model):
@@ -137,9 +388,11 @@ class DetectRequest(msrest.serialization.Model):
      there is duplicated timestamp, the API will not work. In such case, an error message will be
      returned.
     :type series: list[~azure.ai.anomalydetector.models.TimeSeriesPoint]
-    :param granularity: Required. Can only be one of yearly, monthly, weekly, daily, hourly,
-     minutely or secondly. Granularity is used for verify whether input series is valid. Possible
-     values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly".
+    :param granularity: Optional argument, can be one of yearly, monthly, weekly, daily, hourly,
+     minutely, secondly, microsecond or none. If granularity is not present, it will be none by
+     default. If granularity is none, the timestamp property in time series point can be absent.
+     Possible values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely",
+     "secondly", "microsecond", "none".
     :type granularity: str or ~azure.ai.anomalydetector.models.TimeGranularity
     :param custom_interval: Custom Interval is used to set non-standard time interval, for example,
      if the series is 5 minutes, request can be set as {"granularity":"minutely",
@@ -158,7 +411,6 @@ class DetectRequest(msrest.serialization.Model):
 
     _validation = {
         'series': {'required': True},
-        'granularity': {'required': True},
     }
 
     _attribute_map = {
@@ -176,11 +428,34 @@ class DetectRequest(msrest.serialization.Model):
     ):
         super(DetectRequest, self).__init__(**kwargs)
         self.series = kwargs['series']
-        self.granularity = kwargs['granularity']
+        self.granularity = kwargs.get('granularity', None)
         self.custom_interval = kwargs.get('custom_interval', None)
         self.period = kwargs.get('period', None)
         self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
         self.sensitivity = kwargs.get('sensitivity', None)
+
+
+class DiagnosticsInfo(msrest.serialization.Model):
+    """DiagnosticsInfo.
+
+    :param model_state:
+    :type model_state: ~azure.ai.anomalydetector.models.ModelState
+    :param variable_states:
+    :type variable_states: list[~azure.ai.anomalydetector.models.VariableState]
+    """
+
+    _attribute_map = {
+        'model_state': {'key': 'modelState', 'type': 'ModelState'},
+        'variable_states': {'key': 'variableStates', 'type': '[VariableState]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DiagnosticsInfo, self).__init__(**kwargs)
+        self.model_state = kwargs.get('model_state', None)
+        self.variable_states = kwargs.get('variable_states', None)
 
 
 class EntireDetectResponse(msrest.serialization.Model):
@@ -255,6 +530,36 @@ class EntireDetectResponse(msrest.serialization.Model):
         self.is_positive_anomaly = kwargs['is_positive_anomaly']
 
 
+class ErrorResponse(msrest.serialization.Model):
+    """ErrorResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error Code.
+    :type code: str
+    :param message: Required. A message explaining the error reported by the service.
+    :type message: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+
+
 class LastDetectResponse(msrest.serialization.Model):
     """LastDetectResponse.
 
@@ -324,19 +629,253 @@ class LastDetectResponse(msrest.serialization.Model):
         self.is_positive_anomaly = kwargs['is_positive_anomaly']
 
 
+class Model(msrest.serialization.Model):
+    """Response of get model.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param model_id: Required. Model identifier.
+    :type model_id: str
+    :param created_time: Required. Date and time (UTC) when the model was created.
+    :type created_time: ~datetime.datetime
+    :param last_updated_time: Required. Date and time (UTC) when the model was last updated.
+    :type last_updated_time: ~datetime.datetime
+    :param model_info: Training Status of the model.
+    :type model_info: ~azure.ai.anomalydetector.models.ModelInfo
+    """
+
+    _validation = {
+        'model_id': {'required': True},
+        'created_time': {'required': True},
+        'last_updated_time': {'required': True},
+    }
+
+    _attribute_map = {
+        'model_id': {'key': 'modelId', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
+        'model_info': {'key': 'modelInfo', 'type': 'ModelInfo'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Model, self).__init__(**kwargs)
+        self.model_id = kwargs['model_id']
+        self.created_time = kwargs['created_time']
+        self.last_updated_time = kwargs['last_updated_time']
+        self.model_info = kwargs.get('model_info', None)
+
+
+class ModelInfo(msrest.serialization.Model):
+    """Train result of a model including status, errors and diagnose info for model and variables.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param sliding_window: An optional field, indicates how many history points will be used to
+     determine the anomaly score of one subsequent point.
+    :type sliding_window: int
+    :param align_policy: An optional field, since those multivariate need to be aligned in the same
+     timestamp before starting the detection.
+    :type align_policy: ~azure.ai.anomalydetector.models.AlignPolicy
+    :param source: Required. source file link of the input variables, each variable will be a csv
+     with two columns, the first column will be timestamp, the second column will be value.Besides
+     these variable csv files, an extra meta.json can be included in th zip file if you would like
+     to rename a variable.Be default, the file name of the variable will be used as the variable
+     name.
+    :type source: str
+    :param start_time: Required. require field, start time of data be used for generating
+     multivariate anomaly detection model, should be data-time.
+    :type start_time: ~datetime.datetime
+    :param end_time: Required. require field, end time of data be used for generating multivariate
+     anomaly detection model, should be data-time.
+    :type end_time: ~datetime.datetime
+    :param display_name: optional field, name of the model.
+    :type display_name: str
+    :ivar status: Model training status. Possible values include: "CREATED", "RUNNING", "READY",
+     "FAILED".
+    :vartype status: str or ~azure.ai.anomalydetector.models.ModelStatus
+    :ivar errors: Error message when fails to create a model.
+    :vartype errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
+    :ivar diagnostics_info: Used for deep analysis model and variables.
+    :vartype diagnostics_info: ~azure.ai.anomalydetector.models.DiagnosticsInfo
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'start_time': {'required': True},
+        'end_time': {'required': True},
+        'display_name': {'max_length': 24, 'min_length': 0},
+        'status': {'readonly': True},
+        'errors': {'readonly': True},
+        'diagnostics_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'sliding_window': {'key': 'slidingWindow', 'type': 'int'},
+        'align_policy': {'key': 'alignPolicy', 'type': 'AlignPolicy'},
+        'source': {'key': 'source', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
+        'diagnostics_info': {'key': 'diagnosticsInfo', 'type': 'DiagnosticsInfo'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ModelInfo, self).__init__(**kwargs)
+        self.sliding_window = kwargs.get('sliding_window', None)
+        self.align_policy = kwargs.get('align_policy', None)
+        self.source = kwargs['source']
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs['end_time']
+        self.display_name = kwargs.get('display_name', None)
+        self.status = None
+        self.errors = None
+        self.diagnostics_info = None
+
+
+class ModelList(msrest.serialization.Model):
+    """Response to the list models operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param models: Required. List of models.
+    :type models: list[~azure.ai.anomalydetector.models.ModelSnapshot]
+    :param current_count: Required. Current count of trained multivariate models.
+    :type current_count: int
+    :param max_count: Required. Max number of models that can be trained for this subscription.
+    :type max_count: int
+    :param next_link: next link to fetch more models.
+    :type next_link: str
+    """
+
+    _validation = {
+        'models': {'required': True},
+        'current_count': {'required': True},
+        'max_count': {'required': True},
+    }
+
+    _attribute_map = {
+        'models': {'key': 'models', 'type': '[ModelSnapshot]'},
+        'current_count': {'key': 'currentCount', 'type': 'int'},
+        'max_count': {'key': 'maxCount', 'type': 'int'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ModelList, self).__init__(**kwargs)
+        self.models = kwargs['models']
+        self.current_count = kwargs['current_count']
+        self.max_count = kwargs['max_count']
+        self.next_link = kwargs.get('next_link', None)
+
+
+class ModelSnapshot(msrest.serialization.Model):
+    """ModelSnapshot.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param model_id: Required. Model identifier.
+    :type model_id: str
+    :param created_time: Required. Date and time (UTC) when the model was created.
+    :type created_time: ~datetime.datetime
+    :param last_updated_time: Required. Date and time (UTC) when the model was last updated.
+    :type last_updated_time: ~datetime.datetime
+    :ivar status: Required. Model training status. Possible values include: "CREATED", "RUNNING",
+     "READY", "FAILED".
+    :vartype status: str or ~azure.ai.anomalydetector.models.ModelStatus
+    :param display_name:
+    :type display_name: str
+    :param variables_count: Required. Count of variables.
+    :type variables_count: int
+    """
+
+    _validation = {
+        'model_id': {'required': True},
+        'created_time': {'required': True},
+        'last_updated_time': {'required': True},
+        'status': {'required': True, 'readonly': True},
+        'variables_count': {'required': True},
+    }
+
+    _attribute_map = {
+        'model_id': {'key': 'modelId', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
+        'status': {'key': 'status', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'variables_count': {'key': 'variablesCount', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ModelSnapshot, self).__init__(**kwargs)
+        self.model_id = kwargs['model_id']
+        self.created_time = kwargs['created_time']
+        self.last_updated_time = kwargs['last_updated_time']
+        self.status = None
+        self.display_name = kwargs.get('display_name', None)
+        self.variables_count = kwargs['variables_count']
+
+
+class ModelState(msrest.serialization.Model):
+    """ModelState.
+
+    :param epoch_ids: Epoch id.
+    :type epoch_ids: list[int]
+    :param train_losses:
+    :type train_losses: list[float]
+    :param validation_losses:
+    :type validation_losses: list[float]
+    :param latencies_in_seconds:
+    :type latencies_in_seconds: list[float]
+    """
+
+    _attribute_map = {
+        'epoch_ids': {'key': 'epochIds', 'type': '[int]'},
+        'train_losses': {'key': 'trainLosses', 'type': '[float]'},
+        'validation_losses': {'key': 'validationLosses', 'type': '[float]'},
+        'latencies_in_seconds': {'key': 'latenciesInSeconds', 'type': '[float]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ModelState, self).__init__(**kwargs)
+        self.epoch_ids = kwargs.get('epoch_ids', None)
+        self.train_losses = kwargs.get('train_losses', None)
+        self.validation_losses = kwargs.get('validation_losses', None)
+        self.latencies_in_seconds = kwargs.get('latencies_in_seconds', None)
+
+
 class TimeSeriesPoint(msrest.serialization.Model):
     """TimeSeriesPoint.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param timestamp: Required. Timestamp of a data point (ISO8601 format).
+    :param timestamp: Optional argument, timestamp of a data point (ISO8601 format).
     :type timestamp: ~datetime.datetime
     :param value: Required. The measurement of that point, should be float.
     :type value: float
     """
 
     _validation = {
-        'timestamp': {'required': True},
         'value': {'required': True},
     }
 
@@ -350,5 +889,48 @@ class TimeSeriesPoint(msrest.serialization.Model):
         **kwargs
     ):
         super(TimeSeriesPoint, self).__init__(**kwargs)
-        self.timestamp = kwargs['timestamp']
+        self.timestamp = kwargs.get('timestamp', None)
         self.value = kwargs['value']
+
+
+class VariableState(msrest.serialization.Model):
+    """VariableState.
+
+    :param variable: Variable name.
+    :type variable: str
+    :param filled_na_ratio: Merged NA ratio of a variable.
+    :type filled_na_ratio: float
+    :param effective_count: Effective time-series points count.
+    :type effective_count: int
+    :param start_time: Start time of a variable.
+    :type start_time: ~datetime.datetime
+    :param end_time: End time of a variable.
+    :type end_time: ~datetime.datetime
+    :param errors: Error message when parse variable.
+    :type errors: list[~azure.ai.anomalydetector.models.ErrorResponse]
+    """
+
+    _validation = {
+        'filled_na_ratio': {'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'variable': {'key': 'variable', 'type': 'str'},
+        'filled_na_ratio': {'key': 'filledNARatio', 'type': 'float'},
+        'effective_count': {'key': 'effectiveCount', 'type': 'int'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VariableState, self).__init__(**kwargs)
+        self.variable = kwargs.get('variable', None)
+        self.filled_na_ratio = kwargs.get('filled_na_ratio', None)
+        self.effective_count = kwargs.get('effective_count', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.errors = kwargs.get('errors', None)

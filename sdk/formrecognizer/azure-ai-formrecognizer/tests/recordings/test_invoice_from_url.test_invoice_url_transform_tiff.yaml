@@ -9,31 +9,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '217'
+      - '215'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 7b8a7b9b-0ffc-4621-9d48-99b68fc350db
+      - d6d1d454-72eb-4a98-a7bc-850c81e81001
       content-length:
       - '0'
       date:
-      - Fri, 19 Mar 2021 21:00:00 GMT
+      - Tue, 11 May 2021 02:32:43 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/7b8a7b9b-0ffc-4621-9d48-99b68fc350db
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/d6d1d454-72eb-4a98-a7bc-850c81e81001
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '244'
+      - '777'
     status:
       code: 202
       message: Accepted
@@ -47,48 +47,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/7b8a7b9b-0ffc-4621-9d48-99b68fc350db
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/d6d1d454-72eb-4a98-a7bc-850c81e81001
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-03-19T21:00:01Z", "lastUpdatedDateTime":
-        "2021-03-19T21:00:01Z"}'
-    headers:
-      apim-request-id:
-      - 582d4a9b-729f-4fe8-9aa8-f589afdbab8e
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 19 Mar 2021 21:00:05 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '15'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/7b8a7b9b-0ffc-4621-9d48-99b68fc350db
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T21:00:01Z",
-        "lastUpdatedDateTime": "2021-03-19T21:00:06Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T02:32:43Z",
+        "lastUpdatedDateTime": "2021-05-11T02:32:47Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
         2200, "unit": "pixel", "lines": [{"text": "Contoso", "boundingBox": [105,
         231, 289, 232, 289, 274, 105, 273], "words": [{"text": "Contoso", "boundingBox":
@@ -168,29 +133,30 @@ interactions:
         706, 1075, 707], "confidence": 0.991}, {"text": "PT", "boundingBox": [1238,
         679, 1277, 679, 1277, 704, 1238, 705], "confidence": 0.998}], "appearance":
         {"style": {"name": "other", "confidence": 0.878}}}]}], "pageResults": [{"page":
-        1, "tables": [{"rows": 3, "columns": 6, "cells": [{"rowIndex": 0, "columnIndex":
-        0, "text": "Invoice Number", "boundingBox": [101, 556, 380, 558, 380, 662,
-        101, 661], "elements": ["#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1"]},
-        {"rowIndex": 0, "columnIndex": 1, "text": "Invoice Date", "boundingBox": [380,
-        558, 658, 558, 659, 662, 380, 662], "elements": ["#/readResults/0/lines/9/words/0",
-        "#/readResults/0/lines/9/words/1"]}, {"rowIndex": 0, "columnIndex": 2, "text":
-        "Invoice Due Date", "boundingBox": [658, 558, 941, 558, 941, 662, 659, 662],
-        "elements": ["#/readResults/0/lines/10/words/0", "#/readResults/0/lines/10/words/1",
-        "#/readResults/0/lines/10/words/2"]}, {"rowIndex": 0, "columnIndex": 3, "columnSpan":
-        2, "text": "Charges", "boundingBox": [941, 558, 1220, 558, 1220, 662, 941,
-        662], "elements": ["#/readResults/0/lines/11/words/0"]}, {"rowIndex": 0, "columnIndex":
-        5, "text": "VAT ID", "boundingBox": [1220, 558, 1499, 556, 1500, 661, 1220,
-        662], "elements": ["#/readResults/0/lines/12/words/0", "#/readResults/0/lines/12/words/1"]},
-        {"rowIndex": 1, "columnIndex": 0, "rowSpan": 2, "text": "34278587", "boundingBox":
-        [101, 661, 380, 662, 380, 771, 101, 771], "elements": ["#/readResults/0/lines/13/words/0"]},
-        {"rowIndex": 1, "columnIndex": 1, "rowSpan": 2, "text": "6/18/2017", "boundingBox":
-        [380, 662, 659, 662, 661, 771, 380, 771], "elements": ["#/readResults/0/lines/14/words/0"]},
+        1, "tables": [{"rows": 3, "columns": 5, "cells": [{"rowIndex": 0, "columnIndex":
+        0, "text": "Invoice Number", "boundingBox": [100, 558, 378, 558, 380, 662,
+        100, 662], "elements": ["#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 1, "text": "Invoice Date",
+        "boundingBox": [378, 558, 661, 558, 661, 662, 380, 662], "elements": ["#/readResults/0/lines/9/words/0",
+        "#/readResults/0/lines/9/words/1"], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        2, "text": "Invoice Due Date", "boundingBox": [661, 558, 941, 558, 941, 662,
+        661, 662], "elements": ["#/readResults/0/lines/10/words/0", "#/readResults/0/lines/10/words/1",
+        "#/readResults/0/lines/10/words/2"], "isHeader": true}, {"rowIndex": 0, "columnIndex":
+        3, "text": "Charges", "boundingBox": [941, 558, 1217, 558, 1219, 662, 941,
+        662], "elements": ["#/readResults/0/lines/11/words/0"], "isHeader": true},
+        {"rowIndex": 0, "columnIndex": 4, "text": "VAT ID", "boundingBox": [1217,
+        558, 1500, 558, 1500, 662, 1219, 662], "elements": ["#/readResults/0/lines/12/words/0",
+        "#/readResults/0/lines/12/words/1"], "isHeader": true}, {"rowIndex": 1, "columnIndex":
+        0, "rowSpan": 2, "text": "34278587", "boundingBox": [100, 662, 380, 662, 381,
+        772, 100, 772], "elements": ["#/readResults/0/lines/13/words/0"]}, {"rowIndex":
+        1, "columnIndex": 1, "rowSpan": 2, "text": "6/18/2017", "boundingBox": [380,
+        662, 661, 662, 661, 772, 381, 772], "elements": ["#/readResults/0/lines/14/words/0"]},
         {"rowIndex": 1, "columnIndex": 2, "rowSpan": 2, "text": "6/24/2017", "boundingBox":
-        [659, 662, 941, 662, 941, 771, 661, 771], "elements": ["#/readResults/0/lines/15/words/0"]},
-        {"rowIndex": 1, "columnIndex": 3, "rowSpan": 2, "columnSpan": 2, "text": "$56,651.49",
-        "boundingBox": [941, 662, 1220, 662, 1220, 771, 941, 771], "elements": ["#/readResults/0/lines/16/words/0"]},
-        {"rowIndex": 1, "columnIndex": 5, "rowSpan": 2, "text": "PT", "boundingBox":
-        [1220, 662, 1500, 661, 1500, 769, 1220, 771], "elements": ["#/readResults/0/lines/16/words/1"]}],
+        [661, 662, 941, 662, 941, 772, 661, 772], "elements": ["#/readResults/0/lines/15/words/0"]},
+        {"rowIndex": 1, "columnIndex": 3, "rowSpan": 2, "text": "$56,651.49", "boundingBox":
+        [941, 662, 1219, 662, 1220, 772, 941, 772], "elements": ["#/readResults/0/lines/16/words/0"]},
+        {"rowIndex": 1, "columnIndex": 4, "rowSpan": 2, "text": "PT", "boundingBox":
+        [1219, 662, 1500, 662, 1500, 769, 1220, 772], "elements": ["#/readResults/0/lines/16/words/1"]}],
         "boundingBox": [100, 556, 1499, 556, 1498, 771, 99, 771]}]}], "documentResults":
         [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields": {"CustomerAddress":
         {"type": "string", "valueString": "1020 Enterprise Way Sunnayvale, CA 87659",
@@ -212,20 +178,20 @@ interactions:
         705, 387, 705], "page": 1, "confidence": 0.962, "elements": ["#/readResults/0/lines/14/words/0"]},
         "InvoiceId": {"type": "string", "valueString": "34278587", "text": "34278587",
         "boundingBox": [107, 680, 227, 680, 227, 705, 107, 705], "page": 1, "confidence":
-        0.963, "elements": ["#/readResults/0/lines/13/words/0"]}, "Items": {"type":
+        0.965, "elements": ["#/readResults/0/lines/13/words/0"]}, "Items": {"type":
         "array", "valueArray": [{"type": "object", "valueObject": {"Amount": {"type":
         "number", "valueNumber": 56651.49, "text": "$56,651.49", "boundingBox": [1075,
-        680, 1213, 680, 1213, 706, 1075, 707], "page": 1, "confidence": 0.801, "elements":
+        680, 1213, 680, 1213, 706, 1075, 707], "page": 1, "confidence": 0.802, "elements":
         ["#/readResults/0/lines/16/words/0"]}, "Date": {"type": "date", "valueDate":
         "2017-06-18", "text": "6/18/2017", "boundingBox": [387, 680, 508, 680, 507,
         705, 387, 705], "page": 1, "confidence": 0.436, "elements": ["#/readResults/0/lines/14/words/0"]},
         "ProductCode": {"type": "string", "valueString": "34278587", "text": "34278587",
         "boundingBox": [107, 680, 227, 680, 227, 705, 107, 705], "page": 1, "confidence":
-        0.665, "elements": ["#/readResults/0/lines/13/words/0"]}, "Tax": {"type":
+        0.661, "elements": ["#/readResults/0/lines/13/words/0"]}, "Tax": {"type":
         "number", "text": "PT", "boundingBox": [1238, 679, 1277, 679, 1277, 704, 1238,
-        705], "page": 1, "confidence": 0.462, "elements": ["#/readResults/0/lines/16/words/1"]}},
+        705], "page": 1, "confidence": 0.497, "elements": ["#/readResults/0/lines/16/words/1"]}},
         "text": "34278587 6/18/2017 6/24/2017 $56,651.49 PT", "boundingBox": [107,
-        679, 1277, 679, 1277, 707, 107, 707], "page": 1, "confidence": 0.885, "elements":
+        679, 1277, 679, 1277, 707, 107, 707], "page": 1, "confidence": 0.538, "elements":
         ["#/readResults/0/lines/13/words/0", "#/readResults/0/lines/14/words/0", "#/readResults/0/lines/15/words/0",
         "#/readResults/0/lines/16/words/0", "#/readResults/0/lines/16/words/1"]}]},
         "VendorAddress": {"type": "string", "valueString": "1 Redmond way Suite 6000
@@ -239,19 +205,19 @@ interactions:
         0.981, "elements": ["#/readResults/0/lines/0/words/0"]}}}]}}'
     headers:
       apim-request-id:
-      - 51c103c1-bb7d-4996-9f96-5932e5a47a91
+      - 3e8b8ef8-31fe-4da2-a4b5-8cd3bea9a5e8
       content-length:
-      - '10827'
+      - '10877'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 21:00:10 GMT
+      - Tue, 11 May 2021 02:32:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '26'
+      - '22'
     status:
       code: 200
       message: OK

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class EncryptionProtectorsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,119 +43,12 @@ class EncryptionProtectorsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def _revalidate_initial(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        **kwargs
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
-
-        # Construct URL
-        url = self._revalidate_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _revalidate_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/encryptionProtector/{encryptionProtectorName}/revalidate'}  # type: ignore
-
-    async def begin_revalidate(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        **kwargs
-    ) -> AsyncLROPoller[None]:
-        """Revalidates an existing encryption protector.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param encryption_protector_name: The name of the encryption protector to be updated.
-        :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._revalidate_initial(
-                resource_group_name=resource_group_name,
-                server_name=server_name,
-                encryption_protector_name=encryption_protector_name,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_revalidate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/encryptionProtector/{encryptionProtectorName}/revalidate'}  # type: ignore
-
     def list_by_server(
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.EncryptionProtectorListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EncryptionProtectorListResult"]:
         """Gets a list of server encryption protectors.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -168,12 +61,12 @@ class EncryptionProtectorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.EncryptionProtectorListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionProtectorListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionProtectorListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -229,9 +122,9 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        **kwargs
-    ) -> "models.EncryptionProtector":
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        **kwargs: Any
+    ) -> "_models.EncryptionProtector":
         """Gets a server encryption protector.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -246,12 +139,12 @@ class EncryptionProtectorsOperations:
         :rtype: ~azure.mgmt.sql.models.EncryptionProtector
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionProtector"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionProtector"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -292,16 +185,16 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        parameters: "models.EncryptionProtector",
-        **kwargs
-    ) -> Optional["models.EncryptionProtector"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.EncryptionProtector"]]
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        parameters: "_models.EncryptionProtector",
+        **kwargs: Any
+    ) -> Optional["_models.EncryptionProtector"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EncryptionProtector"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -349,10 +242,10 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "models.EncryptionProtectorName"],
-        parameters: "models.EncryptionProtector",
-        **kwargs
-    ) -> AsyncLROPoller["models.EncryptionProtector"]:
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        parameters: "_models.EncryptionProtector",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.EncryptionProtector"]:
         """Updates an existing encryption protector.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -366,8 +259,8 @@ class EncryptionProtectorsOperations:
         :type parameters: ~azure.mgmt.sql.models.EncryptionProtector
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EncryptionProtector or the result of cls(response)
@@ -375,7 +268,7 @@ class EncryptionProtectorsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EncryptionProtector"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EncryptionProtector"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -401,7 +294,14 @@ class EncryptionProtectorsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -414,3 +314,117 @@ class EncryptionProtectorsOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/encryptionProtector/{encryptionProtectorName}'}  # type: ignore
+
+    async def _revalidate_initial(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-11-01-preview"
+
+        # Construct URL
+        url = self._revalidate_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _revalidate_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/encryptionProtector/{encryptionProtectorName}/revalidate'}  # type: ignore
+
+    async def begin_revalidate(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Revalidates an existing encryption protector.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param encryption_protector_name: The name of the encryption protector to be updated.
+        :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._revalidate_initial(
+                resource_group_name=resource_group_name,
+                server_name=server_name,
+                encryption_protector_name=encryption_protector_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'encryptionProtectorName': self._serialize.url("encryption_protector_name", encryption_protector_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_revalidate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/encryptionProtector/{encryptionProtectorName}/revalidate'}  # type: ignore

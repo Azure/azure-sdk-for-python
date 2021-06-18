@@ -77,7 +77,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         useWriteEndpoint, useAlternateWriteEndpoint information
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
-        Pipeline client to process the resquest
+        Pipeline client to process the request
     :param azure.core.HttpRequest request:
         The request object to send through the pipeline
     :return: tuple of (result, headers)

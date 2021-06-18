@@ -15,7 +15,7 @@ from azure.ai.textanalytics._models import (
 
 from azure.ai.textanalytics._response_handlers import sentiment_result
 
-from azure.ai.textanalytics._generated.v3_1_preview_4 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1_preview_5 import models as _generated_models
 
 
 @pytest.fixture

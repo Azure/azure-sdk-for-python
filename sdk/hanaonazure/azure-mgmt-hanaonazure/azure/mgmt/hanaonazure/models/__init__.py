@@ -9,6 +9,7 @@
 try:
     from ._models_py3 import Display
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import ErrorResponseError
     from ._models_py3 import Operation
     from ._models_py3 import OperationList
     from ._models_py3 import ProviderInstance
@@ -22,6 +23,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import Display  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import ErrorResponseError  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationList  # type: ignore
     from ._models import ProviderInstance  # type: ignore
@@ -40,6 +42,7 @@ from ._hana_management_client_enums import (
 __all__ = [
     'Display',
     'ErrorResponse',
+    'ErrorResponseError',
     'Operation',
     'OperationList',
     'ProviderInstance',

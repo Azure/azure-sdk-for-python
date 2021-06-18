@@ -33,3 +33,7 @@ extends:
     Artifacts:
     - name: azure-mgmt-purview
       safeName: azuremgmtpurview
+    - name: azure-purview-scanning
+      safeName: azurepurviewscanning
+    - name: azure-purview-catalog
+      safeName: azurepurviewcatalog

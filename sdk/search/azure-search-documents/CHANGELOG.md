@@ -1,14 +1,16 @@
 # Release History
 
-## 11.2.0b2 (Unreleased)
+## 11.3.0b1 (Unreleased)
 
 
-## 11.2.0b1 (2021-04-06)
+## 11.2.0 (2021-06-08)
 
-### New features
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
+**New features**
+
+- Added support for knowledge store    #18461
 - Added new data source type ADLS gen2  #16852
-- Added normalizer support  #17579
 
 ## 11.1.0 (2021-02-10)
 

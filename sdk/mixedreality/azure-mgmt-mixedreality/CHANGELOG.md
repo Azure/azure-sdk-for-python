@@ -1,5 +1,25 @@
 # Release History
 
+## 1.0.0 (2021-04-27)
+
+**Features**
+
+  - Model Operation has a new parameter properties
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter is_data_action
+  - Model SpatialAnchorsAccount has a new parameter plan
+  - Model SpatialAnchorsAccount has a new parameter system_data
+  - Model SpatialAnchorsAccount has a new parameter sku
+  - Model SpatialAnchorsAccount has a new parameter identity
+  - Model SpatialAnchorsAccount has a new parameter storage_account_name
+  - Model SpatialAnchorsAccount has a new parameter kind
+  - Model RemoteRenderingAccount has a new parameter plan
+  - Model RemoteRenderingAccount has a new parameter system_data
+  - Model RemoteRenderingAccount has a new parameter sku
+  - Model RemoteRenderingAccount has a new parameter storage_account_name
+  - Model RemoteRenderingAccount has a new parameter kind
+  - Added operation group ObjectAnchorsAccountsOperations
+
 ## 1.0.0b1 (2020-12-14)
 
 This is beta preview version.

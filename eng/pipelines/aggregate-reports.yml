@@ -4,6 +4,7 @@ pr:
   branches:
     include:
       - master
+      - main
   paths:
     include:
       - eng/pipelines/aggregate-reports.yml

@@ -2,3 +2,4 @@ recursive-include samples *.py
 recursive-include tests *.py
 include *.md
 include azure/__init__.py
+include azure/identity/py.typed

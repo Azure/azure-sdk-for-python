@@ -27,12 +27,19 @@ class Document(object):
         self.prefix = kwargs.get("prefix", "")
         self.data = kwargs.get("data", b'This is written in english.')
 
+    @classmethod
+    def create_dummy_docs(cls, docs_count):
+        result = []
+        for i in range(docs_count):
+            result.append(cls())
+        return result
+
 
 class OperationLocationReplacer(RecordingProcessor):
     """Replace the location/operation location uri in a request/response body."""
 
     def __init__(self):
-        self._replacement = "https://redacted.cognitiveservices.azure.com/translator"
+        self._replacement = "https://redacted.cognitiveservices.azure.com/translator/"
 
     def process_response(self, response):
         try:
@@ -74,6 +81,18 @@ class DocumentTranslationTest(AzureTestCase):
             self.storage_key, "fakeZmFrZV9hY29jdW50X2tleQ=="
         )
 
+    def get_oauth_endpoint(self):
+        return os.getenv("TRANSLATION_DOCUMENT_TEST_ENDPOINT")
+
+    def generate_oauth_token(self):
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                os.getenv("TRANSLATION_TENANT_ID"),
+                os.getenv("TRANSLATION_CLIENT_ID"),
+                os.getenv("TRANSLATION_CLIENT_SECRET"),
+            )
+
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
             for blob in data:
@@ -87,7 +106,7 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "src" + str(uuid.uuid4())
+        container_name = "src" + str(uuid.uuid4()) 
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
@@ -128,14 +147,16 @@ class DocumentTranslationTest(AzureTestCase):
         if self.is_live:
             time.sleep(duration)
 
-
     # model helpers
-    def _validate_doc_status(self, doc_details, target_language):
+    def _validate_doc_status(self, doc_details, target_language=None, **kwargs):
+        status = kwargs.pop("statuses", ["Succeeded"])
+        ids = kwargs.pop("ids", None)
         # specific assertions
-        self.assertEqual(doc_details.status, "Succeeded")
-        self.assertEqual(doc_details.has_completed, True)
-        self.assertIsNotNone(doc_details.translate_to, target_language)
+        self.assertIn(doc_details.status, status)
+        if target_language:
+            self.assertEqual(doc_details.translated_to, target_language)
         # generic assertions
+        self.assertIn(doc_details.id, ids) if ids else self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.source_document_url)
         self.assertIsNotNone(doc_details.translated_document_url)
@@ -144,7 +165,7 @@ class DocumentTranslationTest(AzureTestCase):
         self.assertIsNotNone(doc_details.created_on)
         self.assertIsNotNone(doc_details.last_updated_on)
 
-    def _validate_translation_job(self, job_details, **kwargs):
+    def _validate_translation_metadata(self, poller, **kwargs):
         status = kwargs.pop("status", None)
         total = kwargs.pop('total', None)
         failed = kwargs.pop('failed', None)
@@ -153,19 +174,51 @@ class DocumentTranslationTest(AzureTestCase):
         notstarted = kwargs.pop('notstarted', None)
         cancelled = kwargs.pop('cancelled', None)
         
-        has_completed = False
-        if status:
-            has_completed = True if status not in ["NotStarted", "Running", "Cancelling"] else False
+        # status
+        p = poller.status()
+        self.assertEqual(poller.status(), status) if status else self.assertIsNotNone(poller.status())
+        # docs count
+
+        if poller.done():
+            self.assertEqual(poller.details.documents_total_count, total) if total else self.assertIsNotNone(poller.details.documents_total_count)
+            self.assertEqual(poller.details.documents_failed_count, failed) if failed else self.assertIsNotNone(poller.details.documents_failed_count)
+            self.assertEqual(poller.details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(poller.details.documents_succeeded_count)
+            self.assertEqual(poller.details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(poller.details.documents_in_progress_count)
+            self.assertEqual(poller.details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(poller.details.documents_not_yet_started_count)
+            self.assertEqual(poller.details.documents_cancelled_count, cancelled) if cancelled else self.assertIsNotNone(poller.details.documents_cancelled_count)
+            # generic assertions
+            self.assertIsNotNone(poller.details.id)
+            self.assertIsNotNone(poller.details.created_on)
+            self.assertIsNotNone(poller.details.last_updated_on)
+            self.assertIsNotNone(poller.details.total_characters_charged)
+
+    def _validate_translations(self, job_details, **kwargs):
+        status = kwargs.pop("status", None)
+        total = kwargs.pop('total', None)
+        failed = kwargs.pop('failed', None)
+        succeeded = kwargs.pop('succeeded', None)
+        inprogress = kwargs.pop('inprogress', None)
+        notstarted = kwargs.pop('notstarted', None)
+        cancelled = kwargs.pop('cancelled', None)
+
         # status
         self.assertEqual(job_details.status, status) if status else self.assertIsNotNone(job_details.status)
         # docs count
-        self.assertEqual(job_details.documents_total_count, total) if total else self.assertIsNotNone(job_details.documents_total_count)
-        self.assertEqual(job_details.documents_failed_count, failed) if failed else self.assertIsNotNone(job_details.documents_failed_count)
-        self.assertEqual(job_details.documents_succeeded_count, succeeded) if succeeded else self.assertIsNotNone(job_details.documents_succeeded_count)
-        self.assertEqual(job_details.documents_in_progress_count, inprogress) if inprogress else self.assertIsNotNone(job_details.documents_in_progress_count)
-        self.assertEqual(job_details.documents_not_yet_started_count, notstarted) if notstarted else self.assertIsNotNone(job_details.documents_not_yet_started_count)
-        self.assertEqual(job_details.documents_cancelled_count, cancelled) if cancelled else self.assertIsNotNone(job_details.documents_cancelled_count)
-        self.assertEqual(job_details.has_completed, has_completed) if status else self.assertIsNotNone(job_details.has_completed)
+
+        self.assertEqual(job_details.documents_total_count, total) if total else self.assertIsNotNone(
+            job_details.documents_total_count)
+        self.assertEqual(job_details.documents_failed_count, failed) if failed else self.assertIsNotNone(
+            job_details.documents_failed_count)
+        self.assertEqual(job_details.documents_succeeded_count,
+                         succeeded) if succeeded else self.assertIsNotNone(job_details.documents_succeeded_count)
+        self.assertEqual(job_details.documents_in_progress_count,
+                         inprogress) if inprogress else self.assertIsNotNone(
+            job_details.documents_in_progress_count)
+        self.assertEqual(job_details.documents_not_yet_started_count,
+                         notstarted) if notstarted else self.assertIsNotNone(
+            job_details.documents_not_yet_started_count)
+        self.assertEqual(job_details.documents_cancelled_count,
+                         cancelled) if cancelled else self.assertIsNotNone(job_details.documents_cancelled_count)
         # generic assertions
         self.assertIsNotNone(job_details.id)
         self.assertIsNotNone(job_details.created_on)
@@ -179,30 +232,28 @@ class DocumentTranslationTest(AzureTestCase):
 
 
     # client helpers
-    def _submit_and_validate_translation_job(self, client, translation_inputs, total_docs_count=None):
+    def _begin_and_validate_translation(self, client, translation_inputs, total_docs_count, language=None):
         # submit job
-        job_details = client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
+        poller = client.begin_translation(translation_inputs)
+        self.assertIsNotNone(poller.id)
         # wait for result
-        job_details = client.wait_until_done(job_details.id)
+        result = poller.result()
         # validate
-        self._validate_translation_job(job_details=job_details, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
-
-        return job_details.id
+        self._validate_translation_metadata(poller=poller, status='Succeeded', total=total_docs_count, succeeded=total_docs_count)
+        for doc in result:
+            self._validate_doc_status(doc, language)
+        return poller.id
         
 
-    def _create_and_submit_sample_translation_jobs(self, client, jobs_count):
+    def _begin_multiple_translations(self, client, operations_count, **kwargs):
+        wait_for_operation = kwargs.pop('wait', True)
+        language_code = kwargs.pop('language_code', "es")
+        docs_per_operation = kwargs.pop('docs_per_operation', 2)
         result_job_ids = []
-        for i in range(jobs_count):
+        for i in range(operations_count):
             # prepare containers and test data
-            '''
-                WARNING!!
-                TOTAL_DOC_COUNT_IN_JOB = 1
-                if you plan to create more docs in the job,
-                please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
-            '''
-            blob_data = b'This is some text'  # TOTAL_DOC_COUNT_IN_JOB = 1
-            source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+            blob_data = Document.create_dummy_docs(docs_per_operation)
+            source_container_sas_url = self.create_source_container(data=blob_data)
             target_container_sas_url = self.create_target_container()
 
             # prepare translation inputs
@@ -212,16 +263,55 @@ class DocumentTranslationTest(AzureTestCase):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code="es"
+                            language_code=language_code
                         )
                     ]
                 )
             ]
 
             # submit multiple jobs
-            job_details = client.create_translation_job(translation_inputs)
-            self.assertIsNotNone(job_details.id)
-            client.wait_until_done(job_details.id)
-            result_job_ids.append(job_details.id)
+            poller = client.begin_translation(translation_inputs)
+            self.assertIsNotNone(poller.id)
+            if wait_for_operation:
+                result = poller.result()
+            else:
+                poller.wait()
+            result_job_ids.append(poller.id)
 
         return result_job_ids
+
+    def _begin_and_validate_translation_with_multiple_docs(self, client, docs_count, **kwargs):
+        # get input parms
+        wait_for_operation = kwargs.pop('wait', False)
+        language_code = kwargs.pop('language_code', "es")
+
+        # prepare containers and test data
+        blob_data = Document.create_dummy_docs(docs_count=docs_count)
+        source_container_sas_url = self.create_source_container(data=blob_data)
+        target_container_sas_url = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code=language_code
+                    )
+                ]
+            )
+        ]
+
+        # submit job
+        poller = client.begin_translation(translation_inputs)
+        self.assertIsNotNone(poller.id)
+        # wait for result
+        if wait_for_operation:
+            result = poller.result()
+            for doc in result:
+                self._validate_doc_status(doc, "es")
+        # validate
+        self._validate_translation_metadata(poller=poller)
+
+        return poller

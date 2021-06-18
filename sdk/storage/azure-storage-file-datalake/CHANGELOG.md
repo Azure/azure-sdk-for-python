@@ -1,7 +1,28 @@
 # Release History
 
-## 12.3.1b1 (Unreleased)
+## 12.4.0 (2021-06-09)
+**New features**
+- Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
+- Added support for `list_deleted_paths()` on `FileSystemClient`
 
+## 12.4.0b1 (2021-05-12)
+**New features**
+- Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
+- Added support for `list_deleted_paths()` on `FileSystemClient`
+
+**Fixes**
+- Fixed initiating `PathProperties` problem (#18490)
+
+## 12.3.1 (2021-04-20)
+**Fixes**
+- Fixed `recursive=True` on file deletion
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed `downloader.chunks()` return chunks in different size (#9419, #15648)
+- Optimized memory usage for datalake file uploads large chunks (#16890)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
+
+**New Features**
+- Added `get_account_information()` API
 
 ## 12.3.0 (2021-03-01)
 **Stable release of preview features**

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .authorization_code import AuthorizationCodeCredential
+from .azure_powershell import AzurePowerShellCredential
 from .chained import ChainedTokenCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
@@ -19,6 +20,7 @@ __all__ = [
     "AuthorizationCodeCredential",
     "AzureArcCredential",
     "AzureCliCredential",
+    "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",

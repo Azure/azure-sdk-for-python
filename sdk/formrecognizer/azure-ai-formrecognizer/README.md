@@ -9,9 +9,9 @@ from form documents. It includes the following main functionalities:
     * Receipt model - Recognize data from sales receipts using a prebuilt model.
     * Business card model - Recognize data from business cards using a prebuilt model.
     * Invoice model - Recognize data from invoices using a prebuilt model.
-    * Id document model - Recognize data from id documents using a prebuilt model.
+    * Identity document model - Recognize data from identity documents using a prebuilt model.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
 ## Getting started
 
@@ -24,18 +24,17 @@ from form documents. It includes the following main functionalities:
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library defaults to the v2.1-preview.3 version of the service
+> Note: This version of the client library defaults to the v2.1 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 |SDK version|Supported API version of service
 |-|-
-|3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
-|3.1.0b4 - Latest release (beta)| 2.0, 2.1-preview.3
-
+|3.1.X - Latest GA release| 2.0, 2.1 (default)
+|3.0.0| 2.0
 
 #### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
@@ -139,7 +138,7 @@ form_recognizer_client = FormRecognizerClient(
     - Sales receipts. See fields found on a receipt [here][service_recognize_receipt].
     - Business cards. See fields found on a business card [here][service_recognize_business_cards].
     - Invoices. See fields found on an invoice [here][service_recognize_invoice].
-    - Id documents. See fields found on an id document [here][service_recognize_id_documents].
+    - Identity documents. See fields found on identity documents [here][service_recognize_identity_documents].
  - Recognizing form content, including tables, lines, words, and selection marks, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
 Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
@@ -148,7 +147,7 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 `FormTrainingClient` provides operations for:
 
 - Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
-- Training custom models with labels to recognize specific fields, selection marks, and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Training custom models with labels to recognize specific fields, selection marks, tables, and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
 - Creating a composed model from a collection of existing trained models with labels.
@@ -174,10 +173,7 @@ The following section provides several code snippets covering some of the most c
 
 * [Recognize Forms Using a Custom Model](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model")
 * [Recognize Content](#recognize-content "Recognize Content")
-* [Recognize Receipts](#recognize-receipts "Recognize receipts")
-* [Recognize Business Cards](#recognize-business-cards "Recognize business cards")
-* [Recognize Invoices](#recognize-invoices "Recognize invoices")
-* [Recognize Id Documents](#recognize-id-documents "Recognize id documents")
+* [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Train a Model](#train-a-model "Train a model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
@@ -260,8 +256,10 @@ for content in form_pages:
             ))
 ```
 
-### Recognize Receipts
-Recognize data from sales receipts using a prebuilt model. Receipt fields recognized by the service can be found [here][service_recognize_receipt].
+### Using Prebuilt Models
+Extract fields from certain types of common forms such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
+
+For example, to extract fields from a sales receipt, use the prebuilt receipt model provided by the `begin_recognize_receipts` method:
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -290,81 +288,12 @@ for receipt in result:
             print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
 
-### Recognize Business Cards
-Recognize data from business cards using a prebuilt model. Business card fields recognized by the service can be found [here][service_recognize_business_cards].
+You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields:
+- Analyze receipts through the `begin_recognize_receipts` method (fields recognized by the service can be found [here][service_recognize_receipt])
+- Analyze business cards through the `begin_recognize_business_cards` method (fields recognized by the service can be found [here][service_recognize_business_cards]).
+- Analyze invoices through the `begin_recognize_invoices` method (fields recognized by the service can be found [here][service_recognize_invoice]).
+- Analyze identity documents through the `begin_recognize_identity_documents` method (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 
-```python
-from azure.ai.formrecognizer import FormRecognizerClient
-from azure.core.credentials import AzureKeyCredential
-
-endpoint = "https://<region>.api.cognitive.microsoft.com/"
-credential = AzureKeyCredential("<api_key>")
-
-form_recognizer_client = FormRecognizerClient(endpoint, credential)
-
-with open("<path to your business card>", "rb") as fd:
-    business_card = fd.read()
-
-poller = form_recognizer_client.begin_recognize_business_cards(business_card)
-result = poller.result()
-
-for business_card in result:
-    for name, field in business_card.fields.items():
-        if name == "ContactNames":
-            print("ContactNames:")
-            for items in field.value:
-                for item_name, item in items.value.items():
-                    print("...{}: {} has confidence {}".format(item_name, item.value, item.confidence))
-        else:
-            for item in field.value:
-                print("{}: {} has confidence {}".format(item.name, item.value, item.confidence))
-```
-
-### Recognize Invoices
-Recognize data from invoices using a prebuilt model. Invoice fields recognized by the service can be found [here][service_recognize_invoice].
-
-```python
-from azure.ai.formrecognizer import FormRecognizerClient
-from azure.core.credentials import AzureKeyCredential
-
-endpoint = "https://<region>.api.cognitive.microsoft.com/"
-credential = AzureKeyCredential("<api_key>")
-
-form_recognizer_client = FormRecognizerClient(endpoint, credential)
-
-with open("<path to your invoice>", "rb") as fd:
-    invoice = fd.read()
-
-poller = form_recognizer_client.begin_recognize_invoices(invoice)
-result = poller.result()
-
-for invoice in result:
-    for name, field in invoice.fields.items():
-        print("{}: {} has confidence {}".format(name, field.value, field.confidence))
-```
-
-### Recognize Id documents
-Recognize data from id documents using a prebuilt model. Id document fields recognized by the service can be found [here][service_recognize_id_documents].
-
-```python
-from azure.ai.formrecognizer import FormRecognizerClient
-from azure.core.credentials import AzureKeyCredential
-
-endpoint = "https://<region>.api.cognitive.microsoft.com/"
-credential = AzureKeyCredential("<api_key>")
-
-form_recognizer_client = FormRecognizerClient(endpoint, credential)
-
-with open("<path to your id document>", "rb") as fd:
-    id_document = fd.read()
-
-poller = form_recognizer_client.begin_recognize_id_documents(id_document)
-result = poller.result()
-
-for id_document in result:
-    for name, field in id_document.fields.items():
-        print("{}: {} has confidence {}".format(name, field.value, field.confidence))
-```
 
 ### Train a model
 Train a custom model on your own form type. The resulting model can be used to recognize values from the types of forms it was trained on.
@@ -497,7 +426,7 @@ These code samples show common scenario operations with the Azure Form Recognize
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url]
 * Recognize business cards: [sample_recognize_business_cards.py][sample_recognize_business_cards]
 * Recognize invoices: [sample_recognize_invoices.py][sample_recognize_invoices]
-* Recognize id documents: [sample_recognize_id_documents.py][sample_recognize_id_documents]
+* Recognize identity documents: [sample_recognize_identity_documents.py][sample_recognize_identity_documents]
 * Recognize content: [sample_recognize_content.py][sample_recognize_content]
 * Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms]
 * Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels]
@@ -516,7 +445,7 @@ are found under the `azure.ai.formrecognizer.aio` namespace.
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]
 * Recognize business cards: [sample_recognize_business_cards_async.py][sample_recognize_business_cards_async]
 * Recognize invoices: [sample_recognize_invoices_async.py][sample_recognize_invoices_async]
-* Recognize id documents: [sample_recognize_id_documents_async.py][sample_recognize_id_documents_async]
+* Recognize identity documents: [sample_recognize_identity_documents_async.py][sample_recognize_identity_documents_async]
 * Recognize content: [sample_recognize_content_async.py][sample_recognize_content_async]
 * Recognize custom forms: [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]
 * Train a model without labels: [sample_train_model_without_labels_async.py][sample_train_model_without_labels_async]
@@ -543,8 +472,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
-[train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
-
 
 [training_data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 [azure_subscription]: https://azure.microsoft.com/free/
@@ -553,7 +480,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 [azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
-[fr-labeling-tool]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool
+[fr-labeling-tool]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/label-tool?tabs=v2-1
 [fr-train-without-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-without-labels
 [fr-train-with-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-with-labels
 [prefix_ref_docs]: https://aka.ms/azsdk/python/formrecognizer/docs#azure.ai.formrecognizer.FormTrainingClient.begin_training
@@ -572,7 +499,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
 [service_recognize_business_cards]: https://aka.ms/formrecognizer/businesscardfields
 [service_recognize_invoice]: https://aka.ms/formrecognizer/invoicefields
-[service_recognize_id_documents]: https://aka.ms/formrecognizer/iddocumentfields
+[service_recognize_identity_documents]: https://aka.ms/formrecognizer/iddocumentfields
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
 [cla]: https://cla.microsoft.com
@@ -596,8 +523,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_recognize_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_business_cards_async.py
 [sample_recognize_invoices]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_invoices.py
 [sample_recognize_invoices_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_invoices_async.py
-[sample_recognize_id_documents]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_id_documents.py
-[sample_recognize_id_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_id_documents_async.py
+[sample_recognize_identity_documents]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_identity_documents.py
+[sample_recognize_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_identity_documents_async.py
 [sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
 [sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
 [sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py

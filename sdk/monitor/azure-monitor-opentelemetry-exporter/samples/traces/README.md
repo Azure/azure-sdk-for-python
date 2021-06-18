@@ -3,7 +3,7 @@ page_type: sample
 languages:
   - python
 products:
-  - azure-monitor-opentelemetry-exporter
+  - azure-monitor
 ---
 
 # Microsoft Azure Monitor Opentelemetry Exporter Python Samples

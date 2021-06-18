@@ -46,11 +46,12 @@ Alternatively, you can also use Active Directory authentication using DefaultAzu
 from azure.communication.sms import SmsClient
 from azure.identity import DefaultAzureCredential
 
-connection_string = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+connection_str = "endpoint=ENDPOINT;accessKey=KEY"
 sms_client = SmsClient.from_connection_string(connection_string)
+
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
-endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
 sms_client = SmsClient(endpoint, DefaultAzureCredential())
 ```
 

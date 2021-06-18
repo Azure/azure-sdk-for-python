@@ -82,7 +82,7 @@ class RecognizeContentSampleAsync(object):
                         format_bounding_box(line.bounding_box)
                     ))
                     if line.appearance:
-                        if line.appearance.style.name == "handwriting" and line.appearance.style.confidence > 0.8:
+                        if line.appearance.style_name == "handwriting" and line.appearance.style_confidence > 0.8:
                             print("Text line '{}' is handwritten and might be a signature.".format(line.text))
                     for word in line.words:
                         print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))

@@ -6,6 +6,7 @@
 
 from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import HttpResponseError
 from ._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
 from ._generated.models import PhoneNumberSearchRequest
 from ._shared.utils import parse_connection_str, get_authentication_policy
@@ -189,12 +190,18 @@ class PhoneNumbersClient(object):
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
-        return self._phone_number_client.phone_numbers.begin_update_capabilities(
+        poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             calling=calling,
             sms=sms,
             **kwargs
         )
+
+        result_properties = poller.result().additional_properties
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
+            raise HttpResponseError(message=result_properties['error']['message'])
+
+        return poller
 
     @distributed_trace
     def get_purchased_phone_number(

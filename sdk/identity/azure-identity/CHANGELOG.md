@@ -1,7 +1,35 @@
 # Release History
 
-## 1.6.0b4 (Unreleased)
+## 1.7.0b2 (Unreleased)
+### Added
+- `InteractiveBrowserCredential` keyword argument `login_hint` enables
+  pre-filling the username/email address field on the login page
+  ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
 
+## 1.7.0b1 (2021-06-08)
+Beginning with this release, this library requires Python 2.7 or 3.6+.
+
+### Added
+- `VisualStudioCodeCredential` gets its default tenant and authority
+  configuration from VS Code user settings
+  ([#14808](https://github.com/Azure/azure-sdk-for-python/issues/14808))
+
+
+## 1.6.0 (2021-05-13)
+This is the last version to support Python 3.5. The next version will require
+Python 2.7 or 3.6+.
+
+### Added
+- `AzurePowerShellCredential` authenticates as the identity logged in to Azure
+  PowerShell. This credential is part of `DefaultAzureCredential` by default
+  but can be disabled by a keyword argument:
+  `DefaultAzureCredential(exclude_powershell_credential=True)`
+  ([#17341](https://github.com/Azure/azure-sdk-for-python/issues/17341))
+
+### Fixed
+- `AzureCliCredential` raises `CredentialUnavailableError` when the CLI times out,
+  and kills timed out subprocesses
+- Reduced retry delay for `ManagedIdentityCredential` on Azure VMs
 
 ## 1.6.0b3 (2021-04-06)
 ### Breaking Changes

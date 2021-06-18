@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._management_lock_client import ManagementLockClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ManagementLockClient']
 
 try:

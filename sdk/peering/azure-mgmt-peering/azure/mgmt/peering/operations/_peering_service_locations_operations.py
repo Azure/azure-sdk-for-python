@@ -47,14 +47,11 @@ class PeeringServiceLocationsOperations(object):
 
     def list(
         self,
-        country=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.PeeringServiceLocationListResult"]
-        """Lists all of the available locations for peering service.
+        """Lists all of the available peering service locations for the specified kind of peering.
 
-        :param country: The country of interest, in which the locations are to be present.
-        :type country: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PeeringServiceLocationListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.peering.models.PeeringServiceLocationListResult]
@@ -65,7 +62,7 @@ class PeeringServiceLocationsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2019-08-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -82,8 +79,6 @@ class PeeringServiceLocationsOperations(object):
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if country is not None:
-                    query_parameters['country'] = self._serialize.query("country", country, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -107,7 +102,7 @@ class PeeringServiceLocationsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

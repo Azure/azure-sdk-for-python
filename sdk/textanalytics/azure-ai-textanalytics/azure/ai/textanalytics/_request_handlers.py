@@ -13,7 +13,8 @@ from ._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     RecognizeLinkedEntitiesAction,
-    AnalyzeBatchActionsType,
+    AnalyzeSentimentAction,
+    _AnalyzeActionsType,
 )
 
 def _validate_input(documents, hint, whole_input_hint):
@@ -70,12 +71,14 @@ def _validate_input(documents, hint, whole_input_hint):
 
 def _determine_action_type(action):
     if isinstance(action, RecognizeEntitiesAction):
-        return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_ENTITIES
     if isinstance(action, RecognizePiiEntitiesAction):
-        return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
     if isinstance(action, RecognizeLinkedEntitiesAction):
-        return AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
-    return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+        return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+    if isinstance(action, AnalyzeSentimentAction):
+        return _AnalyzeActionsType.ANALYZE_SENTIMENT
+    return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
 def _check_string_index_type_arg(string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"):
     string_index_type = None

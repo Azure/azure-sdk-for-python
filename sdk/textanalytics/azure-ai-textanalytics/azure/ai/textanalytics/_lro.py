@@ -3,7 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING, Generic
 from six.moves.urllib.parse import urlencode
+from azure.core.polling._poller import PollingReturnType
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling, OperationFailed, BadStatus
@@ -11,6 +13,10 @@ from azure.core.polling.base_polling import LROBasePolling, OperationResourcePol
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
 _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+    import datetime
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
@@ -32,6 +38,7 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
 class TextAnalyticsLROPollingMethod(LROBasePolling):
     def finished(self):
         """Is this polling finished?
+
         :rtype: bool
         """
         return TextAnalyticsLROPollingMethod._finished(self.status())
@@ -97,7 +104,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_4.models import JobMetadata
+        from ._generated.v3_1_preview_5.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -125,28 +132,56 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         return self._current_body.job_id
 
 
-class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
+class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
+
+    def polling_method(self):
+        # type: () -> AnalyzeHealthcareEntitiesLROPollingMethod
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method  # type: ignore
 
     @property
     def created_on(self):
-        return self._polling_method.created_on
+        # type: () -> datetime.datetime
+        """When your healthcare entities job was created
+
+        :return: When your healthcare entities job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
 
     @property
     def expires_on(self):
-        return self._polling_method.expires_on
+        # type: () -> datetime.datetime
+        """When your healthcare entities job will expire
+
+        :return: When your healthcare entities job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
 
     @property
     def last_modified_on(self):
-        return self._polling_method.last_modified_on
+        # type: () -> datetime.datetime
+        """When your healthcare entities job was last modified
+
+        :return: When your healthcare entities job was last modified
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
 
     @property
     def id(self):
-        return self._polling_method.id
+        # type: () -> str
+        """ID of your call to :func:`begin_analyze_healthcare_entities`
 
-    def cancel(  # type: ignore
-        self,
-        **kwargs
-    ):  # type: (...) -> LROPoller[None]
+        :return: ID of your call to :func:`begin_analyze_healthcare_entities`
+        :rtype: str
+        """
+        return self.polling_method().id
+
+    def cancel(self, **kwargs):  # type: ignore
+        # type: (Any) -> AnalyzeHealthcareEntitiesLROPoller[None]
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.
@@ -182,11 +217,11 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller):
             from ._response_handlers import process_http_response_error
             process_http_response_error(error)
 
-class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
+class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.v3_1_preview_4.models import AnalyzeJobMetadata
+        from ._generated.v3_1_preview_5.models import AnalyzeJobMetadata
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -244,40 +279,103 @@ class AnalyzeBatchActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return self._current_body.job_id
 
 
-class AnalyzeBatchActionsLROPoller(LROPoller):
+class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
+
+    def polling_method(self):
+        # type: () -> AnalyzeActionsLROPollingMethod
+        """Return the polling method associated to this poller.
+        """
+        return self._polling_method  # type: ignore
 
     @property
     def created_on(self):
-        return self._polling_method.created_on
+        # type: () -> datetime.datetime
+        """When your analyze job was created
+
+        :return: When your analyze job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
 
     @property
     def expires_on(self):
-        return self._polling_method.expires_on
+        # type: () -> datetime.datetime
+        """When your analyze job will expire
+
+        :return: When your analyze job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
 
     @property
     def display_name(self):
-        return self._polling_method.display_name
+        # type: () -> Optional[str]
+        """The display name of your :func:`begin_analyze_actions` call.
+
+        Corresponds to the `display_name` kwarg you pass to your
+        :func:`begin_analyze_actions` call.
+
+        :return: The display name of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().display_name
 
     @property
     def actions_failed_count(self):
-        return self._polling_method.actions_failed_count
+        # type: () -> int
+        """Total number of actions that have failed
+
+        :return: Total number of actions that have failed
+        :rtype: int
+        """
+        return self.polling_method().actions_failed_count
 
     @property
     def actions_in_progress_count(self):
-        return self._polling_method.actions_in_progress_count
+        # type: () -> int
+        """Total number of actions currently in progress
+
+        :return: Total number of actions currently in progress
+        :rtype: int
+        """
+        return self.polling_method().actions_in_progress_count
 
     @property
     def actions_succeeded_count(self):
-        return self._polling_method.actions_succeeded_count
+        # type: () -> int
+        """Total number of actions that succeeded
+
+        :return: Total number of actions that succeeded
+        :rtype: int
+        """
+        return self.polling_method().actions_succeeded_count
 
     @property
     def last_modified_on(self):
-        return self._polling_method.last_modified_on
+        # type: () -> datetime.datetime
+        """The last time your actions results were updated
+
+        :return: The last time your actions results were updated
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
 
     @property
     def total_actions_count(self):
-        return self._polling_method.total_actions_count
+        # type: () -> int
+        """Total number of actions you submitted
+
+        :return: Total number of actions submitted
+        :rtype: int
+        """
+        return self.polling_method().total_actions_count
 
     @property
     def id(self):
-        return self._polling_method.id
+        # type: () -> str
+        """ID of your :func:`begin_analyze_actions` call.
+
+        :return: ID of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().id

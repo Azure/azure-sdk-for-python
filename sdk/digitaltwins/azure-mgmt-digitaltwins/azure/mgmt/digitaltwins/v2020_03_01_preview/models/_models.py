@@ -57,7 +57,7 @@ class CheckNameResult(msrest.serialization.Model):
     :type message: str
     :param reason: Message providing the reason why the given name is invalid. Possible values
      include: "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.digitaltwins.models.Reason
+    :type reason: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.Reason
     """
 
     _attribute_map = {
@@ -96,7 +96,7 @@ class DigitalTwinsResource(msrest.serialization.Model):
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
     :param sku: This property is reserved for future use, and will be ignored/omitted.
-    :type sku: ~azure.mgmt.digitaltwins.models.DigitalTwinsSkuInfo
+    :type sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
     """
 
     _validation = {
@@ -146,14 +146,15 @@ class DigitalTwinsDescription(DigitalTwinsResource):
     :param tags: A set of tags. The resource tags.
     :type tags: dict[str, str]
     :param sku: This property is reserved for future use, and will be ignored/omitted.
-    :type sku: ~azure.mgmt.digitaltwins.models.DigitalTwinsSkuInfo
+    :type sku: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSkuInfo
     :ivar created_time: Time when DigitalTwinsInstance was created.
     :vartype created_time: ~datetime.datetime
     :ivar last_updated_time: Time when DigitalTwinsInstance was created.
     :vartype last_updated_time: ~datetime.datetime
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.ProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.ProvisioningState
     :ivar host_name: Api endpoint to work with DigitalTwinsInstance.
     :vartype host_name: str
     """
@@ -199,7 +200,7 @@ class DigitalTwinsDescriptionListResult(msrest.serialization.Model):
     :param next_link: The link used to get the next page of DigitalTwins description objects.
     :type next_link: str
     :param value: A list of DigitalTwins description objects.
-    :type value: list[~azure.mgmt.digitaltwins.models.DigitalTwinsDescription]
+    :type value: list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsDescription]
     """
 
     _attribute_map = {
@@ -263,7 +264,8 @@ class DigitalTwinsEndpointResource(ExternalResource):
     :ivar type: The resource type.
     :vartype type: str
     :param properties: DigitalTwinsInstance endpoint resource properties.
-    :type properties: ~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResourceProperties
+    :type properties:
+     ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResourceProperties
     """
 
     _validation = {
@@ -293,7 +295,8 @@ class DigitalTwinsEndpointResourceListResult(msrest.serialization.Model):
     :param next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
     :type next_link: str
     :param value: A list of DigitalTwinsInstance Endpoints.
-    :type value: list[~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResource]
+    :type value:
+     list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsEndpointResource]
     """
 
     _attribute_map = {
@@ -322,10 +325,11 @@ class DigitalTwinsEndpointResourceProperties(msrest.serialization.Model):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param tags: A set of tags. The resource tags.
@@ -385,7 +389,7 @@ class DigitalTwinsSkuInfo(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include: "F1".
-    :type name: str or ~azure.mgmt.digitaltwins.models.DigitalTwinsSku
+    :type name: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsSku
     """
 
     _validation = {
@@ -414,7 +418,7 @@ class ErrorDefinition(msrest.serialization.Model):
     :ivar message: Description of the error.
     :vartype message: str
     :ivar details: Internal error details.
-    :vartype details: list[~azure.mgmt.digitaltwins.models.ErrorDefinition]
+    :vartype details: list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.ErrorDefinition]
     """
 
     _validation = {
@@ -443,7 +447,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
     :param error: Error description.
-    :type error: ~azure.mgmt.digitaltwins.models.ErrorDefinition
+    :type error: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -467,10 +471,11 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param tags: A set of tags. The resource tags.
@@ -521,10 +526,11 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param tags: A set of tags. The resource tags.
@@ -572,7 +578,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{read | write | action | delete}.
     :vartype name: str
     :param display: Operation properties display.
-    :type display: ~azure.mgmt.digitaltwins.models.OperationDisplay
+    :type display: ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.OperationDisplay
     """
 
     _validation = {
@@ -642,7 +648,7 @@ class OperationListResult(msrest.serialization.Model):
     :type next_link: str
     :ivar value: A list of DigitalTwins operations supported by the Microsoft.DigitalTwins resource
      provider.
-    :vartype value: list[~azure.mgmt.digitaltwins.models.Operation]
+    :vartype value: list[~azure.mgmt.digitaltwins.v2020_03_01_preview.models.Operation]
     """
 
     _validation = {
@@ -672,10 +678,11 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param tags: A set of tags. The resource tags.

@@ -131,6 +131,7 @@ except (SyntaxError, ImportError):
 
 from ._net_app_management_client_enums import (
     ActiveDirectoryStatus,
+    BackupType,
     CheckNameResourceTypes,
     CheckQuotaNameResourceTypes,
     CreatedByType,
@@ -206,6 +207,7 @@ __all__ = [
     'VolumeSnapshotProperties',
     'WeeklySchedule',
     'ActiveDirectoryStatus',
+    'BackupType',
     'CheckNameResourceTypes',
     'CheckQuotaNameResourceTypes',
     'CreatedByType',

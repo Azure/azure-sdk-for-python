@@ -1,7 +1,41 @@
 # Release History
 
-## 3.1.0b5 (Unreleased)
+## 3.1.2 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 3.1.1 (2021-06-08)
+
+**Bug Fixes**
+
+- Handles invoices that do not have sub-line item fields detected.
+
+## 3.1.0 (2021-05-26)
+
+This version of the SDK defaults to the latest supported API version, which currently is v2.1
+
+Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+
+
+**Breaking Changes**
+
+- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`.
+- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`.
+- The model `TextAppearance` now includes the properties `style_name` and `style_confidence` that were part of the `TextStyle` object.
+- Removed the model `TextStyle`.
+- Removed field value types "gender" and "country" from the `FieldValueType` enum.
+- Added field value type "countryRegion" to the `FieldValueType` enum.
+- Renamed field name for identity documents from "Country" to "CountryRegion".
+
+**New features**
+
+- Added `to_dict` and `from_dict` methods to all of the models
 
 ## 3.1.0b4 (2021-04-06)
 

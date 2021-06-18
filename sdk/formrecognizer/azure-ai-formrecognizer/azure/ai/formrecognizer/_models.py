@@ -56,28 +56,24 @@ def get_field_value(
         return [
             FormField._from_generated(field, value, read_result)
             for value in value.value_array
-        ]
+        ] if value.value_array else []
     if value.type == "object":
         return {
             key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
-        }
+        } if value.value_object else {}
     if value.type == "selectionMark":
-        return (
-            value.text
-        )  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
-    if value.type == "gender":
-        return value.value_gender
-    if value.type == "country":
-        return value.value_country
+        return value.value_selection_mark
+    if value.type == "countryRegion":
+        return value.value_country_region
     return None
 
 
 class FieldValueType(str, Enum):
     """Semantic data type of the field value.
 
-    .. versionadded:: v2.1-preview
-        The *gender* and *country* values
+    .. versionadded:: v2.1
+        The *selectionMark* and *countryRegion* values
     """
 
     STRING = "string"
@@ -89,8 +85,7 @@ class FieldValueType(str, Enum):
     LIST = "list"
     DICTIONARY = "dictionary"
     SELECTION_MARK = "selectionMark"
-    GENDER = "gender"
-    COUNTRY = "country"
+    COUNTRY_REGION = "countryRegion"
 
 
 class LengthUnit(str, Enum):
@@ -121,7 +116,7 @@ class CustomFormModelStatus(str, Enum):
 class FormContentType(str, Enum):
     """Content type for upload.
 
-    .. versionadded:: v2.1-preview
+    .. versionadded:: v2.1
         Support for image/bmp
     """
 
@@ -137,6 +132,9 @@ class Point(namedtuple("Point", "x y")):
 
     :ivar float x: x-coordinate
     :ivar float y: y-coordinate
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     __slots__ = ()
@@ -144,12 +142,35 @@ class Point(namedtuple("Point", "x y")):
     def __new__(cls, x, y):
         return super(Point, cls).__new__(cls, x, y)
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of Point.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {"x": self.x, "y": self.y}
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> Point
+        """Converts a dict in the shape of a Point to the model itself.
+
+        :param dict data: A dictionary in the shape of Point.
+        :return: Point
+        :rtype: Point
+        """
+        return cls(x=data.get("x", None), y=data.get("y", None))
+
 
 class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
     """The 1-based page range of the form.
 
     :ivar int first_page_number: The first page number of the form.
     :ivar int last_page_number: The last page number of the form.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     __slots__ = ()
@@ -157,6 +178,32 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     def __new__(cls, first_page_number, last_page_number):
         return super(FormPageRange, cls).__new__(
             cls, first_page_number, last_page_number
+        )
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormPageRange.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "first_page_number": self.first_page_number,
+            "last_page_number": self.last_page_number,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormPageRange
+        """Converts a dict in the shape of a FormPageRange to the model itself.
+
+        :param dict data: A dictionary in the shape of FormPageRange.
+        :return: FormPageRange
+        :rtype: FormPageRange
+        """
+        return cls(
+            first_page_number=data.get("first_page_number", None),
+            last_page_number=data.get("last_page_number", None),
         )
 
 
@@ -175,6 +222,9 @@ class FormElement(object):
         The kind of form element. Possible kinds are "word", "line", or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
         or :class:`~azure.ai.formrecognizer.FormSelectionMark`, respectively.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -183,9 +233,46 @@ class FormElement(object):
         self.text = kwargs.get("text", None)
         self.kind = kwargs.get("kind", None)
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormElement.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
+            "page_number": self.page_number,
+            "kind": self.kind,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormElement
+        """Converts a dict in the shape of a FormElement to the model itself.
+
+        :param dict data: A dictionary in the shape of FormElement.
+        :return: FormElement
+        :rtype: FormElement
+        """
+        return cls(
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            kind=data.get("kind", None),
+            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+        )
+
 
 class RecognizedForm(object):
     """Represents a form that has been recognized by a trained or prebuilt model.
+    The `fields` property contains the form fields that were extracted from the
+    form. Tables, text lines/words, and selection marks are extracted per page
+    and found in the `pages` property.
 
     :ivar str form_type:
         The type of form the model identified the submitted form to be.
@@ -206,8 +293,9 @@ class RecognizedForm(object):
         A list of pages recognized from the input document. Contains lines,
         words, selection marks, tables and page metadata.
 
-    .. versionadded:: v2.1-preview
-        The *form_type_confidence* and *model_id* properties
+    .. versionadded:: v2.1
+        The *form_type_confidence* and *model_id* properties, support for
+        *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -231,6 +319,48 @@ class RecognizedForm(object):
             )[:1024]
         )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of RecognizedForm.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "fields": {k: v.to_dict() for k, v in self.fields.items()}
+            if self.fields
+            else {},
+            "form_type": self.form_type,
+            "pages": [v.to_dict() for v in self.pages] if self.pages else [],
+            "model_id": self.model_id,
+            "form_type_confidence": self.form_type_confidence,
+            "page_range": self.page_range.to_dict() if self.page_range else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> RecognizedForm
+        """Converts a dict in the shape of a RecognizedForm to the model itself.
+
+        :param dict data: A dictionary in the shape of RecognizedForm.
+        :return: RecognizedForm
+        :rtype: RecognizedForm
+        """
+        return cls(
+            fields={k: FormField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+            if data.get("fields")
+            else {},
+            form_type=data.get("form_type", None),
+            pages=[FormPage.from_dict(v) for v in data.get("pages")]  # type: ignore
+            if len(data.get("pages", [])) > 0
+            else [],
+            model_id=data.get("model_id", None),
+            form_type_confidence=data.get("form_type_confidence", None),
+            page_range=FormPageRange.from_dict(data.get("page_range"))  # type: ignore
+            if data.get("page_range")
+            else None,
+        )
+
 
 class FormField(object):
     """Represents a field recognized in an input form.
@@ -238,7 +368,7 @@ class FormField(object):
     :ivar str value_type: The type of `value` found on FormField. Described in
         :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
         'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', 'selectionMark',
-        'gender', or 'country'.
+        or 'countryRegion'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
         Note that this is not returned for forms analyzed by models trained with labels.
@@ -248,10 +378,15 @@ class FormField(object):
         analyzed from a custom model that was trained with labels.
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
+        If the value is extracted from the form, but cannot be normalized to its type,
+        then access the `value_data.text` property for a textual representation of the value.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         dict[str, :class:`~azure.ai.formrecognizer.FormField`], or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -300,6 +435,55 @@ class FormField(object):
             :1024
         ]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormField.
+
+        :return: dict
+        :rtype: dict
+        """
+        value = self.value
+        if isinstance(self.value, dict):
+            value = {k: v.to_dict() for k, v in self.value.items()}
+        elif isinstance(self.value, list):
+            value = [v.to_dict() for v in self.value]
+        return {
+            "value_type": self.value_type,
+            "name": self.name,
+            "value": value,
+            "confidence": self.confidence,
+            "label_data": self.label_data.to_dict() if self.label_data else None,
+            "value_data": self.value_data.to_dict() if self.value_data else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormField
+        """Converts a dict in the shape of a FormField to the model itself.
+
+        :param dict data: A dictionary in the shape of FormField.
+        :return: FormField
+        :rtype: FormField
+        """
+        value = data.get("value", None)
+        if isinstance(data.get("value"), dict):
+            value = {k: FormField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
+        elif isinstance(data.get("value"), list):
+            value = [FormField.from_dict(v) for v in data.get("value")]  # type: ignore
+
+        return cls(
+            value_type=data.get("value_type", None),
+            name=data.get("name", None),
+            value=value,
+            confidence=data.get("confidence", None),
+            label_data=FieldData.from_dict(data.get("label_data"))  # type: ignore
+            if data.get("label_data")
+            else None,
+            value_data=FieldData.from_dict(data.get("value_data"))  # type: ignore
+            if data.get("value_data")
+            else None,
+        )
+
 
 class FieldData(object):
     """Contains the data for the form field. This includes the text,
@@ -321,8 +505,9 @@ class FieldData(object):
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
 
-    .. versionadded:: v2.1-preview
-        *FormSelectionMark* is added to the types returned in the list of field_elements
+    .. versionadded:: v2.1
+        *FormSelectionMark* is added to the types returned in the list of field_elements, support for
+        *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -369,6 +554,53 @@ class FieldData(object):
             :1024
         ]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FieldData.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
+            "page_number": self.page_number,
+            "field_elements": [f.to_dict() for f in self.field_elements]
+            if self.field_elements
+            else [],
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FieldData
+        """Converts a dict in the shape of a FieldData to the model itself.
+
+        :param dict data: A dictionary in the shape of FieldData.
+        :return: FieldData
+        :rtype: FieldData
+        """
+        field_elements = []
+        for v in data.get("field_elements"):  # type: ignore
+            if v.get("kind") == "word":
+                field_elements.append(FormWord.from_dict(v))
+            elif v.get("kind") == "line":
+                field_elements.append(FormLine.from_dict(v))  # type: ignore
+            elif v.get("kind") == "selectionMark":
+                field_elements.append(FormSelectionMark.from_dict(v))  # type: ignore
+            else:
+                field_elements.append(FormElement.from_dict(v))  # type: ignore
+
+        return cls(
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(f) for f in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+            field_elements=field_elements,
+        )
+
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
@@ -395,12 +627,14 @@ class FormPage(object):
         returned is 300 per page. The lines are sorted top to bottom, left to right, although in
         certain cases proximity is treated with higher priority. As the sorting order depends on
         the detected text, it may change across images and OCR version updates. Thus, business
-        logic should be built upon the actual line location instead of order.
+        logic should be built upon the actual line location instead of order. The reading order
+        of lines can be specified by the `reading_order` keyword argument (Note: `reading_order`
+        only supported in `begin_recognize_content` and `begin_recognize_content_from_url`).
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
 
-    .. versionadded:: v2.1-preview
-        *selection_marks* property
+    .. versionadded:: v2.1
+        *selection_marks* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -428,6 +662,54 @@ class FormPage(object):
             )[:1024]
         )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormPage.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "page_number": self.page_number,
+            "text_angle": self.text_angle,
+            "width": self.width,
+            "height": self.height,
+            "unit": self.unit,
+            "tables": [table.to_dict() for table in self.tables] if self.tables else [],
+            "lines": [line.to_dict() for line in self.lines] if self.lines else [],
+            "selection_marks": [mark.to_dict() for mark in self.selection_marks]
+            if self.selection_marks
+            else [],
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormPage
+        """Converts a dict in the shape of a FormPage to the model itself.
+
+        :param dict data: A dictionary in the shape of FormPage.
+        :return: FormPage
+        :rtype: FormPage
+        """
+        return cls(
+            text_angle=data.get("text_angle", None),
+            width=data.get("width", None),
+            height=data.get("height", None),
+            unit=data.get("unit", None),
+            page_number=data.get("page_number", None),
+            tables=[FormTable.from_dict(v) for v in data.get("tables")]  # type: ignore
+            if len(data.get("tables", [])) > 0
+            else [],
+            lines=[FormLine.from_dict(v) for v in data.get("lines")]  # type: ignore
+            if len(data.get("lines", [])) > 0
+            else [],
+            selection_marks=[
+                FormSelectionMark.from_dict(v) for v in data.get("selection_marks")  # type: ignore
+            ]
+            if len(data.get("selection_marks", [])) > 0
+            else [],
+        )
+
 
 class FormLine(FormElement):
     """An object representing an extracted line of text.
@@ -446,8 +728,8 @@ class FormLine(FormElement):
     :ivar appearance: An object representing the appearance of the line.
     :vartype appearance: ~azure.ai.formrecognizer.Appearance
 
-    .. versionadded:: v2.1-preview
-        *appearance* property
+    .. versionadded:: v2.1
+        *appearance* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -484,6 +766,47 @@ class FormLine(FormElement):
             :1024
         ]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormLine.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
+            "words": [f.to_dict() for f in self.words] if self.words else [],
+            "page_number": self.page_number,
+            "kind": self.kind,
+            "appearance": self.appearance.to_dict() if self.appearance else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormLine
+        """Converts a dict in the shape of a FormLine to the model itself.
+
+        :param dict data: A dictionary in the shape of FormLine.
+        :return: FormLine
+        :rtype: FormLine
+        """
+        return cls(
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+            words=[FormWord.from_dict(v) for v in data.get("words")]  # type: ignore
+            if len(data.get("words", [])) > 0
+            else [],
+            appearance=TextAppearance.from_dict(data.get("appearance"))  # type: ignore
+            if data.get("appearance")
+            else None,
+        )
+
 
 class FormWord(FormElement):
     """Represents a word recognized from the input document.
@@ -499,6 +822,9 @@ class FormWord(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormWord, this is "word".
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -521,6 +847,41 @@ class FormWord(FormElement):
             :1024
         ]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormWord.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
+            "confidence": self.confidence,
+            "page_number": self.page_number,
+            "kind": self.kind,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormWord
+        """Converts a dict in the shape of a FormWord to the model itself.
+
+        :param dict data: A dictionary in the shape of FormWord.
+        :return: FormWord
+        :rtype: FormWord
+        """
+        return cls(
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+        )
+
 
 class FormSelectionMark(FormElement):
     """Information about the extracted selection mark.
@@ -538,6 +899,9 @@ class FormSelectionMark(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormSelectionMark, this is "selectionMark".
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -555,11 +919,53 @@ class FormSelectionMark(FormElement):
         )
 
     def __repr__(self):
-        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})".format(
-            self.text, self.bounding_box, self.confidence, self.page_number, self.state
+        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={}, kind={})".format(
+            self.text,
+            self.bounding_box,
+            self.confidence,
+            self.page_number,
+            self.state,
+            self.kind,
         )[
             :1024
         ]
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormSelectionMark.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
+            "confidence": self.confidence,
+            "state": self.state,
+            "page_number": self.page_number,
+            "kind": self.kind,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormSelectionMark
+        """Converts a dict in the shape of a FormSelectionMark to the model itself.
+
+        :param dict data: A dictionary in the shape of FormSelectionMark.
+        :return: FormSelectionMark
+        :rtype: FormSelectionMark
+        """
+        return cls(
+            text=data.get("text", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            state=data.get("state", None),
+        )
 
 
 class FormTable(object):
@@ -579,8 +985,8 @@ class FormTable(object):
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
 
-    .. versionadded:: v2.1-preview
-        The *bounding_box* property.
+    .. versionadded:: v2.1
+        The *bounding_box* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -600,6 +1006,44 @@ class FormTable(object):
         )[
             :1024
         ]
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormTable.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "page_number": self.page_number,
+            "row_count": self.row_count,
+            "column_count": self.column_count,
+            "cells": [cell.to_dict() for cell in self.cells],
+            "bounding_box": [box.to_dict() for box in self.bounding_box]
+            if self.bounding_box
+            else [],
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormTable
+        """Converts a dict in the shape of a FormTable to the model itself.
+
+        :param dict data: A dictionary in the shape of FormTable.
+        :return: FormTable
+        :rtype: FormTable
+        """
+        return cls(
+            row_count=data.get("row_count", None),
+            page_number=data.get("page_number", None),
+            column_count=data.get("column_count", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+            cells=[FormTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
+            if len(data.get("cells", [])) > 0
+            else [],
+        )
 
 
 class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
@@ -629,8 +1073,9 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
 
-    .. versionadded:: v2.1-preview
-        *FormSelectionMark* is added to the types returned in the list of field_elements
+    .. versionadded:: v2.1
+        *FormSelectionMark* is added to the types returned in the list of field_elements, support for
+        *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -686,6 +1131,67 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
             ]
         )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormTableCell.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "text": self.text,
+            "row_index": self.row_index,
+            "column_index": self.column_index,
+            "row_span": self.row_span,
+            "column_span": self.column_span,
+            "confidence": self.confidence,
+            "is_header": self.is_header,
+            "is_footer": self.is_footer,
+            "page_number": self.page_number,
+            "bounding_box": [box.to_dict() for box in self.bounding_box]
+            if self.bounding_box
+            else [],
+            "field_elements": [element.to_dict() for element in self.field_elements]
+            if self.field_elements
+            else [],
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormTableCell
+        """Converts a dict in the shape of a FormTableCell to the model itself.
+
+        :param dict data: A dictionary in the shape of FormTableCell.
+        :return: FormTableCell
+        :rtype: FormTableCell
+        """
+        field_elements = []
+        for v in data.get("field_elements"):  # type: ignore
+            if v.get("kind") == "word":
+                field_elements.append(FormWord.from_dict(v))  # type: ignore
+            elif v.get("kind") == "line":
+                field_elements.append(FormLine.from_dict(v))  # type: ignore
+            elif v.get("kind") == "selectionMark":
+                field_elements.append(FormSelectionMark.from_dict(v))  # type: ignore
+            else:
+                field_elements.append(FormElement.from_dict(v))  # type: ignore
+
+        return cls(
+            text=data.get("text", None),
+            row_index=data.get("row_index", None),
+            column_index=data.get("column_index", None),
+            row_span=data.get("row_span", None),
+            column_span=data.get("column_span", None),
+            confidence=data.get("confidence", None),
+            is_header=data.get("is_header", None),
+            is_footer=data.get("is_footer", None),
+            page_number=data.get("page_number", None),
+            bounding_box=[Point.from_dict(v) for v in data.get("bounding_box")]  # type: ignore
+            if len(data.get("bounding_box", [])) > 0
+            else [],
+            field_elements=field_elements,
+        )
+
 
 class CustomFormModel(object):
     """Represents a model trained from custom forms.
@@ -710,8 +1216,8 @@ class CustomFormModel(object):
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
 
-    .. versionadded:: v2.1-preview
-        The *model_name* and *properties* properties.
+    .. versionadded:: v2.1
+        The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -788,6 +1294,60 @@ class CustomFormModel(object):
             ]
         )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModel.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "model_id": self.model_id,
+            "status": self.status,
+            "training_started_on": self.training_started_on,
+            "training_completed_on": self.training_completed_on,
+            "submodels": [submodel.to_dict() for submodel in self.submodels]
+            if self.submodels
+            else [],
+            "errors": [err.to_dict() for err in self.errors] if self.errors else [],
+            "training_documents": [doc.to_dict() for doc in self.training_documents]
+            if self.training_documents
+            else [],
+            "model_name": self.model_name,
+            "properties": self.properties.to_dict() if self.properties else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModel
+        """Converts a dict in the shape of a CustomFormModel to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModel.
+        :return: CustomFormModel
+        :rtype: CustomFormModel
+        """
+        return cls(
+            model_id=data.get("model_id", None),
+            status=data.get("status", None),
+            training_started_on=data.get("training_started_on", None),
+            training_completed_on=data.get("training_completed_on", None),
+            submodels=[CustomFormSubmodel.from_dict(v) for v in data.get("submodels")]  # type: ignore
+            if len(data.get("submodels", [])) > 0
+            else [],
+            errors=[FormRecognizerError.from_dict(v) for v in data.get("errors")]  # type: ignore
+            if len(data.get("errors", [])) > 0
+            else [],
+            training_documents=[
+                TrainingDocumentInfo.from_dict(v) for v in data.get("training_documents")  # type: ignore
+            ]
+            if len(data.get("training_documents", [])) > 0
+            else [],
+            model_name=data.get("model_name", None),
+            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
+            if data.get("properties")
+            else None,
+        )
+
 
 class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
@@ -802,8 +1362,8 @@ class CustomFormSubmodel(object):
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
 
-    .. versionadded:: v2.1-preview
-        The *model_id* property
+    .. versionadded:: v2.1
+        The *model_id* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -882,6 +1442,40 @@ class CustomFormSubmodel(object):
             :1024
         ]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormSubmodel.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "model_id": self.model_id,
+            "accuracy": self.accuracy,
+            "fields": {k: v.to_dict() for k, v in self.fields.items()}
+            if self.fields
+            else {},
+            "form_type": self.form_type,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormSubmodel
+        """Converts a dict in the shape of a CustomFormSubmodel to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormSubmodel.
+        :return: CustomFormSubmodel
+        :rtype: CustomFormSubmodel
+        """
+        return cls(
+            model_id=data.get("model_id", None),
+            accuracy=data.get("accuracy", None),
+            fields={k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+            if data.get("fields")
+            else {},
+            form_type=data.get("form_type", None),
+        )
+
 
 class CustomFormModelField(object):
     """A field that the model will extract from forms it analyzes.
@@ -889,6 +1483,9 @@ class CustomFormModelField(object):
     :ivar str label: The form fields label on the form.
     :ivar str name: Canonical name; uniquely identifies a field within the form.
     :ivar float accuracy: The estimated recognition accuracy for this field.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -915,6 +1512,30 @@ class CustomFormModelField(object):
             self.label, self.name, self.accuracy
         )[:1024]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModelField.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {"label": self.label, "accuracy": self.accuracy, "name": self.name}
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModelField
+        """Converts a dict in the shape of a CustomFormModelField to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModelField.
+        :return: CustomFormModelField
+        :rtype: CustomFormModelField
+        """
+        return cls(
+            label=data.get("label", None),
+            accuracy=data.get("accuracy", None),
+            name=data.get("name", None),
+        )
+
 
 class TrainingDocumentInfo(object):
     """Report for an individual document used for training
@@ -933,8 +1554,8 @@ class TrainingDocumentInfo(object):
     :ivar str model_id:
         The model ID that used the document to train.
 
-    .. versionadded:: v2.1-preview
-        The *model_id* property
+    .. versionadded:: v2.1
+        The *model_id* property, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -986,12 +1607,49 @@ class TrainingDocumentInfo(object):
             :1024
         ]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of TrainingDocumentInfo.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "name": self.name,
+            "status": self.status,
+            "page_count": self.page_count,
+            "errors": [err.to_dict() for err in self.errors] if self.errors else [],
+            "model_id": self.model_id,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> TrainingDocumentInfo
+        """Converts a dict in the shape of a TrainingDocumentInfo to the model itself.
+
+        :param dict data: A dictionary in the shape of TrainingDocumentInfo.
+        :return: TrainingDocumentInfo
+        :rtype: TrainingDocumentInfo
+        """
+        return cls(
+            name=data.get("name", None),
+            status=data.get("status", None),
+            page_count=data.get("page_count", None),
+            errors=[
+                FormRecognizerError.from_dict(v) for v in data.get("errors")  # type: ignore
+            ],
+            model_id=data.get("model_id", None),
+        )
+
 
 class FormRecognizerError(object):
     """Represents an error that occurred while training.
 
     :ivar str code: Error code.
     :ivar str message: Error message.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1011,6 +1669,29 @@ class FormRecognizerError(object):
             self.code, self.message
         )[:1024]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of FormRecognizerError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {"code": self.code, "message": self.message}
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> FormRecognizerError
+        """Converts a dict in the shape of a FormRecognizerError to the model itself.
+
+        :param dict data: A dictionary in the shape of FormRecognizerError.
+        :return: FormRecognizerError
+        :rtype: FormRecognizerError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+        )
+
 
 class CustomFormModelInfo(object):
     """Custom model information.
@@ -1028,8 +1709,8 @@ class CustomFormModelInfo(object):
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
 
-    .. versionadded:: v2.1-preview
-        The *model_name* and *properties* properties
+    .. versionadded:: v2.1
+        The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1076,12 +1757,51 @@ class CustomFormModelInfo(object):
             )[:1024]
         )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModelInfo.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "model_id": self.model_id,
+            "status": self.status,
+            "training_started_on": self.training_started_on,
+            "training_completed_on": self.training_completed_on,
+            "model_name": self.model_name,
+            "properties": self.properties.to_dict() if self.properties else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModelInfo
+        """Converts a dict in the shape of a CustomFormModelInfo to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModelInfo.
+        :return: CustomFormModelInfo
+        :rtype: CustomFormModelInfo
+        """
+        return cls(
+            model_id=data.get("model_id", None),
+            status=data.get("status", None),
+            training_started_on=data.get("training_started_on", None),
+            training_completed_on=data.get("training_completed_on", None),
+            model_name=data.get("model_name", None),
+            properties=CustomFormModelProperties.from_dict(data.get("properties"))  # type: ignore
+            if data.get("properties")
+            else None,
+        )
+
 
 class AccountProperties(object):
     """Summary of all the custom models on the account.
 
     :ivar int custom_model_count: Current count of trained custom models.
     :ivar int custom_model_limit: Max number of models that can be trained for this account.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1100,11 +1820,40 @@ class AccountProperties(object):
             self.custom_model_count, self.custom_model_limit
         )[:1024]
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of AccountProperties.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "custom_model_count": self.custom_model_count,
+            "custom_model_limit": self.custom_model_limit,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> AccountProperties
+        """Converts a dict in the shape of a AccountProperties to the model itself.
+
+        :param dict data: A dictionary in the shape of AccountProperties.
+        :return: AccountProperties
+        :rtype: AccountProperties
+        """
+        return cls(
+            custom_model_count=data.get("custom_model_count", None),
+            custom_model_limit=data.get("custom_model_limit", None),
+        )
+
 
 class CustomFormModelProperties(object):
     """Optional model properties.
 
     :ivar bool is_composed_model: Is this model composed? (default: false).
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
@@ -1121,44 +1870,80 @@ class CustomFormModelProperties(object):
             self.is_composed_model
         )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CustomFormModelProperties.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {"is_composed_model": self.is_composed_model}
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> CustomFormModelProperties
+        """Converts a dict in the shape of a CustomFormModelProperties to the model itself.
+
+        :param dict data: A dictionary in the shape of CustomFormModelProperties.
+        :return: CustomFormModelProperties
+        :rtype: CustomFormModelProperties
+        """
+        return cls(
+            is_composed_model=data.get("is_composed_model", None),
+        )
+
 
 class TextAppearance(object):
     """An object representing the appearance of the text line.
 
-    :param style: An object representing the style of the text line.
-    :type style: ~azure.ai.formrecognizer.TextStyle
+    :ivar str style_name: The text line style name.
+        Possible values include: "other", "handwriting".
+    :ivar float style_confidence: The confidence of text line style.
+
+    .. versionadded:: v2.1
+        Support for *to_dict* and *from_dict* methods
     """
 
     def __init__(self, **kwargs):
-        self.style = kwargs.get("style", None)
+        self.style_name = kwargs.get("style_name", None)
+        self.style_confidence = kwargs.get("style_confidence", None)
 
     @classmethod
     def _from_generated(cls, appearance):
         if appearance is None:
             return appearance
         return cls(
-            style=TextStyle(
-                name=appearance.style.name, confidence=appearance.style.confidence
-            )
+            style_name=appearance.style.name,
+            style_confidence=appearance.style.confidence,
         )
 
     def __repr__(self):
-        return "TextAppearance(style={})".format(repr(self.style))
+        return "TextAppearance(style_name={}, style_confidence={})".format(
+            self.style_name, self.style_confidence
+        )
 
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of TextAppearance.
 
-class TextStyle(object):
-    """An object representing the style of the text line.
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "style_name": self.style_name,
+            "style_confidence": self.style_confidence,
+        }
 
-    :param name: The text line style name.
-        Possible values include: "other", "handwriting".
-    :type name: str
-    :param confidence: The confidence of text line style.
-    :type confidence: float
-    """
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> TextAppearance
+        """Converts a dict in the shape of a TextAppearance to the model itself.
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    def __repr__(self):
-        return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)
+        :param dict data: A dictionary in the shape of TextAppearance.
+        :return: TextAppearance
+        :rtype: TextAppearance
+        """
+        return cls(
+            style_name=data.get("style_name", None),
+            style_confidence=data.get("style_confidence", None),
+        )

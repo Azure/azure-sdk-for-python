@@ -23,10 +23,10 @@ To use this package, you must have:
 * Opentelemetry SDK - [Opentelemtry SDK for Python][ot_sdk_python]
 * Python 3.5 or later - [Install Python][python]
 
-### Authenticate the client
+### Instantiate the client
 
 Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorTraceExporter` class. You will need a **connection_string** to instantiate the object.
-Please find the samples linked below for demonstration as to how to authenticate using a connection string.
+Please find the samples linked below for demonstration as to how to construct the exporter using a connection string.
 
 #### [Create Exporter from connection string][sample_authenticate_client_connstr]
 
@@ -50,7 +50,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Opentelemetry][opentelemtry_spec]: Opentelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
 
-* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentaton. A library that enables OpenTelemetry observability for another library is called an Instrumentation Library.
+* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
 
 * [Trace][trace_concept]: Trace refers to distributed tracing. It can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
 
@@ -168,7 +168,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-opentelemetry-exporter-azuremonitor
+[pypi]: https://pypi.org/project/azure-monitor-opentelemetry-exporter/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io

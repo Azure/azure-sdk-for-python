@@ -6,40 +6,40 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '275'
+      - '291'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 639f75d0-7a5e-468b-9cb1-75aa54d36f50
+      apim-request-id: 75ccef4a-7efb-48d5-81ad-f72df187ee38
       content-length: '0'
-      date: Fri, 19 Mar 2021 19:26:19 GMT
-      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08
+      date: Tue, 11 May 2021 01:54:07 GMT
+      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '90'
+      x-envoy-upstream-service-time: '81'
     status:
       code: 201
       message: Created
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08?includeKeys=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "ec0a6a36-9c9c-45b5-b78d-16937417fd08", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-03-19T19:26:20Z",
-        "lastUpdatedDateTime": "2021-03-19T19:26:23Z"}, "trainResult": {"averageModelAccuracy":
+      string: '{"modelInfo": {"modelId": "23149a9c-f16a-4ddc-a036-322ced3e6c7e", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-05-11T01:54:07Z",
+        "lastUpdatedDateTime": "2021-05-11T01:54:11Z"}, "trainResult": {"averageModelAccuracy":
         0.96, "trainingDocuments": [{"documentName": "Form_1.jpg", "pages": 1, "status":
         "succeeded"}, {"documentName": "Form_2.jpg", "pages": 1, "status": "succeeded"},
         {"documentName": "Form_3.jpg", "pages": 1, "status": "succeeded"}, {"documentName":
@@ -55,17 +55,17 @@ interactions:
         "Total", "accuracy": 0.995}, {"fieldName": "VendorName", "accuracy": 0.995},
         {"fieldName": "Website", "accuracy": 0.995}], "errors": []}}'
     headers:
-      apim-request-id: 86517c26-cc00-4669-b241-e0f34d08b0af
+      apim-request-id: 6df7160a-cabf-463b-a97d-6d6bbd5fbb96
       content-length: '1242'
       content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 19:26:24 GMT
+      date: Tue, 11 May 2021 01:54:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '19'
+      x-envoy-upstream-service-time: '25'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08?includeKeys=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e?includeKeys=true
 - request:
     body: '!!! The request body has been omitted from the recording because its size
       479269 is larger than 128KB. !!!'
@@ -75,58 +75,35 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
-      apim-request-id: ef1941b0-5e5a-4ec8-b83c-6a37f2f915ea
+      apim-request-id: 417c57de-e22f-4fdd-b0a4-fa3d30611312
       content-length: '0'
-      date: Fri, 19 Mar 2021 19:26:25 GMT
-      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyzeresults/0be0a959-fde3-495c-bc74-d9fb570c509a
+      date: Tue, 11 May 2021 01:54:14 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e/analyzeresults/6835eacb-ae87-4f8d-8a99-20822b8599c9
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '105'
+      x-envoy-upstream-service-time: '96'
     status:
       code: 202
       message: Accepted
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyze?includeTextDetails=true
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e/analyze?includeTextDetails=true
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyzeresults/0be0a959-fde3-495c-bc74-d9fb570c509a
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e/analyzeresults/6835eacb-ae87-4f8d-8a99-20822b8599c9
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2021-03-19T19:26:26Z",
-        "lastUpdatedDateTime": "2021-03-19T19:26:27Z"}'
-    headers:
-      apim-request-id: 9e6da8b5-7ea7-40fd-81bd-c6af1d854caf
-      content-length: '109'
-      content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 19:26:31 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '24'
-    status:
-      code: 200
-      message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyzeresults/0be0a959-fde3-495c-bc74-d9fb570c509a
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyzeresults/0be0a959-fde3-495c-bc74-d9fb570c509a
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T19:26:26Z",
-        "lastUpdatedDateTime": "2021-03-19T19:26:31Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T01:54:14Z",
+        "lastUpdatedDateTime": "2021-05-11T01:54:18Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 1700, "height":
         2200, "unit": "pixel", "lines": [{"boundingBox": [136, 139, 351, 138, 351,
         166, 136, 166], "text": "Purchase Order", "appearance": {"style": {"name":
@@ -416,132 +393,134 @@ interactions:
         0.994}, {"boundingBox": [563, 1959, 630, 1959, 630, 1991, 564, 1992], "text":
         "total", "confidence": 0.996}, {"boundingBox": [636, 1959, 786, 1961, 786,
         1990, 636, 1991], "text": "purchase.", "confidence": 0.994}]}]}], "pageResults":
-        [{"page": 1, "tables": [{"rows": 5, "columns": 5, "cells": [{"rowIndex": 0,
-        "columnIndex": 0, "columnSpan": 2, "text": "Details", "boundingBox": [157,
-        1038, 847, 1037, 847, 1086, 157, 1086], "elements": ["#/readResults/0/lines/21/words/0"]},
-        {"rowIndex": 0, "columnIndex": 2, "text": "Quantity", "boundingBox": [847,
-        1037, 1071, 1037, 1071, 1086, 847, 1086], "elements": ["#/readResults/0/lines/22/words/0"]},
-        {"rowIndex": 0, "columnIndex": 3, "text": "Unit Price", "boundingBox": [1071,
-        1037, 1310, 1038, 1310, 1086, 1071, 1086], "elements": ["#/readResults/0/lines/23/words/0",
-        "#/readResults/0/lines/23/words/1"]}, {"rowIndex": 0, "columnIndex": 4, "text":
-        "Total", "boundingBox": [1310, 1038, 1543, 1038, 1543, 1086, 1310, 1086],
-        "elements": ["#/readResults/0/lines/24/words/0"]}, {"rowIndex": 1, "columnIndex":
-        0, "columnSpan": 2, "text": "Bindings", "boundingBox": [157, 1086, 847, 1086,
-        847, 1127, 157, 1128], "elements": ["#/readResults/0/lines/25/words/0"]},
-        {"rowIndex": 1, "columnIndex": 2, "text": "20", "boundingBox": [847, 1086,
-        1071, 1086, 1071, 1127, 847, 1127], "elements": ["#/readResults/0/lines/26/words/0"]},
-        {"rowIndex": 1, "columnIndex": 3, "text": "1.00", "boundingBox": [1071, 1086,
-        1310, 1086, 1310, 1127, 1071, 1127], "elements": ["#/readResults/0/lines/27/words/0"]},
-        {"rowIndex": 1, "columnIndex": 4, "text": "20.00", "boundingBox": [1310, 1086,
-        1543, 1086, 1543, 1127, 1310, 1127], "elements": ["#/readResults/0/lines/28/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "columnSpan": 2, "text": "Covers Small",
-        "boundingBox": [157, 1128, 847, 1127, 847, 1171, 157, 1171], "elements": ["#/readResults/0/lines/29/words/0",
-        "#/readResults/0/lines/29/words/1"]}, {"rowIndex": 2, "columnIndex": 2, "text":
-        "20", "boundingBox": [847, 1127, 1071, 1127, 1071, 1171, 847, 1171], "elements":
-        ["#/readResults/0/lines/30/words/0"]}, {"rowIndex": 2, "columnIndex": 3, "text":
-        "1.00", "boundingBox": [1071, 1127, 1310, 1127, 1310, 1171, 1071, 1171], "elements":
-        ["#/readResults/0/lines/31/words/0"]}, {"rowIndex": 2, "columnIndex": 4, "text":
-        "20.00", "boundingBox": [1310, 1127, 1543, 1127, 1543, 1171, 1310, 1171],
-        "elements": ["#/readResults/0/lines/32/words/0"]}, {"rowIndex": 3, "columnIndex":
-        0, "columnSpan": 2, "text": "Feather Bookmark", "boundingBox": [157, 1171,
-        847, 1171, 847, 1214, 157, 1214], "elements": ["#/readResults/0/lines/33/words/0",
-        "#/readResults/0/lines/33/words/1"]}, {"rowIndex": 3, "columnIndex": 2, "text":
-        "20", "boundingBox": [847, 1171, 1071, 1171, 1071, 1214, 847, 1214], "elements":
-        ["#/readResults/0/lines/34/words/0"]}, {"rowIndex": 3, "columnIndex": 3, "text":
-        "5.00", "boundingBox": [1071, 1171, 1310, 1171, 1310, 1214, 1071, 1214], "elements":
-        ["#/readResults/0/lines/35/words/0"]}, {"rowIndex": 3, "columnIndex": 4, "text":
-        "100.00", "boundingBox": [1310, 1171, 1543, 1171, 1543, 1215, 1310, 1214],
-        "elements": ["#/readResults/0/lines/36/words/0"]}, {"rowIndex": 4, "columnIndex":
-        0, "columnSpan": 2, "text": "Copper Swirl Marker", "boundingBox": [157, 1214,
-        847, 1214, 847, 1258, 157, 1258], "elements": ["#/readResults/0/lines/37/words/0",
-        "#/readResults/0/lines/37/words/1", "#/readResults/0/lines/37/words/2"]},
-        {"rowIndex": 4, "columnIndex": 2, "text": "20", "boundingBox": [847, 1214,
-        1071, 1214, 1071, 1258, 847, 1258], "elements": ["#/readResults/0/lines/38/words/0"]},
-        {"rowIndex": 4, "columnIndex": 3, "text": "5.00", "boundingBox": [1071, 1214,
-        1310, 1214, 1310, 1258, 1071, 1258], "elements": ["#/readResults/0/lines/39/words/0"]},
-        {"rowIndex": 4, "columnIndex": 4, "text": "100.00", "boundingBox": [1310,
-        1214, 1543, 1215, 1543, 1260, 1310, 1258], "elements": ["#/readResults/0/lines/40/words/0"]}],
-        "boundingBox": [153, 1036, 1547, 1037, 1547, 1265, 153, 1265]}, {"rows": 4,
-        "columns": 2, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "SUBTOTAL",
-        "boundingBox": [1072, 1564, 1307, 1565, 1308, 1609, 1071, 1608], "elements":
-        ["#/readResults/0/lines/41/words/0"]}, {"rowIndex": 0, "columnIndex": 1, "text":
-        "$140.00", "boundingBox": [1307, 1565, 1542, 1564, 1543, 1609, 1308, 1609],
-        "elements": ["#/readResults/0/lines/42/words/0"]}, {"rowIndex": 1, "columnIndex":
-        0, "text": "TAX", "boundingBox": [1071, 1608, 1308, 1609, 1308, 1652, 1071,
-        1651], "elements": ["#/readResults/0/lines/43/words/0"]}, {"rowIndex": 1,
-        "columnIndex": 1, "text": "$4.00", "boundingBox": [1308, 1609, 1543, 1609,
-        1543, 1652, 1308, 1652], "elements": ["#/readResults/0/lines/44/words/0"]},
-        {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox": [1071, 1651,
-        1308, 1652, 1308, 1663, 1071, 1663], "elements": []}, {"rowIndex": 2, "columnIndex":
-        1, "text": "", "boundingBox": [1308, 1652, 1543, 1652, 1543, 1663, 1308, 1663],
-        "elements": []}, {"rowIndex": 3, "columnIndex": 0, "text": "TOTAL", "boundingBox":
-        [1071, 1663, 1308, 1663, 1308, 1707, 1071, 1707], "elements": ["#/readResults/0/lines/46/words/0"]},
-        {"rowIndex": 3, "columnIndex": 1, "text": "$144.00", "boundingBox": [1308,
-        1663, 1543, 1663, 1543, 1708, 1308, 1707], "elements": ["#/readResults/0/lines/47/words/0"]}],
-        "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058, 1707]}]}], "documentResults":
-        [{"docType": "custom:ec0a6a36-9c9c-45b5-b78d-16937417fd08", "modelId": "ec0a6a36-9c9c-45b5-b78d-16937417fd08",
-        "pageRange": [1, 1], "fields": {"DatedAs": {"type": "string", "valueString":
-        "12/20/2020", "text": "12/20/2020", "page": 1, "boundingBox": [1163.0, 420.0,
-        1310.0, 420.0, 1310.0, 449.0, 1163.0, 449.0], "confidence": 0.995, "elements":
-        ["#/readResults/0/lines/6/words/2"]}, "CompanyName": {"type": "string", "valueString":
-        "Higgly Wiggly Books", "text": "Higgly Wiggly Books", "page": 1, "boundingBox":
-        [375.0, 646.0, 629.0, 646.0, 629.0, 679.0, 375.0, 679.0], "confidence": 0.995,
-        "elements": ["#/readResults/0/lines/11/words/2", "#/readResults/0/lines/11/words/3",
-        "#/readResults/0/lines/11/words/4"]}, "Quantity": {"type": "number", "text":
-        "20", "page": 1, "boundingBox": [860.0, 1094.0, 888.0, 1094.0, 888.0, 1119.0,
-        860.0, 1119.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/26/words/0"]},
-        "VendorName": {"type": "string", "valueString": "Hillary Swank", "text": "Hillary
-        Swank", "page": 1, "boundingBox": [349.0, 609.0, 520.0, 609.0, 520.0, 639.0,
-        349.0, 639.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/10/words/2",
-        "#/readResults/0/lines/10/words/3"]}, "PhoneNumber": {"type": "string", "valueString":
-        "555-348-6512", "text": "555-348-6512", "page": 1, "boundingBox": [365.0,
-        351.0, 525.0, 351.0, 525.0, 378.0, 365.0, 378.0], "confidence": 0.995, "elements":
-        ["#/readResults/0/lines/3/words/2"]}, "Tax": {"type": "string", "valueString":
-        "$4.00", "text": "$4.00", "page": 1, "boundingBox": [1458.0, 1615.0, 1529.0,
-        1615.0, 1529.0, 1643.0, 1458.0, 1643.0], "confidence": 0.995, "elements":
-        ["#/readResults/0/lines/44/words/0"]}, "Merchant": {"type": "string", "valueString":
-        "Hero Limited", "text": "Hero Limited", "page": 1, "boundingBox": [620.0,
-        205.0, 1062.0, 205.0, 1062.0, 266.0, 620.0, 266.0], "confidence": 0.995, "elements":
-        ["#/readResults/0/lines/1/words/0", "#/readResults/0/lines/1/words/1"]}, "Email":
-        {"type": "string", "valueString": "accounts@herolimited.com", "text": "accounts@herolimited.com",
-        "page": 1, "boundingBox": [164.0, 479.0, 471.0, 479.0, 471.0, 503.0, 164.0,
-        503.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/7/words/0"]},
-        "CompanyPhoneNumber": {"type": "string", "valueString": "938-294-2949", "text":
+        [{"page": 1, "tables": [{"rows": 5, "columns": 4, "cells": [{"rowIndex": 0,
+        "columnIndex": 0, "text": "Details", "boundingBox": [156, 1037, 847, 1037,
+        847, 1086, 156, 1086], "elements": ["#/readResults/0/lines/21/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 1, "text": "Quantity", "boundingBox":
+        [847, 1037, 1071, 1038, 1071, 1086, 847, 1086], "elements": ["#/readResults/0/lines/22/words/0"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 2, "text": "Unit Price",
+        "boundingBox": [1071, 1038, 1309, 1038, 1309, 1086, 1071, 1086], "elements":
+        ["#/readResults/0/lines/23/words/0", "#/readResults/0/lines/23/words/1"],
+        "isHeader": true}, {"rowIndex": 0, "columnIndex": 3, "text": "Total", "boundingBox":
+        [1309, 1038, 1543, 1038, 1543, 1086, 1309, 1086], "elements": ["#/readResults/0/lines/24/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "Bindings", "boundingBox":
+        [156, 1086, 847, 1086, 847, 1127, 156, 1127], "elements": ["#/readResults/0/lines/25/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1086, 1071, 1086, 1071, 1127, 847, 1127], "elements": ["#/readResults/0/lines/26/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 2, "text": "1.00", "boundingBox":
+        [1071, 1086, 1309, 1086, 1309, 1127, 1071, 1127], "elements": ["#/readResults/0/lines/27/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1086, 1543, 1086, 1543, 1127, 1309, 1127], "elements": ["#/readResults/0/lines/28/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 0, "text": "Covers Small",
+        "boundingBox": [156, 1127, 847, 1127, 847, 1171, 156, 1171], "elements": ["#/readResults/0/lines/29/words/0",
+        "#/readResults/0/lines/29/words/1"], "isHeader": false}, {"rowIndex": 2, "columnIndex":
+        1, "text": "20", "boundingBox": [847, 1127, 1071, 1127, 1071, 1171, 847, 1171],
+        "elements": ["#/readResults/0/lines/30/words/0"], "isHeader": false}, {"rowIndex":
+        2, "columnIndex": 2, "text": "1.00", "boundingBox": [1071, 1127, 1309, 1127,
+        1309, 1171, 1071, 1171], "elements": ["#/readResults/0/lines/31/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 3, "text": "20.00", "boundingBox":
+        [1309, 1127, 1543, 1127, 1543, 1171, 1309, 1171], "elements": ["#/readResults/0/lines/32/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 0, "text": "Feather Bookmark",
+        "boundingBox": [156, 1171, 847, 1171, 847, 1214, 156, 1214], "elements": ["#/readResults/0/lines/33/words/0",
+        "#/readResults/0/lines/33/words/1"], "isHeader": false}, {"rowIndex": 3, "columnIndex":
+        1, "text": "20", "boundingBox": [847, 1171, 1071, 1171, 1071, 1214, 847, 1214],
+        "elements": ["#/readResults/0/lines/34/words/0"], "isHeader": false}, {"rowIndex":
+        3, "columnIndex": 2, "text": "5.00", "boundingBox": [1071, 1171, 1309, 1171,
+        1309, 1214, 1071, 1214], "elements": ["#/readResults/0/lines/35/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1171, 1543, 1171, 1543, 1215, 1309, 1214], "elements": ["#/readResults/0/lines/36/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 0, "text": "Copper Swirl
+        Marker", "boundingBox": [156, 1214, 847, 1214, 847, 1258, 156, 1258], "elements":
+        ["#/readResults/0/lines/37/words/0", "#/readResults/0/lines/37/words/1", "#/readResults/0/lines/37/words/2"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 1, "text": "20", "boundingBox":
+        [847, 1214, 1071, 1214, 1071, 1258, 847, 1258], "elements": ["#/readResults/0/lines/38/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 2, "text": "5.00", "boundingBox":
+        [1071, 1214, 1309, 1214, 1309, 1258, 1071, 1258], "elements": ["#/readResults/0/lines/39/words/0"],
+        "isHeader": false}, {"rowIndex": 4, "columnIndex": 3, "text": "100.00", "boundingBox":
+        [1309, 1214, 1543, 1215, 1543, 1260, 1309, 1258], "elements": ["#/readResults/0/lines/40/words/0"],
+        "isHeader": false}], "boundingBox": [153, 1036, 1547, 1037, 1547, 1265, 153,
+        1265]}, {"rows": 4, "columns": 2, "cells": [{"rowIndex": 0, "columnIndex":
+        0, "text": "SUBTOTAL", "boundingBox": [1070, 1564, 1307, 1564, 1308, 1609,
+        1071, 1608], "elements": ["#/readResults/0/lines/41/words/0"], "isHeader":
+        true}, {"rowIndex": 0, "columnIndex": 1, "text": "$140.00", "boundingBox":
+        [1307, 1564, 1544, 1564, 1544, 1609, 1308, 1609], "elements": ["#/readResults/0/lines/42/words/0"],
+        "isHeader": true}, {"rowIndex": 1, "columnIndex": 0, "text": "TAX", "boundingBox":
+        [1071, 1608, 1308, 1609, 1308, 1652, 1071, 1653], "elements": ["#/readResults/0/lines/43/words/0"],
+        "isHeader": false}, {"rowIndex": 1, "columnIndex": 1, "text": "$4.00", "boundingBox":
+        [1308, 1609, 1544, 1609, 1544, 1652, 1308, 1652], "elements": ["#/readResults/0/lines/44/words/0"],
+        "isHeader": false}, {"rowIndex": 2, "columnIndex": 0, "text": "", "boundingBox":
+        [1071, 1653, 1308, 1652, 1308, 1664, 1071, 1664], "elements": [], "isHeader":
+        false}, {"rowIndex": 2, "columnIndex": 1, "text": "", "boundingBox": [1308,
+        1652, 1544, 1652, 1544, 1665, 1308, 1664], "elements": [], "isHeader": false},
+        {"rowIndex": 3, "columnIndex": 0, "text": "TOTAL", "boundingBox": [1071, 1664,
+        1308, 1664, 1308, 1707, 1071, 1707], "elements": ["#/readResults/0/lines/46/words/0"],
+        "isHeader": false}, {"rowIndex": 3, "columnIndex": 1, "text": "$144.00", "boundingBox":
+        [1308, 1664, 1544, 1665, 1544, 1707, 1308, 1707], "elements": ["#/readResults/0/lines/47/words/0"],
+        "isHeader": false}], "boundingBox": [1058, 1563, 1555, 1563, 1555, 1707, 1058,
+        1707]}]}], "documentResults": [{"docType": "custom:23149a9c-f16a-4ddc-a036-322ced3e6c7e",
+        "modelId": "23149a9c-f16a-4ddc-a036-322ced3e6c7e", "pageRange": [1, 1], "fields":
+        {"CompanyPhoneNumber": {"type": "string", "valueString": "938-294-2949", "text":
         "938-294-2949", "page": 1, "boundingBox": [709.0, 722.0, 882.0, 722.0, 882.0,
         749.0, 709.0, 749.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/14/words/1"]},
-        "PurchaseOrderNumber": {"type": "string", "valueString": "948284", "text":
-        "948284", "page": 1, "boundingBox": [1278.0, 461.0, 1372.0, 461.0, 1372.0,
-        489.0, 1278.0, 489.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/8/words/3"]},
-        "Subtotal": {"type": "string", "valueString": "$140.00", "text": "$140.00",
-        "page": 1, "boundingBox": [1428.0, 1572.0, 1528.0, 1572.0, 1528.0, 1599.0,
-        1428.0, 1599.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/42/words/0"]},
+        "PhoneNumber": {"type": "string", "valueString": "555-348-6512", "text": "555-348-6512",
+        "page": 1, "boundingBox": [365.0, 351.0, 525.0, 351.0, 525.0, 378.0, 365.0,
+        378.0], "confidence": 0.992, "elements": ["#/readResults/0/lines/3/words/2"]},
+        "Quantity": {"type": "number", "valueNumber": 20.0, "text": "20", "page":
+        1, "boundingBox": [860.0, 1094.0, 888.0, 1094.0, 888.0, 1119.0, 860.0, 1119.0],
+        "confidence": 0.99, "elements": ["#/readResults/0/lines/26/words/0"]}, "CompanyAddress":
+        {"type": "string", "valueString": "938 NE Burner Road Boulder City, CO 92848",
+        "text": "938 NE Burner Road Boulder City, CO 92848", "page": 1, "boundingBox":
+        [275.0, 685.0, 561.0, 685.0, 561.0, 751.0, 275.0, 751.0], "confidence": 0.622,
+        "elements": ["#/readResults/0/lines/12/words/1", "#/readResults/0/lines/12/words/2",
+        "#/readResults/0/lines/12/words/3", "#/readResults/0/lines/12/words/4", "#/readResults/0/lines/13/words/0",
+        "#/readResults/0/lines/13/words/1", "#/readResults/0/lines/13/words/2", "#/readResults/0/lines/13/words/3"]},
         "Signature": {"type": "string", "valueString": "Bernie Sanders", "text": "Bernie
         Sanders", "page": 1, "boundingBox": [484.0, 1670.0, 762.0, 1670.0, 762.0,
-        1708.0, 484.0, 1708.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/45/words/0",
-        "#/readResults/0/lines/45/words/1"]}, "Website": {"type": "string", "valueString":
+        1708.0, 484.0, 1708.0], "confidence": 0.437, "elements": ["#/readResults/0/lines/45/words/0",
+        "#/readResults/0/lines/45/words/1"]}, "PurchaseOrderNumber": {"type": "string",
+        "valueString": "948284", "text": "948284", "page": 1, "boundingBox": [1278.0,
+        461.0, 1372.0, 461.0, 1372.0, 489.0, 1278.0, 489.0], "confidence": 0.994,
+        "elements": ["#/readResults/0/lines/8/words/3"]}, "Merchant": {"type": "string",
+        "valueString": "Hero Limited", "text": "Hero Limited", "page": 1, "boundingBox":
+        [620.0, 205.0, 1062.0, 205.0, 1062.0, 266.0, 620.0, 266.0], "confidence":
+        0.99, "elements": ["#/readResults/0/lines/1/words/0", "#/readResults/0/lines/1/words/1"]},
+        "Total": {"type": "string", "valueString": "$144.00", "text": "$144.00", "page":
+        1, "boundingBox": [1427.0, 1669.0, 1527.0, 1669.0, 1527.0, 1698.0, 1427.0,
+        1698.0], "confidence": 0.995, "elements": ["#/readResults/0/lines/47/words/0"]},
+        "Tax": {"type": "string", "valueString": "$4.00", "text": "$4.00", "page":
+        1, "boundingBox": [1458.0, 1615.0, 1529.0, 1615.0, 1529.0, 1643.0, 1458.0,
+        1643.0], "confidence": 0.994, "elements": ["#/readResults/0/lines/44/words/0"]},
+        "Email": {"type": "string", "valueString": "accounts@herolimited.com", "text":
+        "accounts@herolimited.com", "page": 1, "boundingBox": [164.0, 479.0, 471.0,
+        479.0, 471.0, 503.0, 164.0, 503.0], "confidence": 0.953, "elements": ["#/readResults/0/lines/7/words/0"]},
+        "VendorName": {"type": "string", "valueString": "Hillary Swank", "text": "Hillary
+        Swank", "page": 1, "boundingBox": [349.0, 609.0, 520.0, 609.0, 520.0, 639.0,
+        349.0, 639.0], "confidence": 0.991, "elements": ["#/readResults/0/lines/10/words/2",
+        "#/readResults/0/lines/10/words/3"]}, "CompanyName": {"type": "string", "valueString":
+        "Higgly Wiggly Books", "text": "Higgly Wiggly Books", "page": 1, "boundingBox":
+        [375.0, 646.0, 629.0, 646.0, 629.0, 679.0, 375.0, 679.0], "confidence": 0.993,
+        "elements": ["#/readResults/0/lines/11/words/2", "#/readResults/0/lines/11/words/3",
+        "#/readResults/0/lines/11/words/4"]}, "Subtotal": {"type": "string", "valueString":
+        "$140.00", "text": "$140.00", "page": 1, "boundingBox": [1428.0, 1572.0, 1528.0,
+        1572.0, 1528.0, 1599.0, 1428.0, 1599.0], "confidence": 0.994, "elements":
+        ["#/readResults/0/lines/42/words/0"]}, "Website": {"type": "string", "valueString":
         "www.herolimited.com", "text": "www.herolimited.com", "page": 1, "boundingBox":
-        [273.0, 393.0, 524.0, 393.0, 524.0, 418.0, 273.0, 418.0], "confidence": 0.995,
-        "elements": ["#/readResults/0/lines/4/words/1"]}, "Total": {"type": "string",
-        "valueString": "$144.00", "text": "$144.00", "page": 1, "boundingBox": [1427.0,
-        1669.0, 1527.0, 1669.0, 1527.0, 1698.0, 1427.0, 1698.0], "confidence": 0.995,
-        "elements": ["#/readResults/0/lines/47/words/0"]}, "CompanyAddress": {"type":
-        "string", "valueString": "938 NE Burner Road Boulder City, CO 92848", "text":
-        "938 NE Burner Road Boulder City, CO 92848", "page": 1, "boundingBox": [275.0,
-        685.0, 561.0, 685.0, 561.0, 751.0, 275.0, 751.0], "confidence": 0.995, "elements":
-        ["#/readResults/0/lines/12/words/1", "#/readResults/0/lines/12/words/2", "#/readResults/0/lines/12/words/3",
-        "#/readResults/0/lines/12/words/4", "#/readResults/0/lines/13/words/0", "#/readResults/0/lines/13/words/1",
-        "#/readResults/0/lines/13/words/2", "#/readResults/0/lines/13/words/3"]}},
-        "docTypeConfidence": 0.92}], "errors": []}}'
+        [273.0, 393.0, 524.0, 393.0, 524.0, 418.0, 273.0, 418.0], "confidence": 0.992,
+        "elements": ["#/readResults/0/lines/4/words/1"]}, "DatedAs": {"type": "string",
+        "valueString": "12/20/2020", "text": "12/20/2020", "page": 1, "boundingBox":
+        [1163.0, 420.0, 1310.0, 420.0, 1310.0, 449.0, 1163.0, 449.0], "confidence":
+        0.994, "elements": ["#/readResults/0/lines/6/words/2"]}}, "docTypeConfidence":
+        0.92}], "errors": []}}'
     headers:
-      apim-request-id: 59384b92-975b-4334-b6e9-3994e2256c2e
-      content-length: '28430'
+      apim-request-id: fd1ce673-cd2b-4830-92de-d24925458e41
+      content-length: '28842'
       content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 19:26:36 GMT
+      date: Tue, 11 May 2021 01:54:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '28'
+      x-envoy-upstream-service-time: '47'
     status:
       code: 200
       message: OK
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/ec0a6a36-9c9c-45b5-b78d-16937417fd08/analyzeresults/0be0a959-fde3-495c-bc74-d9fb570c509a
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models/23149a9c-f16a-4ddc-a036-322ced3e6c7e/analyzeresults/6835eacb-ae87-4f8d-8a99-20822b8599c9
 version: 1

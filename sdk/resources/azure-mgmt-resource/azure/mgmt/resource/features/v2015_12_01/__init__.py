@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._feature_client import FeatureClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['FeatureClient']
 
 try:

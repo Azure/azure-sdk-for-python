@@ -20,7 +20,7 @@ pip install azure-ai-metricsadvisor --pre
 
 ### Prerequisites
 
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.6 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Metrics Advisor serivce][ma_service] to use this package.
 
 ### Authenticate the client
@@ -102,14 +102,14 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 
 ## Examples
 
-* [Add a data feed from a sample or data source](#add-a-data-feed-from-a-sample-or-data-source "Add a data feed from a sample or data source")
-* [Check ingestion status](#check-ingestion-status "Check ingestion status")
-* [Configure anomaly detection configuration](#configure-anomaly-detection-configuration "Configure anomaly detection configuration")
-* [Configure alert configuration](#configure-alert-configuration "Configure alert configuration")
-* [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
-* [Query incidents](#query-incidents "Query incidents")
-* [Query root causes](#query-root-causes "Query root causes")
-* [Add hooks for receiving anomaly alerts](#add-hooks-for-receiving-anomaly-alerts "Add hooks for receiving anomaly alerts")
+- [Add a data feed from a sample or data source](#add-a-data-feed-from-a-sample-or-data-source "Add a data feed from a sample or data source")
+- [Check ingestion status](#check-ingestion-status "Check ingestion status")
+- [Configure anomaly detection configuration](#configure-anomaly-detection-configuration "Configure anomaly detection configuration")
+- [Configure alert configuration](#configure-alert-configuration "Configure alert configuration")
+- [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
+- [Query incidents](#query-incidents "Query incidents")
+- [Query root causes](#query-root-causes "Query root causes")
+- [Add hooks for receiving anomaly alerts](#add-hooks-for-receiving-anomaly-alerts "Add hooks for receiving anomaly alerts")
 
 ### Add a data feed from a sample or data source
 
@@ -120,11 +120,10 @@ import os
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
-        SQLServerDataFeed,
+        SqlServerDataFeedSource,
         DataFeedSchema,
         DataFeedMetric,
         DataFeedDimension,
-        DataFeedOptions,
         DataFeedRollupSettings,
         DataFeedMissingDataPointFillSettings
     )
@@ -142,7 +141,7 @@ client = MetricsAdvisorAdministrationClient(
 
 data_feed = client.create_data_feed(
     name="My data feed",
-    source=SQLServerDataFeed(
+    source=SqlServerDataFeedSource(
         connection_string=sql_server_connection_string,
         query=query,
     ),
@@ -159,18 +158,16 @@ data_feed = client.create_data_feed(
         timestamp_column="Timestamp"
     ),
     ingestion_settings=datetime.datetime(2019, 10, 1),
-    options=DataFeedOptions(
-        data_feed_description="cost/revenue data feed",
-        rollup_settings=DataFeedRollupSettings(
-            rollup_type="AutoRollup",
-            rollup_method="Sum",
-            rollup_identification_value="__CUSTOM_SUM__"
-        ),
-        missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-            fill_type="SmartFilling"
-        ),
-        access_mode="Private"
-    )
+    data_feed_description="cost/revenue data feed",
+    rollup_settings=DataFeedRollupSettings(
+        rollup_type="AutoRollup",
+        rollup_method="Sum",
+        rollup_identification_value="__CUSTOM_SUM__"
+    ),
+    missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+        fill_type="SmartFilling"
+    ),
+    access_mode="Private"
 )
 
 return data_feed
@@ -260,7 +257,7 @@ detection_config = client.create_detection_configuration(
     metric_id=metric_id,
     description="anomaly detection config for metric",
     whole_series_detection_condition=MetricDetectionCondition(
-        cross_conditions_operator="OR",
+        condition_operator="OR",
         change_threshold_condition=change_threshold_condition,
         hard_threshold_condition=hard_threshold_condition,
         smart_detection_condition=smart_detection_condition
@@ -463,7 +460,7 @@ hook = client.create_hook(
 
 ### Async APIs
 
-This library includes a complete async API supported on Python 3.5+. To use it, you must
+This library includes a complete async API supported on Python 3.6+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation][azure_core_docs]

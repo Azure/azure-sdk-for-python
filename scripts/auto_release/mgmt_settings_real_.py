@@ -33,7 +33,6 @@ ACTIVE_DIRECTORY_APPLICATION_SECRET = '000000000ft5g5g5g5g5g5g5g5000000?'
 ACTIVE_DIRECTORY_TENANT_ID = '00000000-0000-0000-0000-000000000000'
 IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED = True
 ENABLE_LOGGING = True
-AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 # Read for details of this file:
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests

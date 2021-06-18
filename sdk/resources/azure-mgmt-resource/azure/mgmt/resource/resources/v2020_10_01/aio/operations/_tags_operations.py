@@ -45,7 +45,7 @@ class TagsOperations:
         self,
         tag_name: str,
         tag_value: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a predefined tag value for a predefined tag name.
 
@@ -104,7 +104,7 @@ class TagsOperations:
         self,
         tag_name: str,
         tag_value: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagValue":
         """Creates a predefined value for a predefined tag name.
 
@@ -168,7 +168,7 @@ class TagsOperations:
     async def create_or_update(
         self,
         tag_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagDetails":
         """Creates a predefined tag name.
 
@@ -231,7 +231,7 @@ class TagsOperations:
     async def delete(
         self,
         tag_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a predefined tag name.
 
@@ -285,7 +285,7 @@ class TagsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagsListResult"]:
         """Gets a summary of tag usage under the subscription.
 
@@ -358,7 +358,7 @@ class TagsOperations:
         self,
         scope: str,
         parameters: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagsResource":
         """Creates or updates the entire set of tags on a resource or subscription.
 
@@ -422,7 +422,7 @@ class TagsOperations:
         self,
         scope: str,
         parameters: "_models.TagsPatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagsResource":
         """Selectively updates the set of tags on a resource or subscription.
 
@@ -489,7 +489,7 @@ class TagsOperations:
     async def get_at_scope(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagsResource":
         """Gets the entire set of tags on a resource or subscription.
 
@@ -544,7 +544,7 @@ class TagsOperations:
     async def delete_at_scope(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the entire set of tags on a resource or subscription.
 

@@ -5,6 +5,7 @@
 import asyncio
 import sys
 import os
+from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
@@ -21,6 +22,10 @@ from ..._credentials.azure_cli import (
 )
 from ..._internal import _scopes_to_resource
 
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials import AccessToken
+
 
 class AzureCliCredential(AsyncContextManager):
     """Authenticates by requesting a token from the Azure CLI.
@@ -29,7 +34,7 @@ class AzureCliCredential(AsyncContextManager):
     """
 
     @log_get_token_async
-    async def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -60,7 +65,7 @@ class AzureCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command):
+async def _run_command(command: str) -> str:
     if sys.platform.startswith("win"):
         args = ("cmd", "/c " + command)
     else:
@@ -76,13 +81,15 @@ async def _run_command(command):
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
         )
+        stdout, _ = await asyncio.wait_for(proc.communicate(), 10)
+        output = stdout.decode()
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
-
-    stdout, _ = await asyncio.wait_for(proc.communicate(), 10)
-    output = stdout.decode()
+    except asyncio.TimeoutError as ex:
+        proc.kill()
+        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
 
     if proc.returncode == 0:
         return output

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_management_client import ContainerRegistryManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ContainerRegistryManagementClient']
 
 try:

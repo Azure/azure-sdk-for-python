@@ -13,28 +13,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"2","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":1.0},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":1.0},"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"documents":[{"id":"2","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":0.75},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":0.99},"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Country Hint.","innererror":{"code":"InvalidCountryHint","message":"Country
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid document
         in request.","innererror":{"code":"InvalidDocument","message":"Document text
         is empty."}}}],"modelVersion":"2021-01-05"}'
     headers:
-      apim-request-id: 94b87f19-901e-4db2-8e83-8b434904d34e
+      apim-request-id: 47105b96-1345-4dd9-9dce-e8388dc42d6e
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
-      date: Tue, 23 Feb 2021 17:08:07 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2
+      date: Tue, 18 May 2021 17:47:43 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '16'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/languages?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/languages?showStats=false
 version: 1

@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"phoneNumberType": "tollFree", "assignmentType": "application", "capabilities":
+      {"calling": "inbound", "sms": "inbound+outbound"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 19 Apr 2021 21:49:44 GMT
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/XX/:search?api-version=2021-03-07
+  response:
+    body:
+      string: '{"error": {"code": "InvalidInput", "message": "Unable to parse country
+        code.", "target": "countrycode"}}'
+    headers:
+      api-supported-versions:
+      - '2021-03-07'
+      content-type:
+      - application/json
+      date:
+      - Mon, 19 Apr 2021 21:49:44 GMT
+      ms-cv:
+      - tAckLoEl7Uyqg0NYT97njA.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 13ms
+    status:
+      code: 400
+      message: Bad Request
+    url: sanitized
+version: 1

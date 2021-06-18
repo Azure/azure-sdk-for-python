@@ -6,210 +6,151 @@
 
 from enum import Enum, EnumMeta
 from six import with_metaclass
+from typing import Mapping, Optional, Union, Any
+try:
+    from typing import Protocol, TypedDict
+except ImportError:
+    from typing_extensions import Protocol, TypedDict
 
-import msrest
+from azure.core import CaseInsensitiveEnumMeta
 
-class CommunicationError(msrest.serialization.Model):
-    """The Communication Services error.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Communication Identifier Kind."""
 
-    All required parameters must be populated in order to send to Azure.
+    UNKNOWN = "unknown"
+    COMMUNICATION_USER = "communication_user"
+    PHONE_NUMBER = "phone_number"
+    MICROSOFT_TEAMS_USER = "microsoft_teams_user"
 
-    :param code: Required. The error code.
-    :type code: str
-    :param message: Required. The error message.
-    :type message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: Further details about specific errors that led to this error.
-    :vartype details: list[~communication.models.CommunicationError]
-    :ivar inner_error: The inner error if any.
-    :vartype inner_error: ~communication.models.CommunicationError
+
+class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The cloud enviornment that the identifier belongs to"""
+
+    PUBLIC = "PUBLIC"
+    DOD = "DOD"
+    GCCH = "GCCH"
+
+
+class CommunicationIdentifier(Protocol):
+    """Communication Identifier.
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping[str, Any] properties: The properties of the identifier.
     """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommunicationError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = None
-        self.details = None
-        self.inner_error = None
+    raw_id = None  # type: Optional[str]
+    kind = None  # type: Optional[Union[CommunicationIdentifierKind, str]]
+    properties = {}  # type: Mapping[str, Any]
 
 
-class CommunicationErrorResponse(msrest.serialization.Model):
-    """The Communication Services error.
+CommunicationUserProperties = TypedDict(
+    'CommunicationUserProperties',
+    id=str
+)
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param error: Required. The Communication Services error.
-    :type error: ~communication.models.CommunicationError
-    """
-
-    _validation = {
-        'error': {'required': True},
-    }
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'CommunicationError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs['error']
 
 class CommunicationUserIdentifier(object):
+    """Represents a user in Azure Communication Service.
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping[str, Any] properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `id`(str): ID of the Communication user as returned from Azure Communication Identity.
+
+    :param str id: ID of the Communication user as returned from Azure Communication Identity.
     """
-    Represents a user in Azure Communication Service.
-    :ivar identifier: Communication user identifier.
-    :vartype identifier: str
-    :param identifier: Identifier to initialize CommunicationUserIdentifier.
-    :type identifier: str
-    """
-    def __init__(self, identifier):
-        self.identifier = identifier
+    kind = CommunicationIdentifierKind.COMMUNICATION_USER
+
+    def __init__(self, id, **kwargs):
+        # type: (str, Any) -> None
+        self.raw_id = kwargs.get('raw_id')
+        self.properties = CommunicationUserProperties(id=id)
+
+
+PhoneNumberProperties = TypedDict(
+    'PhoneNumberProperties',
+    value=str
+)
+
 
 class PhoneNumberIdentifier(object):
+    """Represents a phone number.
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `value`(str): The phone number in E.164 format.
+
+    :param str value: The phone number.
     """
-    Represents a phone number.
-    :param phone_number: The phone number in E.164 format.
-    :type phone_number: str
-    :param raw_id: The full id of the phone number.
-    :type raw_id: str
-    """
-    def __init__(self, phone_number, raw_id=None):
-        self.phone_number = phone_number
-        self.raw_id = raw_id
+    kind = CommunicationIdentifierKind.PHONE_NUMBER
+
+    def __init__(self, value, **kwargs):
+        # type: (str, Any) -> None
+        self.raw_id = kwargs.get('raw_id')
+        self.properties = PhoneNumberProperties(value=value)
+
 
 class UnknownIdentifier(object):
-    """
-    Represents an identifier of an unknown type.
+    """Represents an identifier of an unknown type.
+
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
-    :ivar raw_id: Unknown communication identifier.
-    :vartype raw_id: str
-    :param identifier: Value to initialize UnknownIdentifier.
-    :type identifier: str
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
+    :param str identifier: The ID of the identifier.
     """
+    kind = CommunicationIdentifierKind.UNKNOWN
+
     def __init__(self, identifier):
+        # type: (str) -> None
         self.raw_id = identifier
+        self.properties = {}
 
-class CommunicationIdentifierModel(msrest.serialization.Model):
-    """Communication Identifier Model.
-    All required parameters must be populated in order to send to Azure.
-    :param kind: Required. Kind of Communication Identifier.
-    :type kind: CommunicationIdentifierKind
-    :param id: Full id of the identifier.
-    :type id: str
-    :param phone_number: phone number in case the identifier is a phone number.
-    :type phone_number: str
-    :param is_anonymous: True if the identifier is anonymous.
-    :type is_anonymous: bool
-    :param microsoft_teams_user_id: Microsoft Teams user id.
-    :type microsoft_teams_user_id: str
-    :param communication_cloud_environment: Cloud environment that the user belongs to.
-    :type communication_cloud_environment: CommunicationCloudEnvironment
-    """
 
-    _validation = {
-        'kind': {'required': True},
-    }
+MicrosoftTeamsUserProperties = TypedDict(
+    'MicrosoftTeamsUserProperties',
+    user_id=str,
+    is_anonymous=bool,
+    cloud=Union[CommunicationCloudEnvironment, str]
+)
 
-    _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'microsoft_teams_user_id': {'key': 'microsoftTeamsUserId', 'type': 'str'},
-        'communication_cloud_environment': {'key': 'communicationCloudEnvironment', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommunicationIdentifierModel, self).__init__(**kwargs)
-        self.kind = kwargs['kind']
-        self.id = kwargs.get('id', None)
-        self.phone_number = kwargs.get('phone_number', None)
-        self.is_anonymous = kwargs.get('is_anonymous', None)
-        self.microsoft_teams_user_id = kwargs.get('microsoft_teams_user_id', None)
-        self.communication_cloud_environment = kwargs.get('communication_cloud_environment', None)
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
-
-class CommunicationIdentifierKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Communication Identifier Kind.
-    """
-    Unknown = "UNKNOWN"
-    CommunicationUser = "COMMUNICATIONUSER"
-    PhoneNumber = "PHONENUMBER"
-    CallingApplication = "CALLINGAPPLICATION"
-    MicrosoftTeamsUser = "MICROSOFTTEAMSUSER"
-
-class CommunicationCloudEnvironment(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """
-    The cloud enviornment that the identifier belongs to
-    """
-
-    Public = "PUBLIC"
-    Dod = "DOD"
-    Gcch = "GCCH"
 
 class MicrosoftTeamsUserIdentifier(object):
+    """Represents an identifier for a Microsoft Teams user.
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `user_id`(str): The id of the Microsoft Teams user. If the user isn't anonymous,
+          the id is the AAD object id of the user.
+        - `is_anonymous` (bool): Set this to true if the user is anonymous for example when joining
+          a meeting with a share link.
+        - `cloud` (str): Cloud environment that this identifier belongs to.
+
+    :param str user_id: Microsoft Teams user id.
+    :keyword bool is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
+    :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
+    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
     """
-    Represents an identifier for a Microsoft Teams user.
-    :ivar user_id: The id of the Microsoft Teams user. If the user isn't anonymous, the id is the AAD object id of the user.
-    :vartype user_id: str
-    :param user_id: Value to initialize MicrosoftTeamsUserIdentifier.
-    :type user_id: str
-    :ivar raw_id: Raw id of the Microsoft Teams user.
-    :vartype raw_id: str
-    :ivar cloud: Cloud environment that this identifier belongs to
-    :vartype cloud: CommunicationCloudEnvironment
-    :ivar is_anonymous: set this to true if the user is anonymous for example when joining a meeting with a share link
-    :vartype is_anonymous: bool
-    :param is_anonymous: Value to initialize MicrosoftTeamsUserIdentifier.
-    :type is_anonymous: bool
-    """
-    def __init__(self, user_id, raw_id=None, cloud=CommunicationCloudEnvironment.Public, is_anonymous=False):
-        self.raw_id = raw_id
-        self.user_id = user_id
-        self.is_anonymous = is_anonymous
-        self.cloud = cloud
+    kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
+
+    def __init__(self, user_id, **kwargs):
+        # type: (str, Any) -> None
+        self.raw_id = kwargs.get('raw_id')
+        self.properties = MicrosoftTeamsUserProperties(
+            user_id=user_id,
+            is_anonymous=kwargs.get('is_anonymous', False),
+            cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
+        )

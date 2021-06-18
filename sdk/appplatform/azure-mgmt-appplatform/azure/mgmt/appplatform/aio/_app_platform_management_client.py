@@ -9,12 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import AppPlatformManagementClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,9 +44,10 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Gets subscription ID which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -58,11 +65,11 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        api_version: Optional[str] = None,
+        base_url: Optional[str] = None,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
         if not base_url:
@@ -84,12 +91,16 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :mod:`v2019_05_01_preview.models<azure.mgmt.appplatform.v2019_05_01_preview.models>`
            * 2020-07-01: :mod:`v2020_07_01.models<azure.mgmt.appplatform.v2020_07_01.models>`
+           * 2020-11-01-preview: :mod:`v2020_11_01_preview.models<azure.mgmt.appplatform.v2020_11_01_preview.models>`
         """
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview import models
             return models
         elif api_version == '2020-07-01':
             from ..v2020_07_01 import models
+            return models
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -99,12 +110,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`AppsOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.AppsOperations>`
            * 2020-07-01: :class:`AppsOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.AppsOperations>`
+           * 2020-11-01-preview: :class:`AppsOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.AppsOperations>`
         """
         api_version = self._get_api_version('apps')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import AppsOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import AppsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import AppsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'apps'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -115,12 +129,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`BindingsOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.BindingsOperations>`
            * 2020-07-01: :class:`BindingsOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.BindingsOperations>`
+           * 2020-11-01-preview: :class:`BindingsOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.BindingsOperations>`
         """
         api_version = self._get_api_version('bindings')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import BindingsOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import BindingsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import BindingsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'bindings'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -131,12 +148,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`CertificatesOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.CertificatesOperations>`
            * 2020-07-01: :class:`CertificatesOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.CertificatesOperations>`
+           * 2020-11-01-preview: :class:`CertificatesOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.CertificatesOperations>`
         """
         api_version = self._get_api_version('certificates')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import CertificatesOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import CertificatesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'certificates'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -146,10 +166,13 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-07-01: :class:`ConfigServersOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.ConfigServersOperations>`
+           * 2020-11-01-preview: :class:`ConfigServersOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.ConfigServersOperations>`
         """
         api_version = self._get_api_version('config_servers')
         if api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import ConfigServersOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ConfigServersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'config_servers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -160,12 +183,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`CustomDomainsOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.CustomDomainsOperations>`
            * 2020-07-01: :class:`CustomDomainsOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.CustomDomainsOperations>`
+           * 2020-11-01-preview: :class:`CustomDomainsOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.CustomDomainsOperations>`
         """
         api_version = self._get_api_version('custom_domains')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import CustomDomainsOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import CustomDomainsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import CustomDomainsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'custom_domains'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -176,12 +202,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`DeploymentsOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.DeploymentsOperations>`
            * 2020-07-01: :class:`DeploymentsOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.DeploymentsOperations>`
+           * 2020-11-01-preview: :class:`DeploymentsOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.DeploymentsOperations>`
         """
         api_version = self._get_api_version('deployments')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import DeploymentsOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import DeploymentsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import DeploymentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deployments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -191,10 +220,13 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-07-01: :class:`MonitoringSettingsOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.MonitoringSettingsOperations>`
+           * 2020-11-01-preview: :class:`MonitoringSettingsOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.MonitoringSettingsOperations>`
         """
         api_version = self._get_api_version('monitoring_settings')
         if api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import MonitoringSettingsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import MonitoringSettingsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'monitoring_settings'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -205,12 +237,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`Operations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.Operations>`
            * 2020-07-01: :class:`Operations<azure.mgmt.appplatform.v2020_07_01.aio.operations.Operations>`
+           * 2020-11-01-preview: :class:`Operations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import Operations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import Operations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -221,12 +256,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`RuntimeVersionsOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.RuntimeVersionsOperations>`
            * 2020-07-01: :class:`RuntimeVersionsOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.RuntimeVersionsOperations>`
+           * 2020-11-01-preview: :class:`RuntimeVersionsOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.RuntimeVersionsOperations>`
         """
         api_version = self._get_api_version('runtime_versions')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import RuntimeVersionsOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import RuntimeVersionsOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import RuntimeVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'runtime_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -237,12 +275,15 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-05-01-preview: :class:`ServicesOperations<azure.mgmt.appplatform.v2019_05_01_preview.aio.operations.ServicesOperations>`
            * 2020-07-01: :class:`ServicesOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.ServicesOperations>`
+           * 2020-11-01-preview: :class:`ServicesOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.ServicesOperations>`
         """
         api_version = self._get_api_version('services')
         if api_version == '2019-05-01-preview':
             from ..v2019_05_01_preview.aio.operations import ServicesOperations as OperationClass
         elif api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import ServicesOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import ServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'services'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -265,10 +306,13 @@ class AppPlatformManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2020-07-01: :class:`SkusOperations<azure.mgmt.appplatform.v2020_07_01.aio.operations.SkusOperations>`
+           * 2020-11-01-preview: :class:`SkusOperations<azure.mgmt.appplatform.v2020_11_01_preview.aio.operations.SkusOperations>`
         """
         api_version = self._get_api_version('skus')
         if api_version == '2020-07-01':
             from ..v2020_07_01.aio.operations import SkusOperations as OperationClass
+        elif api_version == '2020-11-01-preview':
+            from ..v2020_11_01_preview.aio.operations import SkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'skus'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

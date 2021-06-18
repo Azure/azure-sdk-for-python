@@ -45,7 +45,7 @@ class ReplicasOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerListResult"]:
         """List all the replicas for a given server.
 

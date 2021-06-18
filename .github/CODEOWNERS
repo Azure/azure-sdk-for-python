@@ -31,6 +31,8 @@
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
 
+/sdk/attestation/azure-security-attestation                          @larryosterman @anilba06 @Azure/azure-sdk-write-attestation
+
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
@@ -46,6 +48,9 @@
 
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
+
+# PRLabel: %Monitor - Log
+/sdk/monitor/azure-monitor-query                                     @rakshith91
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -70,6 +75,9 @@
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
+
+# PRLabel: %Models repository
+/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
@@ -123,12 +131,12 @@
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/     @00Kai0 @msyyc @jsntcy @changlong-liu
+/**/*mgmt*/                                                          @RAY-316 @msyyc 
 
 
 ###########
 # Eng Sys
 ###########
 /eng/           @weshaggard @scbedd @mitchdenny @danieljurek
-/**/tests.yml   @danieljurek
+/**/tests.yml   @benbp
 /**/ci.yml      @mitchdenny

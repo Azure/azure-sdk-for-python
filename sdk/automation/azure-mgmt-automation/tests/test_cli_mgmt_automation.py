@@ -30,10 +30,16 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtAutomationClientTest, self).setUp()
+        self.re_replacer.register_pattern_pair('"value": ".{64}"', '"value": "FakeValue"')
+        self.re_replacer.register_pattern_pair('"Value":".{88}"', '"Value":"FakeValue"')
+        self.re_replacer.register_pattern_pair(
+            '"RegistrationUrl":"https://.*/accounts/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"',
+            '"RegistrationUrl":"FakeUrl"'
+        )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.automation.AutomationClient
         )
-    
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_automation(self, resource_group):
 
@@ -50,7 +56,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
           "sku": {
             "name": "Free"
           },
-          "name": "myAutomationAccount9",
+          "name": AUTOMATION_ACCOUNT_NAME,
           "location": "East US 2"
         }
         result = self.mgmt_client.automation_account.create_or_update(resource_group.name, AUTOMATION_ACCOUNT_NAME, BODY)
@@ -127,7 +133,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
           "name": "TestWebhook",
           "is_enabled": True,
           "uri": "https://s1events.azure-automation.net/webhooks?token=7u3KfQvM1vUPWaDMFRv2%2fAA4Jqx8QwS8aBuyO6Xsdcw%3d",
-          "expiry_time": "2021-03-29T22:18:13.7002872Z",
+          "expiry_time": "2021-12-29T22:18:13.7002872Z",
           "runbook": {
             "name": RUNBOOK_NAME
           }

@@ -49,21 +49,26 @@ class AcsChatEventBaseProperties(msrest.serialization.Model):
 class AcsChatEventInThreadBaseProperties(msrest.serialization.Model):
     """Schema of common properties of all thread-level chat events.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         **kwargs
     ):
         super(AcsChatEventInThreadBaseProperties, self).__init__(**kwargs)
+        self.transaction_id = transaction_id
         self.thread_id = thread_id
 
 
@@ -128,7 +133,7 @@ class AcsChatMessageEventBaseProperties(AcsChatEventBaseProperties):
 
 
 class AcsChatMessageDeletedEventData(AcsChatMessageEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageDeleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatMessageDeleted event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -189,6 +194,8 @@ class AcsChatMessageDeletedEventData(AcsChatMessageEventBaseProperties):
 class AcsChatMessageEventInThreadBaseProperties(AcsChatEventInThreadBaseProperties):
     """Schema of common properties of all thread-level chat message events.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param message_id: The chat message id.
@@ -207,6 +214,7 @@ class AcsChatMessageEventInThreadBaseProperties(AcsChatEventInThreadBaseProperti
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
@@ -219,6 +227,7 @@ class AcsChatMessageEventInThreadBaseProperties(AcsChatEventInThreadBaseProperti
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         message_id: Optional[str] = None,
         sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
@@ -228,7 +237,7 @@ class AcsChatMessageEventInThreadBaseProperties(AcsChatEventInThreadBaseProperti
         version: Optional[int] = None,
         **kwargs
     ):
-        super(AcsChatMessageEventInThreadBaseProperties, self).__init__(thread_id=thread_id, **kwargs)
+        super(AcsChatMessageEventInThreadBaseProperties, self).__init__(transaction_id=transaction_id, thread_id=thread_id, **kwargs)
         self.message_id = message_id
         self.sender_communication_identifier = sender_communication_identifier
         self.sender_display_name = sender_display_name
@@ -238,8 +247,10 @@ class AcsChatMessageEventInThreadBaseProperties(AcsChatEventInThreadBaseProperti
 
 
 class AcsChatMessageDeletedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageDeletedInThread event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatMessageDeletedInThread event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param message_id: The chat message id.
@@ -260,6 +271,7 @@ class AcsChatMessageDeletedInThreadEventData(AcsChatMessageEventInThreadBaseProp
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
@@ -273,6 +285,7 @@ class AcsChatMessageDeletedInThreadEventData(AcsChatMessageEventInThreadBaseProp
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         message_id: Optional[str] = None,
         sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
@@ -283,12 +296,12 @@ class AcsChatMessageDeletedInThreadEventData(AcsChatMessageEventInThreadBaseProp
         delete_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(AcsChatMessageDeletedInThreadEventData, self).__init__(thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
+        super(AcsChatMessageDeletedInThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.delete_time = delete_time
 
 
 class AcsChatMessageEditedEventData(AcsChatMessageEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageEdited event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatMessageEdited event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -352,8 +365,10 @@ class AcsChatMessageEditedEventData(AcsChatMessageEventBaseProperties):
 
 
 class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageEditedInThread event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatMessageEditedInThread event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param message_id: The chat message id.
@@ -376,6 +391,7 @@ class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBasePrope
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
@@ -390,6 +406,7 @@ class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBasePrope
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         message_id: Optional[str] = None,
         sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
@@ -401,13 +418,13 @@ class AcsChatMessageEditedInThreadEventData(AcsChatMessageEventInThreadBasePrope
         edit_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(AcsChatMessageEditedInThreadEventData, self).__init__(thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
+        super(AcsChatMessageEditedInThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.message_body = message_body
         self.edit_time = edit_time
 
 
 class AcsChatMessageReceivedEventData(AcsChatMessageEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageReceived event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatMessageReceived event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -466,8 +483,10 @@ class AcsChatMessageReceivedEventData(AcsChatMessageEventBaseProperties):
 
 
 class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageReceivedInThread event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatMessageReceivedInThread event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param message_id: The chat message id.
@@ -488,6 +507,7 @@ class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBasePro
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'sender_communication_identifier': {'key': 'senderCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
@@ -501,6 +521,7 @@ class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBasePro
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         message_id: Optional[str] = None,
         sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
@@ -511,13 +532,15 @@ class AcsChatMessageReceivedInThreadEventData(AcsChatMessageEventInThreadBasePro
         message_body: Optional[str] = None,
         **kwargs
     ):
-        super(AcsChatMessageReceivedInThreadEventData, self).__init__(thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
+        super(AcsChatMessageReceivedInThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, message_id=message_id, sender_communication_identifier=sender_communication_identifier, sender_display_name=sender_display_name, compose_time=compose_time, type=type, version=version, **kwargs)
         self.message_body = message_body
 
 
 class AcsChatParticipantAddedToThreadEventData(AcsChatEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatParticipantAddedToThread event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadParticipantAdded event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param time: The time at which the user was added to the thread.
@@ -533,6 +556,7 @@ class AcsChatParticipantAddedToThreadEventData(AcsChatEventInThreadBasePropertie
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'time': {'key': 'time', 'type': 'iso-8601'},
         'added_by_communication_identifier': {'key': 'addedByCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
@@ -543,6 +567,7 @@ class AcsChatParticipantAddedToThreadEventData(AcsChatEventInThreadBasePropertie
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
         added_by_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
@@ -550,7 +575,7 @@ class AcsChatParticipantAddedToThreadEventData(AcsChatEventInThreadBasePropertie
         version: Optional[int] = None,
         **kwargs
     ):
-        super(AcsChatParticipantAddedToThreadEventData, self).__init__(thread_id=thread_id, **kwargs)
+        super(AcsChatParticipantAddedToThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, **kwargs)
         self.time = time
         self.added_by_communication_identifier = added_by_communication_identifier
         self.participant_added = participant_added
@@ -597,7 +622,7 @@ class AcsChatThreadEventBaseProperties(AcsChatEventBaseProperties):
 
 
 class AcsChatParticipantAddedToThreadWithUserEventData(AcsChatThreadEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatParticipantAddedToThreadWithUser event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatParticipantAddedToThreadWithUser event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -651,8 +676,10 @@ class AcsChatParticipantAddedToThreadWithUserEventData(AcsChatThreadEventBasePro
 
 
 class AcsChatParticipantRemovedFromThreadEventData(AcsChatEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatParticipantRemovedFromThread event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadParticipantRemoved event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param time: The time at which the user was removed to the thread.
@@ -669,6 +696,7 @@ class AcsChatParticipantRemovedFromThreadEventData(AcsChatEventInThreadBasePrope
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'time': {'key': 'time', 'type': 'iso-8601'},
         'removed_by_communication_identifier': {'key': 'removedByCommunicationIdentifier', 'type': 'CommunicationIdentifierModel'},
@@ -679,6 +707,7 @@ class AcsChatParticipantRemovedFromThreadEventData(AcsChatEventInThreadBasePrope
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
         removed_by_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
@@ -686,7 +715,7 @@ class AcsChatParticipantRemovedFromThreadEventData(AcsChatEventInThreadBasePrope
         version: Optional[int] = None,
         **kwargs
     ):
-        super(AcsChatParticipantRemovedFromThreadEventData, self).__init__(thread_id=thread_id, **kwargs)
+        super(AcsChatParticipantRemovedFromThreadEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, **kwargs)
         self.time = time
         self.removed_by_communication_identifier = removed_by_communication_identifier
         self.participant_removed = participant_removed
@@ -694,7 +723,7 @@ class AcsChatParticipantRemovedFromThreadEventData(AcsChatEventInThreadBasePrope
 
 
 class AcsChatParticipantRemovedFromThreadWithUserEventData(AcsChatThreadEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -751,6 +780,8 @@ class AcsChatParticipantRemovedFromThreadWithUserEventData(AcsChatThreadEventBas
 class AcsChatThreadEventInThreadBaseProperties(AcsChatEventInThreadBaseProperties):
     """Schema of common properties of all chat thread events.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param create_time: The original creation time of the thread.
@@ -760,6 +791,7 @@ class AcsChatThreadEventInThreadBaseProperties(AcsChatEventInThreadBasePropertie
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'version': {'key': 'version', 'type': 'long'},
@@ -768,19 +800,22 @@ class AcsChatThreadEventInThreadBaseProperties(AcsChatEventInThreadBasePropertie
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         create_time: Optional[datetime.datetime] = None,
         version: Optional[int] = None,
         **kwargs
     ):
-        super(AcsChatThreadEventInThreadBaseProperties, self).__init__(thread_id=thread_id, **kwargs)
+        super(AcsChatThreadEventInThreadBaseProperties, self).__init__(transaction_id=transaction_id, thread_id=thread_id, **kwargs)
         self.create_time = create_time
         self.version = version
 
 
 class AcsChatThreadCreatedEventData(AcsChatThreadEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadCreatedWithUser event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadCreated event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param create_time: The original creation time of the thread.
@@ -799,6 +834,7 @@ class AcsChatThreadCreatedEventData(AcsChatThreadEventInThreadBaseProperties):
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'version': {'key': 'version', 'type': 'long'},
@@ -810,6 +846,7 @@ class AcsChatThreadCreatedEventData(AcsChatThreadEventInThreadBaseProperties):
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         create_time: Optional[datetime.datetime] = None,
         version: Optional[int] = None,
@@ -818,14 +855,14 @@ class AcsChatThreadCreatedEventData(AcsChatThreadEventInThreadBaseProperties):
         participants: Optional[List["AcsChatThreadParticipantProperties"]] = None,
         **kwargs
     ):
-        super(AcsChatThreadCreatedEventData, self).__init__(thread_id=thread_id, create_time=create_time, version=version, **kwargs)
+        super(AcsChatThreadCreatedEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, create_time=create_time, version=version, **kwargs)
         self.created_by_communication_identifier = created_by_communication_identifier
         self.properties = properties
         self.participants = participants
 
 
 class AcsChatThreadCreatedWithUserEventData(AcsChatThreadEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadCreatedWithUser event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadCreatedWithUser event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -880,8 +917,10 @@ class AcsChatThreadCreatedWithUserEventData(AcsChatThreadEventBaseProperties):
 
 
 class AcsChatThreadDeletedEventData(AcsChatThreadEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadDeleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadDeleted event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param create_time: The original creation time of the thread.
@@ -897,6 +936,7 @@ class AcsChatThreadDeletedEventData(AcsChatThreadEventInThreadBaseProperties):
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'version': {'key': 'version', 'type': 'long'},
@@ -907,6 +947,7 @@ class AcsChatThreadDeletedEventData(AcsChatThreadEventInThreadBaseProperties):
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         create_time: Optional[datetime.datetime] = None,
         version: Optional[int] = None,
@@ -914,7 +955,7 @@ class AcsChatThreadDeletedEventData(AcsChatThreadEventInThreadBaseProperties):
         delete_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(AcsChatThreadDeletedEventData, self).__init__(thread_id=thread_id, create_time=create_time, version=version, **kwargs)
+        super(AcsChatThreadDeletedEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, create_time=create_time, version=version, **kwargs)
         self.deleted_by_communication_identifier = deleted_by_communication_identifier
         self.delete_time = delete_time
 
@@ -947,8 +988,10 @@ class AcsChatThreadParticipantProperties(msrest.serialization.Model):
 
 
 class AcsChatThreadPropertiesUpdatedEventData(AcsChatThreadEventInThreadBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadPropertiesUpdated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadPropertiesUpdated event.
 
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
     :param thread_id: The chat thread id.
     :type thread_id: str
     :param create_time: The original creation time of the thread.
@@ -966,6 +1009,7 @@ class AcsChatThreadPropertiesUpdatedEventData(AcsChatThreadEventInThreadBaseProp
     """
 
     _attribute_map = {
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
         'thread_id': {'key': 'threadId', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'version': {'key': 'version', 'type': 'long'},
@@ -977,6 +1021,7 @@ class AcsChatThreadPropertiesUpdatedEventData(AcsChatThreadEventInThreadBaseProp
     def __init__(
         self,
         *,
+        transaction_id: Optional[str] = None,
         thread_id: Optional[str] = None,
         create_time: Optional[datetime.datetime] = None,
         version: Optional[int] = None,
@@ -985,14 +1030,14 @@ class AcsChatThreadPropertiesUpdatedEventData(AcsChatThreadEventInThreadBaseProp
         properties: Optional[Dict[str, object]] = None,
         **kwargs
     ):
-        super(AcsChatThreadPropertiesUpdatedEventData, self).__init__(thread_id=thread_id, create_time=create_time, version=version, **kwargs)
+        super(AcsChatThreadPropertiesUpdatedEventData, self).__init__(transaction_id=transaction_id, thread_id=thread_id, create_time=create_time, version=version, **kwargs)
         self.edited_by_communication_identifier = edited_by_communication_identifier
         self.edit_time = edit_time
         self.properties = properties
 
 
 class AcsChatThreadPropertiesUpdatedPerUserEventData(AcsChatThreadEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -1046,7 +1091,7 @@ class AcsChatThreadPropertiesUpdatedPerUserEventData(AcsChatThreadEventBasePrope
 
 
 class AcsChatThreadWithUserDeletedEventData(AcsChatThreadEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadWithUserDeleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.ChatThreadWithUserDeleted event.
 
     :param recipient_communication_identifier: The communication identifier of the target user.
     :type recipient_communication_identifier:
@@ -1092,6 +1137,106 @@ class AcsChatThreadWithUserDeletedEventData(AcsChatThreadEventBaseProperties):
         super(AcsChatThreadWithUserDeletedEventData, self).__init__(recipient_communication_identifier=recipient_communication_identifier, transaction_id=transaction_id, thread_id=thread_id, create_time=create_time, version=version, **kwargs)
         self.deleted_by_communication_identifier = deleted_by_communication_identifier
         self.delete_time = delete_time
+
+
+class AcsRecordingChunkInfoProperties(msrest.serialization.Model):
+    """Schema for all properties of  Recording Chunk Information.
+
+    :param document_id: The documentId of the recording chunk.
+    :type document_id: str
+    :param index: The index of the recording chunk.
+    :type index: long
+    :param end_reason: The reason for ending the recording chunk.
+    :type end_reason: str
+    :param metadata_location: The location of the metadata for this chunk.
+    :type metadata_location: str
+    :param content_location: The location of the content for this chunk.
+    :type content_location: str
+    """
+
+    _attribute_map = {
+        'document_id': {'key': 'documentId', 'type': 'str'},
+        'index': {'key': 'index', 'type': 'long'},
+        'end_reason': {'key': 'endReason', 'type': 'str'},
+        'metadata_location': {'key': 'metadataLocation', 'type': 'str'},
+        'content_location': {'key': 'contentLocation', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        document_id: Optional[str] = None,
+        index: Optional[int] = None,
+        end_reason: Optional[str] = None,
+        metadata_location: Optional[str] = None,
+        content_location: Optional[str] = None,
+        **kwargs
+    ):
+        super(AcsRecordingChunkInfoProperties, self).__init__(**kwargs)
+        self.document_id = document_id
+        self.index = index
+        self.end_reason = end_reason
+        self.metadata_location = metadata_location
+        self.content_location = content_location
+
+
+class AcsRecordingFileStatusUpdatedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.RecordingFileStatusUpdated event.
+
+    :param recording_storage_info: The details of recording storage information.
+    :type recording_storage_info:
+     ~event_grid_publisher_client.models.AcsRecordingStorageInfoProperties
+    :param recording_start_time: The time at which the recording started.
+    :type recording_start_time: ~datetime.datetime
+    :param recording_duration_ms: The recording duration in milliseconds.
+    :type recording_duration_ms: long
+    :param session_end_reason: The reason for ending recording session.
+    :type session_end_reason: str
+    """
+
+    _attribute_map = {
+        'recording_storage_info': {'key': 'recordingStorageInfo', 'type': 'AcsRecordingStorageInfoProperties'},
+        'recording_start_time': {'key': 'recordingStartTime', 'type': 'iso-8601'},
+        'recording_duration_ms': {'key': 'recordingDurationMs', 'type': 'long'},
+        'session_end_reason': {'key': 'sessionEndReason', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        recording_storage_info: Optional["AcsRecordingStorageInfoProperties"] = None,
+        recording_start_time: Optional[datetime.datetime] = None,
+        recording_duration_ms: Optional[int] = None,
+        session_end_reason: Optional[str] = None,
+        **kwargs
+    ):
+        super(AcsRecordingFileStatusUpdatedEventData, self).__init__(**kwargs)
+        self.recording_storage_info = recording_storage_info
+        self.recording_start_time = recording_start_time
+        self.recording_duration_ms = recording_duration_ms
+        self.session_end_reason = session_end_reason
+
+
+class AcsRecordingStorageInfoProperties(msrest.serialization.Model):
+    """Schema for all properties of Recording Storage Information.
+
+    :param recording_chunks: List of details of recording chunks information.
+    :type recording_chunks:
+     list[~event_grid_publisher_client.models.AcsRecordingChunkInfoProperties]
+    """
+
+    _attribute_map = {
+        'recording_chunks': {'key': 'recordingChunks', 'type': '[AcsRecordingChunkInfoProperties]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        recording_chunks: Optional[List["AcsRecordingChunkInfoProperties"]] = None,
+        **kwargs
+    ):
+        super(AcsRecordingStorageInfoProperties, self).__init__(**kwargs)
+        self.recording_chunks = recording_chunks
 
 
 class AcsSmsDeliveryAttemptProperties(msrest.serialization.Model):
@@ -1157,7 +1302,7 @@ class AcsSmsEventBaseProperties(msrest.serialization.Model):
 
 
 class AcsSmsDeliveryReportReceivedEventData(AcsSmsEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.SMSDeliveryReportReceived event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.SMSDeliveryReportReceived event.
 
     :param message_id: The identity of the SMS message.
     :type message_id: str
@@ -1174,6 +1319,8 @@ class AcsSmsDeliveryReportReceivedEventData(AcsSmsEventBaseProperties):
      list[~event_grid_publisher_client.models.AcsSmsDeliveryAttemptProperties]
     :param received_timestamp: The time at which the SMS delivery report was received.
     :type received_timestamp: ~datetime.datetime
+    :param tag: Customer Content.
+    :type tag: str
     """
 
     _attribute_map = {
@@ -1184,6 +1331,7 @@ class AcsSmsDeliveryReportReceivedEventData(AcsSmsEventBaseProperties):
         'delivery_status_details': {'key': 'deliveryStatusDetails', 'type': 'str'},
         'delivery_attempts': {'key': 'deliveryAttempts', 'type': '[AcsSmsDeliveryAttemptProperties]'},
         'received_timestamp': {'key': 'receivedTimestamp', 'type': 'iso-8601'},
+        'tag': {'key': 'tag', 'type': 'str'},
     }
 
     def __init__(
@@ -1196,6 +1344,7 @@ class AcsSmsDeliveryReportReceivedEventData(AcsSmsEventBaseProperties):
         delivery_status_details: Optional[str] = None,
         delivery_attempts: Optional[List["AcsSmsDeliveryAttemptProperties"]] = None,
         received_timestamp: Optional[datetime.datetime] = None,
+        tag: Optional[str] = None,
         **kwargs
     ):
         super(AcsSmsDeliveryReportReceivedEventData, self).__init__(message_id=message_id, from_property=from_property, to=to, **kwargs)
@@ -1203,10 +1352,11 @@ class AcsSmsDeliveryReportReceivedEventData(AcsSmsEventBaseProperties):
         self.delivery_status_details = delivery_status_details
         self.delivery_attempts = delivery_attempts
         self.received_timestamp = received_timestamp
+        self.tag = tag
 
 
 class AcsSmsReceivedEventData(AcsSmsEventBaseProperties):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.SMSReceived event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Communication.SMSReceived event.
 
     :param message_id: The identity of the SMS message.
     :type message_id: str
@@ -1244,7 +1394,7 @@ class AcsSmsReceivedEventData(AcsSmsEventBaseProperties):
 
 
 class AppConfigurationKeyValueDeletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.AppConfiguration.KeyValueDeleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AppConfiguration.KeyValueDeleted event.
 
     :param key: The key used to identify the key-value that was deleted.
     :type key: str
@@ -1280,7 +1430,7 @@ class AppConfigurationKeyValueDeletedEventData(msrest.serialization.Model):
 
 
 class AppConfigurationKeyValueModifiedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.AppConfiguration.KeyValueModified event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.AppConfiguration.KeyValueModified event.
 
     :param key: The key used to identify the key-value that was modified.
     :type key: str
@@ -2335,7 +2485,7 @@ class EventGridEvent(msrest.serialization.Model):
 
 
 class EventHubCaptureFileCreatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.EventHub.CaptureFileCreated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.EventHub.CaptureFileCreated event.
 
     :param fileurl: The path to the capture file.
     :type fileurl: str
@@ -2561,7 +2711,7 @@ class IotHubDeviceTelemetryEventData(DeviceTelemetryEventProperties):
 
 
 class KeyVaultAccessPolicyChangedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an VaultAccessPolicyChanged event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.VaultAccessPolicyChanged event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2612,7 +2762,7 @@ class KeyVaultAccessPolicyChangedEventData(msrest.serialization.Model):
 
 
 class KeyVaultCertificateExpiredEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an CertificateExpired event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.CertificateExpired event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2663,7 +2813,7 @@ class KeyVaultCertificateExpiredEventData(msrest.serialization.Model):
 
 
 class KeyVaultCertificateNearExpiryEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an CertificateNearExpiry event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.CertificateNearExpiry event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2714,7 +2864,7 @@ class KeyVaultCertificateNearExpiryEventData(msrest.serialization.Model):
 
 
 class KeyVaultCertificateNewVersionCreatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an CertificateNewVersionCreated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.CertificateNewVersionCreated event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2765,7 +2915,7 @@ class KeyVaultCertificateNewVersionCreatedEventData(msrest.serialization.Model):
 
 
 class KeyVaultKeyExpiredEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an KeyExpired event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.KeyExpired event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2816,7 +2966,7 @@ class KeyVaultKeyExpiredEventData(msrest.serialization.Model):
 
 
 class KeyVaultKeyNearExpiryEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an KeyNearExpiry event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.KeyNearExpiry event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2867,7 +3017,7 @@ class KeyVaultKeyNearExpiryEventData(msrest.serialization.Model):
 
 
 class KeyVaultKeyNewVersionCreatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an KeyNewVersionCreated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.KeyNewVersionCreated event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2918,7 +3068,7 @@ class KeyVaultKeyNewVersionCreatedEventData(msrest.serialization.Model):
 
 
 class KeyVaultSecretExpiredEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an SecretExpired event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.SecretExpired event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -2969,7 +3119,7 @@ class KeyVaultSecretExpiredEventData(msrest.serialization.Model):
 
 
 class KeyVaultSecretNearExpiryEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an SecretNearExpiry event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.SecretNearExpiry event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -3020,7 +3170,7 @@ class KeyVaultSecretNearExpiryEventData(msrest.serialization.Model):
 
 
 class KeyVaultSecretNewVersionCreatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an SecretNewVersionCreated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.KeyVault.SecretNewVersionCreated event.
 
     :param id: The id of the object that triggered this event.
     :type id: str
@@ -3071,7 +3221,7 @@ class KeyVaultSecretNewVersionCreatedEventData(msrest.serialization.Model):
 
 
 class MachineLearningServicesDatasetDriftDetectedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.MachineLearningServices.DatasetDriftDetected event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.MachineLearningServices.DatasetDriftDetected event.
 
     :param data_drift_id: The ID of the data drift monitor that triggered the event.
     :type data_drift_id: str
@@ -3129,7 +3279,7 @@ class MachineLearningServicesDatasetDriftDetectedEventData(msrest.serialization.
 
 
 class MachineLearningServicesModelDeployedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.MachineLearningServices.ModelDeployed event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.MachineLearningServices.ModelDeployed event.
 
     :param service_name: The name of the deployed service.
     :type service_name: str
@@ -3171,7 +3321,7 @@ class MachineLearningServicesModelDeployedEventData(msrest.serialization.Model):
 
 
 class MachineLearningServicesModelRegisteredEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.MachineLearningServices.ModelRegistered event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.MachineLearningServices.ModelRegistered event.
 
     :param model_name: The name of the model that was registered.
     :type model_name: str
@@ -3207,7 +3357,7 @@ class MachineLearningServicesModelRegisteredEventData(msrest.serialization.Model
 
 
 class MachineLearningServicesRunCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.MachineLearningServices.RunCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.MachineLearningServices.RunCompleted event.
 
     :param experiment_id: The ID of the experiment that the run belongs to.
     :type experiment_id: str
@@ -3253,7 +3403,7 @@ class MachineLearningServicesRunCompletedEventData(msrest.serialization.Model):
 
 
 class MachineLearningServicesRunStatusChangedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.MachineLearningServices.RunStatusChanged event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.MachineLearningServices.RunStatusChanged event.
 
     :param experiment_id: The ID of the experiment that the Machine Learning Run belongs to.
     :type experiment_id: str
@@ -3544,7 +3694,7 @@ class MediaJobStateChangeEventData(msrest.serialization.Model):
 
 
 class MediaJobCanceledEventData(MediaJobStateChangeEventData):
-    """Job canceled event data.
+    """Job canceled event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobCanceled event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3584,7 +3734,7 @@ class MediaJobCanceledEventData(MediaJobStateChangeEventData):
 
 
 class MediaJobCancelingEventData(MediaJobStateChangeEventData):
-    """Job canceling event data.
+    """Job canceling event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobCanceling event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3700,7 +3850,7 @@ class MediaJobErrorDetail(msrest.serialization.Model):
 
 
 class MediaJobErroredEventData(MediaJobStateChangeEventData):
-    """Job error state event data.
+    """Job error state event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobErrored event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3740,7 +3890,7 @@ class MediaJobErroredEventData(MediaJobStateChangeEventData):
 
 
 class MediaJobFinishedEventData(MediaJobStateChangeEventData):
-    """Job finished event data.
+    """Job finished event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobFinished event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3921,7 +4071,7 @@ class MediaJobOutputStateChangeEventData(msrest.serialization.Model):
 
 
 class MediaJobOutputCanceledEventData(MediaJobOutputStateChangeEventData):
-    """Job output canceled event data.
+    """Job output canceled event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobOutputCanceled event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3955,7 +4105,7 @@ class MediaJobOutputCanceledEventData(MediaJobOutputStateChangeEventData):
 
 
 class MediaJobOutputCancelingEventData(MediaJobOutputStateChangeEventData):
-    """Job output canceling event data.
+    """Job output canceling event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobOutputCanceling event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3989,7 +4139,7 @@ class MediaJobOutputCancelingEventData(MediaJobOutputStateChangeEventData):
 
 
 class MediaJobOutputErroredEventData(MediaJobOutputStateChangeEventData):
-    """Job output error event data.
+    """Job output error event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobOutputErrored event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4023,7 +4173,7 @@ class MediaJobOutputErroredEventData(MediaJobOutputStateChangeEventData):
 
 
 class MediaJobOutputFinishedEventData(MediaJobOutputStateChangeEventData):
-    """Job output finished event data.
+    """Job output finished event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobOutputFinished event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4057,7 +4207,7 @@ class MediaJobOutputFinishedEventData(MediaJobOutputStateChangeEventData):
 
 
 class MediaJobOutputProcessingEventData(MediaJobOutputStateChangeEventData):
-    """Job output processing event data.
+    """Job output processing event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobOutputProcessing event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4091,7 +4241,7 @@ class MediaJobOutputProcessingEventData(MediaJobOutputStateChangeEventData):
 
 
 class MediaJobOutputProgressEventData(msrest.serialization.Model):
-    """Job Output Progress Event Data.
+    """Job Output Progress Event Data. Schema of the Data property of an EventGridEvent for a Microsoft.Media.JobOutputProgress event.
 
     :param label: Gets the Job output label.
     :type label: str
@@ -4122,7 +4272,7 @@ class MediaJobOutputProgressEventData(msrest.serialization.Model):
 
 
 class MediaJobOutputScheduledEventData(MediaJobOutputStateChangeEventData):
-    """Job output scheduled event data.
+    """Job output scheduled event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobOutputScheduled event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4156,7 +4306,7 @@ class MediaJobOutputScheduledEventData(MediaJobOutputStateChangeEventData):
 
 
 class MediaJobProcessingEventData(MediaJobStateChangeEventData):
-    """Job processing event data.
+    """Job processing event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobProcessing event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4191,7 +4341,7 @@ class MediaJobProcessingEventData(MediaJobStateChangeEventData):
 
 
 class MediaJobScheduledEventData(MediaJobStateChangeEventData):
-    """Job scheduled event data.
+    """Job scheduled event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.JobScheduled event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4226,7 +4376,7 @@ class MediaJobScheduledEventData(MediaJobStateChangeEventData):
 
 
 class MediaLiveEventConnectionRejectedEventData(msrest.serialization.Model):
-    """Encoder connection rejected event data.
+    """Encoder connection rejected event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventConnectionRejected event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4271,7 +4421,7 @@ class MediaLiveEventConnectionRejectedEventData(msrest.serialization.Model):
 
 
 class MediaLiveEventEncoderConnectedEventData(msrest.serialization.Model):
-    """Encoder connect event data.
+    """Encoder connect event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventEncoderConnected event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4311,7 +4461,7 @@ class MediaLiveEventEncoderConnectedEventData(msrest.serialization.Model):
 
 
 class MediaLiveEventEncoderDisconnectedEventData(msrest.serialization.Model):
-    """Encoder disconnected event data.
+    """Encoder disconnected event data. Schema of the Data property of an EventGridEvent for a Microsoft.Media.LiveEventEncoderDisconnected event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4356,7 +4506,7 @@ class MediaLiveEventEncoderDisconnectedEventData(msrest.serialization.Model):
 
 
 class MediaLiveEventIncomingDataChunkDroppedEventData(msrest.serialization.Model):
-    """Ingest fragment dropped event data.
+    """Ingest fragment dropped event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventIncomingDataChunkDropped event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4406,7 +4556,7 @@ class MediaLiveEventIncomingDataChunkDroppedEventData(msrest.serialization.Model
 
 
 class MediaLiveEventIncomingStreamReceivedEventData(msrest.serialization.Model):
-    """Encoder connect event data.
+    """Encoder connect event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventIncomingStreamReceived event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4471,7 +4621,7 @@ class MediaLiveEventIncomingStreamReceivedEventData(msrest.serialization.Model):
 
 
 class MediaLiveEventIncomingStreamsOutOfSyncEventData(msrest.serialization.Model):
-    """Incoming streams out of sync event data.
+    """Incoming streams out of sync event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventIncomingStreamsOutOfSync event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4525,7 +4675,7 @@ class MediaLiveEventIncomingStreamsOutOfSyncEventData(msrest.serialization.Model
 
 
 class MediaLiveEventIncomingVideoStreamsOutOfSyncEventData(msrest.serialization.Model):
-    """Incoming video stream out of synch event data.
+    """Incoming video stream out of synch event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4570,7 +4720,7 @@ class MediaLiveEventIncomingVideoStreamsOutOfSyncEventData(msrest.serialization.
 
 
 class MediaLiveEventIngestHeartbeatEventData(msrest.serialization.Model):
-    """Ingest fragment dropped event data.
+    """Ingest fragment dropped event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventIngestHeartbeat event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4650,7 +4800,7 @@ class MediaLiveEventIngestHeartbeatEventData(msrest.serialization.Model):
 
 
 class MediaLiveEventTrackDiscontinuityDetectedEventData(msrest.serialization.Model):
-    """Ingest track discontinuity detected event data.
+    """Ingest track discontinuity detected event data. Schema of the data property of an EventGridEvent for a Microsoft.Media.LiveEventTrackDiscontinuityDetected event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4772,8 +4922,170 @@ class PhoneNumberIdentifierModel(msrest.serialization.Model):
         self.value = value
 
 
+class PolicyInsightsPolicyStateChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.PolicyInsights.PolicyStateChanged event.
+
+    :param timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ.
+    :type timestamp: ~datetime.datetime
+    :param policy_assignment_id: The resource ID of the policy assignment.
+    :type policy_assignment_id: str
+    :param policy_definition_id: The resource ID of the policy definition.
+    :type policy_definition_id: str
+    :param policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state of the resource with respect to the policy
+     assignment.
+    :type compliance_state: str
+    :param subscription_id: The subscription ID of the resource.
+    :type subscription_id: str
+    :param compliance_reason_code: The compliance reason code. May be empty.
+    :type compliance_reason_code: str
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'compliance_reason_code': {'key': 'complianceReasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        policy_assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_definition_reference_id: Optional[str] = None,
+        compliance_state: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        compliance_reason_code: Optional[str] = None,
+        **kwargs
+    ):
+        super(PolicyInsightsPolicyStateChangedEventData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_id = policy_definition_id
+        self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.subscription_id = subscription_id
+        self.compliance_reason_code = compliance_reason_code
+
+
+class PolicyInsightsPolicyStateCreatedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.PolicyInsights.PolicyStateCreated event.
+
+    :param timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ.
+    :type timestamp: ~datetime.datetime
+    :param policy_assignment_id: The resource ID of the policy assignment.
+    :type policy_assignment_id: str
+    :param policy_definition_id: The resource ID of the policy definition.
+    :type policy_definition_id: str
+    :param policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state of the resource with respect to the policy
+     assignment.
+    :type compliance_state: str
+    :param subscription_id: The subscription ID of the resource.
+    :type subscription_id: str
+    :param compliance_reason_code: The compliance reason code. May be empty.
+    :type compliance_reason_code: str
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'compliance_reason_code': {'key': 'complianceReasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        policy_assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_definition_reference_id: Optional[str] = None,
+        compliance_state: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        compliance_reason_code: Optional[str] = None,
+        **kwargs
+    ):
+        super(PolicyInsightsPolicyStateCreatedEventData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_id = policy_definition_id
+        self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.subscription_id = subscription_id
+        self.compliance_reason_code = compliance_reason_code
+
+
+class PolicyInsightsPolicyStateDeletedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.PolicyInsights.PolicyStateDeleted event.
+
+    :param timestamp: The time that the resource was scanned by Azure Policy in the Universal ISO
+     8601 DateTime format yyyy-MM-ddTHH:mm:ss.fffffffZ.
+    :type timestamp: ~datetime.datetime
+    :param policy_assignment_id: The resource ID of the policy assignment.
+    :type policy_assignment_id: str
+    :param policy_definition_id: The resource ID of the policy definition.
+    :type policy_definition_id: str
+    :param policy_definition_reference_id: The reference ID for the policy definition inside the
+     initiative definition, if the policy assignment is for an initiative. May be empty.
+    :type policy_definition_reference_id: str
+    :param compliance_state: The compliance state of the resource with respect to the policy
+     assignment.
+    :type compliance_state: str
+    :param subscription_id: The subscription ID of the resource.
+    :type subscription_id: str
+    :param compliance_reason_code: The compliance reason code. May be empty.
+    :type compliance_reason_code: str
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'compliance_reason_code': {'key': 'complianceReasonCode', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        policy_assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_definition_reference_id: Optional[str] = None,
+        compliance_state: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        compliance_reason_code: Optional[str] = None,
+        **kwargs
+    ):
+        super(PolicyInsightsPolicyStateDeletedEventData, self).__init__(**kwargs)
+        self.timestamp = timestamp
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_definition_id = policy_definition_id
+        self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.subscription_id = subscription_id
+        self.compliance_reason_code = compliance_reason_code
+
+
 class RedisExportRDBCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Cache.ExportRDBCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ExportRDBCompleted event.
 
     :param timestamp: The time at which the event occurred.
     :type timestamp: ~datetime.datetime
@@ -4804,7 +5116,7 @@ class RedisExportRDBCompletedEventData(msrest.serialization.Model):
 
 
 class RedisImportRDBCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Cache.ImportRDBCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ImportRDBCompleted event.
 
     :param timestamp: The time at which the event occurred.
     :type timestamp: ~datetime.datetime
@@ -4835,7 +5147,7 @@ class RedisImportRDBCompletedEventData(msrest.serialization.Model):
 
 
 class RedisPatchingCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Cache.PatchingCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.PatchingCompleted event.
 
     :param timestamp: The time at which the event occurred.
     :type timestamp: ~datetime.datetime
@@ -4866,7 +5178,7 @@ class RedisPatchingCompletedEventData(msrest.serialization.Model):
 
 
 class RedisScalingCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Cache.ScalingCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Cache.ScalingCompleted event.
 
     :param timestamp: The time at which the event occurred.
     :type timestamp: ~datetime.datetime
@@ -4897,7 +5209,7 @@ class RedisScalingCompletedEventData(msrest.serialization.Model):
 
 
 class ResourceActionCancelData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Resources.ResourceActionCancel event. This is raised when a resource action operation is canceled.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceActionCancel event. This is raised when a resource action operation is canceled.
 
     :param tenant_id: The tenant ID of the resource.
     :type tenant_id: str
@@ -5110,7 +5422,7 @@ class ResourceActionSuccessData(msrest.serialization.Model):
 
 
 class ResourceDeleteCancelData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Resources.ResourceDeleteCancel event. This is raised when a resource delete operation is canceled.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Resources.ResourceDeleteCancel event. This is raised when a resource delete operation is canceled.
 
     :param tenant_id: The tenant ID of the resource.
     :type tenant_id: str
@@ -5686,7 +5998,7 @@ class ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData(msrest
 
 
 class ServiceBusDeadletterMessagesAvailableWithNoListenersEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for a Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners event.
 
     :param namespace_name: The namespace name of the Microsoft.ServiceBus resource.
     :type namespace_name: str
@@ -5812,8 +6124,81 @@ class SignalRServiceClientConnectionDisconnectedEventData(msrest.serialization.M
         self.error_message = error_message
 
 
+class StorageAsyncOperationInitiatedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.AsyncOperationInitiated event.
+
+    :param api: The name of the API/operation that triggered this event.
+    :type api: str
+    :param client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :type client_request_id: str
+    :param request_id: The request id generated by the Storage service for the storage API
+     operation that triggered this event.
+    :type request_id: str
+    :param content_type: The content type of the blob. This is the same as what would be returned
+     in the Content-Type header from the blob.
+    :type content_type: str
+    :param content_length: The size of the blob in bytes. This is the same as what would be
+     returned in the Content-Length header from the blob.
+    :type content_length: long
+    :param blob_type: The type of blob.
+    :type blob_type: str
+    :param url: The path to the blob.
+    :type url: str
+    :param sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :type sequencer: str
+    :param identity: The identity of the requester that triggered this event.
+    :type identity: str
+    :param storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers.
+    :type storage_diagnostics: object
+    """
+
+    _attribute_map = {
+        'api': {'key': 'api', 'type': 'str'},
+        'client_request_id': {'key': 'clientRequestId', 'type': 'str'},
+        'request_id': {'key': 'requestId', 'type': 'str'},
+        'content_type': {'key': 'contentType', 'type': 'str'},
+        'content_length': {'key': 'contentLength', 'type': 'long'},
+        'blob_type': {'key': 'blobType', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'sequencer': {'key': 'sequencer', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
+        'storage_diagnostics': {'key': 'storageDiagnostics', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_length: Optional[int] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
+        **kwargs
+    ):
+        super(StorageAsyncOperationInitiatedEventData, self).__init__(**kwargs)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.content_type = content_type
+        self.content_length = content_length
+        self.blob_type = blob_type
+        self.url = url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
+
+
 class StorageBlobCreatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.BlobCreated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobCreated event.
 
     :param api: The name of the API/operation that triggered this event.
     :type api: str
@@ -5896,7 +6281,7 @@ class StorageBlobCreatedEventData(msrest.serialization.Model):
 
 
 class StorageBlobDeletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.BlobDeleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobDeleted event.
 
     :param api: The name of the API/operation that triggered this event.
     :type api: str
@@ -5962,8 +6347,60 @@ class StorageBlobDeletedEventData(msrest.serialization.Model):
         self.storage_diagnostics = storage_diagnostics
 
 
+class StorageBlobInventoryPolicyCompletedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.BlobInventoryPolicyCompleted event.
+
+    :param schedule_date_time: The time at which inventory policy was scheduled.
+    :type schedule_date_time: ~datetime.datetime
+    :param account_name: The account name for which inventory policy is registered.
+    :type account_name: str
+    :param rule_name: The rule name for inventory policy.
+    :type rule_name: str
+    :param policy_run_status: The status of inventory run, it can be
+     Succeeded/PartiallySucceeded/Failed.
+    :type policy_run_status: str
+    :param policy_run_status_message: The status message for inventory run.
+    :type policy_run_status_message: str
+    :param policy_run_id: The policy run id for inventory run.
+    :type policy_run_id: str
+    :param manifest_blob_url: The blob URL for manifest file for inventory run.
+    :type manifest_blob_url: str
+    """
+
+    _attribute_map = {
+        'schedule_date_time': {'key': 'scheduleDateTime', 'type': 'iso-8601'},
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'rule_name': {'key': 'ruleName', 'type': 'str'},
+        'policy_run_status': {'key': 'policyRunStatus', 'type': 'str'},
+        'policy_run_status_message': {'key': 'policyRunStatusMessage', 'type': 'str'},
+        'policy_run_id': {'key': 'policyRunId', 'type': 'str'},
+        'manifest_blob_url': {'key': 'manifestBlobUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_date_time: Optional[datetime.datetime] = None,
+        account_name: Optional[str] = None,
+        rule_name: Optional[str] = None,
+        policy_run_status: Optional[str] = None,
+        policy_run_status_message: Optional[str] = None,
+        policy_run_id: Optional[str] = None,
+        manifest_blob_url: Optional[str] = None,
+        **kwargs
+    ):
+        super(StorageBlobInventoryPolicyCompletedEventData, self).__init__(**kwargs)
+        self.schedule_date_time = schedule_date_time
+        self.account_name = account_name
+        self.rule_name = rule_name
+        self.policy_run_status = policy_run_status
+        self.policy_run_status_message = policy_run_status_message
+        self.policy_run_id = policy_run_id
+        self.manifest_blob_url = manifest_blob_url
+
+
 class StorageBlobRenamedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.BlobRenamed event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobRenamed event.
 
     :param api: The name of the API/operation that triggered this event.
     :type api: str
@@ -6023,8 +6460,81 @@ class StorageBlobRenamedEventData(msrest.serialization.Model):
         self.storage_diagnostics = storage_diagnostics
 
 
+class StorageBlobTierChangedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.BlobTierChanged event.
+
+    :param api: The name of the API/operation that triggered this event.
+    :type api: str
+    :param client_request_id: A request id provided by the client of the storage API operation that
+     triggered this event.
+    :type client_request_id: str
+    :param request_id: The request id generated by the Storage service for the storage API
+     operation that triggered this event.
+    :type request_id: str
+    :param content_type: The content type of the blob. This is the same as what would be returned
+     in the Content-Type header from the blob.
+    :type content_type: str
+    :param content_length: The size of the blob in bytes. This is the same as what would be
+     returned in the Content-Length header from the blob.
+    :type content_length: long
+    :param blob_type: The type of blob.
+    :type blob_type: str
+    :param url: The path to the blob.
+    :type url: str
+    :param sequencer: An opaque string value representing the logical sequence of events for any
+     particular blob name. Users can use standard string comparison to understand the relative
+     sequence of two events on the same blob name.
+    :type sequencer: str
+    :param identity: The identity of the requester that triggered this event.
+    :type identity: str
+    :param storage_diagnostics: For service use only. Diagnostic data occasionally included by the
+     Azure Storage service. This property should be ignored by event consumers.
+    :type storage_diagnostics: object
+    """
+
+    _attribute_map = {
+        'api': {'key': 'api', 'type': 'str'},
+        'client_request_id': {'key': 'clientRequestId', 'type': 'str'},
+        'request_id': {'key': 'requestId', 'type': 'str'},
+        'content_type': {'key': 'contentType', 'type': 'str'},
+        'content_length': {'key': 'contentLength', 'type': 'long'},
+        'blob_type': {'key': 'blobType', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'sequencer': {'key': 'sequencer', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'str'},
+        'storage_diagnostics': {'key': 'storageDiagnostics', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_length: Optional[int] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
+        **kwargs
+    ):
+        super(StorageBlobTierChangedEventData, self).__init__(**kwargs)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.content_type = content_type
+        self.content_length = content_length
+        self.blob_type = blob_type
+        self.url = url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
+
+
 class StorageDirectoryCreatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.DirectoryCreated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.DirectoryCreated event.
 
     :param api: The name of the API/operation that triggered this event.
     :type api: str
@@ -6085,7 +6595,7 @@ class StorageDirectoryCreatedEventData(msrest.serialization.Model):
 
 
 class StorageDirectoryDeletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.DirectoryDeleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.DirectoryDeleted event.
 
     :param api: The name of the API/operation that triggered this event.
     :type api: str
@@ -6146,7 +6656,7 @@ class StorageDirectoryDeletedEventData(msrest.serialization.Model):
 
 
 class StorageDirectoryRenamedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.DirectoryRenamed event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.DirectoryRenamed event.
 
     :param api: The name of the API/operation that triggered this event.
     :type api: str
@@ -6238,7 +6748,7 @@ class StorageLifecyclePolicyActionSummaryDetail(msrest.serialization.Model):
 
 
 class StorageLifecyclePolicyCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.LifecyclePolicyCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Storage.LifecyclePolicyCompleted event.
 
     :param schedule_time: The time the policy task was scheduled.
     :type schedule_time: str
@@ -6280,7 +6790,7 @@ class StorageLifecyclePolicyCompletedEventData(msrest.serialization.Model):
 
 
 class SubscriptionDeletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for a Microsoft.EventGrid.SubscriptionDeletedEvent.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.EventGrid.SubscriptionDeletedEvent event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6305,7 +6815,7 @@ class SubscriptionDeletedEventData(msrest.serialization.Model):
 
 
 class SubscriptionValidationEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for a Microsoft.EventGrid.SubscriptionValidationEvent.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.EventGrid.SubscriptionValidationEvent event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6363,7 +6873,7 @@ class SubscriptionValidationResponse(msrest.serialization.Model):
 
 
 class WebAppServicePlanUpdatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.AppServicePlanUpdated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.AppServicePlanUpdated event.
 
     :param app_service_plan_event_type_detail: Detail of action on the app service plan.
     :type app_service_plan_event_type_detail:
@@ -6464,7 +6974,7 @@ class WebAppServicePlanUpdatedEventDataSku(msrest.serialization.Model):
 
 
 class WebAppUpdatedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.AppUpdated event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.AppUpdated event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6518,7 +7028,7 @@ class WebAppUpdatedEventData(msrest.serialization.Model):
 
 
 class WebBackupOperationCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.BackupOperationCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.BackupOperationCompleted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6572,7 +7082,7 @@ class WebBackupOperationCompletedEventData(msrest.serialization.Model):
 
 
 class WebBackupOperationFailedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.BackupOperationFailed event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.BackupOperationFailed event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6626,7 +7136,7 @@ class WebBackupOperationFailedEventData(msrest.serialization.Model):
 
 
 class WebBackupOperationStartedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.BackupOperationStarted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.BackupOperationStarted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6680,7 +7190,7 @@ class WebBackupOperationStartedEventData(msrest.serialization.Model):
 
 
 class WebRestoreOperationCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.RestoreOperationCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.RestoreOperationCompleted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6734,7 +7244,7 @@ class WebRestoreOperationCompletedEventData(msrest.serialization.Model):
 
 
 class WebRestoreOperationFailedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.RestoreOperationFailed event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.RestoreOperationFailed event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6788,7 +7298,7 @@ class WebRestoreOperationFailedEventData(msrest.serialization.Model):
 
 
 class WebRestoreOperationStartedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.RestoreOperationStarted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.RestoreOperationStarted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6842,7 +7352,7 @@ class WebRestoreOperationStartedEventData(msrest.serialization.Model):
 
 
 class WebSlotSwapCompletedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.SlotSwapCompleted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapCompleted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6896,7 +7406,7 @@ class WebSlotSwapCompletedEventData(msrest.serialization.Model):
 
 
 class WebSlotSwapFailedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.SlotSwapFailed event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapFailed event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -6950,7 +7460,7 @@ class WebSlotSwapFailedEventData(msrest.serialization.Model):
 
 
 class WebSlotSwapStartedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.SlotSwapStarted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapStarted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -7004,7 +7514,7 @@ class WebSlotSwapStartedEventData(msrest.serialization.Model):
 
 
 class WebSlotSwapWithPreviewCancelledEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.SlotSwapWithPreviewCancelled event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapWithPreviewCancelled event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail
@@ -7058,7 +7568,7 @@ class WebSlotSwapWithPreviewCancelledEventData(msrest.serialization.Model):
 
 
 class WebSlotSwapWithPreviewStartedEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for an Microsoft.Web.SlotSwapWithPreviewStarted event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.Web.SlotSwapWithPreviewStarted event.
 
     :param app_event_type_detail: Detail of action on the app.
     :type app_event_type_detail: ~event_grid_publisher_client.models.AppEventTypeDetail

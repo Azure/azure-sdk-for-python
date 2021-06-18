@@ -22,7 +22,7 @@ _logger = logging.getLogger(__name__)
 class AbstractPreparer(object):
     _cache_lock = Lock()
     _resource_cache = {}
-    ResourceCacheEntry = namedtuple('ResourceCacheEntry', 'resource_name kwargs preparer')
+    ResourceCacheEntry = namedtuple("ResourceCacheEntry", "resource_name kwargs preparer")
 
     def __init__(self, name_prefix, name_len, disable_recording=False):
         self.name_prefix = name_prefix
@@ -44,8 +44,9 @@ class AbstractPreparer(object):
         # If the first cached test run does not have any http traffic, a recording will not have been
         # generated, so in_recording will be True even if live_test is false, so a random name would be given.
         # In cached mode we need to avoid this because then for tests with recordings, they would not have a moniker.
-        if (self.live_test or test_class_instance.in_recording) \
-                and not (not test_class_instance.is_live and test_class_instance.in_recording and self._use_cache):
+        if (self.live_test or test_class_instance.in_recording) and not (
+            not test_class_instance.is_live and test_class_instance.in_recording and self._use_cache
+        ):
             resource_name = self.random_name
             if not self.live_test and isinstance(self, RecordingProcessor):
                 test_class_instance.recording_processors.append(self)
@@ -57,10 +58,7 @@ class AbstractPreparer(object):
             retries = 4
             for i in range(retries):
                 try:
-                    parameter_update = self.create_resource(
-                        resource_name,
-                        **kwargs
-                    )
+                    parameter_update = self.create_resource(resource_name, **kwargs)
                     _logger.debug("Successfully created resource %s", resource_name)
                     break
                 except AzureNameError:
@@ -70,16 +68,15 @@ class AbstractPreparer(object):
                     resource_name = self.random_name
                 except Exception as e:
                     msg = "Preparer failure when creating resource {} for test {}: {}".format(
-                                  self.__class__.__name__,
-                                  test_class_instance,
-                                  e)
+                        self.__class__.__name__, test_class_instance, e
+                    )
                     while e:
                         try:
                             e = e.inner_exception
                         except AttributeError:
                             break
                     try:
-                        msg += "\nDetailed error message: " + str(e.additional_properties['error']['message'])
+                        msg += "\nDetailed error message: " + str(e.additional_properties["error"]["message"])
                     except (AttributeError, KeyError):
                         pass
 
@@ -91,29 +88,33 @@ class AbstractPreparer(object):
 
         return resource_name, kwargs
 
-
     def __call__(self, fn):
         def _preparer_wrapper(test_class_instance, **kwargs):
-            _logger.debug("Entering preparer wrapper for %s and test %s",
-                self.__class__.__name__, str(test_class_instance))
+            _logger.debug(
+                "Entering preparer wrapper for %s and test %s", self.__class__.__name__, str(test_class_instance)
+            )
 
             # If a child is cached we must use the same cached resource their equivalent parent did so all the deps line up
-            child_is_cached = getattr(fn, '__use_cache', False)
+            child_is_cached = getattr(fn, "__use_cache", False)
             # Note: If it is ever desired to make caching inferred, remove this if/throw.
             # This ensures that a user must _very specifically say they want caching_ on an item and all parents.
             if not self._use_cache and child_is_cached:
-                raise Exception("""Preparer exception for test {}:\n Child preparers are cached, but parent {} is not.
-You must specify use_cache=True in the preparer decorator""".format(test_class_instance, self.__class__.__name__))
+                raise Exception(
+                    """Preparer exception for test {}:\n Child preparers are cached, but parent {} is not.
+You must specify use_cache=True in the preparer decorator""".format(
+                        test_class_instance, self.__class__.__name__
+                    )
+                )
             self._use_cache |= child_is_cached
             _logger.debug("Child cache status for %s: %s", self.__class__.__name__, child_is_cached)
 
             # We must use a cache_key that includes our parents, so that we get a cached stack
             # matching the desired resource stack. (e.g. if parent resource has specific settings)
             try:
-                aggregate_cache_key = (self._cache_key, kwargs['__aggregate_cache_key'])
-            except KeyError: # If we're at the root of the cache stack, start with our own key.
+                aggregate_cache_key = (self._cache_key, kwargs["__aggregate_cache_key"])
+            except KeyError:  # If we're at the root of the cache stack, start with our own key.
                 aggregate_cache_key = self._cache_key
-            kwargs['__aggregate_cache_key'] = aggregate_cache_key
+            kwargs["__aggregate_cache_key"] = aggregate_cache_key
             self._aggregate_cache_key = aggregate_cache_key
             _logger.debug("Aggregate cache key: %s", aggregate_cache_key)
 
@@ -129,17 +130,16 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                 with self._cache_lock:
                     if aggregate_cache_key not in AbstractPreparer._resource_cache:
                         _logger.debug("Storing cached resource for %s", self.__class__.__name__)
-                        AbstractPreparer._resource_cache[aggregate_cache_key] = AbstractPreparer.ResourceCacheEntry(resource_name, kwargs, self)
+                        AbstractPreparer._resource_cache[aggregate_cache_key] = AbstractPreparer.ResourceCacheEntry(
+                            resource_name, kwargs, self
+                        )
 
             if test_class_instance.is_live:
-                test_class_instance.scrubber.register_name_pair(
-                    resource_name,
-                    self.moniker
-                )
+                test_class_instance.scrubber.register_name_pair(resource_name, self.moniker)
 
             # We shouldn't trim the same kwargs that we use for deletion,
             # we may remove some of the variables we needed to do the delete.
-            trimmed_kwargs = {k:v for k,v in kwargs.items()}
+            trimmed_kwargs = {k: v for k, v in kwargs.items()}
             trim_kwargs_from_test_function(fn, trimmed_kwargs)
 
             try:
@@ -162,16 +162,16 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                     self.remove_resource_with_record_override(resource_name, **kwargs)
 
         # _logger.debug("Setting up preparer stack for {}".format(self.__class__.__name__))
-        setattr(_preparer_wrapper, '__is_preparer', True)
+        setattr(_preparer_wrapper, "__is_preparer", True)
         # Inform the next step in the chain (our parent) that we're cached.
-        if self._use_cache or getattr(fn, '__use_cache', False):
-            setattr(_preparer_wrapper, '__use_cache', True)
+        if self._use_cache or getattr(fn, "__use_cache", False):
+            setattr(_preparer_wrapper, "__use_cache", True)
         functools.update_wrapper(_preparer_wrapper, fn)
         return _preparer_wrapper
 
     @contextlib.contextmanager
     def override_disable_recording(self):
-        if hasattr(self.test_class_instance, 'disable_recording'):
+        if hasattr(self.test_class_instance, "disable_recording"):
             orig_enabled = self.test_class_instance.disable_recording
             self.test_class_instance.disable_recording = self.disable_recording
             yield
@@ -183,8 +183,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
     def moniker(self):
         if not self.resource_moniker:
             self.test_class_instance.test_resources_count += 1
-            self.resource_moniker = '{}{:06}'.format(self.name_prefix,
-                                                     self.test_class_instance.test_resources_count)
+            self.resource_moniker = "{}{:06}".format(self.name_prefix, self.test_class_instance.test_resources_count)
         return self.resource_moniker
 
     def create_random_name(self):
@@ -223,33 +222,33 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
             try:
                 _logger.debug("Performing delayed delete for: %s %s", preparer, resource_name)
                 preparer.remove_resource_with_record_override(resource_name, **kwargs)
-            except Exception as e: #pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 # Intentionally broad exception to attempt to leave as few orphan resources as possible even on error.
                 _logger.warning("Exception while performing delayed deletes (this can happen): %s", e)
+
 
 class SingleValueReplacer(RecordingProcessor):
     # pylint: disable=no-member
     def process_request(self, request):
         from six.moves.urllib_parse import quote_plus  # pylint: disable=import-error,import-outside-toplevel
+
         if self.random_name in request.uri:
             request.uri = request.uri.replace(self.random_name, self.moniker)
         elif quote_plus(self.random_name) in request.uri:
-            request.uri = request.uri.replace(quote_plus(self.random_name),
-                                              quote_plus(self.moniker))
+            request.uri = request.uri.replace(quote_plus(self.random_name), quote_plus(self.moniker))
 
         if is_text_payload(request) and request.body:
-            body = str(request.body, 'utf-8') if isinstance(request.body, bytes) else str(request.body)
+            body = str(request.body, "utf-8") if isinstance(request.body, bytes) else str(request.body)
             if self.random_name in body:
                 request.body = body.replace(self.random_name, self.moniker)
 
         return request
 
     def process_response(self, response):
-        if is_text_payload(response) and response['body']['string']:
-            response['body']['string'] = response['body']['string'].replace(self.random_name,
-                                                                            self.moniker)
+        if is_text_payload(response) and response["body"]["string"]:
+            response["body"]["string"] = response["body"]["string"].replace(self.random_name, self.moniker)
 
-        self.replace_header(response, 'location', self.random_name, self.moniker)
-        self.replace_header(response, 'azure-asyncoperation', self.random_name, self.moniker)
+        self.replace_header(response, "location", self.random_name, self.moniker)
+        self.replace_header(response, "azure-asyncoperation", self.random_name, self.moniker)
 
         return response

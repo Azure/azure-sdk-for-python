@@ -60,8 +60,8 @@ class QueueOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param queue_name: A queue name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of lowercase alphanumeric and dash(-) characters only,
@@ -137,8 +137,8 @@ class QueueOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param queue_name: A queue name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of lowercase alphanumeric and dash(-) characters only,
@@ -213,8 +213,8 @@ class QueueOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param queue_name: A queue name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of lowercase alphanumeric and dash(-) characters only,
@@ -282,8 +282,8 @@ class QueueOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param queue_name: A queue name must be unique within a storage account and must be between 3
          and 63 characters.The name must comprise of lowercase alphanumeric and dash(-) characters only,
@@ -349,8 +349,8 @@ class QueueOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param maxpagesize: Optional, a maximum number of queues that should be included in a list
          queue response.

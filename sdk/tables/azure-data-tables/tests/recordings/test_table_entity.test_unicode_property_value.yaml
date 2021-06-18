@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:09:55 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:09:55 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:38 GMT
       location:
       - https://fake_table_account.table.core.windows.net/Tables('uttableac7612b8')
       server:
@@ -65,27 +65,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:09:55 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:09:55 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_table_account.table.core.windows.net/uttableac7612b8
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A09%3A56.4315762Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-12-18T17:09:56.4315762Z","Description":"\ua015"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2021-05-26T15%3A48%3A39.6114846Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2021-05-26T15:48:39.6114846Z","Description":"\ua015"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:38 GMT
       etag:
-      - W/"datetime'2020-12-18T17%3A09%3A56.4315762Z'"
+      - W/"datetime'2021-05-26T15%3A48%3A39.6114846Z'"
       location:
       - https://fake_table_account.table.core.windows.net/uttableac7612b8(PartitionKey='pkac7612b8',RowKey='rkac7612b8')
       server:
@@ -117,27 +117,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_table_account.table.core.windows.net/uttableac7612b8
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-12-18T17%3A09%3A56.5536628Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-12-18T17:09:56.5536628Z","Description":"\ua015"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2021-05-26T15%3A48%3A39.7445805Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2021-05-26T15:48:39.7445805Z","Description":"\ua015"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       etag:
-      - W/"datetime'2020-12-18T17%3A09%3A56.5536628Z'"
+      - W/"datetime'2021-05-26T15%3A48%3A39.7445805Z'"
       location:
       - https://fake_table_account.table.core.windows.net/uttableac7612b8(PartitionKey='pkac7612b8',RowKey='test2')
       server:
@@ -163,29 +163,75 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_table_account.table.core.windows.net/uttableac7612b8()?$filter=PartitionKey%20eq%20%27pkac7612b8%27
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2020-12-18T17%3A09%3A56.4315762Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-12-18T17:09:56.4315762Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2020-12-18T17%3A09%3A56.5536628Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-12-18T17:09:56.5536628Z","Description":"\ua015"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2021-05-26T15%3A48%3A39.6114846Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2021-05-26T15:48:39.6114846Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2021-05-26T15%3A48%3A39.7445805Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2021-05-26T15:48:39.7445805Z","Description":"\ua015"}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 26 May 2021 15:48:39 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 26 May 2021 15:48:39 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_table_account.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"uttableac7612b8"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 26 May 2021 15:48:39 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      vary:
+      - Origin
       x-content-type-options:
       - nosniff
       x-ms-version:
@@ -205,11 +251,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -223,7 +269,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Dec 2020 17:09:56 GMT
+      - Wed, 26 May 2021 15:48:39 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

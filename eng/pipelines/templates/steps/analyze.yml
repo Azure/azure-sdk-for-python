@@ -5,6 +5,7 @@ parameters:
   AdditionalTestArgs: ''
   Artifacts: []
   TestPipeline: false
+  VerifyAutorest: false
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
@@ -23,15 +24,27 @@ steps:
           ServiceName: ${{parameters.ServiceDirectory}}
           ForRelease: false
 
+# - template: /eng/common/pipelines/templates/steps/verify-samples.yml
+#   parameters:
+#     ServiceDirectory: ${{parameters.ServiceDirectory}}
+
     # Using --always-succeed so as not to block the build. Once package
     # target is based on data available per-package the --always-succeed should
     # be removed so this script can help enforce correct practices
     # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
+
+
+  - pwsh: |
+     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+    displayName: 'Install Necessary Dependencies'
+    condition: succeededOrFailed()
+
   - script: |
       cd eng/versioning
       pip install -r requirements.txt
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
+    condition: succeededOrFailed()
 
   - pwsh: |
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
@@ -53,18 +66,16 @@ steps:
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
 
+  - template: ../steps/verify-autorest.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      VerifyAutorest: ${{ parameters.VerifyAutorest }}
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
     # builds should be sufficient.
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
     displayName: 'Component Detection'
-
-  - task: PublishPipelineArtifact@1
-    condition: succeededOrFailed()
-    displayName: 'Publish Report Artifacts'
-    inputs:
-     artifactName: reports
-     pathtoPublish: $(Build.ArtifactStagingDirectory)/reports
 
   - task: PythonScript@0
     displayName: 'Verify sdist'
@@ -93,7 +104,7 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - task: DownloadPipelineArtifact@2
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+    condition: succeededOrFailed()
     inputs:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
@@ -119,4 +130,13 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)/reports'
+      ArtifactName: 'reports'

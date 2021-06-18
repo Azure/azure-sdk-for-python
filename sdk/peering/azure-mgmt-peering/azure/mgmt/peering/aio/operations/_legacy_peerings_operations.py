@@ -45,7 +45,6 @@ class LegacyPeeringsOperations:
         self,
         peering_location: str,
         kind: Union[str, "_models.Enum1"],
-        asn: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.PeeringListResult"]:
         """Lists all of the legacy peerings under the given subscription matching the specified kind and
@@ -55,8 +54,6 @@ class LegacyPeeringsOperations:
         :type peering_location: str
         :param kind: The kind of the peering.
         :type kind: str or ~azure.mgmt.peering.models.Enum1
-        :param asn: The ASN number associated with a legacy peering.
-        :type asn: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PeeringListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.peering.models.PeeringListResult]
@@ -67,7 +64,7 @@ class LegacyPeeringsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2019-08-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -86,8 +83,6 @@ class LegacyPeeringsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['peeringLocation'] = self._serialize.query("peering_location", peering_location, 'str')
                 query_parameters['kind'] = self._serialize.query("kind", kind, 'str')
-                if asn is not None:
-                    query_parameters['asn'] = self._serialize.query("asn", asn, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -111,7 +106,7 @@ class LegacyPeeringsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

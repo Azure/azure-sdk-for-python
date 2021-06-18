@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_index_crud_operations.py
+FILE: sample_index_crud_operations_async.py
 DESCRIPTION:
     This sample demonstrates how to get, create, update, or delete an index.
 USAGE:
-    python sample_index_crud_operations.py
+    python sample_index_crud_operations_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service
