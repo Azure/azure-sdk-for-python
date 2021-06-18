@@ -45,6 +45,9 @@ extends:
       - name: azure-common
         safeName: azurecommon
     BeforeTestSteps:
+      - pwsh: |
+          pip install git+https://github.com/iscai-msft/core.testserver#subdirectory=coretestserver
+        displayName: "Pip install CoreTestServer"
       - task: PythonScript@0
         inputs:
           scriptPath: "scripts/devops_tasks/start_coretestserver.py"
