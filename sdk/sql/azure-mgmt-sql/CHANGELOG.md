@@ -1,5 +1,21 @@
 # Release History
 
+## 0.29.0 (2021-06-18)
+
+**Features**
+
+  - Model ServerUpdate has a new parameter restrict_outbound_network_access
+  - Model ServerUpdate has a new parameter federated_client_id
+  - Model Server has a new parameter restrict_outbound_network_access
+  - Model Server has a new parameter federated_client_id
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+
+**Breaking changes**
+
+  - Operation ReplicationLinksOperations.get has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.create_or_update has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.update has a new signature
+
 ## 0.28.0 (2021-05-24)
 
  - Add resource identity
