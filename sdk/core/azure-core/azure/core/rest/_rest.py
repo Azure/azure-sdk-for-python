@@ -104,20 +104,20 @@ class HttpRequest(object):
         self.url = url
         self.method = method
 
-        self.headers = _case_insensitive_dict(kwargs.pop("headers", None))
         params = kwargs.pop("params", None)
         if params:
             self.url = format_parameters(self.url, params)
         self._files = None
         self._data = None
 
-        headers = self._set_body(
+        default_headers = self._set_body(
             content=kwargs.pop("content", None),
             data=kwargs.pop("data", None),
             files=kwargs.pop("files", None),
             json=kwargs.pop("json", None),
         )
-        self._update_headers(_case_insensitive_dict(headers))
+        self.headers = _case_insensitive_dict(default_headers)
+        self.headers.update(kwargs.pop("headers", {}))
 
         if kwargs:
             raise TypeError(

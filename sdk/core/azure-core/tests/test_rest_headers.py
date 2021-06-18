@@ -86,6 +86,11 @@ def test_headers_delete_removes_all_existing():
     del h["a"]
     assert dict(h) == {}
 
+def test_headers_not_override():
+    request = HttpRequest("PUT", "http://example.org", json={"hello": "world"}, headers={"Content-Length": "5000", "Content-Type": "application/my-content-type"})
+    assert request.headers["Content-Length"] == "5000"
+    assert request.headers["Content-Type"] == "application/my-content-type"
+
 # Can't support list of tuples. Will uncomment once we add that support
 
 # def test_multiple_headers():

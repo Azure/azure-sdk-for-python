@@ -39,7 +39,7 @@ def test_iterable_content(assert_iterator_body):
             yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
     assert_iterator_body(request, b"test 123")
 
 
@@ -48,7 +48,7 @@ def test_generator_with_transfer_encoding_header(assert_iterator_body):
         yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=content())
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
     assert_iterator_body(request, b"test 123")
 
 
@@ -162,21 +162,21 @@ def test_iterator_content(assert_iterator_body):
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
 
     # transfer encoding should still be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
 
 
 def test_json_content():

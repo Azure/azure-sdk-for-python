@@ -130,19 +130,20 @@ class HttpRequest:
     ):
         self.url = url
         self.method = method
-        self.headers = _case_insensitive_dict(headers)
+
         if params:
             self.url = format_parameters(self.url, params)
         self._files = None
         self._data = None
 
-        headers = self._set_body(
+        default_headers = self._set_body(
             content=content,
             data=data,
             files=files,
             json=json,
         )
-        self._update_headers(_case_insensitive_dict(headers))
+        self.headers = _case_insensitive_dict(default_headers)
+        self.headers.update(headers or {})
 
         if kwargs:
             raise TypeError(
@@ -179,12 +180,6 @@ class HttpRequest:
             # boundary so requests / aiohttp etc deal with it
             default_headers.pop("Content-Type")
         return default_headers
-
-    def _update_headers(self, default_headers: Dict[str, str]) -> None:
-        for name, value in default_headers.items():
-            if name == "Transfer-Encoding" and "Content-Length" in self.headers:
-                continue
-            self.headers.setdefault(name, value)
 
     @property
     def content(self) -> Any:

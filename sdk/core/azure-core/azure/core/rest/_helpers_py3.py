@@ -39,7 +39,7 @@ def set_content_body(content: ContentType) -> Tuple[
     if body is not None:
         return headers, body
     if isinstance(content, collections.abc.AsyncIterable):
-        return {"Transfer-Encoding": "chunked"}, content
+        return {}, content
     raise TypeError(
         "Unexpected type for 'content': '{}'. ".format(type(content)) +
         "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"

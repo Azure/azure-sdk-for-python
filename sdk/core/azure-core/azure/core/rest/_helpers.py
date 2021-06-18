@@ -189,7 +189,7 @@ def _shared_set_content_body(content):
             headers["Content-Length"] = str(len(body))
         return headers, body
     if isinstance(content, collections.Iterable):
-        return {"Transfer-Encoding": "chunked"}, content
+        return {}, content
     return headers, None
 
 def set_content_body(content):
