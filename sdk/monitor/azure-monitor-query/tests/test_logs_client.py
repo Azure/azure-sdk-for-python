@@ -13,7 +13,7 @@ def _credential():
     return credential
 
 @pytest.mark.live_test_only
-def test_logs_auth():
+def test_logs_single_query():
     credential = _credential()
     client = LogsQueryClient(credential)
     query = """AppRequests | 
@@ -25,6 +25,28 @@ def test_logs_auth():
 
     assert response is not None
     assert response.tables is not None
+
+@pytest.mark.live_test_only
+def test_logs_single_query_with_non_200():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppInsights | 
+    where TimeGenerated > ago(12h)"""
+
+    with pytest.raises(HttpResponseError) as e:
+        client.query(os.environ['LOG_WORKSPACE_ID'], query)
+
+    assert "SemanticError" in e.value.message
+
+@pytest.mark.live_test_only
+def test_logs_single_query_with_partial_success():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = "set truncationmaxrecords=1; union * | project TimeGenerated | take 10"
+
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
+
+    assert response is not None
 
 @pytest.mark.live_test_only
 def test_logs_server_timeout():
