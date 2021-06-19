@@ -4,11 +4,17 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    AsyncHttpResponse,
+    HttpRequest as PipelineTransportHttpRequest,
+    AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
     AsyncHttpTransport,
-    AsyncioRequestsTransportResponse,
+    AsyncioRequestsTransportResponse as PipelineTransportAsyncioRequestsTransportResponse,
     AioHttpTransport,
+)
+from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._requests_asyncio import RestAsyncioRequestsTransportResponse
+from azure.core.rest import (
+    HttpRequest as RestHttpRequest,
+    AsyncHttpResponse as RestAsyncHttpResponse,
 )
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
@@ -16,7 +22,8 @@ from unittest import mock
 import pytest
 
 @pytest.mark.asyncio
-async def test_connection_error_response():
+@pytest.mark.parametrize("request_type, response_type", [(PipelineTransportHttpRequest, PipelineTransportAsyncHttpResponse), (RestHttpRequest, RestAsyncHttpResponse)])
+async def test_connection_error_response(request_type, response_type):
     class MockSession(object):
         def __init__(self):
             self.auto_decompress = True
@@ -37,9 +44,16 @@ async def test_connection_error_response():
         async def open(self):
             pass
 
+        @property
+        def supported_formats(self):
+            return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
+
         async def send(self, request, **kwargs):
-            request = HttpRequest('GET', 'http://127.0.0.1/')
-            response = AsyncHttpResponse(request, None)
+            request = request_type('GET', 'http://127.0.0.1/')
+            if hasattr(response_type, "content"):
+                response = response_type(request=request, internal_response=None)
+            else:
+                response = response_type(request, None)
             response.status_code = 200
             return response
 
@@ -65,9 +79,12 @@ async def test_connection_error_response():
         async def __call__(self, *args, **kwargs):
             return super(AsyncMock, self).__call__(*args, **kwargs)
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = request_type('GET', 'http://127.0.0.1/')
     pipeline = AsyncPipeline(MockTransport())
-    http_response = AsyncHttpResponse(http_request, None)
+    if hasattr(response_type, "content"):
+        http_response = response_type(request=http_request, internal_response=None)
+    else:
+        http_response = response_type(http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
@@ -75,7 +92,8 @@ async def test_connection_error_response():
             await stream.__anext__()
 
 @pytest.mark.asyncio
-async def test_response_streaming_error_behavior():
+@pytest.mark.parametrize("response_type", [PipelineTransportAsyncioRequestsTransportResponse, RestAsyncioRequestsTransportResponse])
+async def test_response_streaming_error_behavior(response_type):
     # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500
@@ -111,11 +129,18 @@ async def test_response_streaming_error_behavior():
 
     req_response.raw = FakeStreamWithConnectionError()
 
-    response = AsyncioRequestsTransportResponse(
-        req_request,
-        req_response,
-        block_size,
-    )
+    if hasattr(response_type, "content"):
+        response = response_type(
+            request=req_request,
+            internal_response=req_response,
+        )
+        response._connection_data_block_size = block_size
+    else:
+        response = response_type(
+            req_request,
+            req_response,
+            block_size,
+        )
 
     async def mock_run(self, *args, **kwargs):
         return PipelineResponse(
@@ -127,7 +152,11 @@ async def test_response_streaming_error_behavior():
     transport = AioHttpTransport()
     pipeline = AsyncPipeline(transport)
     pipeline.run = mock_run
-    downloader = response.stream_download(pipeline)
+    if hasattr(response_type, "iter_bytes"):
+        # iter_bytes corresponds to iterating with decopression
+        downloader = response.iter_bytes()
+    else:
+        downloader = response.stream_download(pipeline)
     with pytest.raises(requests.exceptions.ConnectionError):
         while True:
             await downloader.__anext__()

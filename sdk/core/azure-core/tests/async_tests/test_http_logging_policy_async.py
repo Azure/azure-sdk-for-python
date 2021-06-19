@@ -15,15 +15,20 @@ from azure.core.pipeline import (
     PipelineContext
 )
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
+    HttpRequest as PipelineTransportHttpRequest,
+    HttpResponse as PipelineTransportHttpResponse,
+)
+from azure.core.rest import (
+    HttpRequest as RestHttpRequest,
+    HttpResponse as RestHttpResponse,
 )
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 
 
-def test_http_logger():
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_http_logger(request_type, response_type):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -41,8 +46,11 @@ def test_http_logger():
 
     policy = HttpLoggingPolicy(logger=logger)
 
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    http_response = HttpResponse(universal_request, None)
+    universal_request = request_type('GET', 'http://127.0.0.1/')
+    if hasattr(response_type, "content"):
+        http_response = response_type(request=universal_request, internal_response=None)
+    else:
+        http_response = response_type(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -137,7 +145,8 @@ def test_http_logger():
 
 
 
-def test_http_logger_operation_level():
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_http_logger_operation_level(request_type, response_type):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -156,8 +165,11 @@ def test_http_logger_operation_level():
     policy = HttpLoggingPolicy()
     kwargs={'logger': logger}
 
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    http_response = HttpResponse(universal_request, None)
+    universal_request = request_type('GET', 'http://127.0.0.1/')
+    if hasattr(response_type, "content"):
+        http_response = response_type(request=universal_request, internal_response=None)
+    else:
+        http_response = response_type(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None, **kwargs))
 
@@ -207,8 +219,8 @@ def test_http_logger_operation_level():
 
     mock_handler.reset()
 
-
-def test_http_logger_with_body():
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_http_logger_with_body(request_type, response_type):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -226,9 +238,12 @@ def test_http_logger_with_body():
 
     policy = HttpLoggingPolicy(logger=logger)
 
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    universal_request = request_type('GET', 'http://127.0.0.1/')
     universal_request.body = "testbody"
-    http_response = HttpResponse(universal_request, None)
+    if hasattr(response_type, "content"):
+        http_response = response_type(request=universal_request, internal_response=None)
+    else:
+        http_response = response_type(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 
@@ -249,7 +264,8 @@ def test_http_logger_with_body():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 6), reason="types.AsyncGeneratorType does not exist in 3.5")
-def test_http_logger_with_generator_body():
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_http_logger_with_generator_body(request_type, response_type):
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -267,11 +283,14 @@ def test_http_logger_with_generator_body():
 
     policy = HttpLoggingPolicy(logger=logger)
 
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    universal_request = request_type('GET', 'http://127.0.0.1/')
     mock = Mock()
     mock.__class__ = types.AsyncGeneratorType
     universal_request.body = mock
-    http_response = HttpResponse(universal_request, None)
+    if hasattr(response_type, "content"):
+        http_response = response_type(request=universal_request, internal_response=None)
+    else:
+        http_response = response_type(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
 

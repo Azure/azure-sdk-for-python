@@ -24,10 +24,13 @@
 #
 # --------------------------------------------------------------------------
 import concurrent.futures
+from attr import has
 import pytest
 import requests.utils
 
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport, RequestsTransportResponse
+from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest, RequestsTransport, RequestsTransportResponse as PipelineTransportRequestsTransportResponse
+from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport._requests_basic import RestRequestsTransportResponse
 from azure.core.configuration import Configuration
 
 
@@ -46,14 +49,18 @@ def test_threading_basic_requests():
         future = executor.submit(thread_body, sender)
         assert future.result()
 
-def test_requests_auto_headers():
-    request = HttpRequest("POST", "https://www.bing.com/")
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_requests_auto_headers(request_type):
+    request = request_type("POST", "https://www.bing.com/")
     with RequestsTransport() as sender:
+        if hasattr(request_type, "content"):
+            # prior to the transport, we change it to a pipeline transport http request
+            request = request._to_pipeline_transport_request()
         response = sender.send(request)
         auto_headers = response.internal_response.request.headers
         assert 'Content-Type' not in auto_headers
 
-def _create_requests_response(body_bytes, headers=None):
+def _create_requests_pipeline_transport_response(body_bytes, headers=None):
     # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255
     req_response = requests.Response()
     req_response._content = body_bytes
@@ -65,15 +72,35 @@ def _create_requests_response(body_bytes, headers=None):
         req_response.headers.update(headers)
     req_response.encoding = requests.utils.get_encoding_from_headers(req_response.headers)
 
-    response = RequestsTransportResponse(
+    response = PipelineTransportRequestsTransportResponse(
         None, # Don't need a request here
         req_response
     )
 
     return response
 
+def _create_requests_rest_response(body_bytes, headers=None):
+    # https://github.com/psf/requests/blob/67a7b2e8336951d527e223429672354989384197/requests/adapters.py#L255
+    req_response = requests.Response()
+    req_response._content = body_bytes
+    req_response._content_consumed = True
+    req_response.status_code = 200
+    req_response.reason = 'OK'
+    if headers:
+        # req_response.headers is type CaseInsensitiveDict
+        req_response.headers.update(headers)
+    req_response.encoding = requests.utils.get_encoding_from_headers(req_response.headers)
 
-def test_requests_response_text():
+    response = RestRequestsTransportResponse(
+        request=None, # Don't need a request here
+        internal_response=req_response
+    )
+
+    return response
+
+
+@pytest.mark.parametrize("_create_requests_response", [_create_requests_pipeline_transport_response, _create_requests_rest_response])
+def test_requests_response_text(_create_requests_response):
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
@@ -81,11 +108,19 @@ def test_requests_response_text():
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
-        assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
+        if hasattr(res, "content"):
+            res.encoding = encoding
+            assert res.text == '56', "Encoding {} didn't work".format(encoding)
+        else:
+            assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
-def test_repr():
+@pytest.mark.parametrize("_create_requests_response", [_create_requests_pipeline_transport_response, _create_requests_rest_response])
+def test_repr(_create_requests_response):
     res = _create_requests_response(
         b'\xef\xbb\xbf56',
         {'Content-Type': 'text/plain'}
     )
-    assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"
+    if hasattr(res, "content"):
+        assert repr(res) == "<HttpResponse: 200 OK, Content-Type: text/plain>"
+    else:
+        assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"

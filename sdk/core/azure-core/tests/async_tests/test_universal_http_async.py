@@ -23,16 +23,18 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
+from re import L
 import sys
 
 from azure.core.pipeline.transport import (
-    HttpRequest,
+    HttpRequest as PipelineTransportHttpRequest,
     AioHttpTransport,
-    AioHttpTransportResponse,
+    AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
     AsyncHttpTransport,
     AsyncioRequestsTransport,
     TrioRequestsTransport)
-
+from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport._aiohttp import RestAioHttpTransportResponse
 import aiohttp
 import trio
 
@@ -41,9 +43,13 @@ from unittest import mock
 
 
 @pytest.mark.asyncio
-async def test_basic_aiohttp():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_basic_aiohttp(request_type):
 
-    request = HttpRequest("GET", "https://www.bing.com/")
+    request = request_type("GET", "https://www.bing.com/")
+    if hasattr(request_type, "content"):
+        # only pipeline transports actually go through the transport
+        request = request._to_pipeline_transport_request()
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -52,18 +58,26 @@ async def test_basic_aiohttp():
     assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_aiohttp_auto_headers():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_aiohttp_auto_headers(request_type):
 
-    request = HttpRequest("POST", "https://www.bing.com/")
+    request = request_type("POST", "https://www.bing.com/")
+    if hasattr(request_type, "content"):
+        # only pipeline transports actually go through the transport
+        request = request._to_pipeline_transport_request()
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
         assert 'Content-Type' not in auto_headers
 
 @pytest.mark.asyncio
-async def test_basic_async_requests():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_basic_async_requests(request_type):
 
-    request = HttpRequest("GET", "https://www.bing.com/")
+    request = request_type("GET", "https://www.bing.com/")
+    if hasattr(request_type, "content"):
+        # only pipeline transports actually go through the transport
+        request = request._to_pipeline_transport_request()
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -71,19 +85,27 @@ async def test_basic_async_requests():
     assert isinstance(response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_conf_async_requests():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_conf_async_requests(request_type):
 
-    request = HttpRequest("GET", "https://www.bing.com/")
+    request = request_type("GET", "https://www.bing.com/")
+    if hasattr(request_type, "content"):
+        # only pipeline transports actually go through the transport
+        request = request._to_pipeline_transport_request()
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
 
     assert isinstance(response.status_code, int)
 
-def test_conf_async_trio_requests():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_conf_async_trio_requests(request_type):
 
     async def do():
-        request = HttpRequest("GET", "https://www.bing.com/")
+        request = request_type("GET", "https://www.bing.com/")
+        if hasattr(request_type, "content"):
+            # only pipeline transports actually go through the transport
+            request = request._to_pipeline_transport_request()
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
             assert response.body() is not None
@@ -91,10 +113,9 @@ def test_conf_async_trio_requests():
     response = trio.run(do)
     assert isinstance(response.status_code, int)
 
-
-def _create_aiohttp_response(body_bytes, headers=None):
+def _create_aiohttp_response(response_type, body_bytes, headers=None):
     class MockAiohttpClientResponse(aiohttp.ClientResponse):
-        def __init__(self, body_bytes, headers=None):
+        def __init__(self, response_type, body_bytes, headers=None):
             self._body = body_bytes
             self._headers = headers
             self._cache = {}
@@ -103,29 +124,40 @@ def _create_aiohttp_response(body_bytes, headers=None):
 
     req_response = MockAiohttpClientResponse(body_bytes, headers)
 
-    response = AioHttpTransportResponse(
-        None, # Don't need a request here
-        req_response
-    )
-    response._body = body_bytes
+    if hasattr(response_type, "content"):
+        response = response_type(
+            request=None,
+            internal_response=req_response,
+        )
+        response._content = body_bytes
+    else:
+        response = response_type(
+            None, # Don't need a request here
+            req_response
+        )
+        response._body = body_bytes
 
     return response
 
 
 @pytest.mark.asyncio
-async def test_aiohttp_response_text():
+@pytest.mark.parametrize("response_type", [PipelineTransportAioHttpTransportResponse, RestAioHttpTransportResponse])
+async def test_aiohttp_response_text(response_type):
 
     for encoding in ["utf-8", "utf-8-sig", None]:
 
         res = _create_aiohttp_response(
+            response_type,
             b'\xef\xbb\xbf56',
             {'Content-Type': 'text/plain'}
         )
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
 
 @pytest.mark.asyncio
-async def test_aiohttp_response_decompression():
+@pytest.mark.parametrize("response_type", [PipelineTransportAioHttpTransportResponse, RestAioHttpTransportResponse])
+async def test_aiohttp_response_decompression(response_type):
     res = _create_aiohttp_response(
+        response_type,
         b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x04\x00\x8d\x8d\xb1n\xc30\x0cD"
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
         b"\x14A\xfe\xbd\x92\x81d\xceB\x1c\xef\xf8\x8e7\x08\x038\xf0\xa67Fj+"
@@ -137,7 +169,10 @@ async def test_aiohttp_response_decompression():
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
         {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
     )
-    body = res.body()
+    if hasattr(response_type, "content"):
+        body = res.content
+    else:
+        body = res.body()
     expect = b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":' \
              b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":' \
              b'"2021-05-07T17:35:36.3121069Z","status":"NotStarted",' \
@@ -146,9 +181,11 @@ async def test_aiohttp_response_decompression():
     assert res.body() == expect, "Decompression didn't work"
 
 @pytest.mark.asyncio
-async def test_aiohttp_response_decompression_negtive():
+@pytest.mark.parametrize("response_type", [PipelineTransportAioHttpTransportResponse, RestAioHttpTransportResponse])
+async def test_aiohttp_response_decompression_negtive(response_type):
     import zlib
     res = _create_aiohttp_response(
+        response_type,
         b"\xff\x85s\x14HVlY\xda\x8av.\n4\x1d\x9a\x8d\xa1\xe5D\x80m\x01\x12="
         b"\x14A\xfe\xbd\x92\x81d\xceB\x1c\xef\xf8\x8e7\x08\x038\xf0\xa67Fj+"
         b"\x946\x9d8\x0c4\x08{\x96(\x94mzkh\x1cM/a\x07\x94<\xb2\x1f>\xca8\x86"
@@ -159,14 +196,23 @@ async def test_aiohttp_response_decompression_negtive():
         b"\xf7+&$\xf6\xa9\x8a\xcb\x96\xdc\xef\xff\xaa\xa1\x1c\xf9$\x01\x00\x00",
         {'Content-Type': 'text/plain', 'Content-Encoding':"gzip"}
     )
-    with pytest.raises(zlib.error):
-        body = res.body()
+    if hasattr(response_type, "content"):
+        with pytest.raises(zlib.error):
+            body = res.content
+    else:
+        with pytest.raises(zlib.error):
+            body = res.body()
 
-def test_repr():
+@pytest.mark.parametrize("response_type", [PipelineTransportAioHttpTransportResponse, RestAioHttpTransportResponse])
+def test_repr(response_type):
     res = _create_aiohttp_response(
+        response_type,
         b'\xef\xbb\xbf56',
         {}
     )
     res.content_type = "text/plain"
 
-    assert repr(res) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain>"
+    if hasattr(response_type, "content"):
+        assert repr(res) == "<AsyncHttpResponse: 200 OK, Content-Type: text/plain>"
+    else:
+        assert repr(res) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain>"

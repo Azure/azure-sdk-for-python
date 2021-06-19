@@ -4,13 +4,16 @@
 # ------------------------------------
 import requests
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
+    HttpRequest as PipelineTransportHttpRequest,
+    HttpResponse as PipelineTransportHttpResponse,
     HttpTransport,
     RequestsTransport,
-    RequestsTransportResponse,
+    RequestsTransportResponse as PipelineTransportRequestsTransportResponse,
 )
+from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
+from azure.core.pipeline.transport._requests_basic import RestRequestsTransportResponse
 from azure.core.pipeline import Pipeline, PipelineResponse
+from azure.core.pipeline._backcompat import SupportedFormat
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
 try:
     from unittest import mock
@@ -18,7 +21,8 @@ except ImportError:
     import mock
 import pytest
 
-def test_connection_error_response():
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_connection_error_response(request_type, response_type):
     class MockTransport(HttpTransport):
         def __init__(self):
             self._count = 0
@@ -31,10 +35,17 @@ def test_connection_error_response():
             pass
 
         def send(self, request, **kwargs):
-            request = HttpRequest('GET', 'http://127.0.0.1/')
-            response = HttpResponse(request, None)
+            request = request_type('GET', 'http://127.0.0.1/')
+            if hasattr(response_type, "content"):
+                response = response_type(request=request, internal_response=None)
+            else:
+                response = response_type(request, None)
             response.status_code = 200
             return response
+
+        @property
+        def supported_formats(self):
+            return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
         def next(self):
             self.__next__()
@@ -43,7 +54,7 @@ def test_connection_error_response():
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
-        
+
         def stream(self, chunk_size, decode_content=False):
             if self._count == 0:
                 self._count += 1
@@ -58,16 +69,20 @@ def test_connection_error_response():
         def close(self):
             pass
 
-    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request = request_type('GET', 'http://127.0.0.1/')
     pipeline = Pipeline(MockTransport())
-    http_response = HttpResponse(http_request, None)
+    if hasattr(response_type, "content"):
+        http_response = response_type(request=http_request, internal_response=None)
+    else:
+        http_response = response_type(http_request, None)
     http_response.internal_response = MockInternalResponse()
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()
 
-def test_response_streaming_error_behavior():
+@pytest.mark.parametrize("response_type", [PipelineTransportRequestsTransportResponse, RestRequestsTransportResponse])
+def test_response_streaming_error_behavior(response_type):
     # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500
@@ -104,11 +119,18 @@ def test_response_streaming_error_behavior():
     s = FakeStreamWithConnectionError()
     req_response.raw = FakeStreamWithConnectionError()
 
-    response = RequestsTransportResponse(
-        req_request,
-        req_response,
-        block_size,
-    )
+    if hasattr(response_type, "content"):
+        response = response_type(
+            request=req_request,
+            internal_response=req_response,
+        )
+        response._connection_data_block_size = block_size
+    else:
+        response = response_type(
+            req_request,
+            req_response,
+            block_size,
+        )
 
     def mock_run(self, *args, **kwargs):
         return PipelineResponse(
@@ -120,6 +142,9 @@ def test_response_streaming_error_behavior():
     transport = RequestsTransport()
     pipeline = Pipeline(transport)
     pipeline.run = mock_run
-    downloader = response.stream_download(pipeline, decompress=False)
+    if hasattr(response_type, "content"):
+        downloader = response.iter_raw()  # raw corresponds to no decompression
+    else:
+        downloader = response.stream_download(pipeline, decompress=False)
     with pytest.raises(requests.exceptions.ConnectionError):
         full_response = b"".join(downloader)

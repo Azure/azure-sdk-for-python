@@ -26,18 +26,27 @@
 import os
 import pytest
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
+from azure.core.rest import HttpRequest as RestHttpRequest
 
 @pytest.mark.asyncio
-async def test_decompress_plain_no_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_decompress_plain_no_header(request_type):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    if hasattr(request_type, "content"):
+        data = response.iter_bytes()
+    else:
+        data = response.stream_download(client._pipeline, decompress=True)
     content = b""
     async for d in data:
         content += d
@@ -45,16 +54,23 @@ async def test_decompress_plain_no_header():
     assert decoded == "test"
 
 @pytest.mark.asyncio
-async def test_compress_plain_no_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_compress_plain_no_header(request_type):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    if hasattr(request_type, "content"):
+        data = response.iter_raw()
+    else:
+        data = response.stream_download(client._pipeline, decompress=False)
     content = b""
     async for d in data:
         content += d
@@ -62,16 +78,23 @@ async def test_compress_plain_no_header():
     assert decoded == "test"
 
 @pytest.mark.asyncio
-async def test_decompress_compressed_no_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_decompress_compressed_no_header(request_type):
     # expect compressed text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    if hasattr(request_type, "content"):
+        data = response.iter_bytes()
+    else:
+        data = response.stream_download(client._pipeline, decompress=True)
     content = b""
     async for d in data:
         content += d
@@ -82,16 +105,23 @@ async def test_decompress_compressed_no_header():
         pass
 
 @pytest.mark.asyncio
-async def test_compress_compressed_no_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_compress_compressed_no_header(request_type):
     # expect compressed text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    if hasattr(request_type, "content"):
+        data = response.iter_raw()
+    else:
+        data = response.stream_download(client._pipeline, decompress=False)
     content = b""
     async for d in data:
         content += d
@@ -102,17 +132,24 @@ async def test_compress_compressed_no_header():
         pass
 
 @pytest.mark.asyncio
-async def test_decompress_plain_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_decompress_plain_header(request_type):
     # expect error
     import zlib
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    if hasattr(request_type, "content"):
+        data = response.iter_bytes()
+    else:
+        data = response.stream_download(client._pipeline, decompress=True)
     try:
         content = b""
         async for d in data:
@@ -122,16 +159,23 @@ async def test_decompress_plain_header():
         pass
 
 @pytest.mark.asyncio
-async def test_compress_plain_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_compress_plain_header(request_type):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    if hasattr(request_type, "content"):
+        data = response.iter_raw()
+    else:
+        data = response.stream_download(client._pipeline, decompress=False)
     content = b""
     async for d in data:
         content += d
@@ -139,16 +183,23 @@ async def test_compress_plain_header():
     assert decoded == "test"
 
 @pytest.mark.asyncio
-async def test_decompress_compressed_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_decompress_compressed_header(request_type):
     # expect plain text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=True)
+    if hasattr(request_type, "content"):
+        data = response.iter_bytes()
+    else:
+        data = response.stream_download(client._pipeline, decompress=True)
     content = b""
     async for d in data:
         content += d
@@ -156,16 +207,23 @@ async def test_decompress_compressed_header():
     assert decoded == "test"
 
 @pytest.mark.asyncio
-async def test_compress_compressed_header():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_compress_compressed_header(request_type):
     # expect compressed text
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     client = AsyncPipelineClient(account_url)
-    request = client.get(url)
+    if hasattr(request_type, "content"):
+        request = request_type("GET", url)
+    else:
+        request = client.get(url)
     pipeline_response = await client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
-    data = response.stream_download(client._pipeline, decompress=False)
+    if hasattr(request_type, "content"):
+        data = response.iter_raw()
+    else:
+        data = response.stream_download(client._pipeline, decompress=False)
     content = b""
     async for d in data:
         content += d

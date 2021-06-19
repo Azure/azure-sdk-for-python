@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import json
+from attr import has
 import requests
 import datetime
 from enum import Enum
@@ -57,12 +58,14 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     SansIOHTTPPolicy
 )
+from azure.core.pipeline._backcompat import SupportedFormat
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
-    HttpRequest,
+    HttpRequest as PipelineTransportHttpRequest,
     HttpTransport,
     RequestsTransport,
 )
+from azure.core.rest import HttpRequest as RestHttpRequest
 
 from azure.core.exceptions import AzureError
 
@@ -87,7 +90,8 @@ def test_pass_in_http_logging_policy():
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 
-def test_sans_io_exception():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_sans_io_exception(request_type):
     class BrokenSender(HttpTransport):
         def send(self, request, **config):
             raise ValueError("Broken")
@@ -98,13 +102,17 @@ def test_sans_io_exception():
         def close(self):
             self.session.close()
 
+        @property
+        def supported_formats(self):
+            return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+
         def __exit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""
             return self.close()
 
     pipeline = Pipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
-    req = HttpRequest("GET", "/")
+    req = request_type("GET", "/")
     with pytest.raises(ValueError):
         pipeline.run(req)
 
@@ -117,12 +125,13 @@ def test_sans_io_exception():
     with pytest.raises(NotImplementedError):
         pipeline.run(req)
 
-class TestRequestsTransport(unittest.TestCase):
+class TestRequestsTransport(object):
 
-    def test_basic_requests(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_basic_requests(self, request_type):
 
         conf = Configuration()
-        request = HttpRequest("GET", "https://bing.com")
+        request = request_type("GET", "https://bing.com")
         policies = [
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
@@ -133,9 +142,10 @@ class TestRequestsTransport(unittest.TestCase):
         assert pipeline._transport.session is None
         assert isinstance(response.http_response.status_code, int)
 
-    def test_basic_options_requests(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_basic_options_requests(self, request_type):
 
-        request = HttpRequest("OPTIONS", "https://httpbin.org")
+        request = request_type("OPTIONS", "https://httpbin.org")
         policies = [
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
@@ -146,9 +156,10 @@ class TestRequestsTransport(unittest.TestCase):
         assert pipeline._transport.session is None
         assert isinstance(response.http_response.status_code, int)
 
-    def test_requests_socket_timeout(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_requests_socket_timeout(self, request_type):
         conf = Configuration()
-        request = HttpRequest("GET", "https://bing.com")
+        request = request_type("GET", "https://bing.com")
         policies = [
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
@@ -160,10 +171,11 @@ class TestRequestsTransport(unittest.TestCase):
             with Pipeline(RequestsTransport(), policies=policies) as pipeline:
                 response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
 
-    def test_basic_requests_separate_session(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_basic_requests_separate_session(self, request_type):
 
         session = requests.Session()
-        request = HttpRequest("GET", "https://bing.com")
+        request = request_type("GET", "https://bing.com")
         policies = [
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
@@ -178,7 +190,7 @@ class TestRequestsTransport(unittest.TestCase):
         assert transport.session
         transport.session.close()
 
-class TestClientPipelineURLFormatting(unittest.TestCase):
+class TestClientPipelineURLFormatting(object):
 
     def test_format_url_basic(self):
         client = PipelineClientBase("https://bing.com")
@@ -237,103 +249,163 @@ class TestClientPipelineURLFormatting(unittest.TestCase):
             client.format_url("foo/bar")
         assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
 
-class TestClientRequest(unittest.TestCase):
-    def test_request_json(self):
+class TestClientRequest(object):
 
-        request = HttpRequest("GET", "/")
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_json(self, request_type):
+
         data = "Lots of dataaaa"
-        request.set_json_body(data)
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "/", json=data)
+        else:
+            request = request_type("GET", "/")
+            request.set_json_body(data)
+            assert request.data == json.dumps(data)
 
-        self.assertEqual(request.data, json.dumps(data))
-        self.assertEqual(request.headers.get("Content-Length"), "17")
+        assert request.headers.get("Content-Length") == "17"
 
-    def test_request_data(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_data(self, request_type):
 
-        request = HttpRequest("GET", "/")
         data = "Lots of dataaaa"
-        request.set_bytes_body(data)
 
-        self.assertEqual(request.data, data)
-        self.assertEqual(request.headers.get("Content-Length"), "15")
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "/", content=data)
+            assert request.content == data
+        else:
+            request = request_type("GET", "/")
+            request.set_bytes_body(data)
+            assert request.data == data
+        assert request.headers.get("Content-Length") == "15"
 
-    def test_request_stream(self):
-        request = HttpRequest("GET", "/")
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_stream(self, request_type):
 
         data = b"Lots of dataaaa"
-        request.set_streamed_data_body(data)
-        self.assertEqual(request.data, data)
+
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "/", content=data)
+            assert request.content == data
+        else:
+            request = request_type("GET", "/")
+            request.set_streamed_data_body(data)
+            assert request.data == data
 
         def data_gen():
             for i in range(10):
                 yield i
         data = data_gen()
-        request.set_streamed_data_body(data)
-        self.assertEqual(request.data, data)
+
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "/", content=data)
+            assert request.content == data
+        else:
+            request.set_streamed_data_body(data)
+            assert request.data == data
 
         data = BytesIO(b"Lots of dataaaa")
-        request.set_streamed_data_body(data)
-        self.assertEqual(request.data, data)
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "/", content=data)
+            assert request.content == data
+        else:
+            request.set_streamed_data_body(data)
+            assert request.data == data
 
 
-    def test_request_xml(self):
-        request = HttpRequest("GET", "/")
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_xml(self, request_type):
         data = ET.Element("root")
-        request.set_xml_body(data)
 
-        assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "/", content=data)
+            assert request.content == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
+        else:
+            request = request_type("GET", "/")
+            request.set_xml_body(data)
 
-    def test_request_url_with_params(self):
+            assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        request.format_parameters({"g": "h"})
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_url_with_params(self, request_type):
 
-        self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "a/b/c?t=y", params={"g": "h"})
+        else:
+            request = request_type("GET", "/")
+            request.url = "a/b/c?t=y"
+            request.format_parameters({"g": "h"})
 
-    def test_request_url_with_params_as_list(self):
+        assert request.url in ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"]
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        request.format_parameters({"g": ["h","i"]})
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_url_with_params_as_list(self, request_type):
 
-        self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
+        if hasattr(request_type, "content"):
+            request = request_type("GET", "a/b/c?t=y", params={"g": ["h","i"]})
+        else:
+            request = request_type("GET", "/")
+            request.url = "a/b/c?t=y"
+            request.format_parameters({"g": ["h","i"]})
 
-    def test_request_url_with_params_with_none_in_list(self):
+        assert request.url in ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"]
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        with pytest.raises(ValueError):
-            request.format_parameters({"g": ["h",None]})
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_url_with_params_with_none_in_list(self, request_type):
 
-    def test_request_url_with_params_with_none(self):
+        if hasattr(request_type, "content"):
+            with pytest.raises(ValueError):
+                request_type("GET", "a/b/c?t=y", params={"g": ["h",None]})
+        else:
+            request = request_type("GET", "/")
+            request.url = "a/b/c?t=y"
+            with pytest.raises(ValueError):
+                request.format_parameters({"g": ["h",None]})
 
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        with pytest.raises(ValueError):
-            request.format_parameters({"g": None})
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_url_with_params_with_none(self, request_type):
+
+        if hasattr(request_type, "content"):
+            with pytest.raises(ValueError):
+                request_type("GET", "a/b/c?t=y", params={"g": None})
+        else:
+            request = request_type("GET", "/")
+            request.url = "a/b/c?t=y"
+            with pytest.raises(ValueError):
+                request.format_parameters({"g": None})
 
 
-    def test_request_text(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_request_text(self, request_type):
         client = PipelineClientBase('http://example.org')
-        request = client.get(
-            "/",
-            content="foo"
-        )
+        if hasattr(request_type, "content"):
+            # we don't assume that everything is JSON bc we have a specific JSON kwarg
+            request = request_type("GET", "/", content="foo")
+            assert request.content == "foo"
+        else:
+            request = client.get(
+                "/",
+                content="foo"
+            )
 
-        # In absence of information, everything is JSON (double quote added)
-        assert request.data == json.dumps("foo")
+            # In absence of information, everything is JSON (double quote added)
+            assert request.data == json.dumps("foo")
 
-        request = client.post(
-            "/",
-            headers={'content-type': 'text/whatever'},
-            content="foo"
-        )
+        if hasattr(request_type, "content"):
+            request = request_type("POST", "/", headers={'content-type': 'text/whatever'}, content="foo")
+            assert request.content == "foo"
+        else:
+            request = client.post(
+                "/",
+                headers={'content-type': 'text/whatever'},
+                content="foo"
+            )
 
-        # We want a direct string
-        assert request.data == "foo"
+            # We want a direct string
+            assert request.data == "foo"
 
-    def test_repr(self):
-        request = HttpRequest("GET", "hello.com")
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_repr(self, request_type):
+        request = request_type("GET", "hello.com")
         assert repr(request) == "<HttpRequest [GET], url: 'hello.com'>"
 
     def test_add_custom_policy(self):
@@ -433,6 +505,3 @@ class TestClientRequest(unittest.TestCase):
             client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
         with pytest.raises(ValueError):
             client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
-
-if __name__ == "__main__":
-    unittest.main()

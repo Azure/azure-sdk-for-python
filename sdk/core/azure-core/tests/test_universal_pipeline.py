@@ -41,11 +41,21 @@ from azure.core.pipeline import (
     PipelineRequest,
     PipelineContext
 )
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+from azure.core.pipeline._backcompat import SupportedFormat
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
-    RequestsTransportResponse,
+    HttpRequest as PipelineTransportHttpRequest,
+    HttpResponse as PipelineTransportHttpResponse,
+    RequestsTransportResponse as PipelineTransportRequestsTransportResponse,
 )
+from azure.core.rest import (
+    HttpRequest as RestHttpRequest,
+    HttpResponse as RestHttpResponse,
+)
+from azure.core.pipeline.transport._requests_basic import RestRequestsTransportResponse
 
 from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
@@ -88,38 +98,51 @@ def test_pipeline_context():
     assert len(revived_context) == 1
 
 
-def test_request_history():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_request_history(request_type):
     class Non_deep_copiable(object):
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
-    request.body = body
+    request = request_type('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'})
+    if hasattr(request_type, "content"):
+        request._content = body  # can't set content to this, bc it's not an iterable or str / bytes
+    else:
+        request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
     assert request_history.http_request.method == request.method
 
-def test_request_history_type_error():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_request_history_type_error(request_type):
     class Non_deep_copiable(object):
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 
     body = Non_deep_copiable()
-    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
-    request.body = body
+    request = request_type('GET', 'http://127.0.0.1/', headers={'user-agent': 'test_request_history'})
+    if hasattr(request_type, "content"):
+        request._content = body  # can't set content to this, bc it's not an iterable or str / bytes
+    else:
+        request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
     assert request_history.http_request.url == request.url
     assert request_history.http_request.method == request.method
 
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
-def test_no_log(mock_http_logger):
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_no_log(mock_http_logger, request_type, response_type):
+    universal_request = request_type('GET', 'http://127.0.0.1/')
     request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
-    response = PipelineResponse(request, HttpResponse(universal_request, None), request.context)
+    if hasattr(response_type, "content"):
+        response = response_type(request=universal_request, internal_response=None)
+    else:
+        response = response_type(universal_request, None)
+    response = PipelineResponse(request, response, request.context)
 
     # By default, no log handler for HTTP
     http_logger.on_request(request)
@@ -180,24 +203,31 @@ def test_no_log(mock_http_logger):
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
 
-def test_retry_without_http_response():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_retry_without_http_response(request_type):
     class NaughtyPolicy(HTTPPolicy):
         def send(*args):
             raise AzureError('boo')
 
     policies = [RetryPolicy(), NaughtyPolicy()]
-    pipeline = Pipeline(policies=policies, transport=None)
+    if hasattr(request_type, "content"):
+        transport = mock.Mock()
+        transport.supported_formats = [SupportedFormat.REST]
+    else:
+        transport = None
+    pipeline = Pipeline(policies=policies, transport=transport)
     with pytest.raises(AzureError):
-        pipeline.run(HttpRequest('GET', url='https://foo.bar'))
+        pipeline.run(request_type('GET', url='https://foo.bar'))
 
 def test_raw_deserializer():
+    # not adding rest for this, bc ContentDecodePolicy will only get pipeline transport requests and responses
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
-    universal_request = HttpRequest('GET', 'http://127.0.0.1/')
+    universal_request = PipelineTransportHttpRequest('GET', 'http://127.0.0.1/')
     request = PipelineRequest(universal_request, context)
 
     def build_response(body, content_type=None):
-        class MockResponse(HttpResponse):
+        class MockResponse(PipelineTransportHttpResponse):
             def __init__(self, body, content_type):
                 super(MockResponse, self).__init__(None, None)
                 self._body = body
@@ -289,7 +319,7 @@ def test_raw_deserializer():
     req_response.headers["content-type"] = "application/json"
     req_response._content = b'{"success": true}'
     req_response._content_consumed = True
-    response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
+    response = PipelineResponse(None, PipelineTransportRequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
 
     raw_deserializer.on_response(request, response)
     result = response.context["deserialized_data"]

@@ -4,7 +4,8 @@
 # ------------------------------------
 """Tests for the request id policy."""
 from azure.core.pipeline.policies import RequestIdPolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
+from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline import PipelineRequest, PipelineContext
 try:
     from unittest import mock
@@ -13,14 +14,15 @@ except ImportError:
 from itertools import product
 import pytest
 
+request_types = (PipelineTransportHttpRequest, RestHttpRequest)
 auto_request_id_values = (True, False, None)
 request_id_init_values = ("foo", None, "_unset")
 request_id_set_values = ("bar", None, "_unset")
 request_id_req_values = ("baz", None, "_unset")
-full_combination = list(product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values))
+full_combination = list(product(request_types, auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values))
 
-@pytest.mark.parametrize("auto_request_id, request_id_init, request_id_set, request_id_req", full_combination)
-def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req):
+@pytest.mark.parametrize("request_type, auto_request_id, request_id_init, request_id_set, request_id_req", full_combination)
+def test_request_id_policy(request_type, auto_request_id, request_id_init, request_id_set, request_id_req):
     """Test policy with no other policy and happy path"""
     kwargs = {}
     if auto_request_id is not None:
@@ -30,7 +32,7 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
     request_id_policy = RequestIdPolicy(**kwargs)
     if request_id_set != "_unset":
         request_id_policy.set_request_id(request_id_set)
-    request = HttpRequest('GET', 'http://127.0.0.1/')
+    request = request_type('GET', 'http://127.0.0.1/')
     pipeline_request = PipelineRequest(request, PipelineContext(None))
     if request_id_req != "_unset":
         pipeline_request.context.options['request_id'] = request_id_req

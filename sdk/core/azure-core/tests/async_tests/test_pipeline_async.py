@@ -24,8 +24,9 @@
 #
 #--------------------------------------------------------------------------
 import sys
-
+from unittest.mock import Mock
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline._backcompat import SupportedFormat
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
@@ -38,11 +39,12 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
-    HttpRequest,
+    HttpRequest as PipelineTransportHttpRequest,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
     AioHttpTransport
 )
+from azure.core.rest import HttpRequest as RestHttpRequest
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling.base_polling import LocationPolling
@@ -58,7 +60,8 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_sans_io_exception():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_sans_io_exception(request_type):
     class BrokenSender(AsyncHttpTransport):
         async def send(self, request, **config):
             raise ValueError("Broken")
@@ -69,13 +72,17 @@ async def test_sans_io_exception():
         async def close(self):
             self.session.close()
 
+        @property
+        def supported_formats(self):
+            return [SupportedFormat.REST] if hasattr(request_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
+
         async def __aexit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""
             return self.close()
 
     pipeline = AsyncPipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
-    req = HttpRequest('GET', '/')
+    req = request_type('GET', '/')
     with pytest.raises(ValueError):
         await pipeline.run(req)
 
@@ -90,9 +97,10 @@ async def test_sans_io_exception():
 
 
 @pytest.mark.asyncio
-async def test_basic_aiohttp():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_basic_aiohttp(request_type):
 
-    request = HttpRequest("GET", "https://bing.com")
+    request = request_type("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -105,10 +113,11 @@ async def test_basic_aiohttp():
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_basic_aiohttp_separate_session():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_basic_aiohttp_separate_session(request_type):
 
     session = aiohttp.ClientSession()
-    request = HttpRequest("GET", "https://bing.com")
+    request = request_type("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -124,9 +133,10 @@ async def test_basic_aiohttp_separate_session():
     await transport.session.close()
 
 @pytest.mark.asyncio
-async def test_basic_async_requests():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_basic_async_requests(request_type):
 
-    request = HttpRequest("GET", "https://bing.com")
+    request = request_type("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -137,7 +147,8 @@ async def test_basic_async_requests():
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_async_transport_sleep():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_async_transport_sleep(request_type):
 
     async with AsyncioRequestsTransport() as transport:
         await transport.sleep(1)
@@ -186,9 +197,10 @@ def test_pass_in_http_logging_policy():
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 @pytest.mark.asyncio
-async def test_conf_async_requests():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_conf_async_requests(request_type):
 
-    request = HttpRequest("GET", "https://bing.com/")
+    request = request_type("GET", "https://bing.com/")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -198,10 +210,11 @@ async def test_conf_async_requests():
 
     assert isinstance(response.http_response.status_code, int)
 
-def test_conf_async_trio_requests():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_conf_async_trio_requests(request_type):
 
     async def do():
-        request = HttpRequest("GET", "https://bing.com/")
+        request = request_type("GET", "https://bing.com/")
         policies = [
             UserAgentPolicy("myusergant"),
             AsyncRedirectPolicy()
@@ -213,15 +226,21 @@ def test_conf_async_trio_requests():
     assert isinstance(response.http_response.status_code, int)
 
 @pytest.mark.asyncio
-async def test_retry_without_http_response():
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+async def test_retry_without_http_response(request_type):
     class NaughtyPolicy(AsyncHTTPPolicy):
         def send(*args):
             raise AzureError('boo')
 
     policies = [AsyncRetryPolicy(), NaughtyPolicy()]
-    pipeline = AsyncPipeline(policies=policies, transport=None)
+    if hasattr(request_type, "content"):
+        transport = Mock()
+        transport.supported_formats = [SupportedFormat.REST]
+    else:
+        transport = None
+    pipeline = AsyncPipeline(policies=policies, transport=transport)
     with pytest.raises(AzureError):
-        await pipeline.run(HttpRequest('GET', url='https://foo.bar'))
+        await pipeline.run(request_type('GET', url='https://foo.bar'))
 
 @pytest.mark.asyncio
 async def test_add_custom_policy():

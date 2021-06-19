@@ -14,8 +14,10 @@ import time
 
 import pytest
 from azure.core.pipeline import Pipeline, PipelineResponse
+from azure.core.pipeline._backcompat import SupportedFormat
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpTransport, HttpRequest
+from azure.core.pipeline.transport import HttpTransport, HttpRequest as PipelineTransportHttpRequest
+from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import common
 from azure.core.tracing.decorator import distributed_trace
@@ -29,14 +31,16 @@ def fake_span():
 
 class MockClient:
     @distributed_trace
-    def __init__(self, policies=None, assert_current_span=False):
+    def __init__(self, request_type, policies=None, assert_current_span=False):
         time.sleep(0.001)
-        self.request = HttpRequest("GET", "https://bing.com")
+        self.request = request_type("GET", "https://bing.com")
         if policies is None:
             policies = []
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))
         self.policies = policies
+        supported_formats = [SupportedFormat.REST] if hasattr(request_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
         self.transport = mock.Mock(spec=HttpTransport)
+        self.transport.supported_formats = supported_formats
         self.pipeline = Pipeline(self.transport, policies=policies)
 
         self.expected_response = mock.Mock(spec=PipelineResponse)
@@ -88,18 +92,21 @@ def random_function():
     pass
 
 
-def test_get_function_and_class_name():
-    client = MockClient()
+@pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+def test_get_function_and_class_name(request_type):
+    client = MockClient(request_type)
     assert common.get_function_and_class_name(client.get_foo, client) == "MockClient.get_foo"
     assert common.get_function_and_class_name(random_function) == "random_function"
+
 
 
 @pytest.mark.usefixtures("fake_span")
 class TestDecorator(object):
 
-    def test_decorator_tracing_attr(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_decorator_tracing_attr(self, request_type):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(request_type)
             client.tracing_attr()
 
         assert len(parent.children) == 2
@@ -107,18 +114,20 @@ class TestDecorator(object):
         assert parent.children[1].name == "MockClient.tracing_attr"
         assert parent.children[1].attributes == {'foo': 'bar'}
 
-    def test_decorator_has_different_name(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_decorator_has_different_name(self, request_type):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(request_type)
             client.check_name_is_different()
 
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
         assert parent.children[1].name == "different name"
 
-    def test_used(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_used(self, request_type):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(policies=[])
+            client = MockClient(request_type, policies=[])
             client.get_foo(parent_span=parent)
             client.get_foo()
 
@@ -130,9 +139,10 @@ class TestDecorator(object):
         assert parent.children[2].name == "MockClient.get_foo"
         assert not parent.children[2].children
 
-    def test_span_merge_span(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_span_merge_span(self, request_type):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(request_type)
             client.merge_span_method()
             client.no_merge_span_method()
 
@@ -144,9 +154,10 @@ class TestDecorator(object):
         assert parent.children[2].name == "MockClient.no_merge_span_method"
         assert parent.children[2].children[0].name == "MockClient.get_foo"
 
-    def test_span_complicated(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_span_complicated(self, request_type):
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(request_type)
             client.make_request(2)
             with parent.span("child") as child:
                 time.sleep(0.001)
@@ -164,11 +175,12 @@ class TestDecorator(object):
         assert parent.children[3].name == "MockClient.make_request"
         assert not parent.children[3].children
 
-    def test_span_with_exception(self):
+    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
+    def test_span_with_exception(self, request_type):
         """Assert that if an exception is raised, the next sibling method is actually a sibling span.
         """
         with FakeSpan(name="parent") as parent:
-            client = MockClient()
+            client = MockClient(request_type)
             try:
                 client.raising_exception()
             except:

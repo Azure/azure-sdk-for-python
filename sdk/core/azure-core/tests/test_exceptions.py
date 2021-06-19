@@ -38,11 +38,12 @@ except ImportError:
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
 from azure.core.pipeline.transport import RequestsTransportResponse
-from azure.core.pipeline.transport._base import _HttpResponseBase
+from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
+from azure.core.rest import _HttpResponseBase as RestHttpResponseBase
 
 
-def _build_response(json_body):
-    class MockResponse(_HttpResponseBase):
+def _build_pipeline_transport_response(json_body):
+    class MockResponse(PipelineTransportHttpResponseBase):
         def __init__(self):
             super(MockResponse, self).__init__(
                 request=None,
@@ -55,6 +56,24 @@ def _build_response(json_body):
 
         def body(self):
             return self._body
+
+    return MockResponse()
+
+def _build_rest_response(json_body):
+    class MockResponse(RestHttpResponseBase):
+        def __init__(self):
+            super(MockResponse, self).__init__(
+                request=None,
+                internal_response = None,
+            )
+            self.status_code = 400
+            self.reason = "Bad Request"
+            self.content_type = "application/json"
+            self._content = json_body
+
+        @property
+        def content(self):
+            return self._content
 
     return MockResponse()
 
@@ -109,7 +128,8 @@ class TestExceptions(object):
         assert error.status_code is None
         assert error.continuation_token == 'foo'
 
-    def test_deserialized_httpresponse_error_code(self):
+    @pytest.mark.parametrize("_build_response", [_build_pipeline_transport_response, _build_rest_response])
+    def test_deserialized_httpresponse_error_code(self, _build_response):
         """This is backward compat support of autorest azure-core (KV 4.0.0, Storage 12.0.0).
 
         Do NOT adapt this test unless you know what you're doing.
@@ -137,7 +157,8 @@ class TestExceptions(object):
         assert error.error.error.message == "A fake error"
 
 
-    def test_deserialized_httpresponse_error_message(self):
+    @pytest.mark.parametrize("_build_response", [_build_pipeline_transport_response, _build_rest_response])
+    def test_deserialized_httpresponse_error_message(self, _build_response):
         """This is backward compat support for weird responses, adn even if it's likely
         just the autorest testserver, should be fine parsing.
 
@@ -170,7 +191,8 @@ class TestExceptions(object):
         assert isinstance(error.status_code, int)
         assert error.error is None
 
-    def test_odata_v4_exception(self):
+    @pytest.mark.parametrize("_build_response", [_build_pipeline_transport_response, _build_rest_response])
+    def test_odata_v4_exception(self, _build_response):
         message = {
             "error": {
                 "code": "501",
@@ -205,7 +227,8 @@ class TestExceptions(object):
         assert exp.message == "Operation returned an invalid status 'Bad Request'"
         assert str(exp) == "Operation returned an invalid status 'Bad Request'"
 
-    def test_odata_v4_minimal(self):
+    @pytest.mark.parametrize("_build_response", [_build_pipeline_transport_response, _build_rest_response])
+    def test_odata_v4_minimal(self, _build_response):
         """Minimal valid OData v4 is code/message and nothing else.
         """
         message = {
@@ -221,7 +244,8 @@ class TestExceptions(object):
         assert exp.details == []
         assert exp.innererror == {}
 
-    def test_broken_odata_details(self):
+    @pytest.mark.parametrize("_build_response", [_build_pipeline_transport_response, _build_rest_response])
+    def test_broken_odata_details(self, _build_response):
         """Do not block creating a nice exception if "details" only is broken
         """
         message = {

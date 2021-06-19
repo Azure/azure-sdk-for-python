@@ -31,40 +31,60 @@ from azure.core.exceptions import (
     ErrorMap,
 )
 from azure.core.pipeline.transport import (
-    HttpRequest,
-    HttpResponse,
+    HttpRequest as PipelineTransportHttpRequest,
+    HttpResponse as PipelineTransportHttpResponse,
+)
+from azure.core.rest import (
+    HttpRequest as RestHttpRequest,
+    HttpResponse as RestHttpResponse
 )
 
-def test_error_map():
-    request = HttpRequest("GET", "")
-    response = HttpResponse(request, None)
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_error_map(request_type, response_type):
+    request = request_type("GET", "")
+    if hasattr(response_type, "content"):
+        response = response_type(request=request, internal_response=None)
+    else:
+        response = response_type(request, None)
     error_map = {
         404: ResourceNotFoundError
     }
     with pytest.raises(ResourceNotFoundError):
         map_error(404, response, error_map)
 
-def test_error_map_no_default():
-    request = HttpRequest("GET", "")
-    response = HttpResponse(request, None)
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_error_map_no_default(request_type, response_type):
+    request = request_type("GET", "")
+    if hasattr(response_type, "content"):
+        response = response_type(request=request, internal_response=None)
+    else:
+        response = response_type(request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     })
     with pytest.raises(ResourceNotFoundError):
         map_error(404, response, error_map)
 
-def test_error_map_with_default():
-    request = HttpRequest("GET", "")
-    response = HttpResponse(request, None)
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_error_map_with_default(request_type, response_type):
+    request = request_type("GET", "")
+    if hasattr(response_type, "content"):
+        response = response_type(request=request, internal_response=None)
+    else:
+        response = response_type(request, None)
     error_map = ErrorMap({
         404: ResourceNotFoundError
     }, default_error=ResourceExistsError)
     with pytest.raises(ResourceExistsError):
         map_error(401, response, error_map)
 
-def test_only_default():
-    request = HttpRequest("GET", "")
-    response = HttpResponse(request, None)
+@pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
+def test_only_default(request_type, response_type):
+    request = request_type("GET", "")
+    if hasattr(response_type, "content"):
+        response = response_type(request=request, internal_response=None)
+    else:
+        response = response_type(request, None)
     error_map = ErrorMap(default_error=ResourceExistsError)
     with pytest.raises(ResourceExistsError):
         map_error(401, response, error_map)
