@@ -6,8 +6,8 @@
 # -------------------------------------------------------------------------
 import pytest
 import mock
-from azure.core.rest import HttpRequest, ResponseNotReadError
-from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpRequest
+from azure.core.exceptions import HttpResponseError, ResponseNotReadError
 
 from azure.core.pipeline import Pipeline, transport
 from azure.core.pipeline.transport import RequestsTransport

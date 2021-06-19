@@ -83,31 +83,6 @@ class HttpVerbs(str, Enum):
     DELETE = "DELETE"
     MERGE = "MERGE"
 
-########################### ERRORS SECTION #################################
-
-class StreamConsumedError(Exception):
-    def __init__(self):
-        message = (
-            "You are attempting to read or stream content that has already been streamed. "
-            "You have likely already consumed this stream, so it can not be accessed anymore."
-        )
-        super(StreamConsumedError, self).__init__(message)
-
-class StreamClosedError(Exception):
-    def __init__(self):
-        message = (
-            "You can not try to read or stream this response's content, since the "
-            "response has been closed."
-        )
-        super(StreamClosedError, self).__init__(message)
-
-class ResponseNotReadError(Exception):
-
-    def __init__(self):
-        message = (
-            "You have not read in the response's bytes yet. Call response.read() first."
-        )
-        super(ResponseNotReadError, self).__init__(message)
 
 ########################### HELPER SECTION #################################
 

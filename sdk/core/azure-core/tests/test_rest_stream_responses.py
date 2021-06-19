@@ -4,7 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-from azure.core.rest import HttpRequest, StreamClosedError, StreamConsumedError, ResponseNotReadError
+from azure.core.rest import HttpRequest
+from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
 def _assert_stream_state(response, open):

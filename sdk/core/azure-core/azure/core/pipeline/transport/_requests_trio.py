@@ -45,12 +45,7 @@ from ._base_async import (
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._backcompat import SupportedFormat
-from ...rest import (
-    AsyncHttpResponse as RestAsyncHttpResponse,
-    StreamClosedError,
-    StreamConsumedError,
-)
-
+from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 

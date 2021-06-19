@@ -50,10 +50,8 @@ from .._backcompat import SupportedFormat
 from ...rest import (
     _HttpResponseBase as _RestHttpResponseBase,
     HttpResponse as RestHttpResponse,
-    ResponseNotReadError,
-    StreamConsumedError,
-    StreamClosedError,
 )
+from ...exceptions import ResponseNotReadError
 
 PipelineType = TypeVar("PipelineType")
 

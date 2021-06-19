@@ -47,8 +47,6 @@ from ._base_requests_async import RequestsAsyncTransportBase
 from .._backcompat import SupportedFormat
 from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
-    StreamClosedError,
-    StreamConsumedError,
 )
 
 

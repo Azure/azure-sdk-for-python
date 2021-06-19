@@ -49,8 +49,6 @@ from ._base_async import (
 from .._backcompat import SupportedFormat
 from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
-    StreamClosedError,
-    StreamConsumedError as RestStreamConsumedError,
 )
 
 # Matching requests, because why not?

@@ -4,9 +4,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResponseNotReadError
 import pytest
-from azure.core.rest import HttpRequest, ResponseNotReadError
+from azure.core.rest import HttpRequest
 
 @pytest.mark.asyncio
 async def test_normal_call(client):

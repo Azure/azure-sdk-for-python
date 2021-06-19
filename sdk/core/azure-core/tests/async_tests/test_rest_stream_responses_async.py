@@ -8,7 +8,8 @@ import functools
 import os
 import json
 import pytest
-from azure.core.rest import StreamConsumedError, HttpRequest, StreamClosedError, StreamConsumedError, ResponseNotReadError
+from azure.core.rest import HttpRequest
+from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 
 @pytest.mark.asyncio
 async def test_iter_raw(client):

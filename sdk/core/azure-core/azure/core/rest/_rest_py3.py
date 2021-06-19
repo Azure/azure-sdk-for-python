@@ -48,9 +48,6 @@ from ._helpers import (
     ParamsType,
     FilesType,
     HeadersType,
-    StreamClosedError,
-    ResponseNotReadError,
-    StreamConsumedError,
     lookup_encoding,
     parse_lines_from_text,
     set_json_body,
@@ -60,6 +57,7 @@ from ._helpers import (
 )
 from ._helpers_py3 import set_content_body
 from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
+from ..exceptions import StreamClosedError, ResponseNotReadError, StreamConsumedError
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 

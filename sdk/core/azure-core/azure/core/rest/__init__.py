@@ -23,12 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
-from ._helpers import (
-    ResponseNotReadError,
-    StreamConsumedError,
-    StreamClosedError,
-)
 try:
     from ._rest_py3 import (
         HttpRequest,
@@ -45,9 +39,6 @@ except (SyntaxError, ImportError):
 __all__ = [
     "HttpRequest",
     "HttpResponse",
-    "StreamConsumedError",
-    "ResponseNotReadError",
-    "StreamClosedError",
     "_HttpResponseBase",
 ]
 

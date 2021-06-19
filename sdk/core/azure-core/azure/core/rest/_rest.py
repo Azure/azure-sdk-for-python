@@ -36,9 +36,6 @@ from .._utils import _case_insensitive_dict
 from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from ._helpers import (
     FilesType,
-    StreamClosedError,
-    ResponseNotReadError,
-    StreamConsumedError,
     lookup_encoding,
     parse_lines_from_text,
     set_content_body,
@@ -47,7 +44,7 @@ from ._helpers import (
     set_urlencoded_body,
     format_parameters,
 )
-
+from ..exceptions import StreamClosedError, ResponseNotReadError, StreamConsumedError
 if TYPE_CHECKING:
     from typing import (
         Iterable,
