@@ -237,7 +237,6 @@ def test_iter_read(client):
     for line in iterator:
         assert line
     assert response.text
-    raise ValueError(response.text)
 
 def test_iter_read_back_and_forth(client):
     # thanks to McCoy Patiño for this test!

@@ -43,12 +43,12 @@ from typing import (
     Iterator,
     cast,
 )
-import xml.etree.ElementTree as ET
 import six
 try:
     from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
 
 ################################### TYPES SECTION #########################
 
@@ -167,7 +167,7 @@ def set_multipart_body(files):
 
 def set_xml_body(content):
     headers = {}
-    bytes_content = ET.tostring(content, encoding="utf-8")
+    bytes_content = ET.tostring(content, encoding="utf8")
     body = bytes_content.replace(b"encoding='utf8'", b"encoding='utf-8'")
     if body:
         headers["Content-Length"] = str(len(body))

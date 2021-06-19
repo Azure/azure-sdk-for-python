@@ -235,7 +235,8 @@ class HttpRequest:
         # following pipeline.transport, we pop the content-type if there are files
         # this is bc we want an empty content type so the transport, i.e. requests,
         # will set our boundary for us
-        request.headers.pop("Content-Type", None)
+        if request.files:
+            request.headers.pop("Content-Type", None)
         return request
 
 class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
