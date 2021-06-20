@@ -29,7 +29,6 @@ def test_transfer_encoding_header():
 
     request = HttpRequest("POST", "http://example.org", data=data)
     assert "Content-Length" not in request.headers
-    assert request.headers["Transfer-Encoding"] == "chunked"
 
 def test_override_content_length_header():
     async def streaming_body(data):
@@ -48,7 +47,7 @@ async def test_aiterbale_content(assert_aiterator_body):
             yield b"test 123"
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
     await assert_aiterator_body(request, b"test 123")
 
 @pytest.mark.asyncio
@@ -61,7 +60,7 @@ async def test_aiterator_content(assert_aiterator_body):
     assert not isinstance(request._data, collections.abc.Iterable)
     assert isinstance(request._data, collections.abc.AsyncIterable)
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
     await assert_aiterator_body(request, b"Hello, world!")
 
     # Support 'data' for compat with requests.
@@ -69,7 +68,7 @@ async def test_aiterator_content(assert_aiterator_body):
     assert not isinstance(request._data, collections.abc.Iterable)
     assert isinstance(request._data, collections.abc.AsyncIterable)
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
     await assert_aiterator_body(request, b"Hello, world!")
 
     # transfer encoding should not be set for GET requests
@@ -77,7 +76,7 @@ async def test_aiterator_content(assert_aiterator_body):
     assert not isinstance(request._data, collections.abc.Iterable)
     assert isinstance(request._data, collections.abc.AsyncIterable)
 
-    assert request.headers == {"Transfer-Encoding": "chunked"}
+    assert request.headers == {}
     await assert_aiterator_body(request, b"Hello, world!")
 
 @pytest.mark.asyncio

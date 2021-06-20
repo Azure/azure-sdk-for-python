@@ -15,22 +15,22 @@ import time
 import pytest
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpTransport, HttpRequest as PipelineTransportHttpRequest
-from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpTransport, HttpRequest as PipelineTransportHttpRequest, AsyncHttpResponse as PipelineTransportAsyncHttpResponse
+from azure.core.rest import HttpRequest as RestHttpRequest, AsyncHttpResponse as RestAsyncHttpResponse
 from azure.core.settings import settings
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from tracing_common import FakeSpan
+from azure.core.pipeline._backcompat import SupportedFormat
 
 
 @pytest.fixture(scope="module")
 def fake_span():
     settings.tracing_implementation.set_value(FakeSpan)
 
-
 class MockClient:
     @distributed_trace
-    def __init__(self, request_type, policies=None, assert_current_span=False):
+    def __init__(self, request_type, response_type=None, policies=None, assert_current_span=False):
         time.sleep(0.001)
         self.request = request_type("GET", "https://bing.com")
         if policies is None:
@@ -38,6 +38,11 @@ class MockClient:
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))
         self.policies = policies
         self.transport = mock.Mock(spec=HttpTransport)
+        self.transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+        if response_type:
+            def format_to_response_type(format):
+                return response_type
+            self.transport.format_to_response_type = format_to_response_type
         self.pipeline = Pipeline(self.transport, policies=policies)
 
         self.expected_response = mock.Mock(spec=PipelineResponse)
@@ -147,10 +152,10 @@ class TestAsyncDecorator(object):
 
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-    async def test_span_complicated(self, request_type):
+    @pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportAsyncHttpResponse), (RestHttpRequest, RestAsyncHttpResponse)])
+    async def test_span_complicated(self, request_type, response_type):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type)
+            client = MockClient(request_type, response_type)
             await client.make_request(2)
             with parent.span("child") as child:
                 time.sleep(0.001)

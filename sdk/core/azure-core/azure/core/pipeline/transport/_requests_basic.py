@@ -51,6 +51,7 @@ from ...rest import (
     _HttpResponseBase as _RestHttpResponseBase,
     HttpResponse as RestHttpResponse,
 )
+from .._tools import iter_bytes_helper, iter_raw_helper
 from ...exceptions import ResponseNotReadError
 
 PipelineType = TypeVar("PipelineType")
@@ -233,9 +234,21 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
 class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
 
-    @property
-    def _stream_download_generator(self):
-        return StreamDownloadGenerator
+    def iter_bytes(self, chunk_size=None):
+        # type: (Optional[int]) -> Iterator[bytes]
+        return iter_bytes_helper(
+            stream_download_generator=StreamDownloadGenerator,
+            response=self,
+            chunk_size=chunk_size,
+        )
+
+    def iter_raw(self, chunk_size=None):
+        # type: (Optional[int]) -> Iterator[bytes]
+        return iter_raw_helper(
+            stream_download_generator=StreamDownloadGenerator,
+            response=self,
+            chunk_size=chunk_size,
+        )
 
 
 class RequestsTransport(HttpTransport):

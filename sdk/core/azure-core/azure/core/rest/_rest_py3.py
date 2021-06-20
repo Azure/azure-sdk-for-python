@@ -365,12 +365,6 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
             raise ResponseNotReadError()
         return self._get_content()
 
-    def _validate_streaming_access(self) -> None:
-        if self.is_stream_consumed:
-            raise StreamConsumedError()
-        if self.is_closed:
-            raise StreamClosedError()
-
 class HttpResponse(_HttpResponseBase):
 
     def __enter__(self) -> "HttpResponse":
@@ -399,23 +393,6 @@ class HttpResponse(_HttpResponseBase):
             self._set_content(b"".join(self.iter_bytes()))
         return self.content
 
-    def _stream_download_helper(self, decompress: bool, chunk_size: Optional[int]=None):
-        if self.is_stream_consumed:
-            raise StreamConsumedError()
-        if self.is_closed:
-            raise StreamClosedError()
-
-        self.is_stream_consumed = True
-        stream_download = self._stream_download_generator(
-            pipeline=None,
-            response=self,
-            chunk_size=chunk_size or self._connection_data_block_size,
-            decompress=decompress,
-        )
-        for part in stream_download:
-            self._num_bytes_downloaded += len(part)
-            yield part
-
     def iter_raw(self, chunk_size: Optional[int] = None) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process
 
@@ -423,9 +400,7 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
-            yield raw_bytes
-        self.close()
+        raise NotImplementedError()
 
     def iter_bytes(self, chunk_size: Optional[int] = None) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process
@@ -434,15 +409,7 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        if self._has_content():
-            if chunk_size is None:
-                chunk_size = len(self.content)
-            for i in range(0, len(self.content), chunk_size):
-                yield self.content[i: i + chunk_size]
-        else:
-            for part in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
-                yield part
-        self.close()
+        raise NotImplementedError()
 
     def iter_text(self, chunk_size: int = None) -> Iterator[str]:
         """Iterates over the text in the response.
@@ -514,9 +481,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for raw_bytes in self._stream_download_helper(decompress=False, chunk_size=chunk_size):
-            yield raw_bytes
-        await self.close()
+        raise NotImplementedError()
 
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
@@ -525,16 +490,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        content = self._get_content()
-        if content is not None:
-            if chunk_size is None:
-                chunk_size = len(content)
-            for i in range(0, len(content), chunk_size):
-                yield content[i: i + chunk_size]
-        else:
-            async for raw_bytes in self._stream_download_helper(decompress=True, chunk_size=chunk_size):
-                yield raw_bytes
-        await self.close()
+        raise NotImplementedError()
 
     async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
         """Asynchronously iterates over the text in the response.

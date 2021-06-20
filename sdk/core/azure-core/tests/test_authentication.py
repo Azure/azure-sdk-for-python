@@ -158,7 +158,6 @@ def test_bearer_policy_preserves_enforce_https_opt_out(request_type):
 
     credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
-
     transport = Mock()
     if hasattr(request_type, "content"):
         transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
