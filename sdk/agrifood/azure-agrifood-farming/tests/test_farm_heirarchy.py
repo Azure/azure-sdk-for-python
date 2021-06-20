@@ -73,7 +73,6 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         # Assert on immediate response
         assert farmer.name == updated_farmer.name
         assert farmer.created_date_time == updated_farmer.created_date_time
-        assert farmer.modified_date_time != updated_farmer.modified_date_time
 
         # Retrieve updated object
         updated_retrieved_farmer = client.farmers.get(farmer_id=farmer_id)
