@@ -25,10 +25,9 @@
 # --------------------------------------------------------------------------
 import copy
 import cgi
-import collections
 from json import loads
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from azure.core.exceptions import HttpResponseError
 
@@ -44,7 +43,7 @@ from ._helpers import (
     set_urlencoded_body,
     format_parameters,
 )
-from ..exceptions import StreamClosedError, ResponseNotReadError, StreamConsumedError
+from ..exceptions import ResponseNotReadError
 if TYPE_CHECKING:
     from typing import (
         Iterable,
@@ -58,7 +57,7 @@ if TYPE_CHECKING:
     ByteStream = Iterable[bytes]
     ContentType = Union[str, bytes, ByteStream]
 
-    from ._helpers import ParamsType, HeadersType, ContentTypeBase as ContentType
+    from ._helpers import HeadersType, ContentTypeBase as ContentType
 
 
 
@@ -124,7 +123,7 @@ class HttpRequest(object):
             )
 
     def _set_body(self, content, data, files, json):
-        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> Dict[str, str]
+        # type: (Optional[ContentType], Optional[dict], Optional[FilesType], Any) -> HeadersType
         """Sets the body of the request, and returns the default headers
         """
         default_headers = {}
@@ -207,7 +206,7 @@ class HttpRequest(object):
         return request
 
 
-class _HttpResponseBase(object):
+class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
     """Class for HttpResponse.
 
     :keyword request: The request that resulted in this response.
@@ -232,7 +231,7 @@ class _HttpResponseBase(object):
         self.request = kwargs.pop("request")
         self.internal_response = kwargs.pop("internal_response")
         self.status_code = None
-        self.headers = {}
+        self.headers = {}  # type: HeadersType
         self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
@@ -324,7 +323,7 @@ class _HttpResponseBase(object):
 
         If response is good, does nothing.
         """
-        if self.status_code >= 400:
+        if cast(int, self.status_code) >= 400:
             raise HttpResponseError(response=self)
 
     @property
@@ -333,7 +332,7 @@ class _HttpResponseBase(object):
         """Return the response's content in bytes."""
         if not self._has_content():
             raise ResponseNotReadError()
-        return self._get_content()
+        return cast(bytes, self._get_content())
 
     def __repr__(self):
         # type: (...) -> str

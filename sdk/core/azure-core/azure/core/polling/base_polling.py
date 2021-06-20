@@ -33,15 +33,18 @@ from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import (
-        HttpResponse,
-        AsyncHttpResponse,
-        HttpRequest,
-    )
+    from typing import TypeVar
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+    HTTPRequestType = TypeVar("HTTPRequestType")
 
-    ResponseType = Union[HttpResponse, AsyncHttpResponse]
-    PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
+    from azure.core.pipeline import PipelineResponse
+
+    ResponseType = Union[HTTPResponseType, AsyncHTTPResponseType]
+    PipelineResponseType = PipelineResponse[
+        HTTPRequestType,
+        ResponseType
+    ]
 
 
 try:

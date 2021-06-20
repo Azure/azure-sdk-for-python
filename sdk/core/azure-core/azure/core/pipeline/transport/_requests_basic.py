@@ -79,7 +79,7 @@ def _read_raw_stream(response, chunk_size=1):
             yield chunk
 
     # following behavior from requests iter_content, we set content consumed to True
-    response._content_consumed = True
+    response._content_consumed = True  # pylint: disable=protected-access
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -134,7 +134,7 @@ class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
 
     def _get_content(self):
         """Return the internal response's content"""
-        if not self.internal_response._content_consumed:
+        if not self.internal_response._content_consumed:  # pylint: disable=protected-access
             # if we just call .content, requests will read in the content.
             # we want to read it in our own way
             return None
@@ -146,14 +146,15 @@ class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
 
     def _set_content(self, val):
         """Set the internal response's content"""
-        self.internal_response._content = val
+        self.internal_response._content = val  # pylint: disable=protected-access
 
     def _has_content(self):
         return self._get_content() is not None
 
-    @_RestHttpResponseBase.encoding.setter
+    @_RestHttpResponseBase.encoding.setter  # type: ignore
     def encoding(self, value):
         # type: (str) -> None
+        # ignoring setter bc of known mypy issue https://github.com/python/mypy/issues/1465
         self._encoding = value
         encoding = value
         if not encoding:
@@ -320,8 +321,8 @@ class RequestsTransport(HttpTransport):
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
 
-    def format_to_response_type(self, format):
-        if format == SupportedFormat.PIPELINE_TRANSPORT:
+    def format_to_response_type(self, request_format, **kwargs):
+        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
             return RequestsTransportResponse
         return RestRequestsTransportResponse
 

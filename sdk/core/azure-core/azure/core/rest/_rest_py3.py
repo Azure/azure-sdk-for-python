@@ -48,6 +48,7 @@ from ._helpers import (
     ParamsType,
     FilesType,
     HeadersType,
+    cast,
     lookup_encoding,
     parse_lines_from_text,
     set_json_body,
@@ -57,7 +58,7 @@ from ._helpers import (
 )
 from ._helpers_py3 import set_content_body
 from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-from ..exceptions import StreamClosedError, ResponseNotReadError, StreamConsumedError
+from ..exceptions import ResponseNotReadError
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
@@ -133,7 +134,7 @@ class HttpRequest:
         if params:
             self.url = format_parameters(self.url, params)
         self._files = None
-        self._data = None
+        self._data = None  # type: Any
 
         default_headers = self._set_body(
             content=content,
@@ -157,10 +158,10 @@ class HttpRequest:
         data: Optional[dict],
         files: Optional[FilesType],
         json: Any,
-    ) -> Dict[str, str]:
+    ) -> HeadersType:
         """Sets the body of the request, and returns the default headers
         """
-        default_headers = {}
+        default_headers = {}  # type: HeadersType
         if data is not None and not isinstance(data, dict):
             # should we warn?
             content = data
@@ -185,25 +186,6 @@ class HttpRequest:
         """Gets the request content.
         """
         return self._data or self._files
-    # def read(self) -> bytes:
-    #     if not self._read_content:
-    #         if not isinstance(self._content, collections.abc.Iterable):
-    #             raise TypeError("read() should only be called on sync streams.")
-    #         self._content = b"".join(self._content)
-    #         self._read_content = True
-    #     return self._content
-
-    # async def aread(self) -> bytes:
-    #     if not self._read_content:
-    #         if not isinstance(self._content, collections.abc.AsyncIterable):
-    #             raise TypeError("aread() should only be called on async streams.")
-    #         parts = []
-    #         async for part in self._content:
-    #             parts.append(part)
-    #         self._content = b"".join(parts)
-    #         self._read_content = True
-    #     return self._content
-
 
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(
@@ -271,7 +253,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self.request = request
         self.internal_response = internal_response
         self.status_code = None
-        self.headers = {}
+        self.headers = {}  # type: HeadersType
         self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
@@ -355,7 +337,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
 
         If response is good, does nothing.
         """
-        if self.status_code >= 400:
+        if cast(int, self.status_code) >= 400:
             raise HttpResponseError(response=self)
 
     @property
@@ -363,7 +345,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         """Return the response's content in bytes."""
         if not self._has_content():
             raise ResponseNotReadError()
-        return self._get_content()
+        return cast(bytes, self._get_content())
 
 class HttpResponse(_HttpResponseBase):
 
@@ -452,27 +434,10 @@ class AsyncHttpResponse(_HttpResponseBase):
         """
         if not self._has_content():
             parts = []
-            async for part in self.iter_bytes():
+            async for part in self.iter_bytes():  # type: ignore
                 parts.append(part)
             self._set_content(b"".join(parts))
         return self._get_content()
-
-    async def _stream_download_helper(self, decompress, chunk_size=None):
-        if self.is_stream_consumed:
-            raise StreamConsumedError()
-        if self.is_closed:
-            raise StreamClosedError()
-
-        self.is_stream_consumed = True
-        stream_download = self._stream_download_generator(
-            pipeline=None,
-            response=self,
-            chunk_size=chunk_size or self._connection_data_block_size,
-            decompress=decompress,
-        )
-        async for part in stream_download:
-            self._num_bytes_downloaded += len(part)
-            yield part
 
     async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
@@ -499,7 +464,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of string. Each string chunk will be a text from the response
         :rtype: AsyncIterator[str]
         """
-        async for byte in self.iter_bytes(chunk_size):
+        async for byte in self.iter_bytes(chunk_size):  # type: ignore
             text = byte.decode(self.encoding or "utf-8")
             yield text
 

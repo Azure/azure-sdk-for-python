@@ -40,7 +40,7 @@ class MockClient:
         self.transport = mock.Mock(spec=HttpTransport)
         self.transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
         if response_type:
-            def format_to_response_type(format):
+            def format_to_response_type(request_format):
                 return response_type
             self.transport.format_to_response_type = format_to_response_type
         self.pipeline = Pipeline(self.transport, policies=policies)

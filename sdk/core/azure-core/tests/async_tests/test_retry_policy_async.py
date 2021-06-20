@@ -143,7 +143,7 @@ async def test_retry_on_429(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, format: str):
+        def format_to_response_type(self, request_format: str):
             return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
@@ -180,7 +180,7 @@ async def test_no_retry_on_201(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, format: str):
+        def format_to_response_type(self, request_format: str):
             return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
@@ -220,7 +220,7 @@ async def test_retry_seekable_stream(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, format: str):
+        def format_to_response_type(self, request_format: str):
             return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
@@ -265,7 +265,7 @@ async def test_retry_seekable_file(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, format):
+        def format_to_response_type(self, request_format):
             return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
@@ -350,7 +350,7 @@ async def test_timeout_defaults(request_type, response_type):
         response.status_code = 200
         return response
 
-    def format_to_response_type(format):
+    def format_to_response_type(request_format):
         return response_type
 
     transport = Mock(

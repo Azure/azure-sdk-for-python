@@ -172,10 +172,6 @@ class AsyncPipelineClient(PipelineClientBase):
     async def _make_pipeline_call(self, request, stream, **kwargs):
         """Want to get rid of this code and use pipeline.run immediately"""
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        try:
-            request = request
-        except AttributeError:
-            pass
         pipeline_response = await self._pipeline.run(
             request, stream=stream, **kwargs  # pylint: disable=protected-access
         )
@@ -200,5 +196,5 @@ class AsyncPipelineClient(PipelineClientBase):
         """
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
         if isinstance(wrapped, PipelineResponse):
-            return wrapped
+            return wrapped  # type: ignore
         return _AsyncContextManager(wrapped=wrapped)

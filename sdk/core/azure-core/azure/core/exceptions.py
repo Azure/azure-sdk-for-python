@@ -335,7 +335,8 @@ class HttpResponseError(AzureError):
             if not self.response:
                 return None
             if hasattr(self.response, "content"):
-                self.response.content  # this is to trigger ResponseNotReadError in azure.core.rest
+                # this is to trigger ResponseNotReadError in azure.core.rest
+                self.response.content  # pylint: disable=pointless-statement
             self._error = self._parse_odata_body()
         return self._error
 

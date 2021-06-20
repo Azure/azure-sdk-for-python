@@ -91,8 +91,8 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
 
-    def format_to_response_type(self, format):
-        if format == SupportedFormat.PIPELINE_TRANSPORT:
+    def format_to_response_type(self, request_format, **kwargs):
+        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
             return AsyncioRequestsTransportResponse
         return RestAsyncioRequestsTransportResponse
 
@@ -207,7 +207,7 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
     """Asynchronous streaming of data from the response.
     """
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
         :param int chunk_size: The maximum size of each chunk iterated over.
@@ -222,7 +222,7 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
             yield part
         await self.close()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
         :param int chunk_size: The maximum size of each chunk iterated over.

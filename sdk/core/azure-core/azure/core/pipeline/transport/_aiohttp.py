@@ -49,6 +49,7 @@ from ._base_async import (
 from .._backcompat import SupportedFormat
 from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
+    HttpRequest as RestHttpRequest
 )
 from .._tools_async import iter_raw_helper, iter_bytes_helper
 
@@ -116,8 +117,8 @@ class AioHttpTransport(AsyncHttpTransport):
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
 
-    def format_to_response_type(self, format):
-        if format == SupportedFormat.PIPELINE_TRANSPORT:
+    def format_to_response_type(self, request_format, **kwargs):
+        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
             return AioHttpTransportResponse
         return RestAioHttpTransportResponse
 
@@ -380,13 +381,13 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
     def __init__(
         self,
         *,
-        request: HttpRequest,
+        request: RestHttpRequest,
         internal_response,
         **kwargs
     ):
         super().__init__(request=request, internal_response=internal_response, **kwargs)
         self.status_code = internal_response.status
-        self.headers = CIMultiDict(internal_response.headers)
+        self.headers = CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
         self._decompress = True
@@ -422,7 +423,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
 
         return content.decode(encoding)
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
         :param int chunk_size: The maximum size of each chunk iterated over.
@@ -437,7 +438,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
             yield part
         await self.close()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
         :param int chunk_size: The maximum size of each chunk iterated over.

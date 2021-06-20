@@ -189,6 +189,6 @@ class AsyncHttpTransport(
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT]
 
-    def format_to_response_type(self, format, **kwargs):
+    def format_to_response_type(self, request_format, **kwargs):
         # type: (str, Any) -> Any
         """Create the response from the format of your input"""

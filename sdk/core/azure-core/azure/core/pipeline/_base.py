@@ -195,14 +195,14 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    def _response_based_on_format(self, format, **kwargs):
+    def _response_based_on_format(self, request_format, **kwargs):
         # type: (str, Any) -> None
         pipeline_response = kwargs.pop("pipeline_response")
-        if format == SupportedFormat.PIPELINE_TRANSPORT:
+        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
             return
 
         response = get_response_from_format(
-            format,
+            request_format,
             transport=self._transport,
             response=pipeline_response.http_response,
             **kwargs
@@ -221,8 +221,10 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        format = request_to_format(request)
-        modified_request = get_request_from_format(format=format, request=request, transport=self._transport, **kwargs)
+        request_format = request_to_format(request)
+        modified_request = get_request_from_format(
+            request_format=request_format, request=request, transport=self._transport, **kwargs
+        )
         self._prepare_multipart(modified_request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(
@@ -236,7 +238,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         pipeline_response = first_node.send(pipeline_request)  # type: ignore
         self._response_based_on_format(
             pipeline_response=pipeline_response,
-            format=format,
+            request_format=request_format,
             request=request,
             **kwargs
         )

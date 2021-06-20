@@ -50,7 +50,7 @@ def _stream_download_helper(decompress, stream_download_generator, response, chu
     stream_download = stream_download_generator(
         pipeline=None,
         response=response,
-        chunk_size=chunk_size or response._connection_data_block_size,
+        chunk_size=chunk_size or response._connection_data_block_size,  # pylint: disable=protected-access
         decompress=decompress,
     )
     for part in stream_download:
@@ -59,7 +59,7 @@ def _stream_download_helper(decompress, stream_download_generator, response, chu
 
 def iter_bytes_helper(stream_download_generator, response, chunk_size=None):
     # type: (Callable, HttpResponse, Optional[int]) -> Iterator[bytes]
-    if response._has_content():
+    if response._has_content():  # pylint: disable=protected-access
         if chunk_size is None:
             chunk_size = len(response.content)
         for i in range(0, len(response.content), chunk_size):

@@ -29,11 +29,12 @@ from typing import AsyncIterable, Dict, Iterable, Tuple, Union
 from six import Iterator
 from ._helpers import (
     _shared_set_content_body,
+    HeadersType
 )
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 def set_content_body(content: ContentType) -> Tuple[
-    Dict[str, str], ContentType
+    HeadersType, ContentType
 ]:
     headers, body = _shared_set_content_body(content)
     if body is not None:

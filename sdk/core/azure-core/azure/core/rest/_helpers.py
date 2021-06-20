@@ -26,7 +26,6 @@
 import os
 import codecs
 from enum import Enum
-from inspect import isgenerator
 from json import dumps
 import collections
 from typing import (
@@ -43,24 +42,21 @@ from typing import (
     Iterator,
     cast,
 )
+import xml.etree.ElementTree as ET
 import six
 try:
     from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
-import xml.etree.ElementTree as ET
 
 ################################### TYPES SECTION #########################
 
 PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
-ParamsType = Union[
-    Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]],
-    List[Tuple[str, PrimitiveData]]
-]
+ParamsType = Dict[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
-HeadersType = Mapping[str, str]
+HeadersType = Dict[str, str]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Union[
@@ -68,7 +64,7 @@ FileType = Union[
 ]
 
 FilesType = Union[
-    Mapping[str, FileType],
+    Dict[str, FileType],
     Sequence[Tuple[str, FileType]]
 ]
 
@@ -82,6 +78,9 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
+
+########################### ERRORS SECTION #################################
+
 
 
 ########################### HELPER SECTION #################################
@@ -149,8 +148,8 @@ def set_xml_body(content):
     return headers, body
 
 def _shared_set_content_body(content):
-    # type: (Any) -> Tuple[Dict[str, str], ContentType]
-    headers = {}
+    # type: (Any) -> Tuple[HeadersType, Optional[ContentTypeBase]]
+    headers = {}  # type: HeadersType
 
     if isinstance(content, ET.Element):
         # XML body

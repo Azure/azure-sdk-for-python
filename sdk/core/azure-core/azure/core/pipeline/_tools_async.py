@@ -49,7 +49,7 @@ async def _stream_download_helper(
     stream_download = stream_download_generator(
         pipeline=None,
         response=response,
-        chunk_size=chunk_size or response._connection_data_block_size,
+        chunk_size=chunk_size or response._connection_data_block_size,  # pylint: disable=protected-access
         decompress=decompress,
     )
     async for part in stream_download:
@@ -61,7 +61,7 @@ async def iter_bytes_helper(
     response,
     chunk_size: Optional[int] = None,
 ) -> AsyncIterator[bytes]:
-    content = response._get_content()
+    content = response._get_content()  # pylint: disable=protected-access
     if content is not None:
         if chunk_size is None:
             chunk_size = len(content)
@@ -80,7 +80,7 @@ async def iter_raw_helper(
     stream_download_generator: Callable,
     response,
     chunk_size: Optional[int] = None
-):
+) -> AsyncIterator[bytes]:
     async for raw_bytes in _stream_download_helper(
         decompress=False,
         stream_download_generator=stream_download_generator,

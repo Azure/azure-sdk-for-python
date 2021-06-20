@@ -23,32 +23,29 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
 from enum import Enum
-
-if TYPE_CHECKING:
-    from typing import Union
 
 class SupportedFormat(str, Enum):
     PIPELINE_TRANSPORT = "pipeline_transport"
     REST = "rest"
 
-def get_request_from_format(format, **kwargs):
+def get_request_from_format(request_format, **kwargs):
     request = kwargs.pop("request")
     supported_formats = [SupportedFormat.PIPELINE_TRANSPORT] # old transports don't have this property
     transport = kwargs.pop("transport")
     if hasattr(transport, "supported_formats") and hasattr(transport.supported_formats, "__iter__"):
         supported_formats = transport.supported_formats
 
-    if format not in supported_formats:
+    if request_format not in supported_formats:
         raise ValueError(
-            "You passed in a request of type {}, which is not supported by the transport. Supported request types are {}".format(
-                format, supported_formats
+            "You passed in a request of type {}, which is not supported by the transport. "\
+                "Supported request types are {}".format(
+                request_format, supported_formats
             )
         )
-    if format != SupportedFormat.PIPELINE_TRANSPORT:
+    if request_format != SupportedFormat.PIPELINE_TRANSPORT:
         # for backcompat reasons, our pipeline runs azure.core.pipeline.transport.HttpRequests
-        request = request._to_pipeline_transport_request()
+        request = request._to_pipeline_transport_request()  # pylint: disable=protected-access
     return request
 
 def request_to_format(request):
@@ -61,21 +58,21 @@ def request_to_format(request):
         "Recommended format is azure.core.rest.HttpRequest, we also support azure.core.pipeline.transport.HttpRequest"
     )
 
-def get_response_from_format(format, **kwargs):
+def get_response_from_format(request_format, **kwargs):
     request = kwargs.pop("request")
     pipeline_transport_response = kwargs.pop("response")
     transport = kwargs.pop("transport")
-    if not hasattr(transport, "format_to_response_type") or transport.format_to_response_type(format) is None:
+    if not hasattr(transport, "format_to_response_type") or transport.format_to_response_type(request_format) is None:
         raise ValueError(
-            "Your response is of format {}, while your transport can only support ".format(type(pipeline_transport_response)) +
-            "azure.core.pipeline.transport.HttpResponse"
+            "Your response is of format {}, while your transport can only support "\
+                "azure.core.pipeline.transport.HttpResponse".format(type(pipeline_transport_response))
         )
 
-    response_type = transport.format_to_response_type(format)
+    response_type = transport.format_to_response_type(request_format)
     # we know response type (for now) is azure.core.rest
     response = response_type(
         request=request,
         internal_response=pipeline_transport_response.internal_response,
     )
-    response._connection_data_block_size = pipeline_transport_response.block_size
+    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
     return response
