@@ -3,18 +3,20 @@
 ## 5.1.0 (Unreleased)
 
 This version of the SDK defaults to the latest supported API version, which currently is `v3.1`.
+Includes all changes from `5.1.0b1` to `5.1.0b7`.
 
 Note: this version will be the last to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
-**Breaking Changes**
+### Features Added
 
-- Changed the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed
-- Removed `AnalyzeActionsType`
-- Removed `AnalyzeActionsResult`
-- Removed `AnalyzeActionsError`
-
-**New Features**
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
+
+### Breaking Changes
+
+- Changed: the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed.
+- Removed: `AnalyzeActionsType`
+- Removed: `AnalyzeActionsResult`
+- Removed: `AnalyzeActionsError`
 
 ## 5.1.0b7 (2021-05-18)
 
