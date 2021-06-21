@@ -50,9 +50,6 @@ class AzureAppConfigurationClient:
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the app configuration service
     :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials.TokenCredential`
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
 
