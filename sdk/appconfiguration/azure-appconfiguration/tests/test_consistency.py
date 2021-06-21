@@ -65,7 +65,7 @@ class AppConfigurationClientTest(AzureTestCase):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key,
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,
@@ -109,7 +109,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_flag_invalid_json(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = []
@@ -120,7 +120,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_flag_invalid_json_string(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = "hello world"
@@ -131,7 +131,7 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_flag_invalid_json_access_properties(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = "hello world"
@@ -145,7 +145,7 @@ class AppConfigurationClientTest(AzureTestCase):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key,
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,
@@ -170,7 +170,7 @@ class AppConfigurationClientTest(AzureTestCase):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key,
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,
@@ -188,5 +188,5 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_flag_prefix(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         assert feature_flag.feature_id.startswith(".appconfig.featureflag/")

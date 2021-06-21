@@ -513,7 +513,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
-        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         self._assert_same_keys(feature_flag, set_flag)
@@ -570,7 +570,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
             "newflag",
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TARGETING,
@@ -630,7 +630,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
             'time_window',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TIME_WINDOW,
@@ -655,7 +655,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,
@@ -680,7 +680,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,

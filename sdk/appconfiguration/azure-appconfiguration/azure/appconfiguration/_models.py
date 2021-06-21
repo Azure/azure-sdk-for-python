@@ -159,7 +159,7 @@ class FeatureFlagConfigurationSetting(
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
+    def __init__(self, feature_id, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
         # type: (str, bool, Optional[List[Dict[str, Any]]], **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         if not feature_id.startswith(self.key_prefix):
@@ -173,7 +173,10 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self.value = kwargs.get("value", {"enabled": enabled, "conditions": {"client_filters": filters}})
+        if "enabled" in kwargs.keys():
+            self.value = kwargs.get("value", {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": filters}})
+        else:
+            self.value = kwargs.get("value", {"conditions": {"client_filters": filters}})
 
     def _validate(self):
         # type: () -> None

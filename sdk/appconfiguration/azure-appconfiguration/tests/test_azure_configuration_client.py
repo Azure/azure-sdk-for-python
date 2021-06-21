@@ -44,11 +44,6 @@ import re
 import functools
 from uuid import uuid4
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
 
 class AppConfigurationClientTest(AzureTestCase):
     def __init__(self, method_name):
@@ -526,7 +521,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_config_setting_feature_flag(self, client):
-        feature_flag = FeatureFlagConfigurationSetting("test_feature", True)
+        feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         self._assert_same_keys(feature_flag, set_flag)
@@ -581,7 +576,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_targeting(self, client):
         new = FeatureFlagConfigurationSetting(
             "newflag",
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TARGETING,
@@ -641,7 +636,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_time_window(self, client):
         new = FeatureFlagConfigurationSetting(
             'time_window',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TIME_WINDOW,
@@ -666,7 +661,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_custom(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,
@@ -691,7 +686,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_filter_multiple(self, client):
         new = FeatureFlagConfigurationSetting(
             'custom',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": PERCENTAGE,
@@ -739,7 +734,7 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_breaking1(self, client):
         new = FeatureFlagConfigurationSetting(
             'breaking1',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TIME_WINDOW,
@@ -755,7 +750,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking2',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TIME_WINDOW,
@@ -772,7 +767,7 @@ class AppConfigurationClientTest(AzureTestCase):
         # This will show up as a Custom filter
         new = FeatureFlagConfigurationSetting(
             'breaking3',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TIME_WINDOW,
@@ -788,7 +783,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking4',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TIME_WINDOW,
@@ -801,7 +796,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking5',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TARGETING,
@@ -818,7 +813,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking6',
-            True,
+            enabled=True,
             filters=[
                 {
                     "name": TARGETING,
@@ -831,7 +826,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking7',
-            True,
+            enabled=True,
             filters=[
                 {
                     'abc': 'def'
@@ -843,7 +838,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         new = FeatureFlagConfigurationSetting(
             'breaking8',
-            True,
+            enabled=True,
             filters=[
                 {
                     'abc': 'def'
