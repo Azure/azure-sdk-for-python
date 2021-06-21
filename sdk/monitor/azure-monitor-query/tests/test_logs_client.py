@@ -68,17 +68,17 @@ def test_logs_batch_query():
         LogsQueryRequest(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsQueryRequest(
             query= """AppRequests | take 10  |
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsQueryRequest(
             query= "AppRequests | take 2",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
     ]
     response = client.batch_query(requests)
@@ -124,3 +124,48 @@ def test_logs_batch_query_with_statistics_in_some():
     assert len(response.responses) == 3
     assert response.responses[0].body.statistics is None
     assert response.responses[2].body.statistics is not None
+
+@pytest.mark.live_test_only
+def test_logs_single_query_additional_workspaces():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
+
+    # returns LogsQueryResults 
+    response = client.query(
+        os.environ['LOG_WORKSPACE_ID'],
+        query,
+        additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
+        )
+
+    assert response is not None
+    assert len(response.tables[0].rows) == 2
+
+@pytest.mark.live_test_only
+def test_logs_batch_query_additional_workspaces():
+    client = LogsQueryClient(_credential())
+    query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
+
+    requests = [
+        LogsQueryRequest(
+            query,
+            timespan="PT1H",
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
+        ),
+        LogsQueryRequest(
+            query,
+            timespan="PT1H",
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
+        ),
+        LogsQueryRequest(
+            query,
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
+        ),
+    ]
+    response = client.batch_query(requests)
+
+    for resp in response.responses:
+        assert len(resp.body.tables[0].rows) == 2

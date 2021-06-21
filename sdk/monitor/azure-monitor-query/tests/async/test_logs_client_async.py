@@ -47,20 +47,68 @@ async def test_logs_batch_query():
         LogsQueryRequest(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsQueryRequest(
             query= """AppRequests | take 10  |
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsQueryRequest(
             query= "AppRequests | take 2",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
     ]
     response = await client.batch_query(requests)
 
     assert len(response.responses) == 3
 
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_single_query_additional_workspaces_async():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
+
+    # returns LogsQueryResults 
+    response = await client.query(
+        os.environ['LOG_WORKSPACE_ID'],
+        query,
+        additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
+        )
+
+    assert response
+    assert len(response.tables[0].rows) == 2
+
+@pytest.mark.live_test_only
+@pytest.mark.asyncio
+async def test_logs_batch_query_additional_workspaces():
+    client = LogsQueryClient(_credential())
+    query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
+
+    requests = [
+        LogsQueryRequest(
+            query,
+            timespan="PT1H",
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
+        ),
+        LogsQueryRequest(
+            query,
+            timespan="PT1H",
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
+        ),
+        LogsQueryRequest(
+            query,
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
+            additional_workspaces=[os.environ['SECONDARY_WORKSPACE_ID']]
+        ),
+    ]
+    response = await client.batch_query(requests)
+
+    assert len(response.responses) == 3
+
+    for resp in response.responses:
+        assert len(resp.body.tables[0].rows) == 2
