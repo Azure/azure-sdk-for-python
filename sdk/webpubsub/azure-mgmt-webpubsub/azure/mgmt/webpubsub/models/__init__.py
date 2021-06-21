@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import DiagnosticConfiguration
     from ._models_py3 import Dimension
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
@@ -47,13 +48,13 @@ try:
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpstreamAuthSettings
     from ._models_py3 import UserAssignedIdentityProperty
-    from ._models_py3 import WebPubSubFeature
     from ._models_py3 import WebPubSubKeys
     from ._models_py3 import WebPubSubNetworkACLs
     from ._models_py3 import WebPubSubResource
     from ._models_py3 import WebPubSubResourceList
     from ._models_py3 import WebPubSubTlsSettings
 except (SyntaxError, ImportError):
+    from ._models import DiagnosticConfiguration  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
@@ -94,7 +95,6 @@ except (SyntaxError, ImportError):
     from ._models import TrackedResource  # type: ignore
     from ._models import UpstreamAuthSettings  # type: ignore
     from ._models import UserAssignedIdentityProperty  # type: ignore
-    from ._models import WebPubSubFeature  # type: ignore
     from ._models import WebPubSubKeys  # type: ignore
     from ._models import WebPubSubNetworkACLs  # type: ignore
     from ._models import WebPubSubResource  # type: ignore
@@ -104,7 +104,6 @@ except (SyntaxError, ImportError):
 from ._web_pub_sub_management_client_enums import (
     ACLAction,
     CreatedByType,
-    FeatureFlags,
     KeyType,
     ManagedIdentityType,
     PrivateLinkServiceConnectionStatus,
@@ -116,6 +115,7 @@ from ._web_pub_sub_management_client_enums import (
 )
 
 __all__ = [
+    'DiagnosticConfiguration',
     'Dimension',
     'ErrorAdditionalInfo',
     'ErrorDetail',
@@ -156,7 +156,6 @@ __all__ = [
     'TrackedResource',
     'UpstreamAuthSettings',
     'UserAssignedIdentityProperty',
-    'WebPubSubFeature',
     'WebPubSubKeys',
     'WebPubSubNetworkACLs',
     'WebPubSubResource',
@@ -164,7 +163,6 @@ __all__ = [
     'WebPubSubTlsSettings',
     'ACLAction',
     'CreatedByType',
-    'FeatureFlags',
     'KeyType',
     'ManagedIdentityType',
     'PrivateLinkServiceConnectionStatus',

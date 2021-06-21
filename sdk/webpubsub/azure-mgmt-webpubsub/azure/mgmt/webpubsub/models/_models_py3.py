@@ -15,6 +15,46 @@ import msrest.serialization
 from ._web_pub_sub_management_client_enums import *
 
 
+class DiagnosticConfiguration(msrest.serialization.Model):
+    """Diagnostic configuration of a Microsoft.SignalRService resource. Used together with Azure monitor DiagnosticSettings.
+
+    :param enable_connectivity_logs: Indicate whether or not enable Connectivity logs.
+     Available values: Enabled, Disabled.
+     Case insensitive.
+    :type enable_connectivity_logs: str
+    :param enable_messaging_logs: Indicate whether or not enable Messaging logs.
+     Available values: Enabled, Disabled.
+     Case insensitive.
+    :type enable_messaging_logs: str
+    :param enable_live_trace: Indicate whether or not enable Live Trace.
+     Available values: Enabled, Disabled.
+     Case insensitive.
+     Live Trace allows you to know what's happening inside Azure SignalR service, it will give you
+     live traces in real time, it will be helpful when you developing your own Azure SignalR based
+     web application or self-troubleshooting some issues.
+    :type enable_live_trace: str
+    """
+
+    _attribute_map = {
+        'enable_connectivity_logs': {'key': 'enableConnectivityLogs', 'type': 'str'},
+        'enable_messaging_logs': {'key': 'enableMessagingLogs', 'type': 'str'},
+        'enable_live_trace': {'key': 'enableLiveTrace', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_connectivity_logs: Optional[str] = None,
+        enable_messaging_logs: Optional[str] = None,
+        enable_live_trace: Optional[str] = None,
+        **kwargs
+    ):
+        super(DiagnosticConfiguration, self).__init__(**kwargs)
+        self.enable_connectivity_logs = enable_connectivity_logs
+        self.enable_messaging_logs = enable_messaging_logs
+        self.enable_live_trace = enable_live_trace
+
+
 class Dimension(msrest.serialization.Model):
     """Specifications of the Dimension of metrics.
 
@@ -60,7 +100,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -1444,57 +1484,6 @@ class UserAssignedIdentityProperty(msrest.serialization.Model):
         self.client_id = None
 
 
-class WebPubSubFeature(msrest.serialization.Model):
-    """Feature of a resource, which controls the runtime behavior.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param flag: Required. FeatureFlags is the supported features of Azure SignalR service.
-    
-    
-     * EnableConnectivityLogs: "true"/"false", to enable/disable the connectivity log category
-     respectively.
-     * EnableMessagingLogs: "true"/"false", to enable/disable the connectivity log category
-     respectively.
-     * EnableLiveTrace: Live Trace allows you to know what's happening inside Azure SignalR
-     service, it will give you live traces in real time, it will be helpful when you developing your
-     own Azure SignalR based web application or self-troubleshooting some issues. Please note that
-     live traces are counted as outbound messages that will be charged. Values allowed:
-     "true"/"false", to enable/disable live trace feature. Possible values include:
-     "EnableConnectivityLogs", "EnableMessagingLogs", "EnableLiveTrace".
-    :type flag: str or ~azure.mgmt.webpubsub.models.FeatureFlags
-    :param value: Required. Value of the feature flag. See Azure SignalR service document
-     https://docs.microsoft.com/azure/azure-signalr/ for allowed values.
-    :type value: str
-    :param properties: Optional properties related to this feature.
-    :type properties: dict[str, str]
-    """
-
-    _validation = {
-        'flag': {'required': True},
-        'value': {'required': True, 'max_length': 128, 'min_length': 1},
-    }
-
-    _attribute_map = {
-        'flag': {'key': 'flag', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        flag: Union[str, "FeatureFlags"],
-        value: str,
-        properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(WebPubSubFeature, self).__init__(**kwargs)
-        self.flag = flag
-        self.value = value
-        self.properties = properties
-
-
 class WebPubSubKeys(msrest.serialization.Model):
     """A class represents the access keys of the resource.
 
@@ -1611,15 +1600,9 @@ class WebPubSubResource(TrackedResource):
      list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
     :param tls: TLS settings.
     :type tls: ~azure.mgmt.webpubsub.models.WebPubSubTlsSettings
-    :param features: List of the featureFlags.
-    
-     FeatureFlags that are not included in the parameters for the update operation will not be
-     modified.
-     And the response will only include featureFlags that are explicitly set.
-     When a featureFlag is not explicitly set, its globally default value will be used
-     But keep in mind, the default value doesn't mean "false". It varies in terms of different
-     FeatureFlags.
-    :type features: list[~azure.mgmt.webpubsub.models.WebPubSubFeature]
+    :param diagnostic_configuration: Diagnostic configuration of a Microsoft.SignalRService
+     resource. Used together with Azure monitor DiagnosticSettings.
+    :type diagnostic_configuration: ~azure.mgmt.webpubsub.models.DiagnosticConfiguration
     :param event_handler: The settings for event handler in webpubsub service.
     :type event_handler: ~azure.mgmt.webpubsub.models.EventHandlerSettings
     :param network_ac_ls: Network ACLs.
@@ -1629,6 +1612,14 @@ class WebPubSubResource(TrackedResource):
      When it's Disabled, public network access is always disabled no matter what you set in network
      ACLs.
     :type public_network_access: str
+    :param disable_local_auth: DisableLocalAuth
+     Enable or disable local auth with AccessKey
+     When set as true, connection with AccessKey=xxx won't work.
+    :type disable_local_auth: bool
+    :param disable_aad_auth: DisableLocalAuth
+     Enable or disable aad auth
+     When set as true, connection with AuthType=aad won't work.
+    :type disable_aad_auth: bool
     """
 
     _validation = {
@@ -1664,10 +1655,12 @@ class WebPubSubResource(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
         'tls': {'key': 'properties.tls', 'type': 'WebPubSubTlsSettings'},
-        'features': {'key': 'properties.features', 'type': '[WebPubSubFeature]'},
+        'diagnostic_configuration': {'key': 'properties.diagnosticConfiguration', 'type': 'DiagnosticConfiguration'},
         'event_handler': {'key': 'properties.eventHandler', 'type': 'EventHandlerSettings'},
         'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'WebPubSubNetworkACLs'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'disable_aad_auth': {'key': 'properties.disableAadAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1678,10 +1671,12 @@ class WebPubSubResource(TrackedResource):
         sku: Optional["ResourceSku"] = None,
         identity: Optional["ManagedIdentity"] = None,
         tls: Optional["WebPubSubTlsSettings"] = None,
-        features: Optional[List["WebPubSubFeature"]] = None,
+        diagnostic_configuration: Optional["DiagnosticConfiguration"] = None,
         event_handler: Optional["EventHandlerSettings"] = None,
         network_ac_ls: Optional["WebPubSubNetworkACLs"] = None,
         public_network_access: Optional[str] = "Enabled",
+        disable_local_auth: Optional[bool] = False,
+        disable_aad_auth: Optional[bool] = False,
         **kwargs
     ):
         super(WebPubSubResource, self).__init__(location=location, tags=tags, **kwargs)
@@ -1697,10 +1692,12 @@ class WebPubSubResource(TrackedResource):
         self.private_endpoint_connections = None
         self.shared_private_link_resources = None
         self.tls = tls
-        self.features = features
+        self.diagnostic_configuration = diagnostic_configuration
         self.event_handler = event_handler
         self.network_ac_ls = network_ac_ls
         self.public_network_access = public_network_access
+        self.disable_local_auth = disable_local_auth
+        self.disable_aad_auth = disable_aad_auth
 
 
 class WebPubSubResourceList(msrest.serialization.Model):

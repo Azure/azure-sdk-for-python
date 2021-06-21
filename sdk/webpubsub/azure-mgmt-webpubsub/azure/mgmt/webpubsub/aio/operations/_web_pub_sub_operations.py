@@ -47,7 +47,7 @@ class WebPubSubOperations:
         self,
         location: str,
         parameters: "_models.NameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Checks that the resource name is valid and is not already in use.
 
@@ -65,7 +65,7 @@ class WebPubSubOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -108,7 +108,7 @@ class WebPubSubOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebPubSubResourceList"]:
         """Handles requests to list all resources in a subscription.
 
@@ -122,7 +122,7 @@ class WebPubSubOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -176,7 +176,7 @@ class WebPubSubOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebPubSubResourceList"]:
         """Handles requests to list all resources in a resource group.
 
@@ -193,7 +193,7 @@ class WebPubSubOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -249,7 +249,7 @@ class WebPubSubOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebPubSubResource":
         """Get the resource and its properties.
 
@@ -268,7 +268,7 @@ class WebPubSubOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -310,14 +310,14 @@ class WebPubSubOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.WebPubSubResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WebPubSubResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WebPubSubResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -369,7 +369,7 @@ class WebPubSubOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.WebPubSubResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WebPubSubResource"]:
         """Create or update a resource.
 
@@ -382,8 +382,8 @@ class WebPubSubOperations:
         :type parameters: ~azure.mgmt.webpubsub.models.WebPubSubResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WebPubSubResource or the result of cls(response)
@@ -440,14 +440,14 @@ class WebPubSubOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -485,7 +485,7 @@ class WebPubSubOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Operation to delete a resource.
 
@@ -496,8 +496,8 @@ class WebPubSubOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -551,14 +551,14 @@ class WebPubSubOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.WebPubSubResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WebPubSubResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WebPubSubResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -607,7 +607,7 @@ class WebPubSubOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.WebPubSubResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WebPubSubResource"]:
         """Operation to update an exiting resource.
 
@@ -620,8 +620,8 @@ class WebPubSubOperations:
         :type parameters: ~azure.mgmt.webpubsub.models.WebPubSubResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WebPubSubResource or the result of cls(response)
@@ -678,7 +678,7 @@ class WebPubSubOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebPubSubKeys":
         """Get the access keys of the resource.
 
@@ -697,7 +697,7 @@ class WebPubSubOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -739,14 +739,14 @@ class WebPubSubOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.RegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebPubSubKeys":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WebPubSubKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -793,7 +793,7 @@ class WebPubSubOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.RegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WebPubSubKeys"]:
         """Regenerate the access key for the resource. PrimaryKey and SecondaryKey cannot be regenerated
         at the same time.
@@ -807,8 +807,8 @@ class WebPubSubOperations:
         :type parameters: ~azure.mgmt.webpubsub.models.RegenerateKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WebPubSubKeys or the result of cls(response)
@@ -865,14 +865,14 @@ class WebPubSubOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -910,7 +910,7 @@ class WebPubSubOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Operation to restart a resource.
 
@@ -921,8 +921,8 @@ class WebPubSubOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
