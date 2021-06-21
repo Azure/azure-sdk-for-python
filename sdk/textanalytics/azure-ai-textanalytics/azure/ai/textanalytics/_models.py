@@ -1356,7 +1356,7 @@ class SentimentConfidenceScores(DictMixin):
             .format(self.positive, self.neutral, self.negative)[:1024]
 
 
-class AnalyzeActionsType(str, Enum):
+class _AnalyzeActionsType(str, Enum):
     """The type of action that was applied to the documents
     """
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
@@ -1364,62 +1364,6 @@ class AnalyzeActionsType(str, Enum):
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
     RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities"  #: Linked Entities Recognition action.
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
-
-
-class AnalyzeActionsResult(DictMixin):
-    """AnalyzeActionsResult contains the results of a recognize entities action
-    on a list of documents. Returned by `begin_analyze_actions`
-
-    :ivar document_results: A list of objects containing results for all Entity Recognition actions
-        included in the analysis.
-    :vartype document_results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        actions. Always False for an instance of a AnalyzeActionsResult.
-    :ivar action_type: The type of action this class is a result of.
-    :vartype action_type: str or ~azure.ai.textanalytics.AnalyzeActionsType
-    :ivar ~datetime.datetime completed_on: Date and time (UTC) when the result completed
-        on the service.
-    """
-    def __init__(self, **kwargs):
-        self.document_results = kwargs.get("document_results")
-        self.is_error = False
-        self.action_type = kwargs.get("action_type")
-        self.completed_on = kwargs.get("completed_on")
-
-    def __repr__(self):
-        return "AnalyzeActionsResult(document_results={}, is_error={}, action_type={}, completed_on={})".format(
-                repr(self.document_results),
-                self.is_error,
-                self.action_type,
-                self.completed_on,
-            )[:1024]
-
-
-class AnalyzeActionsError(DictMixin):
-    """AnalyzeActionsError is an error object which represents an an
-    error response for an action.
-
-    :ivar error: The action result error.
-    :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always True for an instance of a DocumentError.
-    """
-
-    def __init__(self, **kwargs):
-        self.error = kwargs.get("error")
-        self.is_error = True
-
-    def __repr__(self):
-        return "AnalyzeActionsError(error={}, is_error={}".format(
-            repr(self.error), self.is_error
-        )
-
-    @classmethod
-    def _from_generated(cls, error):
-        return cls(
-            error=TextAnalyticsError(code=error.code, message=error.message, target=error.target)
-        )
-
 
 class RecognizeEntitiesAction(DictMixin):
     """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.

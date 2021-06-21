@@ -152,6 +152,7 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = kwargs.get("delivery_annotations")
 
     def __str__(self):
+        # type: () -> str
         return str(self._message)
 
     def __repr__(self):

@@ -1,6 +1,18 @@
 # Release History
 
-## 12.0.0 (unreleased)
+## 12.0.1 (Unreleased)
+
+### Features Added
+* Storage Accounts only: `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 12.0.0 (2021-06-08)
 **Breaking**
 * EdmType.Binary data in entities will now be deserialized as `bytes` in Python 3 and `str` in Python 2, rather than an `EdmProperty` instance. Likewise on serialization, `bytes` in Python 3 and `str` in Python 2 will be interpreted as binary (this is unchanged for Python 3, but breaking for Python 2, where `str` was previously serialized as EdmType.String)
 * `TableClient.create_table` now returns an instance of `TableItem`.
@@ -9,6 +21,8 @@
   `TableAccessPolicy`, `TableMetrics`, `TableRetentionPolicy`, `TableCorsRule`
 * All parameters for `TableServiceClient.set_service_properties` are now keyword-only.
 * The `credential` parameter for all Clients is now keyword-only.
+* The method `TableClient.get_access_policy` will now return `None` where previously it returned an "empty" access policy object.
+* Timestamp properties on `TableAccessPolicy` instances returned from `TableClient.get_access_policy` will now be deserialized to `datetime` instances.
 
 **Fixes**
 * Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.

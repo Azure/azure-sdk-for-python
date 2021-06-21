@@ -1,5 +1,37 @@
 # Release History
 
+## 2.0.0 (2021-06-08)
+
+**Features**
+
+  - Model QueryResult has a new parameter sku
+  - Model QueryResult has a new parameter e_tag
+  - Model QueryResult has a new parameter location
+  - Model View has a new parameter date_range
+  - Model View has a new parameter data_set
+  - Model View has a new parameter include_monetary_commitment
+  - Model View has a new parameter currency
+  - Model ExportExecution has a new parameter tags
+  - Added operation group GenerateReservationDetailsReportOperations
+  - Added operation group SettingsOperations
+
+**Breaking changes**
+
+  - Parameter recurrence of model ExportSchedule is now required
+  - Operation ExportsOperations.list has a new signature
+  - Operation ExportsOperations.get has a new signature
+  - Model Export no longer has parameter run_history
+  - Model Export no longer has parameter next_run_time_estimate
+  - Model View no longer has parameter dataset
+  - Model ExportExecution no longer has parameter e_tag
+  - Model ExportExecution no longer has parameter error
+  - Model CommonExportProperties no longer has parameter run_history
+  - Model CommonExportProperties no longer has parameter next_run_time_estimate
+  - Model ExportProperties no longer has parameter run_history
+  - Model ExportProperties no longer has parameter next_run_time_estimate
+  - Model QueryFilter has a new signature
+  - Model ReportConfigFilter has a new signature
+
 ## 1.0.0 (2021-02-04)
 
 **Features**

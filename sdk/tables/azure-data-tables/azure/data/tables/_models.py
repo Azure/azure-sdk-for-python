@@ -377,10 +377,18 @@ class TableSasPermissions(object):
 
     def __or__(self, other):
         # type: (TableSasPermissions) -> TableSasPermissions
+        """
+        :param other:
+        :type other: :class:`~azure.data.tables.TableSasPermissions`
+        """
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __add__(self, other):
         # type: (TableSasPermissions) -> TableSasPermissions
+        """
+        :param other:
+        :type other: :class:`~azure.data.tables.TableSasPermissions`
+        """
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):

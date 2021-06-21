@@ -1,5 +1,10 @@
 # Release History
 
+## 12.4.0 (2021-06-09)
+**New features**
+- Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
+- Added support for `list_deleted_paths()` on `FileSystemClient`
+
 ## 12.4.0b1 (2021-05-12)
 **New features**
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`

@@ -11,10 +11,10 @@ import unittest
 backups = [TEST_BACKUP_1, TEST_BACKUP_2]
 
 
-def create_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
-                  volume_name=TEST_VOL_1, location=BACKUP_LOCATION, backup_only=False, live=False):
+def create_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
+                  volume_name=TEST_VOL_1, location=LOCATION, backup_only=False, live=False):
     if not backup_only:
-        create_volume(client, rg, account_name, pool_name, volume_name, location, vnet=BACKUP_VNET, live=live)
+        create_volume(client, rg, account_name, pool_name, volume_name, location, vnet=VNET, live=live)
         wait_for_volume(client, rg, account_name, pool_name, volume_name, live)
 
     vaults = client.vaults.list(rg, account_name)
@@ -24,14 +24,14 @@ def create_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=
             "backupEnabled": True
         }
     })
-    client.volumes.begin_update(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).result()
+    client.volumes.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).result()
     backup_body = Backup(location=location)
     backup = client.backups.begin_create(rg, account_name, pool_name, volume_name, backup_name, backup_body).result()
     wait_for_backup_created(client, rg, account_name, pool_name, volume_name, backup_name, live)
     return backup
 
 
-def disable_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
+def disable_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
                    volume_name=TEST_VOL_1, live=False):
     vaults = client.vaults.list(rg, account_name)
     volume_patch = VolumePatch(data_protection={
@@ -40,21 +40,21 @@ def disable_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name
             "backupEnabled": False
         }
     })
-    client.volumes.begin_update(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).wait()
+    client.volumes.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, volume_patch).wait()
     wait_for_no_backup(client, rg, account_name, pool_name, volume_name, backup_name, live)
 
 
-def delete_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
+def delete_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1,
                   volume_name=TEST_VOL_1, live=False):
     client.backups.begin_delete(rg, account_name, pool_name, volume_name, backup_name).wait()
     wait_for_no_backup(client, rg, account_name, pool_name, volume_name, backup_name, live)
 
 
-def get_backup(client, backup_name=TEST_BACKUP_1, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
+def get_backup(client, backup_name=TEST_BACKUP_1, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
     return client.backups.get(rg, account_name, pool_name, volume_name, backup_name)
 
 
-def get_backup_list(client, rg=BACKUP_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
+def get_backup_list(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1):
     return client.backups.list(rg, account_name, pool_name, volume_name)
 
 
@@ -82,41 +82,44 @@ def wait_for_backup_created(client, rg, account_name, pool_name, volume_name, ba
         if backup.provisioning_state == "Succeeded":
             break
 
+def clean_up(client, disable_bp=True, live=False):
+    if disable_bp:
+        disable_backup(client, live=live)
+
+    delete_volume(client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=live)
+    delete_pool(client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=live)
+    delete_account(client, TEST_RG, TEST_ACC_1, live=live)
+
 
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
 
+    # Before tests are run live a resource group needs to be created along with vnet and subnet
+    # Note that when tests are run in live mode it is best to run one test at a time.
     def test_create_delete_backup(self):
         # Create 2 backups since delete backups can only be used when volume has multiple backups
         create_backup(self.client, live=self.is_live)
-
         create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 2)
 
         # delete the older backup since we are not able to delete the newest one with delete backup service
         delete_backup(self.client, live=self.is_live)
-
-        # check if backup was deleted
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 1)
 
         # automaticaly delete the second backup by disable backups on volume
         disable_backup(self.client, live=self.is_live)
-
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 0)
 
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self.client, disable_bp=False, live=self.is_live)
 
     def test_list_backup(self):
         create_backup(self.client, live=self.is_live)
         create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
-
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 2)
         idx = 0
@@ -130,9 +133,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         backup_list = get_backup_list(self.client)
         self.assertEqual(len(list(backup_list)), 0)
 
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self.client, disable_bp=False, live=self.is_live)
 
     def test_get_backup_by_name(self):
         create_backup(self.client, live=self.is_live)
@@ -140,36 +141,29 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         backup = get_backup(self.client, TEST_BACKUP_1)
         self.assertEqual(backup.name, TEST_ACC_1 + "/" + TEST_POOL_1 + "/" + TEST_VOL_1 + "/" + TEST_BACKUP_1)
 
-        disable_backup(self.client, TEST_BACKUP_1, live=self.is_live)
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self.client, live=self.is_live)
+
 
     @unittest.skip("Skipping test until able to update anyting")
     def test_update_backup(self):
         create_backup(self.client, live=self.is_live)
 
         tag = {'Tag1': 'Value1'}
-        backup_body = BackupPatch(location=BACKUP_LOCATION, tags=tag)
-        self.client.backups.begin_update(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_BACKUP_1, backup_body).wait()
+        backup_body = BackupPatch(location=LOCATION, tags=tag)
+        self.client.backups.begin_update(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_BACKUP_1, backup_body).wait()
 
         backup = get_backup(self.client)
         self.assertTrue(backup.tags['Tag1'] == 'Value1')
 
-        disable_backup(self.client, live=self.is_live)
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self.client, live=self.is_live)
+
 
     @unittest.skip("Skipping test until this feature has faster performance. Today you have to wait 5 minute after backup creation until you can call backup status")
     def test_get_backup_status(self):
         create_backup(self.client, live=self.is_live)
 
-        backup_status = self.client.backups.get_status(BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        backup_status = self.client.backups.get_status(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
         self.assertTrue(backup_status.healthy)
         self.assertEqual(backup_status.mirrorState, "Mirrored")
 
-        disable_backup(self.client, live=self.is_live)
-        delete_volume(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, BACKUP_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, BACKUP_RG, TEST_ACC_1, live=self.is_live)
+        clean_up(self.client, live=self.is_live)

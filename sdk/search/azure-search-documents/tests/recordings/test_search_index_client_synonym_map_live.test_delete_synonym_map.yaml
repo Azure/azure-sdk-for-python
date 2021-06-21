@@ -14,12 +14,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D91BB1C3B02C62\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D911E87D02864B\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -29,15 +29,15 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 20 May 2021 17:07:35 GMT
+      - Sat, 08 May 2021 06:14:07 GMT
       elapsed-time:
-      - '31'
+      - '49'
       etag:
-      - W/"0x8D91BB1C3B02C62"
+      - W/"0x8D911E87D02864B"
       expires:
       - '-1'
       location:
-      - https://search78271aec.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      - https://search78271aec.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
       odata-version:
       - '4.0'
       pragma:
@@ -45,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - df0753db-b98d-11eb-850f-a0481ca055a9
+      - 980348d0-afc4-11eb-a525-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -61,12 +61,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D91BB1C3B02C62\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D911E87D02864B\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control:
@@ -76,9 +76,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 20 May 2021 17:07:35 GMT
+      - Sat, 08 May 2021 06:14:07 GMT
       elapsed-time:
-      - '11'
+      - '18'
       expires:
       - '-1'
       odata-version:
@@ -88,7 +88,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - df3df486-b98d-11eb-ac4f-a0481ca055a9
+      - 985751c3-afc4-11eb-bc60-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -108,9 +108,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://search78271aec.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search78271aec.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -118,15 +118,15 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Thu, 20 May 2021 17:07:35 GMT
+      - Sat, 08 May 2021 06:14:07 GMT
       elapsed-time:
-      - '140'
+      - '59'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - df4c4c51-b98d-11eb-8afa-a0481ca055a9
+      - 986e8bb3-afc4-11eb-b608-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -142,9 +142,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps","value":[]}'
@@ -156,9 +156,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 20 May 2021 17:07:35 GMT
+      - Sat, 08 May 2021 06:14:07 GMT
       elapsed-time:
-      - '5'
+      - '15'
       expires:
       - '-1'
       odata-version:
@@ -168,7 +168,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - df6cf37c-b98d-11eb-ba2d-a0481ca055a9
+      - 988d9acd-afc4-11eb-881b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

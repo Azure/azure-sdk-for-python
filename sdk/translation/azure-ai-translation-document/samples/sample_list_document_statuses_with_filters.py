@@ -8,8 +8,8 @@
 FILE: sample_list_document_statuses_with_filters.py
 
 DESCRIPTION:
-    This sample demonstrates how to list all the document in a translation operation for the resource
-    using different kind of filters/sorting/paging options
+    This sample demonstrates how to list all the documents in a translation operation for the resource
+    using different kind of filters/sorting/paging options.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.

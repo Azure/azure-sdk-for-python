@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://searchf61a1409.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
+    uri: https://searchf61a1409.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -21,15 +21,15 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Thu, 20 May 2021 17:02:24 GMT
+      - Sat, 08 May 2021 06:08:43 GMT
       elapsed-time:
-      - '165'
+      - '163'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 25916a7c-b98d-11eb-93c3-a0481ca055a9
+      - d6e94d5a-afc3-11eb-a3b4-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -45,9 +45,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchf61a1409.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://searchf61a1409.search.windows.net/indexes?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://searchf61a1409.search.windows.net/$metadata#indexes","value":[]}'
@@ -59,7 +59,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 20 May 2021 17:02:29 GMT
+      - Sat, 08 May 2021 06:08:49 GMT
       elapsed-time:
       - '26'
       expires:
@@ -71,7 +71,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 28d6354c-b98d-11eb-bbdb-a0481ca055a9
+      - da470f9f-afc3-11eb-bc1b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

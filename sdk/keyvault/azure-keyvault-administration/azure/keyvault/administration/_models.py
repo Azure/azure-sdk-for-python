@@ -8,9 +8,6 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-# pylint:disable=protected-access
-
-
 class KeyVaultPermission(object):
     """Role definition permissions.
 
@@ -40,45 +37,28 @@ class KeyVaultPermission(object):
 
 
 class KeyVaultRoleAssignment(object):
-    """Represents the assignment to a principal of a role over a scope"""
+    """Represents the assignment to a principal of a role over a scope
+
+    :ivar str name: the assignment's name
+    :ivar KeyVaultRoleAssignmentProperties properties: the assignment's properties
+    :ivar str role_assignment_id: unique identifier for the assignment
+    :ivar str type: type of the assignment
+    """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._role_assignment_id = kwargs.get("role_assignment_id")
-        self._name = kwargs.get("name")
-        self._properties = kwargs.get("properties")
-        self._type = kwargs.get("assignment_type")
+        self.name = kwargs.get("name")
+        self.properties = kwargs.get("properties")
+        self.role_assignment_id = kwargs.get("role_assignment_id")
+        self.type = kwargs.get("assignment_type")
 
     def __repr__(self):
         # type: () -> str
-        return "KeyVaultRoleAssignment<{}>".format(self._role_assignment_id)
-
-    @property
-    def role_assignment_id(self):
-        # type: () -> str
-        """Unique identifier for this assignment"""
-        return self._role_assignment_id
-
-    @property
-    def name(self):
-        # type: () -> str
-        """Name of the assignment"""
-        return self._name
-
-    @property
-    def properties(self):
-        # type: () -> KeyVaultRoleAssignmentProperties
-        """Properties of the assignment"""
-        return self._properties
-
-    @property
-    def type(self):
-        # type: () -> str
-        """The type of this assignment"""
-        return self._type
+        return "KeyVaultRoleAssignment<{}>".format(self.role_assignment_id)
 
     @classmethod
     def _from_generated(cls, role_assignment):
+        # pylint:disable=protected-access
         return cls(
             role_assignment_id=role_assignment.id,
             name=role_assignment.name,
@@ -88,34 +68,19 @@ class KeyVaultRoleAssignment(object):
 
 
 class KeyVaultRoleAssignmentProperties(object):
-    """Properties of a role assignment."""
+    """Properties of a role assignment
+
+    :ivar str principal_id: ID of the principal the assignment applies to. This maps to an Active Directory user,
+        service principal, or security group.
+    :ivar str role_definition_id: ID of the scope's role definition
+    :ivar str scope: the scope of the assignment
+    """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._principal_id = kwargs.get("principal_id")
-        self._role_definition_id = kwargs.get("role_definition_id")
-        self._scope = kwargs.get("scope")
-
-    @property
-    def principal_id(self):
-        # type: () -> str
-        """ID of the principal this assignment applies to.
-
-        This maps to the ID inside the Active Directory. It can point to a user, service principal, or security group.
-        """
-        return self._principal_id
-
-    @property
-    def role_definition_id(self):
-        # type: () -> str
-        """ID of the role's definition"""
-        return self._role_definition_id
-
-    @property
-    def scope(self):
-        # type: () -> str
-        """Scope of the assignment"""
-        return self._scope
+        self.principal_id = kwargs.get("principal_id")
+        self.role_definition_id = kwargs.get("role_definition_id")
+        self.scope = kwargs.get("scope")
 
     def __repr__(self):
         # type: () -> str
@@ -135,73 +100,36 @@ class KeyVaultRoleAssignmentProperties(object):
 
 
 class KeyVaultRoleDefinition(object):
-    """Represents the definition of a role over a scope."""
+    """The definition of a role over one or more scopes
+
+    :ivar list[str] assignable_scopes: scopes the role can be assigned over
+    :ivar str description: description of the role definition
+    :ivar str id: unique identifier for this role definition
+    :ivar str name: the role definition's name
+    :ivar list[KeyVaultPermission] permissions: permissions defined for the role
+    :ivar str role_name: the role's name
+    :ivar str role_type: type of the role
+    :ivar str type: type of the role definition
+    """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._id = kwargs.get("id")
-        self._name = kwargs.get("name")
-        self._role_name = kwargs.get("role_name")
-        self._description = kwargs.get("description")
-        self._role_type = kwargs.get("role_type")
-        self._type = kwargs.get("type")
-        self._permissions = kwargs.get("permissions")
-        self._assignable_scopes = kwargs.get("assignable_scopes")
+        self.assignable_scopes = kwargs.get("assignable_scopes")
+        self.description = kwargs.get("description")
+        self.id = kwargs.get("id")
+        self.name = kwargs.get("name")
+        self.permissions = kwargs.get("permissions")
+        self.role_name = kwargs.get("role_name")
+        self.role_type = kwargs.get("role_type")
+        self.type = kwargs.get("type")
 
     def __repr__(self):
         # type: () -> str
-        return "KeyVaultRoleDefinition<{}>".format(self._id)
-
-    @property
-    def id(self):
-        # type: () -> str
-        """Unique identifier for this role definition"""
-        return self._id
-
-    @property
-    def name(self):
-        # type: () -> str
-        """Name of the role definition"""
-        return self._name
-
-    @property
-    def role_name(self):
-        # type: () -> str
-        """Name of the role"""
-        return self._role_name
-
-    @property
-    def description(self):
-        # type: () -> str
-        """Description of the role definition"""
-        return self._description
-
-    @property
-    def role_type(self):
-        # type: () -> str
-        """Type of the role"""
-        return self._role_type
-
-    @property
-    def type(self):
-        # type: () -> str
-        """Type of the role definition"""
-        return self._type
-
-    @property
-    def permissions(self):
-        # type: () -> list[KeyVaultPermission]
-        """Permissions defined for the role"""
-        return self._permissions
-
-    @property
-    def assignable_scopes(self):
-        # type: () -> list[str]
-        """Scopes that can be assigned to the role"""
-        return self._assignable_scopes
+        return "KeyVaultRoleDefinition<{}>".format(self.id)
 
     @classmethod
     def _from_generated(cls, definition):
+        # pylint:disable=protected-access
         return cls(
             assignable_scopes=definition.assignable_scopes,
             description=definition.description,
@@ -214,59 +142,16 @@ class KeyVaultRoleDefinition(object):
         )
 
 
-class _Operation(object):
+class KeyVaultBackupResult(object):
+    """A Key Vault full backup operation result
+
+    :ivar str folder_url: URL of the Azure Blob Storage container containing the backup
+    """
+
     def __init__(self, **kwargs):
-        self.status = kwargs.get("status", None)
-        self.status_details = kwargs.get("status_details", None)
-        self.error = kwargs.get("error", None)
-        self.start_time = kwargs.get("start_time", None)
-        self.end_time = kwargs.get("end_time", None)
-        self.job_id = kwargs.get("job_id", None)
+        # type: (**Any) -> None
+        self.folder_url = kwargs.get("folder_url")
 
     @classmethod
-    def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
-        return cls(**deserialized_operation.__dict__)
-
-
-class KeyVaultBackupOperation(_Operation):
-    """A Key Vault full backup operation.
-
-    :ivar str status: status of the backup operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    :ivar str folder_url: URL of the Azure blob storage container which contains the backup
-    """
-
-    def __init__(self, **kwargs):
-        self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
-        super(KeyVaultBackupOperation, self).__init__(**kwargs)
-
-
-class KeyVaultRestoreOperation(_Operation):
-    """A Key Vault restore operation.
-
-    :ivar str status: status of the operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    """
-
-
-class KeyVaultSelectiveKeyRestoreOperation(_Operation):
-    """A Key Vault operation restoring a single key.
-
-    :ivar str status: status of the operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    """
+    def _from_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
+        return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)

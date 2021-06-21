@@ -26,24 +26,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class AgriFoodFarmingJobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Various states a job can be in.
-    """
-
-    WAITING = "Waiting"
-    RUNNING = "Running"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELLED = "Cancelled"
-
-class AgriFoodFarmingResourceActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Action occurred on a resource.
-    """
-
-    CREATED = "Created"
-    UPDATED = "Updated"
-    DELETED = "Deleted"
-
 class AppAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of action of the operation.
     """
