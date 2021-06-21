@@ -10,6 +10,7 @@ def start_testserver():
         result = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid) #On linux, have to set shell=True
     print('##vso[task.setvariable variable=FLASK_PID]{}'.format(result.pid))
     print("This is used in the pipelines to set the FLASK_PID env var. If you want to stop this testserver, kill this PID.")
+    return result
 
 if __name__ == "__main__":
     start_testserver()
