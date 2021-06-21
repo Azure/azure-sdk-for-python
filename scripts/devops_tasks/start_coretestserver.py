@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 
 def start_testserver():
@@ -13,4 +14,5 @@ def start_testserver():
     return result
 
 if __name__ == "__main__":
-    start_testserver()
+    result = start_testserver()
+    sys.exit(0)
