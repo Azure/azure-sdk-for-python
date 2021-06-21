@@ -1,4 +1,3 @@
-from numpy import row_stack
 import pytest
 import os
 from azure.identity import ClientSecretCredential
