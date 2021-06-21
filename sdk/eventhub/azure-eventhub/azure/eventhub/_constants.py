@@ -35,6 +35,7 @@ EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
 
+MESSAGE_PROPERTY_MAX_LENGTH = 128
 MAX_USER_AGENT_LENGTH = 512
 ALL_PARTITIONS = "all-partitions"
 CONTAINER_PREFIX = "eventhub.pysdk-"

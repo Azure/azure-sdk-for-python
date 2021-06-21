@@ -22,8 +22,14 @@ import six
 
 from uamqp import BatchMessage, Message, constants
 
-from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
+from ._utils import (
+    set_message_partition_key,
+    trace_message,
+    utc_from_timestamp,
+    transform_messages_if_needed
+)
 from ._constants import (
+    MESSAGE_PROPERTY_MAX_LENGTH,
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
     PROP_PARTITION_KEY,
@@ -96,24 +102,17 @@ class EventData(object):
         # type: (Union[str, bytes, List[AnyStr]]) -> None
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
-        if body and isinstance(body, list):
-            self.message = Message(body[0])
-            for more in body[1:]:
-                self.message._body.append(more)  # pylint: disable=protected-access
-        elif body is None:
+        if body is None:
             raise ValueError("EventData cannot be None.")
-        else:
-            self.message = Message(body)
-        self.message.annotations = {}
-        self.message.application_properties = {}
 
-        # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
-        self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
-        self.message = self._raw_amqp_message._message  # pylint:disable=protected-access
+        # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
+        self._raw_amqp_message = AmqpAnnotatedMessage(data_body=body, annotations={}, application_properties={})
+        self.message = self._raw_amqp_message._message # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
-        self._published_sequence_number = None
-        self._pending_published_sequence_number = None
+        self.message_id = None
+        self.content_type = None
+        self.correlation_id = None
 
     def __repr__(self):
         # type: () -> str
@@ -169,7 +168,7 @@ class EventData(object):
 
     @classmethod
     def _from_message(cls, message):
-        # type: (Message) -> EventData
+        # type: (Union[Message) -> EventData
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message.
@@ -189,7 +188,6 @@ class EventData(object):
 
     def _to_outgoing_message(self):
         # type: () -> EventData
-        # pylint: disable=protected-access
         self.message = self._raw_amqp_message._to_outgoing_amqp_message() # pylint:disable=protected-access
         return self
 
@@ -207,17 +205,6 @@ class EventData(object):
         :rtype: int
         """
         return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
-
-    @property
-    def published_sequence_number(self):
-        # type: () -> Optional[int]
-        """
-        The publishing sequence number assigned to the event at the time it was successfully published.
-        If the producer was not configured to apply sequence numbering or if the event has not yet been successfully
-        published, the value will be None.
-        :rtype: int
-        """
-        return self._published_sequence_number
 
     @property
     def offset(self):
@@ -322,8 +309,10 @@ class EventData(object):
         For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
         :rtype: Any
         """
-
-        return self._raw_amqp_message.body
+        try:
+            return self._raw_amqp_message.body
+        except:
+            raise ValueError("Event content empty.")
 
     def body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
@@ -360,6 +349,82 @@ class EventData(object):
             return json.loads(data_str)
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
+
+    @property
+    def content_type(self):
+        # type: () -> Optional[str]
+        """The content type descriptor.
+        Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
+        for example "application/json".
+        :rtype: str
+        """
+        if not self._raw_amqp_message.properties:
+            return None
+        try:
+            return self._raw_amqp_message.properties.content_type.decode("UTF-8")
+        except (AttributeError, UnicodeDecodeError):
+            return self._raw_amqp_message.properties.content_type
+
+    @content_type.setter
+    def content_type(self, value):
+        # type: (str) -> None
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.content_type = value
+
+    @property
+    def correlation_id(self):
+        # type: () -> Optional[str]
+        # pylint: disable=line-too-long
+        """The correlation identifier.
+        Allows an application to specify a context for the message for the purposes of correlation, for example
+        reflecting the MessageId of a message that is being replied to.
+        :rtype: str
+        """
+        if not self._raw_amqp_message.properties:
+            return None
+        try:
+            return self._raw_amqp_message.properties.correlation_id.decode("UTF-8")
+        except (AttributeError, UnicodeDecodeError):
+            return self._raw_amqp_message.properties.correlation_id
+
+    @correlation_id.setter
+    def correlation_id(self, value):
+        # type: (str) -> None
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.correlation_id = value
+
+    @property
+    def message_id(self):
+        # type: () -> Optional[str]
+        """The id to identify the message.
+        The message identifier is an application-defined value that uniquely identifies the message and its payload.
+        The identifier is a free-form string and can reflect a GUID or an identifier derived from the
+        application context.  If enabled, the duplicate detection feature identifies and removes second and
+        further submissions of messages with the same message id.
+        :rtype: str
+        """
+        if not self._raw_amqp_message.properties:
+            return None
+        try:
+            return self._raw_amqp_message.properties.message_id.decode("UTF-8")
+        except (AttributeError, UnicodeDecodeError):
+            return self._raw_amqp_message.properties.message_id
+
+    @message_id.setter
+    def message_id(self, value):
+        # type: (str) -> None
+        if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError(
+                "message_id cannot be longer than {} characters.".format(
+                    MESSAGE_PROPERTY_MAX_LENGTH
+                )
+            )
+
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.message_id = value
 
 
 class EventDataBatch(object):
@@ -420,9 +485,10 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
+        outgoing_batch_data = transform_messages_if_needed(batch_data, EventData)
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
-            batch_data
+            outgoing_batch_data
         )
         return batch_data_instance
 
@@ -431,7 +497,7 @@ class EventDataBatch(object):
             try:
                 self.add(event_data)
             except ValueError:
-                raise ValueError("The combined size of EventData and AmqpAnnotatedMessage collection exceeds "
+                raise ValueError("The combined size of EventData or AmqpAnnotatedMessage collection exceeds "
                                  "the Event Hub frame size limit. Please send a smaller collection of EventData "
                                  "or use EventDataBatch, which is guaranteed to be under the frame size limit")
 
@@ -458,24 +524,22 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
         # pylint:disable=protected-access
-        if isinstance(event_data, AmqpAnnotatedMessage):
-            event_data = EventData._from_message(event_data._to_outgoing_amqp_message())    # pylint: disable=protected-access
-        else:
-            event_data = event_data._to_outgoing_message()
+
+        outgoing_event_data = transform_messages_if_needed(event_data, EventData)
 
         if self._partition_key:
             if (
-                event_data.partition_key
-                and event_data.partition_key != self._partition_key
+                outgoing_event_data.partition_key
+                and outgoing_event_data.partition_key != self._partition_key
             ):
                 raise ValueError(
                     "The partition key of event_data does not match the partition key of this batch."
                 )
-            if not event_data.partition_key:
-                set_message_partition_key(event_data.message, self._partition_key)
+            if not outgoing_event_data.partition_key:
+                set_message_partition_key(outgoing_event_data.message, self._partition_key)
 
-        trace_message(event_data)
-        event_data_size = event_data.message.get_message_encoded_size()
+        trace_message(outgoing_event_data)
+        event_data_size = outgoing_event_data.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
@@ -492,7 +556,7 @@ class EventDataBatch(object):
                 )
             )
 
-        self.message._body_gen.append(event_data)  # pylint: disable=protected-access
+        self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
 

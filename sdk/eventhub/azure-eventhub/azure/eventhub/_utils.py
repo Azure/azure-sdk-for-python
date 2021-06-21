@@ -20,6 +20,7 @@ from uamqp.message import MessageHeader
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
+from .amqp import AmqpAnnotatedMessage
 from ._version import VERSION
 from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
@@ -37,6 +38,12 @@ if TYPE_CHECKING:
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
+
+    MessagesType = Union[
+        AmqpAnnotatedMessage,
+        EventData,
+        Iterable[Union[AmqpAnnotatedMessage, EventData]]
+    ]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -254,3 +261,37 @@ def parse_sas_credential(credential):
         if item.startswith('se='):
             expiry = int(item[3:])
     return (sas, expiry)
+
+def _convert_to_single_event_data(message, message_type):
+    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
+    try:
+        # EventData
+        # pylint: disable=protected-access
+        return message._to_outgoing_message()  # type: ignore
+    except TypeError:
+        # AmqpAnnotatedMessage
+        # pylint: disable=protected-access
+        return message_type._from_message(message.to_outgoing_amqp_message())  # type: ignore
+    # best way to do below? is it needed?
+    #except:
+    #    raise TypeError(
+    #        "Only AmqpAnnotatedMessage or EventData instances are supported. "
+    #        "Received instead: {}".format(message.__class__.__name__)
+    #    )
+
+def transform_messages_if_needed(messages, message_type):
+    # type: (MessagesType, Type[EventData]) -> Union[EventData, List[EventData]]
+    """
+    This method serves multiple goals:
+    1. update the internal messages to reflect any updates to settable properties on EventData
+    2. transform the AmqpAnnotatedMessage to be EventData
+    :param MessagesType messages: A list or single instance of messages of type ServiceBusMessage
+        or AmqpAnnotatedMessage.
+    :param Type[EventData] message_type: The class type to return the messages as.
+    :rtype: Union[EventData, List[EventData]]
+    """
+    if isinstance(messages, Iterable):
+        return [
+            _convert_to_single_event_data(m, message_type) for m in messages
+        ]
+    return _convert_to_single_event_data(messages, message_type)

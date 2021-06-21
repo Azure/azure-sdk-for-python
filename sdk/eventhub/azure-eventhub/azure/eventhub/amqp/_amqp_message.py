@@ -111,7 +111,7 @@ class AmqpAnnotatedMessage(object):
         self._message = kwargs.pop("message", None)
         self._encoding = kwargs.pop("encoding", "UTF-8")
 
-        # internal usage only for service bus received message
+        # internal usage only for Event Hub received message
         if self._message:
             self._from_amqp_message(self._message)
             return

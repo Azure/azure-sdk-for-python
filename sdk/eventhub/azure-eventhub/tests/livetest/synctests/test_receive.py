@@ -124,6 +124,8 @@ def test_receive_owner_level(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
     app_prop = {"raw_prop": "raw_value"}
+    content_type = "text/plain"
+    message_id_base = "mess_id_sample_"
 
     def on_event(partition_context, event):
         on_event.received.append(event)
@@ -140,6 +142,9 @@ def test_receive_over_websocket_sync(connstr_senders):
     for i in range(5):
         ed = EventData("Event Number {}".format(i))
         ed.properties = app_prop
+        ed.content_type = content_type
+        ed.correlation_id = message_id_base
+        ed.message_id = message_id_base + str(i)
         event_list.append(ed)
     senders[0].send(event_list)
 
@@ -150,4 +155,7 @@ def test_receive_over_websocket_sync(connstr_senders):
         time.sleep(10)
     assert len(on_event.received) == 5
     for ed in on_event.received:
+        assert ed.correlation_id == message_id_base
+        assert message_id_base in ed.message_id
+        assert ed.content_type == "text/plain"
         assert ed.properties[b"raw_prop"] == b"raw_value"
