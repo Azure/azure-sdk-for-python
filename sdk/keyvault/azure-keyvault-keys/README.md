@@ -113,6 +113,8 @@ az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissi
 > - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
 > - Cryptographic operations: decrypt, encrypt, unwrapKey, wrapKey, verify, sign
 
+If you have enabled role-based access control (RBAC) for Key Vault instead, you can find roles like "Key Vault Crypto Officer" in our [RBAC guide][rbac_guide].
+If you are managing your keys using Managed HSM, read about its [access control][access_control] that supports different built-in roles isolated from Azure Resource Manager (ARM).
 
 #### Create a client
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
@@ -431,6 +433,7 @@ For more information, see the
 [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact opencode@microsoft.com with any additional questions or comments.
 
+[access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
@@ -449,6 +452,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
+[rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
 [key_client_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient
 [crypto_client_docs]: https://aka.ms/azsdk/python/keyvault-keys/crypto/docs

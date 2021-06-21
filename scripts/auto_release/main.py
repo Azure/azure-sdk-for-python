@@ -417,4 +417,4 @@ if __name__ == '__main__':
         my_print(e)
     else:
         with open(f'{OUT_PATH}/output.txt', 'w') as file_out:
-            file_out.writelines([f'{NEW_BRANCH}\n', "master" if TRACK == '2' else 'release/v3'])
+            file_out.writelines([f'{NEW_BRANCH}\n', "main" if TRACK == '2' else 'release/v3'])

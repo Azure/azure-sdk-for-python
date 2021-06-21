@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query
   response:
@@ -840,21 +840,21 @@ interactions:
         Products"},"property":{"anomalySeverity":"Medium","value":13872.4,"expectedValue":8507.249981917847}},{"timestamp":"2020-09-28T00:00:00Z","dimension":{"dimension_name":"Guangzhou","category":"Handmade"},"property":{"anomalySeverity":"Low","value":3805.6,"expectedValue":4325.101385321185}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$maxpagesize=1000&$skip=1000"}'
     headers:
       apim-request-id:
-      - dd54fbc5-8b69-4d84-832c-47873c5d3a23
+      - e2232397-ac8c-4ea3-891e-368901863c52
       content-length:
       - '185372'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 21 May 2021 20:04:51 GMT
+      - Fri, 11 Jun 2021 23:36:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5214'
+      - '123'
       x-request-id:
-      - dd54fbc5-8b69-4d84-832c-47873c5d3a23
+      - e2232397-ac8c-4ea3-891e-368901863c52
     status:
       code: 200
       message: OK
@@ -872,7 +872,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/query?$maxpagesize=1000&$skip=1000
   response:
@@ -1128,21 +1128,21 @@ interactions:
         Handbags & Sunglasses"},"property":{"anomalySeverity":"High","value":28743826.8,"expectedValue":29403418.48476088}}]}'
     headers:
       apim-request-id:
-      - 6b5506ee-485a-49f9-9260-e8a532ee0625
+      - 1493c4d8-2805-4bf0-9f74-6d0a2edb07ff
       content-length:
       - '52985'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 21 May 2021 20:04:57 GMT
+      - Fri, 11 Jun 2021 23:36:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5249'
+      - '90'
       x-request-id:
-      - 6b5506ee-485a-49f9-9260-e8a532ee0625
+      - 1493c4d8-2805-4bf0-9f74-6d0a2edb07ff
     status:
       code: 200
       message: OK
