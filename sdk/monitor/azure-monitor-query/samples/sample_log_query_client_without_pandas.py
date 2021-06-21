@@ -7,7 +7,6 @@ from msrest.serialization import UTC
 from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 
-# [START client_auth_with_token_cred]
 credential  = ClientSecretCredential(
         client_id = os.environ['AZURE_CLIENT_ID'],
         client_secret = os.environ['AZURE_CLIENT_SECRET'],
@@ -15,11 +14,9 @@ credential  = ClientSecretCredential(
     )
 
 client = LogsQueryClient(credential)
-# [END client_auth_with_token_cred]
 
 # Response time trend 
 # request duration over the last 12 hours. 
-# [START send_logs_query]
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
