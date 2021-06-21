@@ -20,6 +20,7 @@ try:
     from ._models_py3 import CmdkeySetup
     from ._models_py3 import ComponentSetup
     from ._models_py3 import CreateSqlPoolRestorePointDefinition
+    from ._models_py3 import CspWorkspaceAdminProperties
     from ._models_py3 import CustomSetupBase
     from ._models_py3 import CustomerManagedKeyDetails
     from ._models_py3 import DataLakeStorageAccountDetails
@@ -64,6 +65,7 @@ try:
     from ._models_py3 import IpFirewallRuleInfo
     from ._models_py3 import IpFirewallRuleInfoListResult
     from ._models_py3 import IpFirewallRuleProperties
+    from ._models_py3 import KekIdentityProperties
     from ._models_py3 import Key
     from ._models_py3 import KeyInfoListResult
     from ._models_py3 import LibraryInfo
@@ -214,6 +216,7 @@ except (SyntaxError, ImportError):
     from ._models import CmdkeySetup  # type: ignore
     from ._models import ComponentSetup  # type: ignore
     from ._models import CreateSqlPoolRestorePointDefinition  # type: ignore
+    from ._models import CspWorkspaceAdminProperties  # type: ignore
     from ._models import CustomSetupBase  # type: ignore
     from ._models import CustomerManagedKeyDetails  # type: ignore
     from ._models import DataLakeStorageAccountDetails  # type: ignore
@@ -258,6 +261,7 @@ except (SyntaxError, ImportError):
     from ._models import IpFirewallRuleInfo  # type: ignore
     from ._models import IpFirewallRuleInfoListResult  # type: ignore
     from ._models import IpFirewallRuleProperties  # type: ignore
+    from ._models import KekIdentityProperties  # type: ignore
     from ._models import Key  # type: ignore
     from ._models import KeyInfoListResult  # type: ignore
     from ._models import LibraryInfo  # type: ignore
@@ -469,6 +473,7 @@ __all__ = [
     'CmdkeySetup',
     'ComponentSetup',
     'CreateSqlPoolRestorePointDefinition',
+    'CspWorkspaceAdminProperties',
     'CustomSetupBase',
     'CustomerManagedKeyDetails',
     'DataLakeStorageAccountDetails',
@@ -513,6 +518,7 @@ __all__ = [
     'IpFirewallRuleInfo',
     'IpFirewallRuleInfoListResult',
     'IpFirewallRuleProperties',
+    'KekIdentityProperties',
     'Key',
     'KeyInfoListResult',
     'LibraryInfo',

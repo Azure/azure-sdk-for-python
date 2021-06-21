@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2021-03-01",
-    "total_api_version_list": ["2021-03-01"],
+    "chosen_version": "2021-05-01",
+    "total_api_version_list": ["2021-05-01"],
     "client": {
         "name": "SynapseManagementClient",
         "filename": "_synapse_management_client",
@@ -10,8 +10,8 @@
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SynapseManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -159,11 +159,5 @@
         "workspace_sql_aad_admins": "WorkspaceSqlAadAdminsOperations",
         "workspace_managed_identity_sql_control_settings": "WorkspaceManagedIdentitySqlControlSettingsOperations",
         "restorable_dropped_sql_pools": "RestorableDroppedSqlPoolsOperations"
-    },
-    "operation_mixins": {
-        "sync_imports": "None",
-        "async_imports": "None",
-        "operations": {
-        }
     }
 }

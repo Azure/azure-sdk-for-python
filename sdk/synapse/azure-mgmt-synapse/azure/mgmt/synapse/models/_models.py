@@ -320,7 +320,7 @@ class BigDataPoolResourceInfo(TrackedResource):
      values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge", "XXXLarge".
     :type node_size: str or ~azure.mgmt.synapse.models.NodeSize
     :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
-     include: "None", "MemoryOptimized".
+     include: "None", "MemoryOptimized", "HardwareAcceleratedFPGA", "HardwareAcceleratedGPU".
     :type node_size_family: str or ~azure.mgmt.synapse.models.NodeSizeFamily
     :ivar last_succeeded_timestamp: The time when the Big Data pool was updated successfully.
     :vartype last_succeeded_timestamp: ~datetime.datetime
@@ -502,9 +502,9 @@ class CmdkeySetup(CustomSetupBase):
     :param type: Required. The type of custom setup.Constant filled by server.
     :type type: str
     :param target_name: Required. The server name of data source access.
-    :type target_name: object
+    :type target_name: any
     :param user_name: Required. The user name of data source access.
-    :type user_name: object
+    :type user_name: any
     :param password: Required. The password of data source access.
     :type password: ~azure.mgmt.synapse.models.SecretBase
     """
@@ -593,6 +593,25 @@ class CreateSqlPoolRestorePointDefinition(msrest.serialization.Model):
         self.restore_point_label = kwargs['restore_point_label']
 
 
+class CspWorkspaceAdminProperties(msrest.serialization.Model):
+    """Initial workspace AAD admin properties for a CSP subscription.
+
+    :param initial_workspace_admin_object_id: AAD object ID of initial workspace admin.
+    :type initial_workspace_admin_object_id: str
+    """
+
+    _attribute_map = {
+        'initial_workspace_admin_object_id': {'key': 'initialWorkspaceAdminObjectId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CspWorkspaceAdminProperties, self).__init__(**kwargs)
+        self.initial_workspace_admin_object_id = kwargs.get('initial_workspace_admin_object_id', None)
+
+
 class CustomerManagedKeyDetails(msrest.serialization.Model):
     """Details of the customer managed key associated with the workspace.
 
@@ -602,6 +621,8 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
     :vartype status: str
     :param key: The key object of the workspace.
     :type key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
+    :param kek_identity: Key encryption key.
+    :type kek_identity: ~azure.mgmt.synapse.models.KekIdentityProperties
     """
 
     _validation = {
@@ -611,6 +632,7 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'key': {'key': 'key', 'type': 'WorkspaceKeyDetails'},
+        'kek_identity': {'key': 'kekIdentity', 'type': 'KekIdentityProperties'},
     }
 
     def __init__(
@@ -620,6 +642,7 @@ class CustomerManagedKeyDetails(msrest.serialization.Model):
         super(CustomerManagedKeyDetails, self).__init__(**kwargs)
         self.status = None
         self.key = kwargs.get('key', None)
+        self.kek_identity = kwargs.get('kek_identity', None)
 
 
 class DataLakeStorageAccountDetails(msrest.serialization.Model):
@@ -1125,7 +1148,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -1291,9 +1314,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1317,9 +1339,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -1337,8 +1358,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1499,9 +1519,8 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -1525,9 +1544,8 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -1545,8 +1563,7 @@ class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -1732,7 +1749,7 @@ class IntegrationRuntime(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -1792,10 +1809,10 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param location: The location for managed integration runtime. The supported regions could be
-     found on https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-
-     activities.
+     found on
+     https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
     :type location: str
     :param node_size: The node size requirement to managed integration runtime.
     :type node_size: str
@@ -1846,7 +1863,7 @@ class IntegrationRuntimeConnectionInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar service_token: The token generated in service. Callers use this token to authenticate to
      integration runtime.
     :vartype service_token: str
@@ -1926,7 +1943,7 @@ class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param compute_type: Compute type of the cluster which will execute data flow job. Possible
      values include: "General", "MemoryOptimized", "ComputeOptimized".
     :type compute_type: str or ~azure.mgmt.synapse.models.DataFlowComputeType
@@ -2071,7 +2088,7 @@ class IntegrationRuntimeNodeMonitoringData(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar available_memory_in_mb: Available memory (MB) on the integration runtime node.
@@ -2238,7 +2255,7 @@ class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_server_endpoint: The catalog database server URL.
     :type catalog_server_endpoint: str
     :param catalog_admin_user_name: The administrator user name of catalog database.
@@ -2282,7 +2299,7 @@ class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param catalog_info: Catalog information for managed dedicated integration runtime.
     :type catalog_info: ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogInfo
     :param license_type: License type for bringing your own license scenario. Possible values
@@ -2339,7 +2356,7 @@ class IntegrationRuntimeStatus(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -2416,7 +2433,7 @@ class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param v_net_id: The ID of the VNet that this integration runtime will join.
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
@@ -2549,6 +2566,30 @@ class IpFirewallRuleProperties(msrest.serialization.Model):
         self.end_ip_address = kwargs.get('end_ip_address', None)
         self.provisioning_state = None
         self.start_ip_address = kwargs.get('start_ip_address', None)
+
+
+class KekIdentityProperties(msrest.serialization.Model):
+    """Key encryption key properties.
+
+    :param user_assigned_identity: User assigned identity resource Id.
+    :type user_assigned_identity: str
+    :param use_system_assigned_identity: Boolean specifying whether to use system assigned identity
+     or not.
+    :type use_system_assigned_identity: any
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KekIdentityProperties, self).__init__(**kwargs)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+        self.use_system_assigned_identity = kwargs.get('use_system_assigned_identity', None)
 
 
 class Key(ProxyResource):
@@ -3215,7 +3256,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -3263,7 +3304,7 @@ class ManagedIntegrationRuntimeError(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar time: The time when the error occurred.
     :vartype time: ~datetime.datetime
     :ivar code: Error code.
@@ -3308,7 +3349,7 @@ class ManagedIntegrationRuntimeNode(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_id: The managed integration runtime node id.
     :vartype node_id: str
     :ivar status: The managed integration runtime node status. Possible values include: "Starting",
@@ -3348,7 +3389,7 @@ class ManagedIntegrationRuntimeOperationResult(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar type: The operation type. Could be start or stop.
     :vartype type: str
     :ivar start_time: The start time of the operation.
@@ -3405,7 +3446,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -3675,7 +3716,7 @@ class OperationResource(msrest.serialization.Model):
      "Canceled".
     :type status: str or ~azure.mgmt.synapse.models.OperationStatus
     :param properties: Operation properties.
-    :type properties: object
+    :type properties: any
     :param error: Errors from the operation.
     :type error: ~azure.mgmt.synapse.models.ErrorDetail
     :param start_time: Operation start time.
@@ -4925,7 +4966,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -4962,7 +5003,7 @@ class SelfHostedIntegrationRuntimeNode(msrest.serialization.Model):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar machine_name: Machine name of the integration runtime node.
@@ -5085,7 +5126,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, object]
+    :type additional_properties: dict[str, any]
     :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
      include: "Managed", "SelfHosted".
     :type type: str or ~azure.mgmt.synapse.models.IntegrationRuntimeType
@@ -5472,9 +5513,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -5498,9 +5538,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -5518,8 +5557,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -6059,9 +6097,8 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      database, and should not be used in combination with other groups as this will result in
      duplicate audit logs.
     
-     For more information, see `Database-Level Audit Action Groups <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-action-groups>`_.
+     For more information, see `Database-Level Audit Action Groups
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups>`_.
     
      For Database auditing policy, specific Actions can also be specified (note that Actions cannot
      be specified for Server auditing policy). The supported actions to audit are:
@@ -6085,9 +6122,8 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
     
-     For more information, see `Database-Level Audit Actions <https://docs.microsoft.com/en-
-     us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-
-     actions#database-level-audit-actions>`_.
+     For more information, see `Database-Level Audit Actions
+     <https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions>`_.
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage subscription Id.
     :type storage_account_subscription_id: str
@@ -6105,8 +6141,7 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
     
      Diagnostic Settings URI format:
      PUT
-     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-
-     version=2017-05-01-preview
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
     
      For more information, see `Diagnostic Settings REST API
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
@@ -8070,7 +8105,7 @@ class Workspace(TrackedResource):
     :ivar workspace_uid: The workspace unique identifier.
     :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags.
-    :vartype extra_properties: dict[str, object]
+    :vartype extra_properties: dict[str, any]
     :param managed_virtual_network_settings: Managed Virtual Network Settings.
     :type managed_virtual_network_settings:
      ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
@@ -8081,9 +8116,12 @@ class Workspace(TrackedResource):
     :type purview_configuration: ~azure.mgmt.synapse.models.PurviewConfiguration
     :ivar adla_resource_id: The ADLA resource ID.
     :vartype adla_resource_id: str
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+    :param public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
+    :param csp_workspace_admin_properties: Initial workspace AAD admin properties for a CSP
+     subscription.
+    :type csp_workspace_admin_properties: ~azure.mgmt.synapse.models.CspWorkspaceAdminProperties
     """
 
     _validation = {
@@ -8121,6 +8159,7 @@ class Workspace(TrackedResource):
         'purview_configuration': {'key': 'properties.purviewConfiguration', 'type': 'PurviewConfiguration'},
         'adla_resource_id': {'key': 'properties.adlaResourceId', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'csp_workspace_admin_properties': {'key': 'properties.cspWorkspaceAdminProperties', 'type': 'CspWorkspaceAdminProperties'},
     }
 
     def __init__(
@@ -8146,6 +8185,7 @@ class Workspace(TrackedResource):
         self.purview_configuration = kwargs.get('purview_configuration', None)
         self.adla_resource_id = None
         self.public_network_access = kwargs.get('public_network_access', None)
+        self.csp_workspace_admin_properties = kwargs.get('csp_workspace_admin_properties', None)
 
 
 class WorkspaceAadAdminInfo(ProxyResource):
@@ -8267,7 +8307,7 @@ class WorkspacePatchInfo(msrest.serialization.Model):
     :vartype provisioning_state: str
     :param encryption: The encryption details of the workspace.
     :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
-    :param public_network_access: Enable or Disable pubic network access to workspace. Possible
+    :param public_network_access: Enable or Disable public network access to workspace. Possible
      values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.synapse.models.WorkspacePublicNetworkAccess
     """

@@ -287,6 +287,8 @@ class NodeSizeFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
     MEMORY_OPTIMIZED = "MemoryOptimized"
+    HARDWARE_ACCELERATED_FPGA = "HardwareAcceleratedFPGA"
+    HARDWARE_ACCELERATED_GPU = "HardwareAcceleratedGPU"
 
 class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Operation status
@@ -490,7 +492,7 @@ class VulnerabilityAssessmentScanTriggerType(with_metaclass(_CaseInsensitiveEnum
     RECURRING = "Recurring"
 
 class WorkspacePublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable or Disable pubic network access to workspace
+    """Enable or Disable public network access to workspace
     """
 
     ENABLED = "Enabled"
