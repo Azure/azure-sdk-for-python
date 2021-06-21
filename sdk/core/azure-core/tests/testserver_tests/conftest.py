@@ -48,13 +48,12 @@ def terminate_testserver(process):
     else:
         os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
 
-@pytest.fixture()
+@pytest.fixture(autouse=True, scope="module")
 def testserver():
     """Start the Autorest testserver."""
     server = start_testserver()
     yield
     terminate_testserver(server)
-
 
 
 # Ignore collection of async tests for Python 2

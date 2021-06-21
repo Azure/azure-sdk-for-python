@@ -26,7 +26,6 @@
 import pytest
 from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 """This file does a simple call to the testserver to make sure we can use the testserver"""
-pytestmark = pytest.mark.usefixtures("testserver")
 
 @pytest.mark.asyncio
 async def test_smoke():
