@@ -31,12 +31,11 @@ import subprocess
 import sys
 
 def start_testserver():
-    os.environ["FLASK_APP"] = "coretestserver"
-    cmd = "flask run"
+    cmd = "FLASK_APP=coretestserver flask run"
     if os.name == 'nt': #On windows, subprocess creation works without being in the shell
         child_process = subprocess.Popen(cmd, env=dict(os.environ))
     else:
-        child_process = subprocess.Popen("FLASK_APP=coretestserver flask run", shell=True, preexec_fn=os.setsid)
+        child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid)
     time.sleep(1)
     if child_process.returncode is not None:
         raise ValueError("Didn't start!")
