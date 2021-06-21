@@ -41,17 +41,17 @@ from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 
-from ._base import HttpRequest
+from ._base import HttpRequest, SupportedFormat
 from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
-from .._backcompat import SupportedFormat
 from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
     HttpRequest as RestHttpRequest
 )
 from .._tools_async import iter_raw_helper, iter_bytes_helper
+from .._tools import update_response_based_on_format_helper
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -117,10 +117,16 @@ class AioHttpTransport(AsyncHttpTransport):
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
 
-    def format_to_response_type(self, request_format, **kwargs):
-        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
-            return AioHttpTransportResponse
-        return RestAioHttpTransportResponse
+    def update_response_based_on_format(self, request, pipeline_transport_response, **kwargs):
+        format_to_response_type = {
+            SupportedFormat.REST: RestAioHttpTransportResponse
+        }
+        return update_response_based_on_format_helper(
+            request=request,
+            pipeline_transport_response=pipeline_transport_response,
+            format_to_response_type=format_to_response_type,
+            **kwargs
+        )
 
     def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None
@@ -376,6 +382,14 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+    def _to_rest_response(self):
+        response = RestAioHttpTransportResponse(
+            request=self.request._to_rest_request(),
+            internal_response=self.internal_response,
+        )
+        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
+        return response
 
 class RestAioHttpTransportResponse(RestAsyncHttpResponse):
     def __init__(

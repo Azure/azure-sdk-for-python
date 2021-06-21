@@ -21,7 +21,7 @@ from azure.core.settings import settings
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from tracing_common import FakeSpan
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 
 
 @pytest.fixture(scope="module")

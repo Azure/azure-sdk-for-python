@@ -43,15 +43,17 @@ from . import HttpRequest # pylint: disable=unused-import
 from ._base import (
     HttpTransport,
     HttpResponse,
-    _HttpResponseBase
+    _HttpResponseBase,
+    SupportedFormat,
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
-from .._backcompat import SupportedFormat
 from ...rest import (
     _HttpResponseBase as _RestHttpResponseBase,
     HttpResponse as RestHttpResponse,
 )
-from .._tools import iter_bytes_helper, iter_raw_helper
+from .._tools import (
+    iter_bytes_helper, iter_raw_helper, update_response_based_on_format_helper
+)
 from ...exceptions import ResponseNotReadError
 
 PipelineType = TypeVar("PipelineType")
@@ -233,6 +235,14 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
+    def _to_rest_response(self):
+        response = RestRequestsTransportResponse(
+            request=self.request._to_rest_request(),
+            internal_response=self.internal_response,
+        )
+        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
+        return response
+
 class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
 
     def iter_bytes(self, chunk_size=None):
@@ -321,10 +331,17 @@ class RequestsTransport(HttpTransport):
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
 
-    def format_to_response_type(self, request_format, **kwargs):
-        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
-            return RequestsTransportResponse
-        return RestRequestsTransportResponse
+    def update_response_based_on_format(self, request, pipeline_transport_response, **kwargs):
+        format_to_response_type = {
+            SupportedFormat.REST: RestRequestsTransportResponse
+        }
+        return update_response_based_on_format_helper(
+            request=request,
+            pipeline_transport_response=pipeline_transport_response,
+            format_to_response_type=format_to_response_type,
+            **kwargs
+        )
+
 
     def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse

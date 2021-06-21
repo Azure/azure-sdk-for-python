@@ -58,7 +58,7 @@ from azure.core.pipeline.policies import (
     HTTPPolicy,
     SansIOHTTPPolicy
 )
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest as PipelineTransportHttpRequest,

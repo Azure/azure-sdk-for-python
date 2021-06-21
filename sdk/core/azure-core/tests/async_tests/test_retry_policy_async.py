@@ -18,7 +18,7 @@ from azure.core.exceptions import (
     ServiceResponseError,
     ServiceResponseTimeoutError
 )
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     RetryMode,

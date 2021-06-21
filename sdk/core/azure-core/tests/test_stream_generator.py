@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpRequest as RestHttpRequest, HttpResponse as RestHttpResponse
 from azure.core.pipeline.transport._requests_basic import RestRequestsTransportResponse
 from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
 try:
     from unittest import mock

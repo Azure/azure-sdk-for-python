@@ -26,7 +26,7 @@
 import sys
 from unittest.mock import Mock
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,

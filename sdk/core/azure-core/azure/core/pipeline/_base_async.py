@@ -30,12 +30,7 @@ from typing import Any, Union, List, Generic, TypeVar, Dict
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
-from ._backcompat import (
-    SupportedFormat,
-    request_to_format,
-    get_request_from_format,
-    get_response_from_format,
-)
+from ._tools import get_request_format
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -202,25 +197,6 @@ class AsyncPipeline(
         await self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    async def _response_based_on_format(self, request_format: str, **kwargs: Any) -> None:
-        pipeline_response = kwargs.pop("pipeline_response")
-        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
-            return
-
-        response = get_response_from_format(
-            request_format,
-            transport=self._transport,
-            response=pipeline_response.http_response,
-            **kwargs
-        )
-        if not kwargs.get("stream", False):
-            # in this case, the pipeline transport response already called .load_body(), so
-            # the body is loaded. instead of doing response.read(), going to set the body
-            # to the internal content
-            response._content = pipeline_response.http_response.body()  # pylint: disable=protected-access
-            await response.close()
-        pipeline_response.http_response = response
-
     async def run(self, request: HTTPRequestType, **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
@@ -229,23 +205,37 @@ class AsyncPipeline(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        request_format = request_to_format(request)
-        modified_request = get_request_from_format(
-            request_format=request_format, request=request, transport=self._transport, **kwargs
-        )
-        await self._prepare_multipart(modified_request)
+        request_format = get_request_format(request)
+        try:
+            prepared_request = self._transport.prepare_request(request)
+        except AttributeError:
+            prepared_request = request
+        await self._prepare_multipart(prepared_request)
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(modified_request, context)
+        pipeline_request = PipelineRequest(prepared_request, context)
         first_node = (
             self._impl_policies[0]
             if self._impl_policies
             else _AsyncTransportRunner(self._transport)
         )
         pipeline_response = await first_node.send(pipeline_request)
-        await self._response_based_on_format(
-            request_format=request_format,
-            pipeline_response=pipeline_response,
-            request=request,
-            **kwargs
-        )
+        try:
+            pipeline_transport_response = pipeline_response.http_response
+            response = self._transport.update_response_based_on_format(
+                request=request,
+                pipeline_transport_response=pipeline_transport_response,
+                **kwargs
+            )
+            if not kwargs.get("stream"):
+                if hasattr(response, "read"):
+                    # in this case, the pipeline transport response already called .load_body(), so
+                    # the body is loaded. instead of doing response.read(), going to set the body
+                    # to the internal content
+                    response._content = pipeline_transport_response.body()  # pylint: disable=protected-access
+                if hasattr(response, "close"):
+                    await response.close()
+            pipeline_response.http_response = response
+        except AttributeError:
+            pass
+
         return pipeline_response

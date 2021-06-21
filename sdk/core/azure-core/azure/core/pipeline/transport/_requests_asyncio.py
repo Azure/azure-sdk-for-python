@@ -27,7 +27,7 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
+from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType, List
 import urllib3 # type: ignore
 
 import requests
@@ -37,18 +37,18 @@ from azure.core.exceptions import (
     ServiceResponseError
 )
 from azure.core.pipeline import Pipeline
-from ._base import HttpRequest
+from ._base import HttpRequest, SupportedFormat
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
-from .._backcompat import SupportedFormat
 from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
 )
 from .._tools_async import iter_raw_helper, iter_bytes_helper
+from .._tools import update_response_based_on_format_helper
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -91,10 +91,16 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
 
-    def format_to_response_type(self, request_format, **kwargs):
-        if request_format == SupportedFormat.PIPELINE_TRANSPORT:
-            return AsyncioRequestsTransportResponse
-        return RestAsyncioRequestsTransportResponse
+    def update_response_based_on_format(self, request, pipeline_transport_response, **kwargs):
+        format_to_response_type = {
+            SupportedFormat.REST: RestAsyncioRequestsTransportResponse
+        }
+        return update_response_based_on_format_helper(
+            request=request,
+            pipeline_transport_response=pipeline_transport_response,
+            format_to_response_type=format_to_response_type,
+            **kwargs
+        )
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
@@ -202,6 +208,14 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
+
+    def _to_rest_response(self):
+        response = RestAsyncioRequestsTransportResponse(
+            request=self.request._to_rest_request(),
+            internal_response=self.internal_response,
+        )
+        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
+        return response
 
 class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.

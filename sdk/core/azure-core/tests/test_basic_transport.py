@@ -19,7 +19,6 @@ from azure.core.pipeline.transport._base import HttpClientTransportResponse, Htt
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline._backcompat import SupportedFormat
 import logging
 import pytest
 
@@ -187,7 +186,6 @@ def test_response_deserialization_utf8_bom():
 def test_multipart_send():
 
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -233,7 +231,6 @@ def test_multipart_send():
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 def test_multipart_send_with_context():
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -283,7 +280,6 @@ def test_multipart_send_with_context():
 def test_multipart_send_with_one_changeset():
 
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -342,7 +338,6 @@ def test_multipart_send_with_one_changeset():
 def test_multipart_send_with_multiple_changesets():
 
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -429,7 +424,6 @@ def test_multipart_send_with_multiple_changesets():
 def test_multipart_send_with_combination_changeset_first():
 
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -493,7 +487,6 @@ def test_multipart_send_with_combination_changeset_first():
 def test_multipart_send_with_combination_changeset_last():
 
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -557,7 +550,6 @@ def test_multipart_send_with_combination_changeset_last():
 def test_multipart_send_with_combination_changeset_middle():
 
     transport = mock.MagicMock(spec=HttpTransport)
-    transport.supported_formats = [SupportedFormat.PIPELINE_TRANSPORT]
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'

@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
     RetryMode,
 )
 from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 from azure.core.pipeline.transport import (
     HttpRequest as PipelineTransportHttpRequest,
     HttpResponse as PipelineTransportHttpResponse,

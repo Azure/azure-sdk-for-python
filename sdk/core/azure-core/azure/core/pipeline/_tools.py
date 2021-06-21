@@ -84,3 +84,43 @@ def iter_raw_helper(stream_download_generator, response, chunk_size=None):
     ):
         yield raw_bytes
     response.close()
+
+def get_request_format(request):
+    if hasattr(request, "content"):
+        return "rest"
+    if hasattr(request, "body"):
+        return "pipeline_transport"
+    raise ValueError(
+        "The request you passed in has type {} which is not supported. ".format(type(request)) +
+        "Recommended format is azure.core.rest.HttpRequest, we also support azure.core.pipeline.transport.HttpRequest"
+    )
+
+def prepare_request_helper(transport, request, **kwargs):
+    request_format = get_request_format(request)
+    if request_format == "pipeline_transport":
+        return request
+    if hasattr(transport, "supported_formats"):
+        supported_formats = transport.supported_formats
+    else:
+        supported_formats = "pipeline_transport"
+    if request_format not in supported_formats:
+        raise ValueError(
+            "You passed in a request of type {}, which is not supported by the transport. "\
+                "Supported request types are {}".format(
+                request_format, supported_formats
+            )
+        )
+    # for backcompat reasons, our pipeline runs azure.core.pipeline.transport.HttpRequests
+    from .transport import HttpRequest as PipelineTransportHttpRequest
+    request = PipelineTransportHttpRequest._from_rest_request(request)  # pylint: disable=protected-access
+    return request
+
+def update_response_based_on_format_helper(
+    request, pipeline_transport_response, **kwargs
+):
+    request_format = get_request_format(request)
+    if request_format == "pipeline_transport":
+        return pipeline_transport_response
+
+    # for now, we know this will be azure.core.rest
+    return pipeline_transport_response._to_rest_response()

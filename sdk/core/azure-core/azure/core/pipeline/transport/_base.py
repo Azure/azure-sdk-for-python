@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+from enum import Enum
 import abc
 from email.message import Message
 
@@ -60,7 +61,8 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
-    Type
+    Type,
+    overload
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -73,10 +75,8 @@ from azure.core.pipeline import (
     PipelineResponse,
     PipelineContext,
 )
-from .._tools import await_result as _await_result
+from .._tools import await_result as _await_result, prepare_request_helper
 from ..._utils import _case_insensitive_dict
-from .._backcompat import SupportedFormat
-
 
 if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
@@ -157,6 +157,9 @@ def _serialize_request(http_request):
     )
     return serializer.buffer
 
+class SupportedFormat(str, Enum):
+    PIPELINE_TRANSPORT = "pipeline_transport"
+    REST = "rest"
 
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
@@ -190,9 +193,15 @@ class HttpTransport(
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT]
 
-    def format_to_response_type(self, request_format, **kwargs):
-        # type: (str, Any) -> Any
-        """Create the response from the format of your input"""
+    def prepare_request(self, request, **kwargs):
+        return prepare_request_helper(
+            transport=self, request=request, **kwargs
+        )
+
+    def update_response_based_on_format(
+        self, request, pipeline_transport_response, **kwargs
+    ):
+        return pipeline_transport_response
 
 
 class HttpRequest(object):
@@ -481,6 +490,16 @@ class HttpRequest(object):
         :rtype: bytes
         """
         return _serialize_request(self)
+
+    @classmethod
+    def _from_rest_request(cls, request):
+        return cls(
+            method=request.method,
+            url=request.url,
+            headers=request.headers,
+            files=request._files,
+            data=request._data
+        )
 
 
 class _HttpResponseBase(object):

@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransportResponse as PipelineTransportAsyncioRequestsTransportResponse,
     AioHttpTransport,
 )
-from azure.core.pipeline._backcompat import SupportedFormat
+from azure.core.pipeline.transport._base import SupportedFormat
 from azure.core.pipeline.transport._requests_asyncio import RestAsyncioRequestsTransportResponse
 from azure.core.rest import (
     HttpRequest as RestHttpRequest,

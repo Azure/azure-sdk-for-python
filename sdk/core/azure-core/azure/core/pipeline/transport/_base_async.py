@@ -35,9 +35,10 @@ from ._base import (
     PipelineContext,
     PipelineRequest,
     PipelineResponse,
+    SupportedFormat,
 )
+from .._tools import prepare_request_helper
 from .._tools_async import await_result as _await_result
-from .._backcompat import SupportedFormat
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -189,6 +190,12 @@ class AsyncHttpTransport(
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT]
 
-    def format_to_response_type(self, request_format, **kwargs):
-        # type: (str, Any) -> Any
-        """Create the response from the format of your input"""
+    def prepare_request(self, request, **kwargs):
+        return prepare_request_helper(
+            transport=self, request=request, **kwargs
+        )
+
+    def update_response_based_on_format(
+        self, request, pipeline_transport_response, **kwargs
+    ):
+        return pipeline_transport_response
