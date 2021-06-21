@@ -18,8 +18,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ActivityRunsOperations:
-    """ActivityRunsOperations async operations.
+class PrivateLinkResourcesOperations:
+    """PrivateLinkResourcesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -40,45 +40,37 @@ class ActivityRunsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def query_by_pipeline_run(
+    async def get(
         self,
         resource_group_name: str,
         factory_name: str,
-        run_id: str,
-        filter_parameters: "_models.RunFilterParameters",
         **kwargs: Any
-    ) -> "_models.ActivityRunsQueryResponse":
-        """Query activity runs based on input filter conditions.
+    ) -> "_models.PrivateLinkResourcesWrapper":
+        """Gets the private link resources.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param run_id: The pipeline run identifier.
-        :type run_id: str
-        :param filter_parameters: Parameters to filter the activity runs.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ActivityRunsQueryResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse
+        :return: PrivateLinkResourcesWrapper, or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.PrivateLinkResourcesWrapper
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActivityRunsQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourcesWrapper"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-06-01"
-        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.query_by_pipeline_run.metadata['url']  # type: ignore
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'runId': self._serialize.url("run_id", run_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -88,13 +80,9 @@ class ActivityRunsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(filter_parameters, 'RunFilterParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -102,10 +90,10 @@ class ActivityRunsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ActivityRunsQueryResponse', pipeline_response)
+        deserialized = self._deserialize('PrivateLinkResourcesWrapper', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    query_by_pipeline_run.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelineruns/{runId}/queryActivityruns'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/privateLinkResources'}  # type: ignore

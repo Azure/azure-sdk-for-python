@@ -29,6 +29,7 @@ try:
     from ._models_py3 import AmazonS3Location
     from ._models_py3 import AmazonS3ReadSettings
     from ._models_py3 import AppendVariableActivity
+    from ._models_py3 import ArmIdWrapper
     from ._models_py3 import AvroDataset
     from ._models_py3 import AvroFormat
     from ._models_py3 import AvroSink
@@ -389,12 +390,14 @@ try:
     from ._models_py3 import MarketoLinkedService
     from ._models_py3 import MarketoObjectDataset
     from ._models_py3 import MarketoSource
+    from ._models_py3 import MetadataItem
     from ._models_py3 import MicrosoftAccessLinkedService
     from ._models_py3 import MicrosoftAccessSink
     from ._models_py3 import MicrosoftAccessSource
     from ._models_py3 import MicrosoftAccessTableDataset
     from ._models_py3 import MongoDbAtlasCollectionDataset
     from ._models_py3 import MongoDbAtlasLinkedService
+    from ._models_py3 import MongoDbAtlasSink
     from ._models_py3 import MongoDbAtlasSource
     from ._models_py3 import MongoDbCollectionDataset
     from ._models_py3 import MongoDbCursorMethodsProperties
@@ -402,6 +405,7 @@ try:
     from ._models_py3 import MongoDbSource
     from ._models_py3 import MongoDbV2CollectionDataset
     from ._models_py3 import MongoDbV2LinkedService
+    from ._models_py3 import MongoDbV2Sink
     from ._models_py3 import MongoDbV2Source
     from ._models_py3 import MultiplePipelineTrigger
     from ._models_py3 import MySqlLinkedService
@@ -474,6 +478,14 @@ try:
     from ._models_py3 import PrestoLinkedService
     from ._models_py3 import PrestoObjectDataset
     from ._models_py3 import PrestoSource
+    from ._models_py3 import PrivateEndpointConnectionListResponse
+    from ._models_py3 import PrivateEndpointConnectionResource
+    from ._models_py3 import PrivateLinkConnectionApprovalRequest
+    from ._models_py3 import PrivateLinkConnectionApprovalRequestResource
+    from ._models_py3 import PrivateLinkConnectionState
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkResourcesWrapper
     from ._models_py3 import QueryDataFlowDebugSessionsResponse
     from ._models_py3 import QuickBooksLinkedService
     from ._models_py3 import QuickBooksObjectDataset
@@ -484,6 +496,7 @@ try:
     from ._models_py3 import RedshiftUnloadSettings
     from ._models_py3 import RelationalSource
     from ._models_py3 import RelationalTableDataset
+    from ._models_py3 import RemotePrivateEndpointConnection
     from ._models_py3 import RerunTumblingWindowTrigger
     from ._models_py3 import Resource
     from ._models_py3 import ResponsysLinkedService
@@ -569,6 +582,7 @@ try:
     from ._models_py3 import SparkLinkedService
     from ._models_py3 import SparkObjectDataset
     from ._models_py3 import SparkSource
+    from ._models_py3 import SqlAlwaysEncryptedProperties
     from ._models_py3 import SqlDWSink
     from ._models_py3 import SqlDWSource
     from ._models_py3 import SqlMISink
@@ -683,6 +697,7 @@ except (SyntaxError, ImportError):
     from ._models import AmazonS3Location  # type: ignore
     from ._models import AmazonS3ReadSettings  # type: ignore
     from ._models import AppendVariableActivity  # type: ignore
+    from ._models import ArmIdWrapper  # type: ignore
     from ._models import AvroDataset  # type: ignore
     from ._models import AvroFormat  # type: ignore
     from ._models import AvroSink  # type: ignore
@@ -1043,12 +1058,14 @@ except (SyntaxError, ImportError):
     from ._models import MarketoLinkedService  # type: ignore
     from ._models import MarketoObjectDataset  # type: ignore
     from ._models import MarketoSource  # type: ignore
+    from ._models import MetadataItem  # type: ignore
     from ._models import MicrosoftAccessLinkedService  # type: ignore
     from ._models import MicrosoftAccessSink  # type: ignore
     from ._models import MicrosoftAccessSource  # type: ignore
     from ._models import MicrosoftAccessTableDataset  # type: ignore
     from ._models import MongoDbAtlasCollectionDataset  # type: ignore
     from ._models import MongoDbAtlasLinkedService  # type: ignore
+    from ._models import MongoDbAtlasSink  # type: ignore
     from ._models import MongoDbAtlasSource  # type: ignore
     from ._models import MongoDbCollectionDataset  # type: ignore
     from ._models import MongoDbCursorMethodsProperties  # type: ignore
@@ -1056,6 +1073,7 @@ except (SyntaxError, ImportError):
     from ._models import MongoDbSource  # type: ignore
     from ._models import MongoDbV2CollectionDataset  # type: ignore
     from ._models import MongoDbV2LinkedService  # type: ignore
+    from ._models import MongoDbV2Sink  # type: ignore
     from ._models import MongoDbV2Source  # type: ignore
     from ._models import MultiplePipelineTrigger  # type: ignore
     from ._models import MySqlLinkedService  # type: ignore
@@ -1128,6 +1146,14 @@ except (SyntaxError, ImportError):
     from ._models import PrestoLinkedService  # type: ignore
     from ._models import PrestoObjectDataset  # type: ignore
     from ._models import PrestoSource  # type: ignore
+    from ._models import PrivateEndpointConnectionListResponse  # type: ignore
+    from ._models import PrivateEndpointConnectionResource  # type: ignore
+    from ._models import PrivateLinkConnectionApprovalRequest  # type: ignore
+    from ._models import PrivateLinkConnectionApprovalRequestResource  # type: ignore
+    from ._models import PrivateLinkConnectionState  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceProperties  # type: ignore
+    from ._models import PrivateLinkResourcesWrapper  # type: ignore
     from ._models import QueryDataFlowDebugSessionsResponse  # type: ignore
     from ._models import QuickBooksLinkedService  # type: ignore
     from ._models import QuickBooksObjectDataset  # type: ignore
@@ -1138,6 +1164,7 @@ except (SyntaxError, ImportError):
     from ._models import RedshiftUnloadSettings  # type: ignore
     from ._models import RelationalSource  # type: ignore
     from ._models import RelationalTableDataset  # type: ignore
+    from ._models import RemotePrivateEndpointConnection  # type: ignore
     from ._models import RerunTumblingWindowTrigger  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResponsysLinkedService  # type: ignore
@@ -1223,6 +1250,7 @@ except (SyntaxError, ImportError):
     from ._models import SparkLinkedService  # type: ignore
     from ._models import SparkObjectDataset  # type: ignore
     from ._models import SparkSource  # type: ignore
+    from ._models import SqlAlwaysEncryptedProperties  # type: ignore
     from ._models import SqlDWSink  # type: ignore
     from ._models import SqlDWSource  # type: ignore
     from ._models import SqlMISink  # type: ignore
@@ -1319,7 +1347,7 @@ from ._data_factory_management_client_enums import (
     AvroCompressionCodec,
     AzureFunctionActivityMethod,
     AzureSearchIndexWriteBehaviorType,
-    BlobEventTypesEnum,
+    BlobEventTypes,
     CassandraSourceReadConsistencyLevels,
     CompressionCodec,
     CopyBehaviorType,
@@ -1334,7 +1362,6 @@ from ._data_factory_management_client_enums import (
     DependencyCondition,
     DynamicsAuthenticationType,
     DynamicsDeploymentType,
-    DynamicsServicePrincipalCredentialType,
     DynamicsSinkWriteBehavior,
     EventSubscriptionStatus,
     FactoryIdentityType,
@@ -1388,10 +1415,12 @@ from ._data_factory_management_client_enums import (
     SapTablePartitionOption,
     SelfHostedIntegrationRuntimeNodeStatus,
     ServiceNowAuthenticationType,
+    ServicePrincipalCredentialType,
     SftpAuthenticationType,
     SparkAuthenticationType,
     SparkServerType,
     SparkThriftTransportProtocol,
+    SqlAlwaysEncryptedAkvAuthType,
     SqlPartitionOption,
     SsisLogLocationType,
     SsisObjectMetadataType,
@@ -1432,6 +1461,7 @@ __all__ = [
     'AmazonS3Location',
     'AmazonS3ReadSettings',
     'AppendVariableActivity',
+    'ArmIdWrapper',
     'AvroDataset',
     'AvroFormat',
     'AvroSink',
@@ -1792,12 +1822,14 @@ __all__ = [
     'MarketoLinkedService',
     'MarketoObjectDataset',
     'MarketoSource',
+    'MetadataItem',
     'MicrosoftAccessLinkedService',
     'MicrosoftAccessSink',
     'MicrosoftAccessSource',
     'MicrosoftAccessTableDataset',
     'MongoDbAtlasCollectionDataset',
     'MongoDbAtlasLinkedService',
+    'MongoDbAtlasSink',
     'MongoDbAtlasSource',
     'MongoDbCollectionDataset',
     'MongoDbCursorMethodsProperties',
@@ -1805,6 +1837,7 @@ __all__ = [
     'MongoDbSource',
     'MongoDbV2CollectionDataset',
     'MongoDbV2LinkedService',
+    'MongoDbV2Sink',
     'MongoDbV2Source',
     'MultiplePipelineTrigger',
     'MySqlLinkedService',
@@ -1877,6 +1910,14 @@ __all__ = [
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
+    'PrivateEndpointConnectionListResponse',
+    'PrivateEndpointConnectionResource',
+    'PrivateLinkConnectionApprovalRequest',
+    'PrivateLinkConnectionApprovalRequestResource',
+    'PrivateLinkConnectionState',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkResourcesWrapper',
     'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
@@ -1887,6 +1928,7 @@ __all__ = [
     'RedshiftUnloadSettings',
     'RelationalSource',
     'RelationalTableDataset',
+    'RemotePrivateEndpointConnection',
     'RerunTumblingWindowTrigger',
     'Resource',
     'ResponsysLinkedService',
@@ -1972,6 +2014,7 @@ __all__ = [
     'SparkLinkedService',
     'SparkObjectDataset',
     'SparkSource',
+    'SqlAlwaysEncryptedProperties',
     'SqlDWSink',
     'SqlDWSource',
     'SqlMISink',
@@ -2066,7 +2109,7 @@ __all__ = [
     'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'AzureSearchIndexWriteBehaviorType',
-    'BlobEventTypesEnum',
+    'BlobEventTypes',
     'CassandraSourceReadConsistencyLevels',
     'CompressionCodec',
     'CopyBehaviorType',
@@ -2081,7 +2124,6 @@ __all__ = [
     'DependencyCondition',
     'DynamicsAuthenticationType',
     'DynamicsDeploymentType',
-    'DynamicsServicePrincipalCredentialType',
     'DynamicsSinkWriteBehavior',
     'EventSubscriptionStatus',
     'FactoryIdentityType',
@@ -2135,10 +2177,12 @@ __all__ = [
     'SapTablePartitionOption',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'ServiceNowAuthenticationType',
+    'ServicePrincipalCredentialType',
     'SftpAuthenticationType',
     'SparkAuthenticationType',
     'SparkServerType',
     'SparkThriftTransportProtocol',
+    'SqlAlwaysEncryptedAkvAuthType',
     'SqlPartitionOption',
     'SsisLogLocationType',
     'SsisObjectMetadataType',
