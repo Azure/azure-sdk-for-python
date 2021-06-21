@@ -225,7 +225,7 @@ def get_authorization_scope(authority):
 def import_image(authority, repository, tags):
     logger.warning("Import image authority: {}".format(authority))
     mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
+        DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01", base_url="https://management.azure.us",
     )
     logger.warning("LOGGING: {} {}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
     registry_uri = "registry.hub.docker.com"
