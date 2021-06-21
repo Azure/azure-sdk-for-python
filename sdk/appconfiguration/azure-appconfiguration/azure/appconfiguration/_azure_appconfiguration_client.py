@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Optional, Any
+from typing import Optional, Any, Union, TYPE_CHECKING
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
@@ -39,13 +39,9 @@ from ._utils import (
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
+    from azure.core.credentials import TokenCredential
 
 
 class AzureAppConfigurationClient:
@@ -53,7 +49,7 @@ class AzureAppConfigurationClient:
 
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the app configuration service
-    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
+    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials.TokenCredential`
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -63,7 +59,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Any, **Any) -> None
+        # type: (str, Union[AppConfigConnectionStringCredential, TokenCredential], **Any) -> None
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -160,9 +156,8 @@ class AzureAppConfigurationClient:
         return Pipeline(transport, policies)
 
     @distributed_trace
-    def list_configuration_settings(
-        self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
+    def list_configuration_settings(self, **kwargs):
+        # type: (**Any) -> ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -199,6 +194,8 @@ class AzureAppConfigurationClient:
                 pass  # do something
         """
         select = kwargs.pop("fields", None)
+        key_filter = kwargs.pop("key_filter", None)
+        label_filter = kwargs.pop("label_filter", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
         error_map = {401: ClientAuthenticationError}
@@ -224,22 +221,17 @@ class AzureAppConfigurationClient:
     def get_configuration_setting(
         self,
         key,
-        label=None,
-        etag="*",
-        match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> ConfigurationSetting
+    ):  # type: (str, **Any) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
         :type key: str
-        :param label: label of the ConfigurationSetting
-        :type label: str
-        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :type etag: str or None
-        :param match_condition: The match condition to use upon the etag
-        :type match_condition: :class:`~azure.core.MatchConditions`
+        :keyword str label: label of the ConfigurationSetting
+        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: :class:`~azure.core.MatchConditions`
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
@@ -255,6 +247,9 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
+        label = kwargs.get("label", None)
+        etag = kwargs.get("etag", "*")
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -346,6 +341,7 @@ class AzureAppConfigurationClient:
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
+        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \

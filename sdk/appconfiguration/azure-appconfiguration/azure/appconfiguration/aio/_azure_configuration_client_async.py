@@ -4,9 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
@@ -47,7 +48,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from azure.core.async_paging import AsyncItemPaged
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class AzureAppConfigurationClient:
@@ -55,7 +56,7 @@ class AzureAppConfigurationClient:
 
         :param str base_url: base url of the service
         :param credential: An object which can provide secrets for the app configuration service
-        :type credential: azure.AppConfigConnectionStringCredential
+        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
         :keyword HttpTransport transport: If omitted, the standard pipeline is used.
         :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -66,8 +67,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Any, **Any) -> None
+    def __init__(self, base_url: str, credential: Union[AppConfigConnectionStringCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -103,8 +103,7 @@ class AzureAppConfigurationClient:
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, **Any) -> AzureAppConfigurationClient
+    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
         This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -171,8 +170,7 @@ class AzureAppConfigurationClient:
         )
 
     @distributed_trace
-    def list_configuration_settings(self, key_filter=None, label_filter=None, **kwargs):
-        # type: (Optional[str], Optional[str], **Any) -> AsyncItemPaged[ConfigurationSetting]
+    def list_configuration_settings(self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -233,14 +231,13 @@ class AzureAppConfigurationClient:
     @distributed_trace_async
     async def get_configuration_setting(
         self,
-        key,
-        label=None,
-        etag="*",
-        match_condition=MatchConditions.Unconditionally,
-        **kwargs
-    ):
-        # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> ConfigurationSetting
-
+        key: str,
+        *,
+        label: Optional[str] = None,
+        etag: Optional[str] = "*",
+        match_condition: Optional[MatchConditions]=MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
@@ -296,13 +293,12 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace_async
-    async def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
+    async def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs: Any) -> ConfigurationSetting:
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
-        :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
+        :type configuration_setting: :class:`~azure.appconfiguration.ConfigurationSetting`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
@@ -345,10 +341,9 @@ class AzureAppConfigurationClient:
     @distributed_trace_async
     async def set_configuration_setting(
         self,
-        configuration_setting,
-        match_condition=MatchConditions.Unconditionally,
-        **kwargs
-    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Any) -> ConfigurationSetting
+        configuration_setting: ConfigurationSetting,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -360,6 +355,7 @@ class AzureAppConfigurationClient:
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
+        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
@@ -380,6 +376,9 @@ class AzureAppConfigurationClient:
             )
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
+        etag = kwargs.get("etag", configuration_setting.etag)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
+
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
@@ -399,7 +398,7 @@ class AzureAppConfigurationClient:
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
                 if_none_match=prep_if_none_match(
-                    configuration_setting.etag, match_condition
+                    etag, match_condition
                 ),
                 headers=custom_headers,
                 error_map=error_map,
@@ -413,8 +412,8 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def delete_configuration_setting(
-        self, key, label=None, **kwargs
-    ):  # type: (str, Optional[str], **Any) -> ConfigurationSetting
+        self, key: str, label: Optional[str] = None, **kwargs: Any
+    ) -> ConfigurationSetting:
 
         """Delete a ConfigurationSetting if it exists
 
@@ -472,8 +471,8 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], **Any) -> AsyncItemPaged[ConfigurationSetting]
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """
         Find the ConfigurationSetting revision history.
@@ -534,8 +533,8 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     async def set_read_only(
-        self, configuration_setting, read_only=True, **kwargs
-    ):  # type: (ConfigurationSetting, Optional[bool], **Any) -> ConfigurationSetting
+        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs: Any
+    ) -> ConfigurationSetting:
 
         """Set a configuration setting read only
 
