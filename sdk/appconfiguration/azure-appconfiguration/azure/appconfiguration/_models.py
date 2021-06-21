@@ -9,6 +9,11 @@ from msrest.serialization import Model
 from ._generated.models import KeyValue
 
 
+PolymorphicConfigurationSetting = Union[
+    "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
+]
+
+
 class ConfigurationSetting(Model):
     """A configuration value.
     Variables are only populated by the server, and will be ignored when
@@ -60,14 +65,14 @@ class ConfigurationSetting(Model):
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> ConfigurationSetting
+        # type: (KeyValue) -> PolymorphicConfigurationSetting
         if key_value is None:
-            return None
+            return key_value
         if key_value.content_type is not None:
             try:
                 if key_value.content_type.startswith(
                     FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
-                ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):
+                ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):  # type: ignore
                     return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
@@ -92,7 +97,7 @@ class ConfigurationSetting(Model):
         )
 
     def _to_generated(self):
-        # type: (...) -> KeyValue
+        # type: () -> KeyValue
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -187,7 +192,7 @@ class FeatureFlagConfigurationSetting(
 
     @enabled.setter
     def enabled(self, new_value):
-        # type: (bool) -> bool
+        # type: (bool) -> None
         self._validate()
         if self.value is None:
             self.value = {}
@@ -220,28 +225,28 @@ class FeatureFlagConfigurationSetting(
 
     @classmethod
     def _from_generated(cls, key_value):
-        # type: (KeyValue) -> FeatureFlagConfigurationSetting
+        # type: (KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]
         try:
             if key_value is None:
-                return None
+                return key_value
             if key_value.value:
                 try:
                     key_value.value = json.loads(key_value.value)
                 except json.decoder.JSONDecodeError:
                     pass
 
-            filters = key_value.value["conditions"]["client_filters"]
+            filters = key_value.value["conditions"]["client_filters"]  # type: ignore
 
             return cls(
-                feature_id=key_value.key,
-                enabled=key_value.value["enabled"],
+                feature_id=key_value.key,  # type: ignore
+                enabled=key_value.value["enabled"],  # type: ignore
                 label=key_value.label,
                 content_type=key_value.content_type,
                 last_modified=key_value.last_modified,
                 tags=key_value.tags,
                 read_only=key_value.locked,
                 etag=key_value.etag,
-                filters=filters,
+                filters=filters,  # type: ignore
                 value=key_value.value,
             )
         except (KeyError, AttributeError):
@@ -278,13 +283,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :param content_type:
     :type content_type: str
     :ivar value: The value of the configuration setting
-    :vartype value: str
+    :vartype value: Dict[str, Any]
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
@@ -342,7 +347,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> SecretReferenceConfigurationSetting
         if key_value is None:
-            return None
+            return key_value
         if key_value.value:
             try:
                 key_value.value = json.loads(key_value.value)
@@ -350,7 +355,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
                 pass
 
         return cls(
-            key=key_value.key,
+            key=key_value.key,  # type: ignore
+            secret_uri=key_value.value[u"secret_uri"],  # type: ignore
             label=key_value.label,
             secret_id=key_value.value,
             last_modified=key_value.last_modified,
@@ -360,7 +366,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
     def _to_generated(self):
-        # type: (...) -> KeyValue
+        # type: () -> KeyValue
         return KeyValue(
             key=self.key,
             label=self.label,

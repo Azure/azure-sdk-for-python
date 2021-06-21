@@ -1,5 +1,19 @@
 # Release History
 
+## 3.0.0 (2021-06-18)
+
+**Features**
+
+  - Model Server has a new parameter federated_client_id
+  - Model Server has a new parameter restrict_outbound_network_access
+  - Model ServerUpdate has a new parameter federated_client_id
+  - Model ServerUpdate has a new parameter restrict_outbound_network_access
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+
+**Breaking changes**
+
+  - Operation ReplicationLinksOperations.get has a new signature
+
 ## 2.1.0 (2021-05-24)
 
  - Add resource identity

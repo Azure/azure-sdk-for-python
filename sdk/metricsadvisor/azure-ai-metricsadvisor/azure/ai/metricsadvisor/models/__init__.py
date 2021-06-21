@@ -30,7 +30,7 @@ from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_en
     DataSourceType as DatasourceType,
     ViewMode as DataFeedAccessMode,
     RollUpMethod as DataFeedAutoRollupMethod,
-    FillMissingPointType as DataSourceMissingDataPointFillType,
+    FillMissingPointType as DatasourceMissingDataPointFillType,
     AnomalyDetectorDirection,
     IncidentStatus as AnomalyIncidentStatus,
     Granularity as DataFeedGranularityType,
@@ -47,7 +47,6 @@ from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_en
 from .._generated.models import (
     FeedbackQueryTimeMode,
     RootCause,
-    DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
     EnrichmentStatus,
@@ -101,7 +100,7 @@ from ._models import (
     DataFeedDimension,
     DataFeedMetric,
     DataFeedIngestionProgress,
-    DetectionConditionsOperator,
+    DetectionConditionOperator,
     AnomalyDetectionConfiguration,
     MetricAnomalyAlertConditions,
     AnomalyIncident,
@@ -120,6 +119,7 @@ from ._models import (
     DatasourceServicePrincipalInKeyVault,
     DatasourceCredential,
     DataFeedSource,
+    DetectionAnomalyFilterCondition,
 )
 
 
@@ -176,7 +176,7 @@ __all__ = (
     "EmailNotificationHook",
     "WebNotificationHook",
     "DataFeedIngestionProgress",
-    "DetectionConditionsOperator",
+    "DetectionConditionOperator",
     "MetricAnomalyAlertConditions",
     "EnrichmentStatus",
     "DataFeedGranularityType",
@@ -188,7 +188,7 @@ __all__ = (
     "DataFeedAccessMode",
     "DataFeedRollupType",
     "DataFeedAutoRollupMethod",
-    "DataSourceMissingDataPointFillType",
+    "DatasourceMissingDataPointFillType",
     "DataFeedIngestionStatus",
     "SmartDetectionCondition",
     "SuppressCondition",

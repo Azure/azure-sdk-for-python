@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b4 (Unreleased)
+## 4.0.0 (2021-06-21)
 ### Changed
 - Key Vault API version 7.2 is now the default
 - `KeyVaultAccessControlClient.delete_role_assignment` and
@@ -17,7 +17,7 @@
   `.delete_role_definition` return None
 - Changed parameter order in `KeyVaultAccessControlClient.set_role_definition`.
   `permissions` is now an optional keyword-only argument
-- Renamed `BackupOperation` to `KeyVaultBackupOperation`, and removed all but
+- Renamed `BackupOperation` to `KeyVaultBackupResult`, and removed all but
   its `folder_url` property
 - Removed `RestoreOperation` and `SelectiveKeyRestoreOperation` classes
 - Removed `KeyVaultBackupClient.begin_selective_restore`. To restore a

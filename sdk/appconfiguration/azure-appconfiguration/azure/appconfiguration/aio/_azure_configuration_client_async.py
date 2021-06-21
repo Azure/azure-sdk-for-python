@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -37,15 +37,9 @@ from .._generated.aio import AzureAppConfiguration
 from .._generated.aio._configuration import AzureAppConfigurationConfiguration
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
-from .._generated.models import KeyValue
 from .._models import ConfigurationSetting
 from .._sync_token import SyncTokenPolicy
 from .._user_agent import USER_AGENT
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -82,8 +76,6 @@ class AzureAppConfigurationClient:
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
-
-        self._sync_token_policy = None
 
         pipeline = kwargs.get("pipeline")
         self._sync_token_policy = SyncTokenPolicy()
@@ -209,7 +201,7 @@ class AzureAppConfigurationClient:
         error_map = {401: ClientAuthenticationError}
 
         try:
-            return self._impl.get_key_values(
+            return self._impl.get_key_values(  # type: ignore
                 label=label_filter,
                 key=key_filter,
                 select=select,
@@ -232,9 +224,10 @@ class AzureAppConfigurationClient:
         *,
         label: Optional[str] = None,
         etag: Optional[str] = "*",
-        match_condition: Optional[MatchConditions]=MatchConditions.Unconditionally,
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
         **kwargs: Any
-    ) -> ConfigurationSetting:
+    ) -> Union[None, ConfigurationSetting]:
+
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
@@ -316,13 +309,13 @@ class AzureAppConfigurationClient:
             added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
 
         try:
             key_value_added = await self._impl.put_key_value(
                 entity=key_value,
-                key=key_value.key,
+                key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_none_match="*",
                 headers=custom_headers,
@@ -377,7 +370,7 @@ class AzureAppConfigurationClient:
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
 
         key_value = configuration_setting._to_generated()
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -391,7 +384,7 @@ class AzureAppConfigurationClient:
         try:
             key_value_set = await self._impl.put_key_value(
                 entity=key_value,
-                key=key_value.key,
+                key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
                 if_none_match=prep_if_none_match(
@@ -440,7 +433,7 @@ class AzureAppConfigurationClient:
 
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -459,7 +452,7 @@ class AzureAppConfigurationClient:
                 headers=custom_headers,
                 error_map=error_map,
             )
-            return ConfigurationSetting._from_generated(key_value_deleted)
+            return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
         except HttpResponseError as error:
             e = error_map[error.status_code]
             raise e(message=error.message, response=error.response)
@@ -512,7 +505,7 @@ class AzureAppConfigurationClient:
         error_map = {401: ClientAuthenticationError}
 
         try:
-            return self._impl.get_revisions(
+            return self._impl.get_revisions(  # type: ignore
                 label=label_filter,
                 key=key_filter,
                 select=select,
