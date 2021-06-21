@@ -8,6 +8,7 @@
 
 from ._machines_operations import MachinesOperations
 from ._machine_extensions_operations import MachineExtensionsOperations
+from ._hybrid_compute_management_client_operations import HybridComputeManagementClientOperationsMixin
 from ._operations import Operations
 from ._private_link_scopes_operations import PrivateLinkScopesOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
@@ -16,6 +17,7 @@ from ._private_endpoint_connections_operations import PrivateEndpointConnections
 __all__ = [
     'MachinesOperations',
     'MachineExtensionsOperations',
+    'HybridComputeManagementClientOperationsMixin',
     'Operations',
     'PrivateLinkScopesOperations',
     'PrivateLinkResourcesOperations',

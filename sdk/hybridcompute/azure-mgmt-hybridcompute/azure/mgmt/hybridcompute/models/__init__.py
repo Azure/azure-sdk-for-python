@@ -11,6 +11,7 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import ExtensionTargetProperties
     from ._models_py3 import HybridComputePrivateLinkScope
     from ._models_py3 import HybridComputePrivateLinkScopeListResult
     from ._models_py3 import HybridComputePrivateLinkScopeProperties
@@ -23,16 +24,20 @@ try:
     from ._models_py3 import MachineExtensionProperties
     from ._models_py3 import MachineExtensionUpdate
     from ._models_py3 import MachineExtensionUpdateProperties
+    from ._models_py3 import MachineExtensionUpgrade
     from ._models_py3 import MachineExtensionsListResult
     from ._models_py3 import MachineListResult
     from ._models_py3 import MachineProperties
     from ._models_py3 import MachineUpdate
     from ._models_py3 import MachineUpdateProperties
     from ._models_py3 import OSProfile
+    from ._models_py3 import OSProfileLinuxConfiguration
+    from ._models_py3 import OSProfileWindowsConfiguration
     from ._models_py3 import OperationListResult
     from ._models_py3 import OperationValue
     from ._models_py3 import OperationValueDisplay
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionDataModel
     from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateEndpointConnectionProperties
     from ._models_py3 import PrivateEndpointProperty
@@ -53,6 +58,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import ExtensionTargetProperties  # type: ignore
     from ._models import HybridComputePrivateLinkScope  # type: ignore
     from ._models import HybridComputePrivateLinkScopeListResult  # type: ignore
     from ._models import HybridComputePrivateLinkScopeProperties  # type: ignore
@@ -65,16 +71,20 @@ except (SyntaxError, ImportError):
     from ._models import MachineExtensionProperties  # type: ignore
     from ._models import MachineExtensionUpdate  # type: ignore
     from ._models import MachineExtensionUpdateProperties  # type: ignore
+    from ._models import MachineExtensionUpgrade  # type: ignore
     from ._models import MachineExtensionsListResult  # type: ignore
     from ._models import MachineListResult  # type: ignore
     from ._models import MachineProperties  # type: ignore
     from ._models import MachineUpdate  # type: ignore
     from ._models import MachineUpdateProperties  # type: ignore
     from ._models import OSProfile  # type: ignore
+    from ._models import OSProfileLinuxConfiguration  # type: ignore
+    from ._models import OSProfileWindowsConfiguration  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import OperationValue  # type: ignore
     from ._models import OperationValueDisplay  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionDataModel  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateEndpointConnectionProperties  # type: ignore
     from ._models import PrivateEndpointProperty  # type: ignore
@@ -104,6 +114,7 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'ExtensionTargetProperties',
     'HybridComputePrivateLinkScope',
     'HybridComputePrivateLinkScopeListResult',
     'HybridComputePrivateLinkScopeProperties',
@@ -116,16 +127,20 @@ __all__ = [
     'MachineExtensionProperties',
     'MachineExtensionUpdate',
     'MachineExtensionUpdateProperties',
+    'MachineExtensionUpgrade',
     'MachineExtensionsListResult',
     'MachineListResult',
     'MachineProperties',
     'MachineUpdate',
     'MachineUpdateProperties',
     'OSProfile',
+    'OSProfileLinuxConfiguration',
+    'OSProfileWindowsConfiguration',
     'OperationListResult',
     'OperationValue',
     'OperationValueDisplay',
     'PrivateEndpointConnection',
+    'PrivateEndpointConnectionDataModel',
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointConnectionProperties',
     'PrivateEndpointProperty',

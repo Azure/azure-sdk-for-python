@@ -45,7 +45,7 @@ class PrivateLinkScopesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HybridComputePrivateLinkScopeListResult"]:
         """Gets a list of all Azure Arc PrivateLinkScopes within a subscription.
 
@@ -59,7 +59,7 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -113,7 +113,7 @@ class PrivateLinkScopesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HybridComputePrivateLinkScopeListResult"]:
         """Gets a list of Azure Arc PrivateLinkScopes within a resource group.
 
@@ -129,7 +129,7 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -141,7 +141,7 @@ class PrivateLinkScopesOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -185,20 +185,20 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
@@ -230,7 +230,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Azure Arc PrivateLinkScope.
 
@@ -240,8 +240,8 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -271,7 +271,7 @@ class PrivateLinkScopesOperations:
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
@@ -294,7 +294,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridComputePrivateLinkScope":
         """Returns a Azure Arc PrivateLinkScope.
 
@@ -312,13 +312,13 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
@@ -354,7 +354,7 @@ class PrivateLinkScopesOperations:
         resource_group_name: str,
         scope_name: str,
         parameters: "_models.HybridComputePrivateLinkScope",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridComputePrivateLinkScope":
         """Creates (or updates) a Azure Arc PrivateLinkScope. Note: You cannot specify a different value
         for InstrumentationKey nor AppId in the Put operation.
@@ -376,14 +376,14 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
@@ -427,7 +427,7 @@ class PrivateLinkScopesOperations:
         resource_group_name: str,
         scope_name: str,
         private_link_scope_tags: "_models.TagsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridComputePrivateLinkScope":
         """Updates an existing PrivateLinkScope's tags. To update other fields use the CreateOrUpdate
         method.
@@ -449,14 +449,14 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.update_tags.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
         }
@@ -495,7 +495,7 @@ class PrivateLinkScopesOperations:
         self,
         location: str,
         private_link_scope_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkScopeValidationDetails":
         """Returns a Azure Arc PrivateLinkScope's validation details.
 
@@ -513,7 +513,7 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
@@ -554,7 +554,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkScopeValidationDetails":
         """Returns a Azure Arc PrivateLinkScope's validation details for a given machine.
 
@@ -573,14 +573,14 @@ class PrivateLinkScopesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get_validation_details_for_machine.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)

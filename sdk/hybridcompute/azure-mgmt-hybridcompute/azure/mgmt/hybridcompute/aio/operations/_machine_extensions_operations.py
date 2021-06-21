@@ -49,21 +49,21 @@ class MachineExtensionsOperations:
         machine_name: str,
         extension_name: str,
         extension_parameters: "_models.MachineExtension",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MachineExtension"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MachineExtension"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -107,7 +107,7 @@ class MachineExtensionsOperations:
         machine_name: str,
         extension_name: str,
         extension_parameters: "_models.MachineExtension",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MachineExtension"]:
         """The operation to create or update the extension.
 
@@ -121,8 +121,8 @@ class MachineExtensionsOperations:
         :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtension
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MachineExtension or the result of cls(response)
@@ -157,7 +157,7 @@ class MachineExtensionsOperations:
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -183,21 +183,21 @@ class MachineExtensionsOperations:
         machine_name: str,
         extension_name: str,
         extension_parameters: "_models.MachineExtensionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MachineExtension"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MachineExtension"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -241,7 +241,7 @@ class MachineExtensionsOperations:
         machine_name: str,
         extension_name: str,
         extension_parameters: "_models.MachineExtensionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MachineExtension"]:
         """The operation to create or update the extension.
 
@@ -255,8 +255,8 @@ class MachineExtensionsOperations:
         :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MachineExtension or the result of cls(response)
@@ -291,7 +291,7 @@ class MachineExtensionsOperations:
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -316,20 +316,20 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -363,7 +363,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """The operation to delete the extension.
 
@@ -375,8 +375,8 @@ class MachineExtensionsOperations:
         :type extension_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -407,7 +407,7 @@ class MachineExtensionsOperations:
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -432,7 +432,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         extension_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MachineExtension":
         """The operation to get the extension.
 
@@ -452,13 +452,13 @@ class MachineExtensionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -495,7 +495,7 @@ class MachineExtensionsOperations:
         resource_group_name: str,
         machine_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MachineExtensionsListResult"]:
         """The operation to get all extensions of a non-Azure machine.
 
@@ -515,7 +515,7 @@ class MachineExtensionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -527,7 +527,7 @@ class MachineExtensionsOperations:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'machineName': self._serialize.url("machine_name", machine_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }

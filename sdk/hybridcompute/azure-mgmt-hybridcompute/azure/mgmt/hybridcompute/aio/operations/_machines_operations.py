@@ -45,7 +45,7 @@ class MachinesOperations:
         self,
         resource_group_name: str,
         machine_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The operation to remove a hybrid machine identity in Azure.
 
@@ -63,14 +63,14 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -102,7 +102,7 @@ class MachinesOperations:
         resource_group_name: str,
         machine_name: str,
         expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Machine":
         """Retrieves information about the model view or the instance view of a hybrid machine.
 
@@ -122,14 +122,14 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'machineName': self._serialize.url("machine_name", machine_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -164,7 +164,7 @@ class MachinesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MachineListResult"]:
         """Lists all the hybrid machines in the specified resource group. Use the nextLink property in the
         response to get the next page of hybrid machines.
@@ -181,7 +181,7 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -194,7 +194,7 @@ class MachinesOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -235,7 +235,7 @@ class MachinesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MachineListResult"]:
         """Lists all the hybrid machines in the specified subscription. Use the nextLink property in the
         response to get the next page of hybrid machines.
@@ -250,7 +250,7 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-25-preview"
+        api_version = "2021-06-10-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

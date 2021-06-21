@@ -45,7 +45,7 @@ class HybridComputeManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2021-03-25-preview"
+        self.api_version = "2021-06-10-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-hybridcompute/{}'.format(VERSION))
         self._configure(**kwargs)

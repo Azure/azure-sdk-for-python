@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 from ._configuration import HybridComputeManagementClientConfiguration
 from .operations import MachinesOperations
 from .operations import MachineExtensionsOperations
+from .operations import HybridComputeManagementClientOperationsMixin
 from .operations import Operations
 from .operations import PrivateLinkScopesOperations
 from .operations import PrivateLinkResourcesOperations
@@ -28,7 +29,7 @@ from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
-class HybridComputeManagementClient(object):
+class HybridComputeManagementClient(HybridComputeManagementClientOperationsMixin):
     """The Hybrid Compute Management Client.
 
     :ivar machines: MachinesOperations operations
