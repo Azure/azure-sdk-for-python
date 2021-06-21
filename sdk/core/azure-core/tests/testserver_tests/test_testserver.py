@@ -23,8 +23,10 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import pytest
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 """This file does a simple call to the testserver to make sure we can use the testserver"""
+pytestmark = pytest.mark.usefixtures("testserver")
 
 def test_smoke():
     request = HttpRequest(method="GET", url="http://localhost:5000/basic/string")
