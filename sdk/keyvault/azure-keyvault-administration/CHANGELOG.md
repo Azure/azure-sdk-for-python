@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0 (2020-06-17)
+## 4.0.0 (2021-06-21)
 ### Changed
 - Key Vault API version 7.2 is now the default
 - `KeyVaultAccessControlClient.delete_role_assignment` and
