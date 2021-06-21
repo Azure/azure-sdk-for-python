@@ -180,6 +180,25 @@ class Dimension(msrest.serialization.Model):
         self.values = kwargs['values']
 
 
+class ErrorContract(msrest.serialization.Model):
+    """Describes the format of Error response.
+
+    :param error: The error details.
+    :type error: ~$(python-base-namespace).v2018_04_16.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorContract, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
 
@@ -207,15 +226,16 @@ class LogMetricTrigger(msrest.serialization.Model):
     """A log metrics trigger descriptor.
 
     :param threshold_operator: Evaluation operation for Metric -'GreaterThan' or 'LessThan' or
-     'Equal'. Possible values include: "GreaterThan", "LessThan", "Equal".
-    :type threshold_operator: str or ~$(python-base-
-     namespace).v2018_04_16.models.ConditionalOperator
+     'Equal'. Possible values include: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan",
+     "LessThan", "Equal". Default value: "GreaterThanOrEqual".
+    :type threshold_operator: str or
+     ~$(python-base-namespace).v2018_04_16.models.ConditionalOperator
     :param threshold: The threshold of the metric trigger.
     :type threshold: float
     :param metric_trigger_type: Metric Trigger Type - 'Consecutive' or 'Total'. Possible values
-     include: "Consecutive", "Total".
-    :type metric_trigger_type: str or ~$(python-base-
-     namespace).v2018_04_16.models.MetricTriggerType
+     include: "Consecutive", "Total". Default value: "Consecutive".
+    :type metric_trigger_type: str or
+     ~$(python-base-namespace).v2018_04_16.models.MetricTriggerType
     :param metric_column: Evaluation of metric on a particular column.
     :type metric_column: str
     """
@@ -232,9 +252,9 @@ class LogMetricTrigger(msrest.serialization.Model):
         **kwargs
     ):
         super(LogMetricTrigger, self).__init__(**kwargs)
-        self.threshold_operator = kwargs.get('threshold_operator', None)
+        self.threshold_operator = kwargs.get('threshold_operator', "GreaterThanOrEqual")
         self.threshold = kwargs.get('threshold', None)
-        self.metric_trigger_type = kwargs.get('metric_trigger_type', None)
+        self.metric_trigger_type = kwargs.get('metric_trigger_type', "Consecutive")
         self.metric_column = kwargs.get('metric_column', None)
 
 
@@ -255,6 +275,16 @@ class Resource(msrest.serialization.Model):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
+     resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+     the resource provider must validate and persist this value.
+    :vartype kind: str
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
     """
 
     _validation = {
@@ -262,6 +292,8 @@ class Resource(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -270,6 +302,8 @@ class Resource(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(
@@ -282,6 +316,8 @@ class Resource(msrest.serialization.Model):
         self.type = None
         self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
+        self.kind = None
+        self.etag = None
 
 
 class LogSearchRuleResource(Resource):
@@ -301,8 +337,27 @@ class LogSearchRuleResource(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
+    :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
+     resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
+     the resource provider must validate and persist this value.
+    :vartype kind: str
+    :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
+     also be provided as a header per the normal etag convention.  Entity tags are used for
+     comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
+     the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range
+     (section 14.27) header fields.
+    :vartype etag: str
+    :ivar created_with_api_version: The api-version used when creating this alert rule.
+    :vartype created_with_api_version: str
+    :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
+    :vartype is_legacy_log_analytics_rule: bool
     :param description: The description of the Log Search rule.
     :type description: str
+    :param display_name: The display name of the alert rule.
+    :type display_name: str
+    :param auto_mitigate: The flag that indicates whether the alert should be automatically
+     resolved or not. The default is false.
+    :type auto_mitigate: bool
     :param enabled: The flag which indicates whether the Log Search rule is enabled. Value should
      be true or false. Possible values include: "true", "false".
     :type enabled: str or ~$(python-base-namespace).v2018_04_16.models.Enabled
@@ -310,8 +365,8 @@ class LogSearchRuleResource(Resource):
     :vartype last_updated_time: ~datetime.datetime
     :ivar provisioning_state: Provisioning state of the scheduled query rule. Possible values
      include: "Succeeded", "Deploying", "Canceled", "Failed".
-    :vartype provisioning_state: str or ~$(python-base-
-     namespace).v2018_04_16.models.ProvisioningState
+    :vartype provisioning_state: str or
+     ~$(python-base-namespace).v2018_04_16.models.ProvisioningState
     :param source: Required. Data Source against which rule will Query Data.
     :type source: ~$(python-base-namespace).v2018_04_16.models.Source
     :param schedule: Schedule (Frequency, Time Window) for rule. Required for action type -
@@ -326,6 +381,10 @@ class LogSearchRuleResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
+        'etag': {'readonly': True},
+        'created_with_api_version': {'readonly': True},
+        'is_legacy_log_analytics_rule': {'readonly': True},
         'last_updated_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'source': {'required': True},
@@ -338,7 +397,13 @@ class LogSearchRuleResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'created_with_api_version': {'key': 'properties.createdWithApiVersion', 'type': 'str'},
+        'is_legacy_log_analytics_rule': {'key': 'properties.isLegacyLogAnalyticsRule', 'type': 'bool'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'enabled': {'key': 'properties.enabled', 'type': 'str'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -352,7 +417,11 @@ class LogSearchRuleResource(Resource):
         **kwargs
     ):
         super(LogSearchRuleResource, self).__init__(**kwargs)
+        self.created_with_api_version = None
+        self.is_legacy_log_analytics_rule = None
         self.description = kwargs.get('description', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.auto_mitigate = kwargs.get('auto_mitigate', False)
         self.enabled = kwargs.get('enabled', None)
         self.last_updated_time = None
         self.provisioning_state = None
@@ -510,9 +579,10 @@ class TriggerCondition(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param threshold_operator: Required. Evaluation operation for rule - 'GreaterThan' or
-     'LessThan. Possible values include: "GreaterThan", "LessThan", "Equal".
-    :type threshold_operator: str or ~$(python-base-
-     namespace).v2018_04_16.models.ConditionalOperator
+     'LessThan. Possible values include: "GreaterThanOrEqual", "LessThanOrEqual", "GreaterThan",
+     "LessThan", "Equal". Default value: "GreaterThanOrEqual".
+    :type threshold_operator: str or
+     ~$(python-base-namespace).v2018_04_16.models.ConditionalOperator
     :param threshold: Required. Result or count threshold based on which rule should be triggered.
     :type threshold: float
     :param metric_trigger: Trigger condition for metric query rule.
@@ -535,6 +605,6 @@ class TriggerCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(TriggerCondition, self).__init__(**kwargs)
-        self.threshold_operator = kwargs['threshold_operator']
+        self.threshold_operator = kwargs.get('threshold_operator', "GreaterThanOrEqual")
         self.threshold = kwargs['threshold']
         self.metric_trigger = kwargs.get('metric_trigger', None)

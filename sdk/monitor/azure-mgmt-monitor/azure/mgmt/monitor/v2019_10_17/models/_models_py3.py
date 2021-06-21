@@ -83,8 +83,8 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
      able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
     :vartype provisioning_state: str
     :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections: list[~$(python-base-
-     namespace).v2019_10_17.models.PrivateEndpointConnection]
+    :vartype private_endpoint_connections:
+     list[~$(python-base-namespace).v2019_10_17.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -159,7 +159,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -219,8 +219,8 @@ class ErrorResponseCommon(ErrorResponse):
     :ivar details: The error details.
     :vartype details: list[~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~$(python-base-
-     namespace).v2019_10_17.models.ErrorAdditionalInfo]
+    :vartype additional_info:
+     list[~$(python-base-namespace).v2019_10_17.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -343,8 +343,8 @@ class PrivateEndpointConnection(ProxyResource):
     :type private_endpoint: ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
     :param private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state: ~$(python-base-
-     namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+    :type private_link_service_connection_state:
+     ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """

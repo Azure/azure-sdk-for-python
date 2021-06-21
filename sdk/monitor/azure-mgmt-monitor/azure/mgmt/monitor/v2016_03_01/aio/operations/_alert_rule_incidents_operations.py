@@ -46,7 +46,7 @@ class AlertRuleIncidentsOperations:
         resource_group_name: str,
         rule_name: str,
         incident_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Incident":
         """Gets an incident associated to an alert rule.
 
@@ -75,7 +75,7 @@ class AlertRuleIncidentsOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'incidentName': self._serialize.url("incident_name", incident_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -93,7 +93,7 @@ class AlertRuleIncidentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Incident', pipeline_response)
@@ -108,7 +108,7 @@ class AlertRuleIncidentsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IncidentListResult"]:
         """Gets a list of incidents associated to an alert rule.
 
@@ -140,7 +140,7 @@ class AlertRuleIncidentsOperations:
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters

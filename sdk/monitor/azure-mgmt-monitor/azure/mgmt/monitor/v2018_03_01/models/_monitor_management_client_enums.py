@@ -26,7 +26,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AggregationTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the criteria time aggregation types.
     """
 

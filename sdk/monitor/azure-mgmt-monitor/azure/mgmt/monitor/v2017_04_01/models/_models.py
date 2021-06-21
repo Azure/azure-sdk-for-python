@@ -135,12 +135,12 @@ class ActionGroupResource(Resource):
     :type itsm_receivers: list[~$(python-base-namespace).v2017_04_01.models.ItsmReceiver]
     :param azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
      action group.
-    :type azure_app_push_receivers: list[~$(python-base-
-     namespace).v2017_04_01.models.AzureAppPushReceiver]
+    :type azure_app_push_receivers:
+     list[~$(python-base-namespace).v2017_04_01.models.AzureAppPushReceiver]
     :param automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
-    :type automation_runbook_receivers: list[~$(python-base-
-     namespace).v2017_04_01.models.AutomationRunbookReceiver]
+    :type automation_runbook_receivers:
+     list[~$(python-base-namespace).v2017_04_01.models.AutomationRunbookReceiver]
     """
 
     _validation = {
@@ -217,8 +217,8 @@ class ActivityLogAlertActionList(msrest.serialization.Model):
     """A list of activity log alert actions.
 
     :param action_groups: The list of activity log alerts.
-    :type action_groups: list[~$(python-base-
-     namespace).v2017_04_01.models.ActivityLogAlertActionGroup]
+    :type action_groups:
+     list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertActionGroup]
     """
 
     _attribute_map = {

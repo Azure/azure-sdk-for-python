@@ -44,7 +44,7 @@ class DataCollectionRuleAssociationsOperations:
     def list_by_resource(
         self,
         resource_uri: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataCollectionRuleAssociationProxyOnlyResourceListResult"]:
         """Lists associations for the specified resource.
 
@@ -102,7 +102,7 @@ class DataCollectionRuleAssociationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -117,7 +117,7 @@ class DataCollectionRuleAssociationsOperations:
         self,
         resource_group_name: str,
         data_collection_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataCollectionRuleAssociationProxyOnlyResourceListResult"]:
         """Lists associations for the specified data collection rule.
 
@@ -151,8 +151,8 @@ class DataCollectionRuleAssociationsOperations:
                 url = self.list_by_rule.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'dataCollectionRuleName': self._serialize.url("data_collection_rule_name", data_collection_rule_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'dataCollectionRuleName': self._serialize.url("data_collection_rule_name", data_collection_rule_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -180,7 +180,7 @@ class DataCollectionRuleAssociationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -195,7 +195,7 @@ class DataCollectionRuleAssociationsOperations:
         self,
         resource_uri: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataCollectionRuleAssociationProxyOnlyResource":
         """Returns the specified association.
 
@@ -203,7 +203,7 @@ class DataCollectionRuleAssociationsOperations:
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param association_name: The name of the association.
+        :param association_name: The name of the association. The name is case insensitive.
         :type association_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleAssociationProxyOnlyResource, or the result of cls(response)
@@ -222,7 +222,7 @@ class DataCollectionRuleAssociationsOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True, min_length=1),
-            'associationName': self._serialize.url("association_name", association_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'associationName': self._serialize.url("association_name", association_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -240,7 +240,7 @@ class DataCollectionRuleAssociationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DataCollectionRuleAssociationProxyOnlyResource', pipeline_response)
@@ -256,7 +256,7 @@ class DataCollectionRuleAssociationsOperations:
         resource_uri: str,
         association_name: str,
         body: Optional["_models.DataCollectionRuleAssociationProxyOnlyResource"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataCollectionRuleAssociationProxyOnlyResource":
         """Creates or updates an association.
 
@@ -264,7 +264,7 @@ class DataCollectionRuleAssociationsOperations:
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param association_name: The name of the association.
+        :param association_name: The name of the association. The name is case insensitive.
         :type association_name: str
         :param body: The payload.
         :type body: ~$(python-base-namespace).v2019_11_01_preview.models.DataCollectionRuleAssociationProxyOnlyResource
@@ -286,7 +286,7 @@ class DataCollectionRuleAssociationsOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True, min_length=1),
-            'associationName': self._serialize.url("association_name", association_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'associationName': self._serialize.url("association_name", association_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -311,7 +311,7 @@ class DataCollectionRuleAssociationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -330,7 +330,7 @@ class DataCollectionRuleAssociationsOperations:
         self,
         resource_uri: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an association.
 
@@ -338,7 +338,7 @@ class DataCollectionRuleAssociationsOperations:
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param association_name: The name of the association.
+        :param association_name: The name of the association. The name is case insensitive.
         :type association_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -357,7 +357,7 @@ class DataCollectionRuleAssociationsOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True, min_length=1),
-            'associationName': self._serialize.url("association_name", association_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'associationName': self._serialize.url("association_name", association_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -375,7 +375,7 @@ class DataCollectionRuleAssociationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -85,10 +85,15 @@ class AlertRuleResource(Resource):
     :type name_properties_name: str
     :param description: the description of the alert rule that will be included in the alert email.
     :type description: str
+    :param provisioning_state: the provisioning state.
+    :type provisioning_state: str
     :param is_enabled: Required. the flag that indicates whether the alert rule is enabled.
     :type is_enabled: bool
     :param condition: Required. the condition that results in the alert rule being activated.
     :type condition: ~$(python-base-namespace).v2016_03_01.models.RuleCondition
+    :param action: action that is performed when the alert rule becomes active, and when an alert
+     condition is resolved.
+    :type action: ~$(python-base-namespace).v2016_03_01.models.RuleAction
     :param actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
     :type actions: list[~$(python-base-namespace).v2016_03_01.models.RuleAction]
@@ -115,8 +120,10 @@ class AlertRuleResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'name_properties_name': {'key': 'properties.name', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
         'condition': {'key': 'properties.condition', 'type': 'RuleCondition'},
+        'action': {'key': 'properties.action', 'type': 'RuleAction'},
         'actions': {'key': 'properties.actions', 'type': '[RuleAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
@@ -130,14 +137,18 @@ class AlertRuleResource(Resource):
         condition: "RuleCondition",
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
+        action: Optional["RuleAction"] = None,
         actions: Optional[List["RuleAction"]] = None,
         **kwargs
     ):
         super(AlertRuleResource, self).__init__(location=location, tags=tags, **kwargs)
         self.name_properties_name = name_properties_name
         self.description = description
+        self.provisioning_state = provisioning_state
         self.is_enabled = is_enabled
         self.condition = condition
+        self.action = action
         self.actions = actions
         self.last_updated_time = None
 
@@ -174,10 +185,15 @@ class AlertRuleResourcePatch(msrest.serialization.Model):
     :type name: str
     :param description: the description of the alert rule that will be included in the alert email.
     :type description: str
+    :param provisioning_state: the provisioning state.
+    :type provisioning_state: str
     :param is_enabled: the flag that indicates whether the alert rule is enabled.
     :type is_enabled: bool
     :param condition: the condition that results in the alert rule being activated.
     :type condition: ~$(python-base-namespace).v2016_03_01.models.RuleCondition
+    :param action: action that is performed when the alert rule becomes active, and when an alert
+     condition is resolved.
+    :type action: ~$(python-base-namespace).v2016_03_01.models.RuleAction
     :param actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
     :type actions: list[~$(python-base-namespace).v2016_03_01.models.RuleAction]
@@ -193,8 +209,10 @@ class AlertRuleResourcePatch(msrest.serialization.Model):
         'tags': {'key': 'tags', 'type': '{str}'},
         'name': {'key': 'properties.name', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
         'condition': {'key': 'properties.condition', 'type': 'RuleCondition'},
+        'action': {'key': 'properties.action', 'type': 'RuleAction'},
         'actions': {'key': 'properties.actions', 'type': '[RuleAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
@@ -205,8 +223,10 @@ class AlertRuleResourcePatch(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
         is_enabled: Optional[bool] = None,
         condition: Optional["RuleCondition"] = None,
+        action: Optional["RuleAction"] = None,
         actions: Optional[List["RuleAction"]] = None,
         **kwargs
     ):
@@ -214,8 +234,10 @@ class AlertRuleResourcePatch(msrest.serialization.Model):
         self.tags = tags
         self.name = name
         self.description = description
+        self.provisioning_state = provisioning_state
         self.is_enabled = is_enabled
         self.condition = condition
+        self.action = action
         self.actions = actions
         self.last_updated_time = None
 
@@ -640,8 +662,8 @@ class ManagementEventRuleCondition(RuleCondition):
     :param aggregation: How the data that is collected should be combined over time and when the
      alert is activated. Note that for management event alerts aggregation is optional – if it is
      not provided then any event will cause the alert to activate.
-    :type aggregation: ~$(python-base-
-     namespace).v2016_03_01.models.ManagementEventAggregationCondition
+    :type aggregation:
+     ~$(python-base-namespace).v2016_03_01.models.ManagementEventAggregationCondition
     """
 
     _validation = {
@@ -702,17 +724,18 @@ class MetricDefinition(msrest.serialization.Model):
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~$(python-base-namespace).v2016_03_01.models.LocalizableString
     :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
-     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds".
+     "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+     "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
     :type unit: str or ~$(python-base-namespace).v2016_03_01.models.Unit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
-    :type primary_aggregation_type: str or ~$(python-base-
-     namespace).v2016_03_01.models.AggregationType
+    :type primary_aggregation_type: str or
+     ~$(python-base-namespace).v2016_03_01.models.AggregationType
     :param metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :type metric_availabilities: list[~$(python-base-
-     namespace).v2016_03_01.models.MetricAvailability]
+    :type metric_availabilities:
+     list[~$(python-base-namespace).v2016_03_01.models.MetricAvailability]
     :param id: the resource identifier of the metric definition.
     :type id: str
     """
@@ -854,6 +877,13 @@ class RuleDataSource(msrest.serialization.Model):
     :param resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
      this property cannot be updated for an existing rule.
     :type resource_uri: str
+    :param legacy_resource_id: the legacy resource identifier of the resource the rule monitors.
+     **NOTE**\ : this property cannot be updated for an existing rule.
+    :type legacy_resource_id: str
+    :param resource_location: the location of the resource.
+    :type resource_location: str
+    :param metric_namespace: the namespace of the metric.
+    :type metric_namespace: str
     """
 
     _validation = {
@@ -863,6 +893,9 @@ class RuleDataSource(msrest.serialization.Model):
     _attribute_map = {
         'odata_type': {'key': 'odata\\.type', 'type': 'str'},
         'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        'legacy_resource_id': {'key': 'legacyResourceId', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
     }
 
     _subtype_map = {
@@ -873,11 +906,17 @@ class RuleDataSource(msrest.serialization.Model):
         self,
         *,
         resource_uri: Optional[str] = None,
+        legacy_resource_id: Optional[str] = None,
+        resource_location: Optional[str] = None,
+        metric_namespace: Optional[str] = None,
         **kwargs
     ):
         super(RuleDataSource, self).__init__(**kwargs)
         self.odata_type = None  # type: Optional[str]
         self.resource_uri = resource_uri
+        self.legacy_resource_id = legacy_resource_id
+        self.resource_location = resource_location
+        self.metric_namespace = metric_namespace
 
 
 class RuleEmailAction(RuleAction):
@@ -951,6 +990,13 @@ class RuleManagementEventDataSource(RuleDataSource):
     :param resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
      this property cannot be updated for an existing rule.
     :type resource_uri: str
+    :param legacy_resource_id: the legacy resource identifier of the resource the rule monitors.
+     **NOTE**\ : this property cannot be updated for an existing rule.
+    :type legacy_resource_id: str
+    :param resource_location: the location of the resource.
+    :type resource_location: str
+    :param metric_namespace: the namespace of the metric.
+    :type metric_namespace: str
     :param event_name: the event name.
     :type event_name: str
     :param event_source: the event source.
@@ -980,6 +1026,9 @@ class RuleManagementEventDataSource(RuleDataSource):
     _attribute_map = {
         'odata_type': {'key': 'odata\\.type', 'type': 'str'},
         'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        'legacy_resource_id': {'key': 'legacyResourceId', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'event_name': {'key': 'eventName', 'type': 'str'},
         'event_source': {'key': 'eventSource', 'type': 'str'},
         'level': {'key': 'level', 'type': 'str'},
@@ -995,6 +1044,9 @@ class RuleManagementEventDataSource(RuleDataSource):
         self,
         *,
         resource_uri: Optional[str] = None,
+        legacy_resource_id: Optional[str] = None,
+        resource_location: Optional[str] = None,
+        metric_namespace: Optional[str] = None,
         event_name: Optional[str] = None,
         event_source: Optional[str] = None,
         level: Optional[str] = None,
@@ -1006,7 +1058,7 @@ class RuleManagementEventDataSource(RuleDataSource):
         claims: Optional["RuleManagementEventClaimsDataSource"] = None,
         **kwargs
     ):
-        super(RuleManagementEventDataSource, self).__init__(resource_uri=resource_uri, **kwargs)
+        super(RuleManagementEventDataSource, self).__init__(resource_uri=resource_uri, legacy_resource_id=legacy_resource_id, resource_location=resource_location, metric_namespace=metric_namespace, **kwargs)
         self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'  # type: str
         self.event_name = event_name
         self.event_source = event_source
@@ -1030,6 +1082,13 @@ class RuleMetricDataSource(RuleDataSource):
     :param resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
      this property cannot be updated for an existing rule.
     :type resource_uri: str
+    :param legacy_resource_id: the legacy resource identifier of the resource the rule monitors.
+     **NOTE**\ : this property cannot be updated for an existing rule.
+    :type legacy_resource_id: str
+    :param resource_location: the location of the resource.
+    :type resource_location: str
+    :param metric_namespace: the namespace of the metric.
+    :type metric_namespace: str
     :param metric_name: the name of the metric that defines what the rule monitors.
     :type metric_name: str
     """
@@ -1041,6 +1100,9 @@ class RuleMetricDataSource(RuleDataSource):
     _attribute_map = {
         'odata_type': {'key': 'odata\\.type', 'type': 'str'},
         'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        'legacy_resource_id': {'key': 'legacyResourceId', 'type': 'str'},
+        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
     }
 
@@ -1048,10 +1110,13 @@ class RuleMetricDataSource(RuleDataSource):
         self,
         *,
         resource_uri: Optional[str] = None,
+        legacy_resource_id: Optional[str] = None,
+        resource_location: Optional[str] = None,
+        metric_namespace: Optional[str] = None,
         metric_name: Optional[str] = None,
         **kwargs
     ):
-        super(RuleMetricDataSource, self).__init__(resource_uri=resource_uri, **kwargs)
+        super(RuleMetricDataSource, self).__init__(resource_uri=resource_uri, legacy_resource_id=legacy_resource_id, resource_location=resource_location, metric_namespace=metric_namespace, **kwargs)
         self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'  # type: str
         self.metric_name = metric_name
 
@@ -1120,8 +1185,8 @@ class ThresholdRuleCondition(RuleCondition):
     :param time_aggregation: the time aggregation operator. How the data that are collected should
      be combined over time. The default value is the PrimaryAggregationType of the Metric. Possible
      values include: "Average", "Minimum", "Maximum", "Total", "Last".
-    :type time_aggregation: str or ~$(python-base-
-     namespace).v2016_03_01.models.TimeAggregationOperator
+    :type time_aggregation: str or
+     ~$(python-base-namespace).v2016_03_01.models.TimeAggregationOperator
     """
 
     _validation = {

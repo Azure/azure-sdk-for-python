@@ -28,7 +28,7 @@ class MonitorManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription Id.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 

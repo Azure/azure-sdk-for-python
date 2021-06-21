@@ -26,6 +26,26 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ErrorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The error type of the baseline.
+    """
+
+    ZERO = "0"
+    ONE = "1"
+    TWO = "2"
+    THREE = "3"
+    FOUR = "4"
+    ONE_HUNDRED = "100"
+    TWO_HUNDRED = "200"
+
+class PredictionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The prediction result type of the baseline.
+    """
+
+    ZERO = "0"
+    ONE = "1"
+    TWO = "2"
+
 class ReceiverStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.

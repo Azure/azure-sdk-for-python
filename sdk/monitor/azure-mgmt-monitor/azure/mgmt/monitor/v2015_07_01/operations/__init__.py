@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
+from ._alert_rules_operations import AlertRulesOperations
 
 __all__ = [
     'ServiceDiagnosticSettingsOperations',
+    'AlertRulesOperations',
 ]

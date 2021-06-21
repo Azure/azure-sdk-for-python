@@ -8,7 +8,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -16,6 +16,11 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy
 
 from ._version import VERSION
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
+    from azure.core.credentials import TokenCredential
 
 class MonitorManagementClientConfiguration(Configuration):
     """Configuration for MonitorManagementClient.
@@ -25,7 +30,7 @@ class MonitorManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription Id.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 

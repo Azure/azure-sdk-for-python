@@ -43,7 +43,7 @@ class MetricAlertsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricAlertResourceCollection"]:
         """Retrieve alert rule definitions in a subscription.
 
@@ -69,7 +69,7 @@ class MetricAlertsOperations:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -97,7 +97,7 @@ class MetricAlertsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -111,7 +111,7 @@ class MetricAlertsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricAlertResourceCollection"]:
         """Retrieve alert rule definitions in a resource group.
 
@@ -139,7 +139,7 @@ class MetricAlertsOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -168,7 +168,7 @@ class MetricAlertsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -183,7 +183,7 @@ class MetricAlertsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MetricAlertResource":
         """Retrieve an alert rule definition.
 
@@ -207,7 +207,7 @@ class MetricAlertsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
         }
@@ -227,7 +227,7 @@ class MetricAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertResource', pipeline_response)
@@ -243,7 +243,7 @@ class MetricAlertsOperations:
         resource_group_name: str,
         rule_name: str,
         parameters: "_models.MetricAlertResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MetricAlertResource":
         """Create or update an metric alert definition.
 
@@ -270,7 +270,7 @@ class MetricAlertsOperations:
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
         }
@@ -294,7 +294,7 @@ class MetricAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertResource', pipeline_response)
@@ -310,7 +310,7 @@ class MetricAlertsOperations:
         resource_group_name: str,
         rule_name: str,
         parameters: "_models.MetricAlertResourcePatch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MetricAlertResource":
         """Update an metric alert definition.
 
@@ -337,7 +337,7 @@ class MetricAlertsOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
         }
@@ -361,7 +361,7 @@ class MetricAlertsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MetricAlertResource', pipeline_response)
@@ -376,7 +376,7 @@ class MetricAlertsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete an alert rule definition.
 
@@ -395,11 +395,12 @@ class MetricAlertsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-03-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
         }
@@ -411,6 +412,7 @@ class MetricAlertsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -418,7 +420,8 @@ class MetricAlertsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})

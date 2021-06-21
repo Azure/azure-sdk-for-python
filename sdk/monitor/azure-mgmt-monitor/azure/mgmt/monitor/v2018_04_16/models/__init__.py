@@ -12,6 +12,7 @@ try:
     from ._models_py3 import AzNsActionGroup
     from ._models_py3 import Criteria
     from ._models_py3 import Dimension
+    from ._models_py3 import ErrorContract
     from ._models_py3 import ErrorResponse
     from ._models_py3 import LogMetricTrigger
     from ._models_py3 import LogSearchRuleResource
@@ -28,6 +29,7 @@ except (SyntaxError, ImportError):
     from ._models import AzNsActionGroup  # type: ignore
     from ._models import Criteria  # type: ignore
     from ._models import Dimension  # type: ignore
+    from ._models import ErrorContract  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import LogMetricTrigger  # type: ignore
     from ._models import LogSearchRuleResource  # type: ignore
@@ -55,6 +57,7 @@ __all__ = [
     'AzNsActionGroup',
     'Criteria',
     'Dimension',
+    'ErrorContract',
     'ErrorResponse',
     'LogMetricTrigger',
     'LogSearchRuleResource',

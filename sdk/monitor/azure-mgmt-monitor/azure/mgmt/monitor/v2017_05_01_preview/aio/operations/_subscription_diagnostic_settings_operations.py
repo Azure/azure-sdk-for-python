@@ -42,14 +42,11 @@ class SubscriptionDiagnosticSettingsOperations:
 
     async def get(
         self,
-        subscription_id: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionDiagnosticSettingsResource":
         """Gets the active subscription diagnostic settings for the specified resource.
 
-        :param subscription_id: The subscription id.
-        :type subscription_id: str
         :param name: The name of the diagnostic setting.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -68,7 +65,7 @@ class SubscriptionDiagnosticSettingsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'name': self._serialize.url("name", name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -87,7 +84,7 @@ class SubscriptionDiagnosticSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SubscriptionDiagnosticSettingsResource', pipeline_response)
@@ -100,15 +97,12 @@ class SubscriptionDiagnosticSettingsOperations:
 
     async def create_or_update(
         self,
-        subscription_id: str,
         name: str,
         parameters: "_models.SubscriptionDiagnosticSettingsResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionDiagnosticSettingsResource":
         """Creates or updates subscription diagnostic settings for the specified resource.
 
-        :param subscription_id: The subscription id.
-        :type subscription_id: str
         :param name: The name of the diagnostic setting.
         :type name: str
         :param parameters: Parameters supplied to the operation.
@@ -130,7 +124,7 @@ class SubscriptionDiagnosticSettingsOperations:
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'name': self._serialize.url("name", name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -153,7 +147,7 @@ class SubscriptionDiagnosticSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SubscriptionDiagnosticSettingsResource', pipeline_response)
@@ -166,14 +160,11 @@ class SubscriptionDiagnosticSettingsOperations:
 
     async def delete(
         self,
-        subscription_id: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes existing subscription diagnostic settings for the specified resource.
 
-        :param subscription_id: The subscription id.
-        :type subscription_id: str
         :param name: The name of the diagnostic setting.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -192,7 +183,7 @@ class SubscriptionDiagnosticSettingsOperations:
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'name': self._serialize.url("name", name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -211,7 +202,7 @@ class SubscriptionDiagnosticSettingsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -221,13 +212,10 @@ class SubscriptionDiagnosticSettingsOperations:
 
     async def list(
         self,
-        subscription_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SubscriptionDiagnosticSettingsResourceCollection":
         """Gets the active subscription diagnostic settings list for the specified subscriptionId.
 
-        :param subscription_id: The subscription id.
-        :type subscription_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SubscriptionDiagnosticSettingsResourceCollection, or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2017_05_01_preview.models.SubscriptionDiagnosticSettingsResourceCollection
@@ -244,7 +232,7 @@ class SubscriptionDiagnosticSettingsOperations:
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str', skip_quote=True),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -262,7 +250,7 @@ class SubscriptionDiagnosticSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SubscriptionDiagnosticSettingsResourceCollection', pipeline_response)

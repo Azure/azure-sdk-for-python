@@ -44,7 +44,7 @@ class AutoscaleSettingsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutoscaleSettingResourceCollection"]:
         """Lists the autoscale settings for a resource group.
 
@@ -73,7 +73,7 @@ class AutoscaleSettingsOperations:
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -101,7 +101,7 @@ class AutoscaleSettingsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -117,7 +117,7 @@ class AutoscaleSettingsOperations:
         resource_group_name: str,
         autoscale_setting_name: str,
         parameters: "_models.AutoscaleSettingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutoscaleSettingResource":
         """Creates or updates an autoscale setting.
 
@@ -146,7 +146,7 @@ class AutoscaleSettingsOperations:
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -168,7 +168,7 @@ class AutoscaleSettingsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -187,7 +187,7 @@ class AutoscaleSettingsOperations:
         self,
         resource_group_name: str,
         autoscale_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes and autoscale setting.
 
@@ -213,7 +213,7 @@ class AutoscaleSettingsOperations:
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -231,7 +231,7 @@ class AutoscaleSettingsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -243,7 +243,7 @@ class AutoscaleSettingsOperations:
         self,
         resource_group_name: str,
         autoscale_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutoscaleSettingResource":
         """Gets an autoscale setting.
 
@@ -269,7 +269,7 @@ class AutoscaleSettingsOperations:
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -287,7 +287,7 @@ class AutoscaleSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutoscaleSettingResource', pipeline_response)
@@ -303,7 +303,7 @@ class AutoscaleSettingsOperations:
         resource_group_name: str,
         autoscale_setting_name: str,
         autoscale_setting_resource: "_models.AutoscaleSettingResourcePatch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutoscaleSettingResource":
         """Updates an existing AutoscaleSettingsResource. To update other fields use the CreateOrUpdate
         method.
@@ -331,7 +331,7 @@ class AutoscaleSettingsOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
         }
@@ -355,7 +355,7 @@ class AutoscaleSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutoscaleSettingResource', pipeline_response)
@@ -368,7 +368,7 @@ class AutoscaleSettingsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutoscaleSettingResourceCollection"]:
         """Lists the autoscale settings for a subscription.
 
@@ -394,7 +394,7 @@ class AutoscaleSettingsOperations:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -422,7 +422,7 @@ class AutoscaleSettingsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

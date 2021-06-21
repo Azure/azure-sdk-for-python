@@ -28,7 +28,7 @@ class MonitorManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription Id.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 
@@ -47,7 +47,6 @@ class MonitorManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2015-04-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-monitor/{}'.format(VERSION))
         self._configure(**kwargs)

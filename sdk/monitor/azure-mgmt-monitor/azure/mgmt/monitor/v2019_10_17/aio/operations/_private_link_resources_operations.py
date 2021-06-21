@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkResourceListResult"]:
         """Gets the private link resources that need to be created for a Azure Monitor PrivateLinkScope.
 
@@ -75,7 +75,7 @@ class PrivateLinkResourcesOperations:
                 # Construct URL
                 url = self.list_by_private_link_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
                 }
@@ -120,7 +120,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Gets the private link resources that need to be created for a Azure Monitor PrivateLinkScope.
 
@@ -146,7 +146,7 @@ class PrivateLinkResourcesOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
             'groupName': self._serialize.url("group_name", group_name, 'str'),

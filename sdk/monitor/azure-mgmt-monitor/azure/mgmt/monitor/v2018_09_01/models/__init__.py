@@ -18,6 +18,7 @@ try:
     from ._models_py3 import BaselineMetadataValue
     from ._models_py3 import BaselineResponse
     from ._models_py3 import CalculateBaselineResponse
+    from ._models_py3 import CalculateBaselineResponseStatistics
     from ._models_py3 import EmailReceiver
     from ._models_py3 import EnableRequest
     from ._models_py3 import ErrorResponse
@@ -41,6 +42,7 @@ except (SyntaxError, ImportError):
     from ._models import BaselineMetadataValue  # type: ignore
     from ._models import BaselineResponse  # type: ignore
     from ._models import CalculateBaselineResponse  # type: ignore
+    from ._models import CalculateBaselineResponseStatistics  # type: ignore
     from ._models import EmailReceiver  # type: ignore
     from ._models import EnableRequest  # type: ignore
     from ._models import ErrorResponse  # type: ignore
@@ -54,6 +56,8 @@ except (SyntaxError, ImportError):
     from ._models import WebhookReceiver  # type: ignore
 
 from ._monitor_management_client_enums import (
+    ErrorType,
+    PredictionResultType,
     ReceiverStatus,
     ResultType,
     Sensitivity,
@@ -71,6 +75,7 @@ __all__ = [
     'BaselineMetadataValue',
     'BaselineResponse',
     'CalculateBaselineResponse',
+    'CalculateBaselineResponseStatistics',
     'EmailReceiver',
     'EnableRequest',
     'ErrorResponse',
@@ -82,6 +87,8 @@ __all__ = [
     'TimeSeriesInformation',
     'VoiceReceiver',
     'WebhookReceiver',
+    'ErrorType',
+    'PredictionResultType',
     'ReceiverStatus',
     'ResultType',
     'Sensitivity',

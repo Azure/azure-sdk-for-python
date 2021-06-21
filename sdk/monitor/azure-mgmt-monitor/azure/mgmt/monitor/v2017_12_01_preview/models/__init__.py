@@ -17,9 +17,14 @@ except (SyntaxError, ImportError):
     from ._models import MetricNamespaceCollection  # type: ignore
     from ._models import MetricNamespaceName  # type: ignore
 
+from ._monitor_management_client_enums import (
+    NamespaceClassification,
+)
+
 __all__ = [
     'ErrorResponse',
     'MetricNamespace',
     'MetricNamespaceCollection',
     'MetricNamespaceName',
+    'NamespaceClassification',
 ]
