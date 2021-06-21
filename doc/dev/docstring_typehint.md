@@ -1,6 +1,6 @@
 # Docstrings and Type Hints
 
-All public methods should have docstrings to document the parameters, keywords, and return types for each method. Models and clients should also document properties, instance variables, and class variables.
+All public methods should have docstrings to document the parameters, keywords, exceptions raised, and return types for each method. Models and clients should also document properties, instance variables, and class variables.
 
 * [Docstrings](#docstrings)
     * [Method Docstrings](#method_docstrings)
@@ -11,16 +11,18 @@ All public methods should have docstrings to document the parameters, keywords, 
 
 ## Docstrings
 
-Docstrings are noted by the Python long-string `"""<docstring>"""`. When adding docstrings the `~` can be optionally added to the front of a custom model, this will only display the actual model name in the documentation. For example a type that looks like `azure.data.tables.TableEntity` will display the entire path in the documentation, but `~azure.data.tables.TableEntity` will only display `TableEntity` in the documentation. Additionally, adding the wrapper `` :class:`~azure.data.tables.TableEntity` `` will display only `TableEntity` formatted in monospace font. Both of these capabilities are optional and can only be used in the two-line format described below.
+Docstrings are noted by the Python long-string `"""<docstring>"""`. When adding docstrings the `~` can be optionally added to the front of a custom model, this will only display the actual model name in the documentation. For example a type that looks like `azure.data.tables.TableEntity` will display the entire path in the documentation, but `~azure.data.tables.TableEntity` will only display `TableEntity` in the documentation. Additionally, adding the wrapper `` :class:`~azure.data.tables.TableEntity` `` will display only `TableEntity` formatted in monospace font. These documentation methods will also create direct links to the type documentation. Both of these capabilities are optional and can only be used in the two-line format described below.
 
 ### Method Docstrings
 
-A method docstring is annotated by the Python long-string `"""<docstring>"""` right after the method definition. Below is an example of a full docstring from `azure-ai-formrecognizer`:
+A method docstring is annotated by the Python long-string `"""<docstring>"""` right after the method definition. The convention is a short line ending with a period, two new lines, followed by a longer description. Below is an example of a full docstring from `azure-ai-formrecognizer`:
 ```python
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
         # type: (str, bool, Any) -> LROPoller[CustomFormModel]
-        """Create and train a custom model. The request must include a `training_files_url` parameter that is an
+        """Create and train a custom model.
+
+        The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
@@ -34,11 +36,13 @@ A method docstring is annotated by the Python long-string `"""<docstring>"""` ri
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             training. For example, when using a Azure storage blob URI, use the prefix to restrict sub
             folders for training.
-        :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
+        :keyword include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
+        :paramtype include_subfolder: bool
         :keyword str model_name: An optional, user-defined name to associate with your model.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
@@ -63,7 +67,7 @@ A method docstring is annotated by the Python long-string `"""<docstring>"""` ri
 
 The first portion of this docstring is a general description of what the method does. Following the general description of the method is a **required new line** and then documentation for each of the parameters, optional keyword arguments, returned objects, and potentially raised errors.
 
-Required parameters can be documented in one-line or two-lines. Both options can be used in a single docstring for documenting different parameters without issue.
+Positional parameters can be documented in one-line or two-lines. Both options can be used in a single docstring for documenting different parameters without issue.
 1. This option works best for parameters that are one of the basic types (`str`, `int`, `bool`, `bytes`, `float`, etc.)
 ```python
 :param <type> <param_name>: <Description of the parameter>
@@ -74,7 +78,7 @@ Required parameters can be documented in one-line or two-lines. Both options can
 :type <param_name>: <param_type>
 ```
 
-Optional keyword arguments can in one-line or two-lines. Both options can be used in a single docstring for documenting different keywords without issue.
+Optional keyword arguments can be documented in one-line or two-lines. Both options can be used in a single docstring for documenting different keywords without issue. Keywords includes kwargs and in Python 3 code only, parameters after `*` character.
 1. This option works best for keyword args that are one of the basic types (`str`, `int`, `bool`, `bytes`, `float`, etc.)
 ```python
 :keyword <type> <keyword_name>: <Description of the keyword>
@@ -105,6 +109,8 @@ For adding a version specific change use the `versionadded` docstring:
 .. versionadded:: <version_number>
 
 ```
+
+Additional sphinx directives are documented [here](https://review.docs.microsoft.com/help/onboard/admin/reference/python/documenting-api?branch=master#supported-sphinx-directives)
 
 ### Model and Client Docstrings
 
@@ -142,7 +148,7 @@ Python 2.7 does not support in-line type hints, the type hints for all sync code
 ```python
 def add(num1, num2):
     # type: (int, int) -> int
-    ...
+    return num1 + num2
 ```
 The spacing in type hints is important, there must be a space between "#" and "type", after the semicolon, and before and after the "->". If the type hint is not properly formatted API View will not recognize them.
 
@@ -168,7 +174,7 @@ If a parameter can be one of many types use the `Union` type to describe all pos
 The async models and clients are only valid in Python 3.5+ which allows for the use of in-line type hints. A simple example follows:
 ```python
 def add(num1: int, num2: int) -> int:
-    ...
+    return num1 + num2
 ```
 
 Here is a more complex example from `azure-ai-textanalytics`
@@ -182,4 +188,4 @@ def recognize_entities(
     **kwargs: Any
 ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
 ```
-Note that in the in-line type hints the custom models do not to be guarded by an `if TYPE_CHECKING` conditional. These custom models must be included in imports or the program will fail on the type not being found.
+Note that in the in-line type hints the custom models do not to be guarded by an `if TYPE_CHECKING` conditional. These custom models must be included in imports or the program will fail on the type not being found. Do not use `dict[str,list[str]]`, always use the upper case version from the `typing` module, instead do `Dict[str, List[str]]`.
