@@ -43,7 +43,7 @@ class DeletedWorkspacesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceListResult"]:
         """Gets recently deleted workspaces in a subscription, available for recovery.
 
@@ -111,7 +111,7 @@ class DeletedWorkspacesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkspaceListResult"]:
         """Gets recently deleted workspaces in a resource group, available for recovery.
 
@@ -139,7 +139,7 @@ class DeletedWorkspacesOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
