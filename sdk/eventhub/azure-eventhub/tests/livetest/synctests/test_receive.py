@@ -147,13 +147,19 @@ def test_receive_over_websocket_sync(connstr_senders):
         ed.message_id = message_id_base + str(i)
         event_list.append(ed)
     senders[0].send(event_list)
+    single_ed = EventData("Event Number {}".format(6))
+    single_ed.properties = app_prop
+    single_ed.content_type = content_type
+    single_ed.correlation_id = message_id_base
+    single_ed.message_id = message_id_base + str(6)
+    senders[0].send(single_ed)
 
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"partition_id": "0", "starting_position": "-1"})
         thread.start()
         time.sleep(10)
-    assert len(on_event.received) == 5
+    assert len(on_event.received) == 6
     for ed in on_event.received:
         assert ed.correlation_id == message_id_base
         assert message_id_base in ed.message_id
