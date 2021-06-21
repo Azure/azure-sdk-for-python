@@ -78,7 +78,7 @@ async def test_logs_single_query_additional_workspaces_async():
         additional_workspaces=[os.environ["SECONDARY_WORKSPACE_ID"]],
         )
 
-    assert response is not None
+    assert response
     assert len(response.tables[0].rows) == 2
 
 @pytest.mark.live_test_only
