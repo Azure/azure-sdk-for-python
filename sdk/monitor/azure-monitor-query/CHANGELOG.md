@@ -6,6 +6,9 @@
 
 ### Breaking Changes
 
+- `workspaces`, `workspace_ids`, `qualified_names` and `azure_resource_ids` are now merged into a single `additional_workspaces` list in the query API.
+- The `LogQueryRequest` object now takes in a `workspace_id` and `additional_workspaces` instead of `workspace`.
+
 ### Key Bugs Fixed
 
 ### Fixed
