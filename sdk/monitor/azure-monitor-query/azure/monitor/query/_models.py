@@ -11,7 +11,6 @@ from typing import Any, Optional, List
 from ._helpers import order_results, construct_iso8601
 from ._generated.models import (
     Column as InternalColumn,
-    QueryBody as InternalQueryBody,
     LogQueryRequest as InternalLogQueryRequest,
     ErrorDetails as InternalErrorDetails
 )
