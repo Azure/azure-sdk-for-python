@@ -34,14 +34,13 @@ class AdditionalCapabilities(msrest.serialization.Model):
 class AdditionalUnattendContent(msrest.serialization.Model):
     """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
-     value: "OobeSystem".
-    :vartype pass_name: str
-    :ivar component_name: The component name. Currently, the only allowable value is
-     Microsoft-Windows-Shell-Setup. Default value: "Microsoft-Windows-Shell-Setup".
-    :vartype component_name: str
+    :param pass_name: The pass name. Currently, the only allowable value is OobeSystem. The only
+     acceptable values to pass in are None and "OobeSystem". The default value is None.
+    :type pass_name: str
+    :param component_name: The component name. Currently, the only allowable value is
+     Microsoft-Windows-Shell-Setup. The only acceptable values to pass in are None and
+     "Microsoft-Windows-Shell-Setup". The default value is None.
+    :type component_name: str
     :param setting_name: Specifies the name of the setting to which the content applies. Possible
      values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
      "FirstLogonCommands".
@@ -52,11 +51,6 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     :type content: str
     """
 
-    _validation = {
-        'pass_name': {'constant': True},
-        'component_name': {'constant': True},
-    }
-
     _attribute_map = {
         'pass_name': {'key': 'passName', 'type': 'str'},
         'component_name': {'key': 'componentName', 'type': 'str'},
@@ -64,14 +58,13 @@ class AdditionalUnattendContent(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    pass_name = "OobeSystem"
-    component_name = "Microsoft-Windows-Shell-Setup"
-
     def __init__(
         self,
         **kwargs
     ):
         super(AdditionalUnattendContent, self).__init__(**kwargs)
+        self.pass_name = kwargs.get('pass_name', None)
+        self.component_name = kwargs.get('component_name', None)
         self.setting_name = kwargs.get('setting_name', None)
         self.content = kwargs.get('content', None)
 
@@ -3280,9 +3273,10 @@ class ManagedDiskParameters(SubResource):
 
     :param id: Resource Id.
     :type id: str
-    :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+    :param storage_account_type: Specifies the storage account type for the managed disk. Managed
+     OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
+     can only be used with data disks, it cannot be used with OS Disk. Possible values include:
+     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
      "StandardSSD_ZRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2021_03_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
@@ -4207,25 +4201,15 @@ class ProxyResource(msrest.serialization.Model):
 class PublicIPAddressSku(msrest.serialization.Model):
     """Describes the public IP Sku.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param public_ip_address_sku_name: Required. Specify public IP sku name. Possible values
-     include: "Basic", "Standard".
-    :type public_ip_address_sku_name: str or
-     ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
-    :param public_ip_address_sku_tier: Specify public IP sku tier. Possible values include:
-     "Regional", "Global".
-    :type public_ip_address_sku_tier: str or
-     ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
+    :param name: Specify public IP sku name. Possible values include: "Basic", "Standard".
+    :type name: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuName
+    :param tier: Specify public IP sku tier. Possible values include: "Regional", "Global".
+    :type tier: str or ~azure.mgmt.compute.v2021_03_01.models.PublicIPAddressSkuTier
     """
 
-    _validation = {
-        'public_ip_address_sku_name': {'required': True},
-    }
-
     _attribute_map = {
-        'public_ip_address_sku_name': {'key': 'publicIPAddressSkuName', 'type': 'str'},
-        'public_ip_address_sku_tier': {'key': 'publicIPAddressSkuTier', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(
@@ -4233,8 +4217,8 @@ class PublicIPAddressSku(msrest.serialization.Model):
         **kwargs
     ):
         super(PublicIPAddressSku, self).__init__(**kwargs)
-        self.public_ip_address_sku_name = kwargs['public_ip_address_sku_name']
-        self.public_ip_address_sku_tier = kwargs.get('public_ip_address_sku_tier', None)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
 
 
 class PurchasePlan(msrest.serialization.Model):
@@ -5582,8 +5566,6 @@ class ScheduledEventsProfile(msrest.serialization.Model):
 class SecurityProfile(msrest.serialization.Model):
     """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param uefi_settings: Specifies the security settings like secure boot and vTPM used while
      creating the virtual machine. :code:`<br>`:code:`<br>`Minimum api-version: 2020-12-01.
     :type uefi_settings: ~azure.mgmt.compute.v2021_03_01.models.UefiSettings
@@ -5593,23 +5575,18 @@ class SecurityProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` Default: The Encryption at host will be disabled unless this property
      is set to true for the resource.
     :type encryption_at_host: bool
-    :ivar security_type: Specifies the SecurityType of the virtual machine. It is set as
+    :param security_type: Specifies the SecurityType of the virtual machine. It is set as
      TrustedLaunch to enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not
-     be enabled unless this property is set as TrustedLaunch. Default value: "TrustedLaunch".
-    :vartype security_type: str
+     be enabled unless this property is set as TrustedLaunch. The only acceptable values to pass in
+     are None and "TrustedLaunch". The default value is None.
+    :type security_type: str
     """
-
-    _validation = {
-        'security_type': {'constant': True},
-    }
 
     _attribute_map = {
         'uefi_settings': {'key': 'uefiSettings', 'type': 'UefiSettings'},
         'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
         'security_type': {'key': 'securityType', 'type': 'str'},
     }
-
-    security_type = "TrustedLaunch"
 
     def __init__(
         self,
@@ -5618,6 +5595,7 @@ class SecurityProfile(msrest.serialization.Model):
         super(SecurityProfile, self).__init__(**kwargs)
         self.uefi_settings = kwargs.get('uefi_settings', None)
         self.encryption_at_host = kwargs.get('encryption_at_host', None)
+        self.security_type = kwargs.get('security_type', None)
 
 
 class Sku(msrest.serialization.Model):
@@ -6275,7 +6253,7 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of usage measurement. Default value: "Count".
+    :ivar unit: An enum describing the unit of usage measurement. Has constant value: "Count".
     :vartype unit: str
     :param current_value: Required. The current usage of the resource.
     :type current_value: int
