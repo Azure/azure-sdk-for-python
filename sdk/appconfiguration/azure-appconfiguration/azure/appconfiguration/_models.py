@@ -320,7 +320,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
         self.value = secret_id
-        if not isinstance(secret_id, dict) and isinstance(secret_id, six.string_types):
+        if not isinstance(secret_id, dict):
             self.value = {"secret_uri": secret_id}
 
     @property

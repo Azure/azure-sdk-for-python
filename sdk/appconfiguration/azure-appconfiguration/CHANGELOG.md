@@ -1,7 +1,16 @@
 # Release History
 
 ## 1.2.0b3 (Unreleased)
+### Features Added
 
+### Breaking Changes
+* renamed `base_url` to endpoint in `AzureAppConfigurationClient`
+* `key_filter` and `label_filter` are keyword arguments in `list_configuration_settings`
+* `label`, `etag`, and `match_condition` are now keyword arguments in `get_configuration_settings`
+
+### Key Bugs Fixed
+
+### Fixed
 
 ## 1.2.0b2 (2021-06-08)
 
