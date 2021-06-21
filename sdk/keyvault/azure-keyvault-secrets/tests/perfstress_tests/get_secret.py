@@ -22,16 +22,17 @@ class GetSecretTest(PerfStressTest):
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
         self.client = SecretClient(vault_url, self.credential, **self._client_kwargs)
         self.async_client = AsyncSecretClient(vault_url, self.async_credential, **self._client_kwargs)
+        self.secret_name = "livekvtestgetsecretperfsecret"
 
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        await self.async_client.set_secret("livekvtestgetsecretperfsecret", "secret-value")
+        await self.async_client.set_secret(self.secret_name, "secret-value")
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        await self.async_client.delete_secret("livekvtestgetsecretperfsecret")
-        await self.async_client.purge_deleted_secret("livekvtestgetsecretperfsecret")
+        await self.async_client.delete_secret(self.secret_name)
+        await self.async_client.purge_deleted_secret(self.secret_name)
         await super().global_cleanup()
 
     async def close(self):
@@ -42,8 +43,8 @@ class GetSecretTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        self.client.get_secret("livekvtestgetsecretperfsecret")
+        self.client.get_secret(self.secret_name)
 
     async def run_async(self):
         """The asynchronous perf test."""
-        await self.async_client.get_secret("livekvtestgetsecretperfsecret")
+        await self.async_client.get_secret(self.secret_name)

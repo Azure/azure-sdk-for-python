@@ -22,13 +22,13 @@ class ListSecretsTest(PerfStressTest):
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
-        self.client = SecretClient(vault_url, self.credential)
-        self.async_client = AsyncSecretClient(vault_url, self.async_credential)
+        self.client = SecretClient(vault_url, self.credential, **self._client_kwargs)
+        self.async_client = AsyncSecretClient(vault_url, self.async_credential, **self._client_kwargs)
+        self.secret_names = ["livekvtestlistperfsecret{}".format(i) for i in range(self.args.list_size)]
 
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        self.secret_names = ["livekvtestlistperfsecret{}".format(i) for i in range(self.args.list_size)]
         create = [self.async_client.set_secret(name, "secret-value") for name in self.secret_names]
         await asyncio.wait(create)
 

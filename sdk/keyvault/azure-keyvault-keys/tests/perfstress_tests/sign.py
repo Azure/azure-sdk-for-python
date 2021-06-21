@@ -33,15 +33,18 @@ class SignTest(PerfStressTest):
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
-        self.client = KeyClient(vault_url, self.credential)
-        self.async_client = AsyncKeyClient(vault_url, self.async_credential)
+        self.client = KeyClient(vault_url, self.credential, **self._client_kwargs)
+        self.async_client = AsyncKeyClient(vault_url, self.async_credential, **self._client_kwargs)
+        self.key_name = "livekvtestsignperfkey"
 
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        rsa_key = await self.async_client.create_rsa_key("livekvtestsignperfkey")
-        self.crypto_client = CryptographyClient(rsa_key.id, self.credential, permissions=NO_GET)
-        self.async_crypto_client = AsyncCryptographyClient(rsa_key.id, self.async_credential, permissions=NO_GET)
+        rsa_key = await self.async_client.create_rsa_key(self.key_name)
+        self.crypto_client = CryptographyClient(rsa_key.id, self.credential, permissions=NO_GET, **self._client_kwargs)
+        self.async_crypto_client = AsyncCryptographyClient(
+            rsa_key.id, self.async_credential, permissions=NO_GET, **self._client_kwargs
+        )
 
         self.test_algorithm = SignatureAlgorithm.rs256
         plaintext = os.urandom(2048)
@@ -51,8 +54,8 @@ class SignTest(PerfStressTest):
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        await self.async_client.delete_key("livekvtestsignperfkey")
-        await self.async_client.purge_deleted_key("livekvtestsignperfkey")
+        await self.async_client.delete_key(self.key_name)
+        await self.async_client.purge_deleted_key(self.key_name)
         await super().global_cleanup()
 
     async def close(self):

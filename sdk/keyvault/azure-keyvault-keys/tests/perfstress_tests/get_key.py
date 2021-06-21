@@ -20,18 +20,19 @@ class GetKeyTest(PerfStressTest):
 
         # Create clients
         vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
-        self.client = KeyClient(vault_url, self.credential)
-        self.async_client = AsyncKeyClient(vault_url, self.async_credential)
+        self.client = KeyClient(vault_url, self.credential, **self._client_kwargs)
+        self.async_client = AsyncKeyClient(vault_url, self.async_credential, **self._client_kwargs)
+        self.key_name = "livekvtestgetkeyperfkey"
 
     async def global_setup(self):
         """The global setup is run only once."""
         await super().global_setup()
-        await self.async_client.create_rsa_key("livekvtestgetkeyperfkey")
+        await self.async_client.create_rsa_key(self.key_name)
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        await self.async_client.delete_key("livekvtestgetkeyperfkey")
-        await self.async_client.purge_deleted_key("livekvtestgetkeyperfkey")
+        await self.async_client.delete_key(self.key_name)
+        await self.async_client.purge_deleted_key(self.key_name)
         await super().global_cleanup()
 
     async def close(self):
@@ -42,8 +43,8 @@ class GetKeyTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        self.client.get_key("livekvtestgetkeyperfkey")
+        self.client.get_key(self.key_name)
 
     async def run_async(self):
         """The asynchronous perf test."""
-        await self.async_client.get_key("livekvtestgetkeyperfkey")
+        await self.async_client.get_key(self.key_name)
