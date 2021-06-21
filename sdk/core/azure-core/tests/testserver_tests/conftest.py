@@ -48,7 +48,7 @@ def terminate_testserver(process):
     else:
         os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
 
-@pytest.fixture(autouse=True, scope="module")
+@pytest.fixture(autouse=True, scope="package")
 def testserver():
     """Start the Autorest testserver."""
     server = start_testserver()
