@@ -60,13 +60,6 @@
                 "description": "Whether to enable deployment of Managed HSM. The default is false."
             }
         },
-        "enableSoftDelete": {
-            "type": "bool",
-            "defaultValue": true,
-            "metadata": {
-                "description": "Whether to enable soft delete for the Key Vault. The default is true."
-            }
-        },
         "keyVaultDomainSuffix": {
             "type": "string",
             "defaultValue": ".vault.azure.net",
@@ -99,10 +92,8 @@
         },
         "networkAcls": {
             "bypass": "AzureServices",
-            "virtualNetworkRules": [
-            ],
-            "ipRules": [
-            ],
+            "virtualNetworkRules": [],
+            "ipRules": [],
             "defaultAction": "Allow"
         }
     },
@@ -175,7 +166,7 @@
                 "enabledForDeployment": false,
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": false,
-                "enableSoftDelete": "[parameters('enableSoftDelete')]"
+                "enableSoftDelete": true
             }
         },
         {
@@ -189,19 +180,14 @@
                 "name": "Standard_B1"
             },
             "properties": {
-                "TenantId": "[parameters('tenantId')]",
-                "InitialAdminObjectIds": [
+                "tenantId": "[parameters('tenantId')]",
+                "initialAdminObjectIds": [
                     "[parameters('testApplicationOid')]"
                 ],
-                "EnablePurgeProtection": false,
-                "EnableSoftDelete": "[parameters('enableSoftDelete')]",
-                "PublicNetworkAccess": "Enabled",
-                "NetworkAcls": {
-                    "Bypass": "None",
-                    "DefaultAction": "Allow",
-                    "IpRules": [],
-                    "VirtualNetworkRules": []
-                }
+                "enablePurgeProtection": false,
+                "enableSoftDelete": true,
+                "publicNetworkAccess": "Enabled",
+                "networkAcls": "[variables('networkAcls')]"
             }
         },
         {
