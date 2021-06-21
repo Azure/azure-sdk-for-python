@@ -214,7 +214,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def get_configuration_setting(self, key, **kwargs):
-        # type: (...) -> Union[None, ConfigurationSetting]
+        # type: (str, **Any) -> Union[None, ConfigurationSetting]
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
