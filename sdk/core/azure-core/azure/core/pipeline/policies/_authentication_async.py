@@ -125,3 +125,107 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
     def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
+
+
+class AsyncChallengeAuthenticationPolicy(AsyncHTTPPolicy):
+    """Base class for policies that authorize requests with bearer tokens and expect authentication challenges
+
+    :param ~azure.core.credentials.AsyncTokenCredential credential: an object which can asynchronously provide access
+        tokens, such as a credential from :mod:`azure.identity.aio`
+    :param str scopes: required authentication scopes
+    """
+
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
+        # pylint:disable=unused-argument
+        super().__init__()
+        self._credential = credential
+        self._lock = asyncio.Lock()
+        self._scopes = scopes
+        self._token = None  # type: Optional[AccessToken]
+
+    def _need_new_token(self) -> bool:
+        return not self._token or self._token.expires_on - time.time() < 300
+
+    async def on_request(self, request: "PipelineRequest") -> None:
+        """Called before the policy sends a request.
+
+        The base implementation authorizes the request with a bearer token.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+
+        if self._token is None or self._need_new_token():
+            async with self._lock:
+                # double check because another coroutine may have acquired a token while we waited to acquire the lock
+                if not self._token or self._need_new_token():
+                    self._token = await self._credential.get_token(*self._scopes)
+
+        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+
+    async def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs: "Any") -> None:
+        """Acquire a token from the credential and authorize the request with it.
+
+        Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
+        authorize future requests.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param str scopes: required scopes of authentication
+        """
+
+        async with self._lock:
+            self._token = await self._credential.get_token(*scopes, **kwargs)
+        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        """Authorizes a request with a bearer token, possibly handling an authentication challenge
+
+        :param ~azure.core.pipeline.PipelineRequest request: The request
+        """
+        _BearerTokenCredentialPolicyBase._enforce_https(request)
+
+        await self.on_request(request)
+
+        response = await self.next.send(request)
+
+        if response.http_response.status_code == 401:
+            self._token = None  # any cached token is invalid
+            if "WWW-Authenticate" in response.http_response.headers:
+                request_authorized = await self.on_challenge(request, response)
+                if request_authorized:
+                    response = await self.next.send(request)
+
+        return response
+
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        """Authorize request according to an authentication challenge
+
+        This method is called when the resource provider responds 401 with a WWW-Authenticate header.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
+        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
+        :returns: a bool indicating whether the policy should send the request
+        """
+        # pylint:disable=unused-argument,no-self-use
+        return False
+
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> "Union[None, Awaitable[None]]":
+        """Executed after the request comes back from the next policy.
+
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: Pipeline response object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
+
+    def on_exception(self, request: "PipelineRequest") -> "Union[bool, Awaitable[bool]]":
+        """Executed when an exception is raised while executing the next policy.
+
+        This method is executed inside the exception handler.
+
+        :param request: The Pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: False by default, override with True to stop the exception.
+        :rtype: bool
+        """
+        # pylint: disable=no-self-use,unused-argument
+        return False

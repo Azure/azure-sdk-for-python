@@ -25,7 +25,12 @@
 # --------------------------------------------------------------------------
 
 from ._base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
-from ._authentication import BearerTokenCredentialPolicy, AzureKeyCredentialPolicy, AzureSasCredentialPolicy
+from ._authentication import (
+    BearerTokenCredentialPolicy,
+    AzureKeyCredentialPolicy,
+    AzureSasCredentialPolicy,
+    ChallengeAuthenticationPolicy,
+)
 from ._custom_hook import CustomHookPolicy
 from ._redirect import RedirectPolicy
 from ._retry import RetryPolicy, RetryMode
@@ -44,6 +49,7 @@ __all__ = [
     'HTTPPolicy',
     'SansIOHTTPPolicy',
     'BearerTokenCredentialPolicy',
+    'ChallengeAuthenticationPolicy',
     'AzureKeyCredentialPolicy',
     'AzureSasCredentialPolicy',
     'HeadersPolicy',
@@ -65,12 +71,13 @@ __all__ = [
 
 try:
     from ._base_async import AsyncHTTPPolicy
-    from ._authentication_async import AsyncBearerTokenCredentialPolicy
+    from ._authentication_async import AsyncBearerTokenCredentialPolicy, AsyncChallengeAuthenticationPolicy
     from ._redirect_async import AsyncRedirectPolicy
     from ._retry_async import AsyncRetryPolicy
     __all__.extend([
         'AsyncHTTPPolicy',
         'AsyncBearerTokenCredentialPolicy',
+        'AsyncChallengeAuthenticationPolicy',
         'AsyncRedirectPolicy',
         'AsyncRetryPolicy'
     ])

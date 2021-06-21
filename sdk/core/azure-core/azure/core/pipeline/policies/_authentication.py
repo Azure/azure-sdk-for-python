@@ -40,6 +40,8 @@ class _BearerTokenCredentialPolicyBase(object):
     @staticmethod
     def _enforce_https(request):
         # type: (PipelineRequest) -> None
+        """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify "enforce_https=False"
+        """
 
         # move 'enforce_https' from options to context so it persists
         # across retries but isn't passed to a transport implementation
@@ -168,6 +170,84 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :rtype: bool
         """
         # pylint: disable=no-self-use,unused-argument
+        return False
+
+
+class ChallengeAuthenticationPolicy(HTTPPolicy):
+    """Base class for policies that authorize requests with bearer tokens and expect authentication challenges
+
+    :param ~azure.core.credentials.TokenCredential credential: an object which can provide access tokens, such as a
+        credential from :mod:`azure.identity`
+    :param str scopes: required authentication scopes
+    """
+
+    def __init__(self, credential, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (TokenCredential, *str, **Any) -> None
+        super(ChallengeAuthenticationPolicy, self).__init__()
+        self._scopes = scopes
+        self._credential = credential
+        self._token = None  # type: Optional[AccessToken]
+
+    def _need_new_token(self):
+        # type: () -> bool
+        return not self._token or self._token.expires_on - time.time() < 300
+
+    def authorize_request(self, request, *scopes, **kwargs):
+        # type: (PipelineRequest, *str, **Any) -> None
+        """Acquire a token from the credential and authorize the request with it.
+
+        Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
+        authorize future requests.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param str scopes: required scopes of authentication
+        """
+        self._token = self._credential.get_token(*scopes, **kwargs)
+        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        """Called before the policy sends a request.
+
+        The base implementation authorizes the request with a bearer token.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+
+        if self._token is None or self._need_new_token():
+            self._token = self._credential.get_token(*self._scopes)
+        request.http_request.headers["Authorization"] = "Bearer " + self._token.token
+
+    def send(self, request):
+        # type: (PipelineRequest) -> PipelineResponse
+        """Authorizes a request with a bearer token, possibly handling an authentication challenge
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        """
+        _BearerTokenCredentialPolicyBase._enforce_https(request)
+
+        self.on_request(request)
+
+        response = self.next.send(request)
+
+        if response.http_response.status_code == 401:
+            self._token = None  # any cached token is invalid
+            if "WWW-Authenticate" in response.http_response.headers and self.on_challenge(request, response):
+                response = self.next.send(request)
+
+        return response
+
+    def on_challenge(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> bool
+        """Authorize request according to an authentication challenge
+
+        This method is called when the resource provider responds 401 with a WWW-Authenticate header.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
+        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
+        :returns: a bool indicating whether the policy should send the request
+        """
+        # pylint:disable=unused-argument,no-self-use
         return False
 
 
