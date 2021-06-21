@@ -43,7 +43,7 @@ class GetPrivateDnsZoneSuffixOperations:
     async def execute(
         self,
         body: Union[str, "_models.Enum8"],
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Get private DNS zone suffix in the cloud.
 

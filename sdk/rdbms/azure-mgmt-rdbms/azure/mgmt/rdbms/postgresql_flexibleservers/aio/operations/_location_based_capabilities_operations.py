@@ -44,7 +44,7 @@ class LocationBasedCapabilitiesOperations:
     def execute(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CapabilitiesListResult"]:
         """Get capabilities at specified location in a given subscription.
 

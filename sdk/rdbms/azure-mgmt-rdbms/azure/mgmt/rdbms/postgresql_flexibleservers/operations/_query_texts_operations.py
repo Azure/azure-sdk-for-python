@@ -18,19 +18,19 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateLinkResourcesOperations(object):
-    """PrivateLinkResourcesOperations operations.
+class QueryTextsOperations(object):
+    """QueryTextsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.rdbms.postgresql.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -45,30 +45,96 @@ class PrivateLinkResourcesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_server(
+    def get(
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
+        query_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.PrivateLinkResourceListResult"]
-        """Gets the private link resources for PostgreSQL server.
+        # type: (...) -> "_models.QueryText"
+        """Retrieve the Query-Store query texts for the queryId.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param query_id: The Query-Store query identifier.
+        :type query_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateLinkResourceListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql.models.PrivateLinkResourceListResult]
+        :return: QueryText, or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.QueryText
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryText"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01"
+        api_version = "2021-06-01-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'queryId': self._serialize.url("query_id", query_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('QueryText', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/queryTexts/{queryId}'}  # type: ignore
+
+    def list_by_server(
+        self,
+        resource_group_name,  # type: str
+        server_name,  # type: str
+        query_ids,  # type: List[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.QueryTextsResultList"]
+        """Retrieve the Query-Store query texts for specified queryIds.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param query_ids: The query identifiers.
+        :type query_ids: list[str]
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either QueryTextsResultList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.QueryTextsResultList]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryTextsResultList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -80,14 +146,15 @@ class PrivateLinkResourcesOperations(object):
                 # Construct URL
                 url = self.list_by_server.metadata['url']  # type: ignore
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['queryIds'] = [self._serialize.query("query_ids", q, 'str') if q is not None else '' for q in query_ids]
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -97,7 +164,7 @@ class PrivateLinkResourcesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
+            deserialized = self._deserialize('QueryTextsResultList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -118,67 +185,4 @@ class PrivateLinkResourcesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/privateLinkResources'}  # type: ignore
-
-    def get(
-        self,
-        resource_group_name,  # type: str
-        server_name,  # type: str
-        group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PrivateLinkResource"
-        """Gets a private link resource for PostgreSQL server.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param group_name: The name of the private link resource.
-        :type group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.postgresql.models.PrivateLinkResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResource"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/privateLinkResources/{groupName}'}  # type: ignore
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/queryTexts'}  # type: ignore

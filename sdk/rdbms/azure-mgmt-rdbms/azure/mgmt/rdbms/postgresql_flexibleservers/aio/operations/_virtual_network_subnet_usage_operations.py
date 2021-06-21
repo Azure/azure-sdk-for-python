@@ -44,7 +44,7 @@ class VirtualNetworkSubnetUsageOperations:
         self,
         location_name: str,
         parameters: "_models.VirtualNetworkSubnetUsageParameter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkSubnetUsageResult":
         """Get virtual network subnet usage for a given vNet resource id.
 

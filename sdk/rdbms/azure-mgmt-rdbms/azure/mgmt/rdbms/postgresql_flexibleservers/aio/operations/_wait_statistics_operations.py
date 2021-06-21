@@ -19,14 +19,14 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class LogFilesOperations:
-    """LogFilesOperations async operations.
+class WaitStatisticsOperations:
+    """WaitStatisticsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.rdbms.postgresql.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -45,30 +45,35 @@ class LogFilesOperations:
         self,
         resource_group_name: str,
         server_name: str,
+        parameters: "_models.WaitStatisticsInput",
         **kwargs: Any
-    ) -> AsyncIterable["_models.LogFileListResult"]:
-        """List all the log files in a given server.
+    ) -> AsyncIterable["_models.WaitStatisticsResultList"]:
+        """Retrieve wait statistics for specified aggregation window.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param parameters: The required parameters for retrieving wait statistics.
+        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.WaitStatisticsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either LogFileListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.postgresql.models.LogFileListResult]
+        :return: An iterator like instance of either WaitStatisticsResultList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.WaitStatisticsResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogFileListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WaitStatisticsResultList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-12-01"
+        api_version = "2021-06-01-preview"
+        content_type = "application/json"
         accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -84,19 +89,25 @@ class LogFilesOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-                request = self._client.get(url, query_parameters, header_parameters)
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(parameters, 'WaitStatisticsInput')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(parameters, 'WaitStatisticsInput')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('LogFileListResult', pipeline_response)
+            deserialized = self._deserialize('WaitStatisticsResultList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -113,4 +124,4 @@ class LogFilesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/logFiles'}  # type: ignore
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/waitStatistics'}  # type: ignore

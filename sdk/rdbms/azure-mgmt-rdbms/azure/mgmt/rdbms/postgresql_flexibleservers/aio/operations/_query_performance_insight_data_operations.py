@@ -18,14 +18,14 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class QueryPerformanceInsightDataOperations:
+    """QueryPerformanceInsightDataOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.rdbms.postgresql.models
+    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -40,27 +40,39 @@ class Operations:
         self._deserialize = deserializer
         self._config = config
 
-    async def list(
+    async def reset(
         self,
+        resource_group_name: str,
+        server_name: str,
         **kwargs: Any
-    ) -> "_models.OperationListResult":
-        """Lists all of the available REST API operations.
+    ) -> "_models.QueryPerformanceInsightResetDataResult":
+        """Reset data for Query Performance Insight.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.postgresql.models.OperationListResult
+        :return: QueryPerformanceInsightResetDataResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.QueryPerformanceInsightResetDataResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.QueryPerformanceInsightResetDataResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-12-01"
+        api_version = "2021-06-01-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.list.metadata['url']  # type: ignore
+        url = self.reset.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -70,7 +82,7 @@ class Operations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -78,10 +90,10 @@ class Operations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OperationListResult', pipeline_response)
+        deserialized = self._deserialize('QueryPerformanceInsightResetDataResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.DBForPostgreSQL/operations'}  # type: ignore
+    reset.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/resetQueryPerformanceInsightData'}  # type: ignore
