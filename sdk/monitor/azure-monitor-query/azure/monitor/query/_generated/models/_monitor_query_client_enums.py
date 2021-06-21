@@ -37,6 +37,18 @@ class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
+class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The data type of this column.
+    """
+
+    BOOL = "bool"
+    DATETIME = "datetime"
+    DYNAMIC = "dynamic"
+    INT = "int"
+    LONG = "long"
+    REAL = "real"
+    STRING = "string"
+
 class MetadataColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the column
     """
