@@ -31,8 +31,9 @@ requests = [
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
-        query= "AppRequests | take 2",
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        query= "AppRequests",
+        workspace= os.environ['LOG_WORKSPACE_ID'],
+        include_statistics=True
     ),
 ]
 response = client.batch_query(requests)

@@ -191,9 +191,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
         try:
             headers['Prefer'] = prefer
         except TypeError:
-            headers = {'Prefer': prefer}
-        if prefer:
-            headers 
+            headers = {'Prefer': prefer} 
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
         timespan = construct_iso8601(start, end, duration)
@@ -203,6 +201,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
             "query": query, "timespan": timespan
         }
         self.workspace = workspace
+        self.headers = headers
 
 
 class LogsQueryBody(InternalQueryBody):

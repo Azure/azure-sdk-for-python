@@ -1,3 +1,4 @@
+from numpy import row_stack
 import pytest
 import os
 from azure.identity import ClientSecretCredential
@@ -85,3 +86,42 @@ def test_logs_batch_query():
 
     assert len(response.responses) == 3
 
+@pytest.mark.live_test_only
+def test_logs_single_query_with_statistics():
+    credential = _credential()
+    client = LogsQueryClient(credential)
+    query = """AppRequests"""
+
+    # returns LogsQueryResults 
+    response = client.query(os.environ['LOG_WORKSPACE_ID'], query, include_statistics=True)
+
+    assert response.statistics is not None
+
+@pytest.mark.live_test_only
+def test_logs_batch_query_with_statistics_in_some():
+    client = LogsQueryClient(_credential())
+
+    requests = [
+        LogsQueryRequest(
+            query="AzureActivity | summarize count()",
+            timespan="PT1H",
+            workspace= os.environ['LOG_WORKSPACE_ID']
+        ),
+        LogsQueryRequest(
+            query= """AppRequests|
+                summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
+            timespan="PT1H",
+            workspace= os.environ['LOG_WORKSPACE_ID'],
+            include_statistics=True
+        ),
+        LogsQueryRequest(
+            query= "AppRequests",
+            workspace= os.environ['LOG_WORKSPACE_ID'],
+            include_statistics=True
+        ),
+    ]
+    response = client.batch_query(requests)
+
+    assert len(response.responses) == 3
+    assert response.responses[0].body.statistics is None
+    assert response.responses[2].body.statistics is not None
