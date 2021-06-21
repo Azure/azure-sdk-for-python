@@ -44,12 +44,14 @@ class TranslationPerfStressTest(PerfStressTest):
         self.target_container_name = "target-perf-" + str(uuid.uuid4())
 
         self.service_client = DocumentTranslationClient(
-            endpoint=endpoint,
-            credential=AzureKeyCredential(key),
+            endpoint,
+            AzureKeyCredential(key),
+            **self._client_kwargs
         )
         self.async_service_client = AsyncDocumentTranslationClient(
-            endpoint=endpoint,
-            credential=AzureKeyCredential(key),
+            endpoint,
+            AzureKeyCredential(key),
+            **self._client_kwargs
         )
 
     async def create_source_container(self):
