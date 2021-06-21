@@ -17,7 +17,7 @@
 # ----------------------
 
 from logging import fatal
-from typing import ByteString
+from typing import ByteString, Any
 import unittest
 from cryptography.hazmat.primitives import hashes
 from devtools_testutils import AzureTestCase, PowerShellPreparer

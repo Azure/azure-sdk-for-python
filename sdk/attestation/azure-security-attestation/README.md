@@ -260,10 +260,10 @@ response = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
 At this point, the enclave_held_data attribute in the attestationResult
 will hold the input binary runtime_data.
 
-The token is now passed to the "relying party". The relying party will 
-validate that the token was issued by the Attestation Service. It then 
+The token is now passed to the "relying party". The relying party will
+validate that the token was issued by the Attestation Service. It then
 extracts the asymmetric key from the EnclaveHeldData field. The relying
- party will then Encrypt it's "key" data using the asymmetric key and 
+party will then Encrypt it's "key" data using the asymmetric key and
 transmits it back to the enclave.
 
 ```python
@@ -271,7 +271,6 @@ encryptedData = send_token_to_relying_party(attestationResult.Token)
 ```
 
 Now the encrypted data can be passed into the enclave which can decrypt that data.
-
 
 Additional information on how to perform attestation token validation can be found in the [MAA Service Attestation Sample](https://github.com/Azure-Samples/microsoft-azure-attestation).
 
