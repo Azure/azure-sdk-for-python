@@ -67,6 +67,9 @@ class ActiveDirectory(msrest.serialization.Model):
     :param backup_operators: Users to be added to the Built-in Backup Operator active directory
      group. A list of unique usernames without domain specifier.
     :type backup_operators: list[str]
+    :param administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :type administrators: list[str]
     :param kdc_ip: kdc server IP addresses for the active directory machine. This optional
      parameter is used only while creating kerberos volume.
     :type kdc_ip: str
@@ -114,6 +117,7 @@ class ActiveDirectory(msrest.serialization.Model):
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
         'site': {'key': 'site', 'type': 'str'},
         'backup_operators': {'key': 'backupOperators', 'type': '[str]'},
+        'administrators': {'key': 'administrators', 'type': '[str]'},
         'kdc_ip': {'key': 'kdcIP', 'type': 'str'},
         'ad_name': {'key': 'adName', 'type': 'str'},
         'server_root_ca_certificate': {'key': 'serverRootCACertificate', 'type': 'str'},
@@ -136,6 +140,7 @@ class ActiveDirectory(msrest.serialization.Model):
         organizational_unit: Optional[str] = "CN=Computers",
         site: Optional[str] = None,
         backup_operators: Optional[List[str]] = None,
+        administrators: Optional[List[str]] = None,
         kdc_ip: Optional[str] = None,
         ad_name: Optional[str] = None,
         server_root_ca_certificate: Optional[str] = None,
@@ -158,6 +163,7 @@ class ActiveDirectory(msrest.serialization.Model):
         self.organizational_unit = organizational_unit
         self.site = site
         self.backup_operators = backup_operators
+        self.administrators = administrators
         self.kdc_ip = kdc_ip
         self.ad_name = ad_name
         self.server_root_ca_certificate = server_root_ca_certificate
@@ -688,6 +694,12 @@ class BackupStatus(msrest.serialization.Model):
     :vartype unhealthy_reason: str
     :ivar error_message: Displays error message if the backup is in an error state.
     :vartype error_message: str
+    :ivar last_transfer_size: Displays the last transfer size.
+    :vartype last_transfer_size: long
+    :ivar last_transfer_type: Displays the last transfer type.
+    :vartype last_transfer_type: str
+    :ivar total_transfer_bytes: Displays the total bytes transferred.
+    :vartype total_transfer_bytes: long
     """
 
     _validation = {
@@ -696,6 +708,9 @@ class BackupStatus(msrest.serialization.Model):
         'mirror_state': {'readonly': True},
         'unhealthy_reason': {'readonly': True},
         'error_message': {'readonly': True},
+        'last_transfer_size': {'readonly': True},
+        'last_transfer_type': {'readonly': True},
+        'total_transfer_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -704,6 +719,9 @@ class BackupStatus(msrest.serialization.Model):
         'mirror_state': {'key': 'mirrorState', 'type': 'str'},
         'unhealthy_reason': {'key': 'unhealthyReason', 'type': 'str'},
         'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'last_transfer_size': {'key': 'lastTransferSize', 'type': 'long'},
+        'last_transfer_type': {'key': 'lastTransferType', 'type': 'str'},
+        'total_transfer_bytes': {'key': 'totalTransferBytes', 'type': 'long'},
     }
 
     def __init__(
@@ -716,6 +734,9 @@ class BackupStatus(msrest.serialization.Model):
         self.mirror_state = None
         self.unhealthy_reason = None
         self.error_message = None
+        self.last_transfer_size = None
+        self.last_transfer_type = None
+        self.total_transfer_bytes = None
 
 
 class BreakReplicationRequest(msrest.serialization.Model):
@@ -773,6 +794,8 @@ class CapacityPool(msrest.serialization.Model):
     :vartype utilized_throughput_mibps: float
     :param qos_type: The qos type of the pool. Possible values include: "Auto", "Manual".
     :type qos_type: str or ~azure.mgmt.netapp.models.QosType
+    :param cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
+    :type cool_access: bool
     """
 
     _validation = {
@@ -801,6 +824,7 @@ class CapacityPool(msrest.serialization.Model):
         'total_throughput_mibps': {'key': 'properties.totalThroughputMibps', 'type': 'float'},
         'utilized_throughput_mibps': {'key': 'properties.utilizedThroughputMibps', 'type': 'float'},
         'qos_type': {'key': 'properties.qosType', 'type': 'str'},
+        'cool_access': {'key': 'properties.coolAccess', 'type': 'bool'},
     }
 
     def __init__(
@@ -811,6 +835,7 @@ class CapacityPool(msrest.serialization.Model):
         service_level: Union[str, "ServiceLevel"],
         tags: Optional[Dict[str, str]] = None,
         qos_type: Optional[Union[str, "QosType"]] = None,
+        cool_access: Optional[bool] = False,
         **kwargs
     ):
         super(CapacityPool, self).__init__(**kwargs)
@@ -826,6 +851,7 @@ class CapacityPool(msrest.serialization.Model):
         self.total_throughput_mibps = None
         self.utilized_throughput_mibps = None
         self.qos_type = qos_type
+        self.cool_access = cool_access
 
 
 class CapacityPoolList(msrest.serialization.Model):
@@ -1078,6 +1104,11 @@ class ExportPolicyRule(msrest.serialization.Model):
     :type allowed_clients: str
     :param has_root_access: Has root access to volume.
     :type has_root_access: bool
+    :param chown_mode: This parameter specifies who is authorized to change the ownership of a
+     file. restricted - Only root user can change the ownership of the file. unrestricted - Non-root
+     users can change ownership of files that they own. Possible values include: "Restricted",
+     "Unrestricted". Default value: "Restricted".
+    :type chown_mode: str or ~azure.mgmt.netapp.models.ChownMode
     """
 
     _attribute_map = {
@@ -1095,6 +1126,7 @@ class ExportPolicyRule(msrest.serialization.Model):
         'nfsv41': {'key': 'nfsv41', 'type': 'bool'},
         'allowed_clients': {'key': 'allowedClients', 'type': 'str'},
         'has_root_access': {'key': 'hasRootAccess', 'type': 'bool'},
+        'chown_mode': {'key': 'chownMode', 'type': 'str'},
     }
 
     def __init__(
@@ -1114,6 +1146,7 @@ class ExportPolicyRule(msrest.serialization.Model):
         nfsv41: Optional[bool] = None,
         allowed_clients: Optional[str] = None,
         has_root_access: Optional[bool] = True,
+        chown_mode: Optional[Union[str, "ChownMode"]] = "Restricted",
         **kwargs
     ):
         super(ExportPolicyRule, self).__init__(**kwargs)
@@ -1131,6 +1164,41 @@ class ExportPolicyRule(msrest.serialization.Model):
         self.nfsv41 = nfsv41
         self.allowed_clients = allowed_clients
         self.has_root_access = has_root_access
+        self.chown_mode = chown_mode
+
+
+class FilePathAvailabilityRequest(msrest.serialization.Model):
+    """File path availability request content - availability is based on the name and the subnetId.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. File path to verify.
+    :type name: str
+    :param subnet_id: Required. The Azure Resource URI for a delegated subnet. Must have the
+     delegation Microsoft.NetApp/volumes.
+    :type subnet_id: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'subnet_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        subnet_id: str,
+        **kwargs
+    ):
+        super(FilePathAvailabilityRequest, self).__init__(**kwargs)
+        self.name = name
+        self.subnet_id = subnet_id
 
 
 class HourlySchedule(msrest.serialization.Model):
@@ -1870,6 +1938,58 @@ class ResourceNameAvailabilityRequest(msrest.serialization.Model):
         self.resource_group = resource_group
 
 
+class RestoreStatus(msrest.serialization.Model):
+    """Restore status.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar healthy: Restore health status.
+    :vartype healthy: bool
+    :ivar relationship_status: Status of the restore SnapMirror relationship. Possible values
+     include: "Idle", "Transferring".
+    :vartype relationship_status: str or ~azure.mgmt.netapp.models.RelationshipStatus
+    :ivar mirror_state: The status of the restore. Possible values include: "Uninitialized",
+     "Mirrored", "Broken".
+    :vartype mirror_state: str or ~azure.mgmt.netapp.models.MirrorState
+    :ivar unhealthy_reason: Reason for the unhealthy restore relationship.
+    :vartype unhealthy_reason: str
+    :ivar error_message: Displays error message if the restore is in an error state.
+    :vartype error_message: str
+    :ivar total_transfer_bytes: Displays the total bytes transferred.
+    :vartype total_transfer_bytes: long
+    """
+
+    _validation = {
+        'healthy': {'readonly': True},
+        'relationship_status': {'readonly': True},
+        'mirror_state': {'readonly': True},
+        'unhealthy_reason': {'readonly': True},
+        'error_message': {'readonly': True},
+        'total_transfer_bytes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'healthy': {'key': 'healthy', 'type': 'bool'},
+        'relationship_status': {'key': 'relationshipStatus', 'type': 'str'},
+        'mirror_state': {'key': 'mirrorState', 'type': 'str'},
+        'unhealthy_reason': {'key': 'unhealthyReason', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'total_transfer_bytes': {'key': 'totalTransferBytes', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestoreStatus, self).__init__(**kwargs)
+        self.healthy = None
+        self.relationship_status = None
+        self.mirror_state = None
+        self.unhealthy_reason = None
+        self.error_message = None
+        self.total_transfer_bytes = None
+
+
 class ServiceSpecification(msrest.serialization.Model):
     """One property of operation, include metric specifications.
 
@@ -2436,6 +2556,18 @@ class Volume(msrest.serialization.Model):
     :type encryption_key_source: str
     :param ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :type ldap_enabled: bool
+    :param cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
+    :type cool_access: bool
+    :param coolness_period: Specifies the number of days after which data that is not accessed by
+     clients will be tiered.
+    :type coolness_period: int
+    :param unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
+     First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
+     digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :type unix_permissions: str
     """
 
     _validation = {
@@ -2453,6 +2585,8 @@ class Volume(msrest.serialization.Model):
         'subnet_id': {'required': True},
         'mount_targets': {'readonly': True},
         'throughput_mibps': {'maximum': 4500, 'minimum': 0},
+        'coolness_period': {'maximum': 63, 'minimum': 7},
+        'unix_permissions': {'max_length': 4, 'min_length': 4},
     }
 
     _attribute_map = {
@@ -2484,6 +2618,9 @@ class Volume(msrest.serialization.Model):
         'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
         'encryption_key_source': {'key': 'properties.encryptionKeySource', 'type': 'str'},
         'ldap_enabled': {'key': 'properties.ldapEnabled', 'type': 'bool'},
+        'cool_access': {'key': 'properties.coolAccess', 'type': 'bool'},
+        'coolness_period': {'key': 'properties.coolnessPeriod', 'type': 'int'},
+        'unix_permissions': {'key': 'properties.unixPermissions', 'type': 'str'},
     }
 
     def __init__(
@@ -2510,6 +2647,9 @@ class Volume(msrest.serialization.Model):
         throughput_mibps: Optional[float] = 0,
         encryption_key_source: Optional[str] = None,
         ldap_enabled: Optional[bool] = False,
+        cool_access: Optional[bool] = False,
+        coolness_period: Optional[int] = None,
+        unix_permissions: Optional[str] = None,
         **kwargs
     ):
         super(Volume, self).__init__(**kwargs)
@@ -2541,6 +2681,9 @@ class Volume(msrest.serialization.Model):
         self.throughput_mibps = throughput_mibps
         self.encryption_key_source = encryption_key_source
         self.ldap_enabled = ldap_enabled
+        self.cool_access = cool_access
+        self.coolness_period = coolness_period
+        self.unix_permissions = unix_permissions
 
 
 class VolumeBackupProperties(msrest.serialization.Model):
