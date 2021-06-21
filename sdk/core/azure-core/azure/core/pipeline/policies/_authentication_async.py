@@ -7,7 +7,7 @@ import asyncio
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase, _enforce_https
 
 from .._tools_async import await_result
