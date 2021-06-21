@@ -1159,7 +1159,7 @@ class SignalRCorsSettings(msrest.serialization.Model):
 
 
 class SignalRFeature(msrest.serialization.Model):
-    """Feature of a SignalR resource, which controls the SignalR runtime behavior.
+    """Feature of a resource, which controls the runtime behavior.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1392,6 +1392,19 @@ class SignalRResource(TrackedResource):
     :type upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
     :param network_ac_ls: Network ACLs.
     :type network_ac_ls: ~azure.mgmt.signalr.models.SignalRNetworkACLs
+    :param public_network_access: Enable or disable public network access. Default to "Enabled".
+     When it's Enabled, network ACLs still apply.
+     When it's Disabled, public network access is always disabled no matter what you set in network
+     ACLs.
+    :type public_network_access: str
+    :param disable_local_auth: DisableLocalAuth
+     Enable or disable local auth with AccessKey
+     When set as true, connection with AccessKey=xxx won't work.
+    :type disable_local_auth: bool
+    :param disable_aad_auth: disableAadAuth
+     Enable or disable aad auth
+     When set as true, connection with AuthType=aad won't work.
+    :type disable_aad_auth: bool
     """
 
     _validation = {
@@ -1432,6 +1445,9 @@ class SignalRResource(TrackedResource):
         'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
         'upstream': {'key': 'properties.upstream', 'type': 'ServerlessUpstreamSettings'},
         'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'SignalRNetworkACLs'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        'disable_aad_auth': {'key': 'properties.disableAadAuth', 'type': 'bool'},
     }
 
     def __init__(
@@ -1447,6 +1463,9 @@ class SignalRResource(TrackedResource):
         cors: Optional["SignalRCorsSettings"] = None,
         upstream: Optional["ServerlessUpstreamSettings"] = None,
         network_ac_ls: Optional["SignalRNetworkACLs"] = None,
+        public_network_access: Optional[str] = "Enabled",
+        disable_local_auth: Optional[bool] = False,
+        disable_aad_auth: Optional[bool] = False,
         **kwargs
     ):
         super(SignalRResource, self).__init__(location=location, tags=tags, **kwargs)
@@ -1467,6 +1486,9 @@ class SignalRResource(TrackedResource):
         self.cors = cors
         self.upstream = upstream
         self.network_ac_ls = network_ac_ls
+        self.public_network_access = public_network_access
+        self.disable_local_auth = disable_local_auth
+        self.disable_aad_auth = disable_aad_auth
 
 
 class SignalRResourceList(msrest.serialization.Model):
