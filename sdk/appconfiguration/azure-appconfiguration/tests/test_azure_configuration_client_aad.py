@@ -51,9 +51,9 @@ class AppConfigurationClientTest(AzureTestCase):
             key=item.key, label=item.label
         )
 
-    def create_aad_client(self, base_url):
+    def create_aad_client(self, endpoint):
         cred = self.get_credential(AzureAppConfigurationClient)
-        return AzureAppConfigurationClient(base_url, cred)
+        return AzureAppConfigurationClient(endpoint, cred)
 
     # method: add_configuration_setting
     @app_config_decorator

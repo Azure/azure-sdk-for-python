@@ -115,7 +115,7 @@ from azure.appconfiguration import AzureAppConfigurationClient
 
 credential = DefaultAzureCredential()
 
-client = AzureAppConfigurationClient(base_url="your_endpoint_url", credential=credential)
+client = AzureAppConfigurationClient(endpoint="your_endpoint_url", credential=credential)
 ```
 
 ## Key concepts
