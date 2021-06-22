@@ -44,10 +44,9 @@ class CertificateCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword ~azure.identity.RegionalAuthority regional_authority: a specific
-        :class:`~azure.identity.RegionalAuthority` (preferred) or
-        :class:`~azure.identity.RegionalAuthority.AUTO_DISCOVER_REGION`, to attempt to discover the region. If
-        unspecified or discovery fails, the credential will use the non-regional authority.
+    :keyword ~azure.identity.RegionalAuthority regional_authority: for applications deployed to Azure VMs, a :class:`~azure.identity.RegionalAuthority` to
+        which the credential will authenticate. This argument should be used only by applications deployed to Azure
+        VMs.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):

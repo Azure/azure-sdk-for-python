@@ -6,7 +6,7 @@
   pre-filling the username/email address field on the login page
   ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
 - `CertificateCredential` and `ClientSecretCredential` support regional STS
-  configuration by either keyword argument `regional_authority` or environment
+  on Azure VMs by either keyword argument `regional_authority` or environment
   variable `AZURE_REGIONAL_AUTHORITY_NAME`. See `azure.identity.RegionalAuthority`
   for possible values.
   ([#19301](https://github.com/Azure/azure-sdk-for-python/issues/19301))
