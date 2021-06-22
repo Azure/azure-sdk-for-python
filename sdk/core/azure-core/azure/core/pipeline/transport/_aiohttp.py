@@ -232,11 +232,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, chunk_size=None, decompress=True) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        block_size = chunk_size
+        block_size = kwargs.pop("chunk_size", None)
         if not block_size and hasattr(response, "block_size"):
             block_size = response.block_size
         self.block_size = block_size

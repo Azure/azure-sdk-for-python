@@ -159,18 +159,6 @@ class HttpRequest(object):
         """Gets the request content.
         """
         return self._data or self._files
-    #     if not self._read_content:
-    #         raise RequestNotReadError()
-    #     return self._content
-
-    # def read(self):
-    #     # type: (...) -> bytes
-    #     if not self._read_content:
-    #         if not isinstance(self._content, collections.Iterable):
-    #             raise TypeError("read() should only be called on sync streams.")
-    #         self._content = b"".join(self._content)
-    #         self._read_content = True
-    #     return self._content
 
     def __repr__(self):
         # type: (...) -> str
