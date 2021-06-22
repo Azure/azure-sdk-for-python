@@ -12,9 +12,11 @@ urlFragment: farmbeats-samples
 
 These sample programs demonstrate some common use case scenairos for the [FarmBeats Python client library][python_sdk].
 
-- [hello_world.py][hello_world_sample] demonstrates the most basic operation that can be performed - creation of a Farmer. Use this to understand how to create the client object, how to authenticate it, and make sure your client is set up correctly to call into your FarmBeats endpoint.
+- [sample_hello_world.py][hello_world_sample] demonstrates the most basic operation that can be performed - creation of a Farmer. Use this to understand how to create the client object, how to authenticate it, and make sure your client is set up correctly to call into your FarmBeats endpoint.
 
-- [attachments.py][attachments_sample] demonstrates FarmBeats' capabaility of storing arbitrary files in context to the various [farm hierarchy][farm_hierarchy_docs] objects. We first attach some files onto a farmer and a farm, and then download all existing attachments for the farmer onto a local directory.
+- [sample_attachments.py][attachments_sample] demonstrates FarmBeats' capabaility of storing arbitrary files in context to the various [farm hierarchy][farm_hierarchy_docs] objects. We first attach some files onto a farmer and a farm, and then download all existing attachments for the farmer onto a local directory.
+
+Additionally, for each sample, there are corresponding files in the [`samples/async`][async_samples] directory
 
 ## Prerequisites
 
@@ -46,10 +48,10 @@ We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identit
 - `AZURE_CLIENT_SECRET`
 - `FARMBEATS_ENDPOINT`
 
-Once these are set correctly, you can go ahead and run the hello_world.py sample to make sure everything works correctly.
+Once these are set correctly, you can go ahead and run the sample_hello_world.py sample to make sure everything works correctly.
 
 ```bash
-python hello_world.py
+python sample_hello_world.py
 ```
 
 If everything worked fine, you should see an output like this:
@@ -70,8 +72,9 @@ Last modified timestamp: 2021-06-22 21:01:35+00:00
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS/
 
 <!-- Links to samples files -->
-[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/hello_world.py
-[attachments_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/attachments.py
+[async_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/async
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_hello_world.py
+[attachments_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_attachments.py
 
 <!-- Microsoft/Azure related links -->
 [azure_free_sub]: https://azure.microsoft.com/free/
