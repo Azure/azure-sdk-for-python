@@ -50,7 +50,8 @@ class AzureAppConfigurationClient:
 
         :param str endpoint: base url of the service
         :param credential: An object which can provide secrets for the app configuration service
-        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential` or
+            :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -58,7 +59,12 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, endpoint: str, credential: Union[AppConfigConnectionStringCredential, "AsyncTokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AppConfigConnectionStringCredential, "AsyncTokenCredential"],
+        **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -159,7 +165,13 @@ class AzureAppConfigurationClient:
         )
 
     @distributed_trace
-    def list_configuration_settings(self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(
+        self,
+        *,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -283,7 +295,11 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace_async
-    async def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs: Any) -> ConfigurationSetting:
+    async def add_configuration_setting(
+        self,
+        configuration_setting: ConfigurationSetting,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 

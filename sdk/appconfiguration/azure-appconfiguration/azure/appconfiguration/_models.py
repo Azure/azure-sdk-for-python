@@ -4,7 +4,6 @@
 # ------------------------------------
 import json
 from typing import Dict, Optional, Any, List, Union
-import six
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -174,7 +173,10 @@ class FeatureFlagConfigurationSetting(
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
         if "enabled" in kwargs.keys():
-            self.value = kwargs.get("value", {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": filters}})
+            self.value = kwargs.get(
+                "value",
+                {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": filters}}
+            )
         else:
             self.value = kwargs.get("value", {"conditions": {"client_filters": filters}})
 
