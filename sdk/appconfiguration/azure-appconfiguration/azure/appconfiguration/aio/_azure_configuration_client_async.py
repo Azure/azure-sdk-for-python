@@ -38,8 +38,8 @@ from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolic
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.models import KeyValue
 from .._models import ConfigurationSetting
-from .._sync_token import SyncTokenPolicy
 from .._user_agent import USER_AGENT
+from ._sync_token_async import AsyncSyncTokenPolicy
 
 try:
     from typing import TYPE_CHECKING
@@ -87,10 +87,9 @@ class AzureAppConfigurationClient:
         )
 
         pipeline = kwargs.get("pipeline")
-        self._sync_token_policy = SyncTokenPolicy()
+        self._sync_token_policy = AsyncSyncTokenPolicy()
 
         if pipeline is None:
-            self._sync_token_policy = SyncTokenPolicy()
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
                 credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
