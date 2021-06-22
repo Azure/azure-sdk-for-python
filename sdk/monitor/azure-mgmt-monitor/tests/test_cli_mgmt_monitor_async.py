@@ -281,6 +281,7 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
         result = self.vm_client.virtual_machines.create_or_update(group_name, vm_name, BODY)
         return result.result()
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19389")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_monitor_diagnostic_settings(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
