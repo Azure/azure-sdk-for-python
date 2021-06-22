@@ -409,7 +409,12 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @overload
-    async def delete_configuration_setting(self, key: str, **kwargs: Any) -> ConfigurationSetting:
+    async def delete_configuration_setting(
+        self,
+        key: str,
+        label: Optional[str] = None,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
         ...
 
     @overload
