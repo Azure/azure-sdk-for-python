@@ -167,7 +167,6 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self,
-        *,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         **kwargs: Any

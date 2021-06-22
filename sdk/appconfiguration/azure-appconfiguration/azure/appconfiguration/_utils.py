@@ -42,8 +42,8 @@ def prep_if_none_match(etag, match_condition):
 
 def get_endpoint_from_connection_string(connection_string):
     # type: (str) -> str
-    base_url, _, _ = parse_connection_string(connection_string)
-    return base_url
+    endpoint, _, _ = parse_connection_string(connection_string)
+    return endpoint
 
 
 def parse_connection_string(connection_string):
@@ -53,13 +53,13 @@ def parse_connection_string(connection_string):
     if len(segments) != 3:
         raise ValueError("Invalid connection string.")
 
-    base_url = ""
+    endpoint = ""
     id_ = ""
     secret = ""
     for segment in segments:
         segment = segment.strip()
         if segment.startswith("Endpoint"):
-            base_url = str(segment[17:])
+            endpoint = str(segment[17:])
         elif segment.startswith("Id"):
             id_ = str(segment[3:])
         elif segment.startswith("Secret"):
@@ -67,10 +67,10 @@ def parse_connection_string(connection_string):
         else:
             raise ValueError("Invalid connection string.")
 
-    if not base_url or not id_ or not secret:
+    if not endpoint or not id_ or not secret:
         raise ValueError("Invalid connection string.")
 
-    return base_url, id_, secret
+    return endpoint, id_, secret
 
 
 def get_current_utc_time():

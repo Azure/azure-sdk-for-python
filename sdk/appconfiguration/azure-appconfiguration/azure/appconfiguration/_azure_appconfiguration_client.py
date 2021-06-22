@@ -151,8 +151,10 @@ class AzureAppConfigurationClient:
         return Pipeline(transport, policies)
 
     @distributed_trace
-    def list_configuration_settings(self, **kwargs):
-        # type: (**Any) -> ItemPaged[ConfigurationSetting]
+    def list_configuration_settings(
+        self, key_filter=None, label_filter=None, **kwargs
+    ):
+        # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -189,8 +191,6 @@ class AzureAppConfigurationClient:
                 pass  # do something
         """
         select = kwargs.pop("fields", None)
-        key_filter = kwargs.pop("key_filter", None)
-        label_filter = kwargs.pop("label_filter", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
         error_map = {401: ClientAuthenticationError}
