@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from typing import Any, Dict
-from asyncio import locks
+from asyncio import Lock
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
