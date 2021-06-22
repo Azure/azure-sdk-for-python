@@ -141,8 +141,8 @@ class AttestationTest(AzureTestCase):
 
     # The caching infrastructure won't cache .well-known/openid_metadata responses so
     # mark the metadata related tests as live-only.
-    @AttestationPreparer()
     @pytest.mark.live_test_only
+    @AttestationPreparer()
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_openidmetadata()
@@ -156,8 +156,8 @@ class AttestationTest(AzureTestCase):
                 attestation_location_short_name
             )
 
-    @AttestationPreparer()
     @pytest.mark.live_test_only
+    @AttestationPreparer()
     def test_aad_getopenidmetadata(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = attest_client.get_openidmetadata()
@@ -165,8 +165,8 @@ class AttestationTest(AzureTestCase):
         assert open_id_metadata["jwks_uri"] == attestation_aad_url + "/certs"
         assert open_id_metadata["issuer"] == attestation_aad_url
 
-    @AttestationPreparer()
     @pytest.mark.live_test_only
+    @AttestationPreparer()
     def test_isolated_getopenidmetadata(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = attest_client.get_openidmetadata()

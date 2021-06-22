@@ -6,7 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import List
+from typing import Awaitable, List
 import pytest
 import functools
 from devtools_testutils import PowerShellPreparer
@@ -20,10 +20,8 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 
-if TYPE_CHECKING:
-    from typing import Callable, Dict, Optional, Any, TypeVar
-
-    T = TypeVar("T")
+from typing import Awaitable, Callable, Dict, Optional, Any, TypeVar, overload
+T = TypeVar("T")
 
 
 AttestationPreparer = functools.partial(
@@ -57,41 +55,32 @@ AttestationPreparer = functools.partial(
 
 
 def AllAttestationTypes(
-    __func=None,  # type: Callable[..., T]
-    **kwargs  # type: Any
+    __func: Callable[..., Awaitable[T]] = None, **kwargs: Any
 ):
     """Decorator to apply to function to add attestation_type kwarg for each attestation type.
     """
-    def decorator(func):
-        # type: (Callable[..., T]) -> Callable[..., T]
+    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
 
         @functools.wraps(func)
-        def wrapper_use_attestationtype(*args, **kwargs):
-            # type: (*Any, **Any) -> T
-
+        async def wrapper_use_attestationtype(*args: Any, **kwargs: Any) -> T:
             for attestation_type in [
                 AttestationType.SGX_ENCLAVE,
                 AttestationType.OPEN_ENCLAVE,
                 AttestationType.TPM]:
-                func(*args, attestation_type = attestation_type, **kwargs)
+                await func(*args, attestation_type = attestation_type, **kwargs)
         return wrapper_use_attestationtype
         
     return decorator if __func is None else decorator(__func)
 
 def AllInstanceTypes(
-    __func=None,  # type: Callable[..., T]
-    include_shared=True, # type: bool
-    **kwargs  # type: Any
+    __func: Callable[..., Awaitable[T]] = None, include_shared: bool=True, **kwargs: Any
 ):
     """Decorator to apply to function to add instance_url kwarg for each instance type.
     """
-    def decorator(func):
-        # type: (Callable[..., T]) -> Callable[..., T]
+    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
 
         @functools.wraps(func)
-        def wrapper_use_instance(*args, **kwargs):
-            # type: (*Any, **Any) -> T
-
+        async def wrapper_use_instance(*args: Any, **kwargs: Any) -> T:
             instances = [] #type:List[str]
             instances.append(kwargs.get('attestation_aad_url'))
             instances.append(kwargs.get('attestation_isolated_url'))
@@ -105,7 +94,8 @@ def AllInstanceTypes(
                 )
 
             for attestation_type in instances:
-                func(*args, instance_url = attestation_type, **kwargs)
+                await func(*args, instance_url = attestation_type, **kwargs)
         return wrapper_use_instance
         
     return decorator if __func is None else decorator(__func)
+

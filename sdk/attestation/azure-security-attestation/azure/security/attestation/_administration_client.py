@@ -180,7 +180,8 @@ class AttestationAdministrationClient(object):
             token=token_body.policy, body_type=GeneratedStoredAttestationPolicy
         )
 
-        actual_policy = stored_policy.get_body().attestation_policy  # type: bytes
+        policy_body = stored_policy.get_body()
+        actual_policy = policy_body.attestation_policy if policy_body else ''.encode('ascii')  # type: bytes
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)

@@ -156,8 +156,8 @@ class AsyncAzureAttestationTest(AzureTestCase):
                 attestation_location_short_name
             )
 
-    @AttestationPreparer()
     @pytest.mark.live_test_only
+    @AttestationPreparer()
     async def test_aad_getopenidmetadataasync(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = await attest_client.get_openidmetadata()
@@ -165,8 +165,8 @@ class AsyncAzureAttestationTest(AzureTestCase):
         assert open_id_metadata["jwks_uri"] == attestation_aad_url + "/certs"
         assert open_id_metadata["issuer"] == attestation_aad_url
 
-    @AttestationPreparer()
     @pytest.mark.live_test_only
+    @AttestationPreparer()
     async def test_isolated_getopenidmetadataasync(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = await attest_client.get_openidmetadata()
