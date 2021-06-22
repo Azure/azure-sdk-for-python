@@ -18,10 +18,15 @@ try:
     from ._models_py3 import AdaptiveNetworkHardeningEnforceRequest
     from ._models_py3 import AdaptiveNetworkHardeningsList
     from ._models_py3 import AdditionalData
+    from ._models_py3 import AdditionalWorkspacesProperties
     from ._models_py3 import AdvancedThreatProtectionSetting
     from ._models_py3 import Alert
     from ._models_py3 import AlertEntity
     from ._models_py3 import AlertList
+    from ._models_py3 import AlertSimulatorBundlesRequestProperties
+    from ._models_py3 import AlertSimulatorRequestBody
+    from ._models_py3 import AlertSimulatorRequestProperties
+    from ._models_py3 import AlertSyncSettings
     from ._models_py3 import AlertsSuppressionRule
     from ._models_py3 import AlertsSuppressionRulesList
     from ._models_py3 import AllowedConnectionsList
@@ -63,6 +68,7 @@ try:
     from ._models_py3 import CVSS
     from ._models_py3 import CefExternalSecuritySolution
     from ._models_py3 import CefSolutionProperties
+    from ._models_py3 import CloudErrorBody
     from ._models_py3 import Compliance
     from ._models_py3 import ComplianceList
     from ._models_py3 import ComplianceResult
@@ -71,6 +77,8 @@ try:
     from ._models_py3 import ConnectableResource
     from ._models_py3 import ConnectedResource
     from ._models_py3 import ConnectedWorkspace
+    from ._models_py3 import ConnectionFromIpNotAllowed
+    from ._models_py3 import ConnectionStrings
     from ._models_py3 import ConnectionToIpNotAllowed
     from ._models_py3 import ConnectorSetting
     from ._models_py3 import ConnectorSettingList
@@ -87,6 +95,7 @@ try:
     from ._models_py3 import DiscoveredSecuritySolutionList
     from ._models_py3 import ETag
     from ._models_py3 import EffectiveNetworkSecurityGroups
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ExternalSecuritySolution
     from ._models_py3 import ExternalSecuritySolutionKind
     from ._models_py3 import ExternalSecuritySolutionList
@@ -103,6 +112,10 @@ try:
     from ._models_py3 import InformationProtectionPolicy
     from ._models_py3 import InformationProtectionPolicyList
     from ._models_py3 import InformationType
+    from ._models_py3 import IngestionConnectionString
+    from ._models_py3 import IngestionSetting
+    from ._models_py3 import IngestionSettingList
+    from ._models_py3 import IngestionSettingToken
     from ._models_py3 import IoTSecurityAggregatedAlert
     from ._models_py3 import IoTSecurityAggregatedAlertList
     from ._models_py3 import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem
@@ -117,16 +130,12 @@ try:
     from ._models_py3 import IoTSecuritySolutionModel
     from ._models_py3 import IoTSecuritySolutionsList
     from ._models_py3 import IoTSeverityMetrics
-    from ._models_py3 import IotAlert
-    from ._models_py3 import IotAlertList
     from ._models_py3 import IotAlertListModel
     from ._models_py3 import IotAlertModel
     from ._models_py3 import IotAlertType
     from ._models_py3 import IotAlertTypeList
     from ._models_py3 import IotDefenderSettingsList
     from ._models_py3 import IotDefenderSettingsModel
-    from ._models_py3 import IotRecommendation
-    from ._models_py3 import IotRecommendationList
     from ._models_py3 import IotRecommendationListModel
     from ._models_py3 import IotRecommendationModel
     from ._models_py3 import IotRecommendationType
@@ -241,9 +250,12 @@ try:
     from ._models_py3 import Setting
     from ._models_py3 import SettingsList
     from ._models_py3 import Site
+    from ._models_py3 import Software
+    from ._models_py3 import SoftwaresList
     from ._models_py3 import SqlServerVulnerabilityProperties
     from ._models_py3 import SubAssessmentStatus
     from ._models_py3 import SuppressionAlertsScope
+    from ._models_py3 import SystemData
     from ._models_py3 import Tags
     from ._models_py3 import TagsResource
     from ._models_py3 import ThresholdCustomAlertRule
@@ -277,10 +289,15 @@ except (SyntaxError, ImportError):
     from ._models import AdaptiveNetworkHardeningEnforceRequest  # type: ignore
     from ._models import AdaptiveNetworkHardeningsList  # type: ignore
     from ._models import AdditionalData  # type: ignore
+    from ._models import AdditionalWorkspacesProperties  # type: ignore
     from ._models import AdvancedThreatProtectionSetting  # type: ignore
     from ._models import Alert  # type: ignore
     from ._models import AlertEntity  # type: ignore
     from ._models import AlertList  # type: ignore
+    from ._models import AlertSimulatorBundlesRequestProperties  # type: ignore
+    from ._models import AlertSimulatorRequestBody  # type: ignore
+    from ._models import AlertSimulatorRequestProperties  # type: ignore
+    from ._models import AlertSyncSettings  # type: ignore
     from ._models import AlertsSuppressionRule  # type: ignore
     from ._models import AlertsSuppressionRulesList  # type: ignore
     from ._models import AllowedConnectionsList  # type: ignore
@@ -322,6 +339,7 @@ except (SyntaxError, ImportError):
     from ._models import CVSS  # type: ignore
     from ._models import CefExternalSecuritySolution  # type: ignore
     from ._models import CefSolutionProperties  # type: ignore
+    from ._models import CloudErrorBody  # type: ignore
     from ._models import Compliance  # type: ignore
     from ._models import ComplianceList  # type: ignore
     from ._models import ComplianceResult  # type: ignore
@@ -330,6 +348,8 @@ except (SyntaxError, ImportError):
     from ._models import ConnectableResource  # type: ignore
     from ._models import ConnectedResource  # type: ignore
     from ._models import ConnectedWorkspace  # type: ignore
+    from ._models import ConnectionFromIpNotAllowed  # type: ignore
+    from ._models import ConnectionStrings  # type: ignore
     from ._models import ConnectionToIpNotAllowed  # type: ignore
     from ._models import ConnectorSetting  # type: ignore
     from ._models import ConnectorSettingList  # type: ignore
@@ -346,6 +366,7 @@ except (SyntaxError, ImportError):
     from ._models import DiscoveredSecuritySolutionList  # type: ignore
     from ._models import ETag  # type: ignore
     from ._models import EffectiveNetworkSecurityGroups  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ExternalSecuritySolution  # type: ignore
     from ._models import ExternalSecuritySolutionKind  # type: ignore
     from ._models import ExternalSecuritySolutionList  # type: ignore
@@ -362,6 +383,10 @@ except (SyntaxError, ImportError):
     from ._models import InformationProtectionPolicy  # type: ignore
     from ._models import InformationProtectionPolicyList  # type: ignore
     from ._models import InformationType  # type: ignore
+    from ._models import IngestionConnectionString  # type: ignore
+    from ._models import IngestionSetting  # type: ignore
+    from ._models import IngestionSettingList  # type: ignore
+    from ._models import IngestionSettingToken  # type: ignore
     from ._models import IoTSecurityAggregatedAlert  # type: ignore
     from ._models import IoTSecurityAggregatedAlertList  # type: ignore
     from ._models import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem  # type: ignore
@@ -376,16 +401,12 @@ except (SyntaxError, ImportError):
     from ._models import IoTSecuritySolutionModel  # type: ignore
     from ._models import IoTSecuritySolutionsList  # type: ignore
     from ._models import IoTSeverityMetrics  # type: ignore
-    from ._models import IotAlert  # type: ignore
-    from ._models import IotAlertList  # type: ignore
     from ._models import IotAlertListModel  # type: ignore
     from ._models import IotAlertModel  # type: ignore
     from ._models import IotAlertType  # type: ignore
     from ._models import IotAlertTypeList  # type: ignore
     from ._models import IotDefenderSettingsList  # type: ignore
     from ._models import IotDefenderSettingsModel  # type: ignore
-    from ._models import IotRecommendation  # type: ignore
-    from ._models import IotRecommendationList  # type: ignore
     from ._models import IotRecommendationListModel  # type: ignore
     from ._models import IotRecommendationModel  # type: ignore
     from ._models import IotRecommendationType  # type: ignore
@@ -500,9 +521,12 @@ except (SyntaxError, ImportError):
     from ._models import Setting  # type: ignore
     from ._models import SettingsList  # type: ignore
     from ._models import Site  # type: ignore
+    from ._models import Software  # type: ignore
+    from ._models import SoftwaresList  # type: ignore
     from ._models import SqlServerVulnerabilityProperties  # type: ignore
     from ._models import SubAssessmentStatus  # type: ignore
     from ._models import SuppressionAlertsScope  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import Tags  # type: ignore
     from ._models import TagsResource  # type: ignore
     from ._models import ThresholdCustomAlertRule  # type: ignore
@@ -529,6 +553,8 @@ from ._security_center_enums import (
     AadConnectivityStateEnum,
     ActionType,
     AdaptiveApplicationControlIssue,
+    AdditionalWorkspaceDataType,
+    AdditionalWorkspaceType,
     AlertIntent,
     AlertNotifications,
     AlertSeverity,
@@ -541,19 +567,22 @@ from ._security_center_enums import (
     AuthenticationType,
     AuthorizationState,
     AutoProvision,
-    Category,
+    BundleType,
+    Categories,
     ConfigurationStatus,
     ConnectionType,
     ControlType,
+    CreatedByType,
     DataSource,
     DeviceCriticality,
     DeviceStatus,
     Direction,
+    EndOfSupportStatus,
     EnforcementMode,
     EnforcementSupport,
+    Enum13,
     Enum15,
-    Enum17,
-    Enum3,
+    Enum85,
     EventSource,
     ExpandControlsEnum,
     ExpandEnum,
@@ -563,8 +592,10 @@ from ._security_center_enums import (
     HybridComputeProvisioningState,
     ImplementationEffort,
     Intent,
+    KindEnum,
     MacSignificance,
     ManagementState,
+    OnboardingKind,
     Operator,
     PermissionProperty,
     PricingTier,
@@ -593,6 +624,7 @@ from ._security_center_enums import (
     SecurityFamily,
     SecuritySolutionStatus,
     SensorStatus,
+    SensorType,
     ServerVulnerabilityAssessmentPropertiesProvisioningState,
     SettingKind,
     Severity,
@@ -623,10 +655,15 @@ __all__ = [
     'AdaptiveNetworkHardeningEnforceRequest',
     'AdaptiveNetworkHardeningsList',
     'AdditionalData',
+    'AdditionalWorkspacesProperties',
     'AdvancedThreatProtectionSetting',
     'Alert',
     'AlertEntity',
     'AlertList',
+    'AlertSimulatorBundlesRequestProperties',
+    'AlertSimulatorRequestBody',
+    'AlertSimulatorRequestProperties',
+    'AlertSyncSettings',
     'AlertsSuppressionRule',
     'AlertsSuppressionRulesList',
     'AllowedConnectionsList',
@@ -668,6 +705,7 @@ __all__ = [
     'CVSS',
     'CefExternalSecuritySolution',
     'CefSolutionProperties',
+    'CloudErrorBody',
     'Compliance',
     'ComplianceList',
     'ComplianceResult',
@@ -676,6 +714,8 @@ __all__ = [
     'ConnectableResource',
     'ConnectedResource',
     'ConnectedWorkspace',
+    'ConnectionFromIpNotAllowed',
+    'ConnectionStrings',
     'ConnectionToIpNotAllowed',
     'ConnectorSetting',
     'ConnectorSettingList',
@@ -692,6 +732,7 @@ __all__ = [
     'DiscoveredSecuritySolutionList',
     'ETag',
     'EffectiveNetworkSecurityGroups',
+    'ErrorAdditionalInfo',
     'ExternalSecuritySolution',
     'ExternalSecuritySolutionKind',
     'ExternalSecuritySolutionList',
@@ -708,6 +749,10 @@ __all__ = [
     'InformationProtectionPolicy',
     'InformationProtectionPolicyList',
     'InformationType',
+    'IngestionConnectionString',
+    'IngestionSetting',
+    'IngestionSettingList',
+    'IngestionSettingToken',
     'IoTSecurityAggregatedAlert',
     'IoTSecurityAggregatedAlertList',
     'IoTSecurityAggregatedAlertPropertiesTopDevicesListItem',
@@ -722,16 +767,12 @@ __all__ = [
     'IoTSecuritySolutionModel',
     'IoTSecuritySolutionsList',
     'IoTSeverityMetrics',
-    'IotAlert',
-    'IotAlertList',
     'IotAlertListModel',
     'IotAlertModel',
     'IotAlertType',
     'IotAlertTypeList',
     'IotDefenderSettingsList',
     'IotDefenderSettingsModel',
-    'IotRecommendation',
-    'IotRecommendationList',
     'IotRecommendationListModel',
     'IotRecommendationModel',
     'IotRecommendationType',
@@ -846,9 +887,12 @@ __all__ = [
     'Setting',
     'SettingsList',
     'Site',
+    'Software',
+    'SoftwaresList',
     'SqlServerVulnerabilityProperties',
     'SubAssessmentStatus',
     'SuppressionAlertsScope',
+    'SystemData',
     'Tags',
     'TagsResource',
     'ThresholdCustomAlertRule',
@@ -873,6 +917,8 @@ __all__ = [
     'AadConnectivityStateEnum',
     'ActionType',
     'AdaptiveApplicationControlIssue',
+    'AdditionalWorkspaceDataType',
+    'AdditionalWorkspaceType',
     'AlertIntent',
     'AlertNotifications',
     'AlertSeverity',
@@ -885,19 +931,22 @@ __all__ = [
     'AuthenticationType',
     'AuthorizationState',
     'AutoProvision',
-    'Category',
+    'BundleType',
+    'Categories',
     'ConfigurationStatus',
     'ConnectionType',
     'ControlType',
+    'CreatedByType',
     'DataSource',
     'DeviceCriticality',
     'DeviceStatus',
     'Direction',
+    'EndOfSupportStatus',
     'EnforcementMode',
     'EnforcementSupport',
+    'Enum13',
     'Enum15',
-    'Enum17',
-    'Enum3',
+    'Enum85',
     'EventSource',
     'ExpandControlsEnum',
     'ExpandEnum',
@@ -907,8 +956,10 @@ __all__ = [
     'HybridComputeProvisioningState',
     'ImplementationEffort',
     'Intent',
+    'KindEnum',
     'MacSignificance',
     'ManagementState',
+    'OnboardingKind',
     'Operator',
     'PermissionProperty',
     'PricingTier',
@@ -937,6 +988,7 @@ __all__ = [
     'SecurityFamily',
     'SecuritySolutionStatus',
     'SensorStatus',
+    'SensorType',
     'ServerVulnerabilityAssessmentPropertiesProvisioningState',
     'SettingKind',
     'Severity',

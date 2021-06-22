@@ -42,7 +42,7 @@ class OnPremiseIotSensorsOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OnPremiseIotSensorsList":
         """List on-premise IoT sensors.
 
@@ -93,7 +93,7 @@ class OnPremiseIotSensorsOperations:
     async def get(
         self,
         on_premise_iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OnPremiseIotSensor":
         """Get on-premise IoT sensor.
 
@@ -147,7 +147,7 @@ class OnPremiseIotSensorsOperations:
     async def create_or_update(
         self,
         on_premise_iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OnPremiseIotSensor":
         """Create or update on-premise IoT sensor.
 
@@ -205,7 +205,7 @@ class OnPremiseIotSensorsOperations:
     async def delete(
         self,
         on_premise_iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete on-premise IoT sensor.
 
@@ -256,7 +256,7 @@ class OnPremiseIotSensorsOperations:
     async def download_activation(
         self,
         on_premise_iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Download sensor activation file.
 
@@ -311,7 +311,7 @@ class OnPremiseIotSensorsOperations:
         self,
         on_premise_iot_sensor_name: str,
         body: "_models.ResetPasswordInput",
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Download file for reset password of the sensor.
 

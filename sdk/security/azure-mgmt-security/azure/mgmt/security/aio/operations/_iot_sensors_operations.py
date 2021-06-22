@@ -43,7 +43,7 @@ class IotSensorsOperations:
     async def list(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotSensorsList":
         """List IoT sensors.
 
@@ -97,7 +97,7 @@ class IotSensorsOperations:
         self,
         scope: str,
         iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotSensorsModel":
         """Get IoT sensor.
 
@@ -155,7 +155,7 @@ class IotSensorsOperations:
         scope: str,
         iot_sensor_name: str,
         iot_sensors_model: "_models.IotSensorsModel",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IotSensorsModel":
         """Create or update IoT sensor.
 
@@ -223,7 +223,7 @@ class IotSensorsOperations:
         self,
         scope: str,
         iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete IoT sensor.
 
@@ -277,7 +277,7 @@ class IotSensorsOperations:
         self,
         scope: str,
         iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Download sensor activation file.
 
@@ -335,7 +335,7 @@ class IotSensorsOperations:
         scope: str,
         iot_sensor_name: str,
         body: "_models.ResetPasswordInput",
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Download file for reset password of the sensor.
 
@@ -399,7 +399,7 @@ class IotSensorsOperations:
         self,
         scope: str,
         iot_sensor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Trigger threat intelligence package update.
 

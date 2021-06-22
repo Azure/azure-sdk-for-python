@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -18,17 +19,12 @@ if TYPE_CHECKING:
 from ._configuration import SecurityCenterConfiguration
 from .operations import ComplianceResultsOperations
 from .operations import PricingsOperations
-from .operations import SettingsOperations
 from .operations import AdvancedThreatProtectionOperations
 from .operations import DeviceSecurityGroupsOperations
 from .operations import IotSecuritySolutionOperations
 from .operations import IotSecuritySolutionAnalyticsOperations
 from .operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from .operations import IotSecuritySolutionsAnalyticsRecommendationOperations
-from .operations import IotAlertTypesOperations
-from .operations import IotAlertsOperations
-from .operations import IotRecommendationTypesOperations
-from .operations import IotRecommendationsOperations
 from .operations import LocationsOperations
 from .operations import Operations
 from .operations import TasksOperations
@@ -50,7 +46,6 @@ from .operations import AdaptiveApplicationControlsOperations
 from .operations import AdaptiveNetworkHardeningsOperations
 from .operations import AllowedConnectionsOperations
 from .operations import TopologyOperations
-from .operations import AlertsOperations
 from .operations import JitNetworkAccessPoliciesOperations
 from .operations import DiscoveredSecuritySolutionsOperations
 from .operations import SecuritySolutionsReferenceDataOperations
@@ -70,6 +65,14 @@ from .operations import DevicesForHubOperations
 from .operations import DeviceOperations
 from .operations import OnPremiseIotSensorsOperations
 from .operations import IotSitesOperations
+from .operations import IotAlertsOperations
+from .operations import IotAlertTypesOperations
+from .operations import IotRecommendationsOperations
+from .operations import IotRecommendationTypesOperations
+from .operations import AlertsOperations
+from .operations import SettingsOperations
+from .operations import IngestionSettingsOperations
+from .operations import SoftwareInventoriesOperations
 from .. import models
 
 
@@ -80,8 +83,6 @@ class SecurityCenter(object):
     :vartype compliance_results: azure.mgmt.security.aio.operations.ComplianceResultsOperations
     :ivar pricings: PricingsOperations operations
     :vartype pricings: azure.mgmt.security.aio.operations.PricingsOperations
-    :ivar settings: SettingsOperations operations
-    :vartype settings: azure.mgmt.security.aio.operations.SettingsOperations
     :ivar advanced_threat_protection: AdvancedThreatProtectionOperations operations
     :vartype advanced_threat_protection: azure.mgmt.security.aio.operations.AdvancedThreatProtectionOperations
     :ivar device_security_groups: DeviceSecurityGroupsOperations operations
@@ -94,14 +95,6 @@ class SecurityCenter(object):
     :vartype iot_security_solutions_analytics_aggregated_alert: azure.mgmt.security.aio.operations.IotSecuritySolutionsAnalyticsAggregatedAlertOperations
     :ivar iot_security_solutions_analytics_recommendation: IotSecuritySolutionsAnalyticsRecommendationOperations operations
     :vartype iot_security_solutions_analytics_recommendation: azure.mgmt.security.aio.operations.IotSecuritySolutionsAnalyticsRecommendationOperations
-    :ivar iot_alert_types: IotAlertTypesOperations operations
-    :vartype iot_alert_types: azure.mgmt.security.aio.operations.IotAlertTypesOperations
-    :ivar iot_alerts: IotAlertsOperations operations
-    :vartype iot_alerts: azure.mgmt.security.aio.operations.IotAlertsOperations
-    :ivar iot_recommendation_types: IotRecommendationTypesOperations operations
-    :vartype iot_recommendation_types: azure.mgmt.security.aio.operations.IotRecommendationTypesOperations
-    :ivar iot_recommendations: IotRecommendationsOperations operations
-    :vartype iot_recommendations: azure.mgmt.security.aio.operations.IotRecommendationsOperations
     :ivar locations: LocationsOperations operations
     :vartype locations: azure.mgmt.security.aio.operations.LocationsOperations
     :ivar operations: Operations operations
@@ -144,8 +137,6 @@ class SecurityCenter(object):
     :vartype allowed_connections: azure.mgmt.security.aio.operations.AllowedConnectionsOperations
     :ivar topology: TopologyOperations operations
     :vartype topology: azure.mgmt.security.aio.operations.TopologyOperations
-    :ivar alerts: AlertsOperations operations
-    :vartype alerts: azure.mgmt.security.aio.operations.AlertsOperations
     :ivar jit_network_access_policies: JitNetworkAccessPoliciesOperations operations
     :vartype jit_network_access_policies: azure.mgmt.security.aio.operations.JitNetworkAccessPoliciesOperations
     :ivar discovered_security_solutions: DiscoveredSecuritySolutionsOperations operations
@@ -184,6 +175,22 @@ class SecurityCenter(object):
     :vartype on_premise_iot_sensors: azure.mgmt.security.aio.operations.OnPremiseIotSensorsOperations
     :ivar iot_sites: IotSitesOperations operations
     :vartype iot_sites: azure.mgmt.security.aio.operations.IotSitesOperations
+    :ivar iot_alerts: IotAlertsOperations operations
+    :vartype iot_alerts: azure.mgmt.security.aio.operations.IotAlertsOperations
+    :ivar iot_alert_types: IotAlertTypesOperations operations
+    :vartype iot_alert_types: azure.mgmt.security.aio.operations.IotAlertTypesOperations
+    :ivar iot_recommendations: IotRecommendationsOperations operations
+    :vartype iot_recommendations: azure.mgmt.security.aio.operations.IotRecommendationsOperations
+    :ivar iot_recommendation_types: IotRecommendationTypesOperations operations
+    :vartype iot_recommendation_types: azure.mgmt.security.aio.operations.IotRecommendationTypesOperations
+    :ivar alerts: AlertsOperations operations
+    :vartype alerts: azure.mgmt.security.aio.operations.AlertsOperations
+    :ivar settings: SettingsOperations operations
+    :vartype settings: azure.mgmt.security.aio.operations.SettingsOperations
+    :ivar ingestion_settings: IngestionSettingsOperations operations
+    :vartype ingestion_settings: azure.mgmt.security.aio.operations.IngestionSettingsOperations
+    :ivar software_inventories: SoftwareInventoriesOperations operations
+    :vartype software_inventories: azure.mgmt.security.aio.operations.SoftwareInventoriesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Azure subscription ID.
@@ -216,8 +223,6 @@ class SecurityCenter(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.pricings = PricingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.settings = SettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.advanced_threat_protection = AdvancedThreatProtectionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.device_security_groups = DeviceSecurityGroupsOperations(
@@ -229,14 +234,6 @@ class SecurityCenter(object):
         self.iot_security_solutions_analytics_aggregated_alert = IotSecuritySolutionsAnalyticsAggregatedAlertOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.iot_security_solutions_analytics_recommendation = IotSecuritySolutionsAnalyticsRecommendationOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.iot_alert_types = IotAlertTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.iot_alerts = IotAlertsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.iot_recommendation_types = IotRecommendationTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.iot_recommendations = IotRecommendationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -280,8 +277,6 @@ class SecurityCenter(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.topology = TopologyOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.alerts = AlertsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.discovered_security_solutions = DiscoveredSecuritySolutionsOperations(
@@ -320,6 +315,40 @@ class SecurityCenter(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.iot_sites = IotSitesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.iot_alerts = IotAlertsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.iot_alert_types = IotAlertTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.iot_recommendations = IotRecommendationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.iot_recommendation_types = IotRecommendationTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.alerts = AlertsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.settings = SettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.ingestion_settings = IngestionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.software_inventories = SoftwareInventoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ascLocation': self._serialize.url("self._config.asc_location", self._config.asc_location, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()
