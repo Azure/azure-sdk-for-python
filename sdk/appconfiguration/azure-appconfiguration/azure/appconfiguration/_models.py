@@ -371,7 +371,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             key=key_value.key,  # type: ignore
             secret_uri=key_value.value[u"secret_uri"],  # type: ignore
             label=key_value.label,
-            secret_id=key_value.value,
+            secret_id=key_value.value,  # type: ignore
             last_modified=key_value.last_modified,
             tags=key_value.tags,
             read_only=key_value.locked,

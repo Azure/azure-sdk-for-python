@@ -77,7 +77,7 @@ class AzureAppConfigurationClient:
         self._credential_scopes = base_url.strip("/") + "/.default"
 
         self._config = AzureAppConfigurationConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, **kwargs
+            credential, base_url, credential_scopes=self._credential_scopes, **kwargs  # type: ignore
         )
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -94,7 +94,7 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline
+            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline  # type: ignore
         )
 
     @classmethod
