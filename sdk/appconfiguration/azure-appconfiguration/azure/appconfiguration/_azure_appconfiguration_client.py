@@ -247,9 +247,6 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        label = kwargs.pop("label", None)
-        etag = kwargs.pop("etag", "*")
-        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError

@@ -44,10 +44,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     def _assert_same_keys(self, key1, key2):
         assert type(key1) == type(key2)
-        try:
-            assert key1.key == key2.key
-        except AttributeError:
-            assert key1.key == key2.key
+        assert key1.key == key2.key
         assert key1.label == key2.label
         assert key1.content_type == key2.content_type
         assert key1.tags == key2.tags
