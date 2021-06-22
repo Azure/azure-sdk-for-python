@@ -441,8 +441,6 @@ class AzureAppConfigurationClient:
                 etag = args[0].etag if not None else etag
             else:
                 key = args[0]
-                if len(args) == 2:
-                    label = args[1]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
