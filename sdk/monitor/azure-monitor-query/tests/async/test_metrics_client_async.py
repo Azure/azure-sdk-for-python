@@ -1,4 +1,4 @@
-import py
+from datetime import datetime
 import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
@@ -16,9 +16,13 @@ def _credential():
 async def test_metrics_auth():
     credential = _credential()
     client = MetricsQueryClient(credential)
-    # returns LogsQueryResults 
-    response = await client.query(os.environ['METRICS_RESOURCE_URI'], metric_names=["PublishSuccessCount"], timespan='P2D')
-
+    response = await client.query(
+        os.environ['METRICS_RESOURCE_URI'],
+        metric_names=["MatchedEventCount"],
+        start_time=datetime(2021, 6, 21),
+        duration='P1D',
+        aggregation=['Count']
+        )
     assert response is not None
     assert response.metrics is not None
 

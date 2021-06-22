@@ -62,7 +62,7 @@ class MetricsQueryClient(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
-        :type metric_names: list
+        :type metric_names: list[str]
         :param str duration: The duration for which to query the data. This can also be accompanied
          with either start_time or end_time. If start_time or end_time is not provided, the current time is
          taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
@@ -72,8 +72,8 @@ class MetricsQueryClient(object):
          with either start_time or duration.
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
-        :paramtype aggregation: str
+        :keyword aggregation: The list of aggregation types to retrieve.
+        :paramtype aggregation: list[str]
         :keyword top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
@@ -112,6 +112,9 @@ class MetricsQueryClient(object):
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
+        aggregation = kwargs.pop("aggregation", None)
+        if aggregation:
+            kwargs.setdefault("aggregation", ",".join(aggregation))
         timespan = construct_iso8601(start, end, duration)
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
