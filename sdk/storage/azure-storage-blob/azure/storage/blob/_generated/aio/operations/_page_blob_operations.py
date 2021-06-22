@@ -42,8 +42,6 @@ class PageBlobOperations:
 
     async def create(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         blob_content_length: int,
         timeout: Optional[int] = None,
@@ -64,10 +62,6 @@ class PageBlobOperations:
     ) -> None:
         """The Create operation creates a new page blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
@@ -169,8 +163,6 @@ class PageBlobOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -264,8 +256,6 @@ class PageBlobOperations:
 
     async def upload_pages(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         body: IO,
         transactional_content_md5: Optional[bytearray] = None,
@@ -282,10 +272,6 @@ class PageBlobOperations:
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param body: Initial data.
@@ -367,8 +353,6 @@ class PageBlobOperations:
         url = self.upload_pages.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -452,8 +436,6 @@ class PageBlobOperations:
 
     async def clear_pages(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
@@ -467,10 +449,6 @@ class PageBlobOperations:
     ) -> None:
         """The Clear Pages operation clears a set of pages from a page blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -543,8 +521,6 @@ class PageBlobOperations:
         url = self.clear_pages.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -618,8 +594,6 @@ class PageBlobOperations:
 
     async def upload_pages_from_url(
         self,
-        container_name: str,
-        blob: str,
         source_url: str,
         source_range: str,
         content_length: int,
@@ -639,10 +613,6 @@ class PageBlobOperations:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param source_url: Specify a URL to the copy source.
         :type source_url: str
         :param source_range: Bytes of source data in the specified range. The length of this range
@@ -738,8 +708,6 @@ class PageBlobOperations:
         url = self.upload_pages_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -828,8 +796,6 @@ class PageBlobOperations:
 
     async def get_page_ranges(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
@@ -841,10 +807,6 @@ class PageBlobOperations:
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -897,8 +859,6 @@ class PageBlobOperations:
         url = self.get_page_ranges.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -958,8 +918,6 @@ class PageBlobOperations:
 
     async def get_page_ranges_diff(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         prevsnapshot: Optional[str] = None,
@@ -973,10 +931,6 @@ class PageBlobOperations:
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -1041,8 +995,6 @@ class PageBlobOperations:
         url = self.get_page_ranges_diff.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1106,8 +1058,6 @@ class PageBlobOperations:
 
     async def resize(
         self,
-        container_name: str,
-        blob: str,
         blob_content_length: int,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1119,10 +1069,6 @@ class PageBlobOperations:
     ) -> None:
         """Resize the Blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
          TB. The page blob size must be aligned to a 512-byte boundary.
         :type blob_content_length: long
@@ -1184,8 +1130,6 @@ class PageBlobOperations:
         url = self.resize.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1248,8 +1192,6 @@ class PageBlobOperations:
 
     async def update_sequence_number(
         self,
-        container_name: str,
-        blob: str,
         sequence_number_action: Union[str, "_models.SequenceNumberActionType"],
         timeout: Optional[int] = None,
         blob_sequence_number: Optional[int] = 0,
@@ -1260,10 +1202,6 @@ class PageBlobOperations:
     ) -> None:
         """Update the sequence number of the blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
          request. This property applies to page blobs only. This property indicates how the service
          should modify the blob's sequence number.
@@ -1316,8 +1254,6 @@ class PageBlobOperations:
         url = self.update_sequence_number.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1374,8 +1310,6 @@ class PageBlobOperations:
 
     async def copy_incremental(
         self,
-        container_name: str,
-        blob: str,
         copy_source: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1388,10 +1322,6 @@ class PageBlobOperations:
         the original snapshot and can be read or copied from as usual. This API is supported since REST
         version 2016-05-31.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
@@ -1436,8 +1366,6 @@ class PageBlobOperations:
         url = self.copy_incremental.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

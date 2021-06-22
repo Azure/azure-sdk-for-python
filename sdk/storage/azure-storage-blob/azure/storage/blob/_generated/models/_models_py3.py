@@ -1114,53 +1114,6 @@ class CpkScopeInfo(msrest.serialization.Model):
         self.encryption_scope = encryption_scope
 
 
-class DataLakeStorageError(msrest.serialization.Model):
-    """DataLakeStorageError.
-
-    :param data_lake_storage_error_details: The service error response object.
-    :type data_lake_storage_error_details: ~azure.storage.blob.models.DataLakeStorageErrorError
-    """
-
-    _attribute_map = {
-        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_lake_storage_error_details: Optional["DataLakeStorageErrorError"] = None,
-        **kwargs
-    ):
-        super(DataLakeStorageError, self).__init__(**kwargs)
-        self.data_lake_storage_error_details = data_lake_storage_error_details
-
-
-class DataLakeStorageErrorError(msrest.serialization.Model):
-    """The service error response object.
-
-    :param code: The service error code.
-    :type code: str
-    :param message: The service error message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(DataLakeStorageErrorError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
 class DelimitedTextConfiguration(msrest.serialization.Model):
     """delimited text configuration.
 

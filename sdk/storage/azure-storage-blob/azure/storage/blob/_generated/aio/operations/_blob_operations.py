@@ -42,8 +42,6 @@ class BlobOperations:
 
     async def download(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -59,10 +57,6 @@ class BlobOperations:
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -134,8 +128,6 @@ class BlobOperations:
         url = self.download.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -288,8 +280,6 @@ class BlobOperations:
 
     async def get_properties(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -302,10 +292,6 @@ class BlobOperations:
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -367,8 +353,6 @@ class BlobOperations:
         url = self.get_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -473,8 +457,6 @@ class BlobOperations:
 
     async def delete(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -498,10 +480,6 @@ class BlobOperations:
         operations on a soft-deleted blob or snapshot causes the service to return an HTTP status code
         of 404 (ResourceNotFound).
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -561,8 +539,6 @@ class BlobOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -620,18 +596,12 @@ class BlobOperations:
 
     async def undelete(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Undelete a blob that was previously soft deleted.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -657,8 +627,6 @@ class BlobOperations:
         url = self.undelete.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -697,8 +665,6 @@ class BlobOperations:
 
     async def set_expiry(
         self,
-        container_name: str,
-        blob: str,
         expiry_options: Union[str, "_models.BlobExpiryOptions"],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -707,10 +673,6 @@ class BlobOperations:
     ) -> None:
         """Sets the time a blob will expire and be deleted.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param expiry_options: Required. Indicates mode of the expiry time.
         :type expiry_options: str or ~azure.storage.blob.models.BlobExpiryOptions
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -740,8 +702,6 @@ class BlobOperations:
         url = self.set_expiry.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -785,8 +745,6 @@ class BlobOperations:
 
     async def set_http_headers(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
@@ -796,10 +754,6 @@ class BlobOperations:
     ) -> None:
         """The Set HTTP Headers operation sets system properties on the blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -859,8 +813,6 @@ class BlobOperations:
         url = self.set_http_headers.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -926,8 +878,6 @@ class BlobOperations:
 
     async def set_immutability_policy(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
@@ -937,10 +887,6 @@ class BlobOperations:
     ) -> None:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -977,8 +923,6 @@ class BlobOperations:
         url = self.set_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1025,18 +969,12 @@ class BlobOperations:
 
     async def delete_immutability_policy(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1062,8 +1000,6 @@ class BlobOperations:
         url = self.delete_immutability_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1102,8 +1038,6 @@ class BlobOperations:
 
     async def set_legal_hold(
         self,
-        container_name: str,
-        blob: str,
         legal_hold: bool,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1111,10 +1045,6 @@ class BlobOperations:
     ) -> None:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param legal_hold: Specified if a legal hold should be set on the blob.
         :type legal_hold: bool
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1142,8 +1072,6 @@ class BlobOperations:
         url = self.set_legal_hold.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1184,8 +1112,6 @@ class BlobOperations:
 
     async def set_metadata(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
@@ -1198,10 +1124,6 @@ class BlobOperations:
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
         more name-value pairs.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1268,8 +1190,6 @@ class BlobOperations:
         url = self.set_metadata.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1336,8 +1256,6 @@ class BlobOperations:
 
     async def acquire_lease(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
@@ -1348,10 +1266,6 @@ class BlobOperations:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1400,8 +1314,6 @@ class BlobOperations:
         url = self.acquire_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1458,8 +1370,6 @@ class BlobOperations:
 
     async def release_lease(
         self,
-        container_name: str,
-        blob: str,
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1469,10 +1379,6 @@ class BlobOperations:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1515,8 +1421,6 @@ class BlobOperations:
         url = self.release_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1569,8 +1473,6 @@ class BlobOperations:
 
     async def renew_lease(
         self,
-        container_name: str,
-        blob: str,
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1580,10 +1482,6 @@ class BlobOperations:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1626,8 +1524,6 @@ class BlobOperations:
         url = self.renew_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1681,8 +1577,6 @@ class BlobOperations:
 
     async def change_lease(
         self,
-        container_name: str,
-        blob: str,
         lease_id: str,
         proposed_lease_id: str,
         timeout: Optional[int] = None,
@@ -1693,10 +1587,6 @@ class BlobOperations:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
@@ -1743,8 +1633,6 @@ class BlobOperations:
         url = self.change_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1799,8 +1687,6 @@ class BlobOperations:
 
     async def break_lease(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1810,10 +1696,6 @@ class BlobOperations:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1862,8 +1744,6 @@ class BlobOperations:
         url = self.break_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1918,8 +1798,6 @@ class BlobOperations:
 
     async def create_snapshot(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
@@ -1931,10 +1809,6 @@ class BlobOperations:
     ) -> None:
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -2001,8 +1875,6 @@ class BlobOperations:
         url = self.create_snapshot.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2068,8 +1940,6 @@ class BlobOperations:
 
     async def start_copy_from_url(
         self,
-        container_name: str,
-        blob: str,
         copy_source: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
@@ -2088,10 +1958,6 @@ class BlobOperations:
     ) -> None:
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
@@ -2178,8 +2044,6 @@ class BlobOperations:
         url = self.start_copy_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2261,8 +2125,6 @@ class BlobOperations:
 
     async def copy_from_url(
         self,
-        container_name: str,
-        blob: str,
         copy_source: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
@@ -2281,10 +2143,6 @@ class BlobOperations:
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
         return a response until the copy is complete.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
@@ -2367,8 +2225,6 @@ class BlobOperations:
         url = self.copy_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2449,8 +2305,6 @@ class BlobOperations:
 
     async def abort_copy_from_url(
         self,
-        container_name: str,
-        blob: str,
         copy_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -2460,10 +2314,6 @@ class BlobOperations:
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
         destination blob with zero length and full metadata.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param copy_id: The copy identifier provided in the x-ms-copy-id header of the original Copy
          Blob operation.
         :type copy_id: str
@@ -2499,15 +2349,13 @@ class BlobOperations:
         url = self.abort_copy_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['CopyId'] = self._serialize.query("copy_id", copy_id, 'str')
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        query_parameters['copyid'] = self._serialize.query("copy_id", copy_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
 
@@ -2543,8 +2391,6 @@ class BlobOperations:
 
     async def set_tier(
         self,
-        container_name: str,
-        blob: str,
         tier: Union[str, "_models.AccessTierRequired"],
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
@@ -2561,10 +2407,6 @@ class BlobOperations:
         the blob. A block blob's tier determines Hot/Cool/Archive storage type. This operation does not
         update the blob's ETag.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param tier: Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -2615,8 +2457,6 @@ class BlobOperations:
         url = self.set_tier.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2671,16 +2511,10 @@ class BlobOperations:
 
     async def get_account_info(
         self,
-        container_name: str,
-        blob: str,
         **kwargs: Any
     ) -> None:
         """Returns the sku name and account kind.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -2699,8 +2533,6 @@ class BlobOperations:
         url = self.get_account_info.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2738,8 +2570,6 @@ class BlobOperations:
 
     async def query(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -2752,10 +2582,6 @@ class BlobOperations:
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -2818,8 +2644,6 @@ class BlobOperations:
         url = self.query.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2952,8 +2776,6 @@ class BlobOperations:
 
     async def get_tags(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         snapshot: Optional[str] = None,
@@ -2964,10 +2786,6 @@ class BlobOperations:
     ) -> "_models.BlobTags":
         """The Get Tags operation enables users to get the tags associated with a blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -3013,8 +2831,6 @@ class BlobOperations:
         url = self.get_tags.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3063,8 +2879,6 @@ class BlobOperations:
 
     async def set_tags(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         version_id: Optional[str] = None,
         transactional_content_md5: Optional[bytearray] = None,
@@ -3077,10 +2891,6 @@ class BlobOperations:
     ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -3129,8 +2939,6 @@ class BlobOperations:
         url = self.set_tags.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

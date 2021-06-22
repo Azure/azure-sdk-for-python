@@ -175,11 +175,6 @@ class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     METADATA = "metadata"
     DELETED = "deleted"
 
-class PathRenameMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    LEGACY = "legacy"
-    POSIX = "posix"
-
 class PremiumPageBlobAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     P4 = "P4"

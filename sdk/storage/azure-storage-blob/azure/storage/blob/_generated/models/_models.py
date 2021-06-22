@@ -974,48 +974,6 @@ class CpkScopeInfo(msrest.serialization.Model):
         self.encryption_scope = kwargs.get('encryption_scope', None)
 
 
-class DataLakeStorageError(msrest.serialization.Model):
-    """DataLakeStorageError.
-
-    :param data_lake_storage_error_details: The service error response object.
-    :type data_lake_storage_error_details: ~azure.storage.blob.models.DataLakeStorageErrorError
-    """
-
-    _attribute_map = {
-        'data_lake_storage_error_details': {'key': 'error', 'type': 'DataLakeStorageErrorError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStorageError, self).__init__(**kwargs)
-        self.data_lake_storage_error_details = kwargs.get('data_lake_storage_error_details', None)
-
-
-class DataLakeStorageErrorError(msrest.serialization.Model):
-    """The service error response object.
-
-    :param code: The service error code.
-    :type code: str
-    :param message: The service error message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStorageErrorError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-
-
 class DelimitedTextConfiguration(msrest.serialization.Model):
     """delimited text configuration.
 
