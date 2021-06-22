@@ -31,15 +31,17 @@ import os
 import subprocess
 import sys
 import random
-import http.client
-import urllib
+try:
+    import http.client as httpclient
+except ImportError:
+    import httplib as httpclient
 
 def is_port_open(port_num):
-    conn = http.client.HTTPSConnection("localhost:{}".format(port_num))
+    conn = httpclient.HTTPSConnection("localhost:{}".format(port_num))
     try:
         conn.request("GET", "/health")
         return False
-    except ConnectionRefusedError:
+    except Exception:
         return True
 
 def get_port():
@@ -84,6 +86,6 @@ def testserver():
 
 
 # Ignore collection of async tests for Python 2
-collect_ignore = []
+collect_ignore_glob = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("*_async.py")
+    collect_ignore_glob.append("*_async.py")
