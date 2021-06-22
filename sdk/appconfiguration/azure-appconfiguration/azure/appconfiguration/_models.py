@@ -162,8 +162,8 @@ class FeatureFlagConfigurationSetting(
     def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value
         # type: (str, **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
-        self.feature_id = feature_id.lstrip(self.key_prefix)
-        self.key = self.key_prefix + self.feature_id
+        self.feature_id = feature_id
+        self.key = self.key_prefix + self.feature_id.lstrip(self.key_prefix)
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
