@@ -5,6 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._client import QuestionAnsweringClient
+from ._query_client import QuestionAnsweringClient
 
 __all__ = ['QuestionAnsweringClient']

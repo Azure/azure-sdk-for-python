@@ -6,7 +6,33 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._version import VERSION
-from ._client import QuestionAnsweringClient
+from ._query_client import QuestionAnsweringClient
+from ._author_client import KnowledgebaseAuthoringClient
+from ._generated_query.models import (
+    TextQueryParameters,
+    TextAnswers,
+    KnowledgebaseQueryParameters,
+    KnowledgebaseAnswers
+)
+from ._generated_author.models import (
+    ProjectMetadata,
+    CreateProjectParameters,
+    ExportJobParameters,
+    ImportJobParameters,
+    Format,
+)
 
-__all__ = ['QuestionAnsweringClient']
+__all__ = [
+    'QuestionAnsweringClient',
+    'KnowledgebaseAuthoringClient',
+    'TextQueryParameters',
+    'TextAnswers',
+    'KnowledgebaseQueryParameters',
+    'KnowledgebaseAnswers'
+    'ProjectMetadata',
+    'CreateProjectParameters',
+    'ExportJobParameters',
+    'ImportJobParameters',
+    'Format'
+]
 __version__ = VERSION

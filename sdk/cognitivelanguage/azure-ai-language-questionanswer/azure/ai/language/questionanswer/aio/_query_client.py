@@ -16,7 +16,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from .._generated.aio import MicrosoftCognitiveLanguageService
+from .._generated_query.aio import MicrosoftCognitiveLanguageService
 from .._version import USER_AGENT
 
 if TYPE_CHECKING:
@@ -92,3 +92,53 @@ class QuestionAnsweringClient(object):
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         return self._client._send_request(request, **kwargs)
+
+    async def query_text(
+        self,
+        text_query_parameters: "TextQueryParameters",
+        **kwargs: Any
+    ) -> "TextAnswers":
+        """Answers the specified question using the provided text in the body.
+
+        Answers the specified question using the provided text in the body.
+
+        :param text_query_parameters: Post body of the request.
+        :type text_query_parameters: ~azure.ai.language.questionanswering.TextQueryParameters
+        :return: TextAnswers
+        :rtype: ~azure.ai.language.questionanswering.TextAnswers
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return await self._client.question_answering_text.query(
+            text_query_parameters=text_query_parameters,
+            **kwargs
+        )
+
+    async def query_knowledgebase(
+        self,
+        project_name: str,
+        knowledgebase_query_parameters: "KnowledgebaseQueryParameters",
+        *,
+        deployment_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> "KnowledgebaseAnswers":
+        """Answers the specified question using your knowledgebase.
+
+        Answers the specified question using your knowledgebase.
+
+        :param project_name: The name of the project to use.
+        :type project_name: str
+        :param knowledgebase_query_parameters: Post body of the request.
+        :type knowledgebase_query_parameters:
+         ~azure.ai.language.questionanswering.KnowledgebaseQueryParameters
+        :keyword deployment_name: The name of the specific deployment of the project to use.
+        :paramtype deployment_name: str
+        :return: KnowledgebaseAnswers
+        :rtype: ~azure.ai.language.questionanswering.KnowledgebaseAnswers
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return await self._client.question_answering_knowledgebase.query(
+            project_name=project_name,
+            knowledgebase_query_parameters=knowledgebase_query_parameters,
+            deployment_name=deployment_name,
+            **kwargs
+        )
