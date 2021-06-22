@@ -23,8 +23,8 @@ def test_metrics_auth():
         duration='P1D',
         aggregation=['Count']
         )
-    assert response is not None
-    assert response.metrics is not None
+    assert response
+    assert response.metrics
 
 @pytest.mark.live_test_only
 def test_metrics_namespaces():
