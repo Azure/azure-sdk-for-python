@@ -161,9 +161,9 @@ class FeatureFlagConfigurationSetting(
     def __init__(self, feature_id, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
         # type: (str, bool, Optional[List[Dict[str, Any]]], **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
+        self.feature_id = feature_id.lstrip(self.key_prefix)
         if not feature_id.startswith(self.key_prefix):
             feature_id = self.key_prefix + feature_id
-        self.feature_id = feature_id
         self.key = feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
