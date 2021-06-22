@@ -195,6 +195,4 @@ class AsyncPipelineClient(PipelineClientBase):
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
-        if isinstance(wrapped, PipelineResponse):
-            return wrapped  # type: ignore
         return _AsyncContextManager(wrapped=wrapped)
