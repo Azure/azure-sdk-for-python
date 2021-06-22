@@ -6,6 +6,6 @@ Overview of the documents:
 - [dev setup](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) : How to create a development environment for this repo
 - [release](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md) : How to release a package when ready
 - [packaging.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md) : How to organize packaging information for packages under `azure`
-- [engsys.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_chekcs.md): Options for PR validation checks, how to opt-in, and how to run them locally
+- [engsys.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md): Options for PR validation checks, how to opt-in, and how to run them locally
 
 The [mgmt](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt) folder contains information specific to management packages (i.e. packages prefixed by `azure-mgmt`)
