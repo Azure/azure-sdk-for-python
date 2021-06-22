@@ -153,8 +153,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, key_filter=None, label_filter=None, **kwargs
-    ):
-        # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -220,8 +219,7 @@ class AzureAppConfigurationClient:
         etag="*",  # type: Optional[str]
         match_condition=MatchConditions.Unconditionally,  # type: Optional[MatchConditions]
         **kwargs  # type: Any
-    ):
-        # type: (...) -> Union[None, ConfigurationSetting]
+    ):  # type: (...) -> Union[None, ConfigurationSetting]
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
