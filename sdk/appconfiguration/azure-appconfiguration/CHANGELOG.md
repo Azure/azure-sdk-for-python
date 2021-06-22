@@ -1,7 +1,13 @@
 # Release History
 
 ## 1.2.0b3 (Unreleased)
+### Features Added
+* `delete_configuration_setting` now takes either the string `key` or a `ConfigurationSetting` object.
+### Breaking Changes
 
+### Key Bugs Fixed
+
+### Fixed
 
 ## 1.2.0b2 (2021-06-08)
 
