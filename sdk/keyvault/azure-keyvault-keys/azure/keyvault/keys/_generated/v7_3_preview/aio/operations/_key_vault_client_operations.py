@@ -39,10 +39,10 @@ class KeyVaultClientOperationsMixin:
          new key.
         :type key_name: str
         :param parameters: The parameters to create a key.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyCreateParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
@@ -50,7 +50,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -91,6 +91,68 @@ class KeyVaultClientOperationsMixin:
         return deserialized
     create_key.metadata = {'url': '/keys/{key-name}/create'}  # type: ignore
 
+    async def rotate_key(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        **kwargs: Any
+    ) -> "_models.KeyBundle":
+        """Creates a new key version, stores it, then returns key parameters, attributes and policy to the client.
+
+        The operation will rotate the key based on the key policy. It requires the keys/rotate
+        permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of key to be rotated. The system will generate a new version in the
+         specified key.
+        :type key_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyBundle, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "7.3-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.rotate_key.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('KeyBundle', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    rotate_key.metadata = {'url': '/keys/{key-name}/rotate'}  # type: ignore
+
     async def import_key(
         self,
         vault_base_url: str,
@@ -109,10 +171,10 @@ class KeyVaultClientOperationsMixin:
         :param key_name: Name for the imported key.
         :type key_name: str
         :param parameters: The parameters to import a key.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyImportParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
@@ -120,7 +182,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -180,7 +242,7 @@ class KeyVaultClientOperationsMixin:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedKeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedKeyBundle"]
@@ -188,7 +250,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -245,10 +307,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key to update.
         :type key_version: str
         :param parameters: The parameters of the key to update.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyUpdateParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
@@ -256,7 +318,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -319,7 +381,7 @@ class KeyVaultClientOperationsMixin:
         :type key_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
@@ -327,7 +389,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -385,7 +447,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.KeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
@@ -393,7 +455,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -472,7 +534,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.KeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
@@ -480,7 +542,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -563,7 +625,7 @@ class KeyVaultClientOperationsMixin:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupKeyResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.BackupKeyResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.BackupKeyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupKeyResult"]
@@ -571,7 +633,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -629,10 +691,10 @@ class KeyVaultClientOperationsMixin:
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the key.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyRestoreParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
@@ -640,7 +702,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -706,10 +768,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the encryption operation.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
@@ -717,7 +779,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -783,10 +845,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the decryption operation.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
@@ -794,7 +856,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -857,10 +919,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the signing operation.
-        :type parameters: ~azure.keyvault.v7_2.models.KeySignParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeySignParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
@@ -868,7 +930,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -933,10 +995,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for verify operations.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyVerifyParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyVerifyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyVerifyResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyVerifyResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyVerifyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyVerifyResult"]
@@ -944,7 +1006,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1010,10 +1072,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for wrap operation.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
@@ -1021,7 +1083,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1085,10 +1147,10 @@ class KeyVaultClientOperationsMixin:
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the key operation.
-        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
@@ -1096,7 +1158,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1138,6 +1200,152 @@ class KeyVaultClientOperationsMixin:
         return deserialized
     unwrap_key.metadata = {'url': '/keys/{key-name}/{key-version}/unwrapkey'}  # type: ignore
 
+    async def export(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        key_version: str,
+        parameters: "_models.KeyExportParameters",
+        **kwargs: Any
+    ) -> "_models.KeyBundle":
+        """Exports a key.
+
+        The export key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/export permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key to get.
+        :type key_name: str
+        :param key_version: Adding the version parameter retrieves a specific version of a key.
+        :type key_version: str
+        :param parameters: The parameters for the key export operation.
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyExportParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyBundle, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "7.3-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.export.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'key-name': self._serialize.url("key_name", key_name, 'str'),
+            'key-version': self._serialize.url("key_version", key_version, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'KeyExportParameters')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('KeyBundle', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    export.metadata = {'url': '/keys/{key-name}/{key-version}/export'}  # type: ignore
+
+    async def release(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        key_version: str,
+        parameters: "_models.KeyReleaseParameters",
+        **kwargs: Any
+    ) -> "_models.KeyReleaseResult":
+        """Releases a key.
+
+        The release key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/release permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key to get.
+        :type key_name: str
+        :param key_version: Adding the version parameter retrieves a specific version of a key.
+        :type key_version: str
+        :param parameters: The parameters for the key release operation.
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyReleaseParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyReleaseResult, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyReleaseResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyReleaseResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "7.3-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.release.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'key-name': self._serialize.url("key_name", key_name, 'str'),
+            'key-version': self._serialize.url("key_version", key_version, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'KeyReleaseParameters')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('KeyReleaseResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    release.metadata = {'url': '/keys/{key-name}/{key-version}/release'}  # type: ignore
+
     def get_deleted_keys(
         self,
         vault_base_url: str,
@@ -1159,7 +1367,7 @@ class KeyVaultClientOperationsMixin:
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedKeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.DeletedKeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_3_preview.models.DeletedKeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedKeyListResult"]
@@ -1167,7 +1375,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1242,7 +1450,7 @@ class KeyVaultClientOperationsMixin:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedKeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedKeyBundle"]
@@ -1250,7 +1458,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1312,7 +1520,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1364,7 +1572,7 @@ class KeyVaultClientOperationsMixin:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
@@ -1372,7 +1580,7 @@ class KeyVaultClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.2"
+        api_version = "7.3-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1407,3 +1615,197 @@ class KeyVaultClientOperationsMixin:
 
         return deserialized
     recover_deleted_key.metadata = {'url': '/deletedkeys/{key-name}/recover'}  # type: ignore
+
+    async def get_key_rotation_policy(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        **kwargs: Any
+    ) -> "_models.KeyRotationPolicy":
+        """Lists the policy for a key.
+
+        The GetKeyRotationPolicy operation returns the specified key policy resources in the specified
+        key vault. This operation requires the keys/get permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key in a given key vault.
+        :type key_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyRotationPolicy, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyRotationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyRotationPolicy"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "7.3-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_key_rotation_policy.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'key-name': self._serialize.url("key_name", key_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('KeyRotationPolicy', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_key_rotation_policy.metadata = {'url': '/keys/{key-name}/rotationpolicy'}  # type: ignore
+
+    async def update_key_rotation_policy(
+        self,
+        vault_base_url: str,
+        key_name: str,
+        key_rotation_policy: "_models.KeyRotationPolicy",
+        **kwargs: Any
+    ) -> "_models.KeyRotationPolicy":
+        """Updates the rotation policy for a key.
+
+        Set specified members in the key policy. Leave others as undefined. This operation requires the
+        keys/update permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key in the given vault.
+        :type key_name: str
+        :param key_rotation_policy: The policy for the key.
+        :type key_rotation_policy: ~azure.keyvault.v7_3_preview.models.KeyRotationPolicy
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyRotationPolicy, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyRotationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyRotationPolicy"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "7.3-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.update_key_rotation_policy.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'key-name': self._serialize.url("key_name", key_name, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(key_rotation_policy, 'KeyRotationPolicy')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('KeyRotationPolicy', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    update_key_rotation_policy.metadata = {'url': '/keys/{key-name}/rotationpolicy'}  # type: ignore
+
+    async def get_random_bytes(
+        self,
+        vault_base_url: str,
+        parameters: "_models.GetRandomBytesRequest",
+        **kwargs: Any
+    ) -> "_models.RandomBytes":
+        """Get the requested number of bytes containing random values.
+
+        Get the requested number of bytes containing random values from a managed HSM.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param parameters: The request object to get random bytes.
+        :type parameters: ~azure.keyvault.v7_3_preview.models.GetRandomBytesRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RandomBytes, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.RandomBytes
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RandomBytes"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "7.3-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_random_bytes.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(parameters, 'GetRandomBytesRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('RandomBytes', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_random_bytes.metadata = {'url': '/rng'}  # type: ignore
