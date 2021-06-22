@@ -33,7 +33,9 @@ from azure.core.pipeline import (
     PipelineContext,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-from ._tools import await_result as _await_result, get_request_format
+from ._tools import (
+    await_result as _await_result,
+)
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 HttpTransportType = TypeVar("HttpTransportType")
@@ -188,32 +190,10 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    def run(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> PipelineResponse
-        """Runs the HTTP Request through the chained policies.
-
-        :param request: The HTTP request object.
-        :type request: ~azure.core.pipeline.transport.HttpRequest
-        :return: The PipelineResponse object
-        :rtype: ~azure.core.pipeline.PipelineResponse
-        """
+    def _prepare_response(self, request, pipeline_response, **kwargs):
+        # type: (HTTPRequestType, PipelineResponse, Any) -> None
         try:
-            prepared_request = self._transport.prepare_request(request)
-        except AttributeError:
-            prepared_request = request
-        self._prepare_multipart(prepared_request)
-        context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(
-            prepared_request, context
-        )  # type: PipelineRequest[HTTPRequestType]
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _TransportRunner(self._transport)
-        )
-        pipeline_response = first_node.send(pipeline_request)  # type: ignore
-        try:
-            response = self._transport.update_response_based_on_format(
+            response = self._transport.update_response_based_on_format(  # type: ignore
                 request=request,
                 pipeline_transport_response=pipeline_response.http_response,
                 **kwargs
@@ -227,4 +207,33 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         except AttributeError:
             pass
 
+    def run(self, request, **kwargs):
+        # type: (HTTPRequestType, Any) -> PipelineResponse
+        """Runs the HTTP Request through the chained policies.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The PipelineResponse object
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        try:
+            prepared_request = self._transport.prepare_request(request)  # type: ignore
+        except AttributeError:
+            prepared_request = request
+        self._prepare_multipart(prepared_request)
+        context = PipelineContext(self._transport, **kwargs)
+        pipeline_request = PipelineRequest(
+            prepared_request, context
+        )  # type: PipelineRequest[HTTPRequestType]
+        first_node = (
+            self._impl_policies[0]
+            if self._impl_policies
+            else _TransportRunner(self._transport)
+        )
+        pipeline_response = first_node.send(pipeline_request)  # type: ignore
+        self._prepare_response(
+            request=request,
+            pipeline_response=pipeline_response,
+            **kwargs
+        )
         return pipeline_response

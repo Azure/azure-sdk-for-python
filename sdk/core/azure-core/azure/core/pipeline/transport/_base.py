@@ -62,7 +62,6 @@ from typing import (
     Tuple,
     Iterator,
     Type,
-    overload
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -198,11 +197,11 @@ class HttpTransport(
             transport=self, request=request, **kwargs
         )
 
-    def update_response_based_on_format(
-        self, request, pipeline_transport_response, **kwargs
+    def update_response_based_on_format(  # pylint: disable=no-self-use
+        self, request, pipeline_transport_response
     ):
         return update_response_based_on_format_helper(
-            request, pipeline_transport_response, **kwargs
+            request, pipeline_transport_response
         )
 
 
@@ -499,8 +498,8 @@ class HttpRequest(object):
             method=request.method,
             url=request.url,
             headers=request.headers,
-            files=request._files,
-            data=request._data
+            files=request._files,  # pylint: disable=protected-access
+            data=request._data  # pylint: disable=protected-access
         )
 
 

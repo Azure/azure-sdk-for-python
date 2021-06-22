@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 from typing import Optional, Callable, AsyncIterator
 from ..exceptions import StreamClosedError, StreamConsumedError
-from ._tools import get_request_format
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""

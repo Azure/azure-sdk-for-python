@@ -30,7 +30,6 @@ from typing import Any, Union, List, Generic, TypeVar, Dict
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
-from ._tools import get_request_format
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -197,28 +196,9 @@ class AsyncPipeline(
         await self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    async def run(self, request: HTTPRequestType, **kwargs: Any):
-        """Runs the HTTP Request through the chained policies.
-
-        :param request: The HTTP request object.
-        :type request: ~azure.core.pipeline.transport.HttpRequest
-        :return: The PipelineResponse object.
-        :rtype: ~azure.core.pipeline.PipelineResponse
-        """
-        request_format = get_request_format(request)
-        try:
-            prepared_request = self._transport.prepare_request(request)
-        except AttributeError:
-            prepared_request = request
-        await self._prepare_multipart(prepared_request)
-        context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(prepared_request, context)
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _AsyncTransportRunner(self._transport)
-        )
-        pipeline_response = await first_node.send(pipeline_request)
+    async def _prepare_response(
+        self, request: HTTPRequestType, pipeline_response: PipelineResponse, **kwargs: Any
+    ) -> None:
         try:
             pipeline_transport_response = pipeline_response.http_response
             response = self._transport.update_response_based_on_format(
@@ -234,8 +214,35 @@ class AsyncPipeline(
                     response._content = pipeline_transport_response.body()  # pylint: disable=protected-access
                 if hasattr(response, "close"):
                     await response.close()
+
             pipeline_response.http_response = response
         except AttributeError:
             pass
 
+    async def run(self, request: HTTPRequestType, **kwargs: Any):
+        """Runs the HTTP Request through the chained policies.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        try:
+            prepared_request = self._transport.prepare_request(request)
+        except AttributeError:
+            prepared_request = request
+        await self._prepare_multipart(prepared_request)
+        context = PipelineContext(self._transport, **kwargs)
+        pipeline_request = PipelineRequest(prepared_request, context)
+        first_node = (
+            self._impl_policies[0]
+            if self._impl_policies
+            else _AsyncTransportRunner(self._transport)
+        )
+        pipeline_response = await first_node.send(pipeline_request)
+        await self._prepare_response(
+            request=request,
+            pipeline_response=pipeline_response,
+            **kwargs
+        )
         return pipeline_response

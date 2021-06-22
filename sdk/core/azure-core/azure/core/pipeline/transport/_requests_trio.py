@@ -26,7 +26,7 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType
+from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
 import trio
 import urllib3
 
@@ -46,7 +46,6 @@ from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestR
 from ._base_requests_async import RequestsAsyncTransportBase
 from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
 from .._tools_async import iter_raw_helper, iter_bytes_helper
-from .._tools import update_response_based_on_format_helper
 from ...rest import HttpRequest as RestHttpRequest
 
 _LOGGER = logging.getLogger(__name__)
@@ -115,7 +114,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
 
     def _to_rest_response(self):
         response = RestTrioRequestsTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),
+            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
             internal_response=self.internal_response,
         )
         response._connection_data_block_size = self.block_size  # pylint: disable=protected-access

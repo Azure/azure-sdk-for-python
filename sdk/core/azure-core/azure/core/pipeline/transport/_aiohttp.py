@@ -51,7 +51,6 @@ from ...rest import (
     HttpRequest as RestHttpRequest
 )
 from .._tools_async import iter_raw_helper, iter_bytes_helper
-from .._tools import update_response_based_on_format_helper
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -116,17 +115,6 @@ class AioHttpTransport(AsyncHttpTransport):
     @property
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
-
-    def update_response_based_on_format(self, request, pipeline_transport_response, **kwargs):
-        format_to_response_type = {
-            SupportedFormat.REST: RestAioHttpTransportResponse
-        }
-        return update_response_based_on_format_helper(
-            request=request,
-            pipeline_transport_response=pipeline_transport_response,
-            format_to_response_type=format_to_response_type,
-            **kwargs
-        )
 
     def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None
@@ -385,7 +373,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     def _to_rest_response(self):
         response = RestAioHttpTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),
+            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
             internal_response=self.internal_response,
         )
         response._connection_data_block_size = self.block_size  # pylint: disable=protected-access

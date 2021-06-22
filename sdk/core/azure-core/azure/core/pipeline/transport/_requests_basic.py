@@ -52,9 +52,7 @@ from ...rest import (
     HttpResponse as RestHttpResponse,
     HttpRequest as RestHttpRequest
 )
-from .._tools import (
-    iter_bytes_helper, iter_raw_helper, update_response_based_on_format_helper
-)
+from .._tools import iter_bytes_helper, iter_raw_helper
 from ...exceptions import ResponseNotReadError
 
 PipelineType = TypeVar("PipelineType")
@@ -238,7 +236,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
     def _to_rest_response(self):
         response = RestRequestsTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),
+            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
             internal_response=self.internal_response,
         )
         response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
@@ -331,18 +329,6 @@ class RequestsTransport(HttpTransport):
     @property
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
-
-    def update_response_based_on_format(self, request, pipeline_transport_response, **kwargs):
-        format_to_response_type = {
-            SupportedFormat.REST: RestRequestsTransportResponse
-        }
-        return update_response_based_on_format_helper(
-            request=request,
-            pipeline_transport_response=pipeline_transport_response,
-            format_to_response_type=format_to_response_type,
-            **kwargs
-        )
-
 
     def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse

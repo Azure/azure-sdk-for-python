@@ -95,7 +95,7 @@ def get_request_format(request):
         "Recommended format is azure.core.rest.HttpRequest, we also support azure.core.pipeline.transport.HttpRequest"
     )
 
-def prepare_request_helper(transport, request, **kwargs):
+def prepare_request_helper(transport, request):
     request_format = get_request_format(request)
     if request_format == "pipeline_transport":
         return request
@@ -115,11 +115,11 @@ def prepare_request_helper(transport, request, **kwargs):
     return PipelineTransportHttpRequest._from_rest_request(request)  # pylint: disable=protected-access
 
 def update_response_based_on_format_helper(
-    request, pipeline_transport_response, **kwargs
+    request, pipeline_transport_response
 ):
     request_format = get_request_format(request)
     if request_format == "pipeline_transport":
         return pipeline_transport_response
 
     # for now, we know this will be azure.core.rest
-    return pipeline_transport_response._to_rest_response()
+    return pipeline_transport_response._to_rest_response()  # pylint: disable=protected-access

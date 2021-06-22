@@ -195,9 +195,9 @@ class AsyncHttpTransport(
             transport=self, request=request, **kwargs
         )
 
-    def update_response_based_on_format(
-        self, request, pipeline_transport_response, **kwargs
+    def update_response_based_on_format(  # pylint: disable=no-self-use
+        self, request, pipeline_transport_response
     ):
         return update_response_based_on_format_helper(
-            request, pipeline_transport_response, **kwargs
+            request, pipeline_transport_response
         )
