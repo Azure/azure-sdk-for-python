@@ -143,9 +143,6 @@ async def test_retry_on_429(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, request_format: str):
-            return response_type
-
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
             response = PipelineTransportAsyncHttpResponse(request, None)
@@ -179,9 +176,6 @@ async def test_no_retry_on_201(request_type, response_type):
         @property
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
-
-        def format_to_response_type(self, request_format: str):
-            return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
@@ -219,9 +213,6 @@ async def test_retry_seekable_stream(request_type, response_type):
         @property
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
-
-        def format_to_response_type(self, request_format: str):
-            return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             if self._first:
@@ -264,9 +255,6 @@ async def test_retry_seekable_file(request_type, response_type):
         @property
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
-
-        def format_to_response_type(self, request_format):
-            return response_type
 
         async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             if self._first:
@@ -312,7 +300,7 @@ async def test_retry_seekable_file(request_type, response_type):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_retry_timeout(request_type):
+async def test_retry_timeout(request_type, add_properties_to_transport):
     timeout = 1
 
     def send(request, **kwargs):
@@ -325,8 +313,8 @@ async def test_retry_timeout(request_type):
         send=Mock(wraps=send),
         connection_config=ConnectionConfiguration(connection_timeout=timeout * 2),
         sleep=asyncio.sleep,
-        supported_formats=[SupportedFormat.REST] if hasattr(request_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT],
     )
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
@@ -335,7 +323,7 @@ async def test_retry_timeout(request_type):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportAsyncHttpResponse), (RestHttpRequest, RestAsyncHttpResponse)])
-async def test_timeout_defaults(request_type, response_type):
+async def test_timeout_defaults(request_type, response_type, add_properties_to_transport):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
     async def send(request, **kwargs):
@@ -350,16 +338,13 @@ async def test_timeout_defaults(request_type, response_type):
         response.status_code = 200
         return response
 
-    def format_to_response_type(request_format):
-        return response_type
 
     transport = Mock(
         spec_set=AsyncHttpTransport,
         send=Mock(wraps=send),
         sleep=Mock(side_effect=Exception("policy should not sleep: its first send succeeded")),
-        supported_formats=[SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT],
-        format_to_response_type=format_to_response_type
     )
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy()])
 
     await pipeline.run(request_type("GET", "http://127.0.0.1/"))
@@ -370,7 +355,7 @@ async def test_timeout_defaults(request_type, response_type):
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error):
+async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error, add_properties_to_transport):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -380,6 +365,7 @@ async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, 
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=asyncio.sleep),
     )
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
@@ -392,7 +378,7 @@ async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, 
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-async def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error):
+async def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error, add_properties_to_transport):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -401,8 +387,8 @@ async def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeo
         spec=AsyncHttpTransport,
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=asyncio.sleep),
-        supported_formats=[SupportedFormat.REST],
     )
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the retry policy."""
+import functools
 try:
     from io import BytesIO
 except ImportError:
@@ -142,9 +143,6 @@ def test_retry_on_429(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, request_format, **kwargs):
-            return response_type
-
         def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
             # only returning pipeline transport http responses, bc this is how the transport.sends return stuff
@@ -176,9 +174,6 @@ def test_no_retry_on_201(request_type, response_type):
         @property
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
-
-        def format_to_response_type(self, request_format):
-            return response_type
 
         def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             self._count += 1
@@ -229,9 +224,6 @@ def test_retry_seekable_stream(request_type, response_type):
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
 
-        def format_to_response_type(self, request_format):
-            return response_type
-
     data = BytesIO(b"Lots of dataaaa")
     if hasattr(request_type, "content"):
         http_request = request_type('GET', 'http://127.0.0.1/', content=data)
@@ -257,9 +249,6 @@ def test_retry_seekable_file(request_type, response_type):
         @property
         def supported_formats(self):
             return [SupportedFormat.REST] if hasattr(response_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
-
-        def format_to_response_type(self, request_format):
-            return response_type
 
         def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             if self._first:
@@ -302,21 +291,20 @@ def test_retry_seekable_file(request_type, response_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_retry_timeout(request_type):
+def test_retry_timeout(request_type, add_properties_to_transport):
     timeout = 1
 
     def send(request, **kwargs):
         assert kwargs["connection_timeout"] <= timeout, "policy should set connection_timeout not to exceed timeout"
         raise ServiceResponseError("oops")
 
-    supported_formats = [SupportedFormat.REST] if hasattr(request_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
     transport = Mock(
         spec=HttpTransport,
         send=Mock(wraps=send),
         connection_config=ConnectionConfiguration(connection_timeout=timeout * 2),
         sleep=time.sleep,
-        supported_formats=supported_formats
     )
+    add_properties_to_transport(transport)
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
@@ -324,7 +312,7 @@ def test_retry_timeout(request_type):
 
 
 @pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
-def test_timeout_defaults(request_type, response_type):
+def test_timeout_defaults(request_type, response_type, add_properties_to_transport):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
     def send(request, **kwargs):
@@ -335,13 +323,13 @@ def test_timeout_defaults(request_type, response_type):
         response.status_code = 200
         return response
 
-    supported_formats = [SupportedFormat.REST] if hasattr(request_type, "content") else [SupportedFormat.PIPELINE_TRANSPORT]
+
     transport = Mock(
         spec_set=HttpTransport,
         send=Mock(wraps=send),
         sleep=Mock(side_effect=Exception("policy should not sleep: its first send succeeded")),
-        supported_formats=supported_formats,
     )
+    add_properties_to_transport(transport)
     pipeline = Pipeline(transport, [RetryPolicy()])
 
     pipeline.run(request_type("GET", "http://127.0.0.1/"))
@@ -352,7 +340,7 @@ def test_timeout_defaults(request_type, response_type):
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error):
+def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error, add_properties_to_transport):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -362,6 +350,7 @@ def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expect
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=time.sleep),
     )
+    add_properties_to_transport(transport)
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
@@ -373,7 +362,7 @@ def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expect
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error):
+def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error, add_properties_to_transport):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -382,8 +371,8 @@ def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_err
         spec=HttpTransport,
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=time.sleep),
-        supported_formats=[SupportedFormat.REST]
     )
+    add_properties_to_transport(transport)
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):

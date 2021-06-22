@@ -49,7 +49,7 @@ async def test_basic_aiohttp(request_type):
     request = request_type("GET", "https://www.bing.com/")
     if hasattr(request_type, "content"):
         # only pipeline transports actually go through the transport
-        request = request._to_pipeline_transport_request()
+        request = PipelineTransportHttpRequest._from_rest_request(request)
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -64,7 +64,7 @@ async def test_aiohttp_auto_headers(request_type):
     request = request_type("POST", "https://www.bing.com/")
     if hasattr(request_type, "content"):
         # only pipeline transports actually go through the transport
-        request = request._to_pipeline_transport_request()
+        request = PipelineTransportHttpRequest._from_rest_request(request)
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
@@ -77,7 +77,7 @@ async def test_basic_async_requests(request_type):
     request = request_type("GET", "https://www.bing.com/")
     if hasattr(request_type, "content"):
         # only pipeline transports actually go through the transport
-        request = request._to_pipeline_transport_request()
+        request = PipelineTransportHttpRequest._from_rest_request(request)
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -91,7 +91,7 @@ async def test_conf_async_requests(request_type):
     request = request_type("GET", "https://www.bing.com/")
     if hasattr(request_type, "content"):
         # only pipeline transports actually go through the transport
-        request = request._to_pipeline_transport_request()
+        request = PipelineTransportHttpRequest._from_rest_request(request)
     async with AsyncioRequestsTransport() as sender:
         response = await sender.send(request)
         assert response.body() is not None
@@ -105,7 +105,7 @@ def test_conf_async_trio_requests(request_type):
         request = request_type("GET", "https://www.bing.com/")
         if hasattr(request_type, "content"):
             # only pipeline transports actually go through the transport
-            request = request._to_pipeline_transport_request()
+            request = PipelineTransportHttpRequest._from_rest_request(request)
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
             assert response.body() is not None

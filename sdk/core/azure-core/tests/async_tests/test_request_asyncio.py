@@ -31,7 +31,8 @@ async def test_async_gen_data(request_type):
     async with AsyncioRequestsTransport() as transport:
         if hasattr(request_type, "content"):
             # only pipeline transport requests actually go into the transport code
-            req = request_type('GET', 'http://httpbin.org/post', content=AsyncGen())._to_pipeline_transport_request()
+            rest_request = request_type("GET", 'http://httpbin.org/post', content=AsyncGen())
+            req = PipelineTransportHttpRequest._from_rest_request(rest_request)
         else:
             req = request_type('GET', 'http://httpbin.org/post', data=AsyncGen())
         await transport.send(req)
@@ -42,7 +43,8 @@ async def test_send_data(request_type):
     async with AsyncioRequestsTransport() as transport:
         if hasattr(request_type, "content"):
             # only pipeline transport requests actually go into the transport code
-            req = request_type('PUT', 'http://httpbin.org/anything', content=b"azerty")._to_pipeline_transport_request()
+            rest_request = request_type('PUT', 'http://httpbin.org/anything', content=b"azerty")
+            req = PipelineTransportHttpRequest._from_rest_request(rest_request)
         else:
             req = request_type('PUT', 'http://httpbin.org/anything', data=b"azerty")
         response = await transport.send(req)

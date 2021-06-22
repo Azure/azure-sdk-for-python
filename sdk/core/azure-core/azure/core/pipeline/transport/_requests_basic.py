@@ -50,6 +50,7 @@ from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from ...rest import (
     _HttpResponseBase as _RestHttpResponseBase,
     HttpResponse as RestHttpResponse,
+    HttpRequest as RestHttpRequest
 )
 from .._tools import (
     iter_bytes_helper, iter_raw_helper, update_response_based_on_format_helper
@@ -237,7 +238,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
     def _to_rest_response(self):
         response = RestRequestsTransportResponse(
-            request=self.request._to_rest_request(),
+            request=RestHttpRequest._from_pipeline_transport_request(self.request),
             internal_response=self.internal_response,
         )
         response._connection_data_block_size = self.block_size  # pylint: disable=protected-access

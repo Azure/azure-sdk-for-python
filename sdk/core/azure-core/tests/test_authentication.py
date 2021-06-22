@@ -17,8 +17,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.rest import HttpRequest as RestHttpRequest
-from azure.core.pipeline.transport._base import SupportedFormat
-from azure.core.pipeline._tools import prepare_request_helper, update_response_based_on_format_helper
 import pytest
 
 try:
@@ -33,15 +31,9 @@ class MockPipelineTransportResponse(object):
         self.internal_response = None
         self.block_size = None
 
-def add_properties_to_transport(transport_mock):
-    # need to add some stuff to transport to mock the new properties we've added
-    transport_mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
-    transport_mock.prepare_request = functools.partial(prepare_request_helper, transport_mock)
-    transport_mock.update_response_based_on_format = update_response_based_on_format_helper
-
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_adds_header(request_type):
+def test_bearer_policy_adds_header(request_type, add_properties_to_transport):
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
     expected_token = AccessToken("expected_token", 2524608000)
@@ -66,7 +58,7 @@ def test_bearer_policy_adds_header(request_type):
     assert fake_credential.get_token.call_count == 1
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_send(request_type):
+def test_bearer_policy_send(request_type, add_properties_to_transport):
     """The bearer token policy should invoke the next policy's send method and return the result"""
     expected_request = request_type("GET", "https://spam.eggs")
     expected_response = Mock()
@@ -92,7 +84,7 @@ def test_bearer_policy_send(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_token_caching(request_type):
+def test_bearer_policy_token_caching(request_type, add_properties_to_transport):
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     credential = Mock(get_token=Mock(return_value=good_for_one_hour))
     transport = Mock()
@@ -121,7 +113,7 @@ def test_bearer_policy_token_caching(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_optionally_enforces_https(request_type):
+def test_bearer_policy_optionally_enforces_https(request_type, add_properties_to_transport):
     """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
 
     def assert_option_popped(request, **kwargs):
@@ -151,7 +143,7 @@ def test_bearer_policy_optionally_enforces_https(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_preserves_enforce_https_opt_out(request_type):
+def test_bearer_policy_preserves_enforce_https_opt_out(request_type, add_properties_to_transport):
     """The policy should use request context to preserve an opt out from https enforcement"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -169,7 +161,7 @@ def test_bearer_policy_preserves_enforce_https_opt_out(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_default_context(request_type):
+def test_bearer_policy_default_context(request_type, add_properties_to_transport):
     """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
     expected_scope = "scope"
     token = AccessToken("", 0)
@@ -186,7 +178,7 @@ def test_bearer_policy_default_context(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_context_unmodified_by_default(request_type):
+def test_bearer_policy_context_unmodified_by_default(request_type, add_properties_to_transport):
     """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -204,7 +196,7 @@ def test_bearer_policy_context_unmodified_by_default(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_calls_on_challenge(request_type):
+def test_bearer_policy_calls_on_challenge(request_type, add_properties_to_transport):
     """BearerTokenCredentialPolicy should call its on_challenge method when it receives an authentication challenge"""
 
     class TestPolicy(BearerTokenCredentialPolicy):
@@ -227,7 +219,7 @@ def test_bearer_policy_calls_on_challenge(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_cannot_complete_challenge(request_type):
+def test_bearer_policy_cannot_complete_challenge(request_type, add_properties_to_transport):
     """BearerTokenCredentialPolicy should return the 401 response when it can't complete its challenge"""
 
     expected_scope = "scope"
@@ -253,7 +245,7 @@ def test_bearer_policy_cannot_complete_challenge(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_calls_sansio_methods(request_type):
+def test_bearer_policy_calls_sansio_methods(request_type, add_properties_to_transport):
     """BearerTokenCredentialPolicy should call SansIOHttpPolicy methods as does _SansIOHTTPPolicyRunner"""
 
     class TestPolicy(BearerTokenCredentialPolicy):
@@ -314,7 +306,7 @@ def test_key_vault_regression():
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_azure_key_credential_policy(request_type):
+def test_azure_key_credential_policy(request_type, add_properties_to_transport):
     """Tests to see if we can create an AzureKeyCredentialPolicy"""
 
     key_header = "api_key"
@@ -366,7 +358,7 @@ def test_azure_key_credential_updates():
     ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
 ])
-def test_azure_sas_credential_policy_pipeline_transport(sas, url, expected_url):
+def test_azure_sas_credential_policy_pipeline_transport(sas, url, expected_url, add_properties_to_transport):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
 
     def verify_authorization(request):
@@ -390,7 +382,7 @@ def test_azure_sas_credential_policy_pipeline_transport(sas, url, expected_url):
     ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
 ])
-def test_azure_sas_credential_policy_rest(sas, url, expected_url):
+def test_azure_sas_credential_policy_rest(sas, url, expected_url, add_properties_to_transport):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
 
     def verify_authorization(request):

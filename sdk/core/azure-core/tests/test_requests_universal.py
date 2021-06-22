@@ -55,7 +55,7 @@ def test_requests_auto_headers(request_type):
     with RequestsTransport() as sender:
         if hasattr(request_type, "content"):
             # prior to the transport, we change it to a pipeline transport http request
-            request = request._to_pipeline_transport_request()
+            request = PipelineTransportHttpRequest._from_rest_request(request)
         response = sender.send(request)
         auto_headers = response.internal_response.request.headers
         assert 'Content-Type' not in auto_headers

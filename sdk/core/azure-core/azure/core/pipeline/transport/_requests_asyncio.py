@@ -46,6 +46,7 @@ from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestR
 from ._base_requests_async import RequestsAsyncTransportBase
 from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
+    HttpRequest as RestHttpRequest
 )
 from .._tools_async import iter_raw_helper, iter_bytes_helper
 from .._tools import update_response_based_on_format_helper
@@ -211,7 +212,7 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
 
     def _to_rest_response(self):
         response = RestAsyncioRequestsTransportResponse(
-            request=self.request._to_rest_request(),
+            request=RestHttpRequest._from_pipeline_transport_request(self.request),
             internal_response=self.internal_response,
         )
         response._connection_data_block_size = self.block_size  # pylint: disable=protected-access

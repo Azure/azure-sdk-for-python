@@ -75,7 +75,7 @@ from azure.core.pipeline import (
     PipelineResponse,
     PipelineContext,
 )
-from .._tools import await_result as _await_result, prepare_request_helper
+from .._tools import await_result as _await_result, prepare_request_helper, update_response_based_on_format_helper
 from ..._utils import _case_insensitive_dict
 
 if TYPE_CHECKING:
@@ -201,7 +201,9 @@ class HttpTransport(
     def update_response_based_on_format(
         self, request, pipeline_transport_response, **kwargs
     ):
-        return pipeline_transport_response
+        return update_response_based_on_format_helper(
+            request, pipeline_transport_response, **kwargs
+        )
 
 
 class HttpRequest(object):

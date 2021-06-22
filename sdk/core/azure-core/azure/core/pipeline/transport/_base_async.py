@@ -37,7 +37,7 @@ from ._base import (
     PipelineResponse,
     SupportedFormat,
 )
-from .._tools import prepare_request_helper
+from .._tools import prepare_request_helper, update_response_based_on_format_helper
 from .._tools_async import await_result as _await_result
 
 try:
@@ -198,4 +198,6 @@ class AsyncHttpTransport(
     def update_response_based_on_format(
         self, request, pipeline_transport_response, **kwargs
     ):
-        return pipeline_transport_response
+        return update_response_based_on_format_helper(
+            request, pipeline_transport_response, **kwargs
+        )

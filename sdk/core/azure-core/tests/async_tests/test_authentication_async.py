@@ -26,7 +26,7 @@ async def async_magic():
 Mock.__await__ = lambda x: async_magic().__await__()
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_adds_header(request_type):
+async def test_bearer_policy_adds_header(request_type, add_properties_to_transport):
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
     expected_token = AccessToken("expected_token", 2524608000)
@@ -45,8 +45,7 @@ async def test_bearer_policy_adds_header(request_type):
     fake_credential = Mock(get_token=get_token)
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
     transport = Mock()
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
     await pipeline.run(request_type("GET", "https://spam.eggs"), context=None)
@@ -57,7 +56,7 @@ async def test_bearer_policy_adds_header(request_type):
     assert get_token_calls == 1
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_send(request_type):
+async def test_bearer_policy_send(request_type, add_properties_to_transport):
     """The bearer token policy should invoke the next policy's send method and return the result"""
     expected_request = request_type("GET", "https://spam.eggs")
     expected_response = Mock()
@@ -76,15 +75,14 @@ async def test_bearer_policy_send(request_type):
     fake_credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("", 0)))
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     transport = Mock()
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     response = await AsyncPipeline(transport=transport, policies=policies).run(expected_request)
 
     assert response is expected_response
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_token_caching(request_type):
+async def test_bearer_policy_token_caching(request_type, add_properties_to_transport):
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     expected_token = good_for_one_hour
     get_token_calls = 0
@@ -100,8 +98,7 @@ async def test_bearer_policy_token_caching(request_type):
         Mock(send=Mock(return_value=get_completed_future(Mock()))),
     ]
     transport = Mock()
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
     await pipeline.run(request_type("GET", "https://spam.eggs"))
@@ -119,8 +116,7 @@ async def test_bearer_policy_token_caching(request_type):
     ]
 
     transport = Mock()
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
     await pipeline.run(request_type("GET", "https://spam.eggs"))
@@ -131,7 +127,7 @@ async def test_bearer_policy_token_caching(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_optionally_enforces_https(request_type):
+async def test_bearer_policy_optionally_enforces_https(request_type, add_properties_to_transport):
     """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
 
     async def assert_option_popped(request, **kwargs):
@@ -140,8 +136,7 @@ async def test_bearer_policy_optionally_enforces_https(request_type):
 
     credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("***", 42)))
     transport = Mock(send=assert_option_popped)
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(
         transport=transport, policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")]
     )
@@ -162,7 +157,7 @@ async def test_bearer_policy_optionally_enforces_https(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_preserves_enforce_https_opt_out(request_type):
+async def test_bearer_policy_preserves_enforce_https_opt_out(request_type, add_properties_to_transport):
     """The policy should use request context to preserve an opt out from https enforcement"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -174,14 +169,13 @@ async def test_bearer_policy_preserves_enforce_https_opt_out(request_type):
     credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     transport = Mock(send=lambda *_, **__: get_completed_future(Mock()))
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
     await pipeline.run(request_type("GET", "http://not.secure"), enforce_https=False)
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_context_unmodified_by_default(request_type):
+async def test_bearer_policy_context_unmodified_by_default(request_type, add_properties_to_transport):
     """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -193,8 +187,7 @@ async def test_bearer_policy_context_unmodified_by_default(request_type):
     credential = Mock(get_token=lambda *_, **__: get_token)
     policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     transport = Mock(send=lambda *_, **__: get_completed_future(Mock()))
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
     await pipeline.run(request_type("GET", "https://secure"))
@@ -202,7 +195,7 @@ async def test_bearer_policy_context_unmodified_by_default(request_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_bearer_policy_calls_sansio_methods(request_type):
+async def test_bearer_policy_calls_sansio_methods(request_type, add_properties_to_transport):
     """AsyncBearerTokenCredentialPolicy should call SansIOHttpPolicy methods as does _SansIOAsyncHTTPPolicyRunner"""
 
     class TestPolicy(AsyncBearerTokenCredentialPolicy):
@@ -220,8 +213,7 @@ async def test_bearer_policy_calls_sansio_methods(request_type):
     credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", int(time.time()) + 3600))))
     policy = TestPolicy(credential, "scope")
     transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST]
+    add_properties_to_transport(transport)
 
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     await pipeline.run(request_type("GET", "https://localhost"))
@@ -234,8 +226,7 @@ async def test_bearer_policy_calls_sansio_methods(request_type):
         pass
 
     transport = Mock(send=Mock(side_effect=TestException))
-    if hasattr(request_type, "content"):
-        transport.supported_formats = [SupportedFormat.REST]
+    add_properties_to_transport(transport)
     policy = TestPolicy(credential, "scope")
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     with pytest.raises(TestException):

@@ -30,7 +30,7 @@ def fake_span():
 
 class MockClient:
     @distributed_trace
-    def __init__(self, request_type, response_type=None, policies=None, assert_current_span=False):
+    def __init__(self, request_type, add_properties_to_transport, response_type=None, policies=None, assert_current_span=False):
         time.sleep(0.001)
         self.request = request_type("GET", "https://bing.com")
         if policies is None:
@@ -38,11 +38,7 @@ class MockClient:
         policies.append(mock.Mock(spec=HTTPPolicy, send=self.verify_request))
         self.policies = policies
         self.transport = mock.Mock(spec=HttpTransport)
-        self.transport.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
-        if response_type:
-            def format_to_response_type(request_format):
-                return response_type
-            self.transport.format_to_response_type = format_to_response_type
+        add_properties_to_transport(self.transport)
         self.pipeline = Pipeline(self.transport, policies=policies)
 
         self.expected_response = mock.Mock(spec=PipelineResponse)
@@ -95,9 +91,9 @@ class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-    async def test_decorator_tracing_attr(self, request_type):
+    async def test_decorator_tracing_attr(self, request_type, add_properties_to_transport):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type)
+            client = MockClient(request_type, add_properties_to_transport)
             await client.tracing_attr()
 
         assert len(parent.children) == 2
@@ -108,9 +104,9 @@ class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-    async def test_decorator_has_different_name(self, request_type):
+    async def test_decorator_has_different_name(self, request_type, add_properties_to_transport):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type)
+            client = MockClient(request_type, add_properties_to_transport)
             await client.check_name_is_different()
         assert len(parent.children) == 2
         assert parent.children[0].name == "MockClient.__init__"
@@ -119,9 +115,9 @@ class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-    async def test_used(self, request_type):
+    async def test_used(self, request_type, add_properties_to_transport):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type, policies=[])
+            client = MockClient(request_type, add_properties_to_transport, policies=[])
             await client.get_foo(parent_span=parent)
             await client.get_foo()
 
@@ -136,9 +132,9 @@ class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-    async def test_span_merge_span(self, request_type):
+    async def test_span_merge_span(self, request_type, add_properties_to_transport):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type)
+            client = MockClient(request_type, add_properties_to_transport)
             await client.merge_span_method()
             await client.no_merge_span_method()
 
@@ -153,9 +149,9 @@ class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportAsyncHttpResponse), (RestHttpRequest, RestAsyncHttpResponse)])
-    async def test_span_complicated(self, request_type, response_type):
+    async def test_span_complicated(self, request_type, response_type, add_properties_to_transport):
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type, response_type)
+            client = MockClient(request_type, add_properties_to_transport, response_type)
             await client.make_request(2)
             with parent.span("child") as child:
                 time.sleep(0.001)
@@ -175,11 +171,11 @@ class TestAsyncDecorator(object):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-    async def test_span_with_exception(self, request_type):
+    async def test_span_with_exception(self, request_type, add_properties_to_transport):
         """Assert that if an exception is raised, the next sibling method is actually a sibling span.
         """
         with FakeSpan(name="parent") as parent:
-            client = MockClient(request_type)
+            client = MockClient(request_type, add_properties_to_transport)
             try:
                 await client.raising_exception()
             except:

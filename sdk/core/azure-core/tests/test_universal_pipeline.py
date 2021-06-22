@@ -204,17 +204,15 @@ def test_no_log(mock_http_logger, request_type, response_type):
     assert second_count == first_count * 2
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_retry_without_http_response(request_type):
+def test_retry_without_http_response(request_type, add_properties_to_transport):
     class NaughtyPolicy(HTTPPolicy):
         def send(*args):
             raise AzureError('boo')
 
     policies = [RetryPolicy(), NaughtyPolicy()]
-    if hasattr(request_type, "content"):
-        transport = mock.Mock()
-        transport.supported_formats = [SupportedFormat.REST]
-    else:
-        transport = None
+    transport = mock.Mock()
+    add_properties_to_transport(transport)
+
     pipeline = Pipeline(policies=policies, transport=transport)
     with pytest.raises(AzureError):
         pipeline.run(request_type('GET', url='https://foo.bar'))

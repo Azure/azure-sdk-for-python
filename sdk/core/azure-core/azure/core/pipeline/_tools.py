@@ -112,8 +112,7 @@ def prepare_request_helper(transport, request, **kwargs):
         )
     # for backcompat reasons, our pipeline runs azure.core.pipeline.transport.HttpRequests
     from .transport import HttpRequest as PipelineTransportHttpRequest
-    request = PipelineTransportHttpRequest._from_rest_request(request)  # pylint: disable=protected-access
-    return request
+    return PipelineTransportHttpRequest._from_rest_request(request)  # pylint: disable=protected-access
 
 def update_response_based_on_format_helper(
     request, pipeline_transport_response, **kwargs

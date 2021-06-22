@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import functools
 from six.moves.http_client import HTTPConnection
 from collections import OrderedDict
 import time
@@ -183,9 +184,10 @@ def test_response_deserialization_utf8_bom():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send():
+def test_multipart_send(add_properties_to_transport):
 
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -229,8 +231,9 @@ def test_multipart_send():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_context():
+def test_multipart_send_with_context(add_properties_to_transport):
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -277,9 +280,10 @@ def test_multipart_send_with_context():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_one_changeset():
+def test_multipart_send_with_one_changeset(add_properties_to_transport):
 
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -335,9 +339,10 @@ def test_multipart_send_with_one_changeset():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_multiple_changesets():
+def test_multipart_send_with_multiple_changesets(add_properties_to_transport):
 
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -421,9 +426,10 @@ def test_multipart_send_with_multiple_changesets():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_combination_changeset_first():
+def test_multipart_send_with_combination_changeset_first(add_properties_to_transport):
 
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -484,9 +490,10 @@ def test_multipart_send_with_combination_changeset_first():
     )
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_combination_changeset_last():
+def test_multipart_send_with_combination_changeset_last(add_properties_to_transport):
 
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -547,9 +554,10 @@ def test_multipart_send_with_combination_changeset_last():
     )
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_combination_changeset_middle():
+def test_multipart_send_with_combination_changeset_middle(add_properties_to_transport):
 
     transport = mock.MagicMock(spec=HttpTransport)
+    add_properties_to_transport(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'

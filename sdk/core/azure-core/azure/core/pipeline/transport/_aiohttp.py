@@ -41,7 +41,7 @@ from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 
-from ._base import HttpRequest, SupportedFormat
+from ._base import HttpRequest as PipelineTransportHttpRequest, SupportedFormat
 from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
@@ -154,7 +154,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+    async def send(self, request: PipelineTransportHttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -287,7 +287,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
     """
-    def __init__(self, request: HttpRequest,
+    def __init__(self, request: PipelineTransportHttpRequest,
                  aiohttp_response: aiohttp.ClientResponse,
                  block_size=None, *, decompress=True) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
@@ -385,7 +385,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     def _to_rest_response(self):
         response = RestAioHttpTransportResponse(
-            request=self.request._to_rest_request(),
+            request=RestHttpRequest._from_pipeline_transport_request(self.request),
             internal_response=self.internal_response,
         )
         response._connection_data_block_size = self.block_size  # pylint: disable=protected-access

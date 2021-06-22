@@ -227,17 +227,14 @@ def test_conf_async_trio_requests(request_type):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_retry_without_http_response(request_type):
+async def test_retry_without_http_response(request_type, add_properties_to_transport):
     class NaughtyPolicy(AsyncHTTPPolicy):
         def send(*args):
             raise AzureError('boo')
 
     policies = [AsyncRetryPolicy(), NaughtyPolicy()]
-    if hasattr(request_type, "content"):
-        transport = Mock()
-        transport.supported_formats = [SupportedFormat.REST]
-    else:
-        transport = None
+    transport = Mock()
+    add_properties_to_transport(transport)
     pipeline = AsyncPipeline(policies=policies, transport=transport)
     with pytest.raises(AzureError):
         await pipeline.run(request_type('GET', url='https://foo.bar'))
