@@ -4,10 +4,6 @@
 ### Features Added
 
 ### Breaking Changes
-* renamed `base_url` to endpoint in `AzureAppConfigurationClient`
-* `key_filter` and `label_filter` are keyword arguments in `list_configuration_settings`
-* `label`, `etag`, and `match_condition` are now keyword arguments in `get_configuration_settings`
-* `enabled` parameter in `FeatureFlagConfigurationSetting` is now a keyword argument
 
 ### Key Bugs Fixed
 

@@ -48,7 +48,7 @@ if TYPE_CHECKING:
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
-        :param str endpoint: base url of the service
+        :param str base_url: base url of the service
         :param credential: An object which can provide secrets for the app configuration service
         :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential` or
             :class:`~azure.core.credentials_async.AsyncTokenCredential`
@@ -61,23 +61,23 @@ class AzureAppConfigurationClient:
 
     def __init__(
         self,
-        endpoint: str,
+        base_url: str,
         credential: Union[AppConfigConnectionStringCredential, "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
         try:
-            if not endpoint.lower().startswith("http"):
-                endpoint = "https://" + endpoint
+            if not base_url.lower().startswith("http"):
+                base_url = "https://" + base_url
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
         if not credential:
             raise ValueError("Missing credential")
 
-        self._credential_scopes = endpoint.strip("/") + "/.default"
+        self._credential_scopes = base_url.strip("/") + "/.default"
 
         self._config = AzureAppConfigurationConfiguration(
-            credential, endpoint, credential_scopes=self._credential_scopes, **kwargs
+            credential, base_url, credential_scopes=self._credential_scopes, **kwargs
         )
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -90,11 +90,11 @@ class AzureAppConfigurationClient:
             self._sync_token_policy = SyncTokenPolicy()
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
-                credential=credential, aad_mode=aad_mode, endpoint=endpoint, **kwargs
+                credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
             )
 
         self._impl = AzureAppConfiguration(
-            credential, endpoint, credential_scopes=self._credential_scopes, pipeline=pipeline
+            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline
         )
 
     @classmethod
@@ -116,22 +116,22 @@ class AzureAppConfigurationClient:
             connection_str = "<my connection string>"
             async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
         """
-        endpoint = "https://" + get_endpoint_from_connection_string(connection_string)
+        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
             credential=AppConfigConnectionStringCredential(connection_string),
-            endpoint=endpoint,
+            base_url=base_url,
             **kwargs
         )
 
     def _create_appconfig_pipeline(
-        self, credential, endpoint=None, aad_mode=False, **kwargs
+        self, credential, base_url=None, aad_mode=False, **kwargs
     ):
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
 
         if policies is None:  # [] is a valid policy list
             if aad_mode:
-                scope = endpoint.strip("/") + "/.default"
+                scope = base_url.strip("/") + "/.default"
                 if hasattr(credential, "get_token"):
                     credential_policy = AsyncBearerTokenCredentialPolicy(
                         credential, scope
