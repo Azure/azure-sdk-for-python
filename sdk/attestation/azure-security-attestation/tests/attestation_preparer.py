@@ -29,10 +29,17 @@ AttestationPreparer = functools.partial(
     attestation_isolated_signing_key="xxxx",
     attestation_isolated_signing_certificate="xxxx",
     attestation_service_management_url="https://management.core.windows.net/",
-    attestation_location_short_name="eus",  # Note: This must match the short name in the fake resources. It also must match the region in which the live tests are run.
+    # Note: attestation_location_short-name must match the short name in the
+    # fake resources. It also must match the region in which the live tests
+    # are run. If it does not match, then the recording will not
+    # correctly rewrite the attestation_xxx_urls.
+    attestation_location_short_name="eus",  
     attestation_client_id="xxxx",
     attestation_client_secret="secret",
     attestation_tenant_id="tenant",
+    # Note: attestation_isolated_url and attestation_aad_url must have the
+    # same region as the attestation_location_short_name. Otherwise there is a
+    # possiblity that the rewriting rules will miss these URLs.
     attestation_isolated_url="https://fakeresource.eus.attest.azure.net",
     attestation_aad_url="https://fakeresource.eus.attest.azure.net",
     #            attestation_resource_manager_url='https://resourcemanager/zzz'
