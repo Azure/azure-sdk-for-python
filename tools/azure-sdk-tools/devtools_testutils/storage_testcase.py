@@ -14,7 +14,7 @@ except:
     pass
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.models import StorageAccount, Endpoints
+from azure.mgmt.storage.models import StorageAccount, Endpoints, BlobServiceProperties, DeleteRetentionPolicy, LastAccessTimeTrackingPolicy
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
@@ -64,16 +64,8 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(StorageManagementClient)
             group = self._get_resource_group(**kwargs)
-            storage_async_operation = self.client.storage_accounts.begin_create(
-                group.name,
-                name,
-                {
-                    "sku": {"name": self.sku},
-                    "location": self.location,
-                    "kind": self.kind,
-                    "enable_https_traffic_only": True,
-                },
-            )
+            storage_async_operation = self._create_account(group.name, name)
+
             self.resource = storage_async_operation.result()
             storage_keys = {v.key_name: v.value for v in self.client.storage_accounts.list_keys(group.name, name).keys}
             self.storage_key = storage_keys["key1"]
@@ -126,6 +118,18 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                     )
                     sleep(30)
 
+    def _create_account(self, resource_group_name, account_name):
+        return self.client.storage_accounts.begin_create(
+            resource_group_name,
+            account_name,
+            {
+                "sku": {"name": self.sku},
+                "location": self.location,
+                "kind": self.kind,
+                "enable_https_traffic_only": True,
+            },
+        )
+
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs.get(self.resource_group_parameter_name)
@@ -135,6 +139,46 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                 "decorator @{} in front of this storage account preparer."
             )
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+
+
+class BlobAccountPreparer(StorageAccountPreparer):
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.is_versioning_enabled = kwargs.pop("is_versioning_enabled", None)
+        self.is_last_access_time_enabled = kwargs.pop("is_last_access_time_enabled", None)
+        self.container_retention_days = kwargs.pop("container_retention_days", None)
+
+        super(BlobAccountPreparer, self).__init__(**kwargs)
+
+    def _create_account(self, resource_group_name, account_name):
+        storage_async_operation = self.client.storage_accounts.begin_create(
+            resource_group_name,
+            account_name,
+            {
+                "sku": {"name": self.sku},
+                "location": self.location,
+                "kind": self.kind,
+                "enable_https_traffic_only": True,
+            },
+        )
+
+        props = BlobServiceProperties()
+        if self.is_versioning_enabled is True:
+            props.is_versioning_enabled = True
+        if self.container_retention_days:
+            props.container_delete_retention_policy = DeleteRetentionPolicy(enabled=True,
+                                                                            days=self.container_retention_days)
+        if self.is_last_access_time_enabled:
+            props.last_access_time_tracking_policy = LastAccessTimeTrackingPolicy(enable=True)
+
+        if not all(prop is None for prop in props.as_dict().values()):
+            self.client.blob_services.set_service_properties(resource_group_name, account_name, props)
+
+        sleep(30)
+
+        return storage_async_operation
 
 
 CachedStorageAccountPreparer = functools.partial(StorageAccountPreparer, use_cache=True, random_name_enabled=True)
