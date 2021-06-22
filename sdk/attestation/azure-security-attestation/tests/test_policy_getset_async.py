@@ -245,6 +245,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         # type: (str, Any) -> bool
         return instance_url == kwargs.get("attestation_isolated_url")
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllInstanceTypes
     async def test_get_policy_management_certificates(self, **kwargs):

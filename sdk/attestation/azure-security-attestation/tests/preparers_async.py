@@ -22,37 +22,6 @@ from typing import Awaitable, Callable, Dict, Optional, Any, TypeVar, overload
 
 T = TypeVar("T")
 
-
-AttestationPreparer = functools.partial(
-    PowerShellPreparer,
-    "attestation",
-    #            attestation_azure_authority_host='xxx',
-    #            attestation_resource_group='yyyy',
-    #            attestation_subscription_id='xxx',
-    #            attestation_environment='AzureCloud',
-    attestation_policy_signing_key0="keyvalue",
-    attestation_policy_signing_key1="keyvalue",
-    attestation_policy_signing_key2="keyvalue",
-    attestation_policy_signing_certificate0="more junk",
-    attestation_policy_signing_certificate1="more junk",
-    attestation_policy_signing_certificate2="more junk",
-    attestation_serialized_policy_signing_key0="junk",
-    attestation_serialized_policy_signing_key1="junk",
-    attestation_serialized_policy_signing_key2="junk",
-    attestation_serialized_isolated_signing_key="yyyy",
-    attestation_isolated_signing_key="xxxx",
-    attestation_isolated_signing_certificate="xxxx",
-    attestation_service_management_url="https://management.core.windows.net/",
-    attestation_location_short_name="wus",  # Note: This must match the short name in the fake resources.
-    attestation_client_id="xxxx",
-    attestation_client_secret="secret",
-    attestation_tenant_id="tenant",
-    attestation_isolated_url="https://fakeresource.eus.attest.azure.net",
-    attestation_aad_url="https://fakeresource.eus.attest.azure.net",
-    #            attestation_resource_manager_url='https://resourcemanager/zzz'
-)
-
-
 def AllAttestationTypes(func: Callable[..., Awaitable[T]] = None, **kwargs: Any):
     """Decorator to apply to function to add attestation_type kwarg for each attestation type."""
 
@@ -87,7 +56,7 @@ def AllInstanceTypes(
                 + ".attest.azure.net"
             )
 
-        for attestation_type in instances:
-            await func(*args, instance_url=attestation_type, **kwargs)
+        for instance_url in instances:
+            await func(*args, instance_url=instance_url, **kwargs)
 
     return wrapper
