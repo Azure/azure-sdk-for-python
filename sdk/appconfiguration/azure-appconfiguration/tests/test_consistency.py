@@ -47,7 +47,7 @@ class AppConfigurationClientTest(AzureTestCase):
         try:
             assert key1.key == key2.key
         except AttributeError:
-            assert key1.feature_id == key2.feature_id
+            assert key1.key == key2.key
         assert key1.label == key2.label
         assert key1.content_type == key2.content_type
         assert key1.tags == key2.tags
@@ -104,7 +104,7 @@ class AppConfigurationClientTest(AzureTestCase):
         set_flag = client.set_configuration_setting(set_flag)
         assert isinstance(set_flag, FeatureFlagConfigurationSetting)
         assert set_flag.enabled == False
-        assert set_flag.feature_id.endswith(key)
+        assert set_flag.key.endswith(key)
 
     @app_config_decorator
     def test_feature_flag_invalid_json(self, client):
@@ -189,4 +189,4 @@ class AppConfigurationClientTest(AzureTestCase):
     def test_feature_flag_prefix(self, client):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
-        assert feature_flag.feature_id.startswith(".appconfig.featureflag/")
+        assert feature_flag.key.startswith(".appconfig.featureflag/")

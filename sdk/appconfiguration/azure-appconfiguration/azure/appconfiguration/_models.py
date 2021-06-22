@@ -164,6 +164,7 @@ class FeatureFlagConfigurationSetting(
         if not feature_id.startswith(self.key_prefix):
             feature_id = self.key_prefix + feature_id
         self.feature_id = feature_id
+        self.key = feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -182,7 +183,7 @@ class FeatureFlagConfigurationSetting(
 
     def _validate(self):
         # type: () -> None
-        if not self.feature_id.startswith(self.key_prefix):
+        if not self.key.startswith(self.key_prefix):
             raise ValueError("All FeatureFlagConfigurationSettings should be prefixed with {}.".format(self.key_prefix))
         if not (self.value is None or isinstance(self.value, dict)):
             raise ValueError("Expect 'value' to be a dictionary.")
@@ -261,9 +262,9 @@ class FeatureFlagConfigurationSetting(
         # type: () -> KeyValue
 
         return KeyValue(
-            key=self.feature_id,
+            key=self.key,
             label=self.label,
-            value=json.dumps(self.value),  # NOTE: This has to be added for valid json
+            value=json.dumps(self.value),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
