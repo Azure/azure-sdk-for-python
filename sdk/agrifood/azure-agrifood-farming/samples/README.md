@@ -12,7 +12,7 @@ urlFragment: farmbeats-samples
 
 These sample programs demonstrate some common use case scenairos for the [FarmBeats Python client library][python_sdk].
 
-- [hello_world.py][hello_world_sample] demonstrates the most basic operation that can be performed. Use this to understand how to create the client object, how to authenticate it, and make sure your client is set up correctly to call into your FarmBeats endpoint.
+- [hello_world.py][hello_world_sample] demonstrates the most basic operation that can be performed - creation of a Farmer. Use this to understand how to create the client object, how to authenticate it, and make sure your client is set up correctly to call into your FarmBeats endpoint.
 
 - [attachments.py][attachments_sample] demonstrates FarmBeats' capabaility of storing arbitrary files in context to the various [farm hierarchy][farm_hierarchy_docs] objects. We first attach some files onto a farmer and a farm, and then download all existing attachments for the farmer onto a local directory.
 
@@ -20,7 +20,7 @@ These sample programs demonstrate some common use case scenairos for the [FarmBe
 
 To run the samples, you need:
 
-- A [python][get_python] environment. Supported versions are 2.7+ and 3.6+.
+- A [python][get_python] environment. Supported versions are 2.7 and 3.6+.
 - An Azure subscription. Create a free subscription [here][azure_free_sub].
 - A FarmBeats resource. See [installation docs][install_farmbeats] to create a new FarmBeats resource.
 
