@@ -468,10 +468,6 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
         await self.close()
 
     def __getstate__(self):
-        # Be sure body is loaded in memory, otherwise not pickable and let it throw
-        # TODO: fix
-        # await self.read()
-
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
