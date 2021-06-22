@@ -64,7 +64,7 @@ async def test_logs_batch_query():
 
     assert len(response.responses) == 3
 
-@pytest.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
+@pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
 async def test_logs_single_query_additional_workspaces_async():
@@ -82,7 +82,7 @@ async def test_logs_single_query_additional_workspaces_async():
     assert response
     assert len(response.tables[0].rows) == 2
 
-@pytest.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
+@pytest.mark.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
 async def test_logs_batch_query_additional_workspaces():
