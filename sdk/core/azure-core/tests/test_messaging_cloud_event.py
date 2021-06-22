@@ -411,7 +411,7 @@ def test_cloud_custom_dict_ms_precision_is_eq_six():
     assert date_obj.microsecond == 123456
 
 def test_cloud_custom_dict_ms_precision_is_gt_six_z_not():
-    time ="2021-02-18T20:18:10.539861122+00:00"
+    time ="2021-02-18T20:18:10.539861122Z"
     date_obj = _convert_to_isoformat(time)
 
     assert date_obj.month == 2
@@ -420,7 +420,7 @@ def test_cloud_custom_dict_ms_precision_is_gt_six_z_not():
     assert date_obj.microsecond == 539861
 
 def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
-    time ="2021-02-18T20:18:10.123+00:00"
+    time ="2021-02-18T20:18:10.123Z"
     date_obj = _convert_to_isoformat(time)
 
     assert date_obj.month == 2
@@ -429,7 +429,7 @@ def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
     assert date_obj.microsecond == 123000
 
 def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
-    time ="2021-02-18T20:18:10.123456+00:00"
+    time ="2021-02-18T20:18:10.123456Z"
     date_obj = _convert_to_isoformat(time)
 
     assert date_obj.month == 2
