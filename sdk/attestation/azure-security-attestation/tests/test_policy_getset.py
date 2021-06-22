@@ -27,7 +27,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
-from preparers import AllAttestationTypes, AllInstanceTypes, AttestationPreparer
+from preparers import AllAttestationTypes, AllInstanceTypes
+from attestation_preparer import AttestationPreparer
 from helpers import pem_from_base64, base64url_encode, base64url_decode
 
 from azure.security.attestation import (

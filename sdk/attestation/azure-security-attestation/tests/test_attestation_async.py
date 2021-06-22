@@ -26,7 +26,7 @@ import cryptography
 import cryptography.x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-from preparers import AttestationPreparer
+from attestation_preparer import AttestationPreparer
 import json
 
 from helpers import base64url_decode, base64url_encode, pem_from_base64

@@ -19,7 +19,7 @@ import cryptography.x509
 from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
-from preparers import AttestationPreparer
+from attestation_preparer import AttestationPreparer
 from helpers import base64url_decode, base64url_encode, pem_from_base64
 import json
 
