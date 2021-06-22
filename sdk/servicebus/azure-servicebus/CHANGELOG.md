@@ -1,5 +1,11 @@
 # Release History
 
+## 7.3.1 (Unreleased)
+
+**Bug Fixes**
+
+* Fixed a bug that when setting `ServiceBusMessage.partition_key`, input value should be not validated against `session_id` of None (PR #19233, thanks @bishnu-shb).
+
 ## 7.3.0 (2021-06-08)
 
 **New Features**
