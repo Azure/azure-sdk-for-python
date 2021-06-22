@@ -104,18 +104,18 @@ def test_logs_batch_query_with_statistics_in_some():
         LogsQueryRequest(
             query="AzureActivity | summarize count()",
             timespan="PT1H",
-            workspace= os.environ['LOG_WORKSPACE_ID']
+            workspace_id= os.environ['LOG_WORKSPACE_ID']
         ),
         LogsQueryRequest(
             query= """AppRequests|
                 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
             timespan="PT1H",
-            workspace= os.environ['LOG_WORKSPACE_ID'],
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
         ),
         LogsQueryRequest(
             query= "AppRequests",
-            workspace= os.environ['LOG_WORKSPACE_ID'],
+            workspace_id= os.environ['LOG_WORKSPACE_ID'],
             include_statistics=True
         ),
     ]
@@ -125,6 +125,7 @@ def test_logs_batch_query_with_statistics_in_some():
     assert response.responses[0].body.statistics is None
     assert response.responses[2].body.statistics is not None
 
+@pytest.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 @pytest.mark.live_test_only
 def test_logs_single_query_additional_workspaces():
     credential = _credential()
@@ -142,6 +143,7 @@ def test_logs_single_query_additional_workspaces():
     assert len(response.tables[0].rows) == 2
 
 @pytest.mark.live_test_only
+@pytest.skip('https://github.com/Azure/azure-sdk-for-python/issues/19382')
 def test_logs_batch_query_additional_workspaces():
     client = LogsQueryClient(_credential())
     query = "union * | where TimeGenerated > ago(100d) | project TenantId | summarize count() by TenantId"
