@@ -91,7 +91,7 @@ class AttestationClientAttestationSamples(object):
         with AttestationClient(
             DefaultAzureCredential(), self.shared_url
         ) as attest_client:
-            response = attest_client.attest_sgx_enclave(
+            response, _ = attest_client.attest_sgx_enclave(
                 quote, runtime_data=runtime_data
             )
 
@@ -111,7 +111,7 @@ class AttestationClientAttestationSamples(object):
         with AttestationClient(
             DefaultAzureCredential(), self.shared_url
         ) as attest_client:
-            response = attest_client.attest_open_enclave(
+            response, _ = attest_client.attest_open_enclave(
                 oe_report, runtime_json=runtime_data
             )
 
@@ -131,7 +131,7 @@ class AttestationClientAttestationSamples(object):
         with AttestationClient(
             DefaultAzureCredential(), self.shared_url
         ) as attest_client:
-            response = attest_client.attest_open_enclave(
+            response, _ = attest_client.attest_open_enclave(
                 oe_report, runtime_json=runtime_data
             )
 
@@ -171,11 +171,11 @@ class AttestationClientAttestationSamples(object):
         with AttestationClient(
             DefaultAzureCredential(), self.shared_url
         ) as attest_client:
-            response = attest_client.attest_open_enclave(
+            response, token = attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, draft_policy=draft_policy
             )
 
-            print("Token algorithm", response.token.algorithm)
+            print("Token algorithm", token.algorithm)
             print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared_draft]
 
@@ -275,24 +275,24 @@ issuancerules {
             self.shared_url,
             validation_callback=validate_token,
         ) as attest_client:
-            response = attest_client.attest_open_enclave(
+            response, token = attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data
             )
 
             print("Issuer of token is: ", response.issuer)
-            print("Expiration time: ", response.token.expiration_time)
+            print("Expiration time: ", token.expiration_time)
 
         # Repeat the same operation, this time specifying the callback options
         # on the attest_open_enclave call.
         with AttestationClient(
             DefaultAzureCredential(), self.shared_url
         ) as attest_client:
-            response = attest_client.attest_open_enclave(
+            response, token = attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, validation_callback=validate_token
             )
 
             print("Issuer of token is: ", response.issuer)
-            print("Expiration time: ", response.token.expiration_time)
+            print("Expiration time: ", token.expiration_time)
 
         # [END attest_open_enclave_shared_with_options]
 

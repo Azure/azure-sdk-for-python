@@ -65,6 +65,8 @@ policy = response[0]
 ```
 
 * The `AttestationToken` class no longer inherits from `Generic`.
+* The `attest_sgx_enclave`, and `attest_openenclave` APIs now return a tuple of
+  `AttestationResult`, `AttestationToken`, similar to the `get_policy` API.
 
 ### Key Bugs Fixed
 

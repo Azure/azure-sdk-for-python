@@ -254,7 +254,7 @@ This example shows one common pattern of calling into the attestation service to
 This example assumes that you have an existing `AttestationClient` object which is configured with the base URI for your endpoint. It also assumes that you have an SGX Quote (`quote`) generated from within the SGX enclave you are attesting, and "Runtime Data" (`runtime_data`) which is referenced in the SGX Quote.
 
 ```python
-response = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
+response, token = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
 ```
 
 At this point, the enclave_held_data attribute in the attestationResult
@@ -291,7 +291,7 @@ Most Attestation service operations will raise exceptions defined in [Azure Core
 
 ```python
     try:
-    response = attest_client.attest_sgx_enclave(
+    response, _ = attest_client.attest_sgx_enclave(
             quote,
             runtime_data=AttestationData(runtime_data, is_json=False))
     except HttpResponseError as ex:
