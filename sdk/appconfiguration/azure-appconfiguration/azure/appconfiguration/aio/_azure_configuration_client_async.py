@@ -346,6 +346,7 @@ class AzureAppConfigurationClient:
     async def set_configuration_setting(
         self,
         configuration_setting: ConfigurationSetting,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> ConfigurationSetting:
 
