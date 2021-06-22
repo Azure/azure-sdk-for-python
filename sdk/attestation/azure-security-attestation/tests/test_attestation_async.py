@@ -29,7 +29,7 @@ from cryptography.hazmat.primitives import serialization
 from preparers import AttestationPreparer
 import json
 
-from test_policy_getset import Base64Url
+from helpers import base64url_decode, base64url_encode, pem_from_base64
 
 
 _open_enclave_report = (
@@ -208,8 +208,8 @@ class AsyncAzureAttestationTest(AzureTestCase):
     async def _test_attest_open_enclave(self, client_uri):
         # type: (str) -> None
         attest_client = self.create_client(client_uri)
-        oe_report = Base64Url.decode(_open_enclave_report)
-        runtime_data = Base64Url.decode(_runtime_data)
+        oe_report = base64url_decode(_open_enclave_report)
+        runtime_data = base64url_decode(_runtime_data)
         response = await attest_client.attest_open_enclave(
             oe_report, runtime_data=runtime_data
         )
@@ -247,10 +247,10 @@ class AsyncAzureAttestationTest(AzureTestCase):
     async def _test_attest_sgx_enclave(self, base_uri):
         # type: (str) -> None
         attest_client = self.create_client(base_uri)
-        oe_report = Base64Url.decode(_open_enclave_report)
+        oe_report = base64url_decode(_open_enclave_report)
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
-        runtime_data = Base64Url.decode(_runtime_data)
+        runtime_data = base64url_decode(_runtime_data)
         response = await attest_client.attest_sgx_enclave(
             quote, runtime_data=runtime_data
         )

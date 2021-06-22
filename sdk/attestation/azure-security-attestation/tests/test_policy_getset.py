@@ -28,7 +28,7 @@ from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
 from preparers import AllAttestationTypes, AllInstanceTypes, AttestationPreparer
-from helpers import PemUtils
+from helpers import pem_from_base64, base64url_encode, base64url_decode
 
 from azure.security.attestation import (
     AttestationAdministrationClient,
@@ -96,10 +96,10 @@ class PolicyGetSetTests(AzureTestCase):
         attestation_policy_signing_certificate0,
         **kwargs
     ):
-        signing_certificate = PemUtils.pem_from_base64(
+        signing_certificate = pem_from_base64(
             attestation_policy_signing_certificate0, "CERTIFICATE"
         )
-        key = PemUtils.pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
+        key = pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(
@@ -125,10 +125,10 @@ class PolicyGetSetTests(AzureTestCase):
             u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         )
 
-        signing_certificate = PemUtils.pem_from_base64(
+        signing_certificate = pem_from_base64(
             attestation_policy_signing_certificate0, "CERTIFICATE"
         )
-        key = PemUtils.pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
+        key = pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.set_policy(
@@ -165,10 +165,10 @@ class PolicyGetSetTests(AzureTestCase):
             u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         )
 
-        signing_certificate = PemUtils.pem_from_base64(
+        signing_certificate = pem_from_base64(
             attestation_isolated_signing_certificate, "CERTIFICATE"
         )
-        key = PemUtils.pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
+        key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_isolated_url)
         policy_set_response = attest_client.set_policy(
@@ -201,10 +201,10 @@ class PolicyGetSetTests(AzureTestCase):
         attestation_isolated_signing_certificate,
         **kwargs
     ):
-        signing_certificate = PemUtils.pem_from_base64(
+        signing_certificate = pem_from_base64(
             attestation_isolated_signing_certificate, "CERTIFICATE"
         )
-        key = PemUtils.pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
+        key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(
@@ -243,7 +243,7 @@ class PolicyGetSetTests(AzureTestCase):
         instance_url = kwargs.pop("instance_url")
         expected_certificate = None
         if self.is_isolated_url(instance_url, **kwargs):
-            expected_certificate = PemUtils.pem_from_base64(
+            expected_certificate = pem_from_base64(
                 kwargs.get("attestation_isolated_signing_certificate"), "CERTIFICATE"
             )
         self._test_get_policy_management_certificates(
@@ -262,14 +262,14 @@ class PolicyGetSetTests(AzureTestCase):
     ):
         # type: (str, str, str, str, str, str) -> None
 
-        pem_signing_cert = PemUtils.pem_from_base64(
+        pem_signing_cert = pem_from_base64(
             attestation_isolated_signing_certificate, "CERTIFICATE"
         )
-        pem_signing_key = PemUtils.pem_from_base64(
+        pem_signing_key = pem_from_base64(
             attestation_isolated_signing_key, "PRIVATE KEY"
         )
 
-        pem_certificate_to_add = PemUtils.pem_from_base64(
+        pem_certificate_to_add = pem_from_base64(
             attestation_policy_signing_certificate0, "CERTIFICATE"
         )
 
@@ -334,26 +334,3 @@ class PolicyGetSetTests(AzureTestCase):
         )
         return attest_client
 
-
-class Base64Url:
-    """Equivalent to base64.urlsafe_b64encode, but strips padding from the encoded and decoded strings."""
-
-    @staticmethod
-    def encode(unencoded):
-        # type: (bytes)->str
-        base64val = base64.urlsafe_b64encode(unencoded)
-        strip_trailing = base64val.split(b"=")[
-            0
-        ]  # pick the string before the trailing =
-        return strip_trailing.decode("utf-8")
-
-    @staticmethod
-    def decode(encoded):
-        # type: (str)->bytes
-        padding_added = encoded + "=" * ((len(encoded) * -1) % 4)
-        return base64.urlsafe_b64decode(padding_added.encode("utf-8"))
-
-
-# ------------------------------------------------------------------------------
-if __name__ == "__main__":
-    unittest.main()
