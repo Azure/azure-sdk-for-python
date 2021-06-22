@@ -20,6 +20,7 @@ from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
 from attestation_preparer import AttestationPreparer
+from preparers import AllInstanceTypes
 from helpers import base64url_decode, base64url_encode, pem_from_base64
 import json
 
@@ -208,14 +209,14 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = base64url_decode(_open_enclave_report)
         runtime_data = base64url_decode(_runtime_data)
-        response = attest_client.attest_open_enclave(
+        response, _= attest_client.attest_open_enclave(
             oe_report, runtime_data=runtime_data
         )
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response = attest_client.attest_open_enclave(
+        response, token = attest_client.attest_open_enclave(
             oe_report, runtime_json=runtime_data
         )
         # Because the runtime data is JSON, enclave_held_data will be empty.
@@ -224,9 +225,9 @@ class AttestationTest(AzureTestCase):
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
 
-        assert response.token.get_body().iss == response.issuer
+        assert token.get_body().iss == response.issuer
 
-        response = attest_client.attest_open_enclave(
+        response, token = attest_client.attest_open_enclave(
             oe_report,
             runtime_json=runtime_data,
             draft_policy="""version=1.0; authorizationrules{=> permit();}; issuancerules{};""",
@@ -236,24 +237,13 @@ class AttestationTest(AzureTestCase):
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
         # When a draft policy is applied, the token is unsecured.
-        assert response.token.algorithm == "none"
+        assert token.algorithm == "none"
 
     @AttestationPreparer()
-    def test_shared_attest_open_enclave(self, attestation_location_short_name):
-        # type: (str) -> None
-        self._test_attest_open_enclave(
-            self.shared_base_uri(attestation_location_short_name)
-        )
-
-    @AttestationPreparer()
-    def test_aad_attest_open_enclave(self, attestation_aad_url):
-        # type: (str) -> None
-        self._test_attest_open_enclave(attestation_aad_url)
-
-    @AttestationPreparer()
-    def test_isolated_attest_open_enclave(self, attestation_isolated_url):
-        # type: (str) -> None
-        self._test_attest_open_enclave(attestation_isolated_url)
+    @AllInstanceTypes
+    def test_attest_open_enclave(self, **kwargs):
+        # type: (str, **Any) -> None
+        self._test_attest_open_enclave(kwargs.pop('instance_url'))
 
     def _test_attest_sgx_enclave(self, base_uri):
         # type: (str) -> None
@@ -262,12 +252,12 @@ class AttestationTest(AzureTestCase):
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
         runtime_data = base64url_decode(_runtime_data)
-        response = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
+        response, _ = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response = attest_client.attest_sgx_enclave(quote, runtime_json=runtime_data)
+        response, _ = attest_client.attest_sgx_enclave(quote, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get("jwk") is not None
@@ -275,26 +265,15 @@ class AttestationTest(AzureTestCase):
         assert response.sgx_collateral is not None
 
         # Call into the attest API asking it to *not* validate the token.
-        response = attest_client.attest_sgx_enclave(
+        response, _ = attest_client.attest_sgx_enclave(
             quote, runtime_data=runtime_data, validate_token=False
         )
 
     @AttestationPreparer()
-    def test_aad_attest_sgx_enclave(self, attestation_aad_url):
-        # type: (str) -> None
-        self._test_attest_sgx_enclave(attestation_aad_url)
-
-    @AttestationPreparer()
-    def test_isolated_attest_sgx_enclave(self, attestation_isolated_url):
-        # type: (str) -> None
-        self._test_attest_sgx_enclave(attestation_isolated_url)
-
-    @AttestationPreparer()
-    def test_shared_attest_sgx_enclave(self, attestation_location_short_name):
-        # type: (str) -> None
-        self._test_attest_sgx_enclave(
-            self.shared_base_uri(attestation_location_short_name)
-        )
+    @AllInstanceTypes
+    def test_attest_sgx_enclave(self, **kwargs):
+        # type: (str, **Any) -> None
+        self._test_attest_sgx_enclave(kwargs.pop('instance_url'))
 
     @AttestationPreparer()
     def test_tpm_attestation(self, attestation_aad_url):

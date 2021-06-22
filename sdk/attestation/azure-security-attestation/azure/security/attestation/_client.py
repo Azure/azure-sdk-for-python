@@ -87,7 +87,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def get_openidmetadata(self, **kwargs):
-        # type: (Dict[str, Any]) -> Any
+        # type: (Dict[str, Any]) -> Dict[str, Any]
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
@@ -98,18 +98,18 @@ class AttestationClient(object):
         * claims_supported
 
         :return: OpenID metadata configuration
-        :rtype: Any
+        :rtype: Dict[str, Any]
         """
         return self._client.metadata_configuration.get(**kwargs)
 
     @distributed_trace
     def get_signing_certificates(self, **kwargs):
-        # type: (Any) -> list[AttestationSigner]
+        # type: (Any) -> List[AttestationSigner]
         """Returns the set of signing certificates used to sign attestation tokens.
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
 
-        :rtype: list[azure.security.attestation.AttestationSigner]
+        :rtype: List[azure.security.attestation.AttestationSigner]
 
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
@@ -130,7 +130,7 @@ class AttestationClient(object):
         runtime_json=None,  # type: bytes
         runtime_data=None,  # type: bytes
         **kwargs  # type: Dict[str, Any]
-    ):  # type: (...) -> AttestationResult
+    ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -164,7 +164,7 @@ class AttestationClient(object):
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: azure.security.attestation.AttestationResult
+        :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -228,7 +228,7 @@ class AttestationClient(object):
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationResult._from_generated(token.get_body(), token)
+        return AttestationResult._from_generated(token.get_body()), token
 
     @distributed_trace
     def attest_open_enclave(
@@ -239,7 +239,7 @@ class AttestationClient(object):
         runtime_json=None,  # type: bytes
         runtime_data=None,  # type: bytes
         **kwargs  # type: Dict[str, Any]
-    ):  # type: (...) -> AttestationResult
+    ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm)
@@ -273,7 +273,7 @@ class AttestationClient(object):
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: azure.security.attestation.AttestationResult
+        :rtype: Tuple[azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 
@@ -350,7 +350,7 @@ class AttestationClient(object):
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.get_body(), token)
+        return AttestationResult._from_generated(token.get_body()), token
 
     @distributed_trace
     def attest_tpm(self, request, **kwargs):

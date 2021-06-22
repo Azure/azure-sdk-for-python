@@ -27,6 +27,7 @@ import cryptography.x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from attestation_preparer import AttestationPreparer
+from preparers_async import AllInstanceTypes
 import json
 
 from helpers import base64url_decode, base64url_encode, pem_from_base64
@@ -210,14 +211,14 @@ class AsyncAzureAttestationTest(AzureTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = base64url_decode(_open_enclave_report)
         runtime_data = base64url_decode(_runtime_data)
-        response = await attest_client.attest_open_enclave(
+        response, _ = await attest_client.attest_open_enclave(
             oe_report, runtime_data=runtime_data
         )
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response = await attest_client.attest_open_enclave(
+        response, token = await attest_client.attest_open_enclave(
             oe_report, runtime_json=runtime_data
         )
         # Because the runtime data is JSON, enclave_held_data will be empty.
@@ -225,24 +226,13 @@ class AsyncAzureAttestationTest(AzureTestCase):
         assert response.runtime_claims.get("jwk") is not None
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
-        assert response.token.get_body().iss == response.issuer
+        assert token.get_body().iss == response.issuer
 
     @AttestationPreparer()
-    async def test_shared_attest_open_enclave(self, attestation_location_short_name):
-        # type: (str) -> None
-        await self._test_attest_open_enclave(
-            self.shared_base_uri(attestation_location_short_name)
-        )
-
-    @AttestationPreparer()
-    async def test_aad_attest_open_enclave(self, attestation_aad_url):
-        # type: (str) -> None
-        await self._test_attest_open_enclave(attestation_aad_url)
-
-    @AttestationPreparer()
-    async def test_isolated_attest_open_enclave(self, attestation_isolated_url):
-        # type: (str) -> None
-        await self._test_attest_open_enclave(attestation_isolated_url)
+    @AllInstanceTypes
+    async def test_shared_attest_open_enclave(self, **kwargs):
+        # type: (str, **Any) -> None
+        await self._test_attest_open_enclave(kwargs.pop('instance_url'))
 
     async def _test_attest_sgx_enclave(self, base_uri):
         # type: (str) -> None
@@ -251,14 +241,14 @@ class AsyncAzureAttestationTest(AzureTestCase):
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
         runtime_data = base64url_decode(_runtime_data)
-        response = await attest_client.attest_sgx_enclave(
+        response, _ = await attest_client.attest_sgx_enclave(
             quote, runtime_data=runtime_data
         )
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response = await attest_client.attest_sgx_enclave(
+        response, _ = await attest_client.attest_sgx_enclave(
             quote, runtime_json=runtime_data
         )
         # Because the runtime data is JSON, enclave_held_data will be empty.
@@ -268,21 +258,10 @@ class AsyncAzureAttestationTest(AzureTestCase):
         assert response.sgx_collateral is not None
 
     @AttestationPreparer()
-    async def test_aad_attest_sgx_enclave(self, attestation_aad_url):
-        # type: (str) -> None
-        await self._test_attest_sgx_enclave(attestation_aad_url)
-
-    @AttestationPreparer()
-    async def test_isolated_attest_sgx_enclave(self, attestation_isolated_url):
-        # type: (str) -> None
-        await self._test_attest_sgx_enclave(attestation_isolated_url)
-
-    @AttestationPreparer()
-    async def test_shared_attest_sgx_enclave(self, attestation_location_short_name):
-        # type: (str) -> None
-        await self._test_attest_sgx_enclave(
-            self.shared_base_uri(attestation_location_short_name)
-        )
+    @AllInstanceTypes
+    async def test_attest_sgx_enclave(self, **kwargs):
+        # type: (str, **Any) -> None
+        await self._test_attest_sgx_enclave(kwargs.pop('instance_url'))
 
     @AttestationPreparer()
     async def test_tpm_attestation(self, attestation_aad_url):

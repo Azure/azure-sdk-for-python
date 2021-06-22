@@ -192,8 +192,6 @@ class AttestationResult(object):
         :keyword sgx_collateral: Collateral which identifies the collateral used to
             create the token.
         :paramtype sgx_collateral: dict
-        :keyword token: Attestation Token returned by the attestation service.
-        :paramtype token: AttestationToken
 
         """
         self._issuer = kwargs.pop("issuer")  # type: Union[str, None]
@@ -225,10 +223,9 @@ class AttestationResult(object):
             "enclave_held_data", None
         )  # type: Union[bytes, None]
         self._sgx_collateral = kwargs.pop("sgx_collateral")  # type: Dict
-        self._token = kwargs.pop("token")  # type: AttestationToken
 
     @classmethod
-    def _from_generated(cls, generated, token):
+    def _from_generated(cls, generated):
         # type: (GeneratedAttestationResult, AttestationToken) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
@@ -249,18 +246,8 @@ class AttestationResult(object):
             mr_signer=generated.mr_signer,
             svn=generated.svn,
             enclave_held_data=generated.enclave_held_data,
-            sgx_collateral=generated.sgx_collateral,
-            token=token,
+            sgx_collateral=generated.sgx_collateral
         )
-
-    @property
-    def token(self):
-        # type: () -> AttestationToken
-        """Returns the attestation token returned from the service.
-
-        :rtype AttestationToken
-        """
-        return self._token
 
     @property
     def issuer(self):
