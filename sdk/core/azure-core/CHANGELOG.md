@@ -4,8 +4,6 @@
 
 ### Bug Fixes
 
-- The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond precision is less than six in length.
-
 ## 1.15.0 (2021-06-04)
 
 ### New Features

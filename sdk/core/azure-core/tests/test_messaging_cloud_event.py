@@ -2,14 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
-import sys
-import os
 import pytest
 import json
 import datetime
 
 from azure.core.messaging import CloudEvent
+from azure.core._utils import _convert_to_isoformat
 from azure.core.serialization import NULL
 
 # Cloud Event tests
@@ -178,7 +176,7 @@ def test_cloud_custom_dict_ms_precision_is_lt_six():
     assert event.time.month == 2
     assert event.time.day == 18
     assert event.time.hour == 20
-    assert event.time.microsecond == 123
+    assert event.time.microsecond == 123000
 
 def test_cloud_custom_dict_ms_precision_is_eq_six():
     cloud_custom_dict_with_extensions = {
@@ -229,7 +227,7 @@ def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
     assert event.time.month == 2
     assert event.time.day == 18
     assert event.time.hour == 20
-    assert event.time.microsecond == 123
+    assert event.time.microsecond == 123000
 
 def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
     cloud_custom_dict_with_extensions = {
@@ -384,3 +382,57 @@ def test_cloud_from_dict_with_invalid_extensions():
     }
     with pytest.raises(ValueError):
         event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+
+def test_cloud_custom_dict_ms_precision_is_gt_six():
+    time ="2021-02-18T20:18:10.539861122+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 539861
+
+def test_cloud_custom_dict_ms_precision_is_lt_six():
+    time ="2021-02-18T20:18:10.123+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123000
+
+def test_cloud_custom_dict_ms_precision_is_eq_six():
+    time ="2021-02-18T20:18:10.123456+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123456
+
+def test_cloud_custom_dict_ms_precision_is_gt_six_z_not():
+    time ="2021-02-18T20:18:10.539861122+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 539861
+
+def test_cloud_custom_dict_ms_precision_is_lt_six_z_not():
+    time ="2021-02-18T20:18:10.123+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123000
+
+def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
+    time ="2021-02-18T20:18:10.123456+00:00"
+    date_obj = _convert_to_isoformat(time)
+
+    assert date_obj.month == 2
+    assert date_obj.day == 18
+    assert date_obj.hour == 20
+    assert date_obj.microsecond == 123456

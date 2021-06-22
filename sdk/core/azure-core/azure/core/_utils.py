@@ -63,9 +63,6 @@ def _convert_to_isoformat(date_time):
                 break
         if len(decimal_str) > 6:
             timestamp = timestamp.replace(decimal_str, decimal_str[0:6])
-        elif len(decimal_str) < 6:
-            new_dec = "0" * (6 - len(decimal_str)) + decimal_str
-            timestamp = timestamp.replace(decimal_str, new_dec)
 
     if delta == 0:
         tzinfo = TZ_UTC
