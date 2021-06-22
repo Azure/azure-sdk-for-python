@@ -76,8 +76,8 @@ class LogsQueryResults(object):
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
-        self.statistics = kwargs.pop("statistics", None)
-        self.render = kwargs.pop("render", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.render = kwargs.get("render", None)
 
     @classmethod
     def _from_generated(cls, generated):
