@@ -163,7 +163,7 @@ class FeatureFlagConfigurationSetting(
         # type: (str, **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id
-        self.key = self.key_prefix + self.feature_id.lstrip(self.key_prefix)
+        self.key = self.key_prefix + self.feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -172,13 +172,13 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        if "enabled" in kwargs.keys():
-            self.value = kwargs.get(
-                "value",
-                {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": kwargs.pop("filters", [])}}
-            )
-        else:
-            self.value = kwargs.get("value", {"conditions": {"client_filters": kwargs.pop("filters", [])}})
+        # if "enabled" in kwargs.keys():
+        #     self.value = kwargs.get(
+        #         "value",
+        #         {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": kwargs.pop("filters", [])}}
+        #     )
+        # else:
+        #     self.value = kwargs.get("value", {"conditions": {"client_filters": kwargs.pop("filters", [])}})
 
     def _validate(self):
         # type: () -> None
@@ -206,6 +206,12 @@ class FeatureFlagConfigurationSetting(
     @property
     def filters(self):
         # type: () -> Union[None, List[Any]]
+        try:
+            temp = json.dumps(self.value)
+            return temp.get("feature_filters", None)
+        except json.DecodeError:
+            raise ValueError
+
         self._validate()
         if self.value is None:
             return None
@@ -218,15 +224,17 @@ class FeatureFlagConfigurationSetting(
     @filters.setter
     def filters(self, new_filters):
         # type: (List[Dict[str, Any]]) -> None
-        self._validate()
-        if self.value is None:
-            self.value = {}
-        try:
-            self.value["conditions"]["client_filters"] = new_filters
-        except KeyError:
-            self.value["conditions"] = {
-                "client_filters": new_filters
-            }
+        temp = json.dumps(self.value)
+        temp["feature_filters"] = new_filters
+        # self._validate()
+        # if self.value is None:
+        #     self.value = {}
+        # try:
+        #     self.value["conditions"]["client_filters"] = new_filters
+        # except KeyError:
+        #     self.value["conditions"] = {
+        #         "client_filters": new_filters
+        #     }
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -234,24 +242,24 @@ class FeatureFlagConfigurationSetting(
         try:
             if key_value is None:
                 return key_value
-            if key_value.value:
-                try:
-                    key_value.value = json.loads(key_value.value)
-                except json.decoder.JSONDecodeError:
-                    pass
+            # if key_value.value:
+            #     try:
+            #         key_value.value = json.loads(key_value.value)
+            #     except json.decoder.JSONDecodeError:
+            #         pass
 
-            filters = key_value.value["conditions"]["client_filters"]  # type: ignore
+            # filters = key_value.value["conditions"]["client_filters"]  # type: ignore
 
             return cls(
-                feature_id=key_value.key,  # type: ignore
-                enabled=key_value.value["enabled"],  # type: ignore
+                feature_id=key_value.key.lstrip(self._key_prefix),  # type: ignore
+                # enabled=key_value.value["enabled"],  # type: ignore
                 label=key_value.label,
                 content_type=key_value.content_type,
                 last_modified=key_value.last_modified,
                 tags=key_value.tags,
                 read_only=key_value.locked,
                 etag=key_value.etag,
-                filters=filters,  # type: ignore
+                # filters=filters,  # type: ignore
                 value=key_value.value,
             )
         except (KeyError, AttributeError):
@@ -324,13 +332,14 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
-        self.value = secret_id
         if not self.value:
-            self.value = {}
-        if isinstance(self.value, dict) and "secret_uri" not in self.value.keys():
-            self.value["secret_uri"] = secret_id
-        elif isinstance(self.value, six.string_types):
-            self.value = {"secret_uri": self.value}
+            self.value = json.dumps({"secret_uri": secret_id})
+        # if not self.value:
+        #     self.value = {}
+        # if isinstance(self.value, dict) and "secret_uri" not in self.value.keys():
+        #     self.value["secret_uri"] = secret_id
+        # elif isinstance(self.value, six.string_types):
+        #     self.value = {"secret_uri": self.value}
 
     @property
     def secret_id(self):
@@ -339,13 +348,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return self.value['secret_uri']
 
     @secret_id.setter
-    def secret_id(self, value):
+    def secret_id(self, secret_id):
         if self.value is None or isinstance(self.value, dict):
             if self.value is None:
                 self.value = {}
-            self.value["secret_uri"] = value
+            self.value["secret_uri"] = secret_id
         else:
-            raise ValueError("Expect 'value' to be a dictionary.")
+            raise ValueError("Expect 'self.value' to be a dictionary.")
 
     def _validate(self):
         # type: () -> None
@@ -365,7 +374,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
         return cls(
             key=key_value.key,  # type: ignore
-            secret_uri=key_value.value[u"secret_uri"],  # type: ignore
+            # secret_uri=key_value.value[u"secret_uri"],  # type: ignore
+            value=key_value.value,
             label=key_value.label,
             secret_id=key_value.value,  # type: ignore
             last_modified=key_value.last_modified,
