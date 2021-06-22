@@ -54,13 +54,3 @@ try:
 
 except (SyntaxError, ImportError):
     pass
-
-#### FOR BUGBASH
-
-from ._sync_test_client import TestRestClient  # pylint: disable=unused-import
-__all__.extend(["TestRestClient"])
-try:
-    from ._async_test_client import AsyncTestRestClient  # pylint: disable=unused-import
-    __all__.extend(["AsyncTestRestClient"])
-except (SyntaxError, ImportError):
-    pass

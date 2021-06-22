@@ -8,6 +8,7 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
+import sys
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import HttpResponseError
@@ -110,6 +111,8 @@ def test_response_autodetect_encoding(send_request):
     assert response.text == u'Latin 1: ÿ'
     assert response.encoding == "latin-1"
 
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, b'' is the same as a string, so will have text/plain content type")
 def test_response_fallback_to_autodetect(send_request):
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
