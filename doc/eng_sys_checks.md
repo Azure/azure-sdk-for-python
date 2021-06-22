@@ -222,7 +222,7 @@ As mentioned earlier, regression test or reverse dependency test is added to avo
 `azure-eventhub`
 `azure-storage-blob`
 
-Our regression framework automatically finds any such package that is added as required package so this list is not hardcoded.
+Our regression framework automatically finds any such package that is added as required package, so this list is not hardcoded.
 
 We have two different set of regression tests to verify regression scenarios against oldest and latest released dependent packages.
 •   Regression using latest released dependent package
