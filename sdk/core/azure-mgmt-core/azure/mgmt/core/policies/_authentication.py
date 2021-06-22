@@ -84,7 +84,7 @@ def _parse_claims_challenge(challenge):
     if not encoded_claims:
         return None
 
-    padding_needed = 4 - len(encoded_claims) % 4
+    padding_needed = -len(encoded_claims) % 4
     try:
         decoded_claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
         return decoded_claims
