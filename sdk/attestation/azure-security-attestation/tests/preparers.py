@@ -11,9 +11,7 @@ import pytest
 import functools
 from devtools_testutils import PowerShellPreparer
 
-from azure.security.attestation import (
-    AttestationType
-)
+from azure.security.attestation import AttestationType
 
 try:
     from typing import TYPE_CHECKING
@@ -60,8 +58,8 @@ def AllAttestationTypes(
     __func=None,  # type: Callable[..., T]
     **kwargs  # type: Any
 ):
-    """Decorator to apply to function to add attestation_type kwarg for each attestation type.
-    """
+    """Decorator to apply to function to add attestation_type kwarg for each attestation type."""
+
     def decorator(func):
         # type: (Callable[..., T]) -> Callable[..., T]
 
@@ -72,19 +70,22 @@ def AllAttestationTypes(
             for attestation_type in [
                 AttestationType.SGX_ENCLAVE,
                 AttestationType.OPEN_ENCLAVE,
-                AttestationType.TPM]:
-                func(*args, attestation_type = attestation_type, **kwargs)
+                AttestationType.TPM,
+            ]:
+                func(*args, attestation_type=attestation_type, **kwargs)
+
         return wrapper_use_attestationtype
-        
+
     return decorator if __func is None else decorator(__func)
+
 
 def AllInstanceTypes(
     __func=None,  # type: Callable[..., T]
-    include_shared=True, # type: bool
+    include_shared=True,  # type: bool
     **kwargs  # type: Any
 ):
-    """Decorator to apply to function to add instance_url kwarg for each instance type.
-    """
+    """Decorator to apply to function to add instance_url kwarg for each instance type."""
+
     def decorator(func):
         # type: (Callable[..., T]) -> Callable[..., T]
 
@@ -92,20 +93,21 @@ def AllInstanceTypes(
         def wrapper_use_instance(*args, **kwargs):
             # type: (*Any, **Any) -> T
 
-            instances = [] #type:List[str]
-            instances.append(kwargs.get('attestation_aad_url'))
-            instances.append(kwargs.get('attestation_isolated_url'))
+            instances = []  # type:List[str]
+            instances.append(kwargs.get("attestation_aad_url"))
+            instances.append(kwargs.get("attestation_isolated_url"))
             if include_shared:
                 instances.append(
                     "https://shared"
-                    + kwargs.get('attestation_location_short_name')
+                    + kwargs.get("attestation_location_short_name")
                     + "."
-                    + kwargs.get('attestation_location_short_name')
+                    + kwargs.get("attestation_location_short_name")
                     + ".attest.azure.net"
                 )
 
             for attestation_type in instances:
-                func(*args, instance_url = attestation_type, **kwargs)
+                func(*args, instance_url=attestation_type, **kwargs)
+
         return wrapper_use_instance
-        
+
     return decorator if __func is None else decorator(__func)

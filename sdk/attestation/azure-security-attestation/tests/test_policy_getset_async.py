@@ -38,6 +38,7 @@ from azure.security.attestation import (
 )
 
 from dotenv import find_dotenv, load_dotenv
+
 load_dotenv(find_dotenv())
 
 
@@ -46,9 +47,9 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     @AllAttestationTypes
     @AllInstanceTypes
     async def test_get_policy(self, attestation_location_short_name, **kwargs):
-        attest_client = self.create_admin_client(kwargs.pop('instance_url'))
-        policy, token = await attest_client.get_policy(kwargs.pop('attestation_type'))
-        assert policy.startswith("version") or len(policy)==0
+        attest_client = self.create_admin_client(kwargs.pop("instance_url"))
+        policy, token = await attest_client.get_policy(kwargs.pop("attestation_type"))
+        assert policy.startswith("version") or len(policy) == 0
         print("Token: ", token)
 
     @AttestationPreparer()
@@ -58,7 +59,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         )
 
-        attestation_type = kwargs.pop('attestation_type')
+        attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url, **kwargs)
         policy_set_response = await attest_client.set_policy(
             attestation_type, attestation_policy
@@ -81,7 +82,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.reset_policy(
-            kwargs.pop('attestation_type')
+            kwargs.pop("attestation_type")
         )
 
         assert None == policy_set_response.policy_token_hash
@@ -102,7 +103,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             attestation_policy_signing_certificate0, "CERTIFICATE"
         )
         key = PemUtils.pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
-        attestation_type = kwargs.pop('attestation_type')
+        attestation_type = kwargs.pop("attestation_type")
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.reset_policy(
@@ -135,7 +136,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         key = PemUtils.pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        attestation_type = kwargs.pop('attestation_type')
+        attestation_type = kwargs.pop("attestation_type")
         policy_set_response = await attest_client.set_policy(
             attestation_type,
             attestation_policy,
@@ -176,7 +177,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         )
         key = PemUtils.pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
-        attestation_type = kwargs.pop('attestation_type')
+        attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_isolated_url)
         policy_set_response = await attest_client.set_policy(
             attestation_type,
@@ -216,7 +217,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = await attest_client.reset_policy(
-            kwargs.pop('attestation_type'),
+            kwargs.pop("attestation_type"),
             signing_key=key,
             signing_certificate=signing_certificate,
         )
@@ -245,19 +246,20 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     @staticmethod
     def is_isolated_url(instance_url, **kwargs):
         # type: (str, Any) -> bool
-        return instance_url == kwargs.get('attestation_isolated_url')
+        return instance_url == kwargs.get("attestation_isolated_url")
 
     @AttestationPreparer()
     @AllInstanceTypes
     async def test_get_policy_management_certificates(self, **kwargs):
-        instance_url = kwargs.pop('instance_url')
+        instance_url = kwargs.pop("instance_url")
         expected_certificate = None
         if self.is_isolated_url(instance_url, **kwargs):
             expected_certificate = PemUtils.pem_from_base64(
-                kwargs.get('attestation_isolated_signing_certificate'),
-                "CERTIFICATE")
-        await self._test_get_policy_management_certificates(instance_url, expected_certificate)
-
+                kwargs.get("attestation_isolated_signing_certificate"), "CERTIFICATE"
+            )
+        await self._test_get_policy_management_certificates(
+            instance_url, expected_certificate
+        )
 
     @pytest.mark.live_test_only
     @AttestationPreparer()

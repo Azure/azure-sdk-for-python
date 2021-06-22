@@ -45,12 +45,11 @@ class PolicyGetSetTests(AzureTestCase):
     @AllAttestationTypes
     @AllInstanceTypes
     def test_get_policy(self, **kwargs):
-        attest_client = self.create_admin_client(kwargs.pop('instance_url'))
-        policy, token = attest_client.get_policy(kwargs.pop('attestation_type'))
+        attest_client = self.create_admin_client(kwargs.pop("instance_url"))
+        policy, token = attest_client.get_policy(kwargs.pop("attestation_type"))
         print("Shared policy: ", policy)
         assert policy.startswith("version") or len(policy) == 0
         print("Token: ", token)
-
 
     @AttestationPreparer()
     @AllAttestationTypes
@@ -59,7 +58,7 @@ class PolicyGetSetTests(AzureTestCase):
             u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         )
 
-        attestation_type = kwargs.pop('attestation_type')
+        attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.set_policy(
             attestation_type, attestation_policy
@@ -80,7 +79,7 @@ class PolicyGetSetTests(AzureTestCase):
     @AllAttestationTypes
     def test_aad_reset_policy_unsecured(self, attestation_aad_url, **kwargs):
 
-        attestation_type = kwargs.pop('attestation_type')
+        attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(attestation_type)
 
@@ -104,7 +103,7 @@ class PolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(
-            kwargs.pop('attestation_type'),
+            kwargs.pop("attestation_type"),
             signing_key=key,
             signing_certificate=signing_certificate,
         )
@@ -133,7 +132,7 @@ class PolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.set_policy(
-            kwargs.pop('attestation_type'),
+            kwargs.pop("attestation_type"),
             attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -173,7 +172,7 @@ class PolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_isolated_url)
         policy_set_response = attest_client.set_policy(
-            kwargs.pop('attestation_type'),
+            kwargs.pop("attestation_type"),
             attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -209,7 +208,7 @@ class PolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.reset_policy(
-            kwargs.pop('attestation_type'),
+            kwargs.pop("attestation_type"),
             signing_key=key,
             signing_certificate=signing_certificate,
         )
@@ -236,18 +235,20 @@ class PolicyGetSetTests(AzureTestCase):
     @staticmethod
     def is_isolated_url(instance_url, **kwargs):
         # type: (str, Any) -> bool
-        return instance_url == kwargs.get('attestation_isolated_url')
+        return instance_url == kwargs.get("attestation_isolated_url")
 
     @AttestationPreparer()
     @AllInstanceTypes
     def test_get_policy_management_certificates(self, **kwargs):
-        instance_url = kwargs.pop('instance_url')
+        instance_url = kwargs.pop("instance_url")
         expected_certificate = None
         if self.is_isolated_url(instance_url, **kwargs):
             expected_certificate = PemUtils.pem_from_base64(
-                kwargs.get('attestation_isolated_signing_certificate'),
-                "CERTIFICATE")
-        self._test_get_policy_management_certificates(instance_url, expected_certificate)
+                kwargs.get("attestation_isolated_signing_certificate"), "CERTIFICATE"
+            )
+        self._test_get_policy_management_certificates(
+            instance_url, expected_certificate
+        )
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
