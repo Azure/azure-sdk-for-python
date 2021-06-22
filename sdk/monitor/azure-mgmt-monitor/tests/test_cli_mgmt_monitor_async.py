@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 import time
+import pytest
 import unittest
 
 import azure.mgmt.monitor.aio
