@@ -26,8 +26,9 @@
 import pytest
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 """This file does a simple call to the testserver to make sure we can use the testserver"""
-def test_smoke():
-    request = HttpRequest(method="GET", url="http://localhost:5000/basic/string")
+
+def test_smoke(port):
+    request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
     with RequestsTransport() as sender:
         response = sender.send(request)
         response.raise_for_status()

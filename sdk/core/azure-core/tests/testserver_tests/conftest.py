@@ -23,16 +23,42 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from re import T
 import time
 import pytest
 import signal
 import os
 import subprocess
 import sys
+import random
+import http.client
+import urllib
+
+def is_port_open(port_num):
+    conn = http.client.HTTPSConnection("localhost:{}".format(port_num))
+    try:
+        conn.request("GET", "/health")
+        return False
+    except ConnectionRefusedError:
+        return True
+
+def get_port():
+    count = 3
+    for _ in range(count):
+        port_num = random.randrange(3000, 5000)
+        if is_port_open(port_num):
+            return port_num
+    raise TypeError("Tried {} times, can't find an open port".format(count))
+
+@pytest.fixture
+def port():
+    return os.environ["FLASK_PORT"]
 
 def start_testserver():
+    port = get_port()
     os.environ["FLASK_APP"] = "coretestserver"
-    cmd = "flask run"
+    os.environ["FLASK_PORT"] = str(port)
+    cmd = "flask run -p {}".format(port)
     if os.name == 'nt': #On windows, subprocess creation works without being in the shell
         child_process = subprocess.Popen(cmd, env=dict(os.environ))
     else:
@@ -54,6 +80,7 @@ def testserver():
     """Start the Autorest testserver."""
     server = start_testserver()
     yield
+    terminate_testserver(server)
 
 
 # Ignore collection of async tests for Python 2

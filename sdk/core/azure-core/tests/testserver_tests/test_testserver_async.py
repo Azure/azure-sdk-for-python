@@ -28,8 +28,8 @@ from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 """This file does a simple call to the testserver to make sure we can use the testserver"""
 
 @pytest.mark.asyncio
-async def test_smoke():
-    request = HttpRequest(method="GET", url="http://localhost:5000/basic/string")
+async def test_smoke(port):
+    request = HttpRequest(method="GET", url="http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         response.raise_for_status()
