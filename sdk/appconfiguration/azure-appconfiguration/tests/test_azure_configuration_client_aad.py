@@ -173,7 +173,7 @@ class AppConfigurationClientTest(AzureTestCase):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = test_config_setting
         fetched_kv = client.get_configuration_setting(
-            compare_kv.key, label=compare_kv.label
+            compare_kv.key, compare_kv.label
         )
         assert (
             fetched_kv.key == compare_kv.key
@@ -189,7 +189,7 @@ class AppConfigurationClientTest(AzureTestCase):
         compare_kv = test_config_setting
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(
-                compare_kv.key, label=compare_kv.label + "a"
+                compare_kv.key, compare_kv.label + "a"
             )
 
     # method: delete_configuration_setting

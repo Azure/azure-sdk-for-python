@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+import six
 from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
@@ -122,10 +123,10 @@ class FeatureFlagConfigurationSetting(
     :vartype feature_id: str
     :ivar value: The value of the configuration setting
     :vartype value: str
-    :ivar enabled:
-    :vartype enabled: bool
-    :param filters:
-    :type filters: list[dict[str, Any]]
+    :keyword enabled:
+    :paramtype enabled: bool
+    :keyword filters:
+    :paramtype filters: list[dict[str, Any]]
     :param label:
     :type label: str
     :param display_name:
@@ -162,9 +163,7 @@ class FeatureFlagConfigurationSetting(
         # type: (str, **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id.lstrip(self.key_prefix)
-        if not feature_id.startswith(self.key_prefix):
-            feature_id = self.key_prefix + feature_id
-        self.key = feature_id
+        self.key = self.key_prefix + self.feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -326,15 +325,12 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
         self.value = secret_id
-        import six
         if not self.value:
             self.value = {}
         if isinstance(self.value, dict) and "secret_uri" not in self.value.keys():
             self.value["secret_uri"] = secret_id
         elif isinstance(self.value, six.string_types):
             self.value = {"secret_uri": self.value}
-        # elif not self.value:
-        #     self.value = {"secret_uri": secret_id}
 
     @property
     def secret_id(self):
