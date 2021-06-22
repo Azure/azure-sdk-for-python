@@ -204,7 +204,6 @@ class AsyncPipeline(
             response = self._transport.update_response_based_on_format(
                 request=request,
                 pipeline_transport_response=pipeline_transport_response,
-                **kwargs
             )
             if not kwargs.get("stream"):
                 if hasattr(response, "read"):
