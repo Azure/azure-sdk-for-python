@@ -24,10 +24,11 @@
 #
 # --------------------------------------------------------------------------
 from typing import Any, Dict
-from asyncio import Lock
-from .._sync_token import SyncToken
+from asyncio import locks
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+from .._sync_token import SyncToken
 
 
 class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
@@ -42,7 +43,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
         self._sync_tokens = {}  # type: Dict[str, Any]
         self._lock = Lock()
 
-    async def on_request(self, request):  # type: ignore # pylint: disable=arguments-differ
+    async def on_request(self, request):  # type: ignore # pylint: disable=arguments-differ, invalid-overrident-method
         # type: (PipelineRequest) -> None
         """This is executed before sending the request to the next policy.
         :param request: The PipelineRequest object.
@@ -55,7 +56,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
                     {self._sync_token_header: sync_token_header}
                 )
 
-    async def on_response(self, request, response):  # type: ignore # pylint: disable=arguments-differ
+    async def on_response(self, request, response):  # type: ignore # pylint: disable=arguments-differ, invalid-overrident-method
         # type: (PipelineRequest, PipelineResponse) -> None
         """This is executed after the request comes back from the policy.
         :param request: The PipelineRequest object.
