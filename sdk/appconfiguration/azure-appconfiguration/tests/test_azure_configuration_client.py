@@ -123,7 +123,7 @@ class AppConfigurationClientTest(AzureTestCase):
         created_kv.value = None
         created_kv.value = ""
         client.delete_configuration_setting(
-            created_kv.key, label=created_kv.label
+            created_kv.key, created_kv.label
         )
 
     @app_config_decorator
@@ -193,7 +193,7 @@ class AppConfigurationClientTest(AzureTestCase):
             and to_set_kv.etag != set_kv.etag
         )
         client.delete_configuration_setting(
-            to_set_kv.key, label=to_set_kv.label
+            to_set_kv.key, to_set_kv.label
         )
 
     # method: get_configuration_setting
