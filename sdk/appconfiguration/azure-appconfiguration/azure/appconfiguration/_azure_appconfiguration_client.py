@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Optional, Any, Mapping, Union
+from typing import Optional, Any, Mapping, Union, overload
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
@@ -394,8 +394,18 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
+    @overload
+    def delete_configuration_setting(self, key, **kwargs):
+        # type: (str, **Any) -> ConfigurationSetting
+        pass
+
+    @overload
+    def delete_configuration_setting(self, configuration_setting, **kwargs):
+        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
+        pass
+
     @distributed_trace
-    def delete_configuration_setting(self, key, label=None, **kwargs):
+    def delete_configuration_setting(self, *args, **kwargs):
         # type: (str, Optional[str], **Any) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
@@ -422,7 +432,18 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
+        key = kwargs.pop("key", None)
+        label = kwargs.pop("label", None)
         etag = kwargs.pop("etag", None)
+        if len(args) > 0:
+            if isinstance(args[0], ConfigurationSetting):
+                key = args[0].key
+                label = args[0].label
+                etag = args[0].etag if not None else etag
+            else:
+                key = args[0]
+                if len(args) == 2:
+                    label = args[1]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
@@ -436,13 +457,22 @@ class AzureAppConfigurationClient:
             error_map[412] = ResourceExistsError
 
         try:
-            key_value_deleted = self._impl.delete_key_value(
-                key=key,
-                label=label,
-                if_match=prep_if_match(etag, match_condition),
-                headers=custom_headers,
-                error_map=error_map,
-            )
+            if label:
+                key_value_deleted = self._impl.delete_key_value(
+                    key=key,
+                    label=label,
+                    if_match=prep_if_match(etag, match_condition),
+                    headers=custom_headers,
+                    error_map=error_map,
+                )
+            else:
+                key_value_deleted = self._impl.delete_key_value(
+                    key=key,
+                    if_match=prep_if_match(etag, match_condition),
+                    headers=custom_headers,
+                    error_map=error_map,
+                )
+
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
         except HttpResponseError as error:
             e = error_map[error.status_code]
