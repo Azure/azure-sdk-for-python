@@ -158,8 +158,8 @@ class FeatureFlagConfigurationSetting(
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
-        # type: (str, bool, Optional[List[Dict[str, Any]]], **Any) -> None
+    def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value
+        # type: (str, **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id.lstrip(self.key_prefix)
         if not feature_id.startswith(self.key_prefix):
@@ -176,10 +176,10 @@ class FeatureFlagConfigurationSetting(
         if "enabled" in kwargs.keys():
             self.value = kwargs.get(
                 "value",
-                {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": filters}}
+                {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": kwargs.pop("filters", [])}}
             )
         else:
-            self.value = kwargs.get("value", {"conditions": {"client_filters": filters}})
+            self.value = kwargs.get("value", {"conditions": {"client_filters": kwargs.pop("filters", [])}})
 
     def _validate(self):
         # type: () -> None
@@ -326,8 +326,15 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
         self.value = secret_id
-        if not isinstance(secret_id, dict):
-            self.value = {"secret_uri": secret_id}
+        import six
+        if not self.value:
+            self.value = {}
+        if isinstance(self.value, dict) and "secret_uri" not in self.value.keys():
+            self.value["secret_uri"] = secret_id
+        elif isinstance(self.value, six.string_types):
+            self.value = {"secret_uri": self.value}
+        # elif not self.value:
+        #     self.value = {"secret_uri": secret_id}
 
     @property
     def secret_id(self):

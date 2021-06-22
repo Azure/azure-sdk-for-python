@@ -382,7 +382,6 @@ class AzureAppConfigurationClient:
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
         etag = kwargs.get("etag", configuration_setting.etag)
-        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
 
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
