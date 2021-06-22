@@ -388,7 +388,7 @@ class ServiceOperations(object):
         """Retrieves a user delegation key for the Blob service. This is only a valid operation when using
         bearer token authentication.
 
-        :param key_info:
+        :param key_info: Key information.
         :type key_info: ~azure.storage.blob.models.KeyInfo
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
