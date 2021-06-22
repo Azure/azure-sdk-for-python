@@ -7,7 +7,7 @@ Use FarmBeats client library for Python to do the following.
 - Ingest satellite and weather data for areas of interest.
 - Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
+[Source code][source_code] | [Package (PyPi)][pypi-package] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
 
 ## Getting started
 
@@ -361,6 +361,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [product_docs]: https://aka.ms/FarmBeatsProductDocumentationPaaS
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/
+[pypi-package]: https://pypi.org/project/azure-agrifood-farming/
 [python]: https://www.python.org/downloads/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/
