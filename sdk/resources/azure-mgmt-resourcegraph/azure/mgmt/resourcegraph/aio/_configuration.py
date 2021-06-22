@@ -39,6 +39,7 @@ class ResourceGraphClientConfiguration(Configuration):
         super(ResourceGraphClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
+        self.api_version = "2021-06-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-resourcegraph/{}'.format(VERSION))
         self._configure(**kwargs)

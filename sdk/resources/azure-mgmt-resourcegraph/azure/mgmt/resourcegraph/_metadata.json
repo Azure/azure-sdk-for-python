@@ -1,6 +1,6 @@
 {
-    "chosen_version": "",
-    "total_api_version_list": ["2020-04-01-preview", "2020-09-01-preview", "2021-03-01"],
+    "chosen_version": "2021-06-01-preview",
+    "total_api_version_list": ["2021-06-01-preview"],
     "client": {
         "name": "ResourceGraphClient",
         "filename": "_resource_graph_client",
@@ -89,33 +89,9 @@
         "operations": "Operations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
         "operations": {
-            "resource_changes" : {
-                "sync": {
-                    "signature": "def resource_changes(\n    self,\n    parameters,  # type: \"_models.ResourceChangesRequestParameters\"\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"List changes to a resource for a given time interval.\n\n:param parameters: the parameters for this request for changes.\n:type parameters: ~azure.mgmt.resourcegraph.models.ResourceChangesRequestParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceChangeList, or the result of cls(response)\n:rtype: ~azure.mgmt.resourcegraph.models.ResourceChangeList\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "async": {
-                    "coroutine": true,
-                    "signature": "async def resource_changes(\n    self,\n    parameters: \"_models.ResourceChangesRequestParameters\",\n    **kwargs\n) -\u003e \"_models.ResourceChangeList\":\n",
-                    "doc": "\"\"\"List changes to a resource for a given time interval.\n\n:param parameters: the parameters for this request for changes.\n:type parameters: ~azure.mgmt.resourcegraph.models.ResourceChangesRequestParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ResourceChangeList, or the result of cls(response)\n:rtype: ~azure.mgmt.resourcegraph.models.ResourceChangeList\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "parameters"
-            },
-            "resource_change_details" : {
-                "sync": {
-                    "signature": "def resource_change_details(\n    self,\n    parameters,  # type: \"_models.ResourceChangeDetailsRequestParameters\"\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"Get resource change details.\n\n:param parameters: The parameters for this request for resource change details.\n:type parameters: ~azure.mgmt.resourcegraph.models.ResourceChangeDetailsRequestParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of ResourceChangeData, or the result of cls(response)\n:rtype: list[~azure.mgmt.resourcegraph.models.ResourceChangeData]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "async": {
-                    "coroutine": true,
-                    "signature": "async def resource_change_details(\n    self,\n    parameters: \"_models.ResourceChangeDetailsRequestParameters\",\n    **kwargs\n) -\u003e List[\"_models.ResourceChangeData\"]:\n",
-                    "doc": "\"\"\"Get resource change details.\n\n:param parameters: The parameters for this request for resource change details.\n:type parameters: ~azure.mgmt.resourcegraph.models.ResourceChangeDetailsRequestParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: list of ResourceChangeData, or the result of cls(response)\n:rtype: list[~azure.mgmt.resourcegraph.models.ResourceChangeData]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-                },
-                "call": "parameters"
-            },
             "resources" : {
                 "sync": {
                     "signature": "def resources(\n    self,\n    query,  # type: \"_models.QueryRequest\"\n    **kwargs  # type: Any\n):\n",
@@ -123,7 +99,7 @@
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def resources(\n    self,\n    query: \"_models.QueryRequest\",\n    **kwargs\n) -\u003e \"_models.QueryResponse\":\n",
+                    "signature": "async def resources(\n    self,\n    query: \"_models.QueryRequest\",\n    **kwargs: Any\n) -\u003e \"_models.QueryResponse\":\n",
                     "doc": "\"\"\"Queries the resources managed by Azure Resource Manager for scopes specified in the request.\n\n:param query: Request specifying query and its options.\n:type query: ~azure.mgmt.resourcegraph.models.QueryRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: QueryResponse, or the result of cls(response)\n:rtype: ~azure.mgmt.resourcegraph.models.QueryResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "query"
@@ -131,12 +107,12 @@
             "resources_history" : {
                 "sync": {
                     "signature": "def resources_history(\n    self,\n    request,  # type: \"_models.ResourcesHistoryRequest\"\n    **kwargs  # type: Any\n):\n",
-                    "doc": "\"\"\"List all snapshots of a resource for a given time interval.\n\n:param request:\n:type request: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: object, or the result of cls(response)\n:rtype: object\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "doc": "\"\"\"List all snapshots of a resource for a given time interval.\n\n:param request: Request specifying the query and its options.\n:type request: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: any, or the result of cls(response)\n:rtype: any\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def resources_history(\n    self,\n    request: \"_models.ResourcesHistoryRequest\",\n    **kwargs\n) -\u003e object:\n",
-                    "doc": "\"\"\"List all snapshots of a resource for a given time interval.\n\n:param request:\n:type request: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: object, or the result of cls(response)\n:rtype: object\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "async def resources_history(\n    self,\n    request: \"_models.ResourcesHistoryRequest\",\n    **kwargs: Any\n) -\u003e Any:\n",
+                    "doc": "\"\"\"List all snapshots of a resource for a given time interval.\n\n:param request: Request specifying the query and its options.\n:type request: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: any, or the result of cls(response)\n:rtype: any\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "call": "request"
             }

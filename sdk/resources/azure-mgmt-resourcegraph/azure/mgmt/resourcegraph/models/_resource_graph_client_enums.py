@@ -26,20 +26,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class ChangeCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The change category.
+class AuthorizationScopeFilter(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines what level of authorization resources should be returned based on the which
+    subscriptions and management groups are passed as scopes.
     """
 
-    USER = "User"
-    SYSTEM = "System"
-
-class ChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The change type for snapshot. PropertyChanges will be provided in case of Update change type
-    """
-
-    CREATE = "Create"
-    UPDATE = "Update"
-    DELETE = "Delete"
+    AT_SCOPE_AND_BELOW = "AtScopeAndBelow"
+    AT_SCOPE_AND_ABOVE = "AtScopeAndAbove"
+    AT_SCOPE_EXACT = "AtScopeExact"
+    AT_SCOPE_ABOVE_AND_BELOW = "AtScopeAboveAndBelow"
 
 class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Data type of a column in a table.
@@ -57,19 +52,6 @@ class FacetSortOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ASC = "asc"
     DESC = "desc"
-
-class PropertyChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The property change Type
-    """
-
-    INSERT = "Insert"
-    UPDATE = "Update"
-    REMOVE = "Remove"
-
-class ResourcesHistoryRequestOptionsResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    TABLE = "table"
-    OBJECT_ARRAY = "objectArray"
 
 class ResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Defines in which format query result returned.
