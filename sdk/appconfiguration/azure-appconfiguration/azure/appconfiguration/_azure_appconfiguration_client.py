@@ -457,22 +457,13 @@ class AzureAppConfigurationClient:
             error_map[412] = ResourceExistsError
 
         try:
-            if label:
-                key_value_deleted = self._impl.delete_key_value(
-                    key=key,
-                    label=label,
-                    if_match=prep_if_match(etag, match_condition),
-                    headers=custom_headers,
-                    error_map=error_map,
-                )
-            else:
-                key_value_deleted = self._impl.delete_key_value(
-                    key=key,
-                    if_match=prep_if_match(etag, match_condition),
-                    headers=custom_headers,
-                    error_map=error_map,
-                )
-
+            key_value_deleted = self._impl.delete_key_value(
+                key=key,
+                label=label,
+                if_match=prep_if_match(etag, match_condition),
+                headers=custom_headers,
+                error_map=error_map,
+            )
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
         except HttpResponseError as error:
             e = error_map[error.status_code]
