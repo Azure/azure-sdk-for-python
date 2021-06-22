@@ -213,17 +213,25 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def get_configuration_setting(self, key, **kwargs):
-        # type: (str, **Any) -> Union[None, ConfigurationSetting]
-
+    def get_configuration_setting(
+        self,
+        key,  # type: str
+        label=None,  # type: Optional[str]
+        etag="*",  # type: Optional[str]
+        match_condition=MatchConditions.Unconditionally,  # type: Optional[MatchConditions]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Union[None, ConfigurationSetting]
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
         :type key: str
-        :keyword str label: label of the ConfigurationSetting
-        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :keyword match_condition: The match condition to use upon the etag
-        :paramtype match_condition: :class:`~azure.core.MatchConditions`
+        :param label: label of the ConfigurationSetting
+        :type label: str
+        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :type etag: str or None
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object

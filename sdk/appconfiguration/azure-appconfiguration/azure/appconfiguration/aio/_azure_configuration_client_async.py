@@ -233,7 +233,6 @@ class AzureAppConfigurationClient:
     async def get_configuration_setting(
         self,
         key: str,
-        *,
         label: Optional[str] = None,
         etag: Optional[str] = "*",
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
