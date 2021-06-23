@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
+from typing import Dict, Any, Optional, Mapping, Union, overload, TYPE_CHECKING
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -413,17 +413,34 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
+    @overload
+    async def delete_configuration_setting(
+        self,
+        key: str,
+        label: Optional[str] = None,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
+        ...
+
+    @overload
+    async def delete_configuration_setting(self,
+        configuration_setting: ConfigurationSetting,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
+        ...
+
     @distributed_trace_async
     async def delete_configuration_setting(
-        self, key: str, label: Optional[str] = None, **kwargs: Any
+        self,
+        *args: Union[str, ConfigurationSetting],
+        **kwargs: Any
     ) -> ConfigurationSetting:
-
         """Delete a ConfigurationSetting if it exists
 
-        :param key: key used to identify the ConfigurationSetting
-        :type key: str
-        :param label: label used to identify the ConfigurationSetting
-        :type label: str
+        :param str key: key used to identify the ConfigurationSetting
+        :param configuration-setting: ConfigurationSetting to be deleted
+        :type configuration_setting: :class:`~azure.appconfiguration.ConfigurationSetting`
+        :keyword str label: label used to identify the ConfigurationSetting
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: :class:`~azure.core.MatchConditions`
@@ -443,8 +460,16 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-
+        key = kwargs.pop("key", None)
+        label = kwargs.pop("label", None)
         etag = kwargs.pop("etag", None)
+        if len(args) > 0:
+            if isinstance(args[0], ConfigurationSetting):
+                key = args[0].key
+                label = args[0].label
+                etag = args[0].etag if not None else etag
+            else:
+                key = args[0]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
