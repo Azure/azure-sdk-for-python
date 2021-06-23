@@ -1,5 +1,33 @@
 # Release History
 
+## 6.4.0 (2021-06-22)
+
+**Features**
+
+  - Model ContinuousModeBackupPolicy has a new parameter migration_state
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Model DatabaseAccountGetResults has a new parameter analytical_storage_configuration
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter disable_local_auth
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model BackupPolicy has a new parameter migration_state
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter analytical_storage_configuration
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter restore_parameters
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter disable_local_auth
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter create_mode
+  - Model PeriodicModeBackupPolicy has a new parameter migration_state
+  - Model DatabaseAccountUpdateParameters has a new parameter analytical_storage_configuration
+  - Model DatabaseAccountUpdateParameters has a new parameter disable_local_auth
+  - Added operation SqlResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group RestorableMongodbDatabasesOperations
+  - Added operation group RestorableDatabaseAccountsOperations
+  - Added operation group RestorableSqlDatabasesOperations
+  - Added operation group RestorableSqlContainersOperations
+  - Added operation group RestorableMongodbResourcesOperations
+  - Added operation group RestorableMongodbCollectionsOperations
+  - Added operation group RestorableSqlResourcesOperations
+
 ## 6.3.0 (2021-05-14)
 
 **Breaking changes**

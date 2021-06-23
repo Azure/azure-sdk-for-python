@@ -10,6 +10,9 @@ Let's get started with how to setup the repo itself.
 
 To get started with any of the packages, change directory to the package you want to install and run the `pip install .` command. This will install all of the local files necessary for you to run the corresponding tests. It's important to note that if you made changes to the local files and want to run the tests again, you must run the `pip install .` command from the package root folder to update the files with your new changes.
 
+In each SDK directory, run the following command to ensure packages to support development is installed correctly,
+`python -m pip install -r .\dev_requirements.txt`.
+
 Once the package has been installed on your machine, let's jump on how to run the tests to see that everything is in order.
 
 ## Testing

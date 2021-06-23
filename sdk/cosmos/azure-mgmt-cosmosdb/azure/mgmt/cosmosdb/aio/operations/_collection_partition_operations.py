@@ -48,7 +48,7 @@ class CollectionPartitionOperations:
         database_rid: str,
         collection_rid: str,
         filter: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PartitionMetricListResult"]:
         """Retrieves the metrics determined by the given filter for the given collection, split by
         partition.
@@ -75,7 +75,7 @@ class CollectionPartitionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -88,7 +88,7 @@ class CollectionPartitionOperations:
                 url = self.list_metrics.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
                     'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str'),
@@ -137,7 +137,7 @@ class CollectionPartitionOperations:
         database_rid: str,
         collection_rid: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PartitionUsagesResult"]:
         """Retrieves the usages (most recent storage data) for the given collection, split by partition.
 
@@ -162,7 +162,7 @@ class CollectionPartitionOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -175,7 +175,7 @@ class CollectionPartitionOperations:
                 url = self.list_usages.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
                     'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str'),

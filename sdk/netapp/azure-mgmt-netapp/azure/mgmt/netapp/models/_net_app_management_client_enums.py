@@ -68,6 +68,15 @@ class CheckQuotaNameResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
 
+class ChownMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter specifies who is authorized to change the ownership of a file. restricted - Only
+    root user can change the ownership of the file. unrestricted - Non-root users can change
+    ownership of files that they own.
+    """
+
+    RESTRICTED = "Restricted"
+    UNRESTRICTED = "Unrestricted"
+
 class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity that created the resource.
     """

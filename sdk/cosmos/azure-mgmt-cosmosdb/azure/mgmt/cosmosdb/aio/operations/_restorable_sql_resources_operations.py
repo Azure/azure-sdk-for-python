@@ -47,7 +47,7 @@ class RestorableSqlResourcesOperations:
         instance_id: str,
         restore_location: Optional[str] = None,
         restore_timestamp_in_utc: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RestorableSqlResourcesListResult"]:
         """Return a list of database and container combo that exist on the account at the given timestamp
         and location. This helps in scenarios to validate what resources exist at given timestamp and
@@ -72,7 +72,7 @@ class RestorableSqlResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):

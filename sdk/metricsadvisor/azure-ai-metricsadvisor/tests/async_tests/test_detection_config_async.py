@@ -35,7 +35,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     metric_id=data_feed.metric_ids['cost'],
                     description="My test metric anomaly detection configuration",
                     whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="OR",
+                        condition_operator="OR",
                         smart_detection_condition=SmartDetectionCondition(
                             sensitivity=50,
                             anomaly_detector_direction="Both",
@@ -71,7 +71,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(config.name)
                 self.assertIsNone(config.series_detection_conditions)
                 self.assertIsNone(config.series_group_detection_conditions)
-                self.assertEqual(config.whole_series_detection_condition.cross_conditions_operator, "OR")
+                self.assertEqual(config.whole_series_detection_condition.condition_operator, "OR")
                 self.assertEqual(
                     config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(config.whole_series_detection_condition.change_threshold_condition.change_percentage, 50)
@@ -115,7 +115,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     metric_id=data_feed.metric_ids['cost'],
                     description="My test metric anomaly detection configuration",
                     whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="AND",
+                        condition_operator="AND",
                         smart_detection_condition=SmartDetectionCondition(
                             sensitivity=50,
                             anomaly_detector_direction="Both",
@@ -172,7 +172,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(detection_config.metric_id, data_feed.metric_ids['cost'])
                 self.assertEqual(detection_config.description, "My test metric anomaly detection configuration")
                 self.assertIsNotNone(detection_config.name)
-                self.assertEqual(detection_config.whole_series_detection_condition.cross_conditions_operator, "AND")
+                self.assertEqual(detection_config.whole_series_detection_condition.condition_operator, "AND")
                 self.assertEqual(
                     detection_config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(detection_config.whole_series_detection_condition.change_threshold_condition.change_percentage, 50)
@@ -232,7 +232,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     metric_id=data_feed.metric_ids['cost'],
                     description="My test metric anomaly detection configuration",
                     whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="AND",
+                        condition_operator="AND",
                         smart_detection_condition=SmartDetectionCondition(
                             sensitivity=50,
                             anomaly_detector_direction="Both",
@@ -264,7 +264,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     series_detection_conditions=[
                         MetricSingleSeriesDetectionCondition(
                             series_key={"city": "Shenzhen", "category": "Jewelry"},
-                            cross_conditions_operator="AND",
+                            condition_operator="AND",
                             smart_detection_condition=SmartDetectionCondition(
                                 anomaly_detector_direction="Both",
                                 sensitivity=63,
@@ -295,7 +295,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         ),
                         MetricSingleSeriesDetectionCondition(
                             series_key={"city": "Osaka", "category": "Cell Phones"},
-                            cross_conditions_operator="AND",
+                            condition_operator="AND",
                             smart_detection_condition=SmartDetectionCondition(
                                 anomaly_detector_direction="Both",
                                 sensitivity=63,
@@ -309,7 +309,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     series_group_detection_conditions=[
                         MetricSeriesGroupDetectionCondition(
                             series_group_key={"city": "Sao Paulo"},
-                            cross_conditions_operator="AND",
+                            condition_operator="AND",
                             smart_detection_condition=SmartDetectionCondition(
                                 anomaly_detector_direction="Both",
                                 sensitivity=63,
@@ -340,7 +340,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         ),
                         MetricSeriesGroupDetectionCondition(
                             series_group_key={"city": "Seoul"},
-                            cross_conditions_operator="AND",
+                            condition_operator="AND",
                             smart_detection_condition=SmartDetectionCondition(
                                 anomaly_detector_direction="Both",
                                 sensitivity=63,
@@ -359,7 +359,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertIsNotNone(detection_config.name)
 
                 # whole series detection condition
-                self.assertEqual(detection_config.whole_series_detection_condition.cross_conditions_operator, "AND")
+                self.assertEqual(detection_config.whole_series_detection_condition.condition_operator, "AND")
                 self.assertEqual(
                     detection_config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(detection_config.whole_series_detection_condition.change_threshold_condition.change_percentage, 50)
@@ -388,7 +388,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 # series detection conditions
                 self.assertEqual(
                     detection_config.series_detection_conditions[0].series_key, {'city': 'Shenzhen', 'category': 'Jewelry'})
-                self.assertEqual(detection_config.series_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(detection_config.series_detection_conditions[0].condition_operator, "AND")
                 self.assertEqual(
                     detection_config.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
                 self.assertEqual(
@@ -428,7 +428,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 # series group detection conditions
                 self.assertEqual(
                     detection_config.series_group_detection_conditions[0].series_group_key, {"city": "Sao Paulo"})
-                self.assertEqual(detection_config.series_group_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(detection_config.series_group_detection_conditions[0].condition_operator, "AND")
                 self.assertEqual(
                     detection_config.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 100)
                 self.assertEqual(
@@ -514,15 +514,15 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 detection_config.series_detection_conditions[0].change_threshold_condition = change_threshold_condition
                 detection_config.series_detection_conditions[0].hard_threshold_condition = hard_threshold_condition
                 detection_config.series_detection_conditions[0].smart_detection_condition = smart_detection_condition
-                detection_config.series_detection_conditions[0].cross_conditions_operator = "AND"
+                detection_config.series_detection_conditions[0].condition_operator = "AND"
                 detection_config.series_group_detection_conditions[0].change_threshold_condition = change_threshold_condition
                 detection_config.series_group_detection_conditions[0].hard_threshold_condition = hard_threshold_condition
                 detection_config.series_group_detection_conditions[0].smart_detection_condition = smart_detection_condition
-                detection_config.series_group_detection_conditions[0].cross_conditions_operator = "AND"
+                detection_config.series_group_detection_conditions[0].condition_operator = "AND"
                 detection_config.whole_series_detection_condition.hard_threshold_condition = hard_threshold_condition
                 detection_config.whole_series_detection_condition.smart_detection_condition = smart_detection_condition
                 detection_config.whole_series_detection_condition.change_threshold_condition = change_threshold_condition
-                detection_config.whole_series_detection_condition.cross_conditions_operator = "OR"
+                detection_config.whole_series_detection_condition.condition_operator = "OR"
 
                 await self.admin_client.update_detection_configuration(detection_config)
                 updated = await self.admin_client.get_detection_configuration(detection_config.id)
@@ -542,7 +542,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.series_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(updated.series_detection_conditions[0].condition_operator, "AND")
 
                 self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.change_percentage, 20)
@@ -558,7 +558,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.series_group_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(updated.series_group_detection_conditions[0].condition_operator, "AND")
 
                 self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.change_percentage, 20)
@@ -574,7 +574,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.whole_series_detection_condition.cross_conditions_operator, "OR")
+                self.assertEqual(updated.whole_series_detection_condition.condition_operator, "OR")
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -614,21 +614,21 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     name="updated",
                     description="updated",
                     whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="OR",
+                        condition_operator="OR",
                         smart_detection_condition=smart_detection_condition,
                         hard_threshold_condition=hard_threshold_condition,
                         change_threshold_condition=change_threshold_condition
                     ),
                     series_detection_conditions=[MetricSingleSeriesDetectionCondition(
                         series_key={"city": "San Paulo", "category": "Jewelry"},
-                        cross_conditions_operator="AND",
+                        condition_operator="AND",
                         smart_detection_condition=smart_detection_condition,
                         hard_threshold_condition=hard_threshold_condition,
                         change_threshold_condition=change_threshold_condition
                     )],
                     series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
                         series_group_key={"city": "Shenzen"},
-                        cross_conditions_operator="AND",
+                        condition_operator="AND",
                         smart_detection_condition=smart_detection_condition,
                         hard_threshold_condition=hard_threshold_condition,
                         change_threshold_condition=change_threshold_condition
@@ -651,7 +651,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.series_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(updated.series_detection_conditions[0].condition_operator, "AND")
                 self.assertEqual(updated.series_detection_conditions[0].series_key, {"city": "San Paulo", "category": "Jewelry"})
 
                 self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
@@ -668,7 +668,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.series_group_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(updated.series_group_detection_conditions[0].condition_operator, "AND")
                 self.assertEqual(updated.series_group_detection_conditions[0].series_group_key, {"city": "Shenzen"})
 
                 self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
@@ -685,7 +685,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.whole_series_detection_condition.cross_conditions_operator, "OR")
+                self.assertEqual(updated.whole_series_detection_condition.condition_operator, "OR")
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
@@ -726,21 +726,21 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.update_detection_configuration(
                     detection_config,
                     whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="OR",
+                        condition_operator="OR",
                         smart_detection_condition=smart_detection_condition,
                         hard_threshold_condition=hard_threshold_condition,
                         change_threshold_condition=change_threshold_condition
                     ),
                     series_detection_conditions=[MetricSingleSeriesDetectionCondition(
                         series_key={"city": "San Paulo", "category": "Jewelry"},
-                        cross_conditions_operator="AND",
+                        condition_operator="AND",
                         smart_detection_condition=smart_detection_condition,
                         hard_threshold_condition=hard_threshold_condition,
                         change_threshold_condition=change_threshold_condition
                     )],
                     series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
                         series_group_key={"city": "Shenzen"},
-                        cross_conditions_operator="AND",
+                        condition_operator="AND",
                         smart_detection_condition=smart_detection_condition,
                         hard_threshold_condition=hard_threshold_condition,
                         change_threshold_condition=change_threshold_condition
@@ -763,7 +763,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.series_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.series_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(updated.series_detection_conditions[0].condition_operator, "AND")
                 self.assertEqual(updated.series_detection_conditions[0].series_key, {"city": "San Paulo", "category": "Jewelry"})
 
                 self.assertEqual(updated.series_group_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
@@ -780,7 +780,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.series_group_detection_conditions[0].smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.series_group_detection_conditions[0].cross_conditions_operator, "AND")
+                self.assertEqual(updated.series_group_detection_conditions[0].condition_operator, "AND")
                 self.assertEqual(updated.series_group_detection_conditions[0].series_group_key, {"city": "Shenzen"})
 
                 self.assertEqual(updated.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")
@@ -797,7 +797,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.sensitivity, 10)
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_number, 5)
                 self.assertEqual(updated.whole_series_detection_condition.smart_detection_condition.suppress_condition.min_ratio, 2)
-                self.assertEqual(updated.whole_series_detection_condition.cross_conditions_operator, "OR")
+                self.assertEqual(updated.whole_series_detection_condition.condition_operator, "OR")
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
