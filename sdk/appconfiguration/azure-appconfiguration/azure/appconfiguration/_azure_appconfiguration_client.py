@@ -438,7 +438,8 @@ class AzureAppConfigurationClient:
             if isinstance(args[0], ConfigurationSetting):
                 key = args[0].key
                 label = args[0].label
-                etag = args[0].etag if not None else etag
+                if etag is None:
+                    etag = args[0].etag
             else:
                 key = args[0]
                 if len(args) == 2:
