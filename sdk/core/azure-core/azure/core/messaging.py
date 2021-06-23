@@ -122,6 +122,16 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
+        if not all([_ in event for _ in ("source", "type")]):
+            if all([_ in event for _ in (("subject", "eventType", "data", "dataVersion", "id", "eventTime"))]):
+                raise ValueError(
+                    "The event does not conform to the cloud event spec." + 
+                    " Try using the EventGridEvent from azure-eventgrid library"
+                )
+            raise ValueError(
+                "The event does not conform to the cloud event spec. source and type are required."
+                )
+
         kwargs = {}  # type: Dict[Any, Any]
         reserved_attr = [
             "data",
