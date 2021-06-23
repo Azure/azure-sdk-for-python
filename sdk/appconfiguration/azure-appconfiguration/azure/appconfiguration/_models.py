@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from json.decoder import JSONDecodeError
-import six
 from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
@@ -188,7 +186,8 @@ class FeatureFlagConfigurationSetting(
             temp = json.loads(self.value)
             return temp.get("enabled", None)
         except json.decoder.JSONDecodeError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
+            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+                "'value' is expected to be a dictionary")
 
     @enabled.setter
     def enabled(self, new_value):
@@ -198,7 +197,8 @@ class FeatureFlagConfigurationSetting(
             temp["enabled"] = new_value
             self.value = json.dumps(temp)
         except json.decoder.JSONDecodeError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
+            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+                "'value' is expected to be a dictionary")
 
     @property
     def filters(self):
@@ -211,9 +211,11 @@ class FeatureFlagConfigurationSetting(
             try:
                 return conditions.get("client_filters", [])
             except AttributeError:
-                return ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'client_filters' is expected to be a dictionary")
+                raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format." + \
+                    " 'client_filters' is expected to be a dictionary")
         except json.decoder.JSONDecodeError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
+            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+                "'value' is expected to be a dictionary")
 
 
     @filters.setter
@@ -227,9 +229,11 @@ class FeatureFlagConfigurationSetting(
                 temp["conditions"]["client_filters"] = new_filters
                 self.value = json.dumps(temp)
             except AttributeError:
-                return ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'client_filters' is expected to be a dictionary")
+                raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format." + \
+                    " 'client_filters' is expected to be a dictionary")
         except json.decoder.JSONDecodeError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
+            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+                "'value' is expected to be a dictionary")
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -324,7 +328,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp = json.loads(self.value)
             return temp.get("secret_uri", None)
         except json.decoder.JSONDecodeError:
-            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
+            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
+                "'value' is expected to be a dictionary")
 
     @secret_id.setter
     def secret_id(self, secret_id):
@@ -333,7 +338,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp["secret_uri"] = secret_id
             self.value = json.dumps(temp)
         except json.decoder.JSONDecodeError:
-            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
+            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
+                "'value' is expected to be a dictionary")
 
     @classmethod
     def _from_generated(cls, key_value):
