@@ -440,7 +440,7 @@ class AzureAppConfigurationClient:
         :param str key: key used to identify the ConfigurationSetting
         :param configuration-setting: ConfigurationSetting to be deleted
         :type configuration_setting: :class:`~azure.appconfiguration.ConfigurationSetting`
-        :keyword str label: label used to identify the ConfigurationSetting
+        :param str label: label used to identify the ConfigurationSetting
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: :class:`~azure.core.MatchConditions`
@@ -460,8 +460,8 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        key = kwargs.pop("key", None)
-        label = kwargs.pop("label", None)
+        key = None
+        label = None
         etag = kwargs.pop("etag", None)
         if len(args) > 0:
             if isinstance(args[0], ConfigurationSetting):
