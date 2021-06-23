@@ -12,6 +12,10 @@ from ._generated_query.models import (
     TextQueryParameters,
     TextAnswers,
     KnowledgebaseQueryParameters,
+    KnowledgebaseAnswerRequestContext,
+    RankerType,
+    StrictFilters,
+    AnswerSpanRequest,
     KnowledgebaseAnswers
 )
 from ._generated_author.models import (
@@ -28,6 +32,9 @@ __all__ = [
     'TextQueryParameters',
     'TextAnswers',
     'KnowledgebaseQueryParameters',
+    'RankerType',
+    'StrictFilters',
+    'AnswerSpanRequest',
     'KnowledgebaseAnswers'
     'ProjectMetadata',
     'CreateProjectParameters',

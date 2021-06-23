@@ -13,6 +13,13 @@ from testcase import (
     QuestionAnsweringClientPreparer
 )
 
+from azure.ai.language.questionanswer import (
+    KnowledgebaseQueryParameters,
+    KnowledgebaseAnswerRequestContext,
+    RankerType,
+    StrictFilters,
+    AnswerSpanRequest,
+)
 from azure.ai.language.questionanswer.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswer.rest import question_answering_knowledgebase
 
@@ -123,3 +130,95 @@ class QnATests(QuestionAnsweringTest):
                     assert prompt.get('displayOrder') is not None
                     assert prompt.get('qnaId')
                     assert prompt.get('displayText')
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
+    async def test_query_knowledgebase(self, client, question_answering_project):
+        query_params = KnowledgebaseQueryParameters(
+            question="Ports and connectors",
+            top=3,
+            context=KnowledgebaseAnswerRequestContext(
+                previous_user_query="Meet Surface Pro 4",
+                previous_qna_id=4
+            )
+        )
+
+        async with client:
+            output = await client.query_knowledgebase(
+                project_name=question_answering_project,
+                deployment_name='test',
+                knowledgebase_query_parameters=query_params
+            )
+
+        assert output.answers
+        for answer in output.answers:
+            assert answer.answer
+            assert answer.confidence_score
+            assert answer.id
+            assert answer.source
+            assert answer.metadata is not None
+            assert not answer.answer_span
+
+            assert answer.questions
+            for question in answer.questions:
+                assert question
+
+            assert answer.dialog
+            assert answer.dialog.is_context_only is not None
+            assert answer.dialog.prompts is not None
+            if answer.dialog.prompts:
+                for prompt in answer.dialog.prompts:
+                    assert prompt.display_order is not None
+                    assert prompt.qna_id
+                    assert prompt.display_text
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
+    async def test_query_knowledgebase_with_answerspan(self, client, question_answering_project):
+        query_params = KnowledgebaseQueryParameters(
+            question="Ports and connectors",
+            top=3,
+            context=KnowledgebaseAnswerRequestContext(
+                previous_user_query="Meet Surface Pro 4",
+                previous_qna_id=4
+            ),
+            answer_span_request=AnswerSpanRequest(
+                enable=True,
+                confidence_score_threshold=0.1,
+                top_answers_with_span=2
+            )
+        )
+
+        async with client:
+            output = await client.query_knowledgebase(
+                project_name=question_answering_project,
+                deployment_name='test',
+                knowledgebase_query_parameters=query_params
+            )
+
+        assert output.answers
+        for answer in output.answers:
+            assert answer.answer
+            assert answer.confidence_score
+            assert answer.id
+            assert answer.source
+            assert answer.metadata is not None
+
+            if answer.answer_span:
+                assert answer.answer_span.text
+                assert answer.answer_span.confidence_score
+                assert answer.answer_span.offset is not None
+                assert answer.answer_span.length
+
+            assert answer.questions
+            for question in answer.questions:
+                assert question
+
+            assert answer.dialog
+            assert answer.dialog.is_context_only is not None
+            assert answer.dialog.prompts is not None
+            if answer.dialog.prompts:
+                for prompt in answer.dialog.prompts:
+                    assert prompt.display_order is not None
+                    assert prompt.qna_id
+                    assert prompt.display_text

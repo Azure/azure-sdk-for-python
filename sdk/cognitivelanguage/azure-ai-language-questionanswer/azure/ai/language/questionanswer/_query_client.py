@@ -135,7 +135,7 @@ class QuestionAnsweringClient(object):
          ~azure.ai.language.questionanswering.KnowledgebaseQueryParameters
         :keyword deployment_name: The name of the specific deployment of the project to use.
         :paramtype deployment_name: str
-        :return: KnowledgebaseAnswers, or the result of cls(response)
+        :return: KnowledgebaseAnswers
         :rtype: ~azure.ai.language.questionanswering.KnowledgebaseAnswers
         :raises: ~azure.core.exceptions.HttpResponseError
         """
