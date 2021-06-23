@@ -122,10 +122,12 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
+        # https://github.com/cloudevents/spec Cloud event spec requires source, type,
+        # specversion. We autopopulate everything other than source, type.
         if not all([_ in event for _ in ("source", "type")]):
-            if all([_ in event for _ in (("subject", "eventType", "data", "dataVersion", "id", "eventTime"))]):
+            if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
                 raise ValueError(
-                    "The event does not conform to the cloud event spec." + 
+                    "The event does not conform to the cloud event spec." +
                     " Try using the EventGridEvent from azure-eventgrid library"
                 )
             raise ValueError(
