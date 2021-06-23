@@ -1,8 +1,10 @@
 # Release History
 
-## 4.3.1 (Unreleased)
+## 4.4.0 (Unreleased)
 
 ### Features Added
+
+- `EventGridPublisherClient` now supports Azure Active Directory (AAD) for authentication.
 
 ### Breaking Changes
 

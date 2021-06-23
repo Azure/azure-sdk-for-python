@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union, List, Dict, cast
+from typing import Any, Union, List, Dict, TYPE_CHECKING, cast
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.messaging import CloudEvent
@@ -23,10 +23,10 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
 )
+from ._helpers_async import _get_authentication_policy_async
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
 from .._helpers import (
-    _get_authentication_policy,
     _is_cloud_event,
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
@@ -35,6 +35,9 @@ from .._helpers import (
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 SendType = Union[
     CloudEvent, EventGridEvent, Dict, List[CloudEvent], List[EventGridEvent], List[Dict]
@@ -49,8 +52,9 @@ class EventGridPublisherClient:
 
     :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements
-     SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+     SAS key authentication or SAS token authentication or an AsyncTokenCredential.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
     :rtype: None
 
     .. admonition:: Example:
@@ -73,7 +77,7 @@ class EventGridPublisherClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, AzureSasCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         self._client = EventGridPublisherClientAsync(
@@ -85,7 +89,7 @@ class EventGridPublisherClient:
     def _policies(
         credential: Union[AzureKeyCredential, AzureSasCredential], **kwargs: Any
     ) -> List[Any]:
-        auth_policy = _get_authentication_policy(credential)
+        auth_policy = _get_authentication_policy_async(credential)
         sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),

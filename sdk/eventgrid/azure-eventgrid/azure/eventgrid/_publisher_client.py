@@ -40,7 +40,7 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+    from azure.core.credentials import AzureKeyCredential, AzureSasCredential, TokenCredential
 
     SendType = Union[
         CloudEvent,
@@ -60,8 +60,9 @@ class EventGridPublisherClient(object):
 
     :param str endpoint: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which
-     implements SAS key authentication or SAS token authentication.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential
+     implements SAS key authentication or SAS token authentication or a TokenCredential.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AzureSasCredential or
+     ~azure.core.credentials.TokenCredential
     :rtype: None
 
     .. admonition:: Example:
@@ -82,7 +83,7 @@ class EventGridPublisherClient(object):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, AzureSasCredential], Any) -> None
+        # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
