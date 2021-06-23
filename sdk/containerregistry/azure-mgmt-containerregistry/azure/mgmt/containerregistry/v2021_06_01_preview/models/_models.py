@@ -6,7 +6,60 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+
+class ActivationProperties(msrest.serialization.Model):
+    """The activation properties of the connected registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The activation status of the connected registry. Possible values include:
+     "Active", "Inactive".
+    :vartype status: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ActivationStatus
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ActivationProperties, self).__init__(**kwargs)
+        self.status = None
+
+
+class ActiveDirectoryObject(msrest.serialization.Model):
+    """The Active Directory Object that will be used for authenticating the token of a container registry.
+
+    :param object_id: The user/group/application object ID for Active Directory Object that will be
+     used for authenticating the token of a container registry.
+    :type object_id: str
+    :param tenant_id: The tenant ID of user/group/application object Active Directory Object that
+     will be used for authenticating the token of a container registry.
+    :type tenant_id: str
+    """
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ActiveDirectoryObject, self).__init__(**kwargs)
+        self.object_id = kwargs.get('object_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
 
 
 class Actor(msrest.serialization.Model):
@@ -58,15 +111,204 @@ class CallbackConfig(msrest.serialization.Model):
         self.custom_headers = kwargs.get('custom_headers', None)
 
 
+class ProxyResource(msrest.serialization.Model):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ConnectedRegistry(ProxyResource):
+    """An object that represents a connected registry for a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
+    :param mode: The mode of the connected registry resource that indicates the permissions of the
+     registry. Possible values include: "Registry", "Mirror".
+    :type mode: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectedRegistryMode
+    :ivar version: The current version of ACR runtime on the connected registry.
+    :vartype version: str
+    :ivar connection_state: The current connection state of the connected registry. Possible values
+     include: "Online", "Offline", "Syncing", "Unhealthy".
+    :vartype connection_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectionState
+    :ivar last_activity_time: The last activity time of the connected registry.
+    :vartype last_activity_time: ~datetime.datetime
+    :ivar activation: The activation properties of the connected registry.
+    :vartype activation:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ActivationProperties
+    :param parent: The parent of the connected registry.
+    :type parent: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ParentProperties
+    :param client_token_ids: The list of the ACR token resource IDs used to authenticate clients to
+     the connected registry.
+    :type client_token_ids: list[str]
+    :param login_server: The login server properties of the connected registry.
+    :type login_server:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LoginServerProperties
+    :param logging: The logging properties of the connected registry.
+    :type logging: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LoggingProperties
+    :ivar status_details: The list of current statuses of the connected registry.
+    :vartype status_details:
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.StatusDetailProperties]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'version': {'readonly': True},
+        'connection_state': {'readonly': True},
+        'last_activity_time': {'readonly': True},
+        'activation': {'readonly': True},
+        'status_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'mode': {'key': 'properties.mode', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'connection_state': {'key': 'properties.connectionState', 'type': 'str'},
+        'last_activity_time': {'key': 'properties.lastActivityTime', 'type': 'iso-8601'},
+        'activation': {'key': 'properties.activation', 'type': 'ActivationProperties'},
+        'parent': {'key': 'properties.parent', 'type': 'ParentProperties'},
+        'client_token_ids': {'key': 'properties.clientTokenIds', 'type': '[str]'},
+        'login_server': {'key': 'properties.loginServer', 'type': 'LoginServerProperties'},
+        'logging': {'key': 'properties.logging', 'type': 'LoggingProperties'},
+        'status_details': {'key': 'properties.statusDetails', 'type': '[StatusDetailProperties]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectedRegistry, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.mode = kwargs.get('mode', None)
+        self.version = None
+        self.connection_state = None
+        self.last_activity_time = None
+        self.activation = None
+        self.parent = kwargs.get('parent', None)
+        self.client_token_ids = kwargs.get('client_token_ids', None)
+        self.login_server = kwargs.get('login_server', None)
+        self.logging = kwargs.get('logging', None)
+        self.status_details = None
+
+
+class ConnectedRegistryListResult(msrest.serialization.Model):
+    """The result of a request to list connected registries for a container registry.
+
+    :param value: The list of connected registries. Since this list may be incomplete, the nextLink
+     field should be used to request the next list of connected registries.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectedRegistry]
+    :param next_link: The URI that can be used to request the next list of connected registries.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ConnectedRegistry]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectedRegistryListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class ConnectedRegistryUpdateParameters(msrest.serialization.Model):
+    """The parameters for updating a connected registry.
+
+    :param sync_properties: The sync properties of the connected registry with its parent.
+    :type sync_properties:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SyncUpdateProperties
+    :param logging: The logging properties of the connected registry.
+    :type logging: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LoggingProperties
+    :param client_token_ids: The list of the ACR token resource IDs used to authenticate clients to
+     the connected registry.
+    :type client_token_ids: list[str]
+    """
+
+    _attribute_map = {
+        'sync_properties': {'key': 'properties.syncProperties', 'type': 'SyncUpdateProperties'},
+        'logging': {'key': 'properties.logging', 'type': 'LoggingProperties'},
+        'client_token_ids': {'key': 'properties.clientTokenIds', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectedRegistryUpdateParameters, self).__init__(**kwargs)
+        self.sync_properties = kwargs.get('sync_properties', None)
+        self.logging = kwargs.get('logging', None)
+        self.client_token_ids = kwargs.get('client_token_ids', None)
+
+
 class EncryptionProperty(msrest.serialization.Model):
     """EncryptionProperty.
 
     :param status: Indicates whether or not the encryption is enabled for container registry.
      Possible values include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EncryptionStatus
     :param key_vault_properties: Key vault properties.
     :type key_vault_properties:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.KeyVaultProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.KeyVaultProperties
     """
 
     _attribute_map = {
@@ -81,6 +323,64 @@ class EncryptionProperty(msrest.serialization.Model):
         super(EncryptionProperty, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """An error response from the Azure Container Registry service.
+
+    :param error: Azure container registry build API error body.
+    :type error: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ErrorResponseBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseBody(msrest.serialization.Model):
+    """An error response from the Azure Container Registry service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    :param details: an array of additional nested error response info objects, as described by this
+     contract.
+    :type details: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.InnerErrorDescription
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'InnerErrorDescription'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponseBody, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
 
 
 class EventInfo(msrest.serialization.Model):
@@ -109,10 +409,10 @@ class Event(EventInfo):
     :type id: str
     :param event_request_message: The event request message sent to the service URI.
     :type event_request_message:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventRequestMessage
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EventRequestMessage
     :param event_response_message: The event response message received from the service URI.
     :type event_response_message:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventResponseMessage
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EventResponseMessage
     """
 
     _attribute_map = {
@@ -140,15 +440,15 @@ class EventContent(msrest.serialization.Model):
     :param action: The action that encompasses the provided event.
     :type action: str
     :param target: The target of the event.
-    :type target: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Target
+    :type target: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Target
     :param request: The request that generated the event.
-    :type request: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Request
+    :type request: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Request
     :param actor: The agent that initiated the event. For most situations, this could be from the
      authorization context of the request.
-    :type actor: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Actor
+    :type actor: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Actor
     :param source: The registry node that generated the event. Put differently, while the actor
      initiates the event, the source generates it.
-    :type source: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Source
+    :type source: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Source
     """
 
     _attribute_map = {
@@ -180,7 +480,7 @@ class EventListResult(msrest.serialization.Model):
 
     :param value: The list of events. Since this list may be incomplete, the nextLink field should
      be used to request the next list of events.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Event]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Event]
     :param next_link: The URI that can be used to request the next list of events.
     :type next_link: str
     """
@@ -203,7 +503,7 @@ class EventRequestMessage(msrest.serialization.Model):
     """The event request message sent to the service URI.
 
     :param content: The content of the event request message.
-    :type content: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EventContent
+    :type content: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EventContent
     :param headers: The headers of the event request message.
     :type headers: dict[str, str]
     :param method: The HTTP method used to send the event request message.
@@ -269,46 +569,6 @@ class EventResponseMessage(msrest.serialization.Model):
         self.version = kwargs.get('version', None)
 
 
-class ProxyResource(msrest.serialization.Model):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
 class ExportPipeline(ProxyResource):
     """An object that represents an export pipeline for a container registry.
 
@@ -321,22 +581,22 @@ class ExportPipeline(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param location: The location of the export pipeline.
     :type location: str
     :param identity: The identity of the export pipeline.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :param target: The target properties of the export pipeline.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipelineTargetProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPipelineTargetProperties
     :param options: The list of all options configured for the pipeline.
     :type options: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineOptions]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineOptions]
     :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
      called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -376,7 +636,7 @@ class ExportPipelineListResult(msrest.serialization.Model):
 
     :param value: The list of export pipelines. Since this list may be incomplete, the nextLink
      field should be used to request the next list of export pipelines.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipeline]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPipeline]
     :param next_link: The URI that can be used to request the next list of pipeline runs.
     :type next_link: str
     """
@@ -431,6 +691,79 @@ class ExportPipelineTargetProperties(msrest.serialization.Model):
         self.key_vault_uri = kwargs['key_vault_uri']
 
 
+class ExportPolicy(msrest.serialization.Model):
+    """The export policy for a container registry.
+
+    :param status: The value that indicates whether the policy is enabled or not. Possible values
+     include: "enabled", "disabled". Default value: "enabled".
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPolicyStatus
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ExportPolicy, self).__init__(**kwargs)
+        self.status = kwargs.get('status', "enabled")
+
+
+class GenerateCredentialsParameters(msrest.serialization.Model):
+    """The parameters used to generate credentials for a specified token or user of a container registry.
+
+    :param token_id: The resource ID of the token for which credentials have to be generated.
+    :type token_id: str
+    :param expiry: The expiry date of the generated credentials after which the credentials become
+     invalid.
+    :type expiry: ~datetime.datetime
+    :param name: Specifies name of the password which should be regenerated if any -- password1 or
+     password2. Possible values include: "password1", "password2".
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPasswordName
+    """
+
+    _attribute_map = {
+        'token_id': {'key': 'tokenId', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GenerateCredentialsParameters, self).__init__(**kwargs)
+        self.token_id = kwargs.get('token_id', None)
+        self.expiry = kwargs.get('expiry', None)
+        self.name = kwargs.get('name', None)
+
+
+class GenerateCredentialsResult(msrest.serialization.Model):
+    """The response from the GenerateCredentials operation.
+
+    :param username: The username for a container registry.
+    :type username: str
+    :param passwords: The list of passwords for a container registry.
+    :type passwords: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPassword]
+    """
+
+    _attribute_map = {
+        'username': {'key': 'username', 'type': 'str'},
+        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GenerateCredentialsResult, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.passwords = kwargs.get('passwords', None)
+
+
 class IdentityProperties(msrest.serialization.Model):
     """Managed identity for the resource.
 
@@ -441,14 +774,14 @@ class IdentityProperties(msrest.serialization.Model):
     :param type: The identity type. Possible values include: "SystemAssigned", "UserAssigned",
      "SystemAssigned, UserAssigned", "None".
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ResourceIdentityType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated with the resource. The
      user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
          providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.UserIdentityProperties]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.UserIdentityProperties]
     """
 
     _attribute_map = {
@@ -475,7 +808,7 @@ class ImportImageParameters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. The source of the image.
-    :type source: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSource
+    :type source: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportSource
     :param target_tags: List of strings of the form repo[:tag]. When tag is omitted the source will
      be used (or 'latest' if source tag is also omitted).
     :type target_tags: list[str]
@@ -485,7 +818,7 @@ class ImportImageParameters(msrest.serialization.Model):
     :param mode: When Force, any existing target tags will be overwritten. When NoForce, any
      existing target tags will fail the operation before any copying begins. Possible values
      include: "NoForce", "Force". Default value: "NoForce".
-    :type mode: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportMode
+    :type mode: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportMode
     """
 
     _validation = {
@@ -522,25 +855,25 @@ class ImportPipeline(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param location: The location of the import pipeline.
     :type location: str
     :param identity: The identity of the import pipeline.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :param source: The source properties of the import pipeline.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipelineSourceProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportPipelineSourceProperties
     :param trigger: The properties that describe the trigger of the import pipeline.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineTriggerProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineTriggerProperties
     :param options: The list of all options configured for the pipeline.
     :type options: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineOptions]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineOptions]
     :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
      called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -582,7 +915,7 @@ class ImportPipelineListResult(msrest.serialization.Model):
 
     :param value: The list of import pipelines. Since this list may be incomplete, the nextLink
      field should be used to request the next list of import pipelines.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipeline]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportPipeline]
     :param next_link: The URI that can be used to request the next list of pipeline runs.
     :type next_link: str
     """
@@ -608,7 +941,7 @@ class ImportPipelineSourceProperties(msrest.serialization.Model):
 
     :param type: The type of source for the import pipeline. Possible values include:
      "AzureStorageBlobContainer". Default value: "AzureStorageBlobContainer".
-    :type type: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineSourceType
+    :type type: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineSourceType
     :param uri: The source uri of the import pipeline.
      When 'AzureStorageBlob': "https://accountName.blob.core.windows.net/containerName/blobName"
      When 'AzureStorageBlobContainer': "https://accountName.blob.core.windows.net/containerName".
@@ -649,7 +982,7 @@ class ImportSource(msrest.serialization.Model):
     :type registry_uri: str
     :param credentials: Credentials used when importing from a registry uri.
     :type credentials:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportSourceCredentials
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportSourceCredentials
     :param source_image: Required. Repository name of the source image.
      Specify an image by repository ('hello-world'). This will use the 'latest' tag.
      Specify an image by tag ('hello-world:latest').
@@ -708,13 +1041,47 @@ class ImportSourceCredentials(msrest.serialization.Model):
         self.password = kwargs['password']
 
 
+class InnerErrorDescription(msrest.serialization.Model):
+    """inner error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
+    :param target: target of the particular error.
+    :type target: str
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(InnerErrorDescription, self).__init__(**kwargs)
+        self.code = kwargs['code']
+        self.message = kwargs['message']
+        self.target = kwargs.get('target', None)
+
+
 class IPRule(msrest.serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
     All required parameters must be populated in order to send to Azure.
 
     :param action: The action of IP ACL rule. Possible values include: "Allow".
-    :type action: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
+    :type action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
     :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
      address is allowed.
     :type ip_address_or_range: str
@@ -782,6 +1149,62 @@ class KeyVaultProperties(msrest.serialization.Model):
         self.last_key_rotation_timestamp = None
 
 
+class LoggingProperties(msrest.serialization.Model):
+    """The logging properties of the connected registry.
+
+    :param log_level: The verbosity of logs persisted on the connected registry. Possible values
+     include: "Debug", "Information", "Warning", "Error", "None". Default value: "Information".
+    :type log_level: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LogLevel
+    :param audit_log_status: Indicates whether audit logs are enabled on the connected registry.
+     Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :type audit_log_status: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.AuditLogStatus
+    """
+
+    _attribute_map = {
+        'log_level': {'key': 'logLevel', 'type': 'str'},
+        'audit_log_status': {'key': 'auditLogStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LoggingProperties, self).__init__(**kwargs)
+        self.log_level = kwargs.get('log_level', "Information")
+        self.audit_log_status = kwargs.get('audit_log_status', "Disabled")
+
+
+class LoginServerProperties(msrest.serialization.Model):
+    """The login server properties of the connected registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar host: The host of the connected registry. Can be FQDN or IP.
+    :vartype host: str
+    :ivar tls: The TLS properties of the connected registry login server.
+    :vartype tls: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TlsProperties
+    """
+
+    _validation = {
+        'host': {'readonly': True},
+        'tls': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'host': {'key': 'host', 'type': 'str'},
+        'tls': {'key': 'tls', 'type': 'TlsProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LoginServerProperties, self).__init__(**kwargs)
+        self.host = None
+        self.tls = None
+
+
 class NetworkRuleSet(msrest.serialization.Model):
     """The network rule set for a container registry.
 
@@ -790,12 +1213,12 @@ class NetworkRuleSet(msrest.serialization.Model):
     :param default_action: Required. The default action of allow or deny when no other rules match.
      Possible values include: "Allow", "Deny". Default value: "Allow".
     :type default_action: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.DefaultAction
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.DefaultAction
     :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.VirtualNetworkRule]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.VirtualNetworkRule]
     :param ip_rules: The IP ACL rules.
-    :type ip_rules: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.IPRule]
+    :type ip_rules: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.IPRule]
     """
 
     _validation = {
@@ -827,16 +1250,21 @@ class OperationDefinition(msrest.serialization.Model):
     :type name: str
     :param display: The display information for the container registry operation.
     :type display:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDisplayDefinition
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationDisplayDefinition
+    :param is_data_action: This property indicates if the operation is an action or a data action
+     ref:
+     https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations.
+    :type is_data_action: bool
     :param service_specification: The definition of Azure Monitoring service.
     :type service_specification:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationServiceSpecificationDefinition
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationServiceSpecificationDefinition
     """
 
     _attribute_map = {
         'origin': {'key': 'origin', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplayDefinition'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'service_specification': {'key': 'properties.serviceSpecification', 'type': 'OperationServiceSpecificationDefinition'},
     }
 
@@ -848,6 +1276,7 @@ class OperationDefinition(msrest.serialization.Model):
         self.origin = kwargs.get('origin', None)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.service_specification = kwargs.get('service_specification', None)
 
 
@@ -887,7 +1316,7 @@ class OperationListResult(msrest.serialization.Model):
 
     :param value: The list of container registry operations. Since this list may be incomplete, the
      nextLink field should be used to request the next list of operations.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationDefinition]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationDefinition]
     :param next_link: The URI that can be used to request the next list of container registry
      operations.
     :type next_link: str
@@ -978,10 +1407,10 @@ class OperationServiceSpecificationDefinition(msrest.serialization.Model):
 
     :param metric_specifications: A list of Azure Monitoring metrics definition.
     :type metric_specifications:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationMetricSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationMetricSpecificationDefinition]
     :param log_specifications: A list of Azure Monitoring log definitions.
     :type log_specifications:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.OperationLogSpecificationDefinition]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationLogSpecificationDefinition]
     """
 
     _attribute_map = {
@@ -998,6 +1427,36 @@ class OperationServiceSpecificationDefinition(msrest.serialization.Model):
         self.log_specifications = kwargs.get('log_specifications', None)
 
 
+class ParentProperties(msrest.serialization.Model):
+    """The properties of the connected registry parent.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: The resource ID of the parent to which the connected registry will be associated.
+    :type id: str
+    :param sync_properties: Required. The sync properties of the connected registry with its
+     parent.
+    :type sync_properties: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SyncProperties
+    """
+
+    _validation = {
+        'sync_properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'sync_properties': {'key': 'syncProperties', 'type': 'SyncProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ParentProperties, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.sync_properties = kwargs['sync_properties']
+
+
 class PipelineRun(ProxyResource):
     """An object that represents a pipeline run for a container registry.
 
@@ -1010,15 +1469,15 @@ class PipelineRun(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: The provisioning state of a pipeline run. Possible values include:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     :param request: The request parameters for a pipeline run.
-    :type request: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunRequest
+    :type request: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunRequest
     :ivar response: The response of a pipeline run.
-    :vartype response: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunResponse
+    :vartype response: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunResponse
     :param force_update_tag: How the pipeline run should be forced to recreate even if the pipeline
      run configuration has not changed.
     :type force_update_tag: str
@@ -1060,7 +1519,7 @@ class PipelineRunListResult(msrest.serialization.Model):
 
     :param value: The list of pipeline runs. Since this list may be incomplete, the nextLink field
      should be used to request the next list of pipeline runs.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRun]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRun]
     :param next_link: The URI that can be used to request the next list of pipeline runs.
     :type next_link: str
     """
@@ -1091,10 +1550,10 @@ class PipelineRunRequest(msrest.serialization.Model):
     :type artifacts: list[str]
     :param source: The source properties of the pipeline run.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunSourceProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunSourceProperties
     :param target: The target properties of the pipeline run.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunTargetProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunTargetProperties
     :param catalog_digest: The digest of the tar used to transfer the artifacts.
     :type catalog_digest: str
     """
@@ -1127,22 +1586,22 @@ class PipelineRunResponse(msrest.serialization.Model):
     :param imported_artifacts: The artifacts imported in the pipeline run.
     :type imported_artifacts: list[str]
     :param progress: The current progress of the copy operation.
-    :type progress: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProgressProperties
+    :type progress: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProgressProperties
     :param start_time: The time the pipeline run started.
     :type start_time: ~datetime.datetime
     :param finish_time: The time the pipeline run finished.
     :type finish_time: ~datetime.datetime
     :param source: The source of the pipeline run.
     :type source:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ImportPipelineSourceProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportPipelineSourceProperties
     :param target: The target of the pipeline run.
     :type target:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipelineTargetProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPipelineTargetProperties
     :param catalog_digest: The digest of the tar used to transfer the artifacts.
     :type catalog_digest: str
     :param trigger: The trigger that caused the pipeline run.
     :type trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineTriggerDescriptor
     :param pipeline_run_error_message: The detailed error message for the pipeline run in the case
      of failure.
     :type pipeline_run_error_message: str
@@ -1184,7 +1643,7 @@ class PipelineRunSourceProperties(msrest.serialization.Model):
     :param type: The type of the source. Possible values include: "AzureStorageBlob". Default
      value: "AzureStorageBlob".
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunSourceType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunSourceType
     :param name: The name of the source.
     :type name: str
     """
@@ -1209,7 +1668,7 @@ class PipelineRunTargetProperties(msrest.serialization.Model):
     :param type: The type of the target. Possible values include: "AzureStorageBlob". Default
      value: "AzureStorageBlob".
     :type type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineRunTargetType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineRunTargetType
     :param name: The name of the target.
     :type name: str
     """
@@ -1254,7 +1713,7 @@ class PipelineSourceTriggerProperties(msrest.serialization.Model):
 
     :param status: Required. The current status of the source trigger. Possible values include:
      "Enabled", "Disabled". Default value: "Enabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TriggerStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TriggerStatus
     """
 
     _validation = {
@@ -1278,7 +1737,7 @@ class PipelineTriggerDescriptor(msrest.serialization.Model):
 
     :param source_trigger: The source trigger that caused the pipeline run.
     :type source_trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineSourceTriggerDescriptor
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineSourceTriggerDescriptor
     """
 
     _attribute_map = {
@@ -1298,7 +1757,7 @@ class PipelineTriggerProperties(msrest.serialization.Model):
 
     :param source_trigger: The source trigger properties of the pipeline.
     :type source_trigger:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PipelineSourceTriggerProperties
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PipelineSourceTriggerProperties
     """
 
     _attribute_map = {
@@ -1318,18 +1777,21 @@ class Policies(msrest.serialization.Model):
 
     :param quarantine_policy: The quarantine policy for a container registry.
     :type quarantine_policy:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.QuarantinePolicy
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.QuarantinePolicy
     :param trust_policy: The content trust policy for a container registry.
-    :type trust_policy: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicy
+    :type trust_policy: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TrustPolicy
     :param retention_policy: The retention policy for a container registry.
     :type retention_policy:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RetentionPolicy
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.RetentionPolicy
+    :param export_policy: The export policy for a container registry.
+    :type export_policy: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ExportPolicy
     """
 
     _attribute_map = {
         'quarantine_policy': {'key': 'quarantinePolicy', 'type': 'QuarantinePolicy'},
         'trust_policy': {'key': 'trustPolicy', 'type': 'TrustPolicy'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
+        'export_policy': {'key': 'exportPolicy', 'type': 'ExportPolicy'},
     }
 
     def __init__(
@@ -1340,6 +1802,7 @@ class Policies(msrest.serialization.Model):
         self.quarantine_policy = kwargs.get('quarantine_policy', None)
         self.trust_policy = kwargs.get('trust_policy', None)
         self.retention_policy = kwargs.get('retention_policy', None)
+        self.export_policy = kwargs.get('export_policy', None)
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -1373,18 +1836,18 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param private_endpoint: The resource of private endpoint.
     :type private_endpoint:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpoint
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateEndpoint
     :param private_link_service_connection_state: A collection of information about the state of
      the connection between service consumer and provider.
     :type private_link_service_connection_state:
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of private endpoint connection resource.
      Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -1421,7 +1884,7 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     :param value: The list of private endpoint connections. Since this list may be incomplete, the
      nextLink field should be used to request the next list of private endpoint connections.
     :type value:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateEndpointConnection]
     :param next_link: The URI that can be used to request the next list of private endpoint
      connections.
     :type next_link: str
@@ -1491,7 +1954,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
 
     :param value: The list of private link resources. Since this list may be incomplete, the
      nextLink field should be used to request the next list of private link resources.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateLinkResource]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateLinkResource]
     :param next_link: The URI that can be used to request the next list of private link resources.
     :type next_link: str
     """
@@ -1515,14 +1978,14 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
 
     :param status: The private link service connection status. Possible values include: "Approved",
      "Pending", "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ConnectionStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ConnectionStatus
     :param description: The description for connection status. For example if connection is
      rejected it can indicate reason for rejection.
     :type description: str
     :param actions_required: A message indicating if changes on the service provider require any
      updates on the consumer. Possible values include: "None", "Recreate".
     :type actions_required: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ActionsRequired
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ActionsRequired
     """
 
     _attribute_map = {
@@ -1565,7 +2028,7 @@ class QuarantinePolicy(msrest.serialization.Model):
 
     :param status: The value that indicates whether the policy is enabled or not. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -1587,7 +2050,7 @@ class RegenerateCredentialParameters(msrest.serialization.Model):
 
     :param name: Required. Specifies name of the password which should be regenerated -- password
      or password2. Possible values include: "password", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PasswordName
     """
 
     _validation = {
@@ -1625,7 +2088,7 @@ class Resource(msrest.serialization.Model):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     """
 
     _validation = {
@@ -1677,11 +2140,11 @@ class Registry(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param sku: Required. The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Sku
     :param identity: The identity of the container registry.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :ivar login_server: The URL that can be used to log into the container registry.
     :vartype login_server: str
     :ivar creation_date: The creation date of the container registry in ISO8601 format.
@@ -1690,17 +2153,17 @@ class Registry(Resource):
      operation was called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded",
      "Failed", "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     :ivar status: The status of the container registry at the time the operation was called.
-    :vartype status: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :vartype status: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Status
     :param admin_user_enabled: The value that indicates whether the admin user is enabled.
     :type admin_user_enabled: bool
     :param network_rule_set: The network rule set for a container registry.
-    :type network_rule_set: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
+    :type network_rule_set: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
-    :type policies: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :type policies: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Policies
     :param encryption: The encryption settings of container registry.
-    :type encryption: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :type encryption: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EncryptionProperty
     :param data_endpoint_enabled: Enable a single data endpoint per region for serving data.
     :type data_endpoint_enabled: bool
     :ivar data_endpoint_host_names: List of host names that will serve data when
@@ -1709,15 +2172,21 @@ class Registry(Resource):
     :ivar private_endpoint_connections: List of private endpoint connections for a container
      registry.
     :vartype private_endpoint_connections:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.PrivateEndpointConnection]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.PrivateEndpointConnection]
     :param public_network_access: Whether or not public network access is allowed for the container
      registry. Possible values include: "Enabled", "Disabled".
     :type public_network_access: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PublicNetworkAccess
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PublicNetworkAccess
     :param network_rule_bypass_options: Whether to allow trusted Azure services to access a network
      restricted registry. Possible values include: "AzureServices", "None".
     :type network_rule_bypass_options: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleBypassOptions
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleBypassOptions
+    :param zone_redundancy: Whether or not zone redundancy is enabled for this container registry.
+     Possible values include: "Enabled", "Disabled".
+    :type zone_redundancy: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ZoneRedundancy
+    :param anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
+    :type anonymous_pull_enabled: bool
     """
 
     _validation = {
@@ -1757,6 +2226,8 @@ class Registry(Resource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'network_rule_bypass_options': {'key': 'properties.networkRuleBypassOptions', 'type': 'str'},
+        'zone_redundancy': {'key': 'properties.zoneRedundancy', 'type': 'str'},
+        'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -1779,6 +2250,8 @@ class Registry(Resource):
         self.private_endpoint_connections = None
         self.public_network_access = kwargs.get('public_network_access', None)
         self.network_rule_bypass_options = kwargs.get('network_rule_bypass_options', None)
+        self.zone_redundancy = kwargs.get('zone_redundancy', None)
+        self.anonymous_pull_enabled = kwargs.get('anonymous_pull_enabled', False)
 
 
 class RegistryListCredentialsResult(msrest.serialization.Model):
@@ -1788,7 +2261,7 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
     :type username: str
     :param passwords: The list of passwords for a container registry.
     :type passwords:
-     list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryPassword]
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -1810,7 +2283,7 @@ class RegistryListResult(msrest.serialization.Model):
 
     :param value: The list of container registries. Since this list may be incomplete, the nextLink
      field should be used to request the next list of container registries.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Registry]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Registry]
     :param next_link: The URI that can be used to request the next list of container registries.
     :type next_link: str
     """
@@ -1896,7 +2369,7 @@ class RegistryPassword(msrest.serialization.Model):
     """The login password for the container registry.
 
     :param name: The password name. Possible values include: "password", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PasswordName
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PasswordName
     :param value: The password value.
     :type value: str
     """
@@ -1919,29 +2392,31 @@ class RegistryUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a container registry.
 
     :param identity: The identity of the container registry.
-    :type identity: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
+    :type identity: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.IdentityProperties
     :param tags: A set of tags. The tags for the container registry.
     :type tags: dict[str, str]
     :param sku: The SKU of the container registry.
-    :type sku: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Sku
+    :type sku: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Sku
     :param admin_user_enabled: The value that indicates whether the admin user is enabled.
     :type admin_user_enabled: bool
     :param network_rule_set: The network rule set for a container registry.
-    :type network_rule_set: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleSet
+    :type network_rule_set: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleSet
     :param policies: The policies for a container registry.
-    :type policies: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Policies
+    :type policies: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Policies
     :param encryption: The encryption settings of container registry.
-    :type encryption: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.EncryptionProperty
+    :type encryption: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.EncryptionProperty
     :param data_endpoint_enabled: Enable a single data endpoint per region for serving data.
     :type data_endpoint_enabled: bool
     :param public_network_access: Whether or not public network access is allowed for the container
      registry. Possible values include: "Enabled", "Disabled".
     :type public_network_access: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PublicNetworkAccess
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PublicNetworkAccess
     :param network_rule_bypass_options: Whether to allow trusted Azure services to access a network
      restricted registry. Possible values include: "AzureServices", "None".
     :type network_rule_bypass_options: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.NetworkRuleBypassOptions
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.NetworkRuleBypassOptions
+    :param anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
+    :type anonymous_pull_enabled: bool
     """
 
     _attribute_map = {
@@ -1955,6 +2430,7 @@ class RegistryUpdateParameters(msrest.serialization.Model):
         'data_endpoint_enabled': {'key': 'properties.dataEndpointEnabled', 'type': 'bool'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'network_rule_bypass_options': {'key': 'properties.networkRuleBypassOptions', 'type': 'str'},
+        'anonymous_pull_enabled': {'key': 'properties.anonymousPullEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -1972,6 +2448,7 @@ class RegistryUpdateParameters(msrest.serialization.Model):
         self.data_endpoint_enabled = kwargs.get('data_endpoint_enabled', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.network_rule_bypass_options = kwargs.get('network_rule_bypass_options', None)
+        self.anonymous_pull_enabled = kwargs.get('anonymous_pull_enabled', None)
 
 
 class RegistryUsage(msrest.serialization.Model):
@@ -1984,7 +2461,7 @@ class RegistryUsage(msrest.serialization.Model):
     :param current_value: The current value of the usage.
     :type current_value: long
     :param unit: The unit of measurement. Possible values include: "Count", "Bytes".
-    :type unit: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsageUnit
+    :type unit: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.RegistryUsageUnit
     """
 
     _attribute_map = {
@@ -2009,7 +2486,7 @@ class RegistryUsageListResult(msrest.serialization.Model):
     """The result of a request to get container registry quota usages.
 
     :param value: The list of container registry quota usages.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.RegistryUsage]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.RegistryUsage]
     """
 
     _attribute_map = {
@@ -2043,18 +2520,22 @@ class Replication(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :ivar provisioning_state: The provisioning state of the replication at the time the operation
      was called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     :ivar status: The status of the replication at the time the operation was called.
-    :vartype status: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Status
+    :vartype status: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Status
     :param region_endpoint_enabled: Specifies whether the replication's regional endpoint is
      enabled. Requests will not be routed to a replication whose regional endpoint is disabled,
      however its data will continue to be synced with other replications.
     :type region_endpoint_enabled: bool
+    :param zone_redundancy: Whether or not zone redundancy is enabled for this container registry
+     replication. Possible values include: "Enabled", "Disabled".
+    :type zone_redundancy: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ZoneRedundancy
     """
 
     _validation = {
@@ -2077,6 +2558,7 @@ class Replication(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'Status'},
         'region_endpoint_enabled': {'key': 'properties.regionEndpointEnabled', 'type': 'bool'},
+        'zone_redundancy': {'key': 'properties.zoneRedundancy', 'type': 'str'},
     }
 
     def __init__(
@@ -2087,6 +2569,7 @@ class Replication(Resource):
         self.provisioning_state = None
         self.status = None
         self.region_endpoint_enabled = kwargs.get('region_endpoint_enabled', True)
+        self.zone_redundancy = kwargs.get('zone_redundancy', None)
 
 
 class ReplicationListResult(msrest.serialization.Model):
@@ -2094,7 +2577,7 @@ class ReplicationListResult(msrest.serialization.Model):
 
     :param value: The list of replications. Since this list may be incomplete, the nextLink field
      should be used to request the next list of replications.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Replication]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Replication]
     :param next_link: The URI that can be used to request the next list of replications.
     :type next_link: str
     """
@@ -2186,7 +2669,7 @@ class RetentionPolicy(msrest.serialization.Model):
     :vartype last_updated_time: ~datetime.datetime
     :param status: The value that indicates whether the policy is enabled or not. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PolicyStatus
     """
 
     _validation = {
@@ -2209,6 +2692,118 @@ class RetentionPolicy(msrest.serialization.Model):
         self.status = kwargs.get('status', None)
 
 
+class ScopeMap(ProxyResource):
+    """An object that represents a scope map for a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    :param description: The user friendly description of the scope map.
+    :type description: str
+    :ivar type_properties_type: The type of the scope map. E.g. BuildIn scope map.
+    :vartype type_properties_type: str
+    :ivar creation_date: The creation date of scope map.
+    :vartype creation_date: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
+    :param actions: The list of scoped permissions for registry artifacts.
+     E.g. repositories/repository-name/content/read,
+     repositories/repository-name/metadata/write.
+    :type actions: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'type_properties_type': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScopeMap, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.type_properties_type = None
+        self.creation_date = None
+        self.provisioning_state = None
+        self.actions = kwargs.get('actions', None)
+
+
+class ScopeMapListResult(msrest.serialization.Model):
+    """The result of a request to list scope maps for a container registry.
+
+    :param value: The list of scope maps. Since this list may be incomplete, the nextLink field
+     should be used to request the next list of scope maps.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.ScopeMap]
+    :param next_link: The URI that can be used to request the next list of scope maps.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ScopeMap]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScopeMapListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class ScopeMapUpdateParameters(msrest.serialization.Model):
+    """The properties for updating the scope map.
+
+    :param description: The user friendly description of the scope map.
+    :type description: str
+    :param actions: The list of scope permissions for registry artifacts.
+     E.g. repositories/repository-name/pull,
+     repositories/repository-name/delete.
+    :type actions: list[str]
+    """
+
+    _attribute_map = {
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScopeMapUpdateParameters, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.actions = kwargs.get('actions', None)
+
+
 class Sku(msrest.serialization.Model):
     """The SKU of a container registry.
 
@@ -2218,10 +2813,10 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. The SKU name of the container registry. Required for registry creation.
      Possible values include: "Classic", "Basic", "Standard", "Premium".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuName
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SkuName
     :ivar tier: The SKU tier based on the SKU name. Possible values include: "Classic", "Basic",
      "Standard", "Premium".
-    :vartype tier: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SkuTier
+    :vartype tier: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SkuTier
     """
 
     _validation = {
@@ -2302,6 +2897,138 @@ class Status(msrest.serialization.Model):
         self.timestamp = None
 
 
+class StatusDetailProperties(msrest.serialization.Model):
+    """The status detail properties of the connected registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The component of the connected registry corresponding to the status.
+    :vartype type: str
+    :ivar code: The code of the status.
+    :vartype code: str
+    :ivar description: The description of the status.
+    :vartype description: str
+    :ivar timestamp: The timestamp of the status.
+    :vartype timestamp: ~datetime.datetime
+    :ivar correlation_id: The correlation ID of the status.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'code': {'readonly': True},
+        'description': {'readonly': True},
+        'timestamp': {'readonly': True},
+        'correlation_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'correlation_id': {'key': 'correlationId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StatusDetailProperties, self).__init__(**kwargs)
+        self.type = None
+        self.code = None
+        self.description = None
+        self.timestamp = None
+        self.correlation_id = None
+
+
+class SyncProperties(msrest.serialization.Model):
+    """The sync properties of the connected registry with its parent.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param token_id: Required. The resource ID of the ACR token used to authenticate the connected
+     registry to its parent during sync.
+    :type token_id: str
+    :param schedule: The cron expression indicating the schedule that the connected registry will
+     sync with its parent.
+    :type schedule: str
+    :param sync_window: The time window during which sync is enabled for each schedule occurrence.
+     Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
+    :type sync_window: ~datetime.timedelta
+    :param message_ttl: Required. The period of time for which a message is available to sync
+     before it is expired. Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per
+     ISO8601.
+    :type message_ttl: ~datetime.timedelta
+    :ivar last_sync_time: The last time a sync occurred between the connected registry and its
+     parent.
+    :vartype last_sync_time: ~datetime.datetime
+    :ivar gateway_endpoint: The gateway endpoint used by the connected registry to communicate with
+     its parent.
+    :vartype gateway_endpoint: str
+    """
+
+    _validation = {
+        'token_id': {'required': True},
+        'message_ttl': {'required': True},
+        'last_sync_time': {'readonly': True},
+        'gateway_endpoint': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'token_id': {'key': 'tokenId', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'str'},
+        'sync_window': {'key': 'syncWindow', 'type': 'duration'},
+        'message_ttl': {'key': 'messageTtl', 'type': 'duration'},
+        'last_sync_time': {'key': 'lastSyncTime', 'type': 'iso-8601'},
+        'gateway_endpoint': {'key': 'gatewayEndpoint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SyncProperties, self).__init__(**kwargs)
+        self.token_id = kwargs['token_id']
+        self.schedule = kwargs.get('schedule', None)
+        self.sync_window = kwargs.get('sync_window', None)
+        self.message_ttl = kwargs['message_ttl']
+        self.last_sync_time = None
+        self.gateway_endpoint = None
+
+
+class SyncUpdateProperties(msrest.serialization.Model):
+    """The parameters for updating the sync properties of the connected registry with its parent.
+
+    :param schedule: The cron expression indicating the schedule that the connected registry will
+     sync with its parent.
+    :type schedule: str
+    :param sync_window: The time window during which sync is enabled for each schedule occurrence.
+     Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
+    :type sync_window: ~datetime.timedelta
+    :param message_ttl: The period of time for which a message is available to sync before it is
+     expired. Specify the duration using the format P[n]Y[n]M[n]DT[n]H[n]M[n]S as per ISO8601.
+    :type message_ttl: ~datetime.timedelta
+    """
+
+    _attribute_map = {
+        'schedule': {'key': 'schedule', 'type': 'str'},
+        'sync_window': {'key': 'syncWindow', 'type': 'duration'},
+        'message_ttl': {'key': 'messageTtl', 'type': 'duration'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SyncUpdateProperties, self).__init__(**kwargs)
+        self.schedule = kwargs.get('schedule', None)
+        self.sync_window = kwargs.get('sync_window', None)
+        self.message_ttl = kwargs.get('message_ttl', None)
+
+
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -2310,7 +3037,7 @@ class SystemData(msrest.serialization.Model):
     :param created_by_type: The type of identity that created the resource. Possible values
      include: "User", "Application", "ManagedIdentity", "Key".
     :type created_by_type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.CreatedByType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: ~datetime.datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -2318,7 +3045,7 @@ class SystemData(msrest.serialization.Model):
     :param last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.LastModifiedByType
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.LastModifiedByType
     :param last_modified_at: The timestamp of resource modification (UTC).
     :type last_modified_at: ~datetime.datetime
     """
@@ -2396,15 +3123,289 @@ class Target(msrest.serialization.Model):
         self.version = kwargs.get('version', None)
 
 
+class TlsCertificateProperties(msrest.serialization.Model):
+    """The TLS certificate properties of the connected registry login server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The type of certificate location. Possible values include: "LocalDirectory".
+    :vartype type: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.CertificateType
+    :ivar location: Indicates the location of the certificates.
+    :vartype location: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TlsCertificateProperties, self).__init__(**kwargs)
+        self.type = None
+        self.location = None
+
+
+class TlsProperties(msrest.serialization.Model):
+    """The TLS properties of the connected registry login server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: Indicates whether HTTPS is enabled for the login server. Possible values include:
+     "Enabled", "Disabled".
+    :vartype status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TlsStatus
+    :ivar certificate: The certificate used to configure HTTPS for the login server.
+    :vartype certificate:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TlsCertificateProperties
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'certificate': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'certificate': {'key': 'certificate', 'type': 'TlsCertificateProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TlsProperties, self).__init__(**kwargs)
+        self.status = None
+        self.certificate = None
+
+
+class Token(ProxyResource):
+    """An object that represents a token for a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
+    :ivar creation_date: The creation date of scope map.
+    :vartype creation_date: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
+    :param scope_map_id: The resource ID of the scope map to which the token will be associated
+     with.
+    :type scope_map_id: str
+    :param credentials: The credentials that can be used for authenticating the token.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCredentialsProperties
+    :param status: The status of the token example enabled or disabled. Possible values include:
+     "enabled", "disabled".
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
+        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Token, self).__init__(**kwargs)
+        self.creation_date = None
+        self.provisioning_state = None
+        self.scope_map_id = kwargs.get('scope_map_id', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.status = kwargs.get('status', None)
+
+
+class TokenCertificate(msrest.serialization.Model):
+    """The properties of a certificate used for authenticating a token.
+
+    :param name:  Possible values include: "certificate1", "certificate2".
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCertificateName
+    :param expiry: The expiry datetime of the certificate.
+    :type expiry: ~datetime.datetime
+    :param thumbprint: The thumbprint of the certificate.
+    :type thumbprint: str
+    :param encoded_pem_certificate: Base 64 encoded string of the public certificate1 in PEM format
+     that will be used for authenticating the token.
+    :type encoded_pem_certificate: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'encoded_pem_certificate': {'key': 'encodedPemCertificate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TokenCertificate, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.expiry = kwargs.get('expiry', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.encoded_pem_certificate = kwargs.get('encoded_pem_certificate', None)
+
+
+class TokenCredentialsProperties(msrest.serialization.Model):
+    """The properties of the credentials that can be used for authenticating the token.
+
+    :param certificates:
+    :type certificates:
+     list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCertificate]
+    :param passwords:
+    :type passwords: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPassword]
+    """
+
+    _attribute_map = {
+        'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
+        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TokenCredentialsProperties, self).__init__(**kwargs)
+        self.certificates = kwargs.get('certificates', None)
+        self.passwords = kwargs.get('passwords', None)
+
+
+class TokenListResult(msrest.serialization.Model):
+    """The result of a request to list tokens for a container registry.
+
+    :param value: The list of tokens. Since this list may be incomplete, the nextLink field should
+     be used to request the next list of tokens.
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Token]
+    :param next_link: The URI that can be used to request the next list of tokens.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Token]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TokenListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class TokenPassword(msrest.serialization.Model):
+    """The password that will be used for authenticating the token of a container registry.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param creation_time: The creation datetime of the password.
+    :type creation_time: ~datetime.datetime
+    :param expiry: The expiry datetime of the password.
+    :type expiry: ~datetime.datetime
+    :param name: The password name "password1" or "password2". Possible values include:
+     "password1", "password2".
+    :type name: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenPasswordName
+    :ivar value: The password value.
+    :vartype value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TokenPassword, self).__init__(**kwargs)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.expiry = kwargs.get('expiry', None)
+        self.name = kwargs.get('name', None)
+        self.value = None
+
+
+class TokenUpdateParameters(msrest.serialization.Model):
+    """The parameters for updating a token.
+
+    :param scope_map_id: The resource ID of the scope map to which the token will be associated
+     with.
+    :type scope_map_id: str
+    :param status: The status of the token example enabled or disabled. Possible values include:
+     "enabled", "disabled".
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenStatus
+    :param credentials: The credentials that can be used for authenticating the token.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TokenCredentialsProperties
+    """
+
+    _attribute_map = {
+        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TokenUpdateParameters, self).__init__(**kwargs)
+        self.scope_map_id = kwargs.get('scope_map_id', None)
+        self.status = kwargs.get('status', None)
+        self.credentials = kwargs.get('credentials', None)
+
+
 class TrustPolicy(msrest.serialization.Model):
     """The content trust policy for a container registry.
 
     :param type: The type of trust policy. Possible values include: "Notary". Default value:
      "Notary".
-    :type type: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.TrustPolicyType
+    :type type: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.TrustPolicyType
     :param status: The value that indicates whether the policy is enabled or not. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.PolicyStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.PolicyStatus
     """
 
     _attribute_map = {
@@ -2450,7 +3451,7 @@ class VirtualNetworkRule(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param action: The action of virtual network rule. Possible values include: "Allow".
-    :type action: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.Action
+    :type action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
     :param virtual_network_resource_id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
@@ -2493,22 +3494,22 @@ class Webhook(Resource):
     :param tags: A set of tags. The tags of the resource.
     :type tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.SystemData
     :param status: The status of the webhook at the time the operation was called. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered. For example, 'foo:*'
      means events for all tags under repository 'foo'. 'foo:bar' means events for 'foo:bar' only.
      'foo' is equivalent to 'foo:latest'. Empty means all events.
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the time the operation was
      called. Possible values include: "Creating", "Updating", "Deleting", "Succeeded", "Failed",
      "Canceled".
     :vartype provisioning_state: str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ProvisioningState
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ProvisioningState
     """
 
     _validation = {
@@ -2560,14 +3561,14 @@ class WebhookCreateParameters(msrest.serialization.Model):
     :type custom_headers: dict[str, str]
     :param status: The status of the webhook at the time the operation was called. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered. For example, 'foo:*'
      means events for all tags under repository 'foo'. 'foo:bar' means events for 'foo:bar' only.
      'foo' is equivalent to 'foo:latest'. Empty means all events.
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookAction]
     """
 
     _validation = {
@@ -2603,7 +3604,7 @@ class WebhookListResult(msrest.serialization.Model):
 
     :param value: The list of webhooks. Since this list may be incomplete, the nextLink field
      should be used to request the next list of webhooks.
-    :type value: list[~azure.mgmt.containerregistry.v2019_12_01_preview.models.Webhook]
+    :type value: list[~azure.mgmt.containerregistry.v2021_06_01_preview.models.Webhook]
     :param next_link: The URI that can be used to request the next list of webhooks.
     :type next_link: str
     """
@@ -2633,14 +3634,14 @@ class WebhookUpdateParameters(msrest.serialization.Model):
     :type custom_headers: dict[str, str]
     :param status: The status of the webhook at the time the operation was called. Possible values
      include: "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookStatus
+    :type status: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered. For example, 'foo:*'
      means events for all tags under repository 'foo'. 'foo:bar' means events for 'foo:bar' only.
      'foo' is equivalent to 'foo:latest'. Empty means all events.
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post notifications.
     :type actions: list[str or
-     ~azure.mgmt.containerregistry.v2019_12_01_preview.models.WebhookAction]
+     ~azure.mgmt.containerregistry.v2021_06_01_preview.models.WebhookAction]
     """
 
     _attribute_map = {
