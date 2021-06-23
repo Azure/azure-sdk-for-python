@@ -44,15 +44,15 @@ from ._models import (
     HealthcareRelation,
     HealthcareRelationRole,
     HealthcareEntityAssertion,
-    AnalyzeSentimentAction
+    AnalyzeSentimentAction,
+    PiiEntityCategoryType,
+    HealthcareEntityRelationType,
+    EntityConditionality,
+    EntityCertainty,
+    EntityAssociation,
+    HealthcareEntityCategory
 )
-from ._generated.v3_1_preview_5.models import (
-    PiiCategory as PiiEntityCategoryType,
-    RelationType as HealthcareEntityRelationType,
-    Conditionality as EntityConditionality,
-    Certainty as EntityCertainty,
-    Association as EntityAssociation
-)
+
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 __all__ = [
@@ -102,6 +102,7 @@ __all__ = [
     "AnalyzeSentimentAction",
     "AnalyzeHealthcareEntitiesLROPoller",
     "AnalyzeActionsLROPoller",
+    "HealthcareEntityCategory"
 ]
 
 __version__ = VERSION

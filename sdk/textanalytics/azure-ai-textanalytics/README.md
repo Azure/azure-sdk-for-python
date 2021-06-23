@@ -9,7 +9,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 - Language Detection
 - Key Phrase Extraction
 - Multiple Analysis
-- Healthcare Entities Analysis (Gated Preview)
+- Healthcare Entities Analysis
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs]| [Product documentation][ta_product_documentation] | [Samples][ta_samples]
 
@@ -71,17 +71,18 @@ For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics --pre
+pip install azure-ai-textanalytics
 ```
 
-> Note: This version of the client library defaults to the v3.1-preview version of the service
+> Note: This version of the client library defaults to the v3.1 version of the service
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
-| SDK version                                                               | Supported API version of service  |
-| ------------------------------------------------------------------------- | --------------------------------- |
-| 5.0.0 - Latest GA release (can be installed by removing the `--pre` flag) | 3.0                               |
-| 5.1.0b7 - Latest release (beta)                                           | 3.0, 3.1-preview.5 |
+| SDK version  | Supported API version of service  |
+| ------------ | --------------------------------- |
+| 5.1.0 - Latest GA release | 3.0, 3.1 (default) |
+| 5.0.0  | 3.0 |
+
 
 ### Authenticate the client
 
@@ -489,7 +490,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is currently available only in the API v3.1 preview versions and is in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
+Note: The Healthcare Entities Analysis service is available only in the v3.1 API version.
 
 ### Multiple Analysis
 
@@ -559,18 +560,13 @@ for doc, action_results in zip(documents, document_results):
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Multiple analysis is currently available only in the v3.1-preview API version.
+Note: Multiple analysis is available only in the v3.1 API version.
 
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
 The azure-core [reference documentation][azure_core_ref_docs]
 describes available configurations for retries, logging, transport protocols, and more.
-
-## Known Issues
-
-- `begin_analyze_healthcare_entities` is currently in gated preview and can not be used with AAD credentials. For more information, see [the Text Analytics for Health documentation](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
-- At time of this SDK release, the service is not respecting the value passed through `model_version` to `begin_analyze_healthcare_entities`, it only uses the latest model.
 
 ## Troubleshooting
 

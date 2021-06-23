@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1_preview_5 import models as _latest_preview_models
+from ._generated.v3_1 import models as _v3_1_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -68,6 +68,270 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+
+class EntityAssociation(str, Enum):
+    """Describes if the entity is the subject of the text or if it describes someone else.
+    """
+
+    SUBJECT = "subject"
+    OTHER = "other"
+
+
+class EntityCertainty(str, Enum):
+    """Describes the entities certainty and polarity.
+    """
+
+    POSITIVE = "positive"
+    POSITIVE_POSSIBLE = "positivePossible"
+    NEUTRAL_POSSIBLE = "neutralPossible"
+    NEGATIVE_POSSIBLE = "negativePossible"
+    NEGATIVE = "negative"
+
+
+class EntityConditionality(str, Enum):
+    """Describes any conditionality on the entity.
+    """
+
+    HYPOTHETICAL = "hypothetical"
+    CONDITIONAL = "conditional"
+
+
+class HealthcareEntityRelationType(str, Enum):
+    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
+    """
+
+    ABBREVIATION = "Abbreviation"
+    DIRECTION_OF_BODY_STRUCTURE = "DirectionOfBodyStructure"
+    DIRECTION_OF_CONDITION = "DirectionOfCondition"
+    DIRECTION_OF_EXAMINATION = "DirectionOfExamination"
+    DIRECTION_OF_TREATMENT = "DirectionOfTreatment"
+    DOSAGE_OF_MEDICATION = "DosageOfMedication"
+    FORM_OF_MEDICATION = "FormOfMedication"
+    FREQUENCY_OF_MEDICATION = "FrequencyOfMedication"
+    FREQUENCY_OF_TREATMENT = "FrequencyOfTreatment"
+    QUALIFIER_OF_CONDITION = "QualifierOfCondition"
+    RELATION_OF_EXAMINATION = "RelationOfExamination"
+    ROUTE_OF_MEDICATION = "RouteOfMedication"
+    TIME_OF_CONDITION = "TimeOfCondition"
+    TIME_OF_EVENT = "TimeOfEvent"
+    TIME_OF_EXAMINATION = "TimeOfExamination"
+    TIME_OF_MEDICATION = "TimeOfMedication"
+    TIME_OF_TREATMENT = "TimeOfTreatment"
+    UNIT_OF_CONDITION = "UnitOfCondition"
+    UNIT_OF_EXAMINATION = "UnitOfExamination"
+    VALUE_OF_CONDITION = "ValueOfCondition"
+    VALUE_OF_EXAMINATION = "ValueOfExamination"
+
+
+class PiiEntityCategoryType(str, Enum):
+
+    ABA_ROUTING_NUMBER = "ABARoutingNumber"
+    AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
+    AU_BANK_ACCOUNT_NUMBER = "AUBankAccountNumber"
+    AU_DRIVERS_LICENSE_NUMBER = "AUDriversLicenseNumber"
+    AU_MEDICAL_ACCOUNT_NUMBER = "AUMedicalAccountNumber"
+    AU_PASSPORT_NUMBER = "AUPassportNumber"
+    AU_TAX_FILE_NUMBER = "AUTaxFileNumber"
+    AU_BUSINESS_NUMBER = "AUBusinessNumber"
+    AU_COMPANY_NUMBER = "AUCompanyNumber"
+    AT_IDENTITY_CARD = "ATIdentityCard"
+    AT_TAX_IDENTIFICATION_NUMBER = "ATTaxIdentificationNumber"
+    AT_VALUE_ADDED_TAX_NUMBER = "ATValueAddedTaxNumber"
+    AZURE_DOCUMENT_DB_AUTH_KEY = "AzureDocumentDBAuthKey"
+    AZURE_IAAS_DATABASE_CONNECTION_AND_SQL_STRING = "AzureIAASDatabaseConnectionAndSQLString"
+    AZURE_IO_T_CONNECTION_STRING = "AzureIoTConnectionString"
+    AZURE_PUBLISH_SETTING_PASSWORD = "AzurePublishSettingPassword"
+    AZURE_REDIS_CACHE_STRING = "AzureRedisCacheString"
+    AZURE_SAS = "AzureSAS"
+    AZURE_SERVICE_BUS_STRING = "AzureServiceBusString"
+    AZURE_STORAGE_ACCOUNT_KEY = "AzureStorageAccountKey"
+    AZURE_STORAGE_ACCOUNT_GENERIC = "AzureStorageAccountGeneric"
+    BE_NATIONAL_NUMBER = "BENationalNumber"
+    BE_NATIONAL_NUMBER_V2 = "BENationalNumberV2"
+    BE_VALUE_ADDED_TAX_NUMBER = "BEValueAddedTaxNumber"
+    BRCPF_NUMBER = "BRCPFNumber"
+    BR_LEGAL_ENTITY_NUMBER = "BRLegalEntityNumber"
+    BR_NATIONAL_IDRG = "BRNationalIDRG"
+    BG_UNIFORM_CIVIL_NUMBER = "BGUniformCivilNumber"
+    CA_BANK_ACCOUNT_NUMBER = "CABankAccountNumber"
+    CA_DRIVERS_LICENSE_NUMBER = "CADriversLicenseNumber"
+    CA_HEALTH_SERVICE_NUMBER = "CAHealthServiceNumber"
+    CA_PASSPORT_NUMBER = "CAPassportNumber"
+    CA_PERSONAL_HEALTH_IDENTIFICATION = "CAPersonalHealthIdentification"
+    CA_SOCIAL_INSURANCE_NUMBER = "CASocialInsuranceNumber"
+    CL_IDENTITY_CARD_NUMBER = "CLIdentityCardNumber"
+    CN_RESIDENT_IDENTITY_CARD_NUMBER = "CNResidentIdentityCardNumber"
+    CREDIT_CARD_NUMBER = "CreditCardNumber"
+    HR_IDENTITY_CARD_NUMBER = "HRIdentityCardNumber"
+    HR_NATIONAL_ID_NUMBER = "HRNationalIDNumber"
+    HR_PERSONAL_IDENTIFICATION_NUMBER = "HRPersonalIdentificationNumber"
+    HR_PERSONAL_IDENTIFICATION_OIB_NUMBER_V2 = "HRPersonalIdentificationOIBNumberV2"
+    CY_IDENTITY_CARD = "CYIdentityCard"
+    CY_TAX_IDENTIFICATION_NUMBER = "CYTaxIdentificationNumber"
+    CZ_PERSONAL_IDENTITY_NUMBER = "CZPersonalIdentityNumber"
+    CZ_PERSONAL_IDENTITY_V2 = "CZPersonalIdentityV2"
+    DK_PERSONAL_IDENTIFICATION_NUMBER = "DKPersonalIdentificationNumber"
+    DK_PERSONAL_IDENTIFICATION_V2 = "DKPersonalIdentificationV2"
+    DRUG_ENFORCEMENT_AGENCY_NUMBER = "DrugEnforcementAgencyNumber"
+    EE_PERSONAL_IDENTIFICATION_CODE = "EEPersonalIdentificationCode"
+    EU_DEBIT_CARD_NUMBER = "EUDebitCardNumber"
+    EU_DRIVERS_LICENSE_NUMBER = "EUDriversLicenseNumber"
+    EUGPS_COORDINATES = "EUGPSCoordinates"
+    EU_NATIONAL_IDENTIFICATION_NUMBER = "EUNationalIdentificationNumber"
+    EU_PASSPORT_NUMBER = "EUPassportNumber"
+    EU_SOCIAL_SECURITY_NUMBER = "EUSocialSecurityNumber"
+    EU_TAX_IDENTIFICATION_NUMBER = "EUTaxIdentificationNumber"
+    FI_EUROPEAN_HEALTH_NUMBER = "FIEuropeanHealthNumber"
+    FI_NATIONAL_ID = "FINationalID"
+    FI_NATIONAL_IDV2 = "FINationalIDV2"
+    FI_PASSPORT_NUMBER = "FIPassportNumber"
+    FR_DRIVERS_LICENSE_NUMBER = "FRDriversLicenseNumber"
+    FR_HEALTH_INSURANCE_NUMBER = "FRHealthInsuranceNumber"
+    FR_NATIONAL_ID = "FRNationalID"
+    FR_PASSPORT_NUMBER = "FRPassportNumber"
+    FR_SOCIAL_SECURITY_NUMBER = "FRSocialSecurityNumber"
+    FR_TAX_IDENTIFICATION_NUMBER = "FRTaxIdentificationNumber"
+    FR_VALUE_ADDED_TAX_NUMBER = "FRValueAddedTaxNumber"
+    DE_DRIVERS_LICENSE_NUMBER = "DEDriversLicenseNumber"
+    DE_PASSPORT_NUMBER = "DEPassportNumber"
+    DE_IDENTITY_CARD_NUMBER = "DEIdentityCardNumber"
+    DE_TAX_IDENTIFICATION_NUMBER = "DETaxIdentificationNumber"
+    DE_VALUE_ADDED_NUMBER = "DEValueAddedNumber"
+    GR_NATIONAL_ID_CARD = "GRNationalIDCard"
+    GR_NATIONAL_IDV2 = "GRNationalIDV2"
+    GR_TAX_IDENTIFICATION_NUMBER = "GRTaxIdentificationNumber"
+    HK_IDENTITY_CARD_NUMBER = "HKIdentityCardNumber"
+    HU_VALUE_ADDED_NUMBER = "HUValueAddedNumber"
+    HU_PERSONAL_IDENTIFICATION_NUMBER = "HUPersonalIdentificationNumber"
+    HU_TAX_IDENTIFICATION_NUMBER = "HUTaxIdentificationNumber"
+    IN_PERMANENT_ACCOUNT = "INPermanentAccount"
+    IN_UNIQUE_IDENTIFICATION_NUMBER = "INUniqueIdentificationNumber"
+    ID_IDENTITY_CARD_NUMBER = "IDIdentityCardNumber"
+    INTERNATIONAL_BANKING_ACCOUNT_NUMBER = "InternationalBankingAccountNumber"
+    IE_PERSONAL_PUBLIC_SERVICE_NUMBER = "IEPersonalPublicServiceNumber"
+    IE_PERSONAL_PUBLIC_SERVICE_NUMBER_V2 = "IEPersonalPublicServiceNumberV2"
+    IL_BANK_ACCOUNT_NUMBER = "ILBankAccountNumber"
+    IL_NATIONAL_ID = "ILNationalID"
+    IT_DRIVERS_LICENSE_NUMBER = "ITDriversLicenseNumber"
+    IT_FISCAL_CODE = "ITFiscalCode"
+    IT_VALUE_ADDED_TAX_NUMBER = "ITValueAddedTaxNumber"
+    JP_BANK_ACCOUNT_NUMBER = "JPBankAccountNumber"
+    JP_DRIVERS_LICENSE_NUMBER = "JPDriversLicenseNumber"
+    JP_PASSPORT_NUMBER = "JPPassportNumber"
+    JP_RESIDENT_REGISTRATION_NUMBER = "JPResidentRegistrationNumber"
+    JP_SOCIAL_INSURANCE_NUMBER = "JPSocialInsuranceNumber"
+    JP_MY_NUMBER_CORPORATE = "JPMyNumberCorporate"
+    JP_MY_NUMBER_PERSONAL = "JPMyNumberPersonal"
+    JP_RESIDENCE_CARD_NUMBER = "JPResidenceCardNumber"
+    LV_PERSONAL_CODE = "LVPersonalCode"
+    LT_PERSONAL_CODE = "LTPersonalCode"
+    LU_NATIONAL_IDENTIFICATION_NUMBER_NATURAL = "LUNationalIdentificationNumberNatural"
+    LU_NATIONAL_IDENTIFICATION_NUMBER_NON_NATURAL = "LUNationalIdentificationNumberNonNatural"
+    MY_IDENTITY_CARD_NUMBER = "MYIdentityCardNumber"
+    MT_IDENTITY_CARD_NUMBER = "MTIdentityCardNumber"
+    MT_TAX_ID_NUMBER = "MTTaxIDNumber"
+    NL_CITIZENS_SERVICE_NUMBER = "NLCitizensServiceNumber"
+    NL_CITIZENS_SERVICE_NUMBER_V2 = "NLCitizensServiceNumberV2"
+    NL_TAX_IDENTIFICATION_NUMBER = "NLTaxIdentificationNumber"
+    NL_VALUE_ADDED_TAX_NUMBER = "NLValueAddedTaxNumber"
+    NZ_BANK_ACCOUNT_NUMBER = "NZBankAccountNumber"
+    NZ_DRIVERS_LICENSE_NUMBER = "NZDriversLicenseNumber"
+    NZ_INLAND_REVENUE_NUMBER = "NZInlandRevenueNumber"
+    NZ_MINISTRY_OF_HEALTH_NUMBER = "NZMinistryOfHealthNumber"
+    NZ_SOCIAL_WELFARE_NUMBER = "NZSocialWelfareNumber"
+    NO_IDENTITY_NUMBER = "NOIdentityNumber"
+    PH_UNIFIED_MULTI_PURPOSE_ID_NUMBER = "PHUnifiedMultiPurposeIDNumber"
+    PL_IDENTITY_CARD = "PLIdentityCard"
+    PL_NATIONAL_ID = "PLNationalID"
+    PL_NATIONAL_IDV2 = "PLNationalIDV2"
+    PL_PASSPORT_NUMBER = "PLPassportNumber"
+    PL_TAX_IDENTIFICATION_NUMBER = "PLTaxIdentificationNumber"
+    PLREGON_NUMBER = "PLREGONNumber"
+    PT_CITIZEN_CARD_NUMBER = "PTCitizenCardNumber"
+    PT_CITIZEN_CARD_NUMBER_V2 = "PTCitizenCardNumberV2"
+    PT_TAX_IDENTIFICATION_NUMBER = "PTTaxIdentificationNumber"
+    RO_PERSONAL_NUMERICAL_CODE = "ROPersonalNumericalCode"
+    RU_PASSPORT_NUMBER_DOMESTIC = "RUPassportNumberDomestic"
+    RU_PASSPORT_NUMBER_INTERNATIONAL = "RUPassportNumberInternational"
+    SA_NATIONAL_ID = "SANationalID"
+    SG_NATIONAL_REGISTRATION_IDENTITY_CARD_NUMBER = "SGNationalRegistrationIdentityCardNumber"
+    SK_PERSONAL_NUMBER = "SKPersonalNumber"
+    SI_TAX_IDENTIFICATION_NUMBER = "SITaxIdentificationNumber"
+    SI_UNIQUE_MASTER_CITIZEN_NUMBER = "SIUniqueMasterCitizenNumber"
+    ZA_IDENTIFICATION_NUMBER = "ZAIdentificationNumber"
+    KR_RESIDENT_REGISTRATION_NUMBER = "KRResidentRegistrationNumber"
+    ESDNI = "ESDNI"
+    ES_SOCIAL_SECURITY_NUMBER = "ESSocialSecurityNumber"
+    ES_TAX_IDENTIFICATION_NUMBER = "ESTaxIdentificationNumber"
+    SQL_SERVER_CONNECTION_STRING = "SQLServerConnectionString"
+    SE_NATIONAL_ID = "SENationalID"
+    SE_NATIONAL_IDV2 = "SENationalIDV2"
+    SE_PASSPORT_NUMBER = "SEPassportNumber"
+    SE_TAX_IDENTIFICATION_NUMBER = "SETaxIdentificationNumber"
+    SWIFT_CODE = "SWIFTCode"
+    CH_SOCIAL_SECURITY_NUMBER = "CHSocialSecurityNumber"
+    TW_NATIONAL_ID = "TWNationalID"
+    TW_PASSPORT_NUMBER = "TWPassportNumber"
+    TW_RESIDENT_CERTIFICATE = "TWResidentCertificate"
+    TH_POPULATION_IDENTIFICATION_CODE = "THPopulationIdentificationCode"
+    TR_NATIONAL_IDENTIFICATION_NUMBER = "TRNationalIdentificationNumber"
+    UK_DRIVERS_LICENSE_NUMBER = "UKDriversLicenseNumber"
+    UK_ELECTORAL_ROLL_NUMBER = "UKElectoralRollNumber"
+    UK_NATIONAL_HEALTH_NUMBER = "UKNationalHealthNumber"
+    UK_NATIONAL_INSURANCE_NUMBER = "UKNationalInsuranceNumber"
+    UK_UNIQUE_TAXPAYER_NUMBER = "UKUniqueTaxpayerNumber"
+    USUK_PASSPORT_NUMBER = "USUKPassportNumber"
+    US_BANK_ACCOUNT_NUMBER = "USBankAccountNumber"
+    US_DRIVERS_LICENSE_NUMBER = "USDriversLicenseNumber"
+    US_INDIVIDUAL_TAXPAYER_IDENTIFICATION = "USIndividualTaxpayerIdentification"
+    US_SOCIAL_SECURITY_NUMBER = "USSocialSecurityNumber"
+    UA_PASSPORT_NUMBER_DOMESTIC = "UAPassportNumberDomestic"
+    UA_PASSPORT_NUMBER_INTERNATIONAL = "UAPassportNumberInternational"
+    ORGANIZATION = "Organization"
+    EMAIL = "Email"
+    URL = "URL"
+    AGE = "Age"
+    PHONE_NUMBER = "PhoneNumber"
+    IP_ADDRESS = "IPAddress"
+    DATE = "Date"
+    PERSON = "Person"
+    ADDRESS = "Address"
+    ALL = "All"
+    DEFAULT = "Default"
+
+
+class HealthcareEntityCategory(str, Enum):
+    """Healthcare Entity Category.
+    """
+
+    BODY_STRUCTURE = "BodyStructure"
+    AGE = "Age"
+    GENDER = "Gender"
+    EXAMINATION_NAME = "ExaminationName"
+    DATE = "Date"
+    DIRECTION = "Direction"
+    FREQUENCY = "Frequency"
+    MEASUREMENT_VALUE = "MeasurementValue"
+    MEASUREMENT_UNIT = "MeasurementUnit"
+    RELATIONAL_OPERATOR = "RelationalOperator"
+    TIME = "Time"
+    GENE_OR_PROTEIN = "GeneOrProtein"
+    VARIANT = "Variant"
+    ADMINISTRATIVE_EVENT = "AdministrativeEvent"
+    CARE_ENVIRONMENT = "CareEnvironment"
+    HEALTHCARE_PROFESSION = "HealthcareProfession"
+    DIAGNOSIS = "Diagnosis"
+    SYMPTOM_OR_SIGN = "SymptomOrSign"
+    CONDITION_QUALIFIER = "ConditionQualifier"
+    MEDICATION_CLASS = "MedicationClass"
+    MEDICATION_NAME = "MedicationName"
+    DOSAGE = "Dosage"
+    MEDICATION_FORM = "MedicationForm"
+    MEDICATION_ROUTE = "MedicationRoute"
+    FAMILY_RELATION = "FamilyRelation"
+    TREATMENT_NAME = "TreatmentName"
+
 
 class PiiEntityDomainType(str, Enum):
     """The different domains of PII entities that users can filter by"""
@@ -171,7 +435,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
     :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out. Only returned for API versions v3.1-preview and up.
+        redacted out. Only returned for API versions v3.1 and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -181,7 +445,7 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *redacted_text* parameter.
     """
 
@@ -387,15 +651,15 @@ class CategorizedEntity(DictMixin):
     :vartype subcategory: str
     :ivar int length: The entity text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1-preview and up.
+        by default. Only returned for API versions v3.1 and up.
     :ivar int offset: The entity text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1-preview and up.
+        API versions v3.1 and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *offset* property.
     """
 
@@ -495,8 +759,8 @@ class HealthcareEntity(DictMixin):
     :ivar str text: Entity text as appears in the document.
     :ivar str normalized_text: Optional. Normalized version of the raw `text` we extract
         from the document. Not all `text`s have a normalized version.
-    :ivar str category: Entity category, see the following link for health's named
-        entity types: https://aka.ms/text-analytics-health-entities
+    :ivar str category: Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
+        type for possible healthcare entity categories.
     :ivar str subcategory: Entity subcategory.
     :ivar assertion: Contains various assertions about this entity. For example, if
         an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
@@ -938,8 +1202,8 @@ class LinkedEntity(DictMixin):
     :vartype data_source: str
     :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
         Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
-        Only available for API version v3.1-preview and up.
-    .. versionadded:: v3.1-preview
+        Only available for API version v3.1 and up.
+    .. versionadded:: v3.1
         The *bing_entity_search_api_id* property.
     """
 
@@ -990,13 +1254,13 @@ class LinkedEntityMatch(DictMixin):
     :ivar text: Entity text as appears in the request.
     :ivar int length: The linked entity match text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1-preview and up.
+        Only returned for API versions v3.1 and up.
     :ivar int offset: The linked entity match text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1-preview and up.
+        Only returned for API versions v3.1 and up.
     :vartype text: str
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *offset* property.
     """
 
@@ -1112,19 +1376,19 @@ class SentenceSentiment(DictMixin):
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int length: The sentence text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1-preview and up.
+        by default. Only returned for API versions v3.1 and up.
     :ivar int offset: The sentence text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1-preview and up.
+        API versions v3.1 and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in the sentence "The food is good, but the service is bad", we would
         mine the two opinions "food is good" and "service is bad". Only returned
         if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
-        api version is v3.1-preview and up.
+        api version is v3.1 and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
-    .. versionadded:: v3.1-preview
+    .. versionadded:: v3.1
         The *offset* and *mined_opinions* properties.
     """
 
@@ -1410,8 +1674,8 @@ class RecognizeEntitiesAction(DictMixin):
             .format(self.model_version, self.string_index_type, self.disable_service_logs)[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.EntitiesTask(
-            parameters=_latest_preview_models.EntitiesTaskParameters(
+        return _v3_1_models.EntitiesTask(
+            parameters=_v3_1_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
@@ -1481,8 +1745,8 @@ class AnalyzeSentimentAction(DictMixin):
         )[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.SentimentAnalysisTask(
-            parameters=_latest_preview_models.SentimentAnalysisTaskParameters(
+        return _v3_1_models.SentimentAnalysisTask(
+            parameters=_v3_1_models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
@@ -1502,6 +1766,11 @@ class RecognizePiiEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
+    :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+        the specific PII entity categories you want to filter out. For example, if you only want to filter out
+        U.S. social security numbers in a document, you can pass in
+        `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
@@ -1517,6 +1786,11 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
+    :ivar categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+        the specific PII entity categories you want to filter out. For example, if you only want to filter out
+        U.S. social security numbers in a document, you can pass in
+        `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+    :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
@@ -1534,23 +1808,26 @@ class RecognizePiiEntitiesAction(DictMixin):
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
         self.domain_filter = kwargs.get("domain_filter", None)
+        self.categories_filter = kwargs.get("categories_filter", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, string_index_type={}, "\
-            "disable_service_logs={}".format(
+        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, categories_filter={}, "\
+               "string_index_type={}, disable_service_logs={}".format(
             self.model_version,
             self.domain_filter,
+            self.categories_filter,
             self.string_index_type,
             self.disable_service_logs,
         )[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.PiiTask(
-            parameters=_latest_preview_models.PiiTaskParameters(
+        return _v3_1_models.PiiTask(
+            parameters=_v3_1_models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
+                pii_categories=self.categories_filter,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs
             )
@@ -1594,8 +1871,8 @@ class ExtractKeyPhrasesAction(DictMixin):
             .format(self.model_version, self.disable_service_logs)[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.KeyPhrasesTask(
-            parameters=_latest_preview_models.KeyPhrasesTaskParameters(
+        return _v3_1_models.KeyPhrasesTask(
+            parameters=_v3_1_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
             )
@@ -1650,8 +1927,8 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
 
     def to_generated(self):
-        return _latest_preview_models.EntityLinkingTask(
-            parameters=_latest_preview_models.EntityLinkingTaskParameters(
+        return _v3_1_models.EntityLinkingTask(
+            parameters=_v3_1_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
