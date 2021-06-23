@@ -261,6 +261,8 @@ class ChatThreadClient(object):
     async def send_message(
         self,
         content: str,
+        *,
+        metadata: Dict[str, str] = None,
         **kwargs
     ) -> SendChatMessageResult:
         """Sends a message to a thread.
@@ -304,7 +306,6 @@ class ChatThreadClient(object):
                 "chat_message_type: {message_type} can be only 'text' or 'html'".format(message_type=chat_message_type))
 
         sender_display_name = kwargs.pop("sender_display_name", None)
-        metadata = kwargs.pop("metadata", None)
 
         create_message_request = SendChatMessageRequest(
             content=content,
@@ -385,6 +386,7 @@ class ChatThreadClient(object):
             self,
             message_id: str,
             content: str = None,
+            *,
             metadata: Dict[str, str] = None,
             **kwargs
     ) -> None:
@@ -392,10 +394,8 @@ class ChatThreadClient(object):
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :param content: Chat message content.
-        :type content: str
-        :param metadata: Message metadata.
-        :type metadata: dict[str, str]
+        :keyword content: Chat message content
+        :keyword dict[str, str] metadata : Message metadata.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

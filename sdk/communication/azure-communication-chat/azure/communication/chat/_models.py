@@ -107,7 +107,7 @@ class ChatMessage(object): # pylint: disable=too-many-instance-attributes
         self.sender = kwargs['sender']
         self.deleted_on = kwargs['deleted_on']
         self.edited_on = kwargs['edited_on']
-        self.metadata = kwargs['metadata']
+        self.metadata = kwargs.get('metadata')
 
     @classmethod
     def _get_message_type(cls, chat_message_type):
