@@ -1,6 +1,17 @@
 # Release History
 
-## 4.3.0 (2021-06-21)
+## 4.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 4.3.0 (2021-06-22)
 This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.
 ### Fixed
 - Correct typing for async paging methods

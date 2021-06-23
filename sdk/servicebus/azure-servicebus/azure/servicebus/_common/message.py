@@ -310,7 +310,7 @@ class ServiceBusMessage(
                 )
             )
 
-        if value and value != self.session_id:
+        if value and self.session_id and value != self.session_id:
             raise ValueError(
                 "partition_key:{} cannot be set to a different value than session_id:{}".format(
                     value, self.session_id

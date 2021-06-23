@@ -48,6 +48,15 @@ class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
     implicitly created identity and a set of user-assigned identities. The type 'None' will remove
