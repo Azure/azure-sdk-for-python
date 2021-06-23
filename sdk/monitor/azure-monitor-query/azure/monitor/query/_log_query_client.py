@@ -105,11 +105,11 @@ class LogsQueryClient(object):
             prefer += "wait=" + str(server_timeout)
         if include_statistics:
             if len(prefer) > 0:
-                prefer += ";"
+                prefer += " "
             prefer += "include-statistics=true"
         if include_render:
             if len(prefer) > 0:
-                prefer += ";"
+                prefer += " "
             prefer += "include-render=true"
 
         body = LogsQueryBody(
