@@ -594,7 +594,8 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
-        updated_sent_config.filters.append(
+        filters = updated_sent_config.filters
+        filters.append(
             {
                 "name": TARGETING,
                 "parameters": {
@@ -606,7 +607,8 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             }
         )
-        updated_sent_config.filters.append(
+
+        filters.append(
             {
                 "name": TARGETING,
                 "parameters": {
@@ -618,12 +620,38 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             }
         )
+        updated_sent_config.filters = filters
 
         sent_config = client.set_configuration_setting(updated_sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
         assert len(sent_config.filters) == 3
 
         client.delete_configuration_setting(updated_sent_config.key)
+
+    @app_config_decorator
+    def test_feature_filter_time_window(self, client):
+        new = FeatureFlagConfigurationSetting(
+            'time_window',
+            enabled=True,
+            filters=[
+                {
+                    "name": TIME_WINDOW,
+                    "parameters": {
+                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
+                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
+                    }
+                }
+            ]
+        )
+
+        sent = client.set_configuration_setting(new)
+        self._assert_same_keys(sent, new)
+
+        sent.filters[0]["parameters"]["Start"] = "Thurs, 11 Mar 2021 05:00:00 GMT"
+        new_sent = client.set_configuration_setting(sent)
+        self._assert_same_keys(sent, new_sent)
+
+        client.delete_configuration_setting(new_sent.key)
 
     @app_config_decorator
     def test_feature_filter_time_window(self, client):
