@@ -528,16 +528,17 @@ class AppConfigurationClientTest(AzureTestCase):
         changed_flag = client.set_configuration_setting(set_flag)
 
         changed_flag.enabled = False
-        assert changed_flag.value['enabled'] == False
+        temp = json.loads(changed_flag.value)
+        assert temp['enabled'] == False
 
-        c = copy.deepcopy(changed_flag.value)
+        c = json.loads(copy.deepcopy(changed_flag.value))
         c['enabled'] = True
-        changed_flag.value = c
+        changed_flag.value = json.dumps(c)
         assert changed_flag.enabled == True
 
-        changed_flag.value = {}
+        changed_flag.value = json.dumps({})
         assert changed_flag.enabled == None
-        assert changed_flag.value == {}
+        assert changed_flag.value == json.dumps({})
 
         with pytest.raises(ValueError):
             set_flag.value = "bad_value"
