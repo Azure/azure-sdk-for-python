@@ -655,3 +655,15 @@ class KeyClient(AsyncKeyVaultClientBase):
             **kwargs
         )
         return KeyReleaseResult(result.value)
+
+    @distributed_trace_async
+    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
+        """Get the requested number of random bytes from a managed HSM.
+
+        :param int count: The requested number of random bytes.
+        :return: The random bytes.
+        :rtype: bytes
+        """
+        parameters = self._models.GetRandomBytesRequest(count=count)
+        result = await self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        return result.value
