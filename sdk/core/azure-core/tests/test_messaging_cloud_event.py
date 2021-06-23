@@ -446,7 +446,7 @@ def test_eventgrid_event_schema_raises():
         "eventTime":"2020-08-07T02:06:08.11969Z",
         "eventType":"pull request",
     }
-    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec. Try using the EventGridEvent from azure-eventgrid library"):
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. Try using the EventGridEvent from azure-eventgrid library"):
         CloudEvent.from_dict(cloud_custom_dict)
 
 def test_wrong_schema_raises_no_source():
@@ -457,7 +457,7 @@ def test_wrong_schema_raises_no_source():
         "time":"2020-08-07T02:06:08.11969Z",
         "specversion":"1.0",
     }
-    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec. source and type are required."):
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. source and type are required."):
         CloudEvent.from_dict(cloud_custom_dict)
 
 def test_wrong_schema_raises_no_type():
@@ -468,5 +468,5 @@ def test_wrong_schema_raises_no_type():
         "time":"2020-08-07T02:06:08.11969Z",
         "specversion":"1.0",
     }
-    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec. source and type are required."):
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. source and type are required."):
         CloudEvent.from_dict(cloud_custom_dict)

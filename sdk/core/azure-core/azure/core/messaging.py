@@ -131,7 +131,8 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                     " Try using the EventGridEvent from azure-eventgrid library"
                 )
             raise ValueError(
-                "The event does not conform to the cloud event spec. source and type are required."
+                "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
+                " source and type are required."
                 )
 
         kwargs = {}  # type: Dict[Any, Any]
