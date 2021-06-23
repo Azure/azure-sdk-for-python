@@ -172,7 +172,7 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :paramtype headers: dict[str, str]
     """
 
-    def __init__(self, query, workspace_id, duration=None, **kwargs):
+    def __init__(self, query, workspace_id, duration=None, **kwargs): #pylint: disable=super-init-not-called
         # type: (str, str, Optional[str], Any) -> None
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
@@ -199,13 +199,11 @@ class LogsQueryRequest(InternalLogQueryRequest):
         timespan = construct_iso8601(start, end, duration)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = kwargs.get("request_id", str(uuid.uuid4()))
-        self.headers = kwargs.get("headers", None)
         self.body = {
             "query": query, "timespan": timespan, "workspaces": additional_workspaces
         }
         self.headers = headers
         self.workspace = workspace_id
-        super(LogsQueryRequest, self).__init__(**kwargs)
 
 class LogsQueryResult(object):
     """The LogsQueryResult.

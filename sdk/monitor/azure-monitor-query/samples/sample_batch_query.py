@@ -21,18 +21,18 @@ requests = [
     LogsQueryRequest(
         query="AzureActivity | summarize count()",
         duration="PT1H",
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
         duration="PT1H",
         start_time=datetime(2021, 6, 2),
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        workspace_id= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= "AppRequests",
-        workspace= os.environ['LOG_WORKSPACE_ID'],
+        workspace_id= os.environ['LOG_WORKSPACE_ID'],
         include_statistics=True
     ),
 ]
