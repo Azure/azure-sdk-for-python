@@ -422,10 +422,10 @@ class AzureAppConfigurationClient:
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
-        :param str key: key used to identify the ConfigurationSetting
-        :param configuration-setting: ConfigurationSetting to be deleted
-        :type configuration_setting: :class:`~azure.appconfiguration.ConfigurationSetting`
-        :param str label: label used to identify the ConfigurationSetting
+        :param key: key used to identify the ConfigurationSetting
+        :type key: str
+        :param label: label used to identify the ConfigurationSetting
+        :type label: str
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: :class:`~azure.core.MatchConditions`

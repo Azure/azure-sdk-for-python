@@ -178,6 +178,8 @@ class FeatureFlagConfigurationSetting(
                 self.value = json.dumps({"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": []}})
             elif "filters" in kwargs.keys():
                 self.value = json.dumps({"conditions": {"client_filters": []}})
+            else:
+                self.value = json.dumps({})
 
     @property
     def enabled(self):
