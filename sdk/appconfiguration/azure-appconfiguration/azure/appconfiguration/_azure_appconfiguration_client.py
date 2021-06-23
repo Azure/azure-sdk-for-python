@@ -444,6 +444,8 @@ class AzureAppConfigurationClient:
                 key = args[0]
                 if len(args) == 2:
                     label = args[1]
+                elif len(args) > 2:
+                    raise TypeError("delete_configuration_setting expected at most two positional args.")
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}

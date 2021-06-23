@@ -464,6 +464,8 @@ class AzureAppConfigurationClient:
                 label = args[0].label
                 if etag is None:
                     etag = args[0].etag
+                elif len(args) > 2:
+                    raise TypeError("delete_configuration_setting expected at most two positional args.")
             else:
                 key = args[0]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
