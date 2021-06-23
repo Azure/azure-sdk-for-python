@@ -10,6 +10,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 ### Features Added
 
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
+- Added `HealthcareEntityCategory`
 
 ### Breaking Changes
 
