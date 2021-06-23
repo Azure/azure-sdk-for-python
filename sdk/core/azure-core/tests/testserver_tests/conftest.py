@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from re import T
 import time
 import pytest
 import signal
@@ -41,7 +40,7 @@ def is_port_open(port_num):
     try:
         conn.request("GET", "/health")
         return False
-    except Exception:
+    except Exception as e:
         return True
 
 def get_port():
@@ -66,12 +65,10 @@ def start_testserver():
     else:
         #On linux, have to set shell=True
         child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid, env=dict(os.environ))
-    count = 5
-    for _ in range(count):
-        time.sleep(1)
-        if not is_port_open(port):
-            return child_process
-    raise ValueError("Didn't start!")
+    time.sleep(2)
+    if not child_process.returncode is None:
+        raise ValueError("Didn't start!")
+    return child_process
 
 def terminate_testserver(process):
     if os.name == 'nt':
