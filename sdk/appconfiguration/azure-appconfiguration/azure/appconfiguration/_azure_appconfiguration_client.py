@@ -387,19 +387,9 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
-    @overload
+    @distributed_trace
     def delete_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, Optional[str], **Any) -> ConfigurationSetting
-        pass
-
-    @overload
-    def delete_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
-        pass
-
-    @distributed_trace
-    def delete_configuration_setting(self, *args, **kwargs):
-        # type: (Union[str, ConfigurationSetting], **Any) -> ConfigurationSetting
         """Delete a ConfigurationSetting if it exists
 
         :param str key: key used to identify the ConfigurationSetting
@@ -424,18 +414,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        key = None
-        label = None
         etag = kwargs.pop("etag", None)
-        if len(args) > 0:
-            if isinstance(args[0], ConfigurationSetting):
-                key = args[0].key
-                label = args[0].label
-                etag = args[0].etag if not None else etag
-            else:
-                key = args[0]
-                if len(args) == 2:
-                    label = args[1]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}

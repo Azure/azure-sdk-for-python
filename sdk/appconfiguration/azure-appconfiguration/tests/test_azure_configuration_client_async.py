@@ -190,13 +190,6 @@ class AppConfigurationClientTest(AzureTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
-    def test_delete_with_configuration_setting(self, client, test_config_setting_no_label):
-        to_delete_kv = test_config_setting_no_label
-        client.delete_configuration_setting(to_delete_kv)
-        with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting(to_delete_kv.key)
-
-    @app_config_decorator
     def test_delete_with_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_delete_kv = test_config_setting
         client.delete_configuration_setting(
