@@ -36,17 +36,19 @@ Additionally, there are some specific prerequisites if you want to leverage thir
 
 To run the samples, you need the following three dependencies.
 ```bash
-pip install azure-agrifood-farming azure-identity asyncio
+pip install azure-agrifood-farming azure-identity aiohttp
 ```
 
 ### Set up the credentials for authentication
 
-We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate to your FarmBeats instance. If you have followed the [installation docs][install_farmbeats], you should already have an application created. Set the following environment variables to the appropriate values.
+We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate to your FarmBeats instance. If you have followed the [installation docs][install_farmbeats], you should already have an application created. Set the following environment variables to the appropriate values. 
 
 - `AZURE_TENANT_ID`
 - `AZURE_CLIENT_ID`
 - `AZURE_CLIENT_SECRET`
 - `FARMBEATS_ENDPOINT`
+
+_Note: There are alternate mechanisms of authentication supported by `azure-identity`. Check out the docs [here][azure_identity]_
 
 Once these are set correctly, you can go ahead and run the sample_hello_world.py sample to make sure everything works correctly.
 
