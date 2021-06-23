@@ -31,7 +31,7 @@ class AsyncTextAnalyticsClientBase(object):
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
-            api_version=kwargs.pop("api_version", TextAnalyticsApiVersion.V3_1_PREVIEW),
+            api_version=kwargs.pop("api_version", TextAnalyticsApiVersion.V3_1),
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
             custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
