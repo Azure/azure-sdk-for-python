@@ -3,39 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.core.exceptions import (
-    ResourceModifiedError,
-    ResourceNotFoundError,
-    ResourceExistsError,
-    AzureError,
-)
+from devtools_testutils import AzureTestCase
 from azure.appconfiguration import (
-    ResourceReadOnlyError,
-    AzureAppConfigurationClient,
-    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
     PERCENTAGE,
-    TARGETING,
-    TIME_WINDOW,
-)
-from azure.identity import DefaultAzureCredential
-
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
 )
 from wrapper import app_config_decorator
 
-from uuid import uuid4
+import json
 import pytest
 
 
@@ -112,7 +88,7 @@ class AppConfigurationClientTest(AzureTestCase):
         set_flag.value = []
         received = client.set_configuration_setting(set_flag)
 
-        assert not isinstance(received, FeatureFlagConfigurationSetting)
+        assert isinstance(received, FeatureFlagConfigurationSetting)
 
     @app_config_decorator
     def test_feature_flag_invalid_json_string(self, client):
@@ -123,7 +99,7 @@ class AppConfigurationClientTest(AzureTestCase):
         set_flag.value = "hello world"
         received = client.set_configuration_setting(set_flag)
 
-        assert not isinstance(received, FeatureFlagConfigurationSetting)
+        assert isinstance(received, FeatureFlagConfigurationSetting)
 
     @app_config_decorator
     def test_feature_flag_invalid_json_access_properties(self, client):
@@ -180,7 +156,8 @@ class AppConfigurationClientTest(AzureTestCase):
         )
         feature_flag.enabled = False
 
-        assert feature_flag.value["enabled"] == False
+        temp = json.loads(feature_flag.value)
+        assert temp["enabled"] == False
 
     @app_config_decorator
     def test_feature_flag_prefix(self, client):

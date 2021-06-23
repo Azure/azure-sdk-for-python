@@ -209,7 +209,7 @@ class FeatureFlagConfigurationSetting(
             if not conditions:
                 return None
             try:
-                return conditions.get("client_filters", None)
+                return conditions.get("client_filters", [])
             except AttributeError:
                 return ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. 'client_filters' is expected to be a dictionary")
         except json.decoder.JSONDecodeError:
