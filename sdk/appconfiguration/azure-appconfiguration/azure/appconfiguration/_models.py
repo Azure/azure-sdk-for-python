@@ -144,9 +144,9 @@ class FeatureFlagConfigurationSetting(
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
-        "feature_id": {"key": "key", "type": "str"},
+        "feature_id": {"key": "feaure_id", "type": "str"},
         "label": {"key": "label", "type": "str"},
-        "content_type": {"key": "content_type", "type": "str"},
+        "content_type": {"key": "_feature_flag_content_type", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "last_modified": {"key": "last_modified", "type": "iso-8601"},
         "read_only": {"key": "read_only", "type": "bool"},
