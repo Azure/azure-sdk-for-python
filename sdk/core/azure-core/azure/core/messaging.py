@@ -127,7 +127,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         if not all([_ in event for _ in ("source", "type")]):
             if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
                 raise ValueError(
-                    "The event does not conform to the cloud event spec." +
+                    "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
                     " Try using the EventGridEvent from azure-eventgrid library"
                 )
             raise ValueError(
