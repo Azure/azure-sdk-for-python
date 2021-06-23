@@ -17,6 +17,7 @@ stages:
         JobName: ${{ replace(service, '-', '_') }}
         DeployArmTemplate: true
         AllocateResourceGroup: true
+        TestTimeoutInMinutes: 240
         ${{ if eq(service, 'azure-keyvault-keys') }}:
           AdditionalMatrixConfigs:
             - Name: keyvault_test_matrix_addons
