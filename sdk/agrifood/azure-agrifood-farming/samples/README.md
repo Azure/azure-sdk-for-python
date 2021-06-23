@@ -41,7 +41,7 @@ pip install azure-agrifood-farming azure-identity aiohttp
 
 ### Set up the credentials for authentication
 
-We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate to your FarmBeats instance. If you have followed the [installation docs][install_farmbeats], you should already have an application created. Set the following environment variables to the appropriate values. 
+We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate to your FarmBeats instance. If you have followed the [installation docs][install_farmbeats], you should already have an application created, and the appropriate RBAC roles assigned. Set the following environment variables to the appropriate values. 
 
 - `AZURE_TENANT_ID`
 - `AZURE_CLIENT_ID`
