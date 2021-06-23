@@ -66,10 +66,12 @@ def start_testserver():
     else:
         #On linux, have to set shell=True
         child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid, env=dict(os.environ))
-    time.sleep(1)
-    if child_process.returncode is not None:
-        raise ValueError("Didn't start!")
-    return child_process
+    count = 5
+    for _ in range(count):
+        time.sleep(1)
+        if not is_port_open(port):
+            return child_process
+    raise ValueError("Didn't start!")
 
 def terminate_testserver(process):
     if os.name == 'nt':
