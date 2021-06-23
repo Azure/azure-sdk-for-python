@@ -70,7 +70,7 @@ class ClusterVersionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -109,7 +109,7 @@ class ClusterVersionsOperations(object):
     def get_by_environment(
         self,
         location,  # type: str
-        environment,  # type: Union[str, "_models.Enum8"]
+        environment,  # type: Union[str, "_models.Enum14"]
         cluster_version,  # type: str
         **kwargs  # type: Any
     ):
@@ -122,7 +122,7 @@ class ClusterVersionsOperations(object):
          location.
         :type location: str
         :param environment: The operating system of the cluster. The default means all.
-        :type environment: str or ~azure.mgmt.servicefabric.models.Enum8
+        :type environment: str or ~azure.mgmt.servicefabric.models.Enum14
         :param cluster_version: The cluster code version.
         :type cluster_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -135,7 +135,7 @@ class ClusterVersionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -195,7 +195,7 @@ class ClusterVersionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -233,7 +233,7 @@ class ClusterVersionsOperations(object):
     def list_by_environment(
         self,
         location,  # type: str
-        environment,  # type: Union[str, "_models.Enum8"]
+        environment,  # type: Union[str, "_models.Enum14"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ClusterCodeVersionsListResult"
@@ -245,7 +245,7 @@ class ClusterVersionsOperations(object):
          location.
         :type location: str
         :param environment: The operating system of the cluster. The default means all.
-        :type environment: str or ~azure.mgmt.servicefabric.models.Enum8
+        :type environment: str or ~azure.mgmt.servicefabric.models.Enum14
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ClusterCodeVersionsListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.servicefabric.models.ClusterCodeVersionsListResult
@@ -256,7 +256,7 @@ class ClusterVersionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
