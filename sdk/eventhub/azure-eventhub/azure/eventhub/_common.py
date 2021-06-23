@@ -16,6 +16,7 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
+    Mapping,
 )
 
 import six
@@ -167,18 +168,23 @@ class EventData(object):
         return event_str
 
     @classmethod
-    def _from_message(cls, message):
-        # type: (Union[Message) -> EventData
+    def _from_message(cls, message, raw_amqp_message=None):
+        # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
         """Internal use only.
 
-        Creates an EventData object from a raw uamqp message.
+        Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
 
         :param ~uamqp.Message message: A received uamqp message.
+        :param ~azure.eventhub.amqp.AmqpAnnotatedMessage message: An amqp annotated message.
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        event_data.message = message
-        event_data._raw_amqp_message = AmqpAnnotatedMessage(message=message)
+        if raw_amqp_message and message:
+            event_data._raw_amqp_message = raw_amqp_message
+            event_data.message = message
+        elif message:
+            event_data._raw_amqp_message = AmqpAnnotatedMessage(message=message)
+            event_data.message = message
         return event_data
 
     def _encode_message(self):
@@ -314,6 +320,14 @@ class EventData(object):
         except:
             raise ValueError("Event content empty.")
 
+    @property
+    def body_type(self):
+        # type: () -> AmqpMessageBodyType
+        """The body type of the underlying AMQP message.
+        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        """
+        return self._raw_amqp_message.body_type
+
     def body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         """The content of the event as a string, if the data is of a compatible type.
@@ -324,6 +338,11 @@ class EventData(object):
         """
         data = self.body
         try:
+            if self.body_type != AmqpMessageBodyType.DATA:
+                # pylint: disable=protected-access
+                self.raw_amqp_message._message._body._encoding = encoding
+                return str(self.raw_amqp_message._message._body)
+
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
         except TypeError:
             return six.text_type(data)

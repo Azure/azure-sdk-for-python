@@ -93,7 +93,6 @@ def receive_and_parse_message(consumer):
             print('Stopped receiving.')
 
 
-# Send AmqpAnnotatedMessage
 producer = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
@@ -103,7 +102,7 @@ with producer:
     send_sequence_message(producer)
     send_value_message(producer)
 
-# Receive
+
 consumer = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     consumer_group='$Default',

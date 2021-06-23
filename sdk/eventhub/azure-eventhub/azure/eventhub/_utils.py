@@ -30,7 +30,8 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-    PROP_TIMESTAMP)
+    PROP_TIMESTAMP,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
     MessagesType = Union[
         AmqpAnnotatedMessage,
         EventData,
-        Iterable[Union[AmqpAnnotatedMessage, EventData]]
+        Iterable[Union[AmqpAnnotatedMessage, EventData]],
     ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -134,9 +135,7 @@ def set_message_partition_key(message, partition_key):
 
 @contextmanager
 def send_context_manager():
-    span_impl_type = (
-        settings.tracing_implementation()
-    )  # type: Type[AbstractSpan]
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
 
     if span_impl_type is not None:
         with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
@@ -158,14 +157,10 @@ def trace_message(event, parent_span=None):
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
             )
-            link = Link({
-                'traceparent': current_span.get_trace_parent()
-            })
+            link = Link({"traceparent": current_span.get_trace_parent()})
             with current_span.span(
-                name="Azure.EventHubs.message",
-                kind=SpanKind.PRODUCER,
-                links=[link]
-                ) as message_span:
+                name="Azure.EventHubs.message", kind=SpanKind.PRODUCER, links=[link]
+            ) as message_span:
                 message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 if not event.properties:
                     event.properties = dict()
@@ -175,20 +170,31 @@ def trace_message(event, parent_span=None):
     except Exception as exp:  # pylint:disable=broad-except
         _LOGGER.warning("trace_message had an exception %r", exp)
 
+
 def get_event_links(events):
-    trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
+    trace_events = (
+        events if isinstance(events, Iterable) else (events,)
+    )  # pylint:disable=isinstance-second-argument-not-valid-type
     links = []
     try:
         for event in trace_events:  # type: ignore
             if event.properties:
                 traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
                 if traceparent:
-                    links.append(Link({'traceparent': traceparent},
-                        attributes={"enqueuedTime": event.message.annotations.get(PROP_TIMESTAMP)}
-                        ))
+                    links.append(
+                        Link(
+                            {"traceparent": traceparent},
+                            attributes={
+                                "enqueuedTime": event.message.annotations.get(
+                                    PROP_TIMESTAMP
+                                )
+                            },
+                        )
+                    )
     except AttributeError:
         pass
     return links
+
 
 def event_position_selector(value, inclusive=False):
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
@@ -252,15 +258,17 @@ def get_last_enqueued_event_properties(event_data):
         return event_data._last_enqueued_event_properties
     return None
 
+
 def parse_sas_credential(credential):
     # type: (AzureSasCredential) -> Tuple
     sas = credential.signature
-    parsed_sas = sas.split('&')
+    parsed_sas = sas.split("&")
     expiry = None
     for item in parsed_sas:
-        if item.startswith('se='):
+        if item.startswith("se="):
             expiry = int(item[3:])
     return (sas, expiry)
+
 
 def _convert_to_single_event_data(message, message_type):
     # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
@@ -268,16 +276,11 @@ def _convert_to_single_event_data(message, message_type):
         # EventData
         # pylint: disable=protected-access
         return message._to_outgoing_message()  # type: ignore
-    except TypeError:
+    except AttributeError:
         # AmqpAnnotatedMessage
         # pylint: disable=protected-access
-        return message_type._from_message(message.to_outgoing_amqp_message())  # type: ignore
-    # best way to do below? is it needed?
-    #except:
-    #    raise TypeError(
-    #        "Only AmqpAnnotatedMessage or EventData instances are supported. "
-    #        "Received instead: {}".format(message.__class__.__name__)
-    #    )
+        return message_type._from_message(message=message._to_outgoing_amqp_message(), raw_amqp_message=message)  # type: ignore
+
 
 def transform_messages_if_needed(messages, message_type):
     # type: (MessagesType, Type[EventData]) -> Union[EventData, List[EventData]]
@@ -291,7 +294,5 @@ def transform_messages_if_needed(messages, message_type):
     :rtype: Union[EventData, List[EventData]]
     """
     if isinstance(messages, Iterable):
-        return [
-            _convert_to_single_event_data(m, message_type) for m in messages
-        ]
+        return [_convert_to_single_event_data(m, message_type) for m in messages]
     return _convert_to_single_event_data(messages, message_type)
