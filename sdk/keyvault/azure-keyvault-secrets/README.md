@@ -114,6 +114,7 @@ az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --secret-permi
 > Possible permissions:
 > - Secret management: set, backup, delete, get, list, purge, recover, restore
 
+If you have enabled role-based access control (RBAC) for Key Vault instead, you can find roles like "Key Vault Secrets Officer" in our [RBAC guide][rbac_guide].
 
 #### Create a client
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
@@ -426,6 +427,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [pip]: https://pypi.org/project/pip/
 [pypi_package_secrets]: https://pypi.org/project/azure-keyvault-secrets/
+[rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-secrets/docs
 [secret_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/azure/keyvault/secrets
 [secret_client_docs]: https://aka.ms/azsdk/python/keyvault-secrets/docs#azure.keyvault.secrets.SecretClient

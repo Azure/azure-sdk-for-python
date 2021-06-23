@@ -44,7 +44,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourcesListResult":
         """Gets a list of private link resources in the specified managed cluster.
 

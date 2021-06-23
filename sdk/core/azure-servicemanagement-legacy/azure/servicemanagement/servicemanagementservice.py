@@ -1896,11 +1896,11 @@ class ServiceManagementService(_ServiceManagementClient):
         offer:
             Specifies the publisher defined name of the offer. The allowed
             characters are uppercase or lowercase letters, digit,
-            hypen(-), period (.).The maximum allowed length is 64 characters.
+            hyphen(-), period (.).The maximum allowed length is 64 characters.
         sku:
             Specifies the publisher defined name of the Sku. The allowed
             characters are uppercase or lowercase letters, digit,
-            hypen(-), period (.). The maximum allowed length is 64 characters.
+            hyphen(-), period (.). The maximum allowed length is 64 characters.
         version:
             Specifies the publisher defined version of the image.
             The allowed characters are digit and period.

@@ -17,8 +17,8 @@ from azure.core.polling.base_polling import (
 )
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
-from ._generated.models import TranslationStatus
-from ._models import TranslationStatusResult
+from ._generated.models import TranslationStatus as _TranslationStatus
+from ._models import TranslationStatus
 
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ _FAILED = frozenset(["validationfailed"])
 
 class DocumentTranslationLROPoller(LROPoller):
     """A custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatusResult`."""
+    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
     @property
     def id(self):
@@ -58,12 +58,12 @@ class DocumentTranslationLROPoller(LROPoller):
 
     @property
     def details(self):
-        # type: () -> TranslationStatusResult
+        # type: () -> TranslationStatus
         """The details for the translation operation
 
-        :rtype: ~azure.ai.translation.document.TranslationStatusResult
+        :rtype: ~azure.ai.translation.document.TranslationStatus
         """
-        return TranslationStatusResult._from_generated(  # pylint: disable=protected-access
+        return TranslationStatus._from_generated(  # pylint: disable=protected-access
             self._polling_method._current_body  # pylint: disable=protected-access
         )
 
@@ -89,8 +89,8 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
     @property
     def _current_body(self):
-        # type: () -> TranslationStatus
-        return TranslationStatus.deserialize(self._pipeline_response)
+        # type: () -> _TranslationStatus
+        return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self):
         # type: () -> str

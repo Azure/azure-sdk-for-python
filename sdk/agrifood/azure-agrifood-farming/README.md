@@ -1,4 +1,4 @@
-# Azure AgriFood Farming client library for Python
+# Azure FarmBeats client library for Python
 FarmBeats is a B2B PaaS offering from Microsoft that makes it easy for AgriFood companies to build intelligent digital agriculture solutions on Azure. FarmBeats allows users to acquire, aggregate, and process agricultural data from various sources (farm equipment, weather, satellite) without the need to invest in deep data engineering resources.  Customers can build SaaS solutions on top of FarmBeats and leverage first class support for model building to generate insights at scale.
 
 Use FarmBeats client library for Python to do the following. 
@@ -7,7 +7,7 @@ Use FarmBeats client library for Python to do the following.
 - Ingest satellite and weather data for areas of interest.
 - Ingest farm operations data covering tilling, planting, harvesting and application of farm inputs.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
+[Source code][source_code] | [Package (PyPi)][pypi-package] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Changelog][change_log]
 
 ## Getting started
 
@@ -15,12 +15,12 @@ Use FarmBeats client library for Python to do the following.
 
 To use this package, you must have:
 - Azure subscription - [Create a free account][azure_subscription]
-- AgriFood (FarmBeats) resource - [Install FarmBeats][install_farmbeats]
+- Azure FarmBeats resource - [Install FarmBeats][install_farmbeats]
 - Python 2.7, 3.6 or later - [Install Python][python]
 
 ### Install the package
 
-Install the Azure AgriFood Farming client library for Python with [pip][pip]:
+Install the Azure FarmBeats client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-agrifood-farming
@@ -33,7 +33,8 @@ provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
 
 To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip] and
-enable AAD authentication on your AgriFood resource (ADD LINK).
+enable AAD authentication on your FarmBeats resource. If you followed the [installation docs][install_farmbeats] when creating the FarmBeats 
+resource, this is already covered.
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential]
@@ -289,7 +290,7 @@ for scene in scenes:
 
 ### General
 
-The AgriFood Farming client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
+The FarmBeats client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
 
 ### Logging
 
@@ -360,6 +361,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [product_docs]: https://aka.ms/FarmBeatsProductDocumentationPaaS
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/
+[pypi-package]: https://pypi.org/project/azure-agrifood-farming/
 [python]: https://www.python.org/downloads/
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/

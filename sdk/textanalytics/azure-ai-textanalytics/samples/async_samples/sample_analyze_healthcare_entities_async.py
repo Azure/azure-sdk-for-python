@@ -16,10 +16,6 @@ DESCRIPTION:
     comb through all of the prescriptions our pharmacy has fulfilled so we can catalog how
     much inventory we have.
 
-    As a usage note: healthcare is currently in gated preview. Your subscription needs to
-    be allow-listed before you can use this endpoint. More information about that here:
-    https://aka.ms/text-analytics-health-request-access
-
 USAGE:
     python sample_analyze_healthcare_entities_async.py
 
