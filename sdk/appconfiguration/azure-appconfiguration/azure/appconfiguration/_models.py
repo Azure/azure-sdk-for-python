@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+from json.decoder import JSONDecodeError
 import six
 from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
@@ -343,38 +344,35 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     @property
     def secret_id(self):
-        # type: () -> str
-        self._validate()
-        return self.value['secret_uri']
+        # type: () -> Optional[str]
+        try:
+            temp = json.loads(self.value)
+            return temp.get("secret_uri", None)
+        except json.decoder.JSONDecodeError:
+            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
 
     @secret_id.setter
     def secret_id(self, secret_id):
-        if self.value is None or isinstance(self.value, dict):
-            if self.value is None:
-                self.value = {}
-            self.value["secret_uri"] = secret_id
-        else:
-            raise ValueError("Expect 'self.value' to be a dictionary.")
-
-    def _validate(self):
-        # type: () -> None
-        if not (self.value is None or isinstance(self.value, dict)):
-            raise ValueError("Expect 'value' to be a dictionary or None.")
+        try:
+            temp = json.loads(self.value)
+            temp["secret_uri"] = secret_id
+            self.value = json.dumps(temp)
+        except json.decoder.JSONDecodeError:
+            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. 'value' is expected to be a dictionary")
 
     @classmethod
     def _from_generated(cls, key_value):
         # type: (KeyValue) -> SecretReferenceConfigurationSetting
         if key_value is None:
             return key_value
-        if key_value.value:
-            try:
-                key_value.value = json.loads(key_value.value)
-            except json.decoder.JSONDecodeError:
-                pass
+        # if key_value.value:
+        #     try:
+        #         key_value.value = json.loads(key_value.value)
+        #     except json.decoder.JSONDecodeError:
+        #         pass
 
         return cls(
             key=key_value.key,  # type: ignore
-            # secret_uri=key_value.value[u"secret_uri"],  # type: ignore
             value=key_value.value,
             label=key_value.label,
             secret_id=key_value.value,  # type: ignore
@@ -389,7 +387,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=json.dumps(self.value),
+            value=self.value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,

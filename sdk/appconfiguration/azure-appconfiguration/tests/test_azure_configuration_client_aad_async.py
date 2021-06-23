@@ -33,9 +33,7 @@ from consts import (
 import pytest
 import copy
 import datetime
-import os
-import logging
-import asyncio
+import json
 import re
 import copy
 
@@ -555,9 +553,10 @@ class AppConfigurationClientTest(AzureTestCase):
         new_uri = "https://aka.ms/azsdk"
         new_uri2 = "https://aka.ms/azsdk/python"
         updated_flag.secret_id = new_uri
-        assert updated_flag.value['secret_uri'] == new_uri
+        temp = json.loads(updated_flag.value)
+        assert temp['secret_uri'] == new_uri
 
-        updated_flag.value = {'secret_uri': new_uri2}
+        updated_flag.value = json.dumps({'secret_uri': new_uri2})
         assert updated_flag.secret_id == new_uri2
 
         with pytest.raises(ValueError):
