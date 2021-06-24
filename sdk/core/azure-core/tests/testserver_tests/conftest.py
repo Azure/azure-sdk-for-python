@@ -31,6 +31,7 @@ import subprocess
 import sys
 import random
 from six.moves import urllib
+from rest_client import TestRestClient
 
 def is_port_available(port_num):
     req = urllib.request.Request("http://localhost:{}/health".format(port_num))
@@ -86,3 +87,7 @@ def testserver():
 collect_ignore_glob = []
 if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")
+
+@pytest.fixture
+def client(port):
+    return TestRestClient(port)
