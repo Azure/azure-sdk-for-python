@@ -2,9 +2,11 @@
 
 ## 7.3.1 (Unreleased)
 
-**Bug Fixes**
+### Fixed
 
-* Fixed a bug that when setting `ServiceBusMessage.partition_key`, input value should be not validated against `session_id` of None (PR #19233, thanks @bishnu-shb).
+- Fixed a bug that when setting `ServiceBusMessage.partition_key`, input value should be not validated against `session_id` of None (PR #19233, thanks @bishnu-shb).
+- Fixed a bug that setting `ServiceBusMessage.time_to_live` causes OverflowError error on Ubuntu 20.04.
+- Fixed a bug that `AmqpAnnotatedProperties.creation_time` and `AmqpAnnotatedProperties.absolute_expiry_time` should be calculated in the unit of milliseconds instead of seconds.
 
 ## 7.3.0 (2021-06-08)
 
