@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Type
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureTestCase, PowerShellPreparer
@@ -893,3 +894,12 @@ class AppConfigurationClientTest(AzureTestCase):
         new.content_type = "fkaeyjfdkal;"
         client.set_configuration_setting(new)
         new1 = client.get_configuration_setting(new.key)
+
+    @app_config_decorator
+    def test_type_error(self, client):
+        with pytest.raises(TypeError):
+            _ = FeatureFlagConfigurationSetting("blash", key="blash")
+        with pytest.raises(TypeError):
+            _ = FeatureFlagConfigurationSetting("blash", value="blash")
+        with pytest.raises(TypeError):
+            _ = SecretReferenceConfigurationSetting("blash", value="blash")

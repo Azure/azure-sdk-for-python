@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import collections
 import json
 from typing import Dict, Optional, Any, List, Union
 from msrest.serialization import Model
@@ -86,7 +87,7 @@ class ConfigurationSetting(Model):
                     return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
-            except (KeyError, AttributeError, TypeError):
+            except (KeyError, AttributeError):
                 pass
 
         return cls(
@@ -165,6 +166,8 @@ class FeatureFlagConfigurationSetting(
 
     def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value
         # type: (str, **Any) -> None
+        if kwargs.pop("key", None) or kwargs.pop("value", None):
+            raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id
         self.key = self._key_prefix + self.feature_id
@@ -258,6 +261,17 @@ class FeatureFlagConfigurationSetting(
         # type: (KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]
         if key_value is None:
             return key_value
+        enabled = None
+        filters = None
+        try:
+            temp = json.loads(key_value.value)
+            if isinstance(temp, dict):
+                enabled = temp.get("enabled")
+                if "conditions" in temp.keys():
+                    filters = temp["conditions"].get("client_filters")
+        except (ValueError, JSONDecodeError):
+            pass
+
         return cls(
             feature_id=key_value.key.lstrip(".appconfig.featureflag").lstrip("/"),  # type: ignore
             label=key_value.label,
@@ -266,7 +280,8 @@ class FeatureFlagConfigurationSetting(
             tags=key_value.tags,
             read_only=key_value.locked,
             etag=key_value.etag,
-            value=key_value.value,
+            enabled=enabled,
+            filters=filters
         )
 
     def _to_generated(self):
@@ -324,11 +339,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key, secret_id, label=None, **kwargs):
+    def __init__(self, key, secret_id, **kwargs):
         # type: (str, str, Optional[str], **Any) -> None
+        if kwargs.pop("value", None):
+            raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
-        self.label = label
+        self.label = kwargs.pop("label", None)
         self.content_type = kwargs.get(
             "content_type", self._secret_reference_content_type
         )
@@ -364,12 +381,17 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         # type: (KeyValue) -> SecretReferenceConfigurationSetting
         if key_value is None:
             return key_value
+        secret_uri = None
+        try:
+            temp = json.loads(key_value.value)
+            secret_uri = temp.get("secret_uri")
+        except (ValueError, JSONDecodeError):
+            pass
 
         return cls(
             key=key_value.key,  # type: ignore
-            value=key_value.value,
             label=key_value.label,
-            secret_id=key_value.value,  # type: ignore
+            secret_id=secret_uri,  # type: ignore
             last_modified=key_value.last_modified,
             tags=key_value.tags,
             read_only=key_value.locked,
