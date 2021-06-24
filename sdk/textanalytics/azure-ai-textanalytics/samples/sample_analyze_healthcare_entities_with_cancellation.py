@@ -11,9 +11,6 @@ FILE: sample_analyze_healthcare_entities_with_cancellation.py
 
 DESCRIPTION:
     This sample demonstrates how to cancel a Healthcare Entities Analysis job after it's been started.
-    Since the Health API is currently only available in a gated preview, you need
-    to have your subscription on the service's allow list. More information
-    here: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview.
 
 USAGE:
     python sample_analyze_healthcare_entities_with_cancellation.py

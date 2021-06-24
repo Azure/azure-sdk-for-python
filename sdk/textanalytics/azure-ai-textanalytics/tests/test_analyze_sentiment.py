@@ -693,7 +693,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         with pytest.raises(ValueError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
-        assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
+        assert "'show_opinion_mining' is only available for API version v3.1 and up" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -723,7 +723,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     def test_string_index_type_explicit_fails_v3(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.analyze_sentiment(["this should fail"], string_index_type="UnicodeCodePoint")
-        assert "'string_index_type' is only available for API version V3_1_PREVIEW and up" in str(excinfo.value)
+        assert "'string_index_type' is only available for API version V3_1 and up" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

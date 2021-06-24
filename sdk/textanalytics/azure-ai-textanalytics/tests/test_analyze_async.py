@@ -32,6 +32,7 @@ from azure.ai.textanalytics import (
     RecognizeLinkedEntitiesResult,
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
+    PiiEntityCategoryType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -369,16 +370,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version_multiple_tasks(self, client):
-
-        def callback(resp):
-            if not resp.raw_response:
-                # this is the initial post call
-                request_body = json.loads(resp.http_request.body)
-                assert len(request_body["tasks"]) == 5
-                for task in request_body["tasks"].values():
-                    assert len(task) == 1
-                    assert task[0]['parameters']['model-version'] == 'latest'
-                    assert not task[0]['parameters']['loggingOptOut']
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -723,3 +714,34 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             actions=actions,
             polling_interval=self._interval(),
         )).result()
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_pii_action_categories_filter(self, client):
+
+        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
+                {"id": "2",
+                 "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
+                {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
+
+        actions = [
+            RecognizePiiEntitiesAction(
+                categories_filter=[
+                    PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER,
+                    PiiEntityCategoryType.ABA_ROUTING_NUMBER
+                ]
+            ),
+        ]
+        async with client:
+            result = await (await client.begin_analyze_actions(documents=docs, actions=actions, polling_interval=self._interval())).result()
+            action_results = []
+            async for p in result:
+                action_results.append(p)
+
+        assert len(action_results) == 3
+
+        assert action_results[0][0].entities[0].text == "859-98-0987"
+        assert action_results[0][0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
+        assert action_results[1][0].entities[0].text == "111000025"
+        assert action_results[1][0].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
+        assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter

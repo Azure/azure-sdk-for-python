@@ -84,6 +84,7 @@ known_content_issues:
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
   - ['sdk/monitor/azure-monitor-opentelemetry-exporter/README.md', '#4554']
+  - ['sdk/monitor/azure-monitor/README.md', '#4554']
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/translation/azure-ai-translation-document/swagger/README.md', '#4554']
@@ -138,6 +139,7 @@ known_content_issues:
   - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
+  - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.md', '#4554']
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'

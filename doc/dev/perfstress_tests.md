@@ -2,6 +2,7 @@
 1. [The perfstress framework](#the-perfstress-framework)
     - [The PerfStressTest base](#the-perfstresstest-base)
     - [Default command options](#default-command-options)
+    - [Running with test proxy](#running-with-test-proxy)
 2. [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
     - [Writing a test](#writing-a-test)
     - [Adding legacy T1 tests](#adding-legacy-t1-tests)
@@ -38,6 +39,16 @@ class PerfStressTest:
     async def global_cleanup(self):
         # Can be optionally defined. Only run once, regardless of parallelism.
 
+    async def record_and_start_playback(self):
+        # Set up the recording on the test proxy, and configure the proxy in playback mode.
+        # This function is only run if a test proxy URL is provided (-x).
+        # There should be no need to overwrite this function.
+
+    async def stop_playback(self):
+        # Configure the proxy out of playback mode and discard the recording.
+        # This function is only run if a test proxy URL is provided (-x).
+        # There should be no need to overwrite this function.
+
     async def setup(self):
         # Can be optionally defined. Run once per test instance, after global_setup.
 
@@ -65,12 +76,24 @@ class PerfStressTest:
 ```
 ## Default command options
 The framework has a series of common command line options built in:
-- `--duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
-- `--iterations=1` Number of test iterations to run. Default is 1.
-- `--parallel=1` Number of tests to run in parallel. Default is 1.
-- `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
+- `-d --duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
+- `-i --iterations=1` Number of test iterations to run. Default is 1.
+- `-p --parallel=1` Number of tests to run in parallel. Default is 1.
+- `-w --warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
+- `-x --test-proxy` Whether to run the tests against the test proxy server. Specfiy the URL for the proxy endpoint (e.g. "https://localhost:5001").
+- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
+
+
+## Running with the test proxy
+Follow the instructions here to install and run the test proxy server:
+https://github.com/Azure/azure-sdk-tools/tree/feature/http-recording-server/tools/test-proxy/Azure.Sdk.Tools.TestProxy
+
+Once running, in a separate process run the perf test in question, combined with the `-x` flag to specify the proxy endpoint.
+```cmd
+(env) ~/azure-storage-blob/tests> perfstress DownloadTest -x "https://localhost:5001"
+```
 
 # Adding performance tests to an SDK
 The performance tests will be in a submodule called `perfstress_tests` within the `tests` directory in an SDK project.
@@ -351,5 +374,5 @@ Using the `perfstress` command alone will list the available perf tests found. N
 
 Please add a `README.md` to the perfstress_tests directory so that others know how to setup and run the perf tests, along with a description of the available tests and any support command line options. README files in a `tests/perfstress_tests` directory should already be filtered from CI validation for SDK readmes.
 Some examples can be found here:
-- [Azure Storage Blob](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/perfstress_tests/README.md)
-- [Azure Service Bus](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/tests/perf_tests/README.md)
+- [Azure Storage Blob](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/tests/perfstress_tests/README.md)
+- [Azure Service Bus](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/tests/perf_tests/README.md)

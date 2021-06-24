@@ -1,5 +1,24 @@
 # Release History
 
+## 4.0.0 (2021-06-11)
+
+**Features**
+
+  - Model ExportPolicyRule has a new parameter chown_mode
+  - Model BackupStatus has a new parameter last_transfer_size
+  - Model BackupStatus has a new parameter total_transfer_bytes
+  - Model BackupStatus has a new parameter last_transfer_type
+  - Model Volume has a new parameter cool_access
+  - Model Volume has a new parameter unix_permissions
+  - Model Volume has a new parameter coolness_period
+  - Model CapacityPool has a new parameter cool_access
+  - Model ActiveDirectory has a new parameter administrators
+  - Added operation BackupsOperations.get_volume_restore_status
+
+**Breaking changes**
+
+  - Operation NetAppResourceOperations.check_file_path_availability has a new signature
+
 ## 3.0.0 (2021-05-21)
 
 **Features**

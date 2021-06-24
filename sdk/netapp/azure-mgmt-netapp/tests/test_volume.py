@@ -52,7 +52,7 @@ def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_PO
     return volume
 
 
-def create_dp_volume(client, source_volume, rg=TEST_REMOTE_RG, account_name=TEST_ACC_2, pool_name=TEST_POOL_2,
+def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name=TEST_ACC_2, pool_name=TEST_POOL_2,
                      volume_name=TEST_VOL_2, location=REMOTE_LOCATION, volume_only=False, live=False):
     if not volume_only:
         create_pool(
@@ -144,17 +144,18 @@ def delete_volume(client, rg, account_name, pool_name, volume_name, live=False):
 def wait_for_replication_status(client, target_state, live=False):
     # python isn't good at do-while loops but loop until we get the target state
     while True:
-        replication_status = client.volumes.replication_status(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+        replication_status = client.volumes.replication_status(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         if replication_status.mirror_state == target_state:
             break
         if live:
             time.sleep(1)
 
+
 def wait_for_succeeded(client, live=False):
     # python isn't good at do-while loops but loop until we get volumes in succeeded state
     while True:
-        source_volume = client.volumes.get(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
-        dp_volume = client.volumes.get(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+        source_volume = client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+        dp_volume = client.volumes.get(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded"):
             break
         if live:
@@ -166,6 +167,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         super(NetAppAccountTestCase, self).setUp()
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
 
+    # Before tests are run live a resource group needs to be created along with vnet and subnet
+    # Note that when tests are run in live mode it is best to run one test at a time.
     def test_create_delete_list_volume(self):
         volume = create_volume(
             self.client,
@@ -213,26 +216,16 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
     def test_volume_replication(self):
         source_volume = create_volume(
             self.client,
-            TEST_REPL_RG,
+            TEST_RG,
             TEST_ACC_1,
             TEST_POOL_1,
             TEST_VOL_1,
-            vnet=REPL_VNET,
+            vnet=VNET,
             live=self.is_live)
-
-        if self.is_live:
-            time.sleep(5)
-
-        self.client.volumes.get(
-            TEST_REPL_RG,
-            TEST_ACC_1,
-            TEST_POOL_1,
-            TEST_VOL_1)
-
         dp_volume = create_dp_volume(
             self.client,
             source_volume,
-            TEST_REMOTE_RG,
+            TEST_REPL_REMOTE_RG,
             TEST_ACC_2,
             TEST_POOL_2,
             TEST_VOL_2,
@@ -243,39 +236,39 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
         # sync replication
         body = AuthorizeRequest(remote_volume_resource_id=dp_volume.id)
-        self.client.volumes.begin_authorize_replication(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, body)
+        self.client.volumes.begin_authorize_replication(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, body)
         wait_for_succeeded(self.client, self.is_live)
         if self.is_live:
             time.sleep(30)
         wait_for_replication_status(self.client, "Mirrored", self.is_live)
 
         # break replication
-        self.client.volumes.begin_break_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         wait_for_replication_status(self.client, "Broken", self.is_live)
         if self.is_live:
             time.sleep(30)
         wait_for_succeeded(self.client, self.is_live)
 
         # resync
-        self.client.volumes.begin_resync_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+        self.client.volumes.begin_resync_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         wait_for_replication_status(self.client, "Mirrored", self.is_live)
         if self.is_live:
             time.sleep(30)
 
         # break again
-        self.client.volumes.begin_break_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
         wait_for_replication_status(self.client, "Broken", self.is_live)
         if self.is_live:
             time.sleep(30)
 
         # delete the data protection object
         #  - initiate delete replication on destination, this then releases on source, both resulting in object deletion
-        self.client.volumes.begin_delete_replication(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+        self.client.volumes.begin_delete_replication(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
 
         replication_found = True  # because it was previously present
         while replication_found:
             try:
-                self.client.volumes.replication_status(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
+                self.client.volumes.replication_status(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
             except:
                 # an exception means the replication was not found
                 # i.e. it has been deleted
@@ -290,8 +283,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         # and ensure the replication objects are removed
         # python isn't good at do-while loops but loop until we get volumes in succeeded state
         while True:
-            source_volume = self.client.volumes.get(TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1);
-            dp_volume = self.client.volumes.get(TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2);
+            source_volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
+            dp_volume = self.client.volumes.get(TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2)
             if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded") and \
                     (source_volume.data_protection.replication is None) and \
                     (dp_volume.data_protection.replication is None):
@@ -302,14 +295,14 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         # now proceed with the delete of the volumes and tidy up resources
 
         # delete destination volume
-        delete_volume(self.client, TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2, live=self.is_live)
-        delete_pool(self.client, TEST_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, live=self.is_live)
-        delete_account(self.client, TEST_REMOTE_RG, TEST_ACC_2, live=self.is_live)
+        delete_volume(self.client, TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, TEST_VOL_2, live=self.is_live)
+        delete_pool(self.client, TEST_REPL_REMOTE_RG, TEST_ACC_2, TEST_POOL_2, live=self.is_live)
+        delete_account(self.client, TEST_REPL_REMOTE_RG, TEST_ACC_2, live=self.is_live)
 
         # delete source volume
-        delete_volume(self.client, TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        delete_pool(self.client, TEST_REPL_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_REPL_RG, TEST_ACC_1, live=self.is_live)
+        delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_get_volume_by_name(self):
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
@@ -342,7 +335,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             TEST_VOL_1,
             volume_body
         ).result()
-        self.assertEqual("Premium", volume.service_level);  # unchanged
+        self.assertEqual("Premium", volume.service_level)  # unchanged
         self.assertEqual(200 * GIGABYTE, volume.usage_threshold)
 
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)

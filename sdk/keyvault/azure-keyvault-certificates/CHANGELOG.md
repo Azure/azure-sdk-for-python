@@ -1,6 +1,17 @@
 # Release History
 
-## 4.3.0 (2020-06-17)
+## 4.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 4.3.0 (2021-06-22)
 This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.
 ### Changed
 - Key Vault API version 7.2 is now the default
