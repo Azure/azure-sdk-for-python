@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._question_answering_client import QuestionAnsweringClient
-from ._knowledgebase_authoring_client import KnowledgebaseAuthoringClient
-__all__ = ['QuestionAnsweringClient', 'KnowledgebaseAuthoringClient']
+from ._question_answering_client_operations import QuestionAnsweringClientOperationsMixin
+
+__all__ = [
+    "QuestionAnsweringClientOperationsMixin",
+]
