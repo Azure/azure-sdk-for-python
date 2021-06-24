@@ -24,7 +24,6 @@ class KeyOperation(str, Enum):
     verify = "verify"
     wrap_key = "wrapKey"
     unwrap_key = "unwrapKey"
-    # export = "export"  # this should be necessary for export, but might not be for release
 
 
 class KeyType(str, Enum):
