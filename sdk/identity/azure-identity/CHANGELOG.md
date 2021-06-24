@@ -6,6 +6,10 @@
   pre-filling the username/email address field on the login page
   ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
 
+### Fixed
+- `azure.identity.aio.ManagedIdentityCredential` is an async context manager
+  that closes its underlying transport session at the end of a `with` block
+
 ## 1.7.0b1 (2021-06-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
 
