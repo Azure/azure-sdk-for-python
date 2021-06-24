@@ -82,7 +82,7 @@ class AttestationClient(object):
         self._signing_certificates = None
 
     @distributed_trace_async
-    async def get_openidmetadata(self, **kwargs: Any) -> Any:
+    async def get_openidmetadata(self, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
@@ -93,7 +93,7 @@ class AttestationClient(object):
         * claims_supported
 
         :return: OpenID metadata configuration
-        :rtype: Any
+        :rtype: Dict[str, Any]
         """
         return await self._client.metadata_configuration.get(**kwargs)
 
@@ -102,7 +102,7 @@ class AttestationClient(object):
         """Returns the set of signing certificates used to sign attestation tokens.
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
-        :rtype: list[azure.security.attestation.AttestationSigner]
+        :rtype: list[~azure.security.attestation.AttestationSigner]
 
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
@@ -155,7 +155,7 @@ class AttestationClient(object):
 
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
-        :rtype: azure.security.attestation.AttestationResult
+        :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. note::
             Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
@@ -230,7 +230,7 @@ class AttestationClient(object):
         runtime_json: bytes = None,
         runtime_data: bytes = None,
         **kwargs: Any
-    ) -> AttestationResult:
+    ) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -262,7 +262,7 @@ class AttestationClient(object):
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: azure.security.attestation.AttestationResult
+        :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0 (2021-07-06)
 
 ### Features Added
 
@@ -67,6 +67,13 @@ policy = response[0]
 * The `AttestationToken` class no longer inherits from `Generic`.
 * The `attest_sgx_enclave`, and `attest_openenclave` APIs now return a tuple of
   `AttestationResult`, `AttestationToken`, similar to the `get_policy` API.
+* The `set_policy`, `reset_policy`, `add_policy_management_certificate`, and `remove_policy_management_certificate` APIs all return a tuple.
+* The `AttestationToken.get_body()` API was renamed `AttestationToken.body()`
+* Several time related properties were renamed to be consistent with the usage from
+  keyvault:
+  * The `expiration_time` property on `AttestationToken` was renamed to `expires`.
+  * The `issuance_time` property on `AttestationToken` was renamed to `issued_on`.
+  * The `not_before_time` property on `AttestationToken` was renamed to `not_before`.
 
 ### Key Bugs Fixed
 

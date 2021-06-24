@@ -140,7 +140,7 @@ class AttestationAdministrationClient(object):
         :return: A tuple containing the attestation policy and the token returned
             by the service..
 
-        :rtype: ~typing.Tuple[str, AttestationToken]
+        :rtype: ~typing.Tuple[str, ~azure.security.attestation.AttestationToken]
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -315,7 +315,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
         :return: An :class:`AttestationPolicyResult` object expressing the result of the removal.
-        :rtype: Tuple[azure.security.attestation.AttestationPolicyResult, azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyResult, ~azure.security.attestation.AttestationToken]
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
@@ -391,7 +391,7 @@ class AttestationAdministrationClient(object):
             "Not Before" time in the token.
 
         :return: A tuple containing the list of PEM encoded X.509 certificate chains and an attestation token.
-        :rtype: Tuple[list[list[string]], AttestationToken]
+        :rtype: Tuple[list[list[string]], ~azure.security.attestation.AttestationToken]
 
         .. admonition:: Example: Retrieving the set of policy management certificates
             for an isolated attestation instance.
@@ -454,7 +454,7 @@ class AttestationAdministrationClient(object):
         :return: Attestation service response
             encapsulating the status of the add request.
 
-        :rtype: Tuple[azure.security.attestation.AttestationPolicyCertificateResult, azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes

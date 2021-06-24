@@ -167,19 +167,15 @@ class AttestationResult(object):
         :keyword policy_signer: If the policy which processed the request is signed,
             this will be the certificate which signed the policy.
         :paramtype policy_signer: azure.security.attestation.AttestationSigner or None
-        :keyword policy_hash: The hash of the policy which processed the attestation
+        :keyword str policy_hash: The hash of the policy which processed the attestation
             evidence.
-        :paramtype policy_hash: str
-        :keyword is_debuggable: True if the SGX enclave being attested is debuggable.
-        :paramtype is_debuggable: bool
+        :keyword bool is_debuggable: True if a debugger can be attached to the SGX enclave
+            being attested.
         :keyword product_id: Product ID for the SGX enclave being attested.
         :paramtype product_id: int
-        :keyword mr_enclave: MRENCLAVE value for the SGX enclave being attested.
-        :paramtype mr_enclave: str
-        :keyword mr_signer: MRSIGNER value for the SGX enclave being attested.
-        :paramtype mr_signer: str
-        :keyword svn: Security version number for the SGX enclave being attested.
-        :paramtype svn: int
+        :keyword str mr_enclave: MRENCLAVE value for the SGX enclave being attested.
+        :keyword str mr_signer: MRSIGNER value for the SGX enclave being attested.
+        :keyword int svn: Security version number for the SGX enclave being attested.
         :keyword sgx_collateral: Collateral which identifies the collateral used to
             create the token.
         :paramtype sgx_collateral: dict

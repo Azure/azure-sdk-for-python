@@ -144,7 +144,7 @@ class AttestationAdministrationClient(object):
         :return: A tuple containing the attestation policy and the token returned
             by the service..
 
-        :rtype: ~typing.Tuple[str, AttestationToken]
+        :rtype: Tuple[str, ~azure.security.attestation.AttestationToken]
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -219,7 +219,7 @@ class AttestationAdministrationClient(object):
 
         :return: Result of set policy operation.
 
-        :rtype: ~azure.security.attestation.AttestationPolicyResult
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyResult, ~azure.security.attestation.AttestationToken]
 
         :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -323,9 +323,9 @@ class AttestationAdministrationClient(object):
 
         :return: A policy set result reflecting the outcome of the policy removal and the token which contained the result.
 
-        :rtype: Tuple[azure.security.attestation.AttestationPolicyResult, azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyResult, ~azure.security.attestation.AttestationToken]
 
-        :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
             If the attestation instance is in *Isolated* mode, then the
@@ -417,7 +417,7 @@ class AttestationAdministrationClient(object):
             "Not Before" time in the token.
 
         :return: A tuple containing the list of PEM encoded X.509 certificate chains and an attestation token.
-        :rtype: Tuple[list[list[str]], AttestationToken]
+        :rtype: Tuple[List[List[str]], ~azure.security.attestation.AttestationToken]
 
         .. admonition:: Example: Retrieving the set of policy management certificates
             for an isolated attestation instance.
@@ -481,7 +481,7 @@ class AttestationAdministrationClient(object):
             of the add request and the token sent from the service which 
             contained the response.
 
-        :rtype: Tuple[azure.security.attestation.AttestationPolicyCertificateResult, azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes
@@ -581,7 +581,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Result describing the outcome of the certificate removal.
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificateResult` response to the
         :meth:`remove_policy_management_certificate` API contains two attributes
