@@ -42,7 +42,7 @@ class QueueClient(StorageAccountHostsMixin):
     """A client to interact with a specific Queue.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
     #optional-configuration>`_.
 
     :param str account_url:

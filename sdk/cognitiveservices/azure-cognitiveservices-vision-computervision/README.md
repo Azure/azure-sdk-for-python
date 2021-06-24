@@ -293,7 +293,7 @@ For more extensive documentation on the Computer Vision service, see the [Azure 
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-vision-computervision
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-cognitiveservices-vision-computervision
 
 [pypi_computervision]:https://pypi.org/project/azure-cognitiveservices-vision-computervision/
 [pypi_pillow]:https://pypi.org/project/Pillow/

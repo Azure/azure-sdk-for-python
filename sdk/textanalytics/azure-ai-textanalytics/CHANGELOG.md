@@ -265,7 +265,7 @@ https://azure.github.io/azure-sdk/releases/latest/python.html.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See README for a full list of optional configuration arguments.
 - Authentication using `azure-identity` credentials
   - see the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 - New error hierarchy:
     - All service errors will now use the base type: `azure.core.exceptions.HttpResponseError`
