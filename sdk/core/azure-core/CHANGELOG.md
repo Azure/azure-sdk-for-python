@@ -1,6 +1,12 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.16.0 (Unreleased)
+
+### New Features
+
+- Add new provisional module `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- Add new provisional methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
 
 
 ## 1.15.0 (2021-06-04)
