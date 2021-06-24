@@ -7,7 +7,7 @@ from devtools_testutils import AzureTestCase
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    PERCENTAGE,
+    FILTER_PERCENTAGE,
 )
 from wrapper import app_config_decorator
 
@@ -41,7 +41,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -121,7 +121,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -146,7 +146,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"

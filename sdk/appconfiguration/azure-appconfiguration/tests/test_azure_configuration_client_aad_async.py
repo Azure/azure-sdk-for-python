@@ -16,9 +16,9 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     SecretReferenceConfigurationSetting,
     FeatureFlagConfigurationSetting,
-    PERCENTAGE,
-    TARGETING,
-    TIME_WINDOW,
+    FILTER_PERCENTAGE,
+    FILTER_TARGETING,
+    FILTER_TIME_WINDOW,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from consts import (
@@ -572,7 +572,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": TARGETING,
+                    "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
                             u"Users": [u"abc", u"def"],
@@ -597,7 +597,7 @@ class AppConfigurationClientTest(AzureTestCase):
         filters = updated_sent_config.filters
         filters.append(
             {
-                "name": TARGETING,
+                "name": FILTER_TARGETING,
                 "parameters": {
                     u"Audience": {
                         u"Users": [u"abcd", u"defg"],
@@ -610,7 +610,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         filters.append(
             {
-                "name": TARGETING,
+                "name": FILTER_TARGETING,
                 "parameters": {
                     u"Audience": {
                         u"Users": [u"abcde", u"defgh"],
@@ -635,7 +635,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
                         "End": "Fri, 02 Apr 2021 04:00:00 GMT"
@@ -660,7 +660,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
                         "End": "Fri, 02 Apr 2021 04:00:00 GMT"
@@ -685,7 +685,7 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -710,20 +710,20 @@ class AppConfigurationClientTest(AzureTestCase):
             enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10
                     }
                 },
                 {
-                    "name": TIME_WINDOW,
+                    "name": FILTER_TIME_WINDOW,
                     "parameters": {
                         "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
                         "End": "Fri, 02 Apr 2021 04:00:00 GMT"
                     }
                 },
                 {
-                    "name": TARGETING,
+                    "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
                             u"Users": [u"abcde", u"defgh"],

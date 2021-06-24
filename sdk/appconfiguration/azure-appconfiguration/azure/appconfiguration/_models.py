@@ -76,7 +76,7 @@ class ConfigurationSetting(Model):
             try:
                 if key_value.content_type.startswith(
                     FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
-                ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):  # type: ignore
+                ) and key_value.key.startswith(FeatureFlagConfigurationSetting._key_prefix):  # type: ignore
                     return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
@@ -157,7 +157,7 @@ class FeatureFlagConfigurationSetting(
         "read_only": {"key": "read_only", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
     }
-    key_prefix = ".appconfig.featureflag/"
+    _key_prefix = ".appconfig.featureflag/"
     _feature_flag_content_type = (
         "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     )
@@ -167,7 +167,7 @@ class FeatureFlagConfigurationSetting(
         # type: (str, **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id
-        self.key = self.key_prefix + self.feature_id
+        self.key = self._key_prefix + self.feature_id
         self.label = kwargs.get("label", None)
         self.content_type = kwargs.get("content_type", self._feature_flag_content_type)
         self.last_modified = kwargs.get("last_modified", None)
@@ -230,7 +230,6 @@ class FeatureFlagConfigurationSetting(
         except JSONDecodeError:
             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
                 "'value' is expected to be a dictionary")
-
 
     @filters.setter
     def filters(self, new_filters):
