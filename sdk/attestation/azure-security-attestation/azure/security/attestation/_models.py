@@ -831,8 +831,8 @@ class AttestationToken(object):
                         )
             if (
                 kwargs.get("validate_not_before", True)
-                and hasattr(self, "not_before_time")
-                and self.not_before_time is not None
+                and hasattr(self, "not_before")
+                and self.not_before is not None
             ):
                 if time_now < self.not_before:
                     delta = self.not_before - time_now
