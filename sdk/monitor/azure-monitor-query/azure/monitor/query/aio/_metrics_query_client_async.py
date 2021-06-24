@@ -8,7 +8,7 @@
 # pylint: disable=anomalous-backslash-in-string
 
 from datetime import timedelta
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any, List, Optional
 
 from azure.core.async_paging import AsyncItemPaged
 
@@ -47,7 +47,7 @@ class MetricsQueryClient(object):
         self,
         resource_uri: str,
         metric_names: List,
-        duration: timedelta = None,
+        duration: Optional[timedelta] = None,
         **kwargs: Any
         ) -> MetricsResult:
         """Lists the metric values for a resource.

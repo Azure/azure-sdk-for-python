@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
@@ -54,7 +54,7 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     def query(self, resource_uri, metric_names, duration=None, **kwargs):
-        # type: (str, list, timedelta, Any) -> MetricsResult
+        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly

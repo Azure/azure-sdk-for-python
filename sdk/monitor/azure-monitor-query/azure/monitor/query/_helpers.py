@@ -50,10 +50,8 @@ def order_results(request_order, responses):
     return ordered
 
 def construct_iso8601(start=None, end=None, duration=None):
-    try:
+    if duration is not None:
         duration = 'PT{}S'.format(duration.total_seconds())
-    except AttributeError:
-        pass
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)

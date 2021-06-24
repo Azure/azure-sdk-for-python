@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import timedelta
-from typing import Any, Union, Sequence, Dict, TYPE_CHECKING
+from typing import Any, Union, Sequence, Dict, Optional, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
@@ -42,7 +42,7 @@ class LogsQueryClient(object):
         self,
         workspace_id: str,
         query: str,
-        duration: timedelta = None,
+        duration: Optional[timedelta] = None,
         **kwargs: Any) -> LogsQueryResults:
         """Execute an Analytics query.
 

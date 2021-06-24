@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict
+from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, Optional
 from azure.core.exceptions import HttpResponseError
 
 from ._generated._monitor_query_client import MonitorQueryClient
@@ -50,7 +50,7 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, duration=None, **kwargs):
-        # type: (str, str, timedelta, Any) -> LogsQueryResults
+        # type: (str, str, Optional[timedelta], Any) -> LogsQueryResults
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
