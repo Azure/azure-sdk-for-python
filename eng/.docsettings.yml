@@ -93,6 +93,7 @@ known_content_issues:
   - ['sdk/containerregistry/azure-containerregistry/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/attestation/azure-security-attestation/swagger/README.md', '#4554']
+  - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.md', '#4554']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']
