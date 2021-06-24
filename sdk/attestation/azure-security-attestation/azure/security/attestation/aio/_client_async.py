@@ -219,7 +219,7 @@ class AttestationClient(object):
 
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.get_body()), token
+        return AttestationResult._from_generated(token.body()), token
 
     @distributed_trace_async
     async def attest_open_enclave(
@@ -339,7 +339,7 @@ class AttestationClient(object):
 
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.get_body()), token
+        return AttestationResult._from_generated(token.body()), token
 
     @distributed_trace_async
     async def attest_tpm(self, request: str, **kwargs: Any) -> str:

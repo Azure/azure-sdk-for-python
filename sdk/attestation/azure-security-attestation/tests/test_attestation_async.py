@@ -226,7 +226,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         assert response.runtime_claims.get("jwk") is not None
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
-        assert token.get_body().iss == response.issuer
+        assert token.body().iss == response.issuer
 
     @AttestationPreparer()
     @AllInstanceTypes

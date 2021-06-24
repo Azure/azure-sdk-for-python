@@ -725,7 +725,7 @@ class AttestationToken(object):
         if "validation_callback" in kwargs:
             kwargs.get("validation_callback")(self, signer)
 
-    def get_body(self):
+    def body(self):
         # type: () -> Any
         """Returns the body of the attestation token as an object.
 

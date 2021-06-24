@@ -60,11 +60,11 @@ class TestAzureAttestationToken(object):
 
     def test_create_unsecured_token(self):
         token = AttestationToken(body={"val1": [1, 2, 3]})
-        assert token.get_body() == {"val1": [1, 2, 3]}
+        assert token.body() == {"val1": [1, 2, 3]}
 
     def test_create_unsecured_empty_token(self):
         token = AttestationToken(body=None)
-        assert token.get_body() is None
+        assert token.body() is None
         token._validate_token()
 
     def test_create_secured_token(self):
@@ -74,7 +74,7 @@ class TestAzureAttestationToken(object):
         token = AttestationToken(
             body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert
         )
-        assert token.get_body() == {"val1": [1, 2, 3]}
+        assert token.body() == {"val1": [1, 2, 3]}
         token._validate_token()
 
     def test_create_secured_empty_token(self):
@@ -82,7 +82,7 @@ class TestAzureAttestationToken(object):
         cert = self._create_x509_certificate(key, u"test certificate")
 
         token = AttestationToken(body=None, signing_key=key, signing_certificate=cert)
-        assert token.get_body() is None
+        assert token.body() is None
         token._validate_token()
 
     def test_token_callback(self):
@@ -92,7 +92,7 @@ class TestAzureAttestationToken(object):
         token = AttestationToken(
             body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert
         )
-        assert token.get_body() == {"val1": [1, 2, 3]}
+        assert token.body() == {"val1": [1, 2, 3]}
 
         global callback_invoked
         callback_invoked = False
@@ -112,7 +112,7 @@ class TestAzureAttestationToken(object):
         token = AttestationToken(
             body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert
         )
-        assert token.get_body() == {"val1": [1, 2, 3]}
+        assert token.body() == {"val1": [1, 2, 3]}
 
         global callback_invoked
         callback_invoked = False

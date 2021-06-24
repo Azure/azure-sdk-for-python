@@ -169,12 +169,12 @@ class AttestationAdministrationClient(object):
         token = AttestationToken(
             token=policyResult.token, body_type=GeneratedPolicyResult
         )
-        token_body = token.get_body()
+        token_body = token.body()
         stored_policy = AttestationToken(
             token=token_body.policy, body_type=GeneratedStoredAttestationPolicy
         )
 
-        policy_body = stored_policy.get_body()
+        policy_body = stored_policy.body()
         actual_policy = (
             policy_body.attestation_policy if policy_body else "".encode("ascii")
         )  # type: bytes
@@ -286,7 +286,7 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
 
-        return AttestationPolicyResult._from_generated(token.get_body()), token
+        return AttestationPolicyResult._from_generated(token.body()), token
 
     @distributed_trace_async
     async def reset_policy(
@@ -359,7 +359,7 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
 
-        return AttestationPolicyResult._from_generated(token.get_body()), token
+        return AttestationPolicyResult._from_generated(token.body()), token
 
     @distributed_trace_async
     async def get_policy_management_certificates(
@@ -419,7 +419,7 @@ class AttestationAdministrationClient(object):
             token._validate_token(await self._get_signers(**kwargs), **options)
         certificates = []
 
-        cert_list = token.get_body()
+        cert_list = token.body()
 
         for key in cert_list.policy_certificates.keys:
             key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
@@ -534,7 +534,7 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
         return AttestationPolicyCertificateResult._from_generated(
-            token.get_body()), token
+            token.body()), token
 
     @distributed_trace_async
     async def remove_policy_management_certificate(
@@ -641,7 +641,7 @@ class AttestationAdministrationClient(object):
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
         return AttestationPolicyCertificateResult._from_generated(
-            token.get_body()), token
+            token.body()), token
 
     async def _get_signers(self, **kwargs: Any) -> List[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens."""

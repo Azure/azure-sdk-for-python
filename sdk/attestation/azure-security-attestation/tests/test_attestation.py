@@ -225,7 +225,7 @@ class AttestationTest(AzureTestCase):
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
 
-        assert token.get_body().iss == response.issuer
+        assert token.body().iss == response.issuer
 
         response, token = attest_client.attest_open_enclave(
             oe_report,
