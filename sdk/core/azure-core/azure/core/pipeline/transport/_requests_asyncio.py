@@ -42,7 +42,7 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import to_rest_response_helper
 from .._tools_async import (
