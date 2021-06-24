@@ -66,7 +66,7 @@ def construct_iso8601(start=None, end=None, duration=None):
         end = Serializer.serialize_iso(end)
         iso_str = duration + '/' + end
     else:
-        iso_str =  duration
+        iso_str = duration
     return iso_str
 
 def _duration_to_iso8601(duration):
