@@ -5,24 +5,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
+import uuid
+import base64
 import gzip
+from os import path, remove
 
 import pytest
-import base64
-import unittest
-import uuid
-from os import path, remove, sys, urandom
-from azure.core.exceptions import HttpResponseError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
-    BlobClient,
     StorageErrorCode,
     BlobProperties,
     ContentSettings)
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -154,7 +151,7 @@ class StorageGetBlobTest(StorageTestCase):
         self._setup(storage_account, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        file_path = "C:/Users/xiafu/Downloads/testgzip.txt.gz"
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/testgzip.txt.gz"))
         data = self.get_random_bytes(1024*1024*1024)
 
         with gzip.open(file_path, 'wb') as stream2:
