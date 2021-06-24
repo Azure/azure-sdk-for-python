@@ -8,7 +8,7 @@ from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryClient, LogsQueryRequest
 
-from azure.monitor.query._helpers import _duration_to_iso8601
+from azure.monitor.query._helpers import construct_iso8601
 
 def _credential():
     credential  = ClientSecretCredential(
@@ -102,10 +102,10 @@ def test_duration_to_iso8601():
     d6 = timedelta(milliseconds=100000)
     d7 = timedelta(hours=24, days=1)
 
-    assert _duration_to_iso8601(d1) == 'PT86400.0S'
-    assert _duration_to_iso8601(d2) == 'PT604800.0S'
-    assert _duration_to_iso8601(d3) == 'PT2160000.0S'
-    assert _duration_to_iso8601(d4) == 'PT10.0S'
-    assert _duration_to_iso8601(d5) == 'PT0.001S'
-    assert _duration_to_iso8601(d5) == 'PT0.001S'
-    assert _duration_to_iso8601(d7) == 'PT172800.0S'
+    assert construct_iso8601(duration=d1) == 'PT86400.0S'
+    assert construct_iso8601(duration=d2) == 'PT604800.0S'
+    assert construct_iso8601(duration=d3) == 'PT2160000.0S'
+    assert construct_iso8601(duration=d4) == 'PT10.0S'
+    assert construct_iso8601(duration=d5) == 'PT0.001S'
+    assert construct_iso8601(duration=d5) == 'PT0.001S'
+    assert construct_iso8601(duration=d7) == 'PT172800.0S'
