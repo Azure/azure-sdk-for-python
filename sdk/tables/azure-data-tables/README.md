@@ -2,7 +2,7 @@
 
 Azure Data Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
 Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
-The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts.
+The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts. This document covers [`azure-data-tables`][Tables_pypi]. If you're using [`azure-cosmosdb-tables`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table), we recommend that you upgrade your code. See the [migration guide](./migration_guide.md) for more details.
 
 [Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
 
