@@ -1,14 +1,16 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false}}], "entityLinkingTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "opinionMining":
-      false}}]}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like
-      the hotel we stayed at.", "language": "english"}]}}'
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "bad",
+      "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "2"}], "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad",
+      "loggingOptOut": false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters":
+      {"model-version": "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "opinionMining": false}, "taskName": "4"}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "I did not like the hotel
+      we stayed at.", "language": "english"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -17,7 +19,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '743'
+      - '828'
       Content-Type:
       - application/json
       User-Agent:
@@ -31,11 +33,11 @@ interactions:
         job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01,2021-05-01."}}}'
     headers:
       apim-request-id:
-      - 3495be0b-6377-4e9b-b500-024a65887de0
+      - 360432b0-f52a-4653-a832-3d9cff7dfb18
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:26:29 GMT
+      - Wed, 23 Jun 2021 23:54:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

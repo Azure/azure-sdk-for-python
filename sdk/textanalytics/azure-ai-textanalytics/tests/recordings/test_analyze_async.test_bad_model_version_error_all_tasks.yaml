@@ -1,19 +1,21 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false}}], "entityLinkingTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
-      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "opinionMining":
-      false}}]}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like
-      the hotel we stayed at.", "language": "english"}]}}'
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "bad",
+      "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "2"}], "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad",
+      "loggingOptOut": false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters":
+      {"model-version": "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "opinionMining": false}, "taskName": "4"}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "I did not like the hotel
+      we stayed at.", "language": "english"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '743'
+      - '828'
       Content-Type:
       - application/json
       User-Agent:
@@ -26,13 +28,13 @@ interactions:
         task parameter value bad is not supported for model-version parameter for
         job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01,2021-05-01."}}}'
     headers:
-      apim-request-id: 5c21564d-da6f-4e3a-88a9-72efa8e28092
+      apim-request-id: f84fe450-cb02-4e59-9318-6e67595b8ada
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:36:44 GMT
+      date: Thu, 24 Jun 2021 00:05:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 400
       message: Bad Request

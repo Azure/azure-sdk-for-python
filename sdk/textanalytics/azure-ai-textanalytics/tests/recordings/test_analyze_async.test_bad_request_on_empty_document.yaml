@@ -2,13 +2,13 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": []}, "analysisInput":
-      {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
+      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '306'
+      - '323'
       Content-Type:
       - application/json
       User-Agent:
@@ -20,13 +20,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Document
         text is empty."}}}'
     headers:
-      apim-request-id: fa84ca2c-2342-4bb7-8349-4dfe7428667f
+      apim-request-id: 6229c177-dacb-47c4-9844-4fab6ea752df
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:36:44 GMT
+      date: Thu, 24 Jun 2021 00:05:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 400
       message: Bad Request

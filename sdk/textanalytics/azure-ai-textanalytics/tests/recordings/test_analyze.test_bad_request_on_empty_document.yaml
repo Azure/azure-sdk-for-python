@@ -2,8 +2,8 @@ interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false}}], "entityLinkingTasks": [], "sentimentAnalysisTasks": []}, "analysisInput":
-      {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
+      false}, "taskName": "0"}], "entityLinkingTasks": [], "sentimentAnalysisTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -12,7 +12,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '306'
+      - '323'
       Content-Type:
       - application/json
       User-Agent:
@@ -25,11 +25,11 @@ interactions:
         text is empty."}}}'
     headers:
       apim-request-id:
-      - edc28160-4bfb-4cb4-813b-dbd38087a44f
+      - 2d85870e-8f08-4fc8-8a01-d8d6340962ed
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:26:30 GMT
+      - Wed, 23 Jun 2021 23:54:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '5'
     status:
       code: 400
       message: Bad Request

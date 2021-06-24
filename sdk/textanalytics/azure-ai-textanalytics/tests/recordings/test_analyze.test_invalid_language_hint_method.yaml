@@ -1,15 +1,16 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
-      "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "opinionMining": false}}]}, "analysisInput":
-      {"documents": [{"id": "0", "text": "This should fail because we''re passing
-      in an invalid language hint", "language": "notalanguage"}]}}'
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest",
+      "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "2"}], "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest",
+      "loggingOptOut": false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters":
+      {"model-version": "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "opinionMining": false}, "taskName": "4"}]},
+      "analysisInput": {"documents": [{"id": "0", "text": "This should fail because
+      we''re passing in an invalid language hint", "language": "notalanguage"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -18,7 +19,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '791'
+      - '876'
       Content-Type:
       - application/json
       User-Agent:
@@ -30,11 +31,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - c07811c3-ff3b-42da-9d79-6cfb509030ee
+      - 4be94062-e31b-4736-bada-5fa54a367ff9
       date:
-      - Wed, 23 Jun 2021 01:27:08 GMT
+      - Wed, 23 Jun 2021 23:55:53 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '450'
+      - '344'
     status:
       code: 202
       message: Accepted
@@ -58,199 +59,19 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
   response:
     body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:09Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"21f05310-ac51-47b9-a432-5fba652e3efc","lastUpdateDateTime":"2021-06-23T23:55:54Z","createdDateTime":"2021-06-23T23:55:53Z","expirationDateTime":"2021-06-24T23:55:53Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T23:55:54.7123192Z","taskName":"3","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
     headers:
       apim-request-id:
-      - 02251fd0-16d3-448f-96e5-5c9595e362b9
+      - c4d90ce9-7388-49fe-9a2c-2282c4b39ca2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:27:13 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '50'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:09Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 874e0920-e95f-4f18-a5f1-363ac92e0a54
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:18 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '57'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:09Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 03fc1282-e9bc-4a95-a7c2-baa38f5f5c7d
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:23 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '48'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:09Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
-    headers:
-      apim-request-id:
-      - db3949b7-de9c-40c6-b3ad-27fcab66d880
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:29 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '46'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:09Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
-    headers:
-      apim-request-id:
-      - f8b6d52b-b449-44cb-bbc0-ed14865e6696
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:33 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '43'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:09Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 106fd220-3a47-4a3d-bd84-9195ed7df02a
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:38 GMT
+      - Wed, 23 Jun 2021 23:55:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -274,481 +95,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
   response:
     body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:44Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"21f05310-ac51-47b9-a432-5fba652e3efc","lastUpdateDateTime":"2021-06-23T23:56:00Z","createdDateTime":"2021-06-23T23:55:53Z","expirationDateTime":"2021-06-24T23:55:53Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T23:55:54.7123192Z","taskName":"3","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 116cc64e-f72d-4628-b393-1d4780423e86
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:44 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '110'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:44Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - e3a9eb34-b7ef-4102-80bf-aa70626d0b84
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:49 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '85'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:44Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 59385bbc-9a92-4f0c-9fa5-a4fe7e6f44b1
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:27:54 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '103'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:44Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 8dc759cf-593f-44e3-ab6c-59a7b3a0d2eb
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:00 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '87'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:27:44Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 44790b62-3f5d-4bac-be8c-a8db5f60ecd2
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:05 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '88'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:08Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 0702db2a-fd86-4fd7-b797-f70e445510d3
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:10 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '282'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:14Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":2,"failed":0,"inProgress":3,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 7645d742-a1c6-42d4-a721-1729538fa85e
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:15 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '84'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:20Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":3,"failed":0,"inProgress":2,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:20.0275393Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 2eb87892-1157-4b8f-afca-8eede5e4cf97
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:20 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '162'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:25Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":1,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:25.1164561Z","taskName":"NamedEntityRecognition_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:20.0275393Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 09baf2cf-7eb5-40d3-8c9a-5451ecb7922b
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:25 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '164'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:25Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":1,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:25.1164561Z","taskName":"NamedEntityRecognition_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:20.0275393Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 83c9be60-4168-426d-a67b-fb86e552afe2
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:31 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '992'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:25Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":1,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:25.1164561Z","taskName":"NamedEntityRecognition_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:20.0275393Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
-    headers:
-      apim-request-id:
-      - 9fce83ee-4496-487a-bd7e-9c6ae47317bf
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 23 Jun 2021 01:28:37 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '167'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/2d2f4746-6e21-4048-8a6e-ff0cb882075e
-  response:
-    body:
-      string: '{"jobId":"2d2f4746-6e21-4048-8a6e-ff0cb882075e","lastUpdateDateTime":"2021-06-23T01:28:39Z","createdDateTime":"2021-06-23T01:27:08Z","expirationDateTime":"2021-06-24T01:27:08Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":5,"failed":0,"inProgress":0,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:25.1164561Z","taskName":"NamedEntityRecognition_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:09.8034555Z","taskName":"EntityLinking_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:20.0275393Z","taskName":"PersonallyIdentifiableInformation_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-06-23T01:28:39.6608061Z","taskName":"KeyPhraseExtraction_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:00.2484822Z","taskName":"1","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: ja,ko,zh-Hans,da,fi,nl,pl,ru,sv,de,en,es,fr,it,pt-BR,pt-PT,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T01:27:44.0617122Z","taskName":"SentimentAnalysis_latest","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
-        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}}]}}'
     headers:
       apim-request-id:
-      - e112a490-45c6-473f-8ac6-d75f8439a22b
+      - 215e34f8-e0fc-474f-a966-6017c79e1870
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 23 Jun 2021 01:28:42 GMT
+      - Wed, 23 Jun 2021 23:56:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -756,7 +118,190 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '259'
+      - '83'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
+  response:
+    body:
+      string: '{"jobId":"21f05310-ac51-47b9-a432-5fba652e3efc","lastUpdateDateTime":"2021-06-23T23:56:05Z","createdDateTime":"2021-06-23T23:55:53Z","expirationDateTime":"2021-06-24T23:55:53Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":1,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.4439938Z","taskName":"0","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T23:55:54.7123192Z","taskName":"3","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.9133069Z","taskName":"2","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:00.2484822Z","taskName":"1","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,da,fi,nl,pl,ru,sv,de,en,es,fr,it,pt-BR,pt-PT,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 11dfbe6d-c6c5-4f31-8c95-b3a250969dd9
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 23 Jun 2021 23:56:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '173'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
+  response:
+    body:
+      string: '{"jobId":"21f05310-ac51-47b9-a432-5fba652e3efc","lastUpdateDateTime":"2021-06-23T23:56:05Z","createdDateTime":"2021-06-23T23:55:53Z","expirationDateTime":"2021-06-24T23:55:53Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":1,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.4439938Z","taskName":"0","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T23:55:54.7123192Z","taskName":"3","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.9133069Z","taskName":"2","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:00.2484822Z","taskName":"1","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,da,fi,nl,pl,ru,sv,de,en,es,fr,it,pt-BR,pt-PT,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 644e258b-ee85-4f5a-bc42-cb15018513f5
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 23 Jun 2021 23:56:14 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '173'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
+  response:
+    body:
+      string: '{"jobId":"21f05310-ac51-47b9-a432-5fba652e3efc","lastUpdateDateTime":"2021-06-23T23:56:05Z","createdDateTime":"2021-06-23T23:55:53Z","expirationDateTime":"2021-06-24T23:55:53Z","status":"running","errors":[],"displayName":"NA","tasks":{"completed":4,"failed":0,"inProgress":1,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.4439938Z","taskName":"0","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T23:55:54.7123192Z","taskName":"3","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.9133069Z","taskName":"2","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:00.2484822Z","taskName":"1","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,da,fi,nl,pl,ru,sv,de,en,es,fr,it,pt-BR,pt-PT,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}}]}}'
+    headers:
+      apim-request-id:
+      - a94529b0-b5fc-455c-bf7f-189bf409e730
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 23 Jun 2021 23:56:20 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '210'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze/jobs/21f05310-ac51-47b9-a432-5fba652e3efc
+  response:
+    body:
+      string: '{"jobId":"21f05310-ac51-47b9-a432-5fba652e3efc","lastUpdateDateTime":"2021-06-23T23:56:23Z","createdDateTime":"2021-06-23T23:55:53Z","expirationDateTime":"2021-06-24T23:55:53Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"completed":5,"failed":0,"inProgress":0,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.4439938Z","taskName":"0","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-06-01"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-06-23T23:55:54.7123192Z","taskName":"3","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:05.9133069Z","taskName":"2","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:00.2484822Z","taskName":"1","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,da,fi,nl,pl,ru,sv,de,en,es,fr,it,pt-BR,pt-PT,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2021-06-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-06-23T23:56:23.4363928Z","taskName":"4","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
+        For additional details see https://aka.ms/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id:
+      - ab272c3c-ca2c-4591-88be-5778d5df88c2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 23 Jun 2021 23:56:25 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '174'
     status:
       code: 200
       message: OK

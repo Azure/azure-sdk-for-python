@@ -1,21 +1,22 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
-      "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
-      false, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
-      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
-      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
-      "latest", "loggingOptOut": false, "opinionMining": false}}]}, "analysisInput":
-      {"documents": [{"id": "0", "text": "input document", "language": "en"}, {"id":
-      "1", "text": "input document", "language": "en"}, {"id": "2", "text": "input
-      document", "language": "en"}, {"id": "3", "text": "input document", "language":
-      "en"}, {"id": "4", "text": "input document", "language": "en"}, {"id": "5",
-      "text": "input document", "language": "en"}, {"id": "6", "text": "input document",
-      "language": "en"}, {"id": "7", "text": "input document", "language": "en"},
-      {"id": "8", "text": "input document", "language": "en"}, {"id": "9", "text":
-      "input document", "language": "en"}, {"id": "10", "text": "input document",
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "0"}], "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest",
+      "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}, "taskName":
+      "2"}], "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest",
+      "loggingOptOut": false}, "taskName": "1"}], "entityLinkingTasks": [{"parameters":
+      {"model-version": "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"},
+      "taskName": "3"}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "opinionMining": false}, "taskName": "4"}]},
+      "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
+      "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
+      "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
+      "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
+      {"id": "5", "text": "input document", "language": "en"}, {"id": "6", "text":
+      "input document", "language": "en"}, {"id": "7", "text": "input document", "language":
+      "en"}, {"id": "8", "text": "input document", "language": "en"}, {"id": "9",
+      "text": "input document", "language": "en"}, {"id": "10", "text": "input document",
       "language": "en"}, {"id": "11", "text": "input document", "language": "en"},
       {"id": "12", "text": "input document", "language": "en"}, {"id": "13", "text":
       "input document", "language": "en"}, {"id": "14", "text": "input document",
@@ -32,7 +33,7 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '2170'
+      - '2255'
       Content-Type:
       - application/json
       User-Agent:
@@ -44,13 +45,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 25 records are permitted."}}}'
     headers:
-      apim-request-id: 68c490b0-5f6c-4cb2-bae6-df9cfd271c43
+      apim-request-id: 0a642012-2554-47a8-8062-5a62c5e006ad
       content-type: application/json; charset=utf-8
-      date: Wed, 23 Jun 2021 01:43:10 GMT
+      date: Thu, 24 Jun 2021 00:11:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request

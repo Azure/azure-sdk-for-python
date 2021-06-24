@@ -1824,7 +1824,7 @@ class RecognizePiiEntitiesAction(DictMixin):
             self.disable_service_logs,
         )[:1024]
 
-    def to_generated(self):
+    def to_generated(self, task_id):
         return _v3_1_models.PiiTask(
             parameters=_v3_1_models.PiiTaskParameters(
                 model_version=self.model_version,
