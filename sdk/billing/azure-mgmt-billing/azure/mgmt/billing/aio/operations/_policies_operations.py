@@ -44,7 +44,7 @@ class PoliciesOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Policy":
         """Lists the policies for a billing profile. This operation is supported only for billing accounts
         with agreement type Microsoft Customer Agreement.
@@ -104,7 +104,7 @@ class PoliciesOperations:
         billing_account_name: str,
         billing_profile_name: str,
         parameters: "_models.Policy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Policy":
         """Updates the policies for a billing profile. This operation is supported only for billing
         accounts with agreement type Microsoft Customer Agreement.
@@ -170,7 +170,7 @@ class PoliciesOperations:
         self,
         billing_account_name: str,
         customer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomerPolicy":
         """Lists the policies for a customer. This operation is supported only for billing accounts with
         agreement type Microsoft Partner Agreement.
@@ -230,7 +230,7 @@ class PoliciesOperations:
         billing_account_name: str,
         customer_name: str,
         parameters: "_models.CustomerPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomerPolicy":
         """Updates the policies for a customer. This operation is supported only for billing accounts with
         agreement type Microsoft Partner Agreement.

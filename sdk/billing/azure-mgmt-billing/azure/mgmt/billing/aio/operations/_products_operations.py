@@ -45,7 +45,7 @@ class ProductsOperations:
         self,
         billing_account_name: str,
         customer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProductsListResult"]:
         """Lists the products for a customer. These don't include products billed based on usage.The
         operation is supported only for billing accounts with agreement type Microsoft Partner
@@ -121,7 +121,7 @@ class ProductsOperations:
         self,
         billing_account_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProductsListResult"]:
         """Lists the products for a billing account. These don't include products billed based on usage.
         The operation is supported for billing accounts with agreement type Microsoft Customer
@@ -201,7 +201,7 @@ class ProductsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProductsListResult"]:
         """Lists the products for a billing profile. These don't include products billed based on usage.
         The operation is supported for billing accounts with agreement type Microsoft Customer
@@ -285,7 +285,7 @@ class ProductsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProductsListResult"]:
         """Lists the products for an invoice section. These don't include products billed based on usage.
         The operation is supported only for billing accounts with agreement type Microsoft Customer
@@ -370,7 +370,7 @@ class ProductsOperations:
         self,
         billing_account_name: str,
         product_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Product":
         """Gets a product by ID. The operation is supported only for billing accounts with agreement type
         Microsoft Customer Agreement.
@@ -430,7 +430,7 @@ class ProductsOperations:
         billing_account_name: str,
         product_name: str,
         parameters: "_models.Product",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Product":
         """Updates the properties of a Product. Currently, auto renew can be updated. The operation is
         supported only for billing accounts with agreement type Microsoft Customer Agreement.
@@ -497,7 +497,7 @@ class ProductsOperations:
         billing_account_name: str,
         product_name: str,
         parameters: "_models.TransferProductRequestProperties",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Product"]:
         """Moves a product's charges to a new invoice section. The new invoice section must belong to the
         same billing profile as the existing invoice section. This operation is supported only for
@@ -573,7 +573,7 @@ class ProductsOperations:
         billing_account_name: str,
         product_name: str,
         parameters: "_models.TransferProductRequestProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateProductTransferEligibilityResult":
         """Validates if a product's charges can be moved to a new invoice section. This operation is
         supported only for products that are purchased with a recurring charge and for billing accounts

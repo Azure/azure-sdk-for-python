@@ -45,7 +45,7 @@ class BillingRoleDefinitionsOperations:
         self,
         billing_account_name: str,
         billing_role_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleDefinition":
         """Gets the definition for a role on a billing account. The operation is supported for billing
         accounts with agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -106,7 +106,7 @@ class BillingRoleDefinitionsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         billing_role_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleDefinition":
         """Gets the definition for a role on an invoice section. The operation is supported only for
         billing accounts with agreement type Microsoft Customer Agreement.
@@ -172,7 +172,7 @@ class BillingRoleDefinitionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         billing_role_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleDefinition":
         """Gets the definition for a role on a billing profile. The operation is supported for billing
         accounts with agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -233,7 +233,7 @@ class BillingRoleDefinitionsOperations:
     def list_by_billing_account(
         self,
         billing_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingRoleDefinitionListResult"]:
         """Lists the role definitions for a billing account. The operation is supported for billing
         accounts with agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -306,7 +306,7 @@ class BillingRoleDefinitionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingRoleDefinitionListResult"]:
         """Lists the role definitions for an invoice section. The operation is supported for billing
         accounts with agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -384,7 +384,7 @@ class BillingRoleDefinitionsOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingRoleDefinitionListResult"]:
         """Lists the role definitions for a billing profile. The operation is supported for billing
         accounts with agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.

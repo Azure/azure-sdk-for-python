@@ -43,7 +43,7 @@ class AddressOperations:
     async def validate(
         self,
         address: "_models.AddressDetails",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateAddressResponse":
         """Validates an address. Use the operation to validate an address before using it as soldTo or a
         billTo address.

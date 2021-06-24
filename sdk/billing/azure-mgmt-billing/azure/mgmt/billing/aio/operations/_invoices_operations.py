@@ -48,7 +48,7 @@ class InvoicesOperations:
         billing_account_name: str,
         period_start_date: str,
         period_end_date: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InvoiceListResult"]:
         """Lists the invoices for a billing account for a given start date and end date. The operation is
         supported for billing accounts with agreement type Microsoft Partner Agreement or Microsoft
@@ -131,7 +131,7 @@ class InvoicesOperations:
         billing_profile_name: str,
         period_start_date: str,
         period_end_date: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InvoiceListResult"]:
         """Lists the invoices for a billing profile for a given start date and end date. The operation is
         supported for billing accounts with agreement type Microsoft Partner Agreement or Microsoft
@@ -215,7 +215,7 @@ class InvoicesOperations:
         self,
         billing_account_name: str,
         invoice_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Invoice":
         """Gets an invoice by billing account name and ID. The operation is supported for billing accounts
         with agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -273,7 +273,7 @@ class InvoicesOperations:
     async def get_by_id(
         self,
         invoice_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Invoice":
         """Gets an invoice by ID. The operation is supported for billing accounts with agreement type
         Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -330,7 +330,7 @@ class InvoicesOperations:
         billing_account_name: str,
         invoice_name: str,
         download_token: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DownloadUrl"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DownloadUrl"]]
         error_map = {
@@ -386,7 +386,7 @@ class InvoicesOperations:
         billing_account_name: str,
         invoice_name: str,
         download_token: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DownloadUrl"]:
         """Gets a URL to download an invoice. The operation is supported for billing accounts with
         agreement type Microsoft Partner Agreement or Microsoft Customer Agreement.
@@ -399,8 +399,8 @@ class InvoicesOperations:
         :type download_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DownloadUrl or the result of cls(response)
@@ -456,7 +456,7 @@ class InvoicesOperations:
         self,
         billing_account_name: str,
         download_urls: List[str],
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DownloadUrl"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DownloadUrl"]]
         error_map = {
@@ -514,7 +514,7 @@ class InvoicesOperations:
         self,
         billing_account_name: str,
         download_urls: List[str],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DownloadUrl"]:
         """Gets a URL to download multiple invoice documents (invoice pdf, tax receipts, credit notes) as
         a zip file. The operation is supported for billing accounts with agreement type Microsoft
@@ -526,8 +526,8 @@ class InvoicesOperations:
         :type download_urls: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DownloadUrl or the result of cls(response)
@@ -581,7 +581,7 @@ class InvoicesOperations:
         self,
         period_start_date: str,
         period_end_date: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InvoiceListResult"]:
         """Lists the invoices for a subscription.
 
@@ -655,7 +655,7 @@ class InvoicesOperations:
     async def get_by_subscription_and_invoice_id(
         self,
         invoice_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Invoice":
         """Gets an invoice by subscription ID and invoice ID.
 
@@ -711,7 +711,7 @@ class InvoicesOperations:
         self,
         invoice_name: str,
         download_token: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DownloadUrl"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DownloadUrl"]]
         error_map = {
@@ -766,7 +766,7 @@ class InvoicesOperations:
         self,
         invoice_name: str,
         download_token: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DownloadUrl"]:
         """Gets a URL to download an invoice.
 
@@ -776,8 +776,8 @@ class InvoicesOperations:
         :type download_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DownloadUrl or the result of cls(response)
@@ -831,7 +831,7 @@ class InvoicesOperations:
     async def _download_multiple_billing_subscription_invoices_initial(
         self,
         download_urls: List[str],
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DownloadUrl"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DownloadUrl"]]
         error_map = {
@@ -888,7 +888,7 @@ class InvoicesOperations:
     async def begin_download_multiple_billing_subscription_invoices(
         self,
         download_urls: List[str],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DownloadUrl"]:
         """Gets a URL to download multiple invoice documents (invoice pdf, tax receipts, credit notes) as
         a zip file.
@@ -897,8 +897,8 @@ class InvoicesOperations:
         :type download_urls: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DownloadUrl or the result of cls(response)

@@ -48,7 +48,7 @@ class ReservationsOperations:
         orderby: Optional[str] = None,
         refresh_summary: Optional[str] = None,
         selected_state: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationsListResult"]:
         """Lists the reservations for a billing account and the roll up counts of reservations group by
         provisioning states.
@@ -142,7 +142,7 @@ class ReservationsOperations:
         orderby: Optional[str] = None,
         refresh_summary: Optional[str] = None,
         selected_state: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationsListResult"]:
         """Lists the reservations for a billing profile and the roll up counts of reservations group by
         provisioning state.

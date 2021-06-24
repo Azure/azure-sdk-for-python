@@ -45,7 +45,7 @@ class BillingRoleAssignmentsOperations:
         self,
         billing_account_name: str,
         billing_role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleAssignment":
         """Gets a role assignment for the caller on a billing account. The operation is supported for
         billing accounts with agreement type Microsoft Partner Agreement or Microsoft Customer
@@ -105,7 +105,7 @@ class BillingRoleAssignmentsOperations:
         self,
         billing_account_name: str,
         billing_role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleAssignment":
         """Deletes a role assignment for the caller on a billing account. The operation is supported for
         billing accounts with agreement type Microsoft Partner Agreement or Microsoft Customer
@@ -167,7 +167,7 @@ class BillingRoleAssignmentsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         billing_role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleAssignment":
         """Gets a role assignment for the caller on an invoice section. The operation is supported for
         billing accounts with agreement type Microsoft Customer Agreement.
@@ -234,7 +234,7 @@ class BillingRoleAssignmentsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         billing_role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleAssignment":
         """Deletes a role assignment for the caller on an invoice section. The operation is supported for
         billing accounts with agreement type Microsoft Customer Agreement.
@@ -300,7 +300,7 @@ class BillingRoleAssignmentsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         billing_role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleAssignment":
         """Gets a role assignment for the caller on a billing profile. The operation is supported for
         billing accounts with agreement type Microsoft Partner Agreement or Microsoft Customer
@@ -364,7 +364,7 @@ class BillingRoleAssignmentsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         billing_role_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingRoleAssignment":
         """Deletes a role assignment for the caller on a billing profile. The operation is supported for
         billing accounts with agreement type Microsoft Partner Agreement or Microsoft Customer
@@ -426,7 +426,7 @@ class BillingRoleAssignmentsOperations:
     def list_by_billing_account(
         self,
         billing_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingRoleAssignmentListResult"]:
         """Lists the role assignments for the caller on a billing account. The operation is supported for
         billing accounts with agreement type Microsoft Partner Agreement or Microsoft Customer
@@ -500,7 +500,7 @@ class BillingRoleAssignmentsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingRoleAssignmentListResult"]:
         """Lists the role assignments for the caller on an invoice section. The operation is supported for
         billing accounts with agreement type Microsoft Customer Agreement.
@@ -578,7 +578,7 @@ class BillingRoleAssignmentsOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingRoleAssignmentListResult"]:
         """Lists the role assignments for the caller on a billing profile. The operation is supported for
         billing accounts with agreement type Microsoft Customer Agreement.

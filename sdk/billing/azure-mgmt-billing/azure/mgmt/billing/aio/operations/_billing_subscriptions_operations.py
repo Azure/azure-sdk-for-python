@@ -47,7 +47,7 @@ class BillingSubscriptionsOperations:
         self,
         billing_account_name: str,
         customer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingSubscriptionsListResult"]:
         """Lists the subscriptions for a customer. The operation is supported only for billing accounts
         with agreement type Microsoft Partner Agreement.
@@ -121,7 +121,7 @@ class BillingSubscriptionsOperations:
     def list_by_billing_account(
         self,
         billing_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingSubscriptionsListResult"]:
         """Lists the subscriptions for a billing account. The operation is supported for billing accounts
         with agreement type Microsoft Customer Agreement or Microsoft Partner Agreement.
@@ -193,7 +193,7 @@ class BillingSubscriptionsOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingSubscriptionsListResult"]:
         """Lists the subscriptions that are billed to a billing profile. The operation is supported for
         billing accounts with agreement type Microsoft Customer Agreement or Microsoft Partner
@@ -270,7 +270,7 @@ class BillingSubscriptionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingSubscriptionsListResult"]:
         """Lists the subscriptions that are billed to an invoice section. The operation is supported only
         for billing accounts with agreement type Microsoft Customer Agreement.
@@ -347,7 +347,7 @@ class BillingSubscriptionsOperations:
     async def get(
         self,
         billing_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingSubscription":
         """Gets a subscription by its ID. The operation is supported for billing accounts with agreement
         type Microsoft Customer Agreement and Microsoft Partner Agreement.
@@ -404,7 +404,7 @@ class BillingSubscriptionsOperations:
         self,
         billing_account_name: str,
         parameters: "_models.BillingSubscription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingSubscription":
         """Updates the properties of a billing subscription. Currently, cost center can be updated. The
         operation is supported only for billing accounts with agreement type Microsoft Customer
@@ -470,7 +470,7 @@ class BillingSubscriptionsOperations:
         self,
         billing_account_name: str,
         parameters: "_models.TransferBillingSubscriptionRequestProperties",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.BillingSubscription"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BillingSubscription"]]
         error_map = {
@@ -529,7 +529,7 @@ class BillingSubscriptionsOperations:
         self,
         billing_account_name: str,
         parameters: "_models.TransferBillingSubscriptionRequestProperties",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BillingSubscription"]:
         """Moves a subscription's charges to a new invoice section. The new invoice section must belong to
         the same billing profile as the existing invoice section. This operation is supported for
@@ -541,8 +541,8 @@ class BillingSubscriptionsOperations:
         :type parameters: ~azure.mgmt.billing.models.TransferBillingSubscriptionRequestProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BillingSubscription or the result of cls(response)
@@ -597,7 +597,7 @@ class BillingSubscriptionsOperations:
         self,
         billing_account_name: str,
         parameters: "_models.TransferBillingSubscriptionRequestProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateSubscriptionTransferEligibilityResult":
         """Validates if a subscription's charges can be moved to a new invoice section. This operation is
         supported for billing accounts with agreement type Microsoft Customer Agreement.

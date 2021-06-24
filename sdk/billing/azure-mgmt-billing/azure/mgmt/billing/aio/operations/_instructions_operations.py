@@ -45,7 +45,7 @@ class InstructionsOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InstructionListResult"]:
         """Lists the instructions by billing profile id.
 
@@ -120,7 +120,7 @@ class InstructionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         instruction_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Instruction":
         """Get the instruction by name. These are custom billing instructions and are only applicable for
         certain customers.
@@ -184,7 +184,7 @@ class InstructionsOperations:
         billing_profile_name: str,
         instruction_name: str,
         parameters: "_models.Instruction",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Instruction":
         """Creates or updates an instruction. These are custom billing instructions and are only
         applicable for certain customers.

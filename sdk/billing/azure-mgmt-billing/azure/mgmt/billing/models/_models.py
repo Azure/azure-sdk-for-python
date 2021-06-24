@@ -3505,17 +3505,21 @@ class TransactionListResult(msrest.serialization.Model):
 
     :ivar value: The list of transactions.
     :vartype value: list[~azure.mgmt.billing.models.Transaction]
+    :ivar total_count: Total number of records.
+    :vartype total_count: int
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
 
     _validation = {
         'value': {'readonly': True},
+        'total_count': {'readonly': True},
         'next_link': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Transaction]'},
+        'total_count': {'key': 'totalCount', 'type': 'int'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -3525,6 +3529,7 @@ class TransactionListResult(msrest.serialization.Model):
     ):
         super(TransactionListResult, self).__init__(**kwargs)
         self.value = None
+        self.total_count = None
         self.next_link = None
 
 

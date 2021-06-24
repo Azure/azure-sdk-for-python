@@ -47,7 +47,7 @@ class InvoiceSectionsOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InvoiceSectionListResult"]:
         """Lists the invoice sections that a user has access to. The operation is supported only for
         billing accounts with agreement type Microsoft Customer Agreement.
@@ -123,7 +123,7 @@ class InvoiceSectionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.InvoiceSection":
         """Gets an invoice section by its ID. The operation is supported only for billing accounts with
         agreement type Microsoft Customer Agreement.
@@ -187,7 +187,7 @@ class InvoiceSectionsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         parameters: "_models.InvoiceSection",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.InvoiceSection"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.InvoiceSection"]]
         error_map = {
@@ -249,7 +249,7 @@ class InvoiceSectionsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         parameters: "_models.InvoiceSection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.InvoiceSection"]:
         """Creates or updates an invoice section. The operation is supported only for billing accounts
         with agreement type Microsoft Customer Agreement.
@@ -264,8 +264,8 @@ class InvoiceSectionsOperations:
         :type parameters: ~azure.mgmt.billing.models.InvoiceSection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either InvoiceSection or the result of cls(response)

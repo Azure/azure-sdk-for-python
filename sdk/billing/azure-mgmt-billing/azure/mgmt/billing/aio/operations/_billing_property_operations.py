@@ -42,7 +42,7 @@ class BillingPropertyOperations:
 
     async def get(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingProperty":
         """Get the billing properties for a subscription. This operation is not supported for billing
         accounts with agreement type Enterprise Agreement.
@@ -95,7 +95,7 @@ class BillingPropertyOperations:
     async def update(
         self,
         parameters: "_models.BillingProperty",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingProperty":
         """Updates the billing property of a subscription. Currently, cost center can be updated. The
         operation is supported only for billing accounts with agreement type Microsoft Customer

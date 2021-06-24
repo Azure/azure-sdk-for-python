@@ -43,7 +43,7 @@ class EnrollmentAccountsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.EnrollmentAccountListResult"]:
         """Lists the enrollment accounts the caller has access to.
 
@@ -107,7 +107,7 @@ class EnrollmentAccountsOperations:
     async def get(
         self,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EnrollmentAccountSummary":
         """Gets a enrollment account by name.
 

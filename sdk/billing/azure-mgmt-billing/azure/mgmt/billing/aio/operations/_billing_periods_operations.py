@@ -46,7 +46,7 @@ class BillingPeriodsOperations:
         filter: Optional[str] = None,
         skiptoken: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingPeriodsListResult"]:
         """Lists the available billing periods for a subscription in reverse chronological order. This is
         only supported for Azure Web-Direct subscriptions. Other subscription types which were not
@@ -132,7 +132,7 @@ class BillingPeriodsOperations:
     async def get(
         self,
         billing_period_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingPeriod":
         """Gets a named billing period.  This is only supported for Azure Web-Direct subscriptions. Other
         subscription types which were not purchased directly through the Azure web portal are not

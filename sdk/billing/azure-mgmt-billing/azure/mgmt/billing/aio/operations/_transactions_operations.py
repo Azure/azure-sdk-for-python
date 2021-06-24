@@ -45,7 +45,7 @@ class TransactionsOperations:
         self,
         billing_account_name: str,
         invoice_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TransactionListResult"]:
         """Lists the transactions for an invoice. Transactions include purchases, refunds and Azure usage
         charges.

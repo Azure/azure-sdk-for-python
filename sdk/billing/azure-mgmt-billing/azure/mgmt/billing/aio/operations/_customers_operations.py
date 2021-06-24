@@ -47,7 +47,7 @@ class CustomersOperations:
         billing_profile_name: str,
         search: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomerListResult"]:
         """Lists the customers that are billed to a billing profile. The operation is supported only for
         billing accounts with agreement type Microsoft Partner Agreement.
@@ -132,7 +132,7 @@ class CustomersOperations:
         billing_account_name: str,
         search: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomerListResult"]:
         """Lists the customers that are billed to a billing account. The operation is supported only for
         billing accounts with agreement type Microsoft Partner Agreement.
@@ -214,7 +214,7 @@ class CustomersOperations:
         billing_account_name: str,
         customer_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Customer":
         """Gets a customer by its ID. The operation is supported only for billing accounts with agreement
         type Microsoft Partner Agreement.

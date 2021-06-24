@@ -45,7 +45,7 @@ class BillingPermissionsOperations:
         self,
         billing_account_name: str,
         customer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingPermissionsListResult"]:
         """Lists the billing permissions the caller has for a customer.
 
@@ -118,7 +118,7 @@ class BillingPermissionsOperations:
     def list_by_billing_account(
         self,
         billing_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingPermissionsListResult"]:
         """Lists the billing permissions the caller has on a billing account.
 
@@ -190,7 +190,7 @@ class BillingPermissionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingPermissionsListResult"]:
         """Lists the billing permissions the caller has on an invoice section.
 
@@ -267,7 +267,7 @@ class BillingPermissionsOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingPermissionsListResult"]:
         """Lists the billing permissions the caller has on a billing profile.
 

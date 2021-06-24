@@ -46,7 +46,7 @@ class BillingAccountsOperations:
     def list(
         self,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BillingAccountListResult"]:
         """Lists the billing accounts that a user has access to.
 
@@ -115,7 +115,7 @@ class BillingAccountsOperations:
         self,
         billing_account_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BillingAccount":
         """Gets a billing account by its ID.
 
@@ -174,7 +174,7 @@ class BillingAccountsOperations:
         self,
         billing_account_name: str,
         parameters: "_models.BillingAccountUpdateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.BillingAccount"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BillingAccount"]]
         error_map = {
@@ -227,7 +227,7 @@ class BillingAccountsOperations:
         self,
         billing_account_name: str,
         parameters: "_models.BillingAccountUpdateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BillingAccount"]:
         """Updates the properties of a billing account. Currently, displayName and address can be updated.
         The operation is supported only for billing accounts with agreement type Microsoft Customer
@@ -240,8 +240,8 @@ class BillingAccountsOperations:
         :type parameters: ~azure.mgmt.billing.models.BillingAccountUpdateRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BillingAccount or the result of cls(response)
@@ -294,7 +294,7 @@ class BillingAccountsOperations:
     def list_invoice_sections_by_create_subscription_permission(
         self,
         billing_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InvoiceSectionListWithCreateSubPermissionResult"]:
         """Lists the invoice sections for which the user has permission to create Azure subscriptions. The
         operation is supported only for billing accounts with agreement type Microsoft Customer

@@ -45,7 +45,7 @@ class AgreementsOperations:
         self,
         billing_account_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AgreementListResult"]:
         """Lists the agreements for a billing account.
 
@@ -121,7 +121,7 @@ class AgreementsOperations:
         billing_account_name: str,
         agreement_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Agreement":
         """Gets an agreement by ID.
 

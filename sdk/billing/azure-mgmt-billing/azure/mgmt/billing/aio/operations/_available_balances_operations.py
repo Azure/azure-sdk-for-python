@@ -44,7 +44,7 @@ class AvailableBalancesOperations:
         self,
         billing_account_name: str,
         billing_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AvailableBalance":
         """The available credit balance for a billing profile. This is the balance that can be used for
         pay now to settle due or past due invoices. The operation is supported only for billing
