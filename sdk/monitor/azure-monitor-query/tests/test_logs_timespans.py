@@ -58,7 +58,7 @@ def test_query_duration_and_end_time():
 
     def callback(request):
         dic = json.loads(request.http_request.body)
-        assert 'P3D/' in dic.get('timespan')
+        assert 'PT259200.0S/' in dic.get('timespan')
 
     client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=duration, end_time=end_time, raw_request_hook=callback)
 
@@ -74,7 +74,7 @@ def test_query_duration_and_start_time():
 
     def callback(request):
         dic = json.loads(request.http_request.body)
-        assert '/P3D' in dic.get('timespan')
+        assert '/PT259200.0S' in dic.get('timespan')
 
     client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=duration, start_time=start_time, raw_request_hook=callback)
 
@@ -89,7 +89,7 @@ def test_query_duration_only():
 
     def callback(request):
         dic = json.loads(request.http_request.body)
-        assert 'P3D' in dic.get('timespan')
+        assert 'PT259200.0S' in dic.get('timespan')
 
     client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=duration, raw_request_hook=callback)
 

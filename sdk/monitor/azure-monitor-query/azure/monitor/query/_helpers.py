@@ -50,6 +50,8 @@ def order_results(request_order, responses):
     return ordered
 
 def construct_iso8601(start=None, end=None, duration=None):
+    if duration is not None:
+        duration = _duration_to_iso8601(duration)
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)
@@ -57,16 +59,14 @@ def construct_iso8601(start=None, end=None, duration=None):
             end = Serializer.serialize_iso(end)
             iso_str = start + '/' + end
         elif duration is not None:
-            iso_duration = _duration_to_iso8601(duration)
-            iso_str = start + '/' + iso_duration
+            iso_str = start + '/' + duration
         else:
             raise ValueError("Start time must be provided aling with duration or end time.")
     elif end is not None:
-        iso_duration = _duration_to_iso8601(duration)
         end = Serializer.serialize_iso(end)
-        iso_str = iso_duration + '/' + end
+        iso_str = duration + '/' + end
     else:
-        iso_str =  _duration_to_iso8601(duration)
+        iso_str =  duration
     return iso_str
 
 def _duration_to_iso8601(duration):
