@@ -51,7 +51,7 @@ def order_results(request_order, responses):
 
 def construct_iso8601(start=None, end=None, duration=None):
     try:
-        duration = _duration_to_iso8601(duration)
+        duration = 'PT{}S'.format(duration.total_seconds())
     except AttributeError:
         pass
     iso_str = None
@@ -70,6 +70,3 @@ def construct_iso8601(start=None, end=None, duration=None):
     else:
         iso_str = duration
     return iso_str
-
-def _duration_to_iso8601(duration):
-    return 'PT{}S'.format(duration.total_seconds())
