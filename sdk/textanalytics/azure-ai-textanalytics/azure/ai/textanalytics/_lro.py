@@ -196,7 +196,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
                 :start-after: [START analyze_healthcare_entities_with_cancellation]
                 :end-before: [END analyze_healthcare_entities_with_cancellation]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)

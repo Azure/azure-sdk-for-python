@@ -95,14 +95,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :start-after: [START create_ta_client_with_key]
             :end-before: [END create_ta_client_with_key]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the TextAnalyticsClient with endpoint and API key.
 
         .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START create_ta_client_with_aad]
             :end-before: [END create_ta_client_with_aad]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
@@ -174,7 +174,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START detect_language]
                 :end-before: [END detect_language]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
@@ -256,7 +256,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START recognize_entities]
                 :end-before: [END recognize_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -355,7 +355,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START recognize_pii_entities]
                 :end-before: [END recognize_pii_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -457,7 +457,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START recognize_linked_entities]
                 :end-before: [END recognize_linked_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize linked entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -559,7 +559,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START analyze_healthcare_entities]
                 :end-before: [END analyze_healthcare_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize healthcare entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -667,7 +667,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START extract_key_phrases]
                 :end-before: [END extract_key_phrases]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Extract the key phrases in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -759,7 +759,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START analyze_sentiment]
                 :end-before: [END analyze_sentiment]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Analyze sentiment in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -874,7 +874,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START analyze]
                 :end-before: [END analyze]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Start a long-running operation to perform a variety of text analysis
                     actions over a batch of documents.
         """
