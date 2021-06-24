@@ -20,10 +20,15 @@ from .._shared.response_handlers import process_storage_error, parse_length_from
 from .._deserialize import get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 
+
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = data.response.body()
+    # content = data.response.body()
+    content = b''
+    async for a in data:
+        content += a
+
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
@@ -97,22 +102,22 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                         range=range_header,
                         range_get_content_md5=range_validation,
                         validate_content=self.validate_content,
+                        decompress=self.decompress,
                         data_stream_total=self.total_size,
                         download_stream_current=self.progress_total,
                         **self.request_options
                     )
-                    retry_active = False
-
                 except HttpResponseError as error:
                     process_storage_error(error)
+
+                try:
+                    chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
+                    retry_active = False
                 except ClientPayloadError as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
                     await asyncio.sleep(1)
-
-            chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
-
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
@@ -220,6 +225,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self._encoding = encoding
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
+        self._decompress = kwargs.pop("decompress", True)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -268,16 +274,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         # TODO: Set to the stored MD5 when the service returns this
         self.properties.content_md5 = None
 
-        if self.size == 0:
-            self._current_content = b""
-        else:
-            self._current_content = await process_content(
-                self._response,
-                self._initial_offset[0],
-                self._initial_offset[1],
-                self._encryption_options
-            )
-
     async def _initial_request(self):
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
@@ -294,6 +290,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     range=range_header,
                     range_get_content_md5=range_validation,
                     validate_content=self._validate_content,
+                    decompress=self._decompress,
                     data_stream_total=None,
                     download_stream_current=0,
                     **self._request_options)
@@ -312,7 +309,6 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self.size = self._file_size - self._start_range
                 else:
                     self.size = self._file_size
-                retry_active = False
 
             except HttpResponseError as error:
                 if self._start_range is None and error.response.status_code == 416:
@@ -322,6 +318,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     try:
                         _, response = await self._clients.blob.download(
                             validate_content=self._validate_content,
+                            decompress=self._decompress,
                             data_stream_total=0,
                             download_stream_current=0,
                             **self._request_options)
@@ -334,7 +331,17 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self._file_size = 0
                 else:
                     process_storage_error(error)
-
+            try:
+                if self.size == 0:
+                    self._current_content = b""
+                else:
+                    self._current_content = await process_content(
+                        response,
+                        self._initial_offset[0],
+                        self._initial_offset[1],
+                        self._encryption_options
+                    )
+                retry_active = False
             except ClientPayloadError as error:
                 retry_total -= 1
                 if retry_total <= 0:
@@ -393,6 +400,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 stream=None,
                 parallel=False,
                 validate_content=self._validate_content,
+                decompress=self._decompress,
                 encryption_options=self._encryption_options,
                 use_location=self._location_mode,
                 **self._request_options)
@@ -493,6 +501,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             stream=stream,
             parallel=parallel,
             validate_content=self._validate_content,
+            decompress=self._decompress,
             encryption_options=self._encryption_options,
             use_location=self._location_mode,
             **self._request_options)
