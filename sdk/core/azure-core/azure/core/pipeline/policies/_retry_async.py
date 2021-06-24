@@ -176,4 +176,4 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                     absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
-        return prepare_response(response)
+        return prepare_response(my_request, response)

@@ -47,6 +47,7 @@ from azure.core.exceptions import (
 
 from .. import PipelineRequest, PipelineResponse, SupportedFormat
 from ._base import SansIOHTTPPolicy
+from .._tools import prepare_request, prepare_response
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpResponse, AsyncHttpResponse
@@ -99,6 +100,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        request = prepare_request(self, request)
         request.http_request.headers.update(self.headers)
         additional_headers = request.context.options.pop('headers', {})
         if additional_headers:
@@ -149,6 +151,7 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        request = prepare_request(self, request)
         request_id = unset = object()
         if 'request_id' in request.context.options:
             request_id = request.context.options.pop('request_id')
@@ -234,6 +237,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        request = prepare_request(self, request)
         http_request = request.http_request
         options_dict = request.context.options
         if 'user_agent' in options_dict:
@@ -278,6 +282,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        request = prepare_request(self, request)
         http_request = request.http_request
         options = request.context.options
         logging_enable = options.pop("logging_enable", self.enable_http_logger)
@@ -320,6 +325,8 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
+        request = prepare_request(self, request)
+        response = prepare_response(request, response)
         http_response = response.http_response
         try:
             logging_enable = response.context["logging_enable"]
@@ -413,6 +420,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        request = prepare_request(self, request)
         http_request = request.http_request
         options = request.context.options
         # Get logger in my context first (request has been retried)
@@ -456,6 +464,8 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
+        request = prepare_request(self, request)
+        response = prepare_response(request, response)
         http_response = response.http_response
 
         try:
@@ -622,6 +632,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         """
+        request = prepare_request(self, request)
+        response = prepare_response(request, response)
         # If response was asked as stream, do NOT read anything and quit now
         if response.context.options.get("stream", True):
             return

@@ -202,7 +202,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 **config
             )
             response = RestAioHttpTransportResponse(
-                request=prepared_request, internal_response=result
+                request=my_request, internal_response=result
             )
             self._connection_data_block_size = self.connection_config.data_block_size
             response._decompress = not auto_decompress

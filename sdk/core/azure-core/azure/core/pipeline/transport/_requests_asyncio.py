@@ -119,7 +119,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     prepared_request.url,
                     headers=prepared_request.headers,
                     data=data_to_send,
-                    files=request._files,
+                    files=prepared_request._files,
                     verify=kwargs.pop('connection_verify', self.connection_config.verify),
                     timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                     cert=kwargs.pop('connection_cert', self.connection_config.cert),

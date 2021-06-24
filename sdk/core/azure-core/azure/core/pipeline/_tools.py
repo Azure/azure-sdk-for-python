@@ -101,10 +101,10 @@ def get_format(input):
 
     :param input: Request or response
     """
-    if hasattr(input, "http_request"):
-        inner_input = input.http_request
-    elif hasattr(input, "http_response"):
+    if hasattr(input, "http_response"):
         inner_input = input.http_response
+    elif hasattr(input, "http_request"):
+        inner_input = input.http_request
     else:
         inner_input = input
     if hasattr(inner_input, "content"):
@@ -171,7 +171,7 @@ def prepare_response(request, response):
     """
     if get_format(request) == get_format(response):
         return response
-    if hasattr(request, "http_request"):
+    if hasattr(response, "http_response"):
         # if I'm a PipelineResponse, need to call a cls method to create a new one
         return PipelineResponse._convert(response)
     return response._convert()
