@@ -28,6 +28,7 @@ from ._utils import (
     trace_message,
     utc_from_timestamp,
     transform_messages_if_needed,
+    transform_single_message_if_needed,
 )
 from ._constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
@@ -549,7 +550,7 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
 
-        outgoing_event_data = transform_messages_if_needed(event_data, EventData)
+        outgoing_event_data = transform_single_message_if_needed(event_data, EventData)
 
         if self._partition_key:
             if (

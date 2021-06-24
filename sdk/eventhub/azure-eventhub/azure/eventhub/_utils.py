@@ -270,8 +270,18 @@ def parse_sas_credential(credential):
     return (sas, expiry)
 
 
-def _convert_to_single_event_data(message, message_type):
+def transform_single_message_if_needed(message, message_type):
     # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
+    """
+    This method serves multiple goals:
+    1. update the internal message to reflect any updates to settable properties on EventData
+    2. transform the AmqpAnnotatedMessage to be EventData
+    :param message: A single instance of message of type EventData
+        or AmqpAnnotatedMessage.
+    :type message: ~azure.eventhub.common.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage
+    :param Type[EventData] message_type: The class type to return the messages as.
+    :rtype: EventData
+    """
     try:
         # EventData
         # pylint: disable=protected-access
@@ -290,11 +300,11 @@ def transform_messages_if_needed(messages, message_type):
     This method serves multiple goals:
     1. update the internal messages to reflect any updates to settable properties on EventData
     2. transform the AmqpAnnotatedMessage to be EventData
-    :param MessagesType messages: A list or single instance of messages of type ServiceBusMessage
+    :param MessagesType messages: A list or single instance of messages of type EventData 
         or AmqpAnnotatedMessage.
     :param Type[EventData] message_type: The class type to return the messages as.
     :rtype: Union[EventData, List[EventData]]
     """
     if isinstance(messages, Iterable):
-        return [_convert_to_single_event_data(m, message_type) for m in messages]
-    return _convert_to_single_event_data(messages, message_type)
+        return [transform_single_message_if_needed(m, message_type) for m in messages]
+    return transform_single_message_if_needed(messages, message_type)
