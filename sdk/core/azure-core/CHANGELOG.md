@@ -2,6 +2,9 @@
 
 ## 1.15.1 (Unreleased)
 
+### Breaking Changes
+
+- Sync stream downloading now raises `azure.core.exceptions.DecodeError` rather than `requests.exceptions.ContentDecodingError`
 
 ## 1.15.0 (2021-06-04)
 
