@@ -36,7 +36,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
-from azure.core.pipeline import Pipeline
+from .. import Pipeline
 from ._base import HttpRequest, SupportedFormat
 from ._base_async import (
     AsyncHttpResponse,
@@ -45,6 +45,7 @@ from ._base_async import (
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
 from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
+from .._tools import to_rest_response_helper, to_pipeline_transport_helper, prepare_request
 from .._tools_async import iter_raw_helper, iter_bytes_helper
 from ...rest import HttpRequest as RestHttpRequest
 
@@ -112,13 +113,8 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         """
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
-    def _to_rest_response(self):
-        response = RestTrioRequestsTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
-            internal_response=self.internal_response,
-        )
-        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
-        return response
+    def _convert(self):
+        return to_rest_response_helper(self, TrioRequestsTransportResponse)
 
 class RestTrioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
@@ -158,6 +154,9 @@ class RestTrioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTran
         self.internal_response.close()
         await trio.sleep(0)
 
+    def _convert(self):
+        return to_pipeline_transport_helper(self, TrioRequestsTransportResponse)
+
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
@@ -183,7 +182,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
 
     @property
     def supported_formats(self):
-        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+        return [SupportedFormat.REST]
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
@@ -197,21 +196,22 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        prepared_request = prepare_request(self, request)
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        data_to_send = await self._retrieve_request_data(request)
+        data_to_send = await self._retrieve_request_data(prepared_request)
         try:
             try:
                 response = await trio.to_thread.run_sync(
                     functools.partial(
                         self.session.request,
-                        request.method,
-                        request.url,
-                        headers=request.headers,
+                        prepared_request.method,
+                        prepared_request.url,
+                        headers=prepared_request.headers,
                         data=data_to_send,
-                        files=request.files,
+                        files=prepared_request._files,
                         verify=kwargs.pop('connection_verify', self.connection_config.verify),
                         timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                         cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -222,11 +222,11 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
                 response = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
                     functools.partial(
                         self.session.request,
-                        request.method,
-                        request.url,
-                        headers=request.headers,
-                        data=request.data,
-                        files=request.files,
+                        prepared_request.method,
+                        prepared_request.url,
+                        headers=prepared_request.headers,
+                        data=prepared_request._data,
+                        files=prepared_request._files,
                         verify=kwargs.pop('connection_verify', self.connection_config.verify),
                         timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                         cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -249,4 +249,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         if error:
             raise error
 
-        return TrioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        response = RestTrioRequestsTransportResponse(
+            request=request, internal_response=response
+        )
+        response._connection_data_block_size = self.connection_config.data_block_size
+        if not kwargs.get("stream", False):
+
+            await response.read()
+            await response.close()
+        return response

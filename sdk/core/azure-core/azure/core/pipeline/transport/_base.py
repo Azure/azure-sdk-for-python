@@ -67,14 +67,15 @@ from typing import (
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import (
+from .. import (
     ABC,
     AbstractContextManager,
     PipelineRequest,
     PipelineResponse,
     PipelineContext,
+    SupportedFormat,
 )
-from .._tools import await_result as _await_result, prepare_request_helper, update_response_based_on_format_helper
+from .._tools import await_result as _await_result, to_rest_response_helper
 from ..._utils import _case_insensitive_dict
 
 if TYPE_CHECKING:
@@ -156,10 +157,6 @@ def _serialize_request(http_request):
     )
     return serializer.buffer
 
-class SupportedFormat(str, Enum):
-    PIPELINE_TRANSPORT = "pipeline_transport"
-    REST = "rest"
-
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
 ):  # type: ignore
@@ -191,19 +188,6 @@ class HttpTransport(
     @property
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT]
-
-    def prepare_request(self, request, **kwargs):
-        return prepare_request_helper(
-            transport=self, request=request, **kwargs
-        )
-
-    def update_response_based_on_format(  # pylint: disable=no-self-use
-        self, request, pipeline_transport_response
-    ):
-        return update_response_based_on_format_helper(
-            request, pipeline_transport_response
-        )
-
 
 class HttpRequest(object):
     """Represents a HTTP request.
@@ -492,14 +476,14 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
-    @classmethod
-    def _from_rest_request(cls, request):
-        return cls(
-            method=request.method,
-            url=request.url,
-            headers=request.headers,
-            files=request._files,  # pylint: disable=protected-access
-            data=request._data  # pylint: disable=protected-access
+    def _convert(self):
+        from ...rest import HttpRequest as RestHttpRequest
+        return RestHttpRequest(
+            method=self.method,
+            url=self.url,
+            headers=self.headers,
+            files=self.files,
+            data=self.data
         )
 
 
@@ -607,6 +591,11 @@ class _HttpResponseBase(object):
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
+    def _convert(self):
+        # Since PipelineTransport is the older way of doing requests and responses,
+        # we want to use Rest requests and responses as much as possible
+        raise NotImplementedError()
+
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     def stream_download(self, pipeline, **kwargs):
@@ -656,6 +645,10 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
                 ]
 
         return responses
+
+    def _convert(self):
+        from ...rest import HttpResponse as RestHttpResponse
+        return to_rest_response_helper(self, RestHttpResponse)
 
 
 class _HttpClientTransportResponse(_HttpResponseBase):

@@ -33,7 +33,7 @@ import logging
 import time
 from enum import Enum
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-from azure.core.pipeline import PipelineResponse
+from .. import PipelineResponse, SupportedFormat
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -45,6 +45,7 @@ from azure.core.exceptions import (
 
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
+from .._tools import prepare_request, prepare_response
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -258,19 +259,19 @@ class RetryPolicyBase(object):
         if self.is_exhausted(settings):
             return False
 
-        if response.http_request.body and hasattr(response.http_request.body, 'read'):
+        if response.http_request.content and hasattr(response.http_request.content, 'read'):
             if 'body_position' not in settings:
                 return False
             try:
                 # attempt to rewind the body to the initial position
-                response.http_request.body.seek(settings['body_position'], SEEK_SET)
+                response.http_request.content.seek(settings['body_position'], SEEK_SET)
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
         file_positions = settings.get('file_positions')
-        if response.http_request.files and file_positions:
+        if response.http_request._files and file_positions:
             try:
-                for value in response.http_request.files.values():
+                for value in response.http_request._files.values():
                     file_name, body = value[0], value[1]
                     if file_name in file_positions:
                         position = file_positions[file_name]
@@ -316,17 +317,17 @@ class RetryPolicyBase(object):
     def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
-        if request.http_request.body and hasattr(request.http_request.body, 'read'):
+        if request.http_request.content and hasattr(request.http_request.content, 'read'):
             try:
-                body_position = request.http_request.body.tell()
+                body_position = request.http_request.content.tell()
             except (AttributeError, UnsupportedOperation):
                 # if body position cannot be obtained, then retries will not work
                 pass
         else:
-            if request.http_request.files:
+            if request.http_request._files:
                 file_positions = {}
                 try:
-                    for value in request.http_request.files.values():
+                    for value in request.http_request._files.values():
                         name, body = value[0], value[1]
                         if name and body and hasattr(body, 'read'):
                             position = body.tell()
@@ -336,6 +337,10 @@ class RetryPolicyBase(object):
 
         retry_settings['body_position'] = body_position
         retry_settings['file_positions'] = file_positions
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 class RetryPolicy(RetryPolicyBase, HTTPPolicy):
     """A retry policy.
@@ -432,8 +437,10 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         """
         retry_active = True
         response = None
-        retry_settings = self.configure_retries(request.context.options)
-        self._configure_positions(request, retry_settings)
+
+        my_request = prepare_request(self, request)
+        retry_settings = self.configure_retries(my_request.context.options)
+        self._configure_positions(my_request, retry_settings)
 
         absolute_timeout = retry_settings['timeout']
         is_response_error = True
@@ -441,12 +448,14 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         while retry_active:
             try:
                 start_time = time.time()
-                self._configure_timeout(request, absolute_timeout, is_response_error)
-                response = self.next.send(request)
+                self._configure_timeout(my_request, absolute_timeout, is_response_error)
+
+                next_request = prepare_request(self.next, request)
+                response = self.next.send(next_request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport, response=response)
+                        self.sleep(retry_settings, my_request.context.transport, response=response)
                         is_response_error = True
                         continue
                 break
@@ -455,10 +464,10 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
-                    retry_active = self.increment(retry_settings, response=request, error=err)
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, my_request.http_request):
+                    retry_active = self.increment(retry_settings, response=my_request, error=err)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
+                        self.sleep(retry_settings, my_request.context.transport)
                         if isinstance(err, ServiceRequestError):
                             is_response_error = False
                         else:
@@ -471,4 +480,4 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                     absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
-        return response
+        return prepare_response(request, response)

@@ -300,7 +300,7 @@ async def test_retry_seekable_file(request_type, response_type):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-async def test_retry_timeout(request_type, add_properties_to_transport):
+async def test_retry_timeout(request_type, add_supported_format_rest_to_mock):
     timeout = 1
 
     def send(request, **kwargs):
@@ -314,7 +314,7 @@ async def test_retry_timeout(request_type, add_properties_to_transport):
         connection_config=ConnectionConfiguration(connection_timeout=timeout * 2),
         sleep=asyncio.sleep,
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
@@ -323,7 +323,7 @@ async def test_retry_timeout(request_type, add_properties_to_transport):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportAsyncHttpResponse), (RestHttpRequest, RestAsyncHttpResponse)])
-async def test_timeout_defaults(request_type, response_type, add_properties_to_transport):
+async def test_timeout_defaults(request_type, response_type, add_supported_format_rest_to_mock):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
     async def send(request, **kwargs):
@@ -344,7 +344,7 @@ async def test_timeout_defaults(request_type, response_type, add_properties_to_t
         send=Mock(wraps=send),
         sleep=Mock(side_effect=Exception("policy should not sleep: its first send succeeded")),
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy()])
 
     await pipeline.run(request_type("GET", "http://127.0.0.1/"))
@@ -355,7 +355,7 @@ async def test_timeout_defaults(request_type, response_type, add_properties_to_t
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error, add_properties_to_transport):
+async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error, add_supported_format_rest_to_mock):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -365,7 +365,7 @@ async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, 
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=asyncio.sleep),
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
@@ -378,7 +378,7 @@ async def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, 
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-async def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error, add_properties_to_transport):
+async def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error, add_supported_format_rest_to_mock):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -388,7 +388,7 @@ async def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeo
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=asyncio.sleep),
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):

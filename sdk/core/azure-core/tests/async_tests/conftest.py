@@ -10,7 +10,7 @@ import pytest
 from async_generator import yield_, async_generator
 from azure.core.pipeline import policies
 from azure.core.configuration import Configuration
-from azure.core import AsyncPipelineClient
+
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -41,6 +41,7 @@ class TestRestClientConfiguration(Configuration):
 class AsyncTestRestClient(object):
 
     def __init__(self, **kwargs):
+        from azure.core import AsyncPipelineClient
         self._config = TestRestClientConfiguration(**kwargs)
 
         self._client = AsyncPipelineClient(

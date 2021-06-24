@@ -29,11 +29,10 @@ import functools
 import subprocess
 import pytest
 import sys
-from azure.core.pipeline import policies
+from azure.core.pipeline import policies, transport
 from azure.core.configuration import Configuration
 from azure.core import PipelineClient
 from azure.core.pipeline.transport._base import SupportedFormat
-from azure.core.pipeline._tools import prepare_request_helper, update_response_based_on_format_helper
 
 def start_testserver():
     os.environ["FLASK_APP"] = "coretestserver"
@@ -116,12 +115,10 @@ def client():
     return TestRestClient()
 
 @pytest.fixture
-def add_properties_to_transport():
-    def _callback(transport_mock):
-        # need to add some stuff to transport to mock the new properties we've added
-        transport_mock.supported_formats = [SupportedFormat.REST, SupportedFormat.PIPELINE_TRANSPORT]
-        transport_mock.prepare_request = functools.partial(prepare_request_helper, transport_mock)
-        transport_mock.update_response_based_on_format = update_response_based_on_format_helper
+def add_supported_format_rest_to_mock():
+    def _callback(mock):
+        # Our transports and policies have switched to supported format being rest
+        mock.supported_formats = [SupportedFormat.REST]
     return _callback
 
 # Ignore collection of async tests for Python 2

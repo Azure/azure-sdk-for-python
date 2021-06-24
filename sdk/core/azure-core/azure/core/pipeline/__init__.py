@@ -23,8 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
 import abc
+from enum import Enum
 from typing import TypeVar, Generic
 
 try:
@@ -34,6 +34,10 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
+class SupportedFormat(str, Enum):
+    PIPELINE_TRANSPORT = "pipeline_transport"
+    REST = "rest"
 
 try:
     from contextlib import (  # pylint: disable=unused-import
@@ -149,6 +153,22 @@ class PipelineRequest(Generic[HTTPRequestType]):
         self.http_request = http_request
         self.context = context
 
+    @classmethod
+    def _convert(cls, current):
+        """Create a new PipelineRequest with converted http_request
+
+        This convert method is different than the ones for azure.core.rest.HttpRequest
+        and azure.core.pipeline.transport.HttpRequest because it needs to be a classmethod
+        to create a new PipelineRequest with a converted http_request property
+
+        :param current: The current PipelineRequest, whose inner http_request we're looking to convert
+        :type current: ~azure.core.pipeline.PipelineRequest
+        """
+        return cls(
+            http_request=current.http_request._convert(),
+            context=current.context
+        )
+
 
 class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     """A pipeline response object.
@@ -174,10 +194,27 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
         self.http_response = http_response
         self.context = context
 
+    @classmethod
+    def _convert(cls, current):
+        """Create a new PipelineResponse with converted http_response
+
+        This convert method is different than the ones for azure.core.rest.HttpResponse
+        and azure.core.pipeline.transport.HttpResponse because it needs to be a classmethod
+        to create a new PipelineResponse with a converted http_response property
+
+        :param current: The current PipelineResponse, whose inner http_response we're looking to convert
+        :type current: ~azure.core.pipeline.PipelineResponse
+        """
+        return cls(
+            http_request=current.http_request._convert(),
+            http_response=current.http_response._convert(),
+            context=current.context
+        )
+
 
 from ._base import Pipeline  # pylint: disable=wrong-import-position
 
-__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext"]
+__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext", "SupportedFormat"]
 
 try:
     from ._base_async import AsyncPipeline  # pylint: disable=unused-import

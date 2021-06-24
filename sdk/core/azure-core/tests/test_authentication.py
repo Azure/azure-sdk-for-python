@@ -25,15 +25,8 @@ except ImportError:
     # python < 3.3
     from mock import Mock
 
-class MockPipelineTransportResponse(object):
-    # for azure.core.rest cases, since we access internal_response and block_size to modify the response to a rest responses
-    def __init__(self):
-        self.internal_response = None
-        self.block_size = None
-
-
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_adds_header(request_type, add_properties_to_transport):
+def test_bearer_policy_adds_header(request_type, add_supported_format_rest_to_mock):
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
     expected_token = AccessToken("expected_token", 2524608000)
@@ -43,10 +36,12 @@ def test_bearer_policy_adds_header(request_type, add_properties_to_transport):
         return Mock()
 
     fake_credential = Mock(get_token=Mock(return_value=expected_token))
-    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+    second_policy = Mock(send=verify_authorization_header)
+    add_supported_format_rest_to_mock(second_policy)
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), second_policy]
 
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=policies)
     pipeline.run(request_type("GET", "https://spam.eggs"))
 
@@ -58,16 +53,22 @@ def test_bearer_policy_adds_header(request_type, add_properties_to_transport):
     assert fake_credential.get_token.call_count == 1
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_send(request_type, add_properties_to_transport):
+def test_bearer_policy_send(request_type, add_supported_format_rest_to_mock):
     """The bearer token policy should invoke the next policy's send method and return the result"""
     expected_request = request_type("GET", "https://spam.eggs")
     expected_response = Mock()
+    if hasattr(request_type, "body"):
+        # this is bc we do a format check on the response before passing it back
+        # if it has a body, we assume the response is pipeline transport
+        # else, we think it's rest
+        expected_response.body = ""
+    else:
+        expected_response.content == ""
 
     def verify_request(request):
-        if hasattr(request_type, "content"):
-            # at this point in the pipelines, the request is a pipeline transport request
-            # bc we switch rest requests to pipeline transport requests for back compat
-            # checking values instead
+        if hasattr(request_type, "body"):
+            # since we have to create a new http request for PipelineTransport tests,
+            # it will not be the same request object
             assert request.http_request.method == "GET"
             assert request.http_request.url == "https://spam.eggs"
         else:
@@ -75,20 +76,24 @@ def test_bearer_policy_send(request_type, add_properties_to_transport):
         return expected_response
 
     fake_credential = Mock(get_token=lambda _: AccessToken("", 0))
-    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
+    second_policy = Mock(send=verify_request)
+    add_supported_format_rest_to_mock(second_policy)
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), second_policy]
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     response = Pipeline(transport=transport, policies=policies).run(expected_request)
-
-    assert response is expected_response
+    if hasattr(request_type, "content"):
+        # can't do this check for pipline transport reponses bc we have to convert
+        # the response from a REST response to a pipeline transport response
+        assert response is expected_response
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_token_caching(request_type, add_properties_to_transport):
+def test_bearer_policy_token_caching(request_type, add_supported_format_rest_to_mock):
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     credential = Mock(get_token=Mock(return_value=good_for_one_hour))
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
     pipeline.run(request_type("GET", "https://spam.eggs"))
@@ -102,7 +107,7 @@ def test_bearer_policy_token_caching(request_type, add_properties_to_transport):
     credential.get_token.return_value = expired_token
 
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
     pipeline.run(request_type("GET", "https://spam.eggs"))
@@ -113,7 +118,7 @@ def test_bearer_policy_token_caching(request_type, add_properties_to_transport):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_optionally_enforces_https(request_type, add_properties_to_transport):
+def test_bearer_policy_optionally_enforces_https(request_type, add_supported_format_rest_to_mock):
     """HTTPS enforcement should be controlled by a keyword argument, and enabled by default"""
 
     def assert_option_popped(request, **kwargs):
@@ -122,7 +127,7 @@ def test_bearer_policy_optionally_enforces_https(request_type, add_properties_to
 
     credential = Mock(get_token=lambda *_, **__: AccessToken("***", 42))
     transport = Mock(send=assert_option_popped)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(
         transport=transport, policies=[BearerTokenCredentialPolicy(credential, "scope")]
     )
@@ -143,7 +148,7 @@ def test_bearer_policy_optionally_enforces_https(request_type, add_properties_to
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_preserves_enforce_https_opt_out(request_type, add_properties_to_transport):
+def test_bearer_policy_preserves_enforce_https_opt_out(request_type, add_supported_format_rest_to_mock):
     """The policy should use request context to preserve an opt out from https enforcement"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -154,14 +159,14 @@ def test_bearer_policy_preserves_enforce_https_opt_out(request_type, add_propert
     credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=policies)
 
     pipeline.run(request_type("GET", "http://not.secure"), enforce_https=False)
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_default_context(request_type, add_properties_to_transport):
+def test_bearer_policy_default_context(request_type, add_supported_format_rest_to_mock):
     """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
     expected_scope = "scope"
     token = AccessToken("", 0)
@@ -169,7 +174,7 @@ def test_bearer_policy_default_context(request_type, add_properties_to_transport
     policy = BearerTokenCredentialPolicy(credential, expected_scope)
 
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=[policy])
 
     pipeline.run(request_type("GET", "https://localhost"))
@@ -178,7 +183,7 @@ def test_bearer_policy_default_context(request_type, add_properties_to_transport
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_context_unmodified_by_default(request_type, add_properties_to_transport):
+def test_bearer_policy_context_unmodified_by_default(request_type, add_supported_format_rest_to_mock):
     """When no options for the policy accompany a request, the policy shouldn't add anything to the request context"""
 
     class ContextValidator(SansIOHTTPPolicy):
@@ -189,14 +194,14 @@ def test_bearer_policy_context_unmodified_by_default(request_type, add_propertie
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
 
     transport = Mock()
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=policies)
 
     pipeline.run(request_type("GET", "https://secure"))
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_calls_on_challenge(request_type, add_properties_to_transport):
+def test_bearer_policy_calls_on_challenge(request_type, add_supported_format_rest_to_mock):
     """BearerTokenCredentialPolicy should call its on_challenge method when it receives an authentication challenge"""
 
     class TestPolicy(BearerTokenCredentialPolicy):
@@ -211,7 +216,7 @@ def test_bearer_policy_calls_on_challenge(request_type, add_properties_to_transp
     response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=response))
 
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=policies)
     pipeline.run(request_type("GET", "https://localhost"))
 
@@ -219,7 +224,7 @@ def test_bearer_policy_calls_on_challenge(request_type, add_properties_to_transp
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_cannot_complete_challenge(request_type, add_properties_to_transport):
+def test_bearer_policy_cannot_complete_challenge(request_type, add_supported_format_rest_to_mock):
     """BearerTokenCredentialPolicy should return the 401 response when it can't complete its challenge"""
 
     expected_scope = "scope"
@@ -227,25 +232,23 @@ def test_bearer_policy_cannot_complete_challenge(request_type, add_properties_to
     credential = Mock(get_token=Mock(return_value=expected_token))
     expected_response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=expected_response))
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     policies = [BearerTokenCredentialPolicy(credential, expected_scope)]
 
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=policies)
     response = pipeline.run(request_type("GET", "https://localhost"))
 
     if hasattr(request_type, "content"):
-        # in this case, we modify the value that transport.send returns to us, changing it from a PipelineTransportResponset to a RestREspones
-        # so can't verify it's the same one, skipping this part of the test
-        pass
-    else:
         assert response.http_response is expected_response
+    else:
+        a = "b"
     assert transport.send.call_count == 1
     credential.get_token.assert_called_once_with(expected_scope)
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_bearer_policy_calls_sansio_methods(request_type, add_properties_to_transport):
+def test_bearer_policy_calls_sansio_methods(request_type, add_supported_format_rest_to_mock):
     """BearerTokenCredentialPolicy should call SansIOHttpPolicy methods as does _SansIOHTTPPolicyRunner"""
 
     class TestPolicy(BearerTokenCredentialPolicy):
@@ -264,7 +267,7 @@ def test_bearer_policy_calls_sansio_methods(request_type, add_properties_to_tran
     policy = TestPolicy(credential, "scope")
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=[policy])
     pipeline.run(request_type("GET", "https://localhost"))
 
@@ -276,7 +279,7 @@ def test_bearer_policy_calls_sansio_methods(request_type, add_properties_to_tran
         pass
 
     transport = Mock(send=Mock(side_effect=TestException))
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     policy = TestPolicy(credential, "scope")
     pipeline = Pipeline(transport=transport, policies=[policy])
     with pytest.raises(TestException):
@@ -306,7 +309,7 @@ def test_key_vault_regression():
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_azure_key_credential_policy(request_type, add_properties_to_transport):
+def test_azure_key_credential_policy(request_type, add_supported_format_rest_to_mock):
     """Tests to see if we can create an AzureKeyCredentialPolicy"""
 
     key_header = "api_key"
@@ -314,10 +317,10 @@ def test_azure_key_credential_policy(request_type, add_properties_to_transport):
 
     def verify_authorization_header(request):
         assert request.headers[key_header] == api_key
-        return MockPipelineTransportResponse()
+        return Mock()
 
     transport = Mock(send=verify_authorization_header)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     credential = AzureKeyCredential(api_key)
     credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
@@ -358,14 +361,15 @@ def test_azure_key_credential_updates():
     ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
 ])
-def test_azure_sas_credential_policy_pipeline_transport(sas, url, expected_url, add_properties_to_transport):
+def test_azure_sas_credential_policy_pipeline_transport(sas, url, expected_url, add_supported_format_rest_to_mock):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
 
     def verify_authorization(request):
         assert request.url == expected_url
+        return Mock()  # since we have to call ._convert() if the inputted request was a a pipeline transport
 
     transport=Mock(send=verify_authorization)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     credential = AzureSasCredential(sas)
     credential_policy = AzureSasCredentialPolicy(credential=credential)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
@@ -382,18 +386,17 @@ def test_azure_sas_credential_policy_pipeline_transport(sas, url, expected_url, 
     ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
 ])
-def test_azure_sas_credential_policy_rest(sas, url, expected_url, add_properties_to_transport):
+def test_azure_sas_credential_policy_rest(sas, url, expected_url, add_supported_format_rest_to_mock):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
 
     def verify_authorization(request):
         assert request.url == expected_url
-
-        return MockPipelineTransportResponse()
+        return Mock()
 
     transport=Mock(send=verify_authorization)
     credential = AzureSasCredential(sas)
     credential_policy = AzureSasCredentialPolicy(credential=credential)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(RestHttpRequest("GET", url))

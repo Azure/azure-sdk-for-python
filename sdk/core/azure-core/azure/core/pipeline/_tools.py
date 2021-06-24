@@ -25,10 +25,21 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 from ..exceptions import StreamConsumedError, StreamClosedError
+from . import SupportedFormat, PipelineRequest, PipelineResponse
 
 if TYPE_CHECKING:
-    from typing import Optional, Callable, Iterator
-    from ..rest import HttpResponse
+    from typing import Any, Optional, Callable, Iterator, Union
+    from ..rest import (
+        HttpRequest as RestHttpRequest,
+        HttpResponse as RestHttpResponse
+    )
+    from .transport import (
+        HttpRequest as PipelineTransportHttpRequest,
+        HttpResponse as PipelineTransportHttpResponse,
+    )
+    HTTPRequestType = Union[RestHttpRequest, PipelineTransportHttpRequest, PipelineRequest]
+    HTTPResponseType = Union[RestHttpResponse, PipelineTransportHttpResponse, PipelineResponse]
+
 
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
@@ -85,41 +96,82 @@ def iter_raw_helper(stream_download_generator, response, chunk_size=None):
         yield raw_bytes
     response.close()
 
-def get_request_format(request):
-    if hasattr(request, "content"):
-        return "rest"
-    if hasattr(request, "body"):
-        return "pipeline_transport"
+def get_format(input):
+    """Pass in a request or a response to get it's format
+
+    :param input: Request or response
+    """
+    if hasattr(input, "http_request"):
+        inner_input = input.http_request
+    elif hasattr(input, "http_response"):
+        inner_input = input.http_response
+    else:
+        inner_input = input
+    if hasattr(inner_input, "content"):
+        return SupportedFormat.REST
+    if hasattr(inner_input, "body"):
+        return SupportedFormat.PIPELINE_TRANSPORT
     raise ValueError(
-        "The request you passed in has type {} which is not supported. ".format(type(request)) +
-        "Recommended format is azure.core.rest.HttpRequest, we also support azure.core.pipeline.transport.HttpRequest"
+        "The input you passed in has type {} which is not supported. ".format(type(input)) +
+        "We recommend you use requests and response from azure.core.rest, but we also accept " +
+        "requests and responses from azure.core.pipeline.transport"
     )
 
-def prepare_request_helper(transport, request):
-    request_format = get_request_format(request)
-    if request_format == "pipeline_transport":
+def to_rest_response_helper(pipeline_transport_response, response_type):
+    response = response_type(
+        request=pipeline_transport_response.request._convert(),  # pylint: disable=protected-access
+        internal_response=pipeline_transport_response.internal_response,
+    )
+    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
+    return response
+
+def to_pipeline_transport_helper(rest_response, response_type):
+    return response_type(
+        rest_response.request._convert(),  # pylint: disable=protected-access
+        rest_response.internal_response,
+        block_size=rest_response._connection_data_block_size  # pylint: disable=protected-access
+    )
+
+def prepare_request(sender, request):
+    # type: (Any, HTTPRequestType) -> HTTPRequestType
+    """Prepare the request for the next sender.
+
+    Converts the request into the type the sender can handle.
+    If the sender can handle azure.core.rest requests, we return
+    an azure.core.rest request. Otherwise, we return an azure.core.pipeline.transport request
+
+    :param any sender: Either the transport or the next policy in line.
+    :param request: The request passed in by the user
+    :type request: ~azure.core.rest.HttpRequest or ~azure.core.pipeline.transport.HttpRequest or ~azure.core.pipeline.PipelineRequest
+    :return: The request in the format the sender can handle.
+    """
+    request_format = get_format(request)
+    supported_formats = sender.supported_formats if hasattr(sender, "supported_formats") else [SupportedFormat.PIPELINE_TRANSPORT]
+    if request_format in supported_formats:
         return request
-    if hasattr(transport, "supported_formats"):
-        supported_formats = transport.supported_formats
-    else:
-        supported_formats = "pipeline_transport"
-    if request_format not in supported_formats:
-        raise ValueError(
-            "You passed in a request of type {}, which is not supported by the transport. "\
-                "Supported request types are {}".format(
-                request_format, supported_formats
-            )
-        )
-    # for backcompat reasons, our pipeline runs azure.core.pipeline.transport.HttpRequests
-    from .transport import HttpRequest as PipelineTransportHttpRequest
-    return PipelineTransportHttpRequest._from_rest_request(request)  # pylint: disable=protected-access
+    if hasattr(request, "http_request"):
+        # if I'm a PipelineRequest, need to call a cls method to create a new one
+        return PipelineRequest._convert(request)
+    return request._convert()
 
-def update_response_based_on_format_helper(
-    request, pipeline_transport_response
-):
-    request_format = get_request_format(request)
-    if request_format == "pipeline_transport":
-        return pipeline_transport_response
+def prepare_response(request, response):
+    # type: (HTTPRequestType, HTTPResponseType) -> HTTPResponseType
+    """Prepare the response to have the same format as the inputted request.
 
-    # for now, we know this will be azure.core.rest
-    return pipeline_transport_response._to_rest_response()  # pylint: disable=protected-access
+    Converts the response into the format of the passed in request.
+
+    :param request: The request passed in by the user
+    :type request: ~azure.core.rest.HttpRequest or
+     ~azure.core.pipeline.transport.HttpRequest or ~azure.core.pipeline.PipelineRequest
+    :param response: The current format of the response. May be converted if it has
+     a different format than the inputted request
+    :type response: ~azure.core.rest.HttpResponse or ~azure.core.pipeline.transport.HttpResponse
+     or ~azure.core.pipeline.PipelineResponse
+    :return: The response in the same format as the inputted request
+    """
+    if get_format(request) == get_format(response):
+        return response
+    if hasattr(request, "http_request"):
+        # if I'm a PipelineResponse, need to call a cls method to create a new one
+        return PipelineResponse._convert(response)
+    return response._convert()

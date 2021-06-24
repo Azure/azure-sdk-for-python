@@ -104,7 +104,7 @@ def test_sans_io_exception(request_type):
 
         @property
         def supported_formats(self):
-            return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+            return [SupportedFormat.REST]
 
         def __exit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""

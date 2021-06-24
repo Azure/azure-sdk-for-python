@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from .. import PipelineRequest, PipelineResponse, SupportedFormat
 from ._base import SansIOHTTPPolicy
 
 class CustomHookPolicy(SansIOHTTPPolicy):
@@ -55,7 +55,9 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         if response_callback:
             request.context["raw_response_hook"] = response_callback
 
-
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
     def on_response(self, request, response): # pylint: disable=arguments-differ
         # type: (PipelineRequest, PipelineResponse) -> None

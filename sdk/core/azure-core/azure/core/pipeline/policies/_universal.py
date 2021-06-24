@@ -45,7 +45,7 @@ from azure.core.exceptions import (
     raise_with_traceback
 )
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from .. import PipelineRequest, PipelineResponse, SupportedFormat
 from ._base import SansIOHTTPPolicy
 
 if TYPE_CHECKING:
@@ -55,12 +55,6 @@ _LOGGER = logging.getLogger(__name__)
 ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
-
-def _get_request_body(request):
-    if hasattr(request, "body"):
-        return request.body
-    return request.content
-
 
 class HeadersPolicy(SansIOHTTPPolicy):
     """A simple policy that sends the given headers with the request.
@@ -109,6 +103,10 @@ class HeadersPolicy(SansIOHTTPPolicy):
         additional_headers = request.context.options.pop('headers', {})
         if additional_headers:
             request.http_request.headers.update(additional_headers)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 class _Unset(object):
     pass
@@ -165,6 +163,10 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         if request_id is not unset:
             header = {"x-ms-client-request-id": request_id}
             request.http_request.headers.update(header)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
@@ -245,6 +247,10 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         elif self.overwrite or self._USERAGENT not in http_request.headers:
             http_request.headers[self._USERAGENT] = self.user_agent
 
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
+
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
@@ -289,17 +295,17 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Request body:")
 
                 # We don't want to log the binary data of a file upload.
-                if isinstance(_get_request_body(http_request), types.GeneratorType):
+                if isinstance(http_request.content, types.GeneratorType):
                     _LOGGER.debug("File upload")
                     return
                 try:
-                    if isinstance(_get_request_body(http_request), types.AsyncGeneratorType):
+                    if isinstance(http_request.content, types.AsyncGeneratorType):
                         _LOGGER.debug("File upload")
                         return
                 except AttributeError:
                     pass
-                if _get_request_body(http_request):
-                    _LOGGER.debug(str(_get_request_body(http_request)))
+                if http_request.content:
+                    _LOGGER.debug(str(http_request.content))
                     return
                 _LOGGER.debug("This request has no body")
             except Exception as err:  # pylint: disable=broad-except
@@ -342,9 +348,13 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                     if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
-                        _LOGGER.debug(http_response.text())
+                        _LOGGER.debug(http_response.text)
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 
 class HttpLoggingPolicy(SansIOHTTPPolicy):
@@ -427,16 +437,16 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             for header, value in http_request.headers.items():
                 value = self._redact_header(header, value)
                 logger.info("    %r: %r", header, value)
-            if isinstance(_get_request_body(http_request), types.GeneratorType):
+            if isinstance(http_request.content, types.GeneratorType):
                 logger.info("File upload")
                 return
             try:
-                if isinstance(_get_request_body(http_request), types.AsyncGeneratorType):
+                if isinstance(http_request.content, types.AsyncGeneratorType):
                     logger.info("File upload")
                     return
             except AttributeError:
                 pass
-            if _get_request_body(http_request):
+            if http_request.content:
                 logger.info("A body is sent with the request")
                 return
             logger.info("No body was attached to the request")
@@ -461,6 +471,10 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
                 logger.info("    %r: %r", res_header, value)
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log response: %s", repr(err))
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
@@ -577,7 +591,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             mime_type = "application/json"
 
         # Rely on transport implementation to give me "text()" decoded correctly
-        return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
+        response.encoding = encoding
+        return cls.deserialize_from_text(response.text, mime_type, response=response)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -618,6 +633,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             response_encoding
         )
 
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
+
 
 class ProxyPolicy(SansIOHTTPPolicy):
     """A proxy policy.
@@ -645,3 +664,7 @@ class ProxyPolicy(SansIOHTTPPolicy):
         ctxt = request.context.options
         if self.proxies and "proxies" not in ctxt:
             ctxt["proxies"] = self.proxies
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]

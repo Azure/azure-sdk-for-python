@@ -39,7 +39,7 @@ from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.core.pipeline import Pipeline
+from .. import Pipeline
 
 from ._base import HttpRequest as PipelineTransportHttpRequest, SupportedFormat
 from ._base_async import (
@@ -50,6 +50,7 @@ from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
     HttpRequest as RestHttpRequest
 )
+from .._tools import to_rest_response_helper, to_pipeline_transport_helper, prepare_request
 from .._tools_async import iter_raw_helper, iter_bytes_helper
 
 # Matching requests, because why not?
@@ -114,7 +115,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     @property
     def supported_formats(self):
-        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+        return [SupportedFormat.REST]
 
     def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None
@@ -131,16 +132,16 @@ class AioHttpTransport(AsyncHttpTransport):
         return verify
 
     def _get_request_data(self, request): #pylint: disable=no-self-use
-        if request.files:
+        if request._files:
             form_data = aiohttp.FormData()
-            for form_file, data in request.files.items():
+            for form_file, data in request._files.items():
                 content_type = data[2] if len(data) > 2 else None
                 try:
                     form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
                 except IndexError:
                     raise ValueError("Invalid formdata formatting: {}".format(data))
             return form_data
-        return request.data
+        return request._data
 
     async def send(self, request: PipelineTransportHttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
         """Send the request using this HTTP sender.
@@ -158,6 +159,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         :keyword str proxy: will define the proxy to use all the time
         """
+        my_request = prepare_request(self, request)
         await self.open()
         try:
             auto_decompress = self.session.auto_decompress  # type: ignore
@@ -171,7 +173,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
             # Sort by longest string first, so "http" is not used for "https" ;-)
             for protocol in sorted(proxies.keys(), reverse=True):
-                if request.url.startswith(protocol):
+                if my_request.url.startswith(protocol):
                     config['proxy'] = proxies[protocol]
                     break
 
@@ -183,7 +185,7 @@ class AioHttpTransport(AsyncHttpTransport):
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octect-stream" even for empty POST request
         # and that break services like storage signature
-        if not request.data and not request.files:
+        if not my_request._data and not my_request._files:
             config['skip_auto_headers'] = ['Content-Type']
         try:
             stream_response = config.pop("stream", False)
@@ -191,19 +193,22 @@ class AioHttpTransport(AsyncHttpTransport):
             read_timeout = config.pop('read_timeout', self.connection_config.read_timeout)
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
             result = await self.session.request(    # type: ignore
-                request.method,
-                request.url,
-                headers=request.headers,
-                data=self._get_request_data(request),
+                my_request.method,
+                my_request.url,
+                headers=my_request.headers,
+                data=self._get_request_data(my_request),
                 timeout=socket_timeout,
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result,
-                                                self.connection_config.data_block_size,
-                                                decompress=not auto_decompress)
+            response = RestAioHttpTransportResponse(
+                request=prepared_request, internal_response=result
+            )
+            self._connection_data_block_size = self.connection_config.data_block_size
+            response._decompress = not auto_decompress
             if not stream_response:
-                await response.load_body()
+                await response.read()
+                await response.close()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
@@ -371,13 +376,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 
-    def _to_rest_response(self):
-        response = RestAioHttpTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
-            internal_response=self.internal_response,
-        )
-        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
-        return response
+    def _convert(self):
+        return to_rest_response_helper(self, RestAioHttpTransportResponse)
 
 class RestAioHttpTransportResponse(RestAsyncHttpResponse):
     def __init__(
@@ -461,3 +461,6 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+    def _convert(self):
+        return to_pipeline_transport_helper(self, AioHttpTransportResponse)

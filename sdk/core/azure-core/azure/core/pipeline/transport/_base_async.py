@@ -37,9 +37,8 @@ from ._base import (
     PipelineResponse,
     SupportedFormat,
 )
-from .._tools import prepare_request_helper, update_response_based_on_format_helper
+from .._tools import to_rest_response_helper
 from .._tools_async import await_result as _await_result
-
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
 except ImportError:  # Python <= 3.7
@@ -151,6 +150,10 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
         return _PartGenerator(self)
 
+    def _convert(self):
+        from ...rest import AsyncHttpResponse as RestAsyncHttpResponse
+        return to_rest_response_helper(self, RestAsyncHttpResponse)
+
 
 class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
     """Create a HTTPResponse from an http.client response.
@@ -189,15 +192,3 @@ class AsyncHttpTransport(
     @property
     def supported_formats(self):
         return [SupportedFormat.PIPELINE_TRANSPORT]
-
-    def prepare_request(self, request, **kwargs):
-        return prepare_request_helper(
-            transport=self, request=request, **kwargs
-        )
-
-    def update_response_based_on_format(  # pylint: disable=no-self-use
-        self, request, pipeline_transport_response
-    ):
-        return update_response_based_on_format_helper(
-            request, pipeline_transport_response
-        )

@@ -8,6 +8,8 @@ import six
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
+from .. import SupportedFormat
+from .._tools import prepare_request, prepare_response
 
 try:
     from typing import TYPE_CHECKING  # pylint:disable=unused-import
@@ -19,6 +21,11 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional
     from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse  # type: ignore
 
 
 # pylint:disable=too-few-public-methods
@@ -70,6 +77,10 @@ class _BearerTokenCredentialPolicyBase(object):
         # type: () -> bool
         return not self._token or self._token.expires_on - time.time() < 300
 
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
+
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a bearer token Authorization header to requests.
@@ -114,24 +125,27 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        self.on_request(request)
+        my_request = prepare_request(self, request)
+        self.on_request(my_request)
+
+        next_request = prepare_request(self.next, my_request)
         try:
-            response = self.next.send(request)
-            self.on_response(request, response)
+            response = self.next.send(next_request)
+            self.on_response(my_request, response)
         except Exception:  # pylint:disable=broad-except
-            handled = self.on_exception(request)
+            handled = self.on_exception(my_request)
             if not handled:
                 raise
         else:
             if response.http_response.status_code == 401:
                 self._token = None  # any cached token is invalid
                 if "WWW-Authenticate" in response.http_response.headers:
-                    request_authorized = self.on_challenge(request, response)
+                    request_authorized = self.on_challenge(my_request, response)
                     if request_authorized:
-                        response = self.next.send(request)
-                        self.on_response(request, response)
+                        response = self.next.send(next_request)
+                        self.on_response(my_request, response)
 
-        return response
+        return prepare_response(request, response)
 
     def on_challenge(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> bool
@@ -192,6 +206,10 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     def on_request(self, request):
         request.http_request.headers[self._name] = self._credential.key
 
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
+
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     """Adds a shared access signature to query for the provided credential.
@@ -209,11 +227,11 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         url = request.http_request.url
-        query = request.http_request.query
+        parsed = urlparse.urlparse(url)
         signature = self._credential.signature
         if signature.startswith("?"):
             signature = signature[1:]
-        if query:
+        if parsed.query:
             if signature not in url:
                 url = url + "&" + signature
         else:
@@ -222,3 +240,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
             else:
                 url = url + "?" + signature
         request.http_request.url = url
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]

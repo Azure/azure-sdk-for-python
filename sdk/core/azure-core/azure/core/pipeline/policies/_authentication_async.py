@@ -7,9 +7,11 @@ import asyncio
 import time
 from typing import TYPE_CHECKING
 
+from .. import SupportedFormat
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 
+from .._tools import prepare_request, prepare_response
 from .._tools_async import await_result
 
 if TYPE_CHECKING:
@@ -70,24 +72,29 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        await await_result(self.on_request, request)
+        prepared_request = prepare_request(self, request)
+        await await_result(self.on_request, prepared_request)
         try:
-            response = await self.next.send(request)
-            await await_result(self.on_response, request, response)
+            response = await self.next.send(prepared_request)
+            await await_result(self.on_response, prepared_request, response)
         except Exception:  # pylint:disable=broad-except
-            handled = await await_result(self.on_exception, request)
+            handled = await await_result(self.on_exception, prepared_request)
             if not handled:
                 raise
         else:
             if response.http_response.status_code == 401:
                 self._token = None  # any cached token is invalid
                 if "WWW-Authenticate" in response.http_response.headers:
-                    request_authorized = await self.on_challenge(request, response)
+                    request_authorized = await self.on_challenge(prepared_request, response)
                     if request_authorized:
-                        response = await self.next.send(request)
-                        await await_result(self.on_response, request, response)
+                        response = await self.next.send(prepared_request)
+                        await await_result(self.on_response, prepared_request, response)
 
-        return response
+        return prepare_response(request, response)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge

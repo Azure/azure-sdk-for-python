@@ -184,10 +184,10 @@ def test_response_deserialization_utf8_bom():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send(add_properties_to_transport):
+def test_multipart_send(add_supported_format_rest_to_mock):
 
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -231,9 +231,9 @@ def test_multipart_send(add_properties_to_transport):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_context(add_properties_to_transport):
+def test_multipart_send_with_context(add_supported_format_rest_to_mock):
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -280,10 +280,10 @@ def test_multipart_send_with_context(add_properties_to_transport):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_one_changeset(add_properties_to_transport):
+def test_multipart_send_with_one_changeset(add_supported_format_rest_to_mock):
 
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -339,10 +339,10 @@ def test_multipart_send_with_one_changeset(add_properties_to_transport):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_multiple_changesets(add_properties_to_transport):
+def test_multipart_send_with_multiple_changesets(add_supported_format_rest_to_mock):
 
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -426,10 +426,10 @@ def test_multipart_send_with_multiple_changesets(add_properties_to_transport):
 
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_combination_changeset_first(add_properties_to_transport):
+def test_multipart_send_with_combination_changeset_first(add_supported_format_rest_to_mock):
 
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -490,10 +490,10 @@ def test_multipart_send_with_combination_changeset_first(add_properties_to_trans
     )
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_combination_changeset_last(add_properties_to_transport):
+def test_multipart_send_with_combination_changeset_last(add_supported_format_rest_to_mock):
 
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
@@ -554,10 +554,10 @@ def test_multipart_send_with_combination_changeset_last(add_properties_to_transp
     )
 
 @pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
-def test_multipart_send_with_combination_changeset_middle(add_properties_to_transport):
+def test_multipart_send_with_combination_changeset_middle(add_supported_format_rest_to_mock):
 
     transport = mock.MagicMock(spec=HttpTransport)
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
 
     header_policy = HeadersPolicy({
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'

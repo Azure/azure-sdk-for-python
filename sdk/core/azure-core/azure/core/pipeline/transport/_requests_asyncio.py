@@ -36,7 +36,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
-from azure.core.pipeline import Pipeline
+from .. import Pipeline
 from ._base import HttpRequest, SupportedFormat
 from ._base_async import (
     AsyncHttpResponse,
@@ -48,6 +48,7 @@ from ...rest import (
     AsyncHttpResponse as RestAsyncHttpResponse,
     HttpRequest as RestHttpRequest
 )
+from .._tools import to_rest_response_helper, to_pipeline_transport_helper, prepare_request
 from .._tools_async import iter_raw_helper, iter_bytes_helper
 
 
@@ -89,7 +90,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @property
     def supported_formats(self):
-        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+        return [SupportedFormat.REST]
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
@@ -103,21 +104,22 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        prepared_request = prepare_request(self, request)
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        data_to_send = await self._retrieve_request_data(request)
+        data_to_send = await self._retrieve_request_data(prepared_request)
         try:
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
                     self.session.request,
-                    request.method,
-                    request.url,
-                    headers=request.headers,
+                    prepared_request.method,
+                    prepared_request.url,
+                    headers=prepared_request.headers,
                     data=data_to_send,
-                    files=request.files,
+                    files=request._files,
                     verify=kwargs.pop('connection_verify', self.connection_config.verify),
                     timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                     cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -139,7 +141,15 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         if error:
             raise error
 
-        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        response = RestAsyncioRequestsTransportResponse(
+            request=prepared_request,
+            internal_response=response
+        )
+        response._connection_data_block_size = self.connection_config.data_block_size
+        if kwargs.get("stream", False):
+            await response.read()
+            await response.close()
+        return response
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
@@ -198,13 +208,8 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
 
-    def _to_rest_response(self):
-        response = RestAsyncioRequestsTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
-            internal_response=self.internal_response,
-        )
-        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
-        return response
+    def _convert(self):
+        return to_rest_response_helper(self, RestAsyncioRequestsTransportResponse)
 
 class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
@@ -239,3 +244,6 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
         ):
             yield part
         await self.close()
+
+    def _convert(self):
+        return to_pipeline_transport_helper(self, AsyncioRequestsTransportResponse)

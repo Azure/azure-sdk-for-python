@@ -28,7 +28,7 @@ import abc
 
 from typing import Generic, TypeVar, Union, Any, cast
 
-from azure.core.pipeline import PipelineRequest
+from .. import PipelineRequest, SupportedFormat
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore #pylint: disable=unused-import
@@ -75,3 +75,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
         :return: The pipeline response object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT]

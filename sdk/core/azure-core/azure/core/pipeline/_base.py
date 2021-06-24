@@ -26,15 +26,18 @@
 
 import logging
 from typing import Generic, TypeVar, List, Union, Any, Dict
-from azure.core.pipeline import (
+from . import (
     AbstractContextManager,
     PipelineRequest,
     PipelineResponse,
     PipelineContext,
+    SupportedFormat,
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
 from ._tools import (
     await_result as _await_result,
+    prepare_request,
+    prepare_response,
 )
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -67,15 +70,21 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        _await_result(self._policy.on_request, request)
+        current_request = prepare_request(self._policy, request)
+        _await_result(self._policy.on_request, current_request)
         try:
-            response = self.next.send(request)
+            next_request = prepare_request(self.next, current_request)
+            response = self.next.send(next_request)
         except Exception:  # pylint: disable=broad-except
-            if not _await_result(self._policy.on_exception, request):
+            if not _await_result(self._policy.on_exception, current_request):
                 raise
         else:
-            _await_result(self._policy.on_response, request, response)
-        return response
+            _await_result(self._policy.on_response, current_request, response)
+        return prepare_response(request, response)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 
 class _TransportRunner(HTTPPolicy):
@@ -99,11 +108,17 @@ class _TransportRunner(HTTPPolicy):
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        return PipelineResponse(
-            request.http_request,
-            self._sender.send(request.http_request, **request.context.options),
+        prepared_request = prepare_request(self._sender, request.http_request)
+        response = PipelineResponse(
+            prepared_request,
+            self._sender.send(prepared_request, **request.context.options),
             context=request.context,
         )
+        return prepare_response(request, response)
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
 
 
 class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType]):
@@ -215,14 +230,10 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        try:
-            prepared_request = self._transport.prepare_request(request)  # type: ignore
-        except AttributeError:
-            prepared_request = request
-        self._prepare_multipart(prepared_request)
+        # self._prepare_multipart(prepared_request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(
-            prepared_request, context
+            request, context
         )  # type: PipelineRequest[HTTPRequestType]
         first_node = (
             self._impl_policies[0]
@@ -230,9 +241,4 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             else _TransportRunner(self._transport)
         )
         pipeline_response = first_node.send(pipeline_request)  # type: ignore
-        self._prepare_response(
-            request=request,
-            pipeline_response=pipeline_response,
-            **kwargs
-        )
         return pipeline_response

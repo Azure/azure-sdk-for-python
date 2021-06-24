@@ -291,7 +291,7 @@ def test_retry_seekable_file(request_type, response_type):
 
 
 @pytest.mark.parametrize("request_type", [PipelineTransportHttpRequest, RestHttpRequest])
-def test_retry_timeout(request_type, add_properties_to_transport):
+def test_retry_timeout(request_type, add_supported_format_rest_to_mock):
     timeout = 1
 
     def send(request, **kwargs):
@@ -304,7 +304,7 @@ def test_retry_timeout(request_type, add_properties_to_transport):
         connection_config=ConnectionConfiguration(connection_timeout=timeout * 2),
         sleep=time.sleep,
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
@@ -312,7 +312,7 @@ def test_retry_timeout(request_type, add_properties_to_transport):
 
 
 @pytest.mark.parametrize("request_type,response_type", [(PipelineTransportHttpRequest, PipelineTransportHttpResponse), (RestHttpRequest, RestHttpResponse)])
-def test_timeout_defaults(request_type, response_type, add_properties_to_transport):
+def test_timeout_defaults(request_type, response_type, add_supported_format_rest_to_mock):
     """When "timeout" is not set, the policy should not override the transport's timeout configuration"""
 
     def send(request, **kwargs):
@@ -329,7 +329,7 @@ def test_timeout_defaults(request_type, response_type, add_properties_to_transpo
         send=Mock(wraps=send),
         sleep=Mock(side_effect=Exception("policy should not sleep: its first send succeeded")),
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport, [RetryPolicy()])
 
     pipeline.run(request_type("GET", "http://127.0.0.1/"))
@@ -340,7 +340,7 @@ def test_timeout_defaults(request_type, response_type, add_properties_to_transpo
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error, add_properties_to_transport):
+def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expected_timeout_error, add_supported_format_rest_to_mock):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -350,7 +350,7 @@ def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expect
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=time.sleep),
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):
@@ -362,7 +362,7 @@ def test_does_not_sleep_after_timeout_pipeline_transport(transport_error, expect
     "transport_error,expected_timeout_error",
     ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
 )
-def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error, add_properties_to_transport):
+def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_error, add_supported_format_rest_to_mock):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
     # It should not sleep the second time when given timeout=1
     timeout = 1
@@ -372,7 +372,7 @@ def test_does_not_sleep_after_timeout_rest(transport_error, expected_timeout_err
         send=Mock(side_effect=transport_error("oops")),
         sleep=Mock(wraps=time.sleep),
     )
-    add_properties_to_transport(transport)
+    add_supported_format_rest_to_mock(transport)
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(expected_timeout_error):

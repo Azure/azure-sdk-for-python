@@ -42,7 +42,7 @@ try:
 except ImportError:
     pass
 
-from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
+from .. import ABC, PipelineRequest, PipelineResponse, SupportedFormat
 
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -75,6 +75,10 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
         :return: The pipeline response object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT]
 
 
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
@@ -131,6 +135,10 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
                 :dedent: 4
         """
         return False
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.PIPELINE_TRANSPORT]
 
 
 class RequestHistory(object):

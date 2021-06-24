@@ -58,6 +58,7 @@ from ._helpers import (
 )
 from ._helpers_py3 import set_content_body
 from ..exceptions import ResponseNotReadError
+from ..pipeline._tools import to_pipeline_transport_helper
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
@@ -203,14 +204,14 @@ class HttpRequest:
         except (ValueError, TypeError):
             return copy.copy(self)
 
-    @classmethod
-    def _from_pipeline_transport_request(cls, request):
-        return cls(
-            method=request.method,
-            url=request.url,
-            headers=request.headers,
-            files=request.files,
-            data=request.data
+    def _convert(self):
+        from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
+        return PipelineTransportHttpRequest(
+            method=self.method,
+            url=self.url,
+            headers=self.headers,
+            files=self._files,  # pylint: disable=protected-access
+            data=self._data  # pylint: disable=protected-access
         )
 
 class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
@@ -341,6 +342,10 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
             raise ResponseNotReadError()
         return cast(bytes, self._get_content())
 
+    def _convert(self):
+        """Use if you're passing a response to an old transport / policy"""
+        raise NotImplementedError()
+
 class HttpResponse(_HttpResponseBase):
 
     def __enter__(self) -> "HttpResponse":
@@ -417,6 +422,10 @@ class HttpResponse(_HttpResponseBase):
         return "<HttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
+    def _convert(self):
+        from ..pipeline.transport import HttpResponse as PipelineTransportHttpResponse
+        return to_pipeline_transport_helper(self, PipelineTransportHttpResponse)
 
 class AsyncHttpResponse(_HttpResponseBase):
 
@@ -495,3 +504,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         return "<AsyncHttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
+    def _convert(self):
+        from ..pipeline.transport import AsyncHttpResponse as PipelineTransportAsyncHttpResponse
+        return to_pipeline_transport_helper(self, PipelineTransportAsyncHttpResponse)

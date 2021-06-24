@@ -27,8 +27,9 @@ import abc
 
 from typing import Any, Union, List, Generic, TypeVar, Dict
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
+from . import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from ._tools import prepare_request, prepare_response
 from ._tools_async import await_result as _await_result
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
@@ -78,15 +79,20 @@ class _SansIOAsyncHTTPPolicyRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        await _await_result(self._policy.on_request, request)
+        # convert the request for the first policy
+        current_request = prepare_request(self._policy, request)
+        await _await_result(self._policy.on_request, current_request)
+
         try:
-            response = await self.next.send(request)  # type: ignore
+            # convert the request for the next policy
+            next_request = prepare_request(self.next, current_request)
+            response = await self.next.send(next_request)  # type: ignore
         except Exception:  # pylint: disable=broad-except
-            if not await _await_result(self._policy.on_exception, request):
+            if not await _await_result(self._policy.on_exception, current_request):
                 raise
         else:
-            await _await_result(self._policy.on_response, request, response)
-        return response
+            await _await_result(self._policy.on_response, current_request, response)
+        return prepare_response(request, response)
 
 
 class _AsyncTransportRunner(
@@ -111,11 +117,13 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        return PipelineResponse(
-            request.http_request,
-            await self._sender.send(request.http_request, **request.context.options),
+        prepared_request = prepare_request(self, request.http_request)
+        response = PipelineResponse(
+            prepared_request,
+            await self._sender.send(prepared_request, **request.context.options),
             request.context,
         )
+        return prepare_response(request, response)
 
 
 class AsyncPipeline(

@@ -52,7 +52,13 @@ from ...rest import (
     HttpResponse as RestHttpResponse,
     HttpRequest as RestHttpRequest
 )
-from .._tools import iter_bytes_helper, iter_raw_helper
+from .._tools import (
+    iter_bytes_helper,
+    iter_raw_helper,
+    to_rest_response_helper,
+    to_pipeline_transport_helper,
+    prepare_request,
+)
 from ...exceptions import ResponseNotReadError
 
 PipelineType = TypeVar("PipelineType")
@@ -234,13 +240,8 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
-    def _to_rest_response(self):
-        response = RestRequestsTransportResponse(
-            request=RestHttpRequest._from_pipeline_transport_request(self.request),  # pylint: disable=protected-access
-            internal_response=self.internal_response,
-        )
-        response._connection_data_block_size = self.block_size  # pylint: disable=protected-access
-        return response
+    def _convert(self):
+        return to_rest_response_helper(self, RestRequestsTransportResponse)
 
 class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
 
@@ -259,6 +260,9 @@ class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResp
             response=self,
             chunk_size=chunk_size,
         )
+
+    def _convert(self):
+        return to_pipeline_transport_helper(self, RequestsTransportResponse)
 
 
 class RequestsTransport(HttpTransport):
@@ -328,7 +332,7 @@ class RequestsTransport(HttpTransport):
 
     @property
     def supported_formats(self):
-        return [SupportedFormat.PIPELINE_TRANSPORT, SupportedFormat.REST]
+        return [SupportedFormat.REST]
 
     def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse
@@ -343,6 +347,7 @@ class RequestsTransport(HttpTransport):
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        prepared_request = prepare_request(self, request)
         self.open()
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
@@ -359,11 +364,11 @@ class RequestsTransport(HttpTransport):
                 read_timeout = kwargs.pop('read_timeout', self.connection_config.read_timeout)
                 timeout = (connection_timeout, read_timeout)
             response = self.session.request(  # type: ignore
-                request.method,
-                request.url,
-                headers=request.headers,
-                data=request.data,
-                files=request.files,
+                prepared_request.method,
+                prepared_request.url,
+                headers=prepared_request.headers,
+                data=prepared_request._data,
+                files=prepared_request._files,
                 verify=kwargs.pop('connection_verify', self.connection_config.verify),
                 timeout=timeout,
                 cert=kwargs.pop('connection_cert', self.connection_config.cert),
@@ -384,4 +389,11 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        response = RestRequestsTransportResponse(
+            request=request, internal_response=response
+        )
+        response._connection_data_block_size = self.connection_config.data_block_size
+        if not kwargs.get("stream", False):
+            response.read()
+            response.close()
+        return response

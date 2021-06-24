@@ -28,6 +28,7 @@ import logging
 import sys
 from six.moves import urllib
 
+from .. import SupportedFormat
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
@@ -131,3 +132,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         # type: (PipelineRequest) -> bool
         self.end_span(request, exc_info=sys.exc_info())
         return False
+
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]

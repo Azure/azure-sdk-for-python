@@ -35,8 +35,10 @@ except ImportError:
     from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
+from .. import SupportedFormat
 
 from ._base import HTTPPolicy, RequestHistory
+from .._tools import prepare_request, prepare_response
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -124,6 +126,10 @@ class RedirectPolicyBase(object):
             response.http_request.headers.pop(non_redirect_header, None)
         return settings['redirects'] >= 0
 
+    @property
+    def supported_formats(self):
+        return [SupportedFormat.REST]
+
 class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
     """A redirect policy.
 
@@ -155,12 +161,13 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
         while retryable:
-            response = self.next.send(request)
+            prepared_request = prepare_request(self.next, request)
+            response = self.next.send(prepared_request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings['allow']:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 continue
-            return response
+            return prepare_response(request, response)
 
         raise TooManyRedirectsError(redirect_settings['history'])

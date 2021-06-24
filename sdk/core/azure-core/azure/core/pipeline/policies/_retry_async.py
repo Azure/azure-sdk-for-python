@@ -38,7 +38,7 @@ from azure.core.exceptions import (
 )
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicyBase
-
+from .._tools import prepare_request, prepare_response
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -134,8 +134,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         """
         retry_active = True
         response = None
-        retry_settings = self.configure_retries(request.context.options)
-        self._configure_positions(request, retry_settings)
+        my_request = prepare_request(self, request)
+        retry_settings = self.configure_retries(my_request.context.options)
+        self._configure_positions(my_request, retry_settings)
 
         absolute_timeout = retry_settings['timeout']
         is_response_error = True
@@ -143,12 +144,14 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         while retry_active:
             try:
                 start_time = time.time()
-                self._configure_timeout(request, absolute_timeout, is_response_error)
-                response = await self.next.send(request)
+                self._configure_timeout(my_request, absolute_timeout, is_response_error)
+
+                next_request = prepare_request(self.next, request)
+                response = await self.next.send(next_request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        await self.sleep(retry_settings, request.context.transport, response=response)
+                        await self.sleep(retry_settings, my_request.context.transport, response=response)
                         is_response_error = True
                         continue
                 break
@@ -157,10 +160,10 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
-                    retry_active = self.increment(retry_settings, response=request, error=err)
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, my_request.http_request):
+                    retry_active = self.increment(retry_settings, response=my_request, error=err)
                     if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
+                        await self.sleep(retry_settings, my_request.context.transport)
                         if isinstance(err, ServiceRequestError):
                             is_response_error = False
                         else:
@@ -173,4 +176,4 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                     absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
-        return response
+        return prepare_response(response)
