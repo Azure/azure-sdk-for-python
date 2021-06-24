@@ -126,7 +126,7 @@ issuancerules {
 };
     """
 
-            set_result = await admin_client.set_policy(
+            set_result, _ = await admin_client.set_policy(
                 AttestationType.OPEN_ENCLAVE, new_policy
             )
             print("Policy Set result: ", set_result.policy_resolution)
@@ -149,7 +149,7 @@ issuancerules {
             credential, os.environ.get("ATTESTATION_AAD_URL")
         ) as admin_client:
 
-            set_result = await admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
+            set_result, _ = await admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
             print("Policy reset result: ", set_result.policy_resolution)
         # [END reset_aad_policy]
 
@@ -172,7 +172,7 @@ issuancerules {
             signing_certificate=cert,
         ) as admin_client:
 
-            set_result = await admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+            set_result, _ = await admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
             print("Policy Set Resolution: ", set_result.policy_resolution)
         # [END reset_aad_policy_secured]
 
@@ -195,7 +195,7 @@ issuancerules {
             cert = create_x509_certificate(rsa_key, u"TestCertificate")
 
             # Set a minimal policy.
-            set_result = await admin_client.set_policy(
+            set_result, _ = await admin_client.set_policy(
                 AttestationType.SGX_ENCLAVE,
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 signing_key=rsa_key,
@@ -235,7 +235,7 @@ version= 1.0;
 authorizationrules{=> permit();};
 issuancerules {};
 """
-            set_result = await admin_client.set_policy(
+            set_result, _ = await admin_client.set_policy(
                 AttestationType.SGX_ENCLAVE,
                 policy_to_set,
                 signing_key=rsa_key,
@@ -266,7 +266,7 @@ issuancerules {};
             # [END validate_policy_hash]
 
             # Reset the policy now that we're done.
-            admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+            await admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
 
     async def reset_policy_isolated(self):
         """Set a secured attestation policy on an AAD mode instance"""
@@ -284,7 +284,7 @@ issuancerules {};
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(
             credential, os.environ.get("ATTESTATION_ISOLATED_URL")
         ) as admin_client:
-            set_result = await admin_client.reset_policy(
+            set_result, _ = await admin_client.reset_policy(
                 AttestationType.SGX_ENCLAVE,
                 signing_key=isolated_key,
                 signing_certificate=isolated_certificate,
@@ -331,7 +331,7 @@ issuancerules {};
             signing_certificate=self.isolated_certificate,
         ) as admin_client:
 
-            set_result = await admin_client.set_policy(
+            set_result, _ = await admin_client.set_policy(
                 AttestationType.SGX_ENCLAVE,
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 validation_slack=1.0,
@@ -395,7 +395,7 @@ issuancerules {};
             new_certificate = create_x509_certificate(new_key, u"NewCertificateName")
 
             # Add the new certificate to the list.
-            add_result = await admin_client.add_policy_management_certificate(
+            add_result, _ = await admin_client.add_policy_management_certificate(
                 new_certificate,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate,
@@ -440,7 +440,7 @@ issuancerules {};
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(
             credential, endpoint
         ) as admin_client:
-            remove_result = await admin_client.remove_policy_management_certificate(
+            remove_result, _ = await admin_client.remove_policy_management_certificate(
                 new_certificate,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate,

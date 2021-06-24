@@ -245,8 +245,8 @@ issuancerules {
             """
             print("In validation callback, checking token...")
             print("     Token issuer: ", token.issuer)
-            print("     Token was issued at: ", token.issuance_time)
-            print("     Token expires at: ", token.expiration_time)
+            print("     Token was issued at: ", token.issued)
+            print("     Token expires at: ", token.expires)
             if token.issuer != self.shared_url:
                 print(
                     "Token issuer {} does not match expected issuer {}".format(
@@ -280,7 +280,7 @@ issuancerules {
             )
 
             print("Issuer of token is: ", response.issuer)
-            print("Expiration time: ", token.expiration_time)
+            print("Expiration time: ", token.expires)
 
         # Repeat the same operation, this time specifying the callback options
         # on the attest_open_enclave call.
@@ -292,7 +292,7 @@ issuancerules {
             )
 
             print("Issuer of token is: ", response.issuer)
-            print("Expiration time: ", token.expiration_time)
+            print("Expiration time: ", token.expires)
 
         # [END attest_open_enclave_shared_with_options]
 

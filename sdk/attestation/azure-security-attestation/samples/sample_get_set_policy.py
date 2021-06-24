@@ -123,7 +123,7 @@ issuancerules {
 };
     """
 
-            set_result = admin_client.set_policy(
+            set_result, _ = admin_client.set_policy(
                 AttestationType.OPEN_ENCLAVE, new_policy
             )
             print("Policy Set result: ", set_result.policy_resolution)
@@ -146,7 +146,7 @@ issuancerules {
         with AttestationAdministrationClient(
             DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")
         ) as admin_client:
-            set_result = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
+            set_result, _ = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
             print("Policy reset result: ", set_result.policy_resolution)
         # [END reset_aad_policy]
 
@@ -169,7 +169,7 @@ issuancerules {
             signing_certificate=cert,
         ) as admin_client:
 
-            set_result = admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
+            set_result, _ = admin_client.reset_policy(AttestationType.SGX_ENCLAVE)
             print("Policy Set Resolution: ", set_result.policy_resolution)
         # [END reset_aad_policy_secured]
 
@@ -191,7 +191,7 @@ issuancerules {
             cert = create_x509_certificate(rsa_key, u"TestCertificate")
 
             # Set a minimal policy.
-            set_result = admin_client.set_policy(
+            set_result, _ = admin_client.set_policy(
                 AttestationType.SGX_ENCLAVE,
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 signing_key=rsa_key,
@@ -231,7 +231,7 @@ version= 1.0;
 authorizationrules{=> permit();};
 issuancerules {};
 """
-            set_result = admin_client.set_policy(
+            set_result, _ = admin_client.set_policy(
                 AttestationType.SGX_ENCLAVE,
                 policy_to_set,
                 signing_key=rsa_key,
@@ -280,7 +280,7 @@ issuancerules {};
         with AttestationAdministrationClient(
             DefaultAzureCredential(), os.environ.get("ATTESTATION_ISOLATED_URL")
         ) as admin_client:
-            set_result = admin_client.reset_policy(
+            set_result, _ = admin_client.reset_policy(
                 AttestationType.SGX_ENCLAVE,
                 signing_key=isolated_key,
                 signing_certificate=isolated_certificate,
@@ -325,7 +325,7 @@ issuancerules {};
             signing_key=self.isolated_key,
             signing_certificate=self.isolated_certificate,
         ) as admin_client:
-            set_result = admin_client.set_policy(
+            set_result, _ = admin_client.set_policy(
                 AttestationType.SGX_ENCLAVE,
                 """version= 1.0;authorizationrules{=> permit();};issuancerules {};""",
                 validation_slack=1.0,
@@ -396,7 +396,7 @@ issuancerules {};
 
             # Add the new certificate to the list. Specify a validation slack of
             # 1.0 to test passing in validation parameters to this method.
-            add_result = admin_client.add_policy_management_certificate(
+            add_result, _ = admin_client.add_policy_management_certificate(
                 new_certificate,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate,
@@ -442,7 +442,7 @@ issuancerules {};
         ) as admin_client:
             # Now remove the certificate we just added.
             print("Remove the newly added certificate.")
-            remove_result = admin_client.remove_policy_management_certificate(
+            remove_result, _ = admin_client.remove_policy_management_certificate(
                 new_certificate,
                 signing_key=self.isolated_key,
                 signing_certificate=self.isolated_certificate,

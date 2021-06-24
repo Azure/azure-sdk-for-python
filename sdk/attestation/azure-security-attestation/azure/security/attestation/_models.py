@@ -79,23 +79,20 @@ class AttestationPolicyCertificateResult(object):
      "IsPresent", "IsAbsent".
     :type certificate_resolution: str or
      ~azure.security.attestation._generated.models.CertificateModification
-    :param token: Attestation token returned by the attestation service.
-    :type token: AttestationToken
     """
 
-    def __init__(self, certificate_thumbprint, certificate_resolution, token):
+    def __init__(self, certificate_thumbprint, certificate_resolution):
         # type: (str, CertificateModification, AttestationToken)->None
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
-        self.token = token
 
     @classmethod
-    def _from_generated(cls, generated, token):
-        # type: (GeneratedPolicyCertificatesModificationResult, AttestationToken) -> AttestationPolicyCertificateResult
+    def _from_generated(cls, generated):
+        # type: (GeneratedPolicyCertificatesModificationResult) -> AttestationPolicyCertificateResult
         if not generated:
             return cls
         return cls(
-            generated.certificate_thumbprint, generated.certificate_resolution, token
+            generated.certificate_thumbprint, generated.certificate_resolution
         )
 
 
@@ -117,32 +114,26 @@ class AttestationPolicyResult(object):
     :type policy_signer: azure.security.attestation.AttestationSigner
     :param str policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
-    :param token: Attestation Token returned from the attestation service.
-    :type token: AttestationToken
 
     """
 
-    def __init__(self, token, policy_resolution, policy_signer, policy_token_hash):
-        # type: (AttestationToken, PolicyModification, JSONWebKey, str, str) -> None
-        self.token = token
+    def __init__(self, policy_resolution, policy_signer, policy_token_hash):
+        # type: (PolicyModification, JSONWebKey, str, str) -> None
         self.policy_resolution = policy_resolution
         self.policy_signer = AttestationSigner._from_generated(policy_signer)
         self.policy_token_hash = policy_token_hash
 
     @classmethod
-    def _from_generated(cls, generated, token):
-        # type: (GeneratedPolicyResult, AttestationToken, str)->AttestationPolicyResult
-        if not token:
-            raise ValueError("Token parameter must be provided.")
+    def _from_generated(cls, generated):
+        # type: (GeneratedPolicyResult, str)->AttestationPolicyResult
         # If we have a generated policy result or policy text, return that.
         if generated:
             return cls(
-                token,
                 generated.policy_resolution,
                 generated.policy_signer,
                 generated.policy_token_hash,
             )
-        return cls(None, None, None, None)
+        return cls(None, None, None)
 
 
 class AttestationResult(object):
@@ -226,7 +217,7 @@ class AttestationResult(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (GeneratedAttestationResult, AttestationToken) -> AttestationResult
+        # type: (GeneratedAttestationResult) -> AttestationResult
         return AttestationResult(
             issuer=generated.iss,
             unique_identifier=generated.jti,
@@ -565,7 +556,7 @@ class AttestationToken(object):
         return self._header.get("kid")
 
     @property
-    def expiration_time(self):
+    def expires(self):
         # type:() -> Union[datetime, None]
         """Expiration time for the token."""
         exp = self._body.get("exp")
@@ -574,7 +565,7 @@ class AttestationToken(object):
         return None
 
     @property
-    def not_before_time(self):
+    def not_before(self):
         # type:() -> Union[datetime, None]
         """Time before which the token is invalid."""
         nbf = self._body.get("nbf")
@@ -583,7 +574,7 @@ class AttestationToken(object):
         return None
 
     @property
-    def issuance_time(self):
+    def issued(self):
         # type:() -> Union[datetime, None]
         """Time when the token was issued."""
         iat = self._body.get("iat")
@@ -828,14 +819,14 @@ class AttestationToken(object):
             time_now = datetime.now()
             if (
                 kwargs.get("validate_expiration", True)
-                and self.expiration_time is not None
+                and self.expires is not None
             ):
-                if time_now > self.expiration_time:
-                    delta = time_now - self.expiration_time
+                if time_now > self.expires:
+                    delta = time_now - self.expires
                     if delta.total_seconds() > kwargs.get("validation_slack", 0.5):
                         raise AttestationTokenValidationException(
                             u"Token is expired. Now: {}, Not Before: {}".format(
-                                time_now.isoformat(), self.not_before_time.isoformat()
+                                time_now.isoformat(), self.not_before.isoformat()
                             )
                         )
             if (
@@ -843,12 +834,12 @@ class AttestationToken(object):
                 and hasattr(self, "not_before_time")
                 and self.not_before_time is not None
             ):
-                if time_now < self.not_before_time:
-                    delta = self.not_before_time - time_now
+                if time_now < self.not_before:
+                    delta = self.not_before - time_now
                     if delta.total_seconds() > kwargs.get("validation_slack", 0.5):
                         raise AttestationTokenValidationException(
                             u"Token is not yet valid. Now: {}, Not Before: {}".format(
-                                time_now.isoformat(), self.not_before_time.isoformat()
+                                time_now.isoformat(), self.not_before.isoformat()
                             )
                         )
             if (

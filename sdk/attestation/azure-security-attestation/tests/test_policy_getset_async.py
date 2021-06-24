@@ -62,7 +62,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url, **kwargs)
-        policy_set_response = await attest_client.set_policy(
+        policy_set_response, _ = await attest_client.set_policy(
             attestation_type, attestation_policy
         )
         new_policy, _ = await attest_client.get_policy(attestation_type)
@@ -82,7 +82,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
     async def test_aad_reset_policy_unsecured(self, attestation_aad_url, **kwargs):
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = await attest_client.reset_policy(
+        policy_set_response, _ = await attest_client.reset_policy(
             kwargs.pop("attestation_type")
         )
 
@@ -106,7 +106,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         attestation_type = kwargs.pop("attestation_type", AttestationType.SGX_ENCLAVE)
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = await attest_client.reset_policy(
+        policy_set_response, _ = await attest_client.reset_policy(
             attestation_type,
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -136,7 +136,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         attest_client = self.create_admin_client(attestation_aad_url)
         attestation_type = kwargs.pop("attestation_type")
-        policy_set_response = await attest_client.set_policy(
+        policy_set_response, _ = await attest_client.set_policy(
             attestation_type,
             attestation_policy,
             signing_key=key,
@@ -177,7 +177,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
 
         attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_isolated_url)
-        policy_set_response = await attest_client.set_policy(
+        policy_set_response, _ = await attest_client.set_policy(
             attestation_type,
             attestation_policy,
             signing_key=key,
@@ -213,7 +213,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = await attest_client.reset_policy(
+        policy_set_response, _ = await attest_client.reset_policy(
             kwargs.pop("attestation_type"),
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -287,14 +287,14 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         )
 
         # Add a new certificate.
-        result = await admin_client.add_policy_management_certificate(
+        result, _ = await admin_client.add_policy_management_certificate(
             pem_certificate_to_add
         )
 
         assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Add it again - this should be ok.
-        result = await admin_client.add_policy_management_certificate(
+        result, _ = await admin_client.add_policy_management_certificate(
             pem_certificate_to_add
         )
         assert result.certificate_resolution == CertificateModification.IS_PRESENT
@@ -306,7 +306,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         )
 
         # Now remove the certificate we just added.
-        result = await admin_client.remove_policy_management_certificate(
+        result, _ = await admin_client.remove_policy_management_certificate(
             pem_certificate_to_add,
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -314,7 +314,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # Remove it again, this should be ok.
-        result = await admin_client.remove_policy_management_certificate(
+        result, _ = await admin_client.remove_policy_management_certificate(
             pem_certificate_to_add,
             signing_key=key,
             signing_certificate=signing_certificate,

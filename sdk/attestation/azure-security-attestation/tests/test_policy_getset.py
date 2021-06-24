@@ -61,7 +61,7 @@ class PolicyGetSetTests(AzureTestCase):
 
         attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = attest_client.set_policy(
+        policy_set_response, _ = attest_client.set_policy(
             attestation_type, attestation_policy
         )
         new_policy = attest_client.get_policy(attestation_type)[0]
@@ -82,7 +82,7 @@ class PolicyGetSetTests(AzureTestCase):
 
         attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = attest_client.reset_policy(attestation_type)
+        policy_set_response, _ = attest_client.reset_policy(attestation_type)
 
         assert None == policy_set_response.policy_token_hash
         assert policy_set_response.policy_resolution == PolicyModification.REMOVED
@@ -103,7 +103,7 @@ class PolicyGetSetTests(AzureTestCase):
         key = pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = attest_client.reset_policy(
+        policy_set_response, _ = attest_client.reset_policy(
             kwargs.pop("attestation_type"),
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -132,7 +132,7 @@ class PolicyGetSetTests(AzureTestCase):
         key = pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = attest_client.set_policy(
+        policy_set_response, _ = attest_client.set_policy(
             kwargs.pop("attestation_type"),
             attestation_policy,
             signing_key=key,
@@ -172,7 +172,7 @@ class PolicyGetSetTests(AzureTestCase):
         key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_isolated_url)
-        policy_set_response = attest_client.set_policy(
+        policy_set_response, _ = attest_client.set_policy(
             kwargs.pop("attestation_type"),
             attestation_policy,
             signing_key=key,
@@ -208,7 +208,7 @@ class PolicyGetSetTests(AzureTestCase):
         key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response = attest_client.reset_policy(
+        policy_set_response, _ = attest_client.reset_policy(
             kwargs.pop("attestation_type"),
             signing_key=key,
             signing_certificate=signing_certificate,
@@ -282,11 +282,11 @@ class PolicyGetSetTests(AzureTestCase):
         )
 
         # Add a new certificate.
-        result = admin_client.add_policy_management_certificate(pem_certificate_to_add)
+        result, _ = admin_client.add_policy_management_certificate(pem_certificate_to_add)
         assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Add it again - this should be ok.
-        result = admin_client.add_policy_management_certificate(
+        result, _ = admin_client.add_policy_management_certificate(
             pem_certificate_to_add,
             signing_key=pem_signing_key,
             signing_certificate=pem_signing_cert,
@@ -300,13 +300,13 @@ class PolicyGetSetTests(AzureTestCase):
         )
 
         # Now remove the certificate we just added.
-        result = admin_client.remove_policy_management_certificate(
+        result, _ = admin_client.remove_policy_management_certificate(
             pem_certificate_to_add
         )
         assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # Remove it again, this should be ok.
-        result = admin_client.remove_policy_management_certificate(
+        result, _ = admin_client.remove_policy_management_certificate(
             pem_certificate_to_add
         )
         assert result.certificate_resolution == CertificateModification.IS_ABSENT
