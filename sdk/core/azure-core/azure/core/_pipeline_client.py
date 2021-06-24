@@ -40,6 +40,7 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
+from .pipeline.transport.httpx import HttpXTransport
 
 try:
     from typing import TYPE_CHECKING
@@ -167,6 +168,7 @@ class PipelineClient(PipelineClientBase):
                 policies = policies_1
 
         if not transport:
-            transport = RequestsTransport(**kwargs)
+            # transport = RequestsTransport(**kwargs)
+            transport = HttpXTransport(**kwargs)
 
         return Pipeline(transport, policies)

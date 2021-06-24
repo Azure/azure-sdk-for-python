@@ -164,7 +164,8 @@ class AsyncPipelineClient(PipelineClientBase):
                 policies = policies_1
 
         if not transport:
-            from .pipeline.transport import AioHttpTransport
-            transport = AioHttpTransport(**kwargs)
+            # from .pipeline.transport import AioHttpTransport
+            from .pipeline.transport.httpx import AsyncHttpXTransport
+            transport = AsyncHttpXTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
