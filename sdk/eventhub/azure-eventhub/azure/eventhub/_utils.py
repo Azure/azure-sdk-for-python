@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, List
 
 import six
 
@@ -279,7 +279,9 @@ def _convert_to_single_event_data(message, message_type):
     except AttributeError:
         # AmqpAnnotatedMessage
         # pylint: disable=protected-access
-        return message_type._from_message(message=message._to_outgoing_amqp_message(), raw_amqp_message=message)  # type: ignore
+        return message_type._from_message(
+            message=message._to_outgoing_amqp_message(), raw_amqp_message=message  # type: ignore
+        )
 
 
 def transform_messages_if_needed(messages, message_type):

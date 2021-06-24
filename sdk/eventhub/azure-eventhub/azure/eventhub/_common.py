@@ -27,7 +27,7 @@ from ._utils import (
     set_message_partition_key,
     trace_message,
     utc_from_timestamp,
-    transform_messages_if_needed
+    transform_messages_if_needed,
 )
 from ._constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
@@ -54,7 +54,7 @@ from .amqp import (
     AmqpAnnotatedMessage,
     AmqpMessageBodyType,
     AmqpMessageHeader,
-    AmqpMessageProperties
+    AmqpMessageProperties,
 )
 
 if TYPE_CHECKING:
@@ -107,8 +107,10 @@ class EventData(object):
             raise ValueError("EventData cannot be None.")
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
-        self._raw_amqp_message = AmqpAnnotatedMessage(data_body=body, annotations={}, application_properties={})
-        self.message = self._raw_amqp_message._message # pylint:disable=protected-access
+        self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
+            data_body=body, annotations={}, application_properties={}
+        )  
+        self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -194,7 +196,7 @@ class EventData(object):
 
     def _to_outgoing_message(self):
         # type: () -> EventData
-        self.message = self._raw_amqp_message._to_outgoing_amqp_message() # pylint:disable=protected-access
+        self.message = (self._raw_amqp_message._to_outgoing_amqp_message())  # pylint:disable=protected-access
         return self
 
     @property
@@ -474,7 +476,9 @@ class EventDataBatch(object):
     def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
         # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
 
-        if partition_key and not isinstance(partition_key, (six.text_type, six.binary_type)):
+        if partition_key and not isinstance(
+            partition_key, (six.text_type, six.binary_type)
+        ):
             _LOGGER.info(
                 "WARNING: Setting partition_key of non-string value on the events to be sent is discouraged "
                 "as the partition_key will be ignored by the Event Hub service and events will be assigned "
@@ -516,9 +520,11 @@ class EventDataBatch(object):
             try:
                 self.add(event_data)
             except ValueError:
-                raise ValueError("The combined size of EventData or AmqpAnnotatedMessage collection exceeds "
-                                 "the Event Hub frame size limit. Please send a smaller collection of EventData "
-                                 "or use EventDataBatch, which is guaranteed to be under the frame size limit")
+                raise ValueError(
+                    "The combined size of EventData or AmqpAnnotatedMessage collection exceeds "
+                    "the Event Hub frame size limit. Please send a smaller collection of EventData "
+                    "or use EventDataBatch, which is guaranteed to be under the frame size limit"
+                )
 
     @property
     def size_in_bytes(self):
@@ -542,7 +548,6 @@ class EventDataBatch(object):
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
-        # pylint:disable=protected-access
 
         outgoing_event_data = transform_messages_if_needed(event_data, EventData)
 
@@ -555,7 +560,9 @@ class EventDataBatch(object):
                     "The partition key of event_data does not match the partition key of this batch."
                 )
             if not outgoing_event_data.partition_key:
-                set_message_partition_key(outgoing_event_data.message, self._partition_key)
+                set_message_partition_key(
+                    outgoing_event_data.message, self._partition_key
+                )
 
         trace_message(outgoing_event_data)
         event_data_size = outgoing_event_data.message.get_message_encoded_size()
@@ -578,6 +585,7 @@ class EventDataBatch(object):
         self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
+
 
 class DictMixin(object):
     def __setitem__(self, key, item):
