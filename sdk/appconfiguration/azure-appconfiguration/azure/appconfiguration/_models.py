@@ -10,7 +10,7 @@ from ._generated.models import KeyValue
 try:
     from json.decoder import JSONDecodeError
 except ImportError:
-    JSONDecodeError = None
+    JSONDecodeError = None  # type: ignore
 
 
 PolymorphicConfigurationSetting = Union[
@@ -194,10 +194,7 @@ class FeatureFlagConfigurationSetting(
         try:
             temp = json.loads(self.value)
             return temp.get("enabled", None)
-        except ValueError:  # Note: Python 2.7 exception
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
-        except JSONDecodeError:
+        except (JSONDecodeError, ValueError) as exc:
             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
                 "'value' is expected to be a dictionary")
 
@@ -208,10 +205,7 @@ class FeatureFlagConfigurationSetting(
             temp = json.loads(self.value)
             temp["enabled"] = new_value
             self.value = json.dumps(temp)
-        except ValueError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
-        except JSONDecodeError:
+        except (JSONDecodeError, ValueError) as exc:
             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
                 "'value' is expected to be a dictionary")
 
@@ -352,10 +346,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         try:
             temp = json.loads(self.value)
             return temp.get("secret_uri", None)
-        except ValueError:
-            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
-        except JSONDecodeError:
+        except (JSONDecodeError, ValueError) as exc:
             raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
                 "'value' is expected to be a dictionary")
 
@@ -365,10 +356,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp = json.loads(self.value)
             temp["secret_uri"] = secret_id
             self.value = json.dumps(temp)
-        except ValueError:
-            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
-        except JSONDecodeError:
+        except (JSONDecodeError, ValueError) as exc:
             raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
                 "'value' is expected to be a dictionary")
 
