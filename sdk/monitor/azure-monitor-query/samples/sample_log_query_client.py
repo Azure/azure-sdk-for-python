@@ -3,7 +3,7 @@
 
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from msrest.serialization import UTC
 from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
@@ -27,7 +27,7 @@ summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _Resour
 end_time = datetime.now(UTC())
 
 # returns LogsQueryResults 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration='PT1H', end_time=end_time)
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(days=1), end_time=end_time)
 
 if not response.tables:
     print("No results for the query")

@@ -16,6 +16,7 @@ from ._models import LogsQueryResults, LogsQueryRequest, LogsBatchResults
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from datetime import timedelta
 
 
 class LogsQueryClient(object):
@@ -49,7 +50,7 @@ class LogsQueryClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, duration=None, **kwargs):
-        # type: (str, str, str, Any) -> LogsQueryResults
+        # type: (str, str, timedelta, Any) -> LogsQueryResults
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
@@ -63,9 +64,9 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :param str duration: The duration for which to query the data. This can also be accompanied
+        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
          with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+         taken as the end time.
         :keyword datetime start_time: The start time from which to query the data. This should be accompanied
          with either end_time or duration.
         :keyword datetime end_time: The end time till which to query the data. This should be accompanied

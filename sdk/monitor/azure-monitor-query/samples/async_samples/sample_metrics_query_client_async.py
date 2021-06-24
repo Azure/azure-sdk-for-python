@@ -3,7 +3,7 @@
 
 import os
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib3
 from azure.monitor.query.aio import MetricsQueryClient
 from azure.identity.aio import ClientSecretCredential
@@ -25,7 +25,7 @@ async def query_metrics():
             metrics_uri,
             metric_names=["PublishSuccessCount"],
             start_time=datetime(2021, 5, 25),
-            duration='P1D'
+            duration=timedelta(days=1)
             )
 
     for metric in response.metrics:

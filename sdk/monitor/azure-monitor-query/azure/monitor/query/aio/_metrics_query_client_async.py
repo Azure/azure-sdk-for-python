@@ -7,6 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any, List
 
 from azure.core.async_paging import AsyncItemPaged
@@ -42,7 +43,13 @@ class MetricsQueryClient(object):
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
-    async def query(self, resource_uri: str, metric_names: List, duration: str = None, **kwargs: Any) -> MetricsResult:
+    async def query(
+        self,
+        resource_uri: str,
+        metric_names: List,
+        duration: timedelta = None,
+        **kwargs: Any
+        ) -> MetricsResult:
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -52,9 +59,9 @@ class MetricsQueryClient(object):
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
         :type metric_names: list
-        :param str duration: The duration for which to query the data. This can also be accompanied
+        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
          with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+         taken as the end time.
         :keyword datetime start_time: The start time from which to query the data. This should be accompanied
          with either end_time or duration.
         :keyword datetime end_time: The end time till which to query the data. This should be accompanied

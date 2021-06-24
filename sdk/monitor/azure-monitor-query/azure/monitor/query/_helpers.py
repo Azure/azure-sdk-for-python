@@ -57,12 +57,17 @@ def construct_iso8601(start=None, end=None, duration=None):
             end = Serializer.serialize_iso(end)
             iso_str = start + '/' + end
         elif duration is not None:
-            iso_str = start + '/' + duration
+            iso_duration = _duration_to_iso8601(duration)
+            iso_str = start + '/' + iso_duration
         else:
             raise ValueError("Start time must be provided aling with duration or end time.")
     elif end is not None:
+        iso_duration = _duration_to_iso8601(duration)
         end = Serializer.serialize_iso(end)
-        iso_str = duration + '/' + end
+        iso_str = iso_duration + '/' + end
     else:
-        iso_str = duration
+        iso_str =  _duration_to_iso8601(duration)
     return iso_str
+
+def _duration_to_iso8601(duration):
+    return 'PT{}S'.format(duration.total_seconds())
