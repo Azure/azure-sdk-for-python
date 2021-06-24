@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Any, Optional, Mapping, Union, overload, TYPE_CHECKING
+from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
