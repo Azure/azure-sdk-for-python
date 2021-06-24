@@ -40,6 +40,7 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
+from .rest import HttpResponse
 
 try:
     from typing import TYPE_CHECKING
@@ -59,6 +60,7 @@ if TYPE_CHECKING:
         Iterator,
         cast,
     )  # pylint: disable=unused-import
+    from .rest import HttpRequest
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -170,3 +172,27 @@ class PipelineClient(PipelineClientBase):
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
+
+    def send_request(self, request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        # """
+        rest_request = False
+        try:
+            request_to_run = request._to_pipeline_transport_request()
+            rest_request = True
+        except AttributeError:
+            request_to_run = request
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
+        if return_pipeline_response:
+            return pipeline_response
+        response = pipeline_response.http_response
+        if rest_request:
+            return response._to_rest_response()
+        return response

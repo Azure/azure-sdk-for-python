@@ -32,7 +32,6 @@ from typing import TYPE_CHECKING, cast
 from azure.core.exceptions import HttpResponseError
 
 from .._utils import _case_insensitive_dict
-from ..pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from ._helpers import (
     FilesType,
     lookup_encoding,
@@ -323,10 +322,6 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         return "<HttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
-
-    @classmethod
-    def _from_pipeline_transport_response(cls, pipeline_transport_response):
-        return from_pipeline_transport_request_helper(cls, pipeline_transport_response)
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
 

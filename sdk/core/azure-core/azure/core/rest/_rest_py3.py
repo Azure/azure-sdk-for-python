@@ -60,7 +60,6 @@ from ._helpers import (
 )
 from ._helpers_py3 import set_content_body
 from ..exceptions import ResponseNotReadError
-from ..pipeline._tools import to_pipeline_transport_helper
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
@@ -340,10 +339,6 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         if not self._has_content():
             raise ResponseNotReadError()
         return cast(bytes, self._get_content())
-
-    @classmethod
-    def _from_pipeline_transport_response(cls, pipeline_transport_response):
-        return from_pipeline_transport_request_helper(cls, pipeline_transport_response)
 
 class HttpResponse(_HttpResponseBase):
 

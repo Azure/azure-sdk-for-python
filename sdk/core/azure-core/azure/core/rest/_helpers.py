@@ -273,11 +273,3 @@ def from_pipeline_transport_request_helper(request_class, pipeline_transport_req
         files=pipeline_transport_request.files,
         data=pipeline_transport_request.data
     )
-
-def from_pipeline_transport_response(response_class, pipeline_transport_response):
-    response = response_class(
-        request=pipeline_transport_response.request._from_pipeline_transport_request(),
-        internal_response=pipeline_transport_response.internal_response,
-    )
-    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
-    return response

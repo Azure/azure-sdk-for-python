@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from ..rest import HttpRequest
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
     result = func(*args, **kwargs)
@@ -32,3 +32,57 @@ def await_result(func, *args, **kwargs):
             "Policy {} returned awaitable object in non-async pipeline.".format(func)
         )
     return result
+
+def _stream_download_helper(decompress, stream_download_generator, response, chunk_size=None):
+    # type: (bool, Callable, HttpResponse, Optional[int]) -> Iterator[bytes]
+    if response.is_stream_consumed:
+        raise StreamConsumedError()
+    if response.is_closed:
+        raise StreamClosedError()
+
+    response.is_stream_consumed = True
+    stream_download = stream_download_generator(
+        pipeline=None,
+        response=response,
+        chunk_size=chunk_size or response._connection_data_block_size,  # pylint: disable=protected-access
+        decompress=decompress,
+    )
+    for part in stream_download:
+        response._num_bytes_downloaded += len(part)
+        yield part
+
+def iter_bytes_helper(stream_download_generator, response, chunk_size=None):
+    # type: (Callable, HttpResponse, Optional[int]) -> Iterator[bytes]
+    if response._has_content():  # pylint: disable=protected-access
+        if chunk_size is None:
+            chunk_size = len(response.content)
+        for i in range(0, len(response.content), chunk_size):
+            yield response.content[i: i + chunk_size]
+    else:
+        for part in _stream_download_helper(
+            decompress=True,
+            stream_download_generator=stream_download_generator,
+            response=response,
+            chunk_size=chunk_size
+        ):
+            yield part
+    response.close()
+
+def iter_raw_helper(stream_download_generator, response, chunk_size=None):
+    # type: (Callable, HttpResponse, Optional[int]) -> Iterator[bytes]
+    for raw_bytes in _stream_download_helper(
+        decompress=False,
+        stream_download_generator=stream_download_generator,
+        response=response,
+        chunk_size=chunk_size
+    ):
+        yield raw_bytes
+    response.close()
+
+def to_rest_response_helper(pipeline_transport_response, response_type):
+    response = response_type(
+        request=pipeline_transport_response.request._to_rest_request(),  # pylint: disable=protected-access
+        internal_response=pipeline_transport_response.internal_response,
+    )
+    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
+    return response

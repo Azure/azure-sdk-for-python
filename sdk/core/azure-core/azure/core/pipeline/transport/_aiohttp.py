@@ -46,6 +46,15 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
+from ...rest import (
+    HttpRequest as RestHttpRequest,
+    AsyncHttpResponse as RestAsyncHttpResponse,
+)
+from .._tools import to_rest_response_helper
+from .._tools_async import (
+    iter_bytes_helper,
+    iter_raw_helper,
+)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -353,6 +362,90 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw
         self.body()
 
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+        return state
+
+    def _to_rest_response(self):
+        return to_rest_response_helper(self, RestAioHttpTransportResponse)
+
+class RestAioHttpTransportResponse(RestAsyncHttpResponse):
+    def __init__(
+        self,
+        *,
+        request: RestHttpRequest,
+        internal_response,
+        **kwargs
+    ):
+        super().__init__(request=request, internal_response=internal_response, **kwargs)
+        self.status_code = internal_response.status
+        self.headers = CIMultiDict(internal_response.headers)  # type: ignore
+        self.reason = internal_response.reason
+        self.content_type = internal_response.headers.get('content-type')
+        self._decompress = True
+
+    @property
+    def text(self) -> str:
+        content = self.content
+        encoding = self.encoding
+        ctype = self.headers.get(aiohttp.hdrs.CONTENT_TYPE, "").lower()
+        mimetype = aiohttp.helpers.parse_mimetype(ctype)
+
+        encoding = mimetype.parameters.get("charset")
+        if encoding:
+            try:
+                codecs.lookup(encoding)
+            except LookupError:
+                encoding = None
+        if not encoding:
+            if mimetype.type == "application" and (
+                    mimetype.subtype == "json" or mimetype.subtype == "rdap"
+            ):
+                # RFC 7159 states that the default encoding is UTF-8.
+                # RFC 7483 defines application/rdap+json
+                encoding = "utf-8"
+            elif content is None:
+                raise RuntimeError(
+                    "Cannot guess the encoding of a not yet read content"
+                )
+            else:
+                encoding = chardet.detect(content)["encoding"]
+        if not encoding:
+            encoding = "utf-8-sig"
+
+        return content.decode(encoding)
+
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in iter_raw_helper(
+            stream_download_generator=AioHttpStreamDownloadGenerator,
+            response=self,
+            chunk_size=chunk_size,
+        ):
+            yield part
+        await self.close()
+
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
+        """Asynchronously iterates over the response's bytes. Will decompress in the process
+        :param int chunk_size: The maximum size of each chunk iterated over.
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in iter_bytes_helper(
+            stream_download_generator=AioHttpStreamDownloadGenerator,
+            response=self,
+            chunk_size=chunk_size,
+        ):
+            yield part
+        await self.close()
+
+    def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)

@@ -42,6 +42,8 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 
+from .rest import HttpRequest, _AsyncContextManager, AsyncHttpResponse
+
 if TYPE_CHECKING:
     from typing import (
         List,
@@ -168,3 +170,21 @@ class AsyncPipelineClient(PipelineClientBase):
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
+
+    async def _make_pipeline_call(self, request, stream, **kwargs):
+        rest_request = False
+        try:
+            request_to_run = request._to_pipeline_transport_request()
+            rest_request = True
+        except AttributeError:
+            request_to_run = request
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = await self._pipeline.run(
+            request_to_run, stream=stream, **kwargs  # pylint: disable=protected-access
+        )
+        if return_pipeline_response:
+            return pipeline_response
+        response = pipeline_response.http_response
+        if rest_request:
+            return response._to_rest_response()
+        return response
