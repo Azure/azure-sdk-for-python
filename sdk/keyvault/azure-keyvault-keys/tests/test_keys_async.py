@@ -11,7 +11,7 @@ import logging
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey
+from azure.keyvault.keys import ApiVersion, JsonWebKey
 from azure.keyvault.keys.aio import KeyClient
 from six import byte2int
 
@@ -20,7 +20,8 @@ from _test_case import client_setup, get_decorator, KeysTestCase
 
 
 all_api_versions = get_decorator(is_async=True)
-hsm_only = get_decorator(hsm_only=True, is_async=True)
+only_hsm = get_decorator(only_hsm=True, is_async=True)
+only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -228,7 +229,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertIsNotNone(deleted_key)
         self.assertEqual(rsa_key.id, deleted_key.id)
 
-    @hsm_only()
+    @only_hsm()
     @client_setup
     async def test_rsa_public_exponent(self, client, **kwargs):
         """The public exponent of a Managed HSM RSA key can be specified during creation"""
@@ -442,6 +443,18 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @only_hsm_7_3_preview()
+    @client_setup
+    async def test_get_random_bytes(self, client, **kwargs):
+        assert client
+
+        generated_random_bytes = []
+        for i in range(5):
+            random_bytes = await client.get_random_bytes(count=8)
+            assert len(random_bytes) == 8
+            assert all([random_bytes != rb] for rb in generated_random_bytes)
+            generated_random_bytes.append(random_bytes)
 
 
 def test_service_headers_allowed_in_logs():

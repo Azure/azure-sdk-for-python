@@ -15,6 +15,7 @@ from six.moves.urllib_parse import urlparse
 
 def client_setup(testcase_func):
     """decorator that creates a client to be passed in to a test method"""
+
     @functools.wraps(testcase_func)
     def wrapper(test_class_instance, api_version, is_hsm=False, **kwargs):
         test_class_instance._skip_if_not_configured(api_version, is_hsm)
@@ -29,23 +30,30 @@ def client_setup(testcase_func):
             loop.run_until_complete(coroutine)
         else:
             testcase_func(test_class_instance, client, is_hsm=is_hsm)
+
     return wrapper
 
 
-def get_decorator(hsm_only=False, vault_only=False, **kwargs):
+def get_decorator(only_hsm=False, only_vault=False, **kwargs):
     """returns a test decorator for test parameterization"""
-    params = [param(api_version=p[0], is_hsm=p[1], **kwargs) for p in get_test_parameters(hsm_only, vault_only)]
+    versions = kwargs.pop("api_versions", None) or ApiVersion
+    params = [
+        param(api_version=p[0], is_hsm=p[1], **kwargs)
+        for p in get_test_parameters(only_hsm, only_vault, api_versions=versions)
+    ]
     return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
 
 
-def get_test_parameters(hsm_only=False, vault_only=False):
+def get_test_parameters(only_hsm=False, only_vault=False, **kwargs):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
-    hsm_supported_versions = {ApiVersion.V7_2}
-    for api_version in ApiVersion:
-        if not vault_only and api_version in hsm_supported_versions:
+    api_versions = kwargs.get("api_versions", ApiVersion)
+    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3_PREVIEW}
+
+    for api_version in api_versions:
+        if not only_vault and api_version in hsm_supported_versions:
             combinations.append([api_version, True])
-        if not hsm_only:
+        if not only_hsm:
             combinations.append([api_version, False])
     return combinations
 
@@ -76,7 +84,7 @@ class KeysTestCase(AzureTestCase):
 
         self._set_mgmt_settings_real_values()
         super(KeysTestCase, self).setUp(*args, **kwargs)
-    
+
     def tearDown(self):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
@@ -85,26 +93,30 @@ class KeysTestCase(AzureTestCase):
     def create_key_client(self, vault_uri, **kwargs):
         if kwargs.pop("is_async", False):
             from azure.keyvault.keys.aio import KeyClient
+
             credential = self.get_credential(KeyClient, is_async=True)
         else:
             from azure.keyvault.keys import KeyClient
+
             credential = self.get_credential(KeyClient)
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-    
-    def create_crypto_client(self, key,**kwargs):
+
+    def create_crypto_client(self, key, **kwargs):
         if kwargs.pop("is_async", False):
             from azure.keyvault.keys.crypto.aio import CryptographyClient
+
             credential = self.get_credential(CryptographyClient, is_async=True)
         else:
             from azure.keyvault.keys.crypto import CryptographyClient
+
             credential = self.get_credential(CryptographyClient)
         return self.create_client_from_credential(CryptographyClient, credential=credential, key=key, **kwargs)
-    
+
     def _scrub_url(self, real_url, playback_url):
         real = urlparse(real_url)
         playback = urlparse(playback_url)
         self.scrubber.register_name_pair(real.netloc, playback.netloc)
-    
+
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
             os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
