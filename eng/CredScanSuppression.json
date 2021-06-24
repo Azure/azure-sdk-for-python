@@ -45,11 +45,11 @@
             ],
             "_justification": "File contains private key used by test code."
         },
-            {
-              "hash": "sHdLtMfSDs4w/A83iF5BEf3+19x3is6z4yqFHtkxKLs=",
-              "_justification": "Password in docstrings"
-            }
-          ]
+        {
+            "hash":[
+                "sHdLtMfSDs4w/A83iF5BEf3+19x3is6z4yqFHtkxKLs="
+            ],
+            "_justification": "Password in docstrings"
         }
     ]
 }
