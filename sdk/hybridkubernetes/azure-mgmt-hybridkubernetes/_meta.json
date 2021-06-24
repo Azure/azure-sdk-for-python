@@ -1,8 +1,11 @@
 {
-  "autorest": "3.3.0",
-  "use": "@autorest/python@5.6.6",
-  "commit": "e34c5f11d61ca17fdc9fd0f70446dd54b94d67f1",
+  "autorest": "3.4.2",
+  "use": [
+    "@autorest/python@5.8.1",
+    "@autorest/modelerfour@4.19.2"
+  ],
+  "commit": "18aa5fc0a4aeb8d98b47d06c45ef5f551f9b7a81",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest_command": "autorest specification/hybridkubernetes/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.6.6 --version=3.3.0",
+  "autorest_command": "autorest specification/hybridkubernetes/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.8.1 --use=@autorest/modelerfour@4.19.2 --version=3.4.2",
   "readme": "specification/hybridkubernetes/resource-manager/readme.md"
 }

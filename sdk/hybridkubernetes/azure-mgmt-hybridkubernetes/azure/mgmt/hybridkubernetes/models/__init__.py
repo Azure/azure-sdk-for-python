@@ -11,9 +11,13 @@ try:
     from ._models_py3 import ConnectedClusterIdentity
     from ._models_py3 import ConnectedClusterList
     from ._models_py3 import ConnectedClusterPatch
+    from ._models_py3 import CredentialResult
+    from ._models_py3 import CredentialResults
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
+    from ._models_py3 import HybridConnectionConfig
+    from ._models_py3 import ListClusterUserCredentialsProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationList
@@ -25,9 +29,13 @@ except (SyntaxError, ImportError):
     from ._models import ConnectedClusterIdentity  # type: ignore
     from ._models import ConnectedClusterList  # type: ignore
     from ._models import ConnectedClusterPatch  # type: ignore
+    from ._models import CredentialResult  # type: ignore
+    from ._models import CredentialResults  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
+    from ._models import HybridConnectionConfig  # type: ignore
+    from ._models import ListClusterUserCredentialsProperties  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationList  # type: ignore
@@ -36,9 +44,11 @@ except (SyntaxError, ImportError):
     from ._models import TrackedResource  # type: ignore
 
 from ._connected_kubernetes_client_enums import (
+    AuthenticationMethod,
     ConnectivityStatus,
     CreatedByType,
     LastModifiedByType,
+    PrivateLinkState,
     ProvisioningState,
     ResourceIdentityType,
 )
@@ -48,18 +58,24 @@ __all__ = [
     'ConnectedClusterIdentity',
     'ConnectedClusterList',
     'ConnectedClusterPatch',
+    'CredentialResult',
+    'CredentialResults',
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse',
+    'HybridConnectionConfig',
+    'ListClusterUserCredentialsProperties',
     'Operation',
     'OperationDisplay',
     'OperationList',
     'Resource',
     'SystemData',
     'TrackedResource',
+    'AuthenticationMethod',
     'ConnectivityStatus',
     'CreatedByType',
     'LastModifiedByType',
+    'PrivateLinkState',
     'ProvisioningState',
     'ResourceIdentityType',
 ]
