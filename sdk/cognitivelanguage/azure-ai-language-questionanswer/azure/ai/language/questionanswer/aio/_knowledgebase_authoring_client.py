@@ -22,18 +22,18 @@ if TYPE_CHECKING:
 
 class KnowledgebaseAuthoringClient:
     """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
-    
+
+    :param endpoint: Supported Cognitive Services endpoint (e.g., 
+        https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param endpoint: Supported Cognitive Services endpoint (e.g.,
-         https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
-    :type endpoint: str
     """
 
     def __init__(
         self,
-        credential: AzureKeyCredential,
         endpoint: str,
+        credential: AzureKeyCredential,
         **kwargs: Any
     ) -> None:
         base_url = '{Endpoint}/language'

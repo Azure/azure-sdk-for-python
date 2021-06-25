@@ -22,13 +22,13 @@ from .. import models
 class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
     """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     """
 
-    def __init__(self, credential: AzureKeyCredential, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         base_url = "{Endpoint}/language"
         self._config = QuestionAnsweringClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -38,7 +38,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientOperationsMixin):
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    async def send_request(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         We have helper methods to create requests specific to this service in `azure.ai.language.questionanswering.rest`.

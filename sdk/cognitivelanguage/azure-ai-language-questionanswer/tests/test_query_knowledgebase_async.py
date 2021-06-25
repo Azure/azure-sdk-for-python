@@ -4,14 +4,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import os
+
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 
 from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer,
-    QuestionAnsweringClientPreparer
+    GlobalQuestionAnsweringAccountPreparer
 )
+from asynctestcase import AsyncQuestionAnsweringTest
 
 from azure.ai.language.questionanswer.models import (
     KnowledgebaseQueryParameters,
@@ -22,16 +23,11 @@ from azure.ai.language.questionanswer.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswer.rest import *
 
 
-class QnATests(QuestionAnsweringTest):
-    def setUp(self):
-        super(QnATests, self).setUp()
-        self.scrubber.register_name_pair(self._QUESTION_ANSWERING_ACCOUNT, 'foo')
-        self.scrubber.register_name_pair(self._QUESTION_ANSWERING_ACCOUNT, 'bar')
-        self.scrubber.register_name_pair(self._QUESTION_ANSWERING_PROJECT, 'test-project')
+class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
-    @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
-    async def test_query_knowledgebase_llc(self, client, question_answering_project):
+    async def test_query_knowledgebase_llc(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         json_content = {
             "question": "Ports and connectors",
             "top": 3,
@@ -42,7 +38,7 @@ class QnATests(QuestionAnsweringTest):
         }
         request = build_query_knowledgebase_request(
             json=json_content,
-            project_name=question_answering_project,
+            project_name=qna_project,
             deployment_name='test'
         )
         async with client:
@@ -79,8 +75,8 @@ class QnATests(QuestionAnsweringTest):
                     assert prompt.get('displayText')
 
     @GlobalQuestionAnsweringAccountPreparer()
-    @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
-    async def test_query_knowledgebase_llc_with_answerspan(self, client, question_answering_project):
+    async def test_query_knowledgebase_llc_with_answerspan(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         json_content = {
             "question": "Ports and connectors",
             "top": 3,
@@ -96,7 +92,7 @@ class QnATests(QuestionAnsweringTest):
         }
         request = build_query_knowledgebase_request(
             json=json_content,
-            project_name=question_answering_project,
+            project_name=qna_project,
             deployment_name='test'
         )
         async with client:
@@ -133,8 +129,8 @@ class QnATests(QuestionAnsweringTest):
                     assert prompt.get('displayText')
 
     @GlobalQuestionAnsweringAccountPreparer()
-    @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
-    async def test_query_knowledgebase(self, client, question_answering_project):
+    async def test_query_knowledgebase(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         query_params = KnowledgebaseQueryParameters(
             question="Ports and connectors",
             top=3,
@@ -146,7 +142,7 @@ class QnATests(QuestionAnsweringTest):
 
         async with client:
             output = await client.query_knowledgebase(
-                project_name=question_answering_project,
+                project_name=qna_project,
                 deployment_name='test',
                 knowledgebase_query_parameters=query_params
             )
@@ -174,8 +170,8 @@ class QnATests(QuestionAnsweringTest):
                     assert prompt.display_text
 
     @GlobalQuestionAnsweringAccountPreparer()
-    @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
-    async def test_query_knowledgebase_with_answerspan(self, client, question_answering_project):
+    async def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         query_params = KnowledgebaseQueryParameters(
             question="Ports and connectors",
             top=3,
@@ -192,7 +188,7 @@ class QnATests(QuestionAnsweringTest):
 
         async with client:
             output = await client.query_knowledgebase(
-                project_name=question_answering_project,
+                project_name=qna_project,
                 deployment_name='test',
                 knowledgebase_query_parameters=query_params
             )
