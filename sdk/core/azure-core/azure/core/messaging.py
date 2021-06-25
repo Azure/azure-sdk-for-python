@@ -122,19 +122,6 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
-        # https://github.com/cloudevents/spec Cloud event spec requires source, type,
-        # specversion. We autopopulate everything other than source, type.
-        if not all([_ in event for _ in ("source", "type")]):
-            if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
-                raise ValueError(
-                    "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
-                    " Try using the EventGridEvent from azure-eventgrid library"
-                )
-            raise ValueError(
-                "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
-                " source and type are required."
-                )
-
         kwargs = {}  # type: Dict[Any, Any]
         reserved_attr = [
             "data",
@@ -171,11 +158,25 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         if extensions:
             kwargs["extensions"] = extensions
 
-        return cls(
-            id=event.get("id"),
-            source=event["source"],
-            type=event["type"],
-            specversion=event.get("specversion"),
-            time=_convert_to_isoformat(event.get("time")),
-            **kwargs
-        )
+        try:
+            return cls(
+                id=event.get("id"),
+                source=event["source"],
+                type=event["type"],
+                specversion=event.get("specversion"),
+                time=_convert_to_isoformat(event.get("time")),
+                **kwargs
+            )
+        except KeyError:
+            # https://github.com/cloudevents/spec Cloud event spec requires source, type,
+            # specversion. We autopopulate everything other than source, type.
+            if not all([_ in event for _ in ("source", "type")]):
+                if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
+                    raise ValueError(
+                        "It looks like your event is of EventGrid schema. You can parse EventGrid events " +
+                        "using EventGridEvent.from_dict of the azure-eventgrid library."
+                    )
+                raise ValueError(
+                    "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
+                    " source and type are required."
+                    )
