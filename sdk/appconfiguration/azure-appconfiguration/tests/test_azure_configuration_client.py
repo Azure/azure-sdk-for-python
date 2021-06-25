@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Type
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -23,7 +22,6 @@ from azure.appconfiguration import (
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
 )
-from azure.identity import DefaultAzureCredential
 
 from consts import (
     KEY,
@@ -532,7 +530,7 @@ class AppConfigurationClientTest(AzureTestCase):
         temp = json.loads(changed_flag.value)
         assert temp['enabled'] == False
 
-        c = json.loads(copy.deepcopy(changed_flag.value))
+        c = json.loads(changed_flag.value)
         c['enabled'] = True
         changed_flag.value = json.dumps(c)
         assert changed_flag.enabled == True
@@ -602,8 +600,7 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_sent_config = client.set_configuration_setting(sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)
 
-        filters = updated_sent_config.filters
-        filters.append(
+        updated_sent_config.filters.append(
             {
                 "name": FILTER_TARGETING,
                 "parameters": {
@@ -616,7 +613,7 @@ class AppConfigurationClientTest(AzureTestCase):
             }
         )
 
-        filters.append(
+        updated_sent_config.filters.append(
             {
                 "name": FILTER_TARGETING,
                 "parameters": {
@@ -628,7 +625,6 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             }
         )
-        updated_sent_config.filters = filters
 
         sent_config = client.set_configuration_setting(updated_sent_config)
         self._assert_same_keys(sent_config, updated_sent_config)

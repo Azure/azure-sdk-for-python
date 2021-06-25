@@ -168,7 +168,7 @@ class FeatureFlagConfigurationSetting(
         # type: (str, **Any) -> None
         if kwargs.pop("key", None) or kwargs.pop("value", None):
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
-        super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
+        # super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id
         self.key = self._key_prefix + self.feature_id
         self.label = kwargs.get("label", None)
@@ -179,82 +179,109 @@ class FeatureFlagConfigurationSetting(
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        if not self.value:
-            if "enabled" in kwargs.keys() and "filters" in kwargs.keys():
-                self.value = json.dumps(
-                    {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": kwargs.pop("filters")}}
-                )
-            elif "enabled" in kwargs.keys():
-                self.value = json.dumps({"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": []}})
-            elif "filters" in kwargs.keys():
-                self.value = json.dumps({"conditions": {"client_filters": []}})
-            else:
-                self.value = json.dumps({})
+        self.filters = kwargs.get("filters", [])
+        self.enabled = kwargs.get("enabled", None)
+        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
+        # self._filters = FeaturesList([])
+        # if not self.value:
+        #     if "enabled" in kwargs.keys() and "filters" in kwargs.keys():
+        #         self.value = json.dumps(
+        #             {"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": kwargs.pop("filters")}}
+        #         )
+        #         self._filters = FeaturesList(self.value["conditions"]["client_filters"])
+        #     elif "enabled" in kwargs.keys():
+        #         self.value = json.dumps({"enabled": kwargs.pop("enabled"), "conditions": {"client_filters": []}})
+        #     elif "filters" in kwargs.keys():
+        #         self.value = json.dumps({"conditions": {"client_filters": []}})
+        #     else:
+        #         self.value = json.dumps({})
 
     @property
-    def enabled(self):
-        # type: () -> Union[None, bool]
-        try:
-            temp = json.loads(self.value)
-            return temp.get("enabled", None)
-        except (JSONDecodeError, ValueError):
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
+    def value(self):
+        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
+        return self._value
 
-    @enabled.setter
-    def enabled(self, new_value):
-        # type: (bool) -> None
+    @value.setter
+    def value(self, new_value):
         try:
-            temp = json.loads(self.value)
-            temp["enabled"] = new_value
-            self.value = json.dumps(temp)
-        except (JSONDecodeError, ValueError):
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
-
-    @property
-    def filters(self):
-        # type: () -> Union[None, List[Any]]
-        try:
-            temp = None
-            try:
-                temp = json.loads(self.value)
-            except ValueError:
-                raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                    "'value' is expected to be a dictionary")
+            temp = json.loads(new_value)
+            self._value = new_value
+            self.enabled = temp.get("enabled", None)
             conditions = temp.get("conditions", None)
-            if not conditions:
-                return None
-            try:
-                return conditions.get("client_filters", [])
-            except AttributeError:
-                raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format." + \
-                    " 'client_filters' is expected to be a dictionary")
-        except JSONDecodeError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
+            if conditions:
+                self.filters = conditions.get("client_filters", [])
+            else:
+                self.filters = []
+        except (JSONDecodeError, ValueError):
+            self._value = new_value
+            self.enabled = None
+            self.filters = []
 
-    @filters.setter
-    def filters(self, new_filters):
-        # type: (List[Dict[str, Any]]) -> None
-        try:
-            temp = None
-            try:
-                temp = json.loads(self.value)
-            except ValueError:
-                raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                    "'value' is expected to be a dictionary")
-            if "conditions" not in temp:
-                temp["conditions"] = {}
-            try:
-                temp["conditions"]["client_filters"] = new_filters
-                self.value = json.dumps(temp)
-            except AttributeError:
-                raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format." + \
-                    " 'client_filters' is expected to be a dictionary")
-        except JSONDecodeError:
-            raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
+
+    # @property
+    # def enabled(self):
+    #     # type: () -> Union[None, bool]
+    #     try:
+    #         temp = json.loads(self.value)
+    #         return temp.get("enabled", None)
+    #     except (JSONDecodeError, ValueError):
+    #         raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+    #             "'value' is expected to be a dictionary")
+
+    # @enabled.setter
+    # def enabled(self, new_value):
+    #     # type: (bool) -> None
+    #     try:
+    #         temp = json.loads(self.value)
+    #         temp["enabled"] = new_value
+    #         self.value = json.dumps(temp)
+    #     except (JSONDecodeError, ValueError):
+    #         raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+    #             "'value' is expected to be a dictionary")
+
+    # @property
+    # def filters(self):
+    #     # type: () -> Union[None, List[Any]]
+    #     try:
+    #         temp = None
+    #         try:
+    #             temp = json.loads(self.value)
+    #         except ValueError:
+    #             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+    #                 "'value' is expected to be a dictionary")
+    #         conditions = temp.get("conditions", None)
+    #         if not conditions:
+    #             return None
+    #         try:
+    #             return conditions.get("client_filters", [])
+    #         except AttributeError:
+    #             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format." + \
+    #                 " 'client_filters' is expected to be a dictionary")
+    #     except JSONDecodeError:
+    #         raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+    #             "'value' is expected to be a dictionary")
+
+    # @filters.setter
+    # def filters(self, new_filters):
+    #     # type: (List[Dict[str, Any]]) -> None
+    #     try:
+    #         temp = None
+    #         try:
+    #             temp = json.loads(self.value)
+    #         except ValueError:
+    #             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+    #                 "'value' is expected to be a dictionary")
+    #         if "conditions" not in temp:
+    #             temp["conditions"] = {}
+    #         try:
+    #             temp["conditions"]["client_filters"] = new_filters
+    #             self.value = json.dumps(temp)
+    #         except AttributeError:
+    #             raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format." + \
+    #                 " 'client_filters' is expected to be a dictionary")
+    #     except JSONDecodeError:
+    #         raise ValueError("'value' of FeatureFlagConfigurationSetting is not in the proper format. " + \
+    #             "'value' is expected to be a dictionary")
 
     @classmethod
     def _from_generated(cls, key_value):
@@ -290,7 +317,7 @@ class FeatureFlagConfigurationSetting(
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=self.value,
+            value=self._value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
