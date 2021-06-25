@@ -129,6 +129,8 @@ def stable_version_plus(add_content):
         return f'{num[0]}.{int(num[1]) + 1}.0'
     elif flag[2]:
         return f'{num[0]}.{num[1]}.{int(num[2]) + 1}'
+    else:
+        return '0.0.0'
 
 
 def edit_version(add_content):
