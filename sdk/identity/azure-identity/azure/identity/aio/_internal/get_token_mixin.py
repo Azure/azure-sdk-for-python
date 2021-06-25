@@ -25,7 +25,7 @@ class GetTokenMixin(abc.ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
@@ -56,10 +56,10 @@ class GetTokenMixin(abc.ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = await self._acquire_token_silently(*scopes)
+            token = await self._acquire_token_silently(*scopes, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
-                token = await self._request_token(*scopes)
+                token = await self._request_token(*scopes, **kwargs)
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())

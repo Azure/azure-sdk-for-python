@@ -56,7 +56,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes)
 

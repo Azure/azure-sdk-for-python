@@ -62,7 +62,7 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         return self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":

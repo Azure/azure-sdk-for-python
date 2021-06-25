@@ -137,8 +137,8 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
             raise CredentialUnavailableError(message=self._unavailable_reason)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes)
 
