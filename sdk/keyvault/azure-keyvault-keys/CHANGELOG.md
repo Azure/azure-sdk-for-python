@@ -27,9 +27,9 @@ This is the last version to support Python 3.5. The next version will require Py
   - Added 128-, 192-, and 256-bit AES-GCM, AES-CBC, and AES-CBCPAD encryption
     algorithms to `EncryptionAlgorithm`
   - Added 128- and 192-bit AES-KW key wrapping algorithms to `KeyWrapAlgorithm`
-  - `CryptographyClient`'s `encrypt` method accepts `iv` and 
+  - `CryptographyClient`'s `encrypt` method accepts `iv` and
     `additional_authenticated_data` keyword arguments
-  - `CryptographyClient`'s `decrypt` method accepts `iv`, 
+  - `CryptographyClient`'s `decrypt` method accepts `iv`,
     `additional_authenticated_data`, and `authentication_tag` keyword arguments
   - Added `iv`, `aad`, and `tag` properties to `EncryptResult`
 - (From 4.4.0b3) `CryptographyClient` will perform all operations locally if initialized with
@@ -74,9 +74,9 @@ This is the last version to support Python 3.5. The next version will require Py
   - Added 128-, 192-, and 256-bit AES-GCM, AES-CBC, and AES-CBCPAD encryption
     algorithms to `EncryptionAlgorithm`
   - Added 128- and 192-bit AES-KW key wrapping algorithms to `KeyWrapAlgorithm`
-  - `CryptographyClient`'s `encrypt` method accepts `iv` and 
+  - `CryptographyClient`'s `encrypt` method accepts `iv` and
     `additional_authenticated_data` keyword arguments
-  - `CryptographyClient`'s `decrypt` method accepts `iv`, 
+  - `CryptographyClient`'s `decrypt` method accepts `iv`,
     `additional_authenticated_data`, and `authentication_tag` keyword arguments
   - Added `iv`, `aad`, and `tag` properties to `EncryptResult`
 - Added method `parse_key_vault_key_id` that parses out a full ID returned by
@@ -220,7 +220,7 @@ interact with vaults in sovereign clouds.
 ### Other changes:
 - Async clients use [aiohttp](https://pypi.org/project/aiohttp/) for transport
 by default. See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md/#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md/#transport)
 for more information about using other transports.
 
 ## 4.0.0b1 (2019-06-28)
@@ -232,9 +232,9 @@ https://aka.ms/azure-sdk-preview1-python.
 This library is not a direct replacement for `azure-keyvault`. Applications
 using that library would require code changes to use `azure-keyvault-keys`.
 This package's
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/README.md)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples)
 demonstrate the new API.
 
 ### Major changes from `azure-keyvault`
@@ -248,9 +248,9 @@ only)
     the synchronous client in `azure.keyvault.keys`
 - Authentication using `azure-identity` credentials
   - see this package's
-  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/README.md)
+  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/README.md)
   , and the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 
 ### `azure-keyvault` features not implemented in this release

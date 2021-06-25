@@ -125,13 +125,13 @@ credential  = ClientSecretCredential(
 
 client = LogsQueryClient(credential)
 
-# Response time trend 
-# request duration over the last 12 hours. 
-query = """AppRequests | 
-where TimeGenerated > ago(12h) | 
+# Response time trend
+# request duration over the last 12 hours.
+query = """AppRequests |
+where TimeGenerated > ago(12h) |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-# returns LogsQueryResults 
+# returns LogsQueryResults
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
     query,
@@ -290,12 +290,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [azure_cli_link]: https://pypi.org/project/azure-cli/
-[python-query-src]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-query/
+[python-query-src]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/
 [python-query-pypi]: https://aka.ms/azsdk-python-monitor-query-pypi
 [python-query-product-docs]: https://docs.microsoft.com/azure/azure-monitor/
 [python-query-ref-docs]: https://docs.microsoft.com/python/api/overview/azure/?view=azure-python
-[python-query-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-query/samples
-[python-query-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/azure-monitor-query/CHANGELOG.md
+[python-query-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/samples
+[python-query-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/
 
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
