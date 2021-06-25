@@ -38,7 +38,7 @@ steps:
           - "/*"
         Repositories:
           - Name: "Azure/autorest.python"
-            Commitish: "main"
+            Commitish: "master"
             WorkingDirectory: "$(Build.SourcesDirectory)/autorest.python"
         SkipDefaultCheckout: true
 
