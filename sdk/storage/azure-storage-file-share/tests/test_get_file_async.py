@@ -14,7 +14,7 @@ import uuid
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from azure.storage.fileshare import FileProperties
 from azure.storage.fileshare.aio import (
     ShareFileClient,
@@ -326,7 +326,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             data += await chunks.__anext__()
             i += 1
         await file_client.upload_file(data=data)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ResourceModifiedError):
             data += await chunks.__anext__()
 
     @GlobalStorageAccountPreparer()

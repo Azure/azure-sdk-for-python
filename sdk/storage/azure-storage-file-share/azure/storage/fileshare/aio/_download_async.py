@@ -11,7 +11,7 @@ from itertools import islice
 import warnings
 
 from typing import AsyncIterator
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
@@ -95,7 +95,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 **self.request_options
             )
             if response.properties.etag != self.etag:
-                raise ValueError("The file has been modified while downloading.")
+                raise ResourceModifiedError(message="The file has been modified while downloading.")
         except HttpResponseError as error:
             process_storage_error(error)
 

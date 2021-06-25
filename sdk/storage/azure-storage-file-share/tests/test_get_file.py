@@ -11,7 +11,7 @@ import unittest
 import uuid
 
 import pytest
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 
 from azure.storage.fileshare import (
     ShareFileClient,
@@ -291,7 +291,7 @@ class StorageGetFileTest(StorageTestCase):
             data += next(chunks)
             i += 1
         file_client.upload_file(data=data)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ResourceModifiedError):
             data += next(chunks)
 
     @GlobalStorageAccountPreparer()

@@ -1880,7 +1880,7 @@ class StorageContainerTest(StorageTestCase):
             data += next(chunks)
             i += 1
         blob.upload_blob(data=data, overwrite=True)
-        with self.assertRaises(HttpResponseError):
+        with self.assertRaises(ResourceModifiedError):
             data += next(chunks)
 
     @GlobalStorageAccountPreparer()

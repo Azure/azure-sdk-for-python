@@ -16,7 +16,7 @@ import requests
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -216,7 +216,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             data += await chunks.__anext__()
             i += 1
         await blob.upload_blob(data=data, overwrite=True)
-        with self.assertRaises(HttpResponseError):
+        with self.assertRaises(ResourceModifiedError):
             data += await chunks.__anext__()
 
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
