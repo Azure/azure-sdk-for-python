@@ -22,7 +22,7 @@ These sample programs demonstrate some common use case scenairos for the [FarmBe
 
 - [sample_attachments.py][attachments_sample] demonstrates FarmBeats' capabaility of storing arbitrary files in context to the various farm hierarchy objects. We first attach some files onto a farmer and a farm, and then download all existing attachments for the farmer onto a local directory.
 
-- [sample_cascade_delete.py][cascade_delete_sample] demonstrates the usage of cascade delete jobs to perform cleanup of farm hierarchy objects. A cascade delete job handles the recursive deletion of all dependent data for the given parent resource.
+- [sample_cascade_delete.py][cascade_delete_sample] demonstrates the usage of cascade delete jobs to perform cleanup of farm hierarchy objects. A cascade delete job handles the recursive deletion of all dependent data for the given parent resource. Use this to clean up the sample resources that you create in the other samples.
 
 
 Additionally, for each sample, there are corresponding files in the [`samples/async`][async_samples] directory
