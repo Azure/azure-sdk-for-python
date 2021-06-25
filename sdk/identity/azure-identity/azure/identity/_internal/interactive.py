@@ -8,11 +8,9 @@ import abc
 import base64
 import json
 import logging
-import os
 import time
 from typing import TYPE_CHECKING
 
-import msal
 import six
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -188,7 +186,7 @@ class InteractiveCredential(MsalCredential):
         result = None
         claims = kwargs.get("claims")
         if self._auth_record:
-            app = self._get_app()
+            app = self._get_app(**kwargs)
             for account in app.get_accounts(username=self._auth_record.username):
                 if account.get("home_account_id") != self._auth_record.home_account_id:
                     continue
@@ -203,16 +201,6 @@ class InteractiveCredential(MsalCredential):
             response = self._client.get_error_response(result)
             raise AuthenticationRequiredError(scopes, claims=claims, response=response)
         raise AuthenticationRequiredError(scopes, claims=claims)
-
-    def _get_app(self):
-        # type: () -> msal.PublicClientApplication
-        if not self._msal_app:
-            if "AZURE_IDENTITY_DISABLE_CP1" in os.environ:
-                capabilities = None
-            else:
-                capabilities = ["CP1"]  # able to handle CAE claims challenges
-            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=capabilities)
-        return self._msal_app
 
     @abc.abstractmethod
     def _request_token(self, *scopes, **kwargs):
