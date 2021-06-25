@@ -47,7 +47,7 @@ class WorkflowVersionTriggersOperations:
         version_id: str,
         trigger_name: str,
         parameters: Optional["_models.GetCallbackUrlParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkflowTriggerCallbackUrl":
         """Get the callback url for a trigger of a workflow version.
 
@@ -107,7 +107,7 @@ class WorkflowVersionTriggersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTriggerCallbackUrl', pipeline_response)

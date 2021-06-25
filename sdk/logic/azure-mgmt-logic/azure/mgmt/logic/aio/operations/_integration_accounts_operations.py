@@ -44,7 +44,7 @@ class IntegrationAccountsOperations:
     def list_by_subscription(
         self,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IntegrationAccountListResult"]:
         """Gets a list of integration accounts by subscription.
 
@@ -102,7 +102,7 @@ class IntegrationAccountsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -117,7 +117,7 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IntegrationAccountListResult"]:
         """Gets a list of integration accounts by resource group.
 
@@ -178,7 +178,7 @@ class IntegrationAccountsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -193,7 +193,7 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IntegrationAccount":
         """Gets an integration account.
 
@@ -237,7 +237,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccount', pipeline_response)
@@ -253,7 +253,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         integration_account: "_models.IntegrationAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IntegrationAccount":
         """Creates or updates an integration account.
 
@@ -304,7 +304,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -324,7 +324,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         integration_account: "_models.IntegrationAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IntegrationAccount":
         """Updates an integration account.
 
@@ -375,7 +375,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccount', pipeline_response)
@@ -390,7 +390,7 @@ class IntegrationAccountsOperations:
         self,
         resource_group_name: str,
         integration_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an integration account.
 
@@ -434,7 +434,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -447,7 +447,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         parameters: "_models.GetCallbackUrlParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CallbackUrl":
         """Gets the integration account callback URL.
 
@@ -498,7 +498,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CallbackUrl', pipeline_response)
@@ -514,7 +514,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         list_key_vault_keys: "_models.ListKeyVaultKeysDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.KeyVaultKeyCollection"]:
         """Gets the integration account's Key Vault keys.
 
@@ -584,7 +584,7 @@ class IntegrationAccountsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -600,7 +600,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         log_tracking_events: "_models.TrackingEventsDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Logs the integration account's tracking events.
 
@@ -651,7 +651,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -664,7 +664,7 @@ class IntegrationAccountsOperations:
         resource_group_name: str,
         integration_account_name: str,
         regenerate_access_key: "_models.RegenerateActionParameter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IntegrationAccount":
         """Regenerates the integration account access key.
 
@@ -715,7 +715,7 @@ class IntegrationAccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('IntegrationAccount', pipeline_response)

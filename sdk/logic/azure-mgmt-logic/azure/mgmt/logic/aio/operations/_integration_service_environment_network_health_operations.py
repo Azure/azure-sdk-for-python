@@ -44,7 +44,7 @@ class IntegrationServiceEnvironmentNetworkHealthOperations:
         self,
         resource_group: str,
         integration_service_environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Dict[str, "_models.IntegrationServiceEnvironmentSubnetNetworkHealth"]:
         """Gets the integration service environment network health.
 
@@ -88,7 +88,7 @@ class IntegrationServiceEnvironmentNetworkHealthOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('{IntegrationServiceEnvironmentSubnetNetworkHealth}', pipeline_response)

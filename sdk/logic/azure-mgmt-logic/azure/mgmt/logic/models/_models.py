@@ -347,7 +347,7 @@ class ApiReference(ResourceReference):
     :param icon_uri: The icon uri of the api.
     :type icon_uri: str
     :param swagger: The swagger of the api.
-    :type swagger: object
+    :type swagger: any
     :param brand_color: The brand color of the api.
     :type brand_color: str
     :param category: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
@@ -559,7 +559,7 @@ class ApiResourceProperties(msrest.serialization.Model):
     :param name: The name.
     :type name: str
     :param connection_parameters: The connection parameters.
-    :type connection_parameters: dict[str, object]
+    :type connection_parameters: dict[str, any]
     :param metadata: The metadata.
     :type metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
     :param runtime_urls: The runtime urls.
@@ -631,8 +631,8 @@ class ArtifactProperties(msrest.serialization.Model):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
+    :param metadata: Anything.
+    :type metadata: any
     """
 
     _attribute_map = {
@@ -658,10 +658,10 @@ class ArtifactContentPropertiesDefinition(ArtifactProperties):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param content: Any object.
-    :type content: object
+    :param metadata: Anything.
+    :type metadata: any
+    :param content: Anything.
+    :type content: any
     :param content_type: The content type.
     :type content_type: str
     :param content_link: The content link.
@@ -1264,10 +1264,10 @@ class AssemblyProperties(ArtifactContentPropertiesDefinition):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param content: Any object.
-    :type content: object
+    :param metadata: Anything.
+    :type metadata: any
+    :param content: Anything.
+    :type content: any
     :param content_type: The content type.
     :type content_type: str
     :param content_link: The content link.
@@ -1460,8 +1460,8 @@ class BatchConfigurationProperties(ArtifactProperties):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
+    :param metadata: Anything.
+    :type metadata: any
     :param batch_group_name: Required. The name of the batch group.
     :type batch_group_name: str
     :param release_criteria: Required. The batch release criteria.
@@ -1601,7 +1601,7 @@ class ContentLink(msrest.serialization.Model):
     :param content_hash: The content hash.
     :type content_hash: ~azure.mgmt.logic.models.ContentHash
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     """
 
     _attribute_map = {
@@ -2639,8 +2639,8 @@ class Expression(msrest.serialization.Model):
 
     :param text: The text.
     :type text: str
-    :param value: Any object.
-    :type value: object
+    :param value: Anything.
+    :type value: any
     :param subexpressions: The sub expressions.
     :type subexpressions: list[~azure.mgmt.logic.models.Expression]
     :param error: The azure resource error info.
@@ -2670,8 +2670,8 @@ class ExpressionRoot(Expression):
 
     :param text: The text.
     :type text: str
-    :param value: Any object.
-    :type value: object
+    :param value: Anything.
+    :type value: any
     :param subexpressions: The sub expressions.
     :type subexpressions: list[~azure.mgmt.logic.models.Expression]
     :param error: The azure resource error info.
@@ -2728,7 +2728,7 @@ class ExtendedErrorInfo(msrest.serialization.Model):
     :param details: The error message details.
     :type details: list[~azure.mgmt.logic.models.ExtendedErrorInfo]
     :param inner_error: The inner error.
-    :type inner_error: object
+    :type inner_error: any
     """
 
     _validation = {
@@ -2969,7 +2969,7 @@ class IntegrationAccountAgreement(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param agreement_type: Required. The agreement type. Possible values include: "NotSpecified",
      "AS2", "X12", "Edifact".
     :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
@@ -3103,7 +3103,7 @@ class IntegrationAccountCertificate(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param key: The key details in the key vault.
     :type key: ~azure.mgmt.logic.models.KeyVaultKeyReference
     :param public_certificate: The public certificate.
@@ -3223,7 +3223,7 @@ class IntegrationAccountMap(Resource):
     :ivar content_link: The content link.
     :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     """
 
     _validation = {
@@ -3360,7 +3360,7 @@ class IntegrationAccountPartner(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param content: Required. The partner content.
     :type content: ~azure.mgmt.logic.models.PartnerContent
     """
@@ -3479,7 +3479,7 @@ class IntegrationAccountSchema(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param content: The content.
     :type content: str
     :param content_type: The content type.
@@ -3602,7 +3602,7 @@ class IntegrationAccountSession(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param content: The session content.
-    :type content: object
+    :type content: any
     """
 
     _validation = {
@@ -4572,7 +4572,7 @@ class Operation(msrest.serialization.Model):
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.logic.models.OperationDisplay
     :param properties: The properties.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -4662,8 +4662,8 @@ class OperationResultProperties(msrest.serialization.Model):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     """
 
     _attribute_map = {
@@ -4705,20 +4705,20 @@ class OperationResult(OperationResultProperties):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :param iteration_count:
@@ -4896,7 +4896,7 @@ class Request(msrest.serialization.Model):
     """A request.
 
     :param headers: A list of all the headers attached to the request.
-    :type headers: object
+    :type headers: any
     :param uri: The destination for the request.
     :type uri: str
     :param method: The HTTP method used for the request.
@@ -5019,7 +5019,7 @@ class Response(msrest.serialization.Model):
     """A response.
 
     :param headers: A list of all the headers attached to the response.
-    :type headers: object
+    :type headers: any
     :param status_code: The status code of the response.
     :type status_code: int
     :param body_link: Details on the location of the body content.
@@ -5285,7 +5285,7 @@ class SwaggerCustomDynamicSchema(msrest.serialization.Model):
     :param value_path: Json pointer to the dynamic schema on the response body.
     :type value_path: str
     :param parameters: The operation parameters.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _attribute_map = {
@@ -5389,7 +5389,7 @@ class SwaggerCustomDynamicTreeParameter(msrest.serialization.Model):
      item to pass as a value to a parameter for the given operation.
     :type selected_item_value_path: str
     :param value: The parameter value.
-    :type value: object
+    :type value: any
     :param parameter_reference: The parameter reference.
     :type parameter_reference: str
     :param required: Indicates whether the parameter is required.
@@ -5445,7 +5445,7 @@ class SwaggerExternalDocumentation(msrest.serialization.Model):
     :param uri: The documentation Uri.
     :type uri: str
     :param extensions: The vendor extensions.
-    :type extensions: dict[str, object]
+    :type extensions: dict[str, any]
     """
 
     _attribute_map = {
@@ -5479,7 +5479,7 @@ class SwaggerSchema(msrest.serialization.Model):
     :param properties: The object properties.
     :type properties: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
     :param additional_properties: The additional properties.
-    :type additional_properties: object
+    :type additional_properties: any
     :param required: The object required properties.
     :type required: list[str]
     :param max_properties: The maximum number of allowed properties.
@@ -5497,7 +5497,7 @@ class SwaggerSchema(msrest.serialization.Model):
     :param external_docs: The external documentation.
     :type external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
     :param example: The example value.
-    :type example: object
+    :type example: any
     :param notification_url_extension: Indicates the notification url extension. If this is set,
      the property's value should be a callback url for a webhook.
     :type notification_url_extension: bool
@@ -5575,7 +5575,7 @@ class SwaggerXml(msrest.serialization.Model):
     :param wrapped: Indicates whether the array elements are wrapped in a container element.
     :type wrapped: bool
     :param extensions: The vendor extensions.
-    :type extensions: dict[str, object]
+    :type extensions: dict[str, any]
     """
 
     _attribute_map = {
@@ -5618,7 +5618,7 @@ class TrackingEvent(msrest.serialization.Model):
      "EdifactFunctionalGroupAcknowledgment", "EdifactTransactionSetAcknowledgment".
     :type record_type: str or ~azure.mgmt.logic.models.TrackingRecordType
     :param record: The record.
-    :type record: object
+    :type record: any
     :param error: The error.
     :type error: ~azure.mgmt.logic.models.TrackingEventErrorInfo
     """
@@ -5749,7 +5749,7 @@ class Workflow(Resource):
     :param integration_service_environment: The integration service environment.
     :type integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
     :param definition: The definition.
-    :type definition: object
+    :type definition: any
     :param parameters: The parameters.
     :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """
@@ -5857,9 +5857,9 @@ class WorkflowParameter(msrest.serialization.Model):
      "Int", "Float", "Bool", "Array", "Object", "SecureObject".
     :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
-    :type value: object
+    :type value: any
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param description: The description.
     :type description: str
     """
@@ -5891,13 +5891,13 @@ class WorkflowOutputParameter(WorkflowParameter):
      "Int", "Float", "Bool", "Array", "Object", "SecureObject".
     :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
-    :type value: object
+    :type value: any
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param description: The description.
     :type description: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     """
 
     _validation = {
@@ -5975,7 +5975,7 @@ class WorkflowRun(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar correlation_id: Gets the correlation id.
     :vartype correlation_id: str
     :param correlation: The run correlation.
@@ -6068,7 +6068,7 @@ class WorkflowRunAction(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The correlation properties.
@@ -6078,7 +6078,7 @@ class WorkflowRunAction(SubResource):
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     """
@@ -6206,20 +6206,20 @@ class WorkflowRunActionRepetitionDefinition(Resource):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :param iteration_count:
@@ -6325,20 +6325,20 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :param iteration_count:
@@ -6434,11 +6434,11 @@ class WorkflowRunTrigger(msrest.serialization.Model):
     :ivar name: Gets the name.
     :vartype name: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar scheduled_time: Gets the scheduled time.
@@ -6458,9 +6458,9 @@ class WorkflowRunTrigger(msrest.serialization.Model):
      "Aborted", "Ignored".
     :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     """
 
     _validation = {
@@ -6695,7 +6695,7 @@ class WorkflowTriggerHistory(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The run correlation.
@@ -6987,7 +6987,7 @@ class WorkflowVersion(Resource):
     :param integration_account: The integration account.
     :type integration_account: ~azure.mgmt.logic.models.ResourceReference
     :param definition: The definition.
-    :type definition: object
+    :type definition: any
     :param parameters: The parameters.
     :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """

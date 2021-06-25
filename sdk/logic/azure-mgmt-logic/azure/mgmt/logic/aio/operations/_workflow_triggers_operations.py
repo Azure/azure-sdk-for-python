@@ -47,7 +47,7 @@ class WorkflowTriggersOperations:
         workflow_name: str,
         top: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkflowTriggerListResult"]:
         """Gets a list of workflow triggers.
 
@@ -115,7 +115,7 @@ class WorkflowTriggersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -131,7 +131,7 @@ class WorkflowTriggersOperations:
         resource_group_name: str,
         workflow_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkflowTrigger":
         """Gets a workflow trigger.
 
@@ -178,7 +178,7 @@ class WorkflowTriggersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTrigger', pipeline_response)
@@ -194,7 +194,7 @@ class WorkflowTriggersOperations:
         resource_group_name: str,
         workflow_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resets a workflow trigger.
 
@@ -241,7 +241,7 @@ class WorkflowTriggersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -254,7 +254,7 @@ class WorkflowTriggersOperations:
         resource_group_name: str,
         workflow_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Runs a workflow trigger.
 
@@ -301,7 +301,7 @@ class WorkflowTriggersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -314,7 +314,7 @@ class WorkflowTriggersOperations:
         resource_group_name: str,
         workflow_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JsonSchema":
         """Get the trigger schema as JSON.
 
@@ -361,7 +361,7 @@ class WorkflowTriggersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JsonSchema', pipeline_response)
@@ -378,7 +378,7 @@ class WorkflowTriggersOperations:
         workflow_name: str,
         trigger_name: str,
         set_state: "_models.SetTriggerStateActionDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets the state of a workflow trigger.
 
@@ -432,7 +432,7 @@ class WorkflowTriggersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -445,7 +445,7 @@ class WorkflowTriggersOperations:
         resource_group_name: str,
         workflow_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkflowTriggerCallbackUrl":
         """Get the callback URL for a workflow trigger.
 
@@ -492,7 +492,7 @@ class WorkflowTriggersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTriggerCallbackUrl', pipeline_response)

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -394,7 +394,7 @@ class ApiReference(ResourceReference):
     :param icon_uri: The icon uri of the api.
     :type icon_uri: str
     :param swagger: The swagger of the api.
-    :type swagger: object
+    :type swagger: any
     :param brand_color: The brand color of the api.
     :type brand_color: str
     :param category: The tier. Possible values include: "NotSpecified", "Enterprise", "Standard",
@@ -429,7 +429,7 @@ class ApiReference(ResourceReference):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         icon_uri: Optional[str] = None,
-        swagger: Optional[object] = None,
+        swagger: Optional[Any] = None,
         brand_color: Optional[str] = None,
         category: Optional[Union[str, "ApiTier"]] = None,
         integration_service_environment: Optional["ResourceReference"] = None,
@@ -641,7 +641,7 @@ class ApiResourceProperties(msrest.serialization.Model):
     :param name: The name.
     :type name: str
     :param connection_parameters: The connection parameters.
-    :type connection_parameters: dict[str, object]
+    :type connection_parameters: dict[str, any]
     :param metadata: The metadata.
     :type metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
     :param runtime_urls: The runtime urls.
@@ -690,7 +690,7 @@ class ApiResourceProperties(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        connection_parameters: Optional[Dict[str, object]] = None,
+        connection_parameters: Optional[Dict[str, Any]] = None,
         metadata: Optional["ApiResourceMetadata"] = None,
         runtime_urls: Optional[List[str]] = None,
         general_information: Optional["ApiResourceGeneralInformation"] = None,
@@ -727,8 +727,8 @@ class ArtifactProperties(msrest.serialization.Model):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
+    :param metadata: Anything.
+    :type metadata: any
     """
 
     _attribute_map = {
@@ -742,7 +742,7 @@ class ArtifactProperties(msrest.serialization.Model):
         *,
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(ArtifactProperties, self).__init__(**kwargs)
@@ -758,10 +758,10 @@ class ArtifactContentPropertiesDefinition(ArtifactProperties):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param content: Any object.
-    :type content: object
+    :param metadata: Anything.
+    :type metadata: any
+    :param content: Anything.
+    :type content: any
     :param content_type: The content type.
     :type content_type: str
     :param content_link: The content link.
@@ -782,8 +782,8 @@ class ArtifactContentPropertiesDefinition(ArtifactProperties):
         *,
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
-        content: Optional[object] = None,
+        metadata: Optional[Any] = None,
+        content: Optional[Any] = None,
         content_type: Optional[str] = None,
         content_link: Optional["ContentLink"] = None,
         **kwargs
@@ -1443,10 +1443,10 @@ class AssemblyProperties(ArtifactContentPropertiesDefinition):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
-    :param content: Any object.
-    :type content: object
+    :param metadata: Anything.
+    :type metadata: any
+    :param content: Anything.
+    :type content: any
     :param content_type: The content type.
     :type content_type: str
     :param content_link: The content link.
@@ -1484,8 +1484,8 @@ class AssemblyProperties(ArtifactContentPropertiesDefinition):
         assembly_name: str,
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
-        content: Optional[object] = None,
+        metadata: Optional[Any] = None,
+        content: Optional[Any] = None,
         content_type: Optional[str] = None,
         content_link: Optional["ContentLink"] = None,
         assembly_version: Optional[str] = None,
@@ -1664,8 +1664,8 @@ class BatchConfigurationProperties(ArtifactProperties):
     :type created_time: ~datetime.datetime
     :param changed_time: The artifact changed time.
     :type changed_time: ~datetime.datetime
-    :param metadata: Any object.
-    :type metadata: object
+    :param metadata: Anything.
+    :type metadata: any
     :param batch_group_name: Required. The name of the batch group.
     :type batch_group_name: str
     :param release_criteria: Required. The batch release criteria.
@@ -1692,7 +1692,7 @@ class BatchConfigurationProperties(ArtifactProperties):
         release_criteria: "BatchReleaseCriteria",
         created_time: Optional[datetime.datetime] = None,
         changed_time: Optional[datetime.datetime] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(BatchConfigurationProperties, self).__init__(created_time=created_time, changed_time=changed_time, metadata=metadata, **kwargs)
@@ -1823,7 +1823,7 @@ class ContentLink(msrest.serialization.Model):
     :param content_hash: The content hash.
     :type content_hash: ~azure.mgmt.logic.models.ContentHash
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     """
 
     _attribute_map = {
@@ -1841,7 +1841,7 @@ class ContentLink(msrest.serialization.Model):
         content_version: Optional[str] = None,
         content_size: Optional[int] = None,
         content_hash: Optional["ContentHash"] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(ContentLink, self).__init__(**kwargs)
@@ -3025,8 +3025,8 @@ class Expression(msrest.serialization.Model):
 
     :param text: The text.
     :type text: str
-    :param value: Any object.
-    :type value: object
+    :param value: Anything.
+    :type value: any
     :param subexpressions: The sub expressions.
     :type subexpressions: list[~azure.mgmt.logic.models.Expression]
     :param error: The azure resource error info.
@@ -3044,7 +3044,7 @@ class Expression(msrest.serialization.Model):
         self,
         *,
         text: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         subexpressions: Optional[List["Expression"]] = None,
         error: Optional["AzureResourceErrorInfo"] = None,
         **kwargs
@@ -3061,8 +3061,8 @@ class ExpressionRoot(Expression):
 
     :param text: The text.
     :type text: str
-    :param value: Any object.
-    :type value: object
+    :param value: Anything.
+    :type value: any
     :param subexpressions: The sub expressions.
     :type subexpressions: list[~azure.mgmt.logic.models.Expression]
     :param error: The azure resource error info.
@@ -3083,7 +3083,7 @@ class ExpressionRoot(Expression):
         self,
         *,
         text: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         subexpressions: Optional[List["Expression"]] = None,
         error: Optional["AzureResourceErrorInfo"] = None,
         path: Optional[str] = None,
@@ -3127,7 +3127,7 @@ class ExtendedErrorInfo(msrest.serialization.Model):
     :param details: The error message details.
     :type details: list[~azure.mgmt.logic.models.ExtendedErrorInfo]
     :param inner_error: The inner error.
-    :type inner_error: object
+    :type inner_error: any
     """
 
     _validation = {
@@ -3148,7 +3148,7 @@ class ExtendedErrorInfo(msrest.serialization.Model):
         code: Union[str, "ErrorResponseCode"],
         message: str,
         details: Optional[List["ExtendedErrorInfo"]] = None,
-        inner_error: Optional[object] = None,
+        inner_error: Optional[Any] = None,
         **kwargs
     ):
         super(ExtendedErrorInfo, self).__init__(**kwargs)
@@ -3398,7 +3398,7 @@ class IntegrationAccountAgreement(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param agreement_type: Required. The agreement type. Possible values include: "NotSpecified",
      "AS2", "X12", "Edifact".
     :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
@@ -3458,7 +3458,7 @@ class IntegrationAccountAgreement(Resource):
         content: "AgreementContent",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(IntegrationAccountAgreement, self).__init__(location=location, tags=tags, **kwargs)
@@ -3547,7 +3547,7 @@ class IntegrationAccountCertificate(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param key: The key details in the key vault.
     :type key: ~azure.mgmt.logic.models.KeyVaultKeyReference
     :param public_certificate: The public certificate.
@@ -3580,7 +3580,7 @@ class IntegrationAccountCertificate(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         key: Optional["KeyVaultKeyReference"] = None,
         public_certificate: Optional[str] = None,
         **kwargs
@@ -3679,7 +3679,7 @@ class IntegrationAccountMap(Resource):
     :ivar content_link: The content link.
     :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     """
 
     _validation = {
@@ -3717,7 +3717,7 @@ class IntegrationAccountMap(Resource):
         parameters_schema: Optional["IntegrationAccountMapPropertiesParametersSchema"] = None,
         content: Optional[str] = None,
         content_type: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(IntegrationAccountMap, self).__init__(location=location, tags=tags, **kwargs)
@@ -3831,7 +3831,7 @@ class IntegrationAccountPartner(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param content: Required. The partner content.
     :type content: ~azure.mgmt.logic.models.PartnerContent
     """
@@ -3866,7 +3866,7 @@ class IntegrationAccountPartner(Resource):
         content: "PartnerContent",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         **kwargs
     ):
         super(IntegrationAccountPartner, self).__init__(location=location, tags=tags, **kwargs)
@@ -3961,7 +3961,7 @@ class IntegrationAccountSchema(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param content: The content.
     :type content: str
     :param content_type: The content type.
@@ -4007,7 +4007,7 @@ class IntegrationAccountSchema(Resource):
         target_namespace: Optional[str] = None,
         document_name: Optional[str] = None,
         file_name: Optional[str] = None,
-        metadata: Optional[object] = None,
+        metadata: Optional[Any] = None,
         content: Optional[str] = None,
         content_type: Optional[str] = None,
         **kwargs
@@ -4099,7 +4099,7 @@ class IntegrationAccountSession(Resource):
     :ivar changed_time: The changed time.
     :vartype changed_time: ~datetime.datetime
     :param content: The session content.
-    :type content: object
+    :type content: any
     """
 
     _validation = {
@@ -4126,7 +4126,7 @@ class IntegrationAccountSession(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        content: Optional[object] = None,
+        content: Optional[Any] = None,
         **kwargs
     ):
         super(IntegrationAccountSession, self).__init__(location=location, tags=tags, **kwargs)
@@ -5182,7 +5182,7 @@ class Operation(msrest.serialization.Model):
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.logic.models.OperationDisplay
     :param properties: The properties.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -5198,7 +5198,7 @@ class Operation(msrest.serialization.Model):
         origin: Optional[str] = None,
         name: Optional[str] = None,
         display: Optional["OperationDisplay"] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
@@ -5285,8 +5285,8 @@ class OperationResultProperties(msrest.serialization.Model):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     """
 
     _attribute_map = {
@@ -5306,7 +5306,7 @@ class OperationResultProperties(msrest.serialization.Model):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         **kwargs
     ):
         super(OperationResultProperties, self).__init__(**kwargs)
@@ -5335,20 +5335,20 @@ class OperationResult(OperationResultProperties):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :param iteration_count:
@@ -5389,7 +5389,7 @@ class OperationResult(OperationResultProperties):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         retry_history: Optional[List["RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         **kwargs
@@ -5551,7 +5551,7 @@ class Request(msrest.serialization.Model):
     """A request.
 
     :param headers: A list of all the headers attached to the request.
-    :type headers: object
+    :type headers: any
     :param uri: The destination for the request.
     :type uri: str
     :param method: The HTTP method used for the request.
@@ -5567,7 +5567,7 @@ class Request(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        headers: Optional[object] = None,
+        headers: Optional[Any] = None,
         uri: Optional[str] = None,
         method: Optional[str] = None,
         **kwargs
@@ -5690,7 +5690,7 @@ class Response(msrest.serialization.Model):
     """A response.
 
     :param headers: A list of all the headers attached to the response.
-    :type headers: object
+    :type headers: any
     :param status_code: The status code of the response.
     :type status_code: int
     :param body_link: Details on the location of the body content.
@@ -5706,7 +5706,7 @@ class Response(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        headers: Optional[object] = None,
+        headers: Optional[Any] = None,
         status_code: Optional[int] = None,
         body_link: Optional["ContentLink"] = None,
         **kwargs
@@ -5990,7 +5990,7 @@ class SwaggerCustomDynamicSchema(msrest.serialization.Model):
     :param value_path: Json pointer to the dynamic schema on the response body.
     :type value_path: str
     :param parameters: The operation parameters.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     """
 
     _attribute_map = {
@@ -6004,7 +6004,7 @@ class SwaggerCustomDynamicSchema(msrest.serialization.Model):
         *,
         operation_id: Optional[str] = None,
         value_path: Optional[str] = None,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(SwaggerCustomDynamicSchema, self).__init__(**kwargs)
@@ -6111,7 +6111,7 @@ class SwaggerCustomDynamicTreeParameter(msrest.serialization.Model):
      item to pass as a value to a parameter for the given operation.
     :type selected_item_value_path: str
     :param value: The parameter value.
-    :type value: object
+    :type value: any
     :param parameter_reference: The parameter reference.
     :type parameter_reference: str
     :param required: Indicates whether the parameter is required.
@@ -6129,7 +6129,7 @@ class SwaggerCustomDynamicTreeParameter(msrest.serialization.Model):
         self,
         *,
         selected_item_value_path: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         parameter_reference: Optional[str] = None,
         required: Optional[bool] = None,
         **kwargs
@@ -6175,7 +6175,7 @@ class SwaggerExternalDocumentation(msrest.serialization.Model):
     :param uri: The documentation Uri.
     :type uri: str
     :param extensions: The vendor extensions.
-    :type extensions: dict[str, object]
+    :type extensions: dict[str, any]
     """
 
     _attribute_map = {
@@ -6189,7 +6189,7 @@ class SwaggerExternalDocumentation(msrest.serialization.Model):
         *,
         description: Optional[str] = None,
         uri: Optional[str] = None,
-        extensions: Optional[Dict[str, object]] = None,
+        extensions: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(SwaggerExternalDocumentation, self).__init__(**kwargs)
@@ -6213,7 +6213,7 @@ class SwaggerSchema(msrest.serialization.Model):
     :param properties: The object properties.
     :type properties: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
     :param additional_properties: The additional properties.
-    :type additional_properties: object
+    :type additional_properties: any
     :param required: The object required properties.
     :type required: list[str]
     :param max_properties: The maximum number of allowed properties.
@@ -6231,7 +6231,7 @@ class SwaggerSchema(msrest.serialization.Model):
     :param external_docs: The external documentation.
     :type external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
     :param example: The example value.
-    :type example: object
+    :type example: any
     :param notification_url_extension: Indicates the notification url extension. If this is set,
      the property's value should be a callback url for a webhook.
     :type notification_url_extension: bool
@@ -6276,7 +6276,7 @@ class SwaggerSchema(msrest.serialization.Model):
         title: Optional[str] = None,
         items: Optional["SwaggerSchema"] = None,
         properties: Optional[Dict[str, "SwaggerSchema"]] = None,
-        additional_properties: Optional[object] = None,
+        additional_properties: Optional[Any] = None,
         required: Optional[List[str]] = None,
         max_properties: Optional[int] = None,
         min_properties: Optional[int] = None,
@@ -6285,7 +6285,7 @@ class SwaggerSchema(msrest.serialization.Model):
         read_only: Optional[bool] = None,
         xml: Optional["SwaggerXml"] = None,
         external_docs: Optional["SwaggerExternalDocumentation"] = None,
-        example: Optional[object] = None,
+        example: Optional[Any] = None,
         notification_url_extension: Optional[bool] = None,
         dynamic_schema_old: Optional["SwaggerCustomDynamicSchema"] = None,
         dynamic_schema_new: Optional["SwaggerCustomDynamicProperties"] = None,
@@ -6330,7 +6330,7 @@ class SwaggerXml(msrest.serialization.Model):
     :param wrapped: Indicates whether the array elements are wrapped in a container element.
     :type wrapped: bool
     :param extensions: The vendor extensions.
-    :type extensions: dict[str, object]
+    :type extensions: dict[str, any]
     """
 
     _attribute_map = {
@@ -6350,7 +6350,7 @@ class SwaggerXml(msrest.serialization.Model):
         prefix: Optional[str] = None,
         attribute: Optional[bool] = None,
         wrapped: Optional[bool] = None,
-        extensions: Optional[Dict[str, object]] = None,
+        extensions: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(SwaggerXml, self).__init__(**kwargs)
@@ -6380,7 +6380,7 @@ class TrackingEvent(msrest.serialization.Model):
      "EdifactFunctionalGroupAcknowledgment", "EdifactTransactionSetAcknowledgment".
     :type record_type: str or ~azure.mgmt.logic.models.TrackingRecordType
     :param record: The record.
-    :type record: object
+    :type record: any
     :param error: The error.
     :type error: ~azure.mgmt.logic.models.TrackingEventErrorInfo
     """
@@ -6405,7 +6405,7 @@ class TrackingEvent(msrest.serialization.Model):
         event_level: Union[str, "EventLevel"],
         event_time: datetime.datetime,
         record_type: Union[str, "TrackingRecordType"],
-        record: Optional[object] = None,
+        record: Optional[Any] = None,
         error: Optional["TrackingEventErrorInfo"] = None,
         **kwargs
     ):
@@ -6524,7 +6524,7 @@ class Workflow(Resource):
     :param integration_service_environment: The integration service environment.
     :type integration_service_environment: ~azure.mgmt.logic.models.ResourceReference
     :param definition: The definition.
-    :type definition: object
+    :type definition: any
     :param parameters: The parameters.
     :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """
@@ -6572,7 +6572,7 @@ class Workflow(Resource):
         access_control: Optional["FlowAccessControlConfiguration"] = None,
         integration_account: Optional["ResourceReference"] = None,
         integration_service_environment: Optional["ResourceReference"] = None,
-        definition: Optional[object] = None,
+        definition: Optional[Any] = None,
         parameters: Optional[Dict[str, "WorkflowParameter"]] = None,
         **kwargs
     ):
@@ -6647,9 +6647,9 @@ class WorkflowParameter(msrest.serialization.Model):
      "Int", "Float", "Bool", "Array", "Object", "SecureObject".
     :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
-    :type value: object
+    :type value: any
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param description: The description.
     :type description: str
     """
@@ -6665,8 +6665,8 @@ class WorkflowParameter(msrest.serialization.Model):
         self,
         *,
         type: Optional[Union[str, "ParameterType"]] = None,
-        value: Optional[object] = None,
-        metadata: Optional[object] = None,
+        value: Optional[Any] = None,
+        metadata: Optional[Any] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -6686,13 +6686,13 @@ class WorkflowOutputParameter(WorkflowParameter):
      "Int", "Float", "Bool", "Array", "Object", "SecureObject".
     :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
-    :type value: object
+    :type value: any
     :param metadata: The metadata.
-    :type metadata: object
+    :type metadata: any
     :param description: The description.
     :type description: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     """
 
     _validation = {
@@ -6711,8 +6711,8 @@ class WorkflowOutputParameter(WorkflowParameter):
         self,
         *,
         type: Optional[Union[str, "ParameterType"]] = None,
-        value: Optional[object] = None,
-        metadata: Optional[object] = None,
+        value: Optional[Any] = None,
+        metadata: Optional[Any] = None,
         description: Optional[str] = None,
         **kwargs
     ):
@@ -6777,7 +6777,7 @@ class WorkflowRun(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar correlation_id: Gets the correlation id.
     :vartype correlation_id: str
     :param correlation: The run correlation.
@@ -6872,7 +6872,7 @@ class WorkflowRunAction(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The correlation properties.
@@ -6882,7 +6882,7 @@ class WorkflowRunAction(SubResource):
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     """
@@ -7018,20 +7018,20 @@ class WorkflowRunActionRepetitionDefinition(Resource):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :param iteration_count:
@@ -7085,7 +7085,7 @@ class WorkflowRunActionRepetitionDefinition(Resource):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         retry_history: Optional[List["RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         repetition_indexes: Optional[List["RepetitionIndex"]] = None,
@@ -7152,20 +7152,20 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
     :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :param code: The workflow scope repetition code.
     :type code: str
-    :param error: Any object.
-    :type error: object
+    :param error: Anything.
+    :type error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     :param retry_history: Gets the retry histories.
     :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :param iteration_count:
@@ -7209,7 +7209,7 @@ class WorkflowRunActionRepetitionProperties(OperationResult):
         correlation: Optional["RunActionCorrelation"] = None,
         status: Optional[Union[str, "WorkflowStatus"]] = None,
         code: Optional[str] = None,
-        error: Optional[object] = None,
+        error: Optional[Any] = None,
         retry_history: Optional[List["RetryHistory"]] = None,
         iteration_count: Optional[int] = None,
         repetition_indexes: Optional[List["RepetitionIndex"]] = None,
@@ -7276,11 +7276,11 @@ class WorkflowRunTrigger(msrest.serialization.Model):
     :ivar name: Gets the name.
     :vartype name: str
     :ivar inputs: Gets the inputs.
-    :vartype inputs: object
+    :vartype inputs: any
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar scheduled_time: Gets the scheduled time.
@@ -7300,9 +7300,9 @@ class WorkflowRunTrigger(msrest.serialization.Model):
      "Aborted", "Ignored".
     :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracked_properties: Gets the tracked properties.
-    :vartype tracked_properties: object
+    :vartype tracked_properties: any
     """
 
     _validation = {
@@ -7544,7 +7544,7 @@ class WorkflowTriggerHistory(SubResource):
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
-    :vartype error: object
+    :vartype error: any
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The run correlation.
@@ -7863,7 +7863,7 @@ class WorkflowVersion(Resource):
     :param integration_account: The integration account.
     :type integration_account: ~azure.mgmt.logic.models.ResourceReference
     :param definition: The definition.
-    :type definition: object
+    :type definition: any
     :param parameters: The parameters.
     :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """
@@ -7909,7 +7909,7 @@ class WorkflowVersion(Resource):
         endpoints_configuration: Optional["FlowEndpointsConfiguration"] = None,
         access_control: Optional["FlowAccessControlConfiguration"] = None,
         integration_account: Optional["ResourceReference"] = None,
-        definition: Optional[object] = None,
+        definition: Optional[Any] = None,
         parameters: Optional[Dict[str, "WorkflowParameter"]] = None,
         **kwargs
     ):

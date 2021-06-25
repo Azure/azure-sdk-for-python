@@ -48,7 +48,7 @@ class WorkflowRunActionsOperations:
         run_name: str,
         top: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkflowRunActionListResult"]:
         """Gets a list of workflow run actions.
 
@@ -119,7 +119,7 @@ class WorkflowRunActionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -136,7 +136,7 @@ class WorkflowRunActionsOperations:
         workflow_name: str,
         run_name: str,
         action_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkflowRunAction":
         """Gets a workflow run action.
 
@@ -186,7 +186,7 @@ class WorkflowRunActionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowRunAction', pipeline_response)
@@ -203,7 +203,7 @@ class WorkflowRunActionsOperations:
         workflow_name: str,
         run_name: str,
         action_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressionTraces"]:
         """Lists a workflow run expression trace.
 
@@ -269,7 +269,7 @@ class WorkflowRunActionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

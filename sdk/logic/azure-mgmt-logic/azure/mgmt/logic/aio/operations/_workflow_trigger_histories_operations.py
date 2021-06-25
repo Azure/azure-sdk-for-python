@@ -48,7 +48,7 @@ class WorkflowTriggerHistoriesOperations:
         trigger_name: str,
         top: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WorkflowTriggerHistoryListResult"]:
         """Gets a list of workflow trigger histories.
 
@@ -120,7 +120,7 @@ class WorkflowTriggerHistoriesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -137,7 +137,7 @@ class WorkflowTriggerHistoriesOperations:
         workflow_name: str,
         trigger_name: str,
         history_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WorkflowTriggerHistory":
         """Gets a workflow trigger history.
 
@@ -188,7 +188,7 @@ class WorkflowTriggerHistoriesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WorkflowTriggerHistory', pipeline_response)
@@ -205,7 +205,7 @@ class WorkflowTriggerHistoriesOperations:
         workflow_name: str,
         trigger_name: str,
         history_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resubmits a workflow run based on the trigger history.
 
@@ -256,7 +256,7 @@ class WorkflowTriggerHistoriesOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
