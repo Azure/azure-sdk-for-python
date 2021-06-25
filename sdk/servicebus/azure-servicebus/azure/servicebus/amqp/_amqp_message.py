@@ -229,7 +229,7 @@ class AmqpAnnotatedMessage(object):
             message_header.priority = self.header.priority
             if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
-                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple())) * 1000
+                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
                 absolute_expiry_time_from_ttl = int(min(
                     MAX_ABSOLUTE_EXPIRY_TIME,
                     creation_time_from_ttl + self.header.time_to_live
