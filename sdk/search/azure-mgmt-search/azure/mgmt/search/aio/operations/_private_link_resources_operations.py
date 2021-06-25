@@ -46,7 +46,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkResourcesResult"]:
         """Gets a list of all supported private link resource types for the given service.
 

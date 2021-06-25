@@ -45,7 +45,7 @@ class AdminKeysOperations:
         resource_group_name: str,
         search_service_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AdminKeyResult":
         """Gets the primary and secondary admin API keys for the specified Azure Cognitive Search service.
 
@@ -115,7 +115,7 @@ class AdminKeysOperations:
         search_service_name: str,
         key_kind: Union[str, "_models.AdminKeyKind"],
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AdminKeyResult":
         """Regenerates either the primary or secondary admin API key. You can only regenerate one key at a
         time.

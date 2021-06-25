@@ -47,7 +47,7 @@ class QueryKeysOperations:
         search_service_name: str,
         name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.QueryKey":
         """Generates a new query key for the specified search service. You can create up to 50 query keys
         per service.
@@ -120,7 +120,7 @@ class QueryKeysOperations:
         resource_group_name: str,
         search_service_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListQueryKeysResult"]:
         """Returns the list of query API keys for the given Azure Cognitive Search service.
 
@@ -206,7 +206,7 @@ class QueryKeysOperations:
         search_service_name: str,
         key: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified query key. Unlike admin keys, query keys are not regenerated. The process
         for regenerating a query key is to delete and then recreate it.

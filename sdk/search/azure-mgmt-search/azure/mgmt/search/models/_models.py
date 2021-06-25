@@ -71,8 +71,8 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
      characters, cannot contain consecutive dashes, and must be between 2 and 60 characters in
      length.
     :type name: str
-    :ivar type: Required. The type of the resource whose name is to be validated. This value must
-     always be 'searchServices'. Default value: "searchServices".
+    :ivar type: The type of the resource whose name is to be validated. This value must always be
+     'searchServices'. Has constant value: "searchServices".
     :vartype type: str
     """
 

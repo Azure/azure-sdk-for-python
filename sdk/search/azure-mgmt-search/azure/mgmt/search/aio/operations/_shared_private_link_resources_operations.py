@@ -50,7 +50,7 @@ class SharedPrivateLinkResourcesOperations:
         shared_private_link_resource_name: str,
         shared_private_link_resource: "_models.SharedPrivateLinkResource",
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SharedPrivateLinkResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SharedPrivateLinkResource"]]
         error_map = {
@@ -114,7 +114,7 @@ class SharedPrivateLinkResourcesOperations:
         shared_private_link_resource_name: str,
         shared_private_link_resource: "_models.SharedPrivateLinkResource",
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SharedPrivateLinkResource"]:
         """Initiates the creation or update of a shared private link resource managed by the search
         service in the given resource group.
@@ -135,8 +135,8 @@ class SharedPrivateLinkResourcesOperations:
         :type search_management_request_options: ~azure.mgmt.search.models.SearchManagementRequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SharedPrivateLinkResource or the result of cls(response)
@@ -198,7 +198,7 @@ class SharedPrivateLinkResourcesOperations:
         search_service_name: str,
         shared_private_link_resource_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedPrivateLinkResource":
         """Gets the details of the shared private link resource managed by the search service in the given
         resource group.
@@ -273,7 +273,7 @@ class SharedPrivateLinkResourcesOperations:
         search_service_name: str,
         shared_private_link_resource_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -326,7 +326,7 @@ class SharedPrivateLinkResourcesOperations:
         search_service_name: str,
         shared_private_link_resource_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Initiates the deletion of the shared private link resource from the search service.
 
@@ -343,8 +343,8 @@ class SharedPrivateLinkResourcesOperations:
         :type search_management_request_options: ~azure.mgmt.search.models.SearchManagementRequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -401,7 +401,7 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedPrivateLinkResourceListResult"]:
         """Gets a list of all shared private link resources managed by the given service.
 

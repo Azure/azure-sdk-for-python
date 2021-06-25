@@ -48,7 +48,7 @@ class PrivateEndpointConnectionsOperations:
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Updates a Private Endpoint connection to the search service in the given resource group.
 
@@ -130,7 +130,7 @@ class PrivateEndpointConnectionsOperations:
         search_service_name: str,
         private_endpoint_connection_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Gets the details of the private endpoint connection to the search service in the given resource
         group.
@@ -205,7 +205,7 @@ class PrivateEndpointConnectionsOperations:
         search_service_name: str,
         private_endpoint_connection_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PrivateEndpointConnection"]:
         """Disconnects the private endpoint connection and deletes it from the search service.
 
@@ -280,7 +280,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         search_service_name: str,
         search_management_request_options: Optional["_models.SearchManagementRequestOptions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Gets a list of all private endpoint connections in the given service.
 
