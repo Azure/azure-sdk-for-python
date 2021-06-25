@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0-beta.1 (Unreleased)
+## 1.0.1 (Unreleased)
 
 ### Added
 - Added support to add `metadata` for `message`
