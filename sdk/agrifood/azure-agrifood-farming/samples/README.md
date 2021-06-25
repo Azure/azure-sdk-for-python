@@ -57,6 +57,8 @@ We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identit
 - `AZURE_CLIENT_SECRET`
 - `FARMBEATS_ENDPOINT`
 
+
+
 _Note: There are alternate mechanisms of authentication supported by `azure-identity`. Check out the docs [here][azure_identity]_
 
 Once these are set correctly, you can go ahead and run the sample_hello_world.py sample to make sure everything works correctly.
@@ -83,14 +85,14 @@ Last modified timestamp: 2021-06-22 21:01:35+00:00
 [install_farmbeats]: https://aka.ms/FarmBeatsInstallDocumentationPaaS/
 
 <!-- Links to samples files -->
-[async_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/async
-[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_hello_world.py
-[attachments_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_attachments.py
-[cascade_delete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_cascade_delete.py
-[satellie_download_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_satellie_download.py
-[farm_hierarchy_complete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy_complete.py
-[farm_hierarchy_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy.py
-[satellie_download_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/async/sample_satellie_download_async.py
+[async_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agrifood/azure-agrifood-farming/samples/async
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_hello_world.py
+[attachments_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_attachments.py
+[cascade_delete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_cascade_delete.py
+[satellie_download_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_satellie_download.py
+[farm_hierarchy_complete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy_complete.py
+[farm_hierarchy_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy.py
+[satellie_download_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/async/sample_satellie_download_async.py
 
 <!-- Microsoft/Azure related links -->
 [azure_free_sub]: https://azure.microsoft.com/free/
