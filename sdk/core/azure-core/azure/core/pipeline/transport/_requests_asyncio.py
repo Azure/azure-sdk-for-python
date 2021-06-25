@@ -211,6 +211,7 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
             response=self,
             chunk_size=chunk_size,
         ):
+            self._num_bytes_downloaded += len(part)
             yield part
         await self.close()
 
@@ -227,10 +228,11 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
             for i in range(0, len(content), chunk_size):
                 yield content[i: i + chunk_size]
         else:
-            async for raw_bytes in iter_bytes_helper(
+            async for part in iter_bytes_helper(
                 stream_download_generator=AsyncioStreamDownloadGenerator,
                 response=self,
                 chunk_size=chunk_size
             ):
-                yield raw_bytes
+                self._num_bytes_downloaded += len(part)
+                yield part
         await self.close()

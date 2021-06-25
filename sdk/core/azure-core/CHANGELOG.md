@@ -4,9 +4,9 @@
 
 ### New Features
 
-- Add new provisional module `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
-- Add new provisional methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+- Add new ***provisional*** methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
 requests and sends them through our pipelines.
+- Add new ***provisional*** module `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses. Can only be used with the provisional method `send_request` on our `PipelineClient`s
 
 
 ## 1.15.0 (2021-06-04)
