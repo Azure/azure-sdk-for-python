@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._authorization_management_client import AuthorizationManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['AuthorizationManagementClient']
 
 try:
