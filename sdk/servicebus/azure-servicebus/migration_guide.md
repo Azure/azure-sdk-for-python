@@ -4,7 +4,7 @@ This guide is intended to assist in the migration to `azure-servicebus` v7 from 
 It will focus on side-by-side comparisons for similar operations between the two packages.
 
 Familiarity with the `azure-servicebus` v0.50 package is assumed.
-For those new to the Service Bus client library for Python, please refer to the [README for `azure-servicebus`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/README.md) rather than this guide.
+For those new to the Service Bus client library for Python, please refer to the [README for `azure-servicebus`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/README.md) rather than this guide.
 
 ## Table of contents
 
@@ -49,7 +49,7 @@ Further details are available in the guidelines for those interested.
 ### Cross Service SDK improvements
 
 The modern Service Bus client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
-- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library
+- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library
 to share a single authentication approach between clients
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
 
@@ -60,8 +60,8 @@ We have a variety of new features in the version 7 of the Service Bus library.
 - Ability to create a batch of messages with the smarter `ServiceBusSender.create_message_batch()` and `ServiceBusMessageBatch.add_message()` APIs. This will help you manage the messages to be sent in the most optimal way.
 - Ability to configure the retry policy used by the operations on the client.
 - Ability to connect to the service through http proxy.
-- Authentication with AAD credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md).
-- Refer to the [CHANGELOG.md](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/CHANGELOG.md) for more new features, changes and bug fixes.
+- Authentication with AAD credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
+- Refer to the [CHANGELOG.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/CHANGELOG.md) for more new features, changes and bug fixes.
 
 ## Important changes
 
@@ -90,7 +90,7 @@ This provides consistency and predictability on the various features of the libr
 # Authenticate with connection string in V0.50 and V7
 servicebus_client = ServiceBusClient.from_connection_string(conn_str)
 ```
-- Additionally, you can now use Azure Active Directory for authentication via the [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library in V7.
+- Additionally, you can now use Azure Active Directory for authentication via the [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library in V7.
 ```python
 # Authenticate with Azure Active Directory in V7
 from azure.identity import DefaultAzureCredential
@@ -358,7 +358,7 @@ In V7 of this library, we simplified this as below:
   - `annotations` has been placed under `raw_amqp_message` instance variable.
 - `ServiceBusReceivedMessage` is now the class representing the message when you get it from the service, regardless of whether you used the `peek_messages`/`receive_deferred_messages` operation or received it using the receiver.
   - Properties `settled` and `expired` are no longer available.
-- Refer to the [CHANGELOG.md](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/CHANGELOG.md) for more changes on the message properties.
+- Refer to the [CHANGELOG.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/servicebus/azure-servicebus/CHANGELOG.md) for more changes on the message properties.
 
 ### Working with Administration Client
 
@@ -483,4 +483,4 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
 ## Additional samples
 
-More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples)
+More examples can be found at [Samples for azure-servicebus](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples)

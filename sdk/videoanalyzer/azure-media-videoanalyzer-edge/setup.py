@@ -57,7 +57,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer/azure-media-videoanalyzer-edge',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer/azure-media-videoanalyzer-edge',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',

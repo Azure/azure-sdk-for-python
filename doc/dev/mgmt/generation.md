@@ -1,8 +1,8 @@
 # Generation of SDK
 
-Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/swagger_conf.md)), this page explains how to generate your packages.
+Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger_conf.md)), this page explains how to generate your packages.
 
-IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) in your currently loaded virtual environment.
 
 ## Building the code
 
@@ -39,7 +39,7 @@ In practical terms, this is not necessary since the Python SDK has the necessary
 - Checkout the RestAPI specs repo
 - Call the tool: `python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md` changing the last path to the readme you want to generate.
 
-The common configuration to pass to all generation are located in the [swagger_to_sdk.json file](https://github.com/Azure/azure-sdk-for-python/blob/master/swagger_to_sdk_config.json)
+The common configuration to pass to all generation are located in the [swagger_to_sdk.json file](https://github.com/Azure/azure-sdk-for-python/blob/main/swagger_to_sdk_config.json)
 
 ### Automation bot
 

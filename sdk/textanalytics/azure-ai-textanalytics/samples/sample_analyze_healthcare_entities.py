@@ -38,7 +38,7 @@ def sample_analyze_healthcare_entities():
     # [START analyze_healthcare_entities]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics import TextAnalyticsClient, HealthcareEntityRelationType, HealthcareEntityRelationRoleType
+    from azure.ai.textanalytics import TextAnalyticsClient, HealthcareEntityRelation
 
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -92,7 +92,7 @@ def sample_analyze_healthcare_entities():
     dosage_of_medication_relations = [
         entity_relation
         for doc in docs
-        for entity_relation in doc.entity_relations if entity_relation.relation_type == HealthcareEntityRelationType.DOSAGE_OF_MEDICATION
+        for entity_relation in doc.entity_relations if entity_relation.relation_type == HealthcareEntityRelation.DOSAGE_OF_MEDICATION
     ]
     # [END analyze_healthcare_entities]
 
@@ -109,8 +109,8 @@ def sample_analyze_healthcare_entities():
     for relation in dosage_of_medication_relations:
         # The DosageOfMedication relation should only contain the dosage and medication roles
 
-        dosage_role = next(iter(filter(lambda x: x.name == HealthcareEntityRelationRoleType.DOSAGE, relation.roles)))
-        medication_role = next(iter(filter(lambda x: x.name == HealthcareEntityRelationRoleType.MEDICATION, relation.roles)))
+        dosage_role = next(iter(filter(lambda x: x.name == "Dosage", relation.roles)))
+        medication_role = next(iter(filter(lambda x: x.name == "Medication", relation.roles)))
 
         try:
             dosage_value = int(re.findall(r"\d+", dosage_role.entity.text)[0]) # we find the numbers in the dosage
