@@ -45,7 +45,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerLoadBalancingRuleListResult"]:
         """Gets all the load balancing rules in a load balancer.
 
@@ -120,7 +120,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         load_balancing_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LoadBalancingRule":
         """Gets the specified load balancer load balancing rule.
 

@@ -47,7 +47,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified network interface.
 
@@ -99,8 +99,8 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -154,7 +154,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_interface_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkInterface":
         """Gets information about the specified network interface.
 
@@ -217,7 +217,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_interface_name: str,
         parameters: "_models.NetworkInterface",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkInterface":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterface"]
         error_map = {
@@ -274,7 +274,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_interface_name: str,
         parameters: "_models.NetworkInterface",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetworkInterface"]:
         """Creates or updates a network interface.
 
@@ -286,8 +286,8 @@ class NetworkInterfacesOperations:
         :type parameters: ~azure.mgmt.network.v2017_08_01.models.NetworkInterface
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetworkInterface or the result of cls(response)
@@ -342,7 +342,7 @@ class NetworkInterfacesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceListResult"]:
         """Gets all network interfaces in a subscription.
 
@@ -409,7 +409,7 @@ class NetworkInterfacesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceListResult"]:
         """Gets all network interfaces in a resource group.
 
@@ -480,7 +480,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.EffectiveRouteListResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EffectiveRouteListResult"]]
         error_map = {
@@ -529,7 +529,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.EffectiveRouteListResult"]:
         """Gets all route tables applied to a network interface.
 
@@ -539,8 +539,8 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EffectiveRouteListResult or the result of cls(response)
@@ -596,7 +596,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.EffectiveNetworkSecurityGroupListResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EffectiveNetworkSecurityGroupListResult"]]
         error_map = {
@@ -645,7 +645,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         network_interface_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.EffectiveNetworkSecurityGroupListResult"]:
         """Gets all network security groups applied to a network interface.
 
@@ -655,8 +655,8 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EffectiveNetworkSecurityGroupListResult or the result of cls(response)
@@ -713,7 +713,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         virtual_machine_scale_set_name: str,
         virtualmachine_index: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceListResult"]:
         """Gets information about all network interfaces in a virtual machine in a virtual machine scale
         set.
@@ -791,7 +791,7 @@ class NetworkInterfacesOperations:
         self,
         resource_group_name: str,
         virtual_machine_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceListResult"]:
         """Gets all network interfaces in a virtual machine scale set.
 
@@ -868,7 +868,7 @@ class NetworkInterfacesOperations:
         virtualmachine_index: str,
         network_interface_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkInterface":
         """Get the specified network interface in a virtual machine scale set.
 

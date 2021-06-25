@@ -43,7 +43,7 @@ class ExpressRoutePortsLocationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExpressRoutePortsLocationListResult"]:
         """Retrieves all ExpressRoutePort peering locations. Does not return available bandwidths for each
         location. Available bandwidths can only be obtained when retrieving a specific peering
@@ -112,7 +112,7 @@ class ExpressRoutePortsLocationsOperations:
     async def get(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExpressRoutePortsLocation":
         """Retrieves a single ExpressRoutePort peering location, including the list of available
         bandwidths available at said peering location.

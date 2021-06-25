@@ -47,7 +47,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnServerConfiguration":
         """Retrieves the details of a VpnServerConfiguration.
 
@@ -106,7 +106,7 @@ class VpnServerConfigurationsOperations:
         resource_group_name: str,
         vpn_server_configuration_name: str,
         vpn_server_configuration_parameters: "_models.VpnServerConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnServerConfiguration":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnServerConfiguration"]
         error_map = {
@@ -163,7 +163,7 @@ class VpnServerConfigurationsOperations:
         resource_group_name: str,
         vpn_server_configuration_name: str,
         vpn_server_configuration_parameters: "_models.VpnServerConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VpnServerConfiguration"]:
         """Creates a VpnServerConfiguration resource if it doesn't exist else updates the existing
         VpnServerConfiguration.
@@ -178,8 +178,8 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_parameters: ~azure.mgmt.network.v2020_03_01.models.VpnServerConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnServerConfiguration or the result of cls(response)
@@ -237,7 +237,7 @@ class VpnServerConfigurationsOperations:
         resource_group_name: str,
         vpn_server_configuration_name: str,
         vpn_server_configuration_parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VpnServerConfiguration":
         """Updates VpnServerConfiguration tags.
 
@@ -303,7 +303,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -347,7 +347,7 @@ class VpnServerConfigurationsOperations:
         self,
         resource_group_name: str,
         vpn_server_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a VpnServerConfiguration.
 
@@ -357,8 +357,8 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -410,7 +410,7 @@ class VpnServerConfigurationsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnServerConfigurationsResult"]:
         """Lists all the vpnServerConfigurations in a resource group.
 
@@ -479,7 +479,7 @@ class VpnServerConfigurationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListVpnServerConfigurationsResult"]:
         """Lists all the VpnServerConfigurations in a subscription.
 

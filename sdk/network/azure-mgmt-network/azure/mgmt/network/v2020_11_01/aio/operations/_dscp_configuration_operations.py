@@ -48,7 +48,7 @@ class DscpConfigurationOperations:
         resource_group_name: str,
         dscp_configuration_name: str,
         parameters: "_models.DscpConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DscpConfiguration":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscpConfiguration"]
         error_map = {
@@ -105,7 +105,7 @@ class DscpConfigurationOperations:
         resource_group_name: str,
         dscp_configuration_name: str,
         parameters: "_models.DscpConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DscpConfiguration"]:
         """Creates or updates a DSCP Configuration.
 
@@ -117,8 +117,8 @@ class DscpConfigurationOperations:
         :type parameters: ~azure.mgmt.network.v2020_11_01.models.DscpConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DscpConfiguration or the result of cls(response)
@@ -175,7 +175,7 @@ class DscpConfigurationOperations:
         self,
         resource_group_name: str,
         dscp_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -219,7 +219,7 @@ class DscpConfigurationOperations:
         self,
         resource_group_name: str,
         dscp_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a DSCP Configuration.
 
@@ -229,8 +229,8 @@ class DscpConfigurationOperations:
         :type dscp_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -283,7 +283,7 @@ class DscpConfigurationOperations:
         self,
         resource_group_name: str,
         dscp_configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DscpConfiguration":
         """Gets a DSCP Configuration.
 
@@ -340,7 +340,7 @@ class DscpConfigurationOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DscpConfigurationListResult"]:
         """Gets a DSCP Configuration.
 
@@ -409,7 +409,7 @@ class DscpConfigurationOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DscpConfigurationListResult"]:
         """Gets all dscp configurations in a subscription.
 

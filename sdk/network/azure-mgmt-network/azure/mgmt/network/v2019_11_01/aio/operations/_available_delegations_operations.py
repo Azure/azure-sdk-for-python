@@ -44,7 +44,7 @@ class AvailableDelegationsOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableDelegationsResult"]:
         """Gets all of the available subnet delegations for this subscription in this region.
 

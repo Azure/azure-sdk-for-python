@@ -47,7 +47,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class NetworkProfilesOperations:
         self,
         resource_group_name: str,
         network_profile_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified network profile.
 
@@ -99,8 +99,8 @@ class NetworkProfilesOperations:
         :type network_profile_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -154,7 +154,7 @@ class NetworkProfilesOperations:
         resource_group_name: str,
         network_profile_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkProfile":
         """Gets the specified network profile in a specified resource group.
 
@@ -217,7 +217,7 @@ class NetworkProfilesOperations:
         resource_group_name: str,
         network_profile_name: str,
         parameters: "_models.NetworkProfile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkProfile":
         """Creates or updates a network profile.
 
@@ -287,7 +287,7 @@ class NetworkProfilesOperations:
         resource_group_name: str,
         network_profile_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkProfile":
         """Updates network profile tags.
 
@@ -350,7 +350,7 @@ class NetworkProfilesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkProfileListResult"]:
         """Gets all the network profiles in a subscription.
 
@@ -417,7 +417,7 @@ class NetworkProfilesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetworkProfileListResult"]:
         """Gets all network profiles in a resource group.
 

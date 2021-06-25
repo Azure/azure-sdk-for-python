@@ -44,7 +44,7 @@ class AvailableServiceAliasesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableServiceAliasesResult"]:
         """Gets all available service aliases for this subscription in this region.
 
@@ -115,7 +115,7 @@ class AvailableServiceAliasesOperations:
         self,
         resource_group_name: str,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableServiceAliasesResult"]:
         """Gets all available service aliases for this resource group in this region.
 

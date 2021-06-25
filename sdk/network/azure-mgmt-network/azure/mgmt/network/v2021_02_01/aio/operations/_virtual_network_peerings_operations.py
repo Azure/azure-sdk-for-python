@@ -48,7 +48,7 @@ class VirtualNetworkPeeringsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         virtual_network_peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -94,7 +94,7 @@ class VirtualNetworkPeeringsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         virtual_network_peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified virtual network peering.
 
@@ -106,8 +106,8 @@ class VirtualNetworkPeeringsOperations:
         :type virtual_network_peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -163,7 +163,7 @@ class VirtualNetworkPeeringsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         virtual_network_peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkPeering":
         """Gets the specified virtual network peering.
 
@@ -227,7 +227,7 @@ class VirtualNetworkPeeringsOperations:
         virtual_network_peering_name: str,
         virtual_network_peering_parameters: "_models.VirtualNetworkPeering",
         sync_remote_address_space: Optional[Union[str, "_models.SyncRemoteAddressSpace"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkPeering":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkPeering"]
         error_map = {
@@ -289,7 +289,7 @@ class VirtualNetworkPeeringsOperations:
         virtual_network_peering_name: str,
         virtual_network_peering_parameters: "_models.VirtualNetworkPeering",
         sync_remote_address_space: Optional[Union[str, "_models.SyncRemoteAddressSpace"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualNetworkPeering"]:
         """Creates or updates a peering in the specified virtual network.
 
@@ -307,8 +307,8 @@ class VirtualNetworkPeeringsOperations:
         :type sync_remote_address_space: str or ~azure.mgmt.network.v2021_02_01.models.SyncRemoteAddressSpace
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkPeering or the result of cls(response)
@@ -368,7 +368,7 @@ class VirtualNetworkPeeringsOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkPeeringListResult"]:
         """Gets all virtual network peerings in a virtual network.
 

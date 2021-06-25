@@ -45,7 +45,7 @@ class ResourceNavigationLinksOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceNavigationLinksListResult":
         """Gets a list of resource navigation links for a subnet.
 

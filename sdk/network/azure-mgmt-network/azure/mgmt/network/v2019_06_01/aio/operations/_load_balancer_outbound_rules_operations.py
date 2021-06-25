@@ -45,7 +45,7 @@ class LoadBalancerOutboundRulesOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LoadBalancerOutboundRuleListResult"]:
         """Gets all the outbound rules in a load balancer.
 
@@ -120,7 +120,7 @@ class LoadBalancerOutboundRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         outbound_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OutboundRule":
         """Gets the specified load balancer outbound rule.
 
