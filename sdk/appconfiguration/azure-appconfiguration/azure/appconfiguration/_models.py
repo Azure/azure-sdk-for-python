@@ -198,7 +198,12 @@ class FeatureFlagConfigurationSetting(
 
     @property
     def value(self):
-        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
+        if not self.enabled and not self.filters:
+            return self._value
+        elif not self.enabled:
+            self._value = json.dumps({"conditions": {"client_filters": self.filters}})
+        elif not self.filters:
+            self._value = json.dumps({"enabled": self.enabled})
         return self._value
 
     @value.setter
