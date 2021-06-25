@@ -198,13 +198,13 @@ class FeatureFlagConfigurationSetting(
 
     @property
     def value(self):
-        if not self.enabled and not self.filters:
+        if self.enabled is None and self.filters is None:
             return self._value
-        elif not self.enabled:
+        elif self.enabled is None:
             self._value = json.dumps({"conditions": {"client_filters": self.filters}})
-        elif not self.filters:
+        elif self.filters is None:
             self._value = json.dumps({"enabled": self.enabled})
-        return self._value
+        return json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
 
     @value.setter
     def value(self, new_value):
@@ -212,15 +212,14 @@ class FeatureFlagConfigurationSetting(
             temp = json.loads(new_value)
             self._value = new_value
             self.enabled = temp.get("enabled", None)
+            self.filters = None
             conditions = temp.get("conditions", None)
             if conditions:
-                self.filters = conditions.get("client_filters", [])
-            else:
-                self.filters = []
+                self.filters = conditions.get("client_filters", None)
         except (JSONDecodeError, ValueError):
             self._value = new_value
             self.enabled = None
-            self.filters = []
+            self.filters = None
 
 
     # @property
