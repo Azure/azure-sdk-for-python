@@ -32,7 +32,7 @@ from azure.ai.textanalytics import (
     RecognizeLinkedEntitiesResult,
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
-    PiiEntityCategoryType
+    PiiEntityCategory
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -727,8 +727,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         actions = [
             RecognizePiiEntitiesAction(
                 categories_filter=[
-                    PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER,
-                    PiiEntityCategoryType.ABA_ROUTING_NUMBER
+                    PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER,
+                    PiiEntityCategory.ABA_ROUTING_NUMBER
                 ]
             ),
         ]
@@ -741,7 +741,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert len(action_results) == 3
 
         assert action_results[0][0].entities[0].text == "859-98-0987"
-        assert action_results[0][0].entities[0].category == PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER
+        assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
         assert action_results[1][0].entities[0].text == "111000025"
-        assert action_results[1][0].entities[0].category == PiiEntityCategoryType.ABA_ROUTING_NUMBER
+        assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
         assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
