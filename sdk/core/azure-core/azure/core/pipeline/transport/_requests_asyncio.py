@@ -200,7 +200,7 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
     """Asynchronous streaming of data from the response.
     """
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
         :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
@@ -214,16 +214,23 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
             yield part
         await self.close()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # type: ignore
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
         :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_bytes_helper(
-            stream_download_generator=AsyncioStreamDownloadGenerator,
-            response=self,
-            chunk_size=chunk_size,
-        ):
-            yield part
+        content = self._get_content()  # pylint: disable=protected-access
+        if content is not None:
+            if chunk_size is None:
+                chunk_size = len(content)
+            for i in range(0, len(content), chunk_size):
+                yield content[i: i + chunk_size]
+        else:
+            async for raw_bytes in iter_bytes_helper(
+                stream_download_generator=AsyncioStreamDownloadGenerator,
+                response=self,
+                chunk_size=chunk_size
+            ):
+                yield raw_bytes
         await self.close()
