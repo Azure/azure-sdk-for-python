@@ -180,10 +180,14 @@ class AsyncPipelineClient(PipelineClientBase):
         )
         response = pipeline_response.http_response
         if rest_request:
-            response = response._to_rest_response()
-            if not kwargs.get("stream", False):
-                await response.read()
-                await response.close()
+            rest_response = response._to_rest_response()
+            if not stream:
+                # in this case, the pipeline transport response already called .load_body(), so
+                # the body is loaded. instead of doing response.read(), going to set the body
+                # to the internal content
+                rest_response._content = response.body()  # pylint: disable=protected-access
+                await rest_response.close()
+            response = rest_response
         if return_pipeline_response:
             pipeline_response.http_response = response
             return pipeline_response

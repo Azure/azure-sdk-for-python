@@ -34,7 +34,7 @@ async def await_result(func, *args, **kwargs):
         return await result  # type: ignore
     return result
 
-async def _stream_download_helper(
+def _stream_download_helper(
     decompress: bool,
     stream_download_generator: Callable,
     response,
@@ -46,45 +46,33 @@ async def _stream_download_helper(
         raise StreamClosedError()
 
     response.is_stream_consumed = True
-    stream_download = stream_download_generator(
+    return stream_download_generator(
         pipeline=None,
         response=response,
         chunk_size=chunk_size,
         decompress=decompress,
     )
-    async for part in stream_download:
-        response._num_bytes_downloaded += len(part)
-        yield part
 
-async def iter_bytes_helper(
+def iter_bytes_helper(
     stream_download_generator: Callable,
     response,
     chunk_size: Optional[int] = None,
 ) -> AsyncIterator[bytes]:
-    content = response._get_content()  # pylint: disable=protected-access
-    if content is not None:
-        if chunk_size is None:
-            chunk_size = len(content)
-        for i in range(0, len(content), chunk_size):
-            yield content[i: i + chunk_size]
-    else:
-        async for raw_bytes in _stream_download_helper(
-            decompress=True,
-            stream_download_generator=stream_download_generator,
-            response=response,
-            chunk_size=chunk_size
-        ):
-            yield raw_bytes
+    return _stream_download_helper(
+        decompress=True,
+        stream_download_generator=stream_download_generator,
+        response=response,
+        chunk_size=chunk_size
+    )
 
-async def iter_raw_helper(
+def iter_raw_helper(
     stream_download_generator: Callable,
     response,
     chunk_size: Optional[int] = None
 ) -> AsyncIterator[bytes]:
-    async for raw_bytes in _stream_download_helper(
+    return _stream_download_helper(
         decompress=False,
         stream_download_generator=stream_download_generator,
         response=response,
         chunk_size=chunk_size
-    ):
-        yield raw_bytes
+    )
