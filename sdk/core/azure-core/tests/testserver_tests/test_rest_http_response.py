@@ -220,6 +220,8 @@ def test_multipart_data_and_files_content(send_request):
     )
     send_request(request)
 
+@pytest.mark.skipif(sys.version_info < (3, 0),
+                    reason="In 2.7, get requests error even if we use a pipelien transport")
 def test_multipart_encode_non_seekable_filelike(send_request):
     """
     Test that special readable but non-seekable filelike objects are supported,

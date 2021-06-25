@@ -91,3 +91,10 @@ if sys.version_info < (3, 5):
 @pytest.fixture
 def client(port):
     return AsyncTestRestClient(port)
+
+import sys
+
+# Ignore collection of async tests for Python 2
+collect_ignore = []
+if sys.version_info < (3, 5):
+    collect_ignore.append("async_tests")
