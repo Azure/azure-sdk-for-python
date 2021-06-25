@@ -54,9 +54,9 @@ except ImportError:
 PrimitiveData = Optional[Union[str, int, float, bool]]
 
 
-ParamsType = Dict[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
+ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
-HeadersType = Dict[str, str]
+HeadersType = Mapping[str, str]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Union[
@@ -64,7 +64,7 @@ FileType = Union[
 ]
 
 FilesType = Union[
-    Dict[str, FileType],
+    Mapping[str, FileType],
     Sequence[Tuple[str, FileType]]
 ]
 

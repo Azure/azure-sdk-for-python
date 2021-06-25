@@ -87,17 +87,16 @@ class _AsyncContextManager(collections.abc.Awaitable):
 ################################## CLASSES ######################################
 
 class HttpRequest:
-    """Represents an HTTP request.
+    """**Provisional** object that represents an HTTP request.
 
-    :param method: HTTP method (GET, HEAD, etc.)
-    :type method: str or ~azure.core.protocol.HttpVerbs
+    **This object is provisional**, meaning it may be changed.
+
+    :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: The url for your request
-    :keyword params: Query parameters to be mapped into your URL. Your input
-     should be a mapping or sequence of query name to query value(s).
-    :paramtype params: mapping or sequence
-    :keyword headers: HTTP headers you want in your request. Your input should
-     be a mapping or sequence of header name to header value.
-    :paramtype headers: mapping or sequence
+    :keyword mapping params: Query parameters to be mapped into your URL. Your input
+     should be a mapping of query name to query value(s).
+    :keyword mapping headers: HTTP headers you want in your request. Your input should
+     be a mapping of header name to header value.
     :keyword any json: A JSON serializable object. We handle JSON-serialization for your
      object, so use this for more complicated data structures than `data`.
     :keyword content: Content you want in your request body. Think of it as the kwarg you should input
@@ -106,15 +105,13 @@ class HttpRequest:
     :paramtype content: str or bytes or iterable[bytes] or asynciterable[bytes]
     :keyword dict data: Form data you want in your request body. Use for form-encoded data, i.e.
      HTML forms.
-    :keyword files: Files you want to in your request body. Use for uploading files with
-     multipart encoding. Your input should be a mapping or sequence of file name to file content.
+    :keyword mapping files: Files you want to in your request body. Use for uploading files with
+     multipart encoding. Your input should be a mapping of file name to file content.
      Use the `data` kwarg in addition if you want to include non-file data files as part of your request.
-    :paramtype files: mapping or sequence
     :ivar str url: The URL this request is against.
     :ivar str method: The method type of this request.
-    :ivar headers: The HTTP headers you passed in to your request
-    :vartype headers: mapping or sequence
-    :ivar bytes content: The content passed in for the request
+    :ivar mapping headers: The HTTP headers you passed in to your request
+    :ivar any content: The content passed in for the request
     """
 
     def __init__(
@@ -185,7 +182,10 @@ class HttpRequest:
 
     @property
     def content(self) -> Any:
-        """Gets the request content.
+        """Get's the request's content
+
+        :return: The request's content
+        :rtype: any
         """
         return self._data or self._files
 
@@ -215,28 +215,6 @@ class HttpRequest:
         return from_pipeline_transport_request_helper(cls, pipeline_transport_request)
 
 class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
-    """Base class for HttpResponse and AsyncHttpResponse.
-
-    :keyword request: The request that resulted in this response.
-    :paramtype request: ~azure.core.rest.HttpRequest
-    :ivar int status_code: The status code of this response
-    :ivar headers: The response headers
-    :vartype headers: dict[str, any]
-    :ivar str reason: The reason phrase for this response
-    :ivar bytes content: The response content in bytes
-    :ivar str url: The URL that resulted in this response
-    :ivar str encoding: The response encoding. Is settable, by default
-     is the response Content-Type header
-    :ivar str text: The response body as a string.
-    :ivar request: The request that resulted in this response.
-    :vartype request: ~azure.core.rest.HttpRequest
-    :ivar str content_type: The content type of the response
-    :ivar bool is_closed: Whether the network connection has been closed yet
-    :ivar bool is_stream_consumed: When getting a stream response, checks
-     whether the stream has been fully consumed
-    :ivar int num_bytes_downloaded: The number of bytes in your stream that
-     have been downloaded
-    """
 
     def __init__(
         self,
@@ -343,6 +321,31 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         return cast(bytes, self._get_content())
 
 class HttpResponse(_HttpResponseBase):
+    """**Provisional** object that represents an HTTP response.
+
+    **This object is provisional**, meaning it may be changed.
+
+    :keyword request: The request that resulted in this response.
+    :paramtype request: ~azure.core.rest.HttpRequest
+    :keyword internal_response: The object returned from the HTTP library.
+    :ivar int status_code: The status code of this response
+    :ivar mapping headers: The response headers
+    :ivar str reason: The reason phrase for this response
+    :ivar bytes content: The response content in bytes.
+    :ivar str url: The URL that resulted in this response
+    :ivar str encoding: The response encoding. Is settable, by default
+     is the response Content-Type header
+    :ivar str text: The response body as a string.
+    :ivar request: The request that resulted in this response.
+    :vartype request: ~azure.core.rest.HttpRequest
+    :ivar internal_response: The object returned from the HTTP library.
+    :ivar str content_type: The content type of the response
+    :ivar bool is_closed: Whether the network connection has been closed yet
+    :ivar bool is_stream_consumed: When getting a stream response, checks
+     whether the stream has been fully consumed
+    :ivar int num_bytes_downloaded: The number of bytes in your stream that
+     have been downloaded
+    """
 
     def __enter__(self) -> "HttpResponse":
         return self
@@ -420,6 +423,31 @@ class HttpResponse(_HttpResponseBase):
         )
 
 class AsyncHttpResponse(_HttpResponseBase):
+    """**Provisional** object that represents an Async HTTP response.
+
+    **This object is provisional**, meaning it may be changed.
+
+    :keyword request: The request that resulted in this response.
+    :paramtype request: ~azure.core.rest.HttpRequest
+    :keyword internal_response: The object returned from the HTTP library.
+    :ivar int status_code: The status code of this response
+    :ivar mapping headers: The response headers
+    :ivar str reason: The reason phrase for this response
+    :ivar bytes content: The response content in bytes.
+    :ivar str url: The URL that resulted in this response
+    :ivar str encoding: The response encoding. Is settable, by default
+     is the response Content-Type header
+    :ivar str text: The response body as a string.
+    :ivar request: The request that resulted in this response.
+    :vartype request: ~azure.core.rest.HttpRequest
+    :ivar internal_response: The object returned from the HTTP library.
+    :ivar str content_type: The content type of the response
+    :ivar bool is_closed: Whether the network connection has been closed yet
+    :ivar bool is_stream_consumed: When getting a stream response, checks
+     whether the stream has been fully consumed
+    :ivar int num_bytes_downloaded: The number of bytes in your stream that
+     have been downloaded
+    """
 
     async def read(self) -> bytes:
         """Read the response's bytes into memory.
