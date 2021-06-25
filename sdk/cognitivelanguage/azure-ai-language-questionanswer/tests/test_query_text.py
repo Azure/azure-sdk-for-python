@@ -14,7 +14,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswer import QuestionAnsweringClient
-from azure.ai.language.questionanswer.rest import question_answering_text
+from azure.ai.language.questionanswer.rest import *
 
 class QnATests(QuestionAnsweringTest):
     def setUp(self):
@@ -41,7 +41,7 @@ class QnATests(QuestionAnsweringTest):
             ],
             "language": "en"
         }
-        request = question_answering_text.build_query_request(
+        request = build_query_text_request(
             json=json_content
         )
         response = client.send_request(request)

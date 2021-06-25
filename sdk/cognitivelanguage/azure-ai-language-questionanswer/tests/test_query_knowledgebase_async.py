@@ -21,12 +21,15 @@ from azure.ai.language.questionanswer import (
     AnswerSpanRequest,
 )
 from azure.ai.language.questionanswer.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswer.rest import question_answering_knowledgebase
+from azure.ai.language.questionanswer.rest import *
 
 
 class QnATests(QuestionAnsweringTest):
     def setUp(self):
         super(QnATests, self).setUp()
+        self.scrubber.register_name_pair(self._QUESTION_ANSWERING_ACCOUNT, 'foo')
+        self.scrubber.register_name_pair(self._QUESTION_ANSWERING_ACCOUNT, 'bar')
+        self.scrubber.register_name_pair(self._QUESTION_ANSWERING_PROJECT, 'test-project')
 
     @GlobalQuestionAnsweringAccountPreparer()
     @QuestionAnsweringClientPreparer(QuestionAnsweringClient)
@@ -39,7 +42,7 @@ class QnATests(QuestionAnsweringTest):
                 "previousQnAId": 4
             }
         }
-        request = question_answering_knowledgebase.build_query_request(
+        request = build_query_knowledgebase_request(
             json=json_content,
             project_name=question_answering_project,
             deployment_name='test'
@@ -93,7 +96,7 @@ class QnATests(QuestionAnsweringTest):
                 "topAnswersWithSpan": 2
             }
         }
-        request = question_answering_knowledgebase.build_query_request(
+        request = build_query_knowledgebase_request(
             json=json_content,
             project_name=question_answering_project,
             deployment_name='test'

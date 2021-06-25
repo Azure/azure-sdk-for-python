@@ -14,7 +14,7 @@ from testcase import (
 )
 
 from azure.ai.language.questionanswer import QuestionAnsweringClient
-from azure.ai.language.questionanswer.rest import question_answering_knowledgebase
+from azure.ai.language.questionanswer.rest import *
 
 
 class QnATests(QuestionAnsweringTest):
@@ -32,7 +32,7 @@ class QnATests(QuestionAnsweringTest):
                 "previousQnAId": 4
             }
         }
-        request = question_answering_knowledgebase.build_query_request(
+        request = build_query_knowledgebase_request(
             json=json_content,
             project_name=question_answering_project,
             deployment_name='test'
