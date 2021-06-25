@@ -30,7 +30,6 @@ from ._utils import (
     decode_with_recurse,
 )
 from ._constants import (
-    MESSAGE_PROPERTY_MAX_LENGTH,
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
     PROP_PARTITION_KEY,
@@ -401,7 +400,6 @@ class EventData(object):
     @property
     def correlation_id(self):
         # type: () -> Optional[str]
-        # pylint: disable=line-too-long
         """The correlation identifier.
         Allows an application to specify a context for the message for the purposes of correlation, for example
         reflecting the MessageId of a message that is being replied to.

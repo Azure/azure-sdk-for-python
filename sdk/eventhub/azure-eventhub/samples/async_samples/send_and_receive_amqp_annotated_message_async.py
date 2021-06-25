@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show sending, receiving and parsing amqp annotated message(s) to an Event Hub partition.
+Example to show sending, receiving and parsing amqp annotated message(s) to an Event Hubs.
 """
 
 # pylint: disable=C0111

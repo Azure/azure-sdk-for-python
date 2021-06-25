@@ -113,7 +113,6 @@ def test_send_amqp_annotated_message(connstr_receivers):
         corr_id_ed = "corr_id"
         mess_id_ed = "mess_id"
         event_data = EventData(body_ed)
-        event_data.properties = prop_ed
         event_data.content_type = cont_type_ed
         event_data.correlation_id = corr_id_ed
         event_data.message_id = mess_id_ed
@@ -126,6 +125,12 @@ def test_send_amqp_annotated_message(connstr_receivers):
         client.send_batch(batch)
         client.send_batch([data_message, value_message, sequence_message, event_data])
 
+    received_count = {}
+    received_count["data_msg"] = 0
+    received_count["seq_msg"] = 0
+    received_count["value_msg"] = 0
+    received_count["normal_msg"] = 0
+
     def check_values(event):
         raw_amqp_message = event.raw_amqp_message
         if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
@@ -135,12 +140,14 @@ def test_send_amqp_annotated_message(connstr_receivers):
                 assert event.body_as_str() == "aabbcc"
                 assert raw_amqp_message.delivery_annotations[b'delann_key'] == b'delann_value'
                 assert raw_amqp_message.application_properties[b'body_type'] == b'data'
+                received_count["data_msg"] += 1
             else:
                 assert event.body_as_json() == {'json_key': 'json_val'}
                 assert event.correlation_id == corr_id_ed
                 assert event.message_id == mess_id_ed
                 assert event.content_type == cont_type_ed
                 assert event.body_type == AmqpMessageBodyType.DATA
+                received_count["normal_msg"] += 1
         elif raw_amqp_message.body_type == AmqpMessageBodyType.SEQUENCE:
             body = [sequence for sequence in raw_amqp_message.body]
             assert [sequence_body] == body
@@ -148,11 +155,13 @@ def test_send_amqp_annotated_message(connstr_receivers):
             assert raw_amqp_message.footer[b'footer_key'] == b'footer_value'
             assert raw_amqp_message.properties.subject == b'sequence'
             assert raw_amqp_message.application_properties[b'body_type'] == b'sequence'
+            received_count["seq_msg"] += 1
         elif raw_amqp_message.body_type == AmqpMessageBodyType.VALUE:
             assert raw_amqp_message.body == value_body
             assert event.body_as_str() == "{'key': [-123, 'data', False]}"
             assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
             assert raw_amqp_message.application_properties[b'body_type'] == b'value'
+            received_count["value_msg"] += 1
 
     def on_event(partition_context, event):
         on_event.received.append(event)
@@ -169,6 +178,10 @@ def test_send_amqp_annotated_message(connstr_receivers):
             check_values(event)
 
     assert len(on_event.received) == 8
+    assert received_count["data_msg"] == 2
+    assert received_count["seq_msg"] == 2
+    assert received_count["value_msg"] == 2
+    assert received_count["normal_msg"] == 2
 
 
 @pytest.mark.parametrize("payload",
