@@ -9,7 +9,6 @@ import asyncio
 import sys
 import os
 import json
-from azure.identity.aio import DefaultAzureCredential
 import pytest
 from datetime import timedelta
 from msrest.serialization import UTC
@@ -330,17 +329,3 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     def test_send_NONE_credential_async(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
-
-    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
-    @pytest.mark.asyncio
-    async def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        credential = DefaultAzureCredential()
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
-        eg_event = EventGridEvent(
-                subject="sample", 
-                data={"sample": "eventgridevent"}, 
-                event_type="Sample.EventGrid.Event",
-                data_version="2.0"
-                )
-        await client.send(eg_event)
