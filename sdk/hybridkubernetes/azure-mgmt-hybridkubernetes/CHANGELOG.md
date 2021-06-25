@@ -1,5 +1,19 @@
 # Release History
 
+## 2.0.0b1 (2021-06-25)
+
+**Features**
+
+  - Model ConnectedCluster has a new parameter private_link_scope_resource_id
+  - Model ConnectedCluster has a new parameter private_link_state
+  - Added operation ConnectedClusterOperations.begin_update
+  - Added operation ConnectedClusterOperations.list_cluster_user_credentials
+
+**Breaking changes**
+
+  - Removed operation ConnectedClusterOperations.update
+  - Model ConnectedClusterPatch has a new signature
+
 ## 1.0.0 (2021-05-19)
 
 **Features**
