@@ -46,7 +46,7 @@ class DscNodeOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the dsc node identified by node id.
 
@@ -66,7 +66,7 @@ class DscNodeOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -93,7 +93,7 @@ class DscNodeOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -106,7 +106,7 @@ class DscNodeOperations:
         resource_group_name: str,
         automation_account_name: str,
         node_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DscNode":
         """Retrieve the dsc node identified by node id.
 
@@ -126,7 +126,7 @@ class DscNodeOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -153,7 +153,7 @@ class DscNodeOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscNode', pipeline_response)
@@ -170,7 +170,7 @@ class DscNodeOperations:
         automation_account_name: str,
         node_id: str,
         dsc_node_update_parameters: "_models.DscNodeUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DscNode":
         """Update the dsc node.
 
@@ -192,7 +192,7 @@ class DscNodeOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -224,7 +224,7 @@ class DscNodeOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DscNode', pipeline_response)
@@ -243,7 +243,7 @@ class DscNodeOperations:
         skip: Optional[int] = None,
         top: Optional[int] = None,
         inlinecount: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DscNodeListResult"]:
         """Retrieve a list of dsc nodes.
 
@@ -269,7 +269,7 @@ class DscNodeOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -319,7 +319,7 @@ class DscNodeOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

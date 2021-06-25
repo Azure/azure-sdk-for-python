@@ -46,7 +46,7 @@ class SoftwareUpdateConfigurationRunsOperations:
         automation_account_name: str,
         software_update_configuration_run_id: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SoftwareUpdateConfigurationRun":
         """Get a single software update configuration Run by Id.
 
@@ -97,7 +97,7 @@ class SoftwareUpdateConfigurationRunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SoftwareUpdateConfigurationRun', pipeline_response)
@@ -116,7 +116,7 @@ class SoftwareUpdateConfigurationRunsOperations:
         filter: Optional[str] = None,
         skip: Optional[str] = None,
         top: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SoftwareUpdateConfigurationRunListResult":
         """Return list of software update configuration runs.
 
@@ -178,7 +178,7 @@ class SoftwareUpdateConfigurationRunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SoftwareUpdateConfigurationRunListResult', pipeline_response)

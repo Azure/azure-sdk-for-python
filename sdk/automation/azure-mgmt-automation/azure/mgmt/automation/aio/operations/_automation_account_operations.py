@@ -46,7 +46,7 @@ class AutomationAccountOperations:
         resource_group_name: str,
         automation_account_name: str,
         parameters: "_models.AutomationAccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutomationAccount":
         """Update an automation account.
 
@@ -66,7 +66,7 @@ class AutomationAccountOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -97,7 +97,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutomationAccount', pipeline_response)
@@ -113,7 +113,7 @@ class AutomationAccountOperations:
         resource_group_name: str,
         automation_account_name: str,
         parameters: "_models.AutomationAccountCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutomationAccount":
         """Create or update automation account.
 
@@ -133,7 +133,7 @@ class AutomationAccountOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -164,7 +164,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -183,7 +183,7 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete an automation account.
 
@@ -201,7 +201,7 @@ class AutomationAccountOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -227,7 +227,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -239,7 +239,7 @@ class AutomationAccountOperations:
         self,
         resource_group_name: str,
         automation_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AutomationAccount":
         """Get information about an Automation Account.
 
@@ -257,7 +257,7 @@ class AutomationAccountOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -283,7 +283,7 @@ class AutomationAccountOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AutomationAccount', pipeline_response)
@@ -297,7 +297,7 @@ class AutomationAccountOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutomationAccountListResult"]:
         """Retrieve a list of accounts within a given resource group.
 
@@ -313,7 +313,7 @@ class AutomationAccountOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -354,7 +354,7 @@ class AutomationAccountOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -367,7 +367,7 @@ class AutomationAccountOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AutomationAccountListResult"]:
         """Lists the Automation Accounts within an Azure subscription.
 
@@ -383,7 +383,7 @@ class AutomationAccountOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -423,7 +423,7 @@ class AutomationAccountOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

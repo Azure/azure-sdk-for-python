@@ -27,6 +27,7 @@ try:
     from ._models_py3 import CertificateCreateOrUpdateParameters
     from ._models_py3 import CertificateListResult
     from ._models_py3 import CertificateUpdateParameters
+    from ._models_py3 import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import Connection
     from ._models_py3 import ConnectionCreateOrUpdateParameters
     from ._models_py3 import ConnectionListResult
@@ -65,12 +66,15 @@ try:
     from ._models_py3 import DscReportError
     from ._models_py3 import DscReportResource
     from ._models_py3 import DscReportResourceNavigation
+    from ._models_py3 import EncryptionProperties
+    from ._models_py3 import EncryptionPropertiesIdentity
     from ._models_py3 import ErrorResponse
     from ._models_py3 import FieldDefinition
     from ._models_py3 import HybridRunbookWorker
     from ._models_py3 import HybridRunbookWorkerGroup
     from ._models_py3 import HybridRunbookWorkerGroupUpdateParameters
     from ._models_py3 import HybridRunbookWorkerGroupsListResult
+    from ._models_py3 import Identity
     from ._models_py3 import Job
     from ._models_py3 import JobCollectionItem
     from ._models_py3 import JobCreateParameters
@@ -83,6 +87,7 @@ try:
     from ._models_py3 import JobStreamListResult
     from ._models_py3 import Key
     from ._models_py3 import KeyListResult
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import LinkedWorkspace
     from ._models_py3 import LinuxProperties
     from ._models_py3 import Module
@@ -97,6 +102,12 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import PythonPackageCreateParameters
     from ._models_py3 import PythonPackageUpdateParameters
@@ -189,6 +200,7 @@ except (SyntaxError, ImportError):
     from ._models import CertificateCreateOrUpdateParameters  # type: ignore
     from ._models import CertificateListResult  # type: ignore
     from ._models import CertificateUpdateParameters  # type: ignore
+    from ._models import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import Connection  # type: ignore
     from ._models import ConnectionCreateOrUpdateParameters  # type: ignore
     from ._models import ConnectionListResult  # type: ignore
@@ -227,12 +239,15 @@ except (SyntaxError, ImportError):
     from ._models import DscReportError  # type: ignore
     from ._models import DscReportResource  # type: ignore
     from ._models import DscReportResourceNavigation  # type: ignore
+    from ._models import EncryptionProperties  # type: ignore
+    from ._models import EncryptionPropertiesIdentity  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import FieldDefinition  # type: ignore
     from ._models import HybridRunbookWorker  # type: ignore
     from ._models import HybridRunbookWorkerGroup  # type: ignore
     from ._models import HybridRunbookWorkerGroupUpdateParameters  # type: ignore
     from ._models import HybridRunbookWorkerGroupsListResult  # type: ignore
+    from ._models import Identity  # type: ignore
     from ._models import Job  # type: ignore
     from ._models import JobCollectionItem  # type: ignore
     from ._models import JobCreateParameters  # type: ignore
@@ -245,6 +260,7 @@ except (SyntaxError, ImportError):
     from ._models import JobStreamListResult  # type: ignore
     from ._models import Key  # type: ignore
     from ._models import KeyListResult  # type: ignore
+    from ._models import KeyVaultProperties  # type: ignore
     from ._models import LinkedWorkspace  # type: ignore
     from ._models import LinuxProperties  # type: ignore
     from ._models import Module  # type: ignore
@@ -259,6 +275,12 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointProperty  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourceListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionStateProperty  # type: ignore
     from ._models import ProxyResource  # type: ignore
     from ._models import PythonPackageCreateParameters  # type: ignore
     from ._models import PythonPackageUpdateParameters  # type: ignore
@@ -339,6 +361,7 @@ from ._automation_client_enums import (
     ContentSourceType,
     CountType,
     DscConfigurationState,
+    EncryptionKeySourceType,
     GroupTypeEnum,
     HttpStatusCode,
     JobProvisioningState,
@@ -348,6 +371,7 @@ from ._automation_client_enums import (
     ModuleProvisioningState,
     OperatingSystemType,
     ProvisioningState,
+    ResourceIdentityType,
     RunbookState,
     RunbookTypeEnum,
     ScheduleDay,
@@ -382,6 +406,7 @@ __all__ = [
     'CertificateCreateOrUpdateParameters',
     'CertificateListResult',
     'CertificateUpdateParameters',
+    'ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties',
     'Connection',
     'ConnectionCreateOrUpdateParameters',
     'ConnectionListResult',
@@ -420,12 +445,15 @@ __all__ = [
     'DscReportError',
     'DscReportResource',
     'DscReportResourceNavigation',
+    'EncryptionProperties',
+    'EncryptionPropertiesIdentity',
     'ErrorResponse',
     'FieldDefinition',
     'HybridRunbookWorker',
     'HybridRunbookWorkerGroup',
     'HybridRunbookWorkerGroupUpdateParameters',
     'HybridRunbookWorkerGroupsListResult',
+    'Identity',
     'Job',
     'JobCollectionItem',
     'JobCreateParameters',
@@ -438,6 +466,7 @@ __all__ = [
     'JobStreamListResult',
     'Key',
     'KeyListResult',
+    'KeyVaultProperties',
     'LinkedWorkspace',
     'LinuxProperties',
     'Module',
@@ -452,6 +481,12 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'PythonPackageCreateParameters',
     'PythonPackageUpdateParameters',
@@ -530,6 +565,7 @@ __all__ = [
     'ContentSourceType',
     'CountType',
     'DscConfigurationState',
+    'EncryptionKeySourceType',
     'GroupTypeEnum',
     'HttpStatusCode',
     'JobProvisioningState',
@@ -539,6 +575,7 @@ __all__ = [
     'ModuleProvisioningState',
     'OperatingSystemType',
     'ProvisioningState',
+    'ResourceIdentityType',
     'RunbookState',
     'RunbookTypeEnum',
     'ScheduleDay',

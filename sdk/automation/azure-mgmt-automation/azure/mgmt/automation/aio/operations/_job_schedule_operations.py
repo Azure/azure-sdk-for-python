@@ -46,7 +46,7 @@ class JobScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_schedule_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the job schedule identified by job schedule name.
 
@@ -66,7 +66,7 @@ class JobScheduleOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -93,7 +93,7 @@ class JobScheduleOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -106,7 +106,7 @@ class JobScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         job_schedule_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobSchedule":
         """Retrieve the job schedule identified by job schedule name.
 
@@ -126,7 +126,7 @@ class JobScheduleOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         # Construct URL
@@ -153,7 +153,7 @@ class JobScheduleOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobSchedule', pipeline_response)
@@ -170,7 +170,7 @@ class JobScheduleOperations:
         automation_account_name: str,
         job_schedule_id: str,
         parameters: "_models.JobScheduleCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobSchedule":
         """Create a job schedule.
 
@@ -192,7 +192,7 @@ class JobScheduleOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -224,7 +224,7 @@ class JobScheduleOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobSchedule', pipeline_response)
@@ -240,7 +240,7 @@ class JobScheduleOperations:
         resource_group_name: str,
         automation_account_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobScheduleListResult"]:
         """Retrieve a list of job schedules.
 
@@ -260,7 +260,7 @@ class JobScheduleOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-01-13-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -304,7 +304,7 @@ class JobScheduleOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

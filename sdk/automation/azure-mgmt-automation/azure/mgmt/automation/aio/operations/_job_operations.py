@@ -47,7 +47,7 @@ class JobOperations:
         automation_account_name: str,
         job_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Retrieve the job output identified by job name.
 
@@ -114,7 +114,7 @@ class JobOperations:
         automation_account_name: str,
         job_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Retrieve the runbook content of the job identified by job name.
 
@@ -181,7 +181,7 @@ class JobOperations:
         automation_account_name: str,
         job_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Suspend the job identified by job name.
 
@@ -232,7 +232,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -246,7 +246,7 @@ class JobOperations:
         automation_account_name: str,
         job_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop the job identified by jobName.
 
@@ -297,7 +297,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -311,7 +311,7 @@ class JobOperations:
         automation_account_name: str,
         job_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Job":
         """Retrieve the job identified by job name.
 
@@ -362,7 +362,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Job', pipeline_response)
@@ -380,7 +380,7 @@ class JobOperations:
         job_name: str,
         parameters: "_models.JobCreateParameters",
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Job":
         """Create a job of the runbook.
 
@@ -438,7 +438,7 @@ class JobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Job', pipeline_response)
@@ -455,7 +455,7 @@ class JobOperations:
         automation_account_name: str,
         filter: Optional[str] = None,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobListResultV2"]:
         """Retrieve a list of jobs.
 
@@ -523,7 +523,7 @@ class JobOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -540,7 +540,7 @@ class JobOperations:
         automation_account_name: str,
         job_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resume the job identified by jobName.
 
@@ -591,7 +591,7 @@ class JobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

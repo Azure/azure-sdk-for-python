@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
+class PrivateLinkResourcesOperations(object):
+    """PrivateLinkResourcesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,25 +45,25 @@ class UsagesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_automation_account(
+    def automation(
         self,
         resource_group_name,  # type: str
         automation_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.UsageListResult"]
-        """Retrieve the usage for the account id.
+        # type: (...) -> Iterable["_models.PrivateLinkResourceListResult"]
+        """Gets the private link resources that need to be created for Automation account.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either UsageListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automation.models.UsageListResult]
+        :return: An iterator like instance of either PrivateLinkResourceListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.automation.models.PrivateLinkResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -78,11 +78,11 @@ class UsagesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_automation_account.metadata['url']  # type: ignore
+                url = self.automation.metadata['url']  # type: ignore
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -97,7 +97,7 @@ class UsagesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('UsageListResult', pipeline_response)
+            deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -110,13 +110,12 @@ class UsagesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_automation_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/usages'}  # type: ignore
+    automation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/privateLinkResources'}  # type: ignore

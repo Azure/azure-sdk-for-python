@@ -46,7 +46,7 @@ class TestJobOperations:
         automation_account_name: str,
         runbook_name: str,
         parameters: "_models.TestJobCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestJob":
         """Create a test job of the runbook.
 
@@ -68,7 +68,7 @@ class TestJobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -100,7 +100,7 @@ class TestJobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TestJob', pipeline_response)
@@ -116,7 +116,7 @@ class TestJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TestJob":
         """Retrieve the test job for the specified runbook.
 
@@ -136,7 +136,7 @@ class TestJobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -163,7 +163,7 @@ class TestJobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TestJob', pipeline_response)
@@ -179,7 +179,7 @@ class TestJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resume the test job.
 
@@ -199,7 +199,7 @@ class TestJobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -226,7 +226,7 @@ class TestJobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -239,7 +239,7 @@ class TestJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop the test job.
 
@@ -259,7 +259,7 @@ class TestJobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -286,7 +286,7 @@ class TestJobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -299,7 +299,7 @@ class TestJobOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Suspend the test job.
 
@@ -319,7 +319,7 @@ class TestJobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -346,7 +346,7 @@ class TestJobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -1,0 +1,145 @@
+{
+    "chosen_version": "",
+    "total_api_version_list": ["2015-10-31", "2018-06-30", "2019-06-01", "2020-01-13-preview"],
+    "client": {
+        "name": "AutomationClient",
+        "filename": "_automation_client",
+        "description": "Automation Client.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AutomationClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AutomationClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "Gets subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=None,  # type: Optional[str]",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: Optional[str] = None,",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "python2_package": "Python2PackageOperations",
+        "agent_registration_information": "AgentRegistrationInformationOperations",
+        "dsc_node": "DscNodeOperations",
+        "node_reports": "NodeReportsOperations",
+        "dsc_node_configuration": "DscNodeConfigurationOperations",
+        "dsc_compilation_job": "DscCompilationJobOperations",
+        "dsc_compilation_job_stream": "DscCompilationJobStreamOperations",
+        "node_count_information": "NodeCountInformationOperations",
+        "source_control": "SourceControlOperations",
+        "source_control_sync_job": "SourceControlSyncJobOperations",
+        "source_control_sync_job_streams": "SourceControlSyncJobStreamsOperations",
+        "automation_account": "AutomationAccountOperations",
+        "statistics": "StatisticsOperations",
+        "usages": "UsagesOperations",
+        "keys": "KeysOperations",
+        "certificate": "CertificateOperations",
+        "connection": "ConnectionOperations",
+        "connection_type": "ConnectionTypeOperations",
+        "credential": "CredentialOperations",
+        "hybrid_runbook_worker_group": "HybridRunbookWorkerGroupOperations",
+        "job_schedule": "JobScheduleOperations",
+        "linked_workspace": "LinkedWorkspaceOperations",
+        "activity": "ActivityOperations",
+        "module": "ModuleOperations",
+        "object_data_types": "ObjectDataTypesOperations",
+        "fields": "FieldsOperations",
+        "schedule": "ScheduleOperations",
+        "variable": "VariableOperations",
+        "watcher": "WatcherOperations",
+        "dsc_configuration": "DscConfigurationOperations",
+        "job": "JobOperations",
+        "job_stream": "JobStreamOperations",
+        "operations": "Operations",
+        "software_update_configurations": "SoftwareUpdateConfigurationsOperations",
+        "software_update_configuration_runs": "SoftwareUpdateConfigurationRunsOperations",
+        "software_update_configuration_machine_runs": "SoftwareUpdateConfigurationMachineRunsOperations",
+        "runbook_draft": "RunbookDraftOperations",
+        "runbook": "RunbookOperations",
+        "test_job_streams": "TestJobStreamsOperations",
+        "test_job": "TestJobOperations",
+        "webhook": "WebhookOperations"
+    }
+}

@@ -20,7 +20,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -60,7 +60,7 @@ class RunbookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -87,7 +87,7 @@ class RunbookOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -116,8 +116,8 @@ class RunbookOperations(object):
         :type runbook_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -175,7 +175,7 @@ class RunbookOperations(object):
         runbook_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> str
+        # type: (...) -> IO
         """Retrieve the content of runbook identified by runbook name.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -185,16 +185,16 @@ class RunbookOperations(object):
         :param runbook_name: The runbook name.
         :type runbook_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: str, or the result of cls(response)
-        :rtype: str
+        :return: IO, or the result of cls(response)
+        :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "text/powershell"
 
         # Construct URL
@@ -223,7 +223,7 @@ class RunbookOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize('IO', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -257,7 +257,7 @@ class RunbookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -284,7 +284,7 @@ class RunbookOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Runbook', pipeline_response)
@@ -325,7 +325,7 @@ class RunbookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -357,7 +357,7 @@ class RunbookOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -401,7 +401,7 @@ class RunbookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -433,7 +433,7 @@ class RunbookOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Runbook', pipeline_response)
@@ -470,7 +470,7 @@ class RunbookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         # Construct URL
@@ -497,7 +497,7 @@ class RunbookOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -528,7 +528,7 @@ class RunbookOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2018-06-30"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -570,7 +570,7 @@ class RunbookOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

@@ -47,7 +47,7 @@ class SoftwareUpdateConfigurationsOperations:
         software_update_configuration_name: str,
         parameters: "_models.SoftwareUpdateConfiguration",
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SoftwareUpdateConfiguration":
         """Create a new software update configuration with the name given in the URI.
 
@@ -106,7 +106,7 @@ class SoftwareUpdateConfigurationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -127,7 +127,7 @@ class SoftwareUpdateConfigurationsOperations:
         automation_account_name: str,
         software_update_configuration_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SoftwareUpdateConfiguration":
         """Get a single software update configuration by name.
 
@@ -179,7 +179,7 @@ class SoftwareUpdateConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SoftwareUpdateConfiguration', pipeline_response)
@@ -196,7 +196,7 @@ class SoftwareUpdateConfigurationsOperations:
         automation_account_name: str,
         software_update_configuration_name: str,
         client_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """delete a specific software update configuration.
 
@@ -248,7 +248,7 @@ class SoftwareUpdateConfigurationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -262,7 +262,7 @@ class SoftwareUpdateConfigurationsOperations:
         automation_account_name: str,
         client_request_id: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SoftwareUpdateConfigurationListResult":
         """Get all software update configurations for the account.
 
@@ -314,7 +314,7 @@ class SoftwareUpdateConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SoftwareUpdateConfigurationListResult', pipeline_response)

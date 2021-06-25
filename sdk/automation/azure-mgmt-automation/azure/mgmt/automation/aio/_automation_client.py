@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -16,25 +17,19 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import AutomationClientConfiguration
-from .operations import RunbookDraftOperations
-from .operations import RunbookOperations
-from .operations import TestJobStreamsOperations
-from .operations import TestJobOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from .operations import Python2PackageOperations
 from .operations import AgentRegistrationInformationOperations
 from .operations import DscNodeOperations
 from .operations import NodeReportsOperations
+from .operations import DscNodeConfigurationOperations
 from .operations import DscCompilationJobOperations
 from .operations import DscCompilationJobStreamOperations
-from .operations import DscNodeConfigurationOperations
 from .operations import NodeCountInformationOperations
-from .operations import SoftwareUpdateConfigurationRunsOperations
-from .operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .operations import SourceControlOperations
 from .operations import SourceControlSyncJobOperations
 from .operations import SourceControlSyncJobStreamsOperations
-from .operations import JobOperations
-from .operations import JobStreamOperations
 from .operations import AutomationAccountOperations
 from .operations import StatisticsOperations
 from .operations import UsagesOperations
@@ -43,8 +38,6 @@ from .operations import CertificateOperations
 from .operations import ConnectionOperations
 from .operations import ConnectionTypeOperations
 from .operations import CredentialOperations
-from .operations import DscConfigurationOperations
-from .operations import SoftwareUpdateConfigurationsOperations
 from .operations import HybridRunbookWorkerGroupOperations
 from .operations import JobScheduleOperations
 from .operations import LinkedWorkspaceOperations
@@ -52,10 +45,20 @@ from .operations import ActivityOperations
 from .operations import ModuleOperations
 from .operations import ObjectDataTypesOperations
 from .operations import FieldsOperations
-from .operations import Operations
 from .operations import ScheduleOperations
 from .operations import VariableOperations
 from .operations import WatcherOperations
+from .operations import DscConfigurationOperations
+from .operations import JobOperations
+from .operations import JobStreamOperations
+from .operations import Operations
+from .operations import SoftwareUpdateConfigurationsOperations
+from .operations import SoftwareUpdateConfigurationRunsOperations
+from .operations import SoftwareUpdateConfigurationMachineRunsOperations
+from .operations import RunbookDraftOperations
+from .operations import RunbookOperations
+from .operations import TestJobStreamsOperations
+from .operations import TestJobOperations
 from .operations import WebhookOperations
 from .. import models
 
@@ -63,14 +66,10 @@ from .. import models
 class AutomationClient(object):
     """Automation Client.
 
-    :ivar runbook_draft: RunbookDraftOperations operations
-    :vartype runbook_draft: azure.mgmt.automation.aio.operations.RunbookDraftOperations
-    :ivar runbook: RunbookOperations operations
-    :vartype runbook: azure.mgmt.automation.aio.operations.RunbookOperations
-    :ivar test_job_streams: TestJobStreamsOperations operations
-    :vartype test_job_streams: azure.mgmt.automation.aio.operations.TestJobStreamsOperations
-    :ivar test_job: TestJobOperations operations
-    :vartype test_job: azure.mgmt.automation.aio.operations.TestJobOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.automation.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.automation.aio.operations.PrivateLinkResourcesOperations
     :ivar python2_package: Python2PackageOperations operations
     :vartype python2_package: azure.mgmt.automation.aio.operations.Python2PackageOperations
     :ivar agent_registration_information: AgentRegistrationInformationOperations operations
@@ -79,28 +78,20 @@ class AutomationClient(object):
     :vartype dsc_node: azure.mgmt.automation.aio.operations.DscNodeOperations
     :ivar node_reports: NodeReportsOperations operations
     :vartype node_reports: azure.mgmt.automation.aio.operations.NodeReportsOperations
+    :ivar dsc_node_configuration: DscNodeConfigurationOperations operations
+    :vartype dsc_node_configuration: azure.mgmt.automation.aio.operations.DscNodeConfigurationOperations
     :ivar dsc_compilation_job: DscCompilationJobOperations operations
     :vartype dsc_compilation_job: azure.mgmt.automation.aio.operations.DscCompilationJobOperations
     :ivar dsc_compilation_job_stream: DscCompilationJobStreamOperations operations
     :vartype dsc_compilation_job_stream: azure.mgmt.automation.aio.operations.DscCompilationJobStreamOperations
-    :ivar dsc_node_configuration: DscNodeConfigurationOperations operations
-    :vartype dsc_node_configuration: azure.mgmt.automation.aio.operations.DscNodeConfigurationOperations
     :ivar node_count_information: NodeCountInformationOperations operations
     :vartype node_count_information: azure.mgmt.automation.aio.operations.NodeCountInformationOperations
-    :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRunsOperations operations
-    :vartype software_update_configuration_runs: azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationRunsOperations
-    :ivar software_update_configuration_machine_runs: SoftwareUpdateConfigurationMachineRunsOperations operations
-    :vartype software_update_configuration_machine_runs: azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationMachineRunsOperations
     :ivar source_control: SourceControlOperations operations
     :vartype source_control: azure.mgmt.automation.aio.operations.SourceControlOperations
     :ivar source_control_sync_job: SourceControlSyncJobOperations operations
     :vartype source_control_sync_job: azure.mgmt.automation.aio.operations.SourceControlSyncJobOperations
     :ivar source_control_sync_job_streams: SourceControlSyncJobStreamsOperations operations
     :vartype source_control_sync_job_streams: azure.mgmt.automation.aio.operations.SourceControlSyncJobStreamsOperations
-    :ivar job: JobOperations operations
-    :vartype job: azure.mgmt.automation.aio.operations.JobOperations
-    :ivar job_stream: JobStreamOperations operations
-    :vartype job_stream: azure.mgmt.automation.aio.operations.JobStreamOperations
     :ivar automation_account: AutomationAccountOperations operations
     :vartype automation_account: azure.mgmt.automation.aio.operations.AutomationAccountOperations
     :ivar statistics: StatisticsOperations operations
@@ -117,10 +108,6 @@ class AutomationClient(object):
     :vartype connection_type: azure.mgmt.automation.aio.operations.ConnectionTypeOperations
     :ivar credential: CredentialOperations operations
     :vartype credential: azure.mgmt.automation.aio.operations.CredentialOperations
-    :ivar dsc_configuration: DscConfigurationOperations operations
-    :vartype dsc_configuration: azure.mgmt.automation.aio.operations.DscConfigurationOperations
-    :ivar software_update_configurations: SoftwareUpdateConfigurationsOperations operations
-    :vartype software_update_configurations: azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationsOperations
     :ivar hybrid_runbook_worker_group: HybridRunbookWorkerGroupOperations operations
     :vartype hybrid_runbook_worker_group: azure.mgmt.automation.aio.operations.HybridRunbookWorkerGroupOperations
     :ivar job_schedule: JobScheduleOperations operations
@@ -135,14 +122,34 @@ class AutomationClient(object):
     :vartype object_data_types: azure.mgmt.automation.aio.operations.ObjectDataTypesOperations
     :ivar fields: FieldsOperations operations
     :vartype fields: azure.mgmt.automation.aio.operations.FieldsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.automation.aio.operations.Operations
     :ivar schedule: ScheduleOperations operations
     :vartype schedule: azure.mgmt.automation.aio.operations.ScheduleOperations
     :ivar variable: VariableOperations operations
     :vartype variable: azure.mgmt.automation.aio.operations.VariableOperations
     :ivar watcher: WatcherOperations operations
     :vartype watcher: azure.mgmt.automation.aio.operations.WatcherOperations
+    :ivar dsc_configuration: DscConfigurationOperations operations
+    :vartype dsc_configuration: azure.mgmt.automation.aio.operations.DscConfigurationOperations
+    :ivar job: JobOperations operations
+    :vartype job: azure.mgmt.automation.aio.operations.JobOperations
+    :ivar job_stream: JobStreamOperations operations
+    :vartype job_stream: azure.mgmt.automation.aio.operations.JobStreamOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.automation.aio.operations.Operations
+    :ivar software_update_configurations: SoftwareUpdateConfigurationsOperations operations
+    :vartype software_update_configurations: azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationsOperations
+    :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRunsOperations operations
+    :vartype software_update_configuration_runs: azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationRunsOperations
+    :ivar software_update_configuration_machine_runs: SoftwareUpdateConfigurationMachineRunsOperations operations
+    :vartype software_update_configuration_machine_runs: azure.mgmt.automation.aio.operations.SoftwareUpdateConfigurationMachineRunsOperations
+    :ivar runbook_draft: RunbookDraftOperations operations
+    :vartype runbook_draft: azure.mgmt.automation.aio.operations.RunbookDraftOperations
+    :ivar runbook: RunbookOperations operations
+    :vartype runbook: azure.mgmt.automation.aio.operations.RunbookOperations
+    :ivar test_job_streams: TestJobStreamsOperations operations
+    :vartype test_job_streams: azure.mgmt.automation.aio.operations.TestJobStreamsOperations
+    :ivar test_job: TestJobOperations operations
+    :vartype test_job: azure.mgmt.automation.aio.operations.TestJobOperations
     :ivar webhook: WebhookOperations operations
     :vartype webhook: azure.mgmt.automation.aio.operations.WebhookOperations
     :param credential: Credential needed for the client to connect to Azure.
@@ -167,15 +174,12 @@ class AutomationClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.runbook_draft = RunbookDraftOperations(
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.runbook = RunbookOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.test_job_streams = TestJobStreamsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.test_job = TestJobOperations(
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.python2_package = Python2PackageOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -185,27 +189,19 @@ class AutomationClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.node_reports = NodeReportsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.dsc_node_configuration = DscNodeConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.dsc_compilation_job = DscCompilationJobOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.dsc_node_configuration = DscNodeConfigurationOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.node_count_information = NodeCountInformationOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.source_control = SourceControlOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.source_control_sync_job = SourceControlSyncJobOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.source_control_sync_job_streams = SourceControlSyncJobStreamsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job = JobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.job_stream = JobStreamOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.automation_account = AutomationAccountOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -223,10 +219,6 @@ class AutomationClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.credential = CredentialOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.dsc_configuration = DscConfigurationOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.hybrid_runbook_worker_group = HybridRunbookWorkerGroupOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(
@@ -241,16 +233,53 @@ class AutomationClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.fields = FieldsOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.schedule = ScheduleOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.variable = VariableOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.watcher = WatcherOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.dsc_configuration = DscConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.job = JobOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.job_stream = JobStreamOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.runbook_draft = RunbookDraftOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.runbook = RunbookOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.test_job_streams = TestJobStreamsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.test_job = TestJobOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.webhook = WebhookOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

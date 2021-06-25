@@ -75,6 +75,13 @@ class DscConfigurationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     EDIT = "Edit"
     PUBLISHED = "Published"
 
+class EncryptionKeySourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Encryption Key Source
+    """
+
+    MICROSOFT_AUTOMATION = "Microsoft.Automation"
+    MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
+
 class GroupTypeEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the HybridWorkerGroup.
     """
@@ -216,6 +223,15 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     RUNNING = "Running"
 
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"
+
 class RunbookState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the state of the runbook.
     """
@@ -257,7 +273,8 @@ class ScheduleFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HOUR = "Hour"
     WEEK = "Week"
     MONTH = "Month"
-    MINUTE = "Minute"  #: The minimum allowed interval for Minute schedules is 15 minutes.
+    #: The minimum allowed interval for Minute schedules is 15 minutes.
+    MINUTE = "Minute"
 
 class SkuNameEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the SKU name of the account.
