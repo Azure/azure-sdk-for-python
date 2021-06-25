@@ -85,7 +85,7 @@ def judge_tag():
     default_api_version = ''  # for multi-api
     api_version = ''  # for single-api
     for file in files:
-        with open(file, 'r') as file_in:
+        with open(file, 'r', encoding="utf-8") as file_in:
             list_in = file_in.readlines()
         for line in list_in:
             if line.find('DEFAULT_API_VERSION = ') > -1:
