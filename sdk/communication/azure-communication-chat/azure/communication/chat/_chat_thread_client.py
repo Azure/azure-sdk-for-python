@@ -397,7 +397,6 @@ class ChatThreadClient(object):
         self,
         message_id,  # type: str
         content=None,  # type: Optional[str]
-        metadata=None, # type: Optional[dict[str, str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -425,6 +424,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
+        metadata = kwargs.pop("metadata", None)
         update_message_request = UpdateChatMessageRequest(content=content, metadata=metadata)
 
         return self._client.chat_thread.update_chat_message(
