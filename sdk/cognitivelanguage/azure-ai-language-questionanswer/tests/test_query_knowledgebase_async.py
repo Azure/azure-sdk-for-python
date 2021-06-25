@@ -13,11 +13,9 @@ from testcase import (
     QuestionAnsweringClientPreparer
 )
 
-from azure.ai.language.questionanswer import (
+from azure.ai.language.questionanswer.models import (
     KnowledgebaseQueryParameters,
     KnowledgebaseAnswerRequestContext,
-    RankerType,
-    StrictFilters,
     AnswerSpanRequest,
 )
 from azure.ai.language.questionanswer.aio import QuestionAnsweringClient
