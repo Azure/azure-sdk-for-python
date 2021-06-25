@@ -69,7 +69,7 @@ def _prepare_request(request):
     # and a bool telling whether we ended up converting it
     rest_request = False
     try:
-        request_to_run = request._to_pipeline_transport_request()
+        request_to_run = request._to_pipeline_transport_request()  # pylint: disable=protected-access
         rest_request = True
     except AttributeError:
         request_to_run = request
@@ -198,7 +198,7 @@ class PipelineClient(PipelineClientBase):
         pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
         if rest_request:
-            response = response._to_rest_response()
+            response = response._to_rest_response()  # pylint: disable=protected-access
             if not kwargs.get("stream", False):
                 response.read()
                 response.close()

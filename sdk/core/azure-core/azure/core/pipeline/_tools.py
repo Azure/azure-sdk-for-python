@@ -24,6 +24,17 @@
 #
 # --------------------------------------------------------------------------
 from ..exceptions import StreamClosedError, StreamConsumedError
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import (
+        Callable,
+        Optional,
+        Iterator,
+    )
+    from azure.core.rest import HttpResponse
+
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
     result = func(*args, **kwargs)
@@ -93,5 +104,5 @@ def set_block_size(response, **kwargs):
         if hasattr(response, "block_size"):
             chunk_size = response.block_size
         elif hasattr(response, "_connection_data_block_size"):
-            chunk_size = response._connection_data_block_size
+            chunk_size = response._connection_data_block_size  # pylint: disable=protected-access
     return chunk_size

@@ -26,6 +26,7 @@
 
 import logging
 from collections.abc import Iterable
+from typing import Any, Awaitable
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -37,7 +38,7 @@ from .pipeline.policies import (
     AsyncRetryPolicy,
 )
 from ._pipeline_client import _prepare_request
-from typing import Any, Awaitable
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -48,7 +49,6 @@ from .rest import HttpRequest, _AsyncContextManager, AsyncHttpResponse
 if TYPE_CHECKING:
     from typing import (
         List,
-        Any,
         Dict,
         Union,
         IO,
@@ -180,7 +180,7 @@ class AsyncPipelineClient(PipelineClientBase):
         )
         response = pipeline_response.http_response
         if rest_request:
-            rest_response = response._to_rest_response()
+            rest_response = response._to_rest_response()  # pylint: disable=protected-access
             if not stream:
                 # in this case, the pipeline transport response already called .load_body(), so
                 # the body is loaded. instead of doing response.read(), going to set the body

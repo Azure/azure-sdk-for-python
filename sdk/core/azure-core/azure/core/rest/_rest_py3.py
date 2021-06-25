@@ -39,6 +39,7 @@ from typing import (
     Type,
     Union,
 )
+from abc import abstractmethod
 
 from azure.core.exceptions import HttpResponseError
 
@@ -440,6 +441,12 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
+        # If you don't have a yield in an AsyncIterator function,
+        # mypy will think it's a coroutine
+        # see here https://github.com/python/mypy/issues/5385#issuecomment-407281656
+        # So, adding this weird yield thing
+        for _ in []:
+            yield _
         raise NotImplementedError()
 
     async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
@@ -449,6 +456,12 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
+        # If you don't have a yield in an AsyncIterator function,
+        # mypy will think it's a coroutine
+        # see here https://github.com/python/mypy/issues/5385#issuecomment-407281656
+        # So, adding this weird yield thing
+        for _ in []:
+            yield _
         raise NotImplementedError()
 
     async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:

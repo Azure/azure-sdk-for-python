@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Optional, Callable, AsyncIterator, TYPE_CHECKING, Union
+from typing import Optional, Callable, AsyncIterator
 from ..exceptions import StreamClosedError, StreamConsumedError
 
 async def await_result(func, *args, **kwargs):
