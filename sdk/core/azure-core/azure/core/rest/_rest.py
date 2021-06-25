@@ -169,13 +169,14 @@ class HttpRequest(object):
 
     def __deepcopy__(self, memo=None):
         try:
-            return HttpRequest(
+            request = HttpRequest(
                 method=self.method,
                 url=self.url,
                 headers=self.headers,
-                files=copy.deepcopy(self._files),
-                data=copy.deepcopy(self._data),
             )
+            request._data = copy.deepcopy(self._data, memo)
+            request._files = copy.deepcopy(self._files, memo)
+            return request
         except (ValueError, TypeError):
             return copy.copy(self)
 
