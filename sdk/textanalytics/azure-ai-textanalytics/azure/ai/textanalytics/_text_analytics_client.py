@@ -324,12 +324,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
-        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomain
         :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
-            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
+            `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
@@ -506,7 +506,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]  # pylint: disable=line-too-long
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -547,10 +547,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult`.
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
+            Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -818,7 +820,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult]]]]  # pylint: disable=line-too-long
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -864,7 +866,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[
             RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or DocumentError
             ]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 

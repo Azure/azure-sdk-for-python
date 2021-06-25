@@ -18,6 +18,10 @@ Note: this version will be the last to officially support Python 3.5, future ver
 - Removed: `AnalyzeActionsType`
 - Removed: `AnalyzeActionsResult`
 - Removed: `AnalyzeActionsError`
+- Removed: `HealthcareEntityRelationRoleType`
+- Changed: renamed `HealthcareEntityRelationType` to `HealthcareEntityRelation`
+- Changed: renamed `PiiEntityCategoryType` to `PiiEntityCategory`
+- Changed: renamed `PiiEntityDomainType` to `PiiEntityDomain`
 
 ## 5.1.0b7 (2021-05-18)
 

@@ -20,7 +20,7 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    HealthcareEntityRelationType,
+    HealthcareEntityRelation,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -412,7 +412,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert len(result.entity_relations) == 1
 
         relation = result.entity_relations[0]
-        assert relation.relation_type == HealthcareEntityRelationType.ABBREVIATION
+        assert relation.relation_type == HealthcareEntityRelation.ABBREVIATION
         assert len(relation.roles) == 2
 
         parkinsons_entity = list(filter(lambda x: x.text == "Parkinsons Disease", result.entities))[0]
