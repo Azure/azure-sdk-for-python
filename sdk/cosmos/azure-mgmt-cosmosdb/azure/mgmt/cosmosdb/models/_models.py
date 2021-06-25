@@ -1306,7 +1306,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param locations: Required. An array that contains the georeplication locations enabled for the
      Cosmos DB account.
     :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: Required. The offer type for the database. Default value:
+    :ivar database_account_offer_type: The offer type for the database. Has constant value:
      "Standard".
     :vartype database_account_offer_type: str
     :param ip_rules: List of IpRules.
@@ -1490,7 +1490,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :ivar document_endpoint: The connection endpoint for the Cosmos DB database account.
     :vartype document_endpoint: str
     :ivar database_account_offer_type: The offer type for the Cosmos DB database account. Default
-     value: Standard. Default value: "Standard".
+     value: Standard. The only acceptable values to pass in are None and "Standard". The default
+     value is None.
     :vartype database_account_offer_type: str
     :param ip_rules: List of IpRules.
     :type ip_rules: list[~azure.mgmt.cosmosdb.models.IpAddressOrRange]
@@ -1580,7 +1581,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'document_endpoint': {'readonly': True},
-        'database_account_offer_type': {'readonly': True, 'constant': True},
+        'database_account_offer_type': {'readonly': True},
         'write_locations': {'readonly': True},
         'read_locations': {'readonly': True},
         'locations': {'readonly': True},
@@ -1632,8 +1633,6 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'network_acl_bypass_resource_ids': {'key': 'properties.networkAclBypassResourceIds', 'type': '[str]'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
     }
-
-    database_account_offer_type = "Standard"
 
     def __init__(
         self,
