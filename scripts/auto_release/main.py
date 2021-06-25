@@ -90,7 +90,7 @@ def judge_tag():
         for line in list_in:
             if line.find('DEFAULT_API_VERSION = ') > -1:
                 default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-            if default_api_version == '' and line.find('self.api_version = ') > -1:
+            if default_api_version == '' and line.find('api_version = ') > -1:
                 api_version += line.split('=')[-1].strip('\n')  # collect all single api version
     if default_api_version != '':
         my_print(f'find default api version:{default_api_version}')
