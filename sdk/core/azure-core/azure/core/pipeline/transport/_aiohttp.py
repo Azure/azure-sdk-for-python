@@ -417,7 +417,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
 
         return content.decode(encoding)
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
         :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
@@ -431,7 +431,7 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
             yield part
         await self.close()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
         :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
