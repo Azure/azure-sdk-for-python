@@ -14,7 +14,16 @@ These sample programs demonstrate some common use case scenairos for the [FarmBe
 
 - [sample_hello_world.py][hello_world_sample] demonstrates the most basic operation that can be performed - creation of a Farmer. Use this to understand how to create the client object, how to authenticate it, and make sure your client is set up correctly to call into your FarmBeats endpoint.
 
-- [sample_attachments.py][attachments_sample] demonstrates FarmBeats' capabaility of storing arbitrary files in context to the various [farm hierarchy][farm_hierarchy_docs] objects. We first attach some files onto a farmer and a farm, and then download all existing attachments for the farmer onto a local directory.
+- [sample_farm_hierarchy.py][farm_hierarchy_sample] demonstrates how to create a simple [farm hierarchy][farm_hierarchy_docs], comprising of Farmer, Farm, Field and Boundary.
+
+- [sample_farm_hierarchy_complete.py][farm_hierarchy_complete_sample] builds on the previous sample to add to the previous sample, and demonstrate the relationships between Crops, Crop Varities, Seasons and Seasonal Fields and the other farm hierarchy objects.
+
+- [sample_satellie_download.py][satellie_download_sample] demonstrates FarmBeats' satellite integrations and how to ingest satellite imagery into the platform, and then download them onto a local directory. This demonstrates key concepts of how to create a job in FarmBeats, and how to poll on the completion of the job using the SDK. In the [corresponding async sample][satellie_download_async_sample] we demonstrate how to handle concurrent download of potentially hundreds of files by limiting the max concurrency using semaphores.
+
+- [sample_attachments.py][attachments_sample] demonstrates FarmBeats' capabaility of storing arbitrary files in context to the various farm hierarchy objects. We first attach some files onto a farmer and a farm, and then download all existing attachments for the farmer onto a local directory.
+
+- [sample_cascade_delete.py][cascade_delete_sample] demonstrates the usage of cascade delete jobs to perform cleanup of farm hierarchy objects. A cascade delete job handles the recursive deletion of all dependent data for the given parent resource.
+
 
 Additionally, for each sample, there are corresponding files in the [`samples/async`][async_samples] directory
 
@@ -77,6 +86,11 @@ Last modified timestamp: 2021-06-22 21:01:35+00:00
 [async_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/agrifood/azure-agrifood-farming/samples/async
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_hello_world.py
 [attachments_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_attachments.py
+[cascade_delete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_cascade_delete.py
+[satellie_download_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_satellie_download.py
+[farm_hierarchy_complete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy_complete.py
+[farm_hierarchy_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy.py
+[satellie_download_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/agrifood/azure-agrifood-farming/samples/async/sample_satellie_download_async.py
 
 <!-- Microsoft/Azure related links -->
 [azure_free_sub]: https://azure.microsoft.com/free/
