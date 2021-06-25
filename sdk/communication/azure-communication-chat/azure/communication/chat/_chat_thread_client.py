@@ -406,8 +406,7 @@ class ChatThreadClient(object):
         :type message_id: str
         :param content: Chat message content.
         :type content: str
-        :param metadata: Message metadata.
-        :type metadata: dict[str, str]
+        :keyword dict[str, str] metadata : Message metadata.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
