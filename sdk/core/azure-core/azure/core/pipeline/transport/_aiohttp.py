@@ -50,7 +50,7 @@ from ...rest import (
     HttpRequest as RestHttpRequest,
     AsyncHttpResponse as RestAsyncHttpResponse,
 )
-from .._tools import to_rest_response_helper, get_chunk_size
+from .._tools import to_rest_response_helper, set_block_size
 from .._tools_async import (
     iter_bytes_helper,
     iter_raw_helper,
@@ -224,7 +224,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = get_chunk_size(response, **kwargs)
+        self.block_size = set_block_size(response, chunk_size=kwargs.pop("chunk_size", None), **kwargs)
         self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None

@@ -55,7 +55,7 @@ from .._tools import (
     to_rest_response_helper,
     iter_bytes_helper,
     iter_raw_helper,
-    get_chunk_size,
+    set_block_size,
 )
 
 PipelineType = TypeVar("PipelineType")
@@ -140,7 +140,7 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = get_chunk_size(response, **kwargs)
+        self.block_size = set_block_size(response, chunk_size=kwargs.pop("chunk_size", None), **kwargs)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))

@@ -44,7 +44,7 @@ from ._base_async import (
     _iterate_response_content)
 from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
 from ._base_requests_async import RequestsAsyncTransportBase
-from .._tools import to_rest_response_helper
+from .._tools import to_rest_response_helper, set_block_size
 from .._tools_async import (
     iter_bytes_helper,
     iter_raw_helper
@@ -151,7 +151,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = set_block_size(response, chunk_size=kwargs.pop("chunk_size", None), **kwargs)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))

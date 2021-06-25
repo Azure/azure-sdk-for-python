@@ -87,7 +87,7 @@ def to_rest_response_helper(pipeline_transport_response, response_type):
     response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
     return response
 
-def get_chunk_size(response, **kwargs):
+def set_block_size(response, **kwargs):
     chunk_size = kwargs.pop("chunk_size", None)
     if not chunk_size:
         if hasattr(response, "block_size"):
