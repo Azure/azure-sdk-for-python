@@ -290,7 +290,7 @@ class DebugSendResponse(Resource):
     :param failure: send failure.
     :type failure: float
     :param results: actual failure description.
-    :type results: object
+    :type results: any
     """
 
     _validation = {

@@ -46,7 +46,7 @@ class NotificationHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         parameters: "_models.CheckAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckAvailabilityResult":
         """Checks the availability of the given notificationHub in a namespace.
 
@@ -113,7 +113,7 @@ class NotificationHubsOperations:
         namespace_name: str,
         notification_hub_name: str,
         parameters: "_models.NotificationHubCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationHubResource":
         """Creates/Update a NotificationHub in a namespace.
 
@@ -187,7 +187,7 @@ class NotificationHubsOperations:
         namespace_name: str,
         notification_hub_name: str,
         parameters: Optional["_models.NotificationHubPatchParameters"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationHubResource":
         """Patch a NotificationHub in a namespace.
 
@@ -259,7 +259,7 @@ class NotificationHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         notification_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a notification hub associated with a namespace.
 
@@ -316,7 +316,7 @@ class NotificationHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         notification_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotificationHubResource":
         """Lists the notification hubs associated with a namespace.
 
@@ -378,8 +378,8 @@ class NotificationHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         notification_hub_name: str,
-        parameters: Optional[object] = None,
-        **kwargs
+        parameters: Optional[Any] = None,
+        **kwargs: Any
     ) -> "_models.DebugSendResponse":
         """test send a push notification.
 
@@ -390,7 +390,7 @@ class NotificationHubsOperations:
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param parameters: Debug send parameters.
-        :type parameters: object
+        :type parameters: any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DebugSendResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.notificationhubs.models.DebugSendResponse
@@ -453,7 +453,7 @@ class NotificationHubsOperations:
         notification_hub_name: str,
         authorization_rule_name: str,
         parameters: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Creates/Updates an authorization rule for a NotificationHub.
 
@@ -526,7 +526,7 @@ class NotificationHubsOperations:
         namespace_name: str,
         notification_hub_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a notificationHub authorization rule.
 
@@ -587,7 +587,7 @@ class NotificationHubsOperations:
         namespace_name: str,
         notification_hub_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Gets an authorization rule for a NotificationHub by name.
 
@@ -651,7 +651,7 @@ class NotificationHubsOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NotificationHubListResult"]:
         """Lists the notification hubs associated with a namespace.
 
@@ -726,7 +726,7 @@ class NotificationHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         notification_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedAccessAuthorizationRuleListResult"]:
         """Gets the authorization rules for a NotificationHub.
 
@@ -805,7 +805,7 @@ class NotificationHubsOperations:
         namespace_name: str,
         notification_hub_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceListKeys":
         """Gets the Primary and Secondary ConnectionStrings to the NotificationHub.
 
@@ -873,7 +873,7 @@ class NotificationHubsOperations:
         notification_hub_name: str,
         authorization_rule_name: str,
         parameters: "_models.PolicykeyResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceListKeys":
         """Regenerates the Primary/Secondary Keys to the NotificationHub Authorization Rule.
 
@@ -947,7 +947,7 @@ class NotificationHubsOperations:
         resource_group_name: str,
         namespace_name: str,
         notification_hub_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PnsCredentialsResource":
         """Lists the PNS Credentials associated with a notification hub .
 

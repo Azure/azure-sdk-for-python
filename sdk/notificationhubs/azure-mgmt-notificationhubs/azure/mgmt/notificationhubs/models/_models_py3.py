@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -327,7 +327,7 @@ class DebugSendResponse(Resource):
     :param failure: send failure.
     :type failure: float
     :param results: actual failure description.
-    :type results: object
+    :type results: any
     """
 
     _validation = {
@@ -356,7 +356,7 @@ class DebugSendResponse(Resource):
         sku: Optional["Sku"] = None,
         success: Optional[float] = None,
         failure: Optional[float] = None,
-        results: Optional[object] = None,
+        results: Optional[Any] = None,
         **kwargs
     ):
         super(DebugSendResponse, self).__init__(location=location, tags=tags, sku=sku, **kwargs)

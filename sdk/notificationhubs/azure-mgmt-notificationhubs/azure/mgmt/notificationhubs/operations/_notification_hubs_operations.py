@@ -387,7 +387,7 @@ class NotificationHubsOperations(object):
         resource_group_name,  # type: str
         namespace_name,  # type: str
         notification_hub_name,  # type: str
-        parameters=None,  # type: Optional[object]
+        parameters=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.DebugSendResponse"
@@ -400,7 +400,7 @@ class NotificationHubsOperations(object):
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param parameters: Debug send parameters.
-        :type parameters: object
+        :type parameters: any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DebugSendResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.notificationhubs.models.DebugSendResponse

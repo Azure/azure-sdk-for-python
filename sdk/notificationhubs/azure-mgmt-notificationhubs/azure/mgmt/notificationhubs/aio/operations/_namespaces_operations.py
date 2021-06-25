@@ -46,7 +46,7 @@ class NamespacesOperations:
     async def check_availability(
         self,
         parameters: "_models.CheckAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckAvailabilityResult":
         """Checks the availability of the given service namespace across all Azure subscriptions. This is
         useful because the domain name is created based on the service namespace name.
@@ -107,7 +107,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         parameters: "_models.NamespaceCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NamespaceResource":
         """Creates/Updates a service namespace. Once created, this namespace's resource manifest is
         immutable. This operation is idempotent.
@@ -178,7 +178,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         parameters: "_models.NamespacePatchParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NamespaceResource":
         """Patches the existing namespace.
 
@@ -243,7 +243,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -285,7 +285,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing namespace. This operation also removes all associated notificationHubs
         under the namespace.
@@ -296,8 +296,8 @@ class NamespacesOperations:
         :type namespace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -350,7 +350,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NamespaceResource":
         """Returns the description for the specified namespace.
 
@@ -410,7 +410,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         parameters: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Creates an authorization rule for a namespace.
 
@@ -479,7 +479,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a namespace authorization rule.
 
@@ -536,7 +536,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessAuthorizationRuleResource":
         """Gets an authorization rule for a namespace by name.
 
@@ -596,7 +596,7 @@ class NamespacesOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NamespaceListResult"]:
         """Lists the available namespaces within a resourceGroup.
 
@@ -666,7 +666,7 @@ class NamespacesOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NamespaceListResult"]:
         """Lists all the available namespaces within the subscription irrespective of the resourceGroups.
 
@@ -734,7 +734,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedAccessAuthorizationRuleListResult"]:
         """Gets the authorization rules for a namespace.
 
@@ -809,7 +809,7 @@ class NamespacesOperations:
         resource_group_name: str,
         namespace_name: str,
         authorization_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedAccessAuthorizationRuleListResult":
         """Gets the Primary and Secondary ConnectionStrings to the namespace.
 
@@ -873,7 +873,7 @@ class NamespacesOperations:
         namespace_name: str,
         authorization_rule_name: str,
         parameters: "_models.PolicykeyResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceListKeys":
         """Regenerates the Primary/Secondary Keys to the Namespace Authorization Rule.
 
