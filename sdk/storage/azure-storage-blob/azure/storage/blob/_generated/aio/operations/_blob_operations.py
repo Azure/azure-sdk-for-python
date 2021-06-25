@@ -95,7 +95,6 @@ class BlobOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        decompress = kwargs.pop("decompress", True)
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -224,7 +223,7 @@ class BlobOperations:
             response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
             response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
             response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
-            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
@@ -270,7 +269,7 @@ class BlobOperations:
             response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
             response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
             response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
-            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -3014,7 +3013,6 @@ class BlobOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
-        decompress = kwargs.pop("decompress", True)
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -3135,7 +3133,7 @@ class BlobOperations:
             response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
             response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
+            deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
@@ -3171,7 +3169,8 @@ class BlobOperations:
             response_headers['x-ms-encryption-key-sha256']=self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256'))
             response_headers['x-ms-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-encryption-scope'))
             response_headers['x-ms-blob-content-md5']=self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5'))
-            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
+            deserialized = response.stream_download(self._client._pipeline)
+
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 

@@ -54,6 +54,7 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
+        await response.http_response.load_body()
 
         will_retry = is_retry(response, request.context.options.get('mode'))
         if not will_retry and download_stream_current is not None:

@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+import gzip
 import os
 import unittest
 import uuid
@@ -16,8 +17,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.storage.fileshare import (
     ShareFileClient,
     ShareServiceClient,
-    FileProperties
-)
+    FileProperties,
+    ContentSettings)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
     StorageTestCase,
@@ -134,6 +135,28 @@ class StorageGetFileTest(StorageTestCase):
 
         # Assert
         self.assertEqual(file_content, binary_data)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_get_file_in_raw_stream(self, resource_group, location, storage_account, storage_account_key):
+        # recording mechanism cannot detect the decompress option properly, it always try to decompress the body
+        # as long as the content-encoding header is in response, so mark this as live test only
+        self._setup(storage_account, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = self.fsc.get_share_client(self.share_name).get_file_client(file_name)
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/testgzip.txt.gz"))
+        data = self.get_random_bytes(1024 * 1024 * 1024)
+
+        with gzip.open(file_path, 'wb') as stream2:
+            stream2.write(data)
+
+        with open(file_path, 'rb') as stream:
+            data = stream.read()
+            file_client.upload_file(data, content_settings=ContentSettings(content_encoding='gzip'))
+
+        content = file_client.download_file(offset=1024, length=512, decompress=False).readall()
+
+        self.assertEqual(data[1024: 1024 + 512], content)
 
     @GlobalStorageAccountPreparer()
     def test_get_file_no_content(self, resource_group, location, storage_account, storage_account_key):

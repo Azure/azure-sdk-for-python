@@ -5,9 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-import gzip
-
 import pytest
 import base64
 from os import path, remove, sys, urandom
@@ -22,8 +19,8 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob import (
     StorageErrorCode,
-    BlobProperties,
-    ContentSettings)
+    BlobProperties
+)
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -164,36 +161,10 @@ class StorageGetBlobTestAsync(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        content = await (await blob.download_blob()).readall()
+        content = await (await blob.download_blob(max_concurrency=2)).readall()
 
         # Assert
         self.assertEqual(self.byte_data, content)
-
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_get_blob_in_raw_stream_async(self, resource_group, location, storage_account, storage_account_key):
-        # parallel tests introduce random order of requests, can only run live
-        await self._setup(storage_account, storage_account_key)
-        blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        file_path = "C:/Users/xiafu/Downloads/testgzip.txt.gz"
-        data = self.get_random_bytes(1024*1024*1024)
-
-        with gzip.open(file_path, 'wb') as stream2:
-            stream2.write(data)
-        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/testgzip.txt.gz"))
-
-        with open(file_path, 'rb') as stream:
-            data = stream.read()
-            await blob.upload_blob(data, content_settings=ContentSettings(content_encoding='gzip'), overwrite=True)
-
-        # Act
-        # with self.assertRaises()
-
-        content = await (await blob.download_blob(offset=1024, length=512, decompress=False)).readall()
-
-        # Assert
-        self.assertEqual(data[1024: 1024 + 512], content)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
@@ -903,7 +874,7 @@ class StorageGetBlobTestAsync(AsyncStorageTestCase):
         blob_name = self._get_blob_reference()
         byte_data = self.get_random_bytes(self.config.max_single_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        await blob.upload_blob(byte_data, overwrite=True)
+        await blob.upload_blob(byte_data)
 
         progress = []
 

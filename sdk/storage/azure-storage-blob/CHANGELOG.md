@@ -2,6 +2,10 @@
 
 ## 12.9.0b1 (Unreleased)
 
+## 12.8.2 (2021-06-25)
+**Fixes**
+- Fixed the auto decompress response body bug, and let user opt in decompress or not.
+
 ## 12.8.1 (2021-04-20)
 **Fixes**
 - Fixed retry on large block upload 

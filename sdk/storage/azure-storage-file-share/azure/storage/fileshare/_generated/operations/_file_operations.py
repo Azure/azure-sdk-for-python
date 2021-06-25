@@ -220,6 +220,7 @@ class FileOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        decompress = kwargs.pop("decompress", True)
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -297,7 +298,7 @@ class FileOperations(object):
             response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
             response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
             response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
@@ -333,7 +334,7 @@ class FileOperations(object):
             response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
             response_headers['x-ms-lease-state']=self._deserialize('str', response.headers.get('x-ms-lease-state'))
             response_headers['x-ms-lease-status']=self._deserialize('str', response.headers.get('x-ms-lease-status'))
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)

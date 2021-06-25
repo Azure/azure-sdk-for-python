@@ -716,6 +716,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword bool decompress:
+            This is True by default. Set it to False to disable the file content auto-decompress.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A streaming object (StorageStreamDownloader)

@@ -1,5 +1,9 @@
 # Release History
 
+## 12.3.2 (2021-06-25) 
+**Fixes**
+- Fixed the auto decompress response body bug, and let user opt in decompress or not.
+
 ## 12.4.0b1 (2021-05-12)
 **New features**
 - Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
