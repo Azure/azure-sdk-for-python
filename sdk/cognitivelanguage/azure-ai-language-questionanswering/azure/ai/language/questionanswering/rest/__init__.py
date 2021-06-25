@@ -6,15 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._question_answering_client import QuestionAnsweringClient
-from ._knowledgebase_authoring_client import KnowledgebaseAuthoringClient
-from ._version import VERSION
-
-__version__ = VERSION
-__all__ = ['QuestionAnsweringClient', 'KnowledgebaseAuthoringClient']
-
 try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+    from ._request_builders_py3 import build_query_knowledgebase_request
+    from ._request_builders_py3 import build_query_text_request
+except (SyntaxError, ImportError):
+    from ._request_builders import build_query_knowledgebase_request  # type: ignore
+    from ._request_builders import build_query_text_request  # type: ignore
+
+__all__ = [
+    'build_query_knowledgebase_request',
+    'build_query_text_request',
+]

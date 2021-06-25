@@ -7,5 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._question_answering_client import QuestionAnsweringClient
-from ._knowledgebase_authoring_client import KnowledgebaseAuthoringClient
-__all__ = ['QuestionAnsweringClient', 'KnowledgebaseAuthoringClient']
+
+__all__ = ['QuestionAnsweringClient']
