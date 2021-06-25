@@ -193,14 +193,14 @@ class EventData(object):
     def _decode_non_data_body_as_str(self, encoding="UTF-8"):
         # type: (str) -> str
         # pylint: disable=protected-access
-        self.raw_amqp_message._message._body._encoding = encoding
         body = self.raw_amqp_message._message._body
         if self.body_type == AmqpMessageBodyType.VALUE:
             if not body.data:
                 return ""
             return str(decode_with_recurse(body.data, encoding))
 
-        return str(body)
+        seq_list = [d for seq_section in body.data for d in seq_section]
+        return str(decode_with_recurse(seq_list, encoding))
 
     def _to_outgoing_message(self):
         # type: () -> EventData

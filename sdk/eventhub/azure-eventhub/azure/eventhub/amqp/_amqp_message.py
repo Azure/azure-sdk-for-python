@@ -93,11 +93,11 @@ class AmqpAnnotatedMessage(object):
     :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
     :paramtype value_body: Any
     :keyword header: The amqp message header.
-    :paramtype header: Optional[~azure.servicebus.amqp.AmqpMessageHeader]
+    :paramtype header: Optional[~azure.eventhub.amqp.AmqpMessageHeader]
     :keyword footer: The amqp message footer.
     :paramtype footer: Optional[dict]
     :keyword properties: Properties to add to the amqp message.
-    :paramtype properties: Optional[~azure.servicebus.amqp.AmqpMessageProperties]
+    :paramtype properties: Optional[~azure.eventhub.amqp.AmqpMessageProperties]
     :keyword application_properties: Service specific application properties.
     :paramtype application_properties: Optional[dict]
     :keyword annotations: Service specific message annotations.
@@ -268,9 +268,9 @@ class AmqpAnnotatedMessage(object):
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
+        For ~azure.eventhub.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.eventhub.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
         :rtype: Any
         """
         return self._message.get_data()
@@ -279,7 +279,7 @@ class AmqpAnnotatedMessage(object):
     def body_type(self):
         # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
-        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return AMQP_MESSAGE_BODY_TYPE_MAP.get(
             self._message._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
@@ -290,7 +290,7 @@ class AmqpAnnotatedMessage(object):
         # type: () -> Optional[AmqpMessageProperties]
         """
         Properties to add to the message.
-        :rtype: Optional[~azure.servicebus.amqp.AmqpMessageProperties]
+        :rtype: Optional[~azure.eventhub.amqp.AmqpMessageProperties]
         """
         return self._properties
 
@@ -347,7 +347,7 @@ class AmqpAnnotatedMessage(object):
         # type: () -> Optional[AmqpMessageHeader]
         """
         The message header.
-        :rtype: Optional[~azure.servicebus.amqp.AmqpMessageHeader]
+        :rtype: Optional[~azure.eventhub.amqp.AmqpMessageHeader]
         """
         return self._header
 
