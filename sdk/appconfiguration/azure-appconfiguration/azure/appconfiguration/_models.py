@@ -374,7 +374,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         # type: (str, str, Optional[str], **Any) -> None
         if kwargs.pop("value", None):
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
-        super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
+        # super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
         self.label = kwargs.pop("label", None)
         self.content_type = kwargs.get(
@@ -384,28 +384,44 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
-        if not self.value:
-            self.value = json.dumps({"secret_uri": secret_id})
+        self.secret_id = secret_id
+        self._value = json.dumps({"secret_uri": secret_id})
 
     @property
-    def secret_id(self):
-        # type: () -> Optional[str]
-        try:
-            temp = json.loads(self.value)
-            return temp.get("secret_uri", None)
-        except (JSONDecodeError, ValueError):
-            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
+    def value(self):
+        self._value = json.dumps({"secret_uri": self.secret_id})
+        return self._value
 
-    @secret_id.setter
-    def secret_id(self, secret_id):
+    @value.setter
+    def value(self, new_value):
         try:
-            temp = json.loads(self.value)
-            temp["secret_uri"] = secret_id
-            self.value = json.dumps(temp)
-        except (JSONDecodeError, ValueError):
-            raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
-                "'value' is expected to be a dictionary")
+            temp = json.loads(new_value)
+            self._value = new_value
+            self.secret_id = temp.get("secret_uri")
+        except(JSONDecodeError, ValueError):
+            self._value= new_value
+            self.secret_id = None
+
+
+    # @property
+    # def secret_id(self):
+    #     # type: () -> Optional[str]
+    #     try:
+    #         temp = json.loads(self.value)
+    #         return temp.get("secret_uri", None)
+    #     except (JSONDecodeError, ValueError):
+    #         raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
+    #             "'value' is expected to be a dictionary")
+
+    # @secret_id.setter
+    # def secret_id(self, secret_id):
+    #     try:
+    #         temp = json.loads(self.value)
+    #         temp["secret_uri"] = secret_id
+    #         self.value = json.dumps(temp)
+    #     except (JSONDecodeError, ValueError):
+    #         raise ValueError("'value' of SecretReferenceConfigurationSetting is not in the proper format. " + \
+    #             "'value' is expected to be a dictionary")
 
     @classmethod
     def _from_generated(cls, key_value):
