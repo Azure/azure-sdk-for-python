@@ -23,6 +23,7 @@ from azure.servicebus.exceptions import MessageAlreadySettled
 from utilities import _build_logger
 _logger = _build_logger("stress-test", logging.WARN)
 
+
 class ReceiveType:
     push="push"
     pull="pull"
@@ -62,6 +63,7 @@ class StressTestRunnerState(object):
             self.memory_bytes = psutil.virtual_memory().total
         except NameError:
             return # psutil was not installed, fall back to simply not capturing these stats.
+
 
 class StressTestRunner:
     '''Framework for running a service bus stress test.
@@ -263,4 +265,3 @@ class StressTestRunner:
             result.time_elapsed = end_time - start_time
             _logger.critical("Stress test completed.  Results:\n{}".format(result))
             return result
-
