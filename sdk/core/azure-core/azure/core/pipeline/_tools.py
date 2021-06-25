@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ..rest import HttpRequest
+from ..exceptions import StreamClosedError, StreamConsumedError
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
     result = func(*args, **kwargs)
@@ -86,3 +86,12 @@ def to_rest_response_helper(pipeline_transport_response, response_type):
     )
     response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
     return response
+
+def get_chunk_size(response, **kwargs):
+    chunk_size = kwargs.pop("chunk_size", None)
+    if not chunk_size:
+        if hasattr(response, "block_size"):
+            chunk_size = response.block_size
+        elif hasattr(response, "_connection_data_block_size"):
+            chunk_size = response._connection_data_block_size
+    return chunk_size

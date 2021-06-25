@@ -49,7 +49,7 @@ async def _stream_download_helper(
     stream_download = stream_download_generator(
         pipeline=None,
         response=response,
-        chunk_size=chunk_size or response._connection_data_block_size,  # pylint: disable=protected-access
+        chunk_size=chunk_size,
         decompress=decompress,
     )
     async for part in stream_download:

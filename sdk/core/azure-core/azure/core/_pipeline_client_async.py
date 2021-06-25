@@ -36,7 +36,8 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-
+from ._pipeline_client import _prepare_request
+from typing import Any, Awaitable
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -172,19 +173,35 @@ class AsyncPipelineClient(PipelineClientBase):
         return AsyncPipeline(transport, policies)
 
     async def _make_pipeline_call(self, request, stream, **kwargs):
-        rest_request = False
-        try:
-            request_to_run = request._to_pipeline_transport_request()
-            rest_request = True
-        except AttributeError:
-            request_to_run = request
+        rest_request, request_to_run = _prepare_request(request)
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(
             request_to_run, stream=stream, **kwargs  # pylint: disable=protected-access
         )
-        if return_pipeline_response:
-            return pipeline_response
         response = pipeline_response.http_response
         if rest_request:
-            return response._to_rest_response()
+            response = response._to_rest_response()
+            if not kwargs.get("stream", False):
+                await response.read()
+                await response.close()
+        if return_pipeline_response:
+            pipeline_response.http_response = response
+            return pipeline_response
         return response
+
+    def send_request(
+        self,
+        request: HttpRequest,
+        *,
+        stream: bool = False,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
+        return _AsyncContextManager(wrapped=wrapped)

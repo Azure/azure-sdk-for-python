@@ -36,7 +36,8 @@ import requests
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError
+    ServiceResponseError,
+    ResponseNotReadError,
 )
 from . import HttpRequest # pylint: disable=unused-import
 
@@ -54,6 +55,7 @@ from .._tools import (
     to_rest_response_helper,
     iter_bytes_helper,
     iter_raw_helper,
+    get_chunk_size,
 )
 
 PipelineType = TypeVar("PipelineType")
@@ -79,6 +81,8 @@ def _read_raw_stream(response, chunk_size=1):
             if not chunk:
                 break
             yield chunk
+    # following behavior from requests iter_content, we set content consumed to True
+    response._content_consumed = True  # pylint: disable=protected-access
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -136,7 +140,7 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = get_chunk_size(response, **kwargs)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))

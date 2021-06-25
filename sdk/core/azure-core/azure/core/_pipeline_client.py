@@ -64,6 +64,16 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+def _prepare_request(request):
+    # returns the request ready to run through pipelines
+    # and a bool telling whether we ended up converting it
+    rest_request = False
+    try:
+        request_to_run = request._to_pipeline_transport_request()
+        rest_request = True
+    except AttributeError:
+        request_to_run = request
+    return rest_request, request_to_run
 
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
@@ -173,6 +183,7 @@ class PipelineClient(PipelineClientBase):
 
         return Pipeline(transport, policies)
 
+
     def send_request(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
@@ -182,17 +193,16 @@ class PipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         # """
-        rest_request = False
-        try:
-            request_to_run = request._to_pipeline_transport_request()
-            rest_request = True
-        except AttributeError:
-            request_to_run = request
+        rest_request, request_to_run = _prepare_request(request)
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
-        if return_pipeline_response:
-            return pipeline_response
         response = pipeline_response.http_response
         if rest_request:
-            return response._to_rest_response()
+            response = response._to_rest_response()
+            if not kwargs.get("stream", False):
+                response.read()
+                response.close()
+        if return_pipeline_response:
+            pipeline_response.http_response = response
+            return pipeline_response
         return response

@@ -50,7 +50,7 @@ from ...rest import (
     HttpRequest as RestHttpRequest,
     AsyncHttpResponse as RestAsyncHttpResponse,
 )
-from .._tools import to_rest_response_helper
+from .._tools import to_rest_response_helper, get_chunk_size
 from .._tools_async import (
     iter_bytes_helper,
     iter_raw_helper,
@@ -220,11 +220,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = get_chunk_size(response, **kwargs)
         self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
