@@ -16,7 +16,6 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
-    Mapping,
 )
 
 import six
@@ -27,7 +26,7 @@ from ._utils import (
     set_message_partition_key,
     trace_message,
     utc_from_timestamp,
-    transform_single_message_if_needed,
+    transform_outbound_single_message,
     decode_with_recurse,
 )
 from ._constants import (
@@ -182,12 +181,8 @@ class EventData(object):
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        if raw_amqp_message and message:
-            event_data._raw_amqp_message = raw_amqp_message
-            event_data.message = message
-        elif message:
-            event_data._raw_amqp_message = AmqpAnnotatedMessage(message=message)
-            event_data.message = message
+        event_data.message = message
+        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
     def _encode_message(self):
@@ -445,14 +440,6 @@ class EventData(object):
 
     @message_id.setter
     def message_id(self, value):
-        # type: (str) -> None
-        if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
-            raise ValueError(
-                "message_id cannot be longer than {} characters.".format(
-                    MESSAGE_PROPERTY_MAX_LENGTH
-                )
-            )
-
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.message_id = value
@@ -518,7 +505,7 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
-        outgoing_batch_data = [transform_single_message_if_needed(m, EventData) for m in batch_data]
+        outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data
@@ -559,7 +546,7 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
 
-        outgoing_event_data = transform_single_message_if_needed(event_data, EventData)
+        outgoing_event_data = transform_outbound_single_message(event_data, EventData)
 
         if self._partition_key:
             if (

@@ -31,7 +31,7 @@ from ._utils import (
     set_message_partition_key,
     trace_message,
     send_context_manager,
-    transform_single_message_if_needed,
+    transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
 
@@ -190,7 +190,7 @@ class EventHubProducer(
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
-            outgoing_event_data = transform_single_message_if_needed(event_data, EventData)
+            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
             if partition_key:
                 set_message_partition_key(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data

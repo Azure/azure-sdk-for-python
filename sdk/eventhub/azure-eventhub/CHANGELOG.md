@@ -2,7 +2,7 @@
 
 ## 5.6.0 (Unreleased)
 
-**New Features**
+### Features Added
 
 - Added support for sending AMQP annotated message which allows full access to the AMQP message fields.
   - Introduced new namespace `azure.eventhub.amqp`.

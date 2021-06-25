@@ -270,7 +270,7 @@ def parse_sas_credential(credential):
     return (sas, expiry)
 
 
-def transform_single_message_if_needed(message, message_type):
+def transform_outbound_single_message(message, message_type):
     # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
     """
     This method serves multiple goals:
@@ -292,22 +292,6 @@ def transform_single_message_if_needed(message, message_type):
         return message_type._from_message(
             message=message._to_outgoing_amqp_message(), raw_amqp_message=message  # type: ignore
         )
-
-
-def transform_messages_if_needed(messages, message_type):
-    # type: (MessagesType, Type[EventData]) -> Union[EventData, List[EventData]]
-    """
-    This method serves multiple goals:
-    1. update the internal messages to reflect any updates to settable properties on EventData
-    2. transform the AmqpAnnotatedMessage to be EventData
-    :param MessagesType messages: A list or single instance of messages of type EventData 
-        or AmqpAnnotatedMessage.
-    :param Type[EventData] message_type: The class type to return the messages as.
-    :rtype: Union[EventData, List[EventData]]
-    """
-    if isinstance(messages, Iterable):
-        return [transform_single_message_if_needed(m, message_type) for m in messages]
-    return transform_single_message_if_needed(messages, message_type)
 
 
 def decode_with_recurse(data, encoding="UTF-8"):
