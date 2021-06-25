@@ -13,7 +13,7 @@ from azure.core.exceptions import StreamClosedError, StreamConsumedError, Respon
 
 @pytest.mark.asyncio
 async def test_iter_raw(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         raw = b""
         async for part in response.iter_raw():
@@ -22,7 +22,7 @@ async def test_iter_raw(client):
 
 @pytest.mark.asyncio
 async def test_iter_raw_on_iterable(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/iterable")
+    request = HttpRequest("GET", "/streams/iterable")
 
     async with client.send_request(request, stream=True) as response:
         raw = b""
@@ -32,7 +32,7 @@ async def test_iter_raw_on_iterable(client):
 
 @pytest.mark.asyncio
 async def test_iter_with_error(client):
-    request = HttpRequest("GET", "http://localhost:5000/errors/403")
+    request = HttpRequest("GET", "/errors/403")
 
     async with client.send_request(request, stream=True) as response:
         try:
@@ -57,7 +57,7 @@ async def test_iter_with_error(client):
 
 @pytest.mark.asyncio
 async def test_iter_raw_with_chunksize(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
         parts = []
@@ -79,7 +79,7 @@ async def test_iter_raw_with_chunksize(client):
 
 @pytest.mark.asyncio
 async def test_iter_raw_num_bytes_downloaded(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
         num_downloaded = response.num_bytes_downloaded
@@ -89,7 +89,7 @@ async def test_iter_raw_num_bytes_downloaded(client):
 
 @pytest.mark.asyncio
 async def test_iter_bytes(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
         raw = b""
@@ -103,7 +103,7 @@ async def test_iter_bytes(client):
 
 @pytest.mark.asyncio
 async def test_iter_bytes_with_chunk_size(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
         parts = []
@@ -125,7 +125,7 @@ async def test_iter_bytes_with_chunk_size(client):
 
 @pytest.mark.asyncio
 async def test_iter_text(client):
-    request = HttpRequest("GET", "http://localhost:5000/basic/string")
+    request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
         content = ""
@@ -135,7 +135,7 @@ async def test_iter_text(client):
 
 @pytest.mark.asyncio
 async def test_iter_text_with_chunk_size(client):
-    request = HttpRequest("GET", "http://localhost:5000/basic/string")
+    request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
         parts = []
@@ -157,7 +157,7 @@ async def test_iter_text_with_chunk_size(client):
 
 @pytest.mark.asyncio
 async def test_iter_lines(client):
-    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+    request = HttpRequest("GET", "/basic/lines")
 
     async with client.send_request(request, stream=True) as response:
         content = []
@@ -168,7 +168,7 @@ async def test_iter_lines(client):
 
 @pytest.mark.asyncio
 async def test_streaming_response(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
         assert response.status_code == 200
@@ -182,7 +182,7 @@ async def test_streaming_response(client):
 
 @pytest.mark.asyncio
 async def test_cannot_read_after_stream_consumed(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         content = b""
         async for chunk in response.iter_bytes():
@@ -194,13 +194,13 @@ async def test_cannot_read_after_stream_consumed(client):
 
 @pytest.mark.asyncio
 async def test_cannot_read_after_response_closed(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         pass
 
     with pytest.raises(StreamClosedError) as ex:
         await response.read()
-    assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
+    assert "You can not try to read or stream this response's content, since the response's stream has been closed" in str(ex.value)
 
 @pytest.mark.asyncio
 async def test_decompress_plain_no_header(client):
@@ -237,7 +237,7 @@ async def test_iter_read_back_and_forth(client):
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
-    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+    request = HttpRequest("GET", "/basic/lines")
 
     async with client.send_request(request, stream=True) as response:
         async for line in response.iter_lines():

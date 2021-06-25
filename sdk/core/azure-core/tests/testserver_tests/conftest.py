@@ -87,14 +87,6 @@ def testserver():
     yield
     terminate_testserver(server)
 
-<<<<<<< HEAD
 @pytest.fixture
 def client(port):
     return TestRestClient(port)
-=======
-
-# Ignore collection of async tests for Python 2
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
->>>>>>> 97e5b6e3f554ac224492ecb6bd6d26bcb9a2248c

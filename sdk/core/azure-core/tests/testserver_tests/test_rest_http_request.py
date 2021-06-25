@@ -274,7 +274,7 @@ def test_complicated_json(client):
         "doublequote": 'a""""b',
         "None": None,
     }
-    request = HttpRequest("POST", "http://localhost:5000/basic/complicated-json", json=input)
+    request = HttpRequest("POST", "/basic/complicated-json", json=input)
     r = client.send_request(request)
     r.raise_for_status()
 

@@ -23,7 +23,7 @@ def _assert_stream_state(response, open):
         assert all(checks)
 
 def test_iter_raw(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
     with client.send_request(request, stream=True) as response:
         raw = b""
         for part in response.iter_raw():
@@ -37,7 +37,7 @@ def test_iter_raw(client):
     assert response.is_stream_consumed
 
 def test_iter_raw_on_iterable(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/iterable")
+    request = HttpRequest("GET", "/streams/iterable")
 
     with client.send_request(request, stream=True) as response:
         raw = b""
@@ -46,7 +46,7 @@ def test_iter_raw_on_iterable(client):
         assert raw == b"Hello, world!"
 
 def test_iter_with_error(client):
-    request = HttpRequest("GET", "http://localhost:5000/errors/403")
+    request = HttpRequest("GET", "/errors/403")
 
     with client.send_request(request, stream=True) as response:
         with pytest.raises(HttpResponseError):
@@ -65,7 +65,7 @@ def test_iter_with_error(client):
     assert response.is_closed
 
 def test_iter_raw_with_chunksize(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         parts = [part for part in response.iter_raw(chunk_size=5)]
@@ -80,7 +80,7 @@ def test_iter_raw_with_chunksize(client):
         assert parts == [b"Hello, world!"]
 
 def test_iter_raw_num_bytes_downloaded(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         num_downloaded = response.num_bytes_downloaded
@@ -89,7 +89,7 @@ def test_iter_raw_num_bytes_downloaded(client):
             num_downloaded = response.num_bytes_downloaded
 
 def test_iter_bytes(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         raw = b""
@@ -104,7 +104,7 @@ def test_iter_bytes(client):
         assert raw == b"Hello, world!"
 
 def test_iter_bytes_with_chunk_size(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         parts = [part for part in response.iter_bytes(chunk_size=5)]
@@ -119,7 +119,7 @@ def test_iter_bytes_with_chunk_size(client):
         assert parts == [b"Hello, world!"]
 
 def test_iter_text(client):
-    request = HttpRequest("GET", "http://localhost:5000/basic/string")
+    request = HttpRequest("GET", "/basic/string")
 
     with client.send_request(request, stream=True) as response:
         content = ""
@@ -128,7 +128,7 @@ def test_iter_text(client):
         assert content == "Hello, world!"
 
 def test_iter_text_with_chunk_size(client):
-    request = HttpRequest("GET", "http://localhost:5000/basic/string")
+    request = HttpRequest("GET", "/basic/string")
 
     with client.send_request(request, stream=True) as response:
         parts = [part for part in response.iter_text(chunk_size=5)]
@@ -143,7 +143,7 @@ def test_iter_text_with_chunk_size(client):
         assert parts == ["Hello, world!"]
 
 def test_iter_lines(client):
-    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+    request = HttpRequest("GET", "/basic/lines")
 
     with client.send_request(request, stream=True) as response:
         content = []
@@ -152,7 +152,7 @@ def test_iter_lines(client):
         assert content == ["Hello,\n", "world!"]
 
 def test_sync_streaming_response(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         assert response.status_code == 200
@@ -165,7 +165,7 @@ def test_sync_streaming_response(client):
         assert response.is_closed
 
 def test_cannot_read_after_stream_consumed(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         content = b""
@@ -180,13 +180,13 @@ def test_cannot_read_after_stream_consumed(client):
     assert "You are attempting to read or stream content that has already been streamed." in str(ex.value)
 
 def test_cannot_read_after_response_closed(client):
-    request = HttpRequest("GET", "http://localhost:5000/streams/basic")
+    request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         response.close()
         with pytest.raises(StreamClosedError) as ex:
             response.read()
-    assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
+    assert "You can not try to read or stream this response's content, since the response's stream has been closed" in str(ex.value)
 
 def test_decompress_plain_no_header(client):
     # thanks to Xiang Yan for this test!
@@ -232,7 +232,7 @@ def test_decompress_compressed_header(client):
 
 def test_iter_read(client):
     # thanks to McCoy Patiño for this test!
-    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+    request = HttpRequest("GET", "/basic/lines")
     response = client.send_request(request, stream=True)
     response.read()
     iterator = response.iter_lines()
@@ -247,7 +247,7 @@ def test_iter_read_back_and_forth(client):
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
-    request = HttpRequest("GET", "http://localhost:5000/basic/lines")
+    request = HttpRequest("GET", "/basic/lines")
     response = client.send_request(request, stream=True)
     iterator = response.iter_lines()
     for line in iterator:
