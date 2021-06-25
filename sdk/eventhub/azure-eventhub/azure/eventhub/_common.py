@@ -27,8 +27,8 @@ from ._utils import (
     set_message_partition_key,
     trace_message,
     utc_from_timestamp,
-    transform_messages_if_needed,
     transform_single_message_if_needed,
+    decode_with_recurse,
 )
 from ._constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
@@ -195,6 +195,18 @@ class EventData(object):
         # pylint: disable=protected-access
         return self._raw_amqp_message._message.encode_message()
 
+    def _decode_non_data_body_as_str(self, encoding="UTF-8"):
+        # type: (str) -> str
+        # pylint: disable=protected-access
+        self.raw_amqp_message._message._body._encoding = encoding
+        body = self.raw_amqp_message._message._body
+        if self.body_type == AmqpMessageBodyType.VALUE:
+            if not body.data:
+                return ""
+            return str(decode_with_recurse(body.data, encoding))
+
+        return str(body)
+
     def _to_outgoing_message(self):
         # type: () -> EventData
         self.message = (self._raw_amqp_message._to_outgoing_amqp_message())  # pylint:disable=protected-access
@@ -342,10 +354,7 @@ class EventData(object):
         data = self.body
         try:
             if self.body_type != AmqpMessageBodyType.DATA:
-                # pylint: disable=protected-access
-                self.raw_amqp_message._message._body._encoding = encoding
-                return str(self.raw_amqp_message._message._body)
-
+                return self._decode_non_data_body_as_str(encoding=encoding)
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
         except TypeError:
             return six.text_type(data)
@@ -509,7 +518,7 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
-        outgoing_batch_data = transform_messages_if_needed(batch_data, EventData)
+        outgoing_batch_data = [transform_single_message_if_needed(m, EventData) for m in batch_data]
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data

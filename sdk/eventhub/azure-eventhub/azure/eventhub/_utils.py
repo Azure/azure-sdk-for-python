@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, List
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, List, Mapping
 
 import six
 
@@ -308,3 +308,34 @@ def transform_messages_if_needed(messages, message_type):
     if isinstance(messages, Iterable):
         return [transform_single_message_if_needed(m, message_type) for m in messages]
     return transform_single_message_if_needed(messages, message_type)
+
+
+def decode_with_recurse(data, encoding="UTF-8"):
+    # type: (Any, str) -> Any
+    """
+    If data is of a compatible type, iterates through nested structure and decodes all binary
+        strings with provided encoding.
+    :param Any data: The data object which, if compatible, will be iterated through to decode binary string.
+    :param encoding: The encoding to use for decoding data.
+        Default is 'UTF-8'
+    :rtype: Any
+    """
+
+    if isinstance(data, str):
+        return data
+    if isinstance(data, six.binary_type):
+        return data.decode(encoding)
+    if isinstance(data, Mapping):
+        decoded_mapping = {}
+        for k,v in data.items():
+            decoded_key = decode_with_recurse(k, encoding)
+            decoded_val = decode_with_recurse(v, encoding)
+            decoded_mapping[decoded_key] = decoded_val
+        return decoded_mapping
+    if isinstance(data, Iterable):
+        decoded_list = []
+        for d in data:
+            decoded_list.append(decode_with_recurse(d, encoding))
+        return decoded_list
+
+    return data

@@ -159,7 +159,7 @@ def test_send_amqp_annotated_message(connstr_receivers):
             received_count["recv_sequence_msg"] += 1
         elif raw_amqp_message.body_type == AmqpMessageBodyType.VALUE:
             assert raw_amqp_message.body == value_body
-            assert event.body_as_str() == "{b'key': [-123, b'data', False]}"
+            assert event.body_as_str() == "{'key': [-123, 'data', False]}"
             # uncomment below after discussing with service team
             #assert raw_amqp_message.header.priority == 10
             assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
@@ -173,8 +173,7 @@ def test_send_amqp_annotated_message(connstr_receivers):
     on_event.received = []
     on_event.app_prop = None
     client = EventHubConsumerClient.from_connection_string(connection_str,
-                                                           consumer_group='$default',
-                                                           transport_type=TransportType.AmqpOverWebsocket)
+                                                           consumer_group='$default')
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"partition_id": "0", "starting_position": "-1"})
