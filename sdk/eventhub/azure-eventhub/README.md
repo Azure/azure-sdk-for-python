@@ -407,6 +407,18 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 - Enable `azure.eventhub` logger to collect traces from the library.
 - Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 - Enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
+- There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
+```python
+import logging
+
+# The logging levels below may need to be adjusted based on the logging that you want to suppress.
+uamqp_logger = logging.getLogger('uamqp')
+uamqp_logger.setLevel(logging.ERROR)
+
+# or even further fine-grained control, suppressing the warnings in uamqp.connection module
+uamqp_connection_logger = logging.getLogger('uamqp.connection')
+uamqp_connection_logger.setLevel(logging.ERROR)
+```
 
 ## Next steps
 
