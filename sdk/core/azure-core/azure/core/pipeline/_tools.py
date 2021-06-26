@@ -23,9 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
 from ..exceptions import StreamClosedError, StreamConsumedError
 
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import (

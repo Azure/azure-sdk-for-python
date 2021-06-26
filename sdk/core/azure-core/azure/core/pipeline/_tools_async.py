@@ -53,26 +53,37 @@ def _stream_download_helper(
         decompress=decompress,
     )
 
-def iter_bytes_helper(
+async def iter_bytes_helper(
     stream_download_generator: Callable,
     response,
     chunk_size: Optional[int] = None,
 ) -> AsyncIterator[bytes]:
-    return _stream_download_helper(
-        decompress=True,
-        stream_download_generator=stream_download_generator,
-        response=response,
-        chunk_size=chunk_size
-    )
+    content = response._get_content()  # pylint: disable=protected-access
+    if content is not None:
+        if chunk_size is None:
+            chunk_size = len(content)
+        for i in range(0, len(content), chunk_size):
+            yield content[i: i + chunk_size]
+    else:
+        async for part in _stream_download_helper(
+            decompress=True,
+            stream_download_generator=stream_download_generator,
+            response=response,
+            chunk_size=chunk_size
+        ):
+            response._num_bytes_downloaded += len(part)
+            yield part
 
-def iter_raw_helper(
+async def iter_raw_helper(
     stream_download_generator: Callable,
     response,
     chunk_size: Optional[int] = None
 ) -> AsyncIterator[bytes]:
-    return _stream_download_helper(
+    async for part in _stream_download_helper(
         decompress=False,
         stream_download_generator=stream_download_generator,
         response=response,
         chunk_size=chunk_size
-    )
+    ):
+        response._num_bytes_downloaded += len(part)
+        yield part

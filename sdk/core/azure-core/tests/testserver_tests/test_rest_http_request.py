@@ -253,7 +253,6 @@ def test_read_content(assert_iterator_body):
     # in this case, request._data is what we end up passing to the requests transport
     assert isinstance(request._data, collections.Iterable)
 
-
 def test_complicated_json(client):
     # thanks to Sean Kane for this test!
     input = {

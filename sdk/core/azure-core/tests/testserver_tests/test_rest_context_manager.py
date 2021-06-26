@@ -5,12 +5,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-import mock
 from azure.core.rest import HttpRequest
-from azure.core.exceptions import HttpResponseError, ResponseNotReadError
-
-from azure.core.pipeline import Pipeline, transport
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.exceptions import ResponseNotReadError
 
 def test_normal_call(client, port):
     def _raise_and_get_text(response):

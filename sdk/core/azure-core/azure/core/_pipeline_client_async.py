@@ -202,8 +202,8 @@ class AsyncPipelineClient(PipelineClientBase):
     ) -> Awaitable[AsyncHttpResponse]:
         """**Provisional** method that runs the network request through the client's chained policies.
 
-        This method is marked as **provisional**, meaning it can be changed
-        
+        This method is marked as **provisional**, meaning it can be changed.
+
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.

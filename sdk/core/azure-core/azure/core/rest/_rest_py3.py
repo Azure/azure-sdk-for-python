@@ -39,7 +39,6 @@ from typing import (
     Type,
     Union,
 )
-from abc import abstractmethod
 
 from azure.core.exceptions import HttpResponseError
 
@@ -477,7 +476,7 @@ class AsyncHttpResponse(_HttpResponseBase):
             yield _
         raise NotImplementedError()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # pylint: disable=unused-argument
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
         :param int chunk_size: The maximum size of each chunk iterated over.
@@ -492,7 +491,7 @@ class AsyncHttpResponse(_HttpResponseBase):
             yield _
         raise NotImplementedError()
 
-    async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:
+    async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:  # pylint: disable=unused-argument
         """Asynchronously iterates over the text in the response.
 
         :param int chunk_size: The maximum size of each chunk iterated over.
