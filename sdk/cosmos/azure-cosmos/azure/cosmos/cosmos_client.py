@@ -128,7 +128,7 @@ class CosmosClient(object):
     :type credential: str or dict[str, str]
     :param str consistency_level: Consistency level to use for the session. The default value is "Session".
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int request_timeout: The HTTP request timeout in milliseconds.
+    :keyword int request_timeout: The HTTP request timeout in seconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
