@@ -48,7 +48,7 @@ class DataMaskingRulesOperations:
         database_name: str,
         data_masking_rule_name: str,
         parameters: "_models.DataMaskingRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataMaskingRule":
         """Creates or updates a database data masking rule.
 
@@ -127,7 +127,7 @@ class DataMaskingRulesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataMaskingRuleListResult"]:
         """Gets a list of database data masking rules.
 

@@ -16,10 +16,12 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
     @FarmBeatsPowerShellPreparer()
     async def test_farmer(self, agrifood_endpoint):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
-        farmer_id = "async-test-farmer"
+
+        farmer_id = self.generate_random_name("async-test-farmer")
+
         farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer()
+            farmer=Farmer()
         )
 
         assert farmer.id == farmer_id
@@ -38,9 +40,11 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
     @FarmBeatsPowerShellPreparer()
     async def test_boundary(self, agrifood_endpoint):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
-        boundary_id = "async-test-boundary"
-        farmer_id = boundary_id + "-farmer"
-        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, body=Farmer())
+        
+        boundary_id = self.generate_random_name("async-test-boundary")
+        farmer_id = self.generate_random_name("async-test-boundary-farmer")
+        
+        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, farmer=Farmer())
         boundary = await self.create_boundary_if_not_exist(client, farmer_id, boundary_id)
         assert boundary == await client.boundaries.get(
             farmer_id=farmer_id,

@@ -22,10 +22,14 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
 
         # Setup data
         common_id_prefix = "satellite-flow-async-"
-        farmer_id = common_id_prefix + "test-farmer"
-        boundary_id = common_id_prefix + "test-boundary"
+        farmer_id_prefix = common_id_prefix + "test-farmer"
+        boundary_id_prefix = common_id_prefix + "test-boundary"
         job_id_prefix = common_id_prefix + "job"
+
         job_id = self.generate_random_name(job_id_prefix)
+        farmer_id = self.generate_random_name(farmer_id_prefix)
+        boundary_id = self.generate_random_name(boundary_id_prefix)
+
         start_date_time = datetime.datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime.datetime(2020, 12, 31, tzinfo=Utc())
 
@@ -33,7 +37,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create farmer
-        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, body=Farmer())
+        farmer = await client.farmers.create_or_update(farmer_id=farmer_id, farmer=Farmer())
 
         # Create boundary if not exists
         boundary = await self.create_boundary_if_not_exist(client, farmer_id, boundary_id)
@@ -41,7 +45,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         # Create satellite job
         satellite_job_poller = await client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
-            body=SatelliteDataIngestionJob(
+            job=SatelliteDataIngestionJob(
                 farmer_id=farmer_id,
                 boundary_id=boundary_id,
                 start_date_time=start_date_time,

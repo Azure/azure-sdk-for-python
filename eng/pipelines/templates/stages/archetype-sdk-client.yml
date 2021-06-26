@@ -11,6 +11,12 @@ parameters:
 - name: TestPipeline
   type: boolean
   default: false
+- name: BeforeTestSteps
+  type: object
+  default: []
+- name: AfterTestSteps
+  type: object
+  default: []
 - name: BeforePublishSteps
   type: object
   default: []
@@ -63,6 +69,9 @@ parameters:
 
 stages:
   - stage: Build
+    variables:
+      - name: BuildTargetingStringValue
+        value: $[ coalesce(variables['BuildTargetingString'], '${{ parameters.BuildTargetingString }}') ]
     jobs:
     - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
@@ -71,9 +80,11 @@ stages:
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BuildTargetingString: $(BuildTargetingStringValue)
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
@@ -85,14 +96,8 @@ stages:
           - ${{ each config in parameters.AdditionalMatrixConfigs }}:
             -  ${{ config }}
         MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace:
-          # Temporarily replace macOS agents with ubuntu agents because of ongoing pool capacity issues
-          - Pool=Azure.Pipelines/azsdk-pool-mms-ubuntu-1804-general
-          - OsVmImage=macOS-10.15/MMSUbuntu18.04
-          - ${{ each replacement in parameters.MatrixReplace }}:
-            - ${{ replacement }}
+        MatrixReplace: ${{ parameters.MatrixReplace }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
-
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

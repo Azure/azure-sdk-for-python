@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_operations import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
+from ._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_operations import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin
 
 __all__ = [
-    'AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin',
+    'MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin',
 ]

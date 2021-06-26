@@ -57,6 +57,7 @@ class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DESIGNER = "designer"
     BOT = "bot"
     FUNCTION = "function"
+    AZUREBOT = "azurebot"
 
 class RegenerateKeysChannelName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

@@ -103,6 +103,7 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         )
         self.assertEqual(result_get.name, subnet_name)
 
+    @unittest.skip('skip temporarily')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_eventhub(self, resource_group):
 

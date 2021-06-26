@@ -98,7 +98,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
     #optional-configuration>`_.
 
     :param str account_url:

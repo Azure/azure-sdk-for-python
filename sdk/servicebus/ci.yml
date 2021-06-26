@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -15,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -29,10 +27,11 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servicebus
-    BuildTargetingString: azure-servicebus*
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:
+    - name: azure-mgmt-servicebus
+      safeName: azuremgmtservicebus
     - name: azure-servicebus
       safeName: azureservicebus
 

@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import NetAppManagementClientConfiguration
 from .operations import Operations
@@ -25,9 +26,8 @@ from .operations import PoolsOperations
 from .operations import VolumesOperations
 from .operations import SnapshotsOperations
 from .operations import SnapshotPoliciesOperations
-from .operations import VolumeBackupStatusOperations
-from .operations import AccountBackupsOperations
 from .operations import BackupsOperations
+from .operations import AccountBackupsOperations
 from .operations import BackupPoliciesOperations
 from .operations import VaultsOperations
 from . import models
@@ -50,12 +50,10 @@ class NetAppManagementClient(object):
     :vartype snapshots: azure.mgmt.netapp.operations.SnapshotsOperations
     :ivar snapshot_policies: SnapshotPoliciesOperations operations
     :vartype snapshot_policies: azure.mgmt.netapp.operations.SnapshotPoliciesOperations
-    :ivar volume_backup_status: VolumeBackupStatusOperations operations
-    :vartype volume_backup_status: azure.mgmt.netapp.operations.VolumeBackupStatusOperations
-    :ivar account_backups: AccountBackupsOperations operations
-    :vartype account_backups: azure.mgmt.netapp.operations.AccountBackupsOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.operations.BackupsOperations
+    :ivar account_backups: AccountBackupsOperations operations
+    :vartype account_backups: azure.mgmt.netapp.operations.AccountBackupsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.netapp.operations.BackupPoliciesOperations
     :ivar vaults: VaultsOperations operations
@@ -83,6 +81,7 @@ class NetAppManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
@@ -99,16 +98,32 @@ class NetAppManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.snapshot_policies = SnapshotPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.volume_backup_status = VolumeBackupStatusOperations(
+        self.backups = BackupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.account_backups = AccountBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.backups = BackupsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

@@ -215,8 +215,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
         self.assertEqual(id_document.fields.get("LastName").value, "TALBOT")
         self.assertEqual(id_document.fields.get("FirstName").value, "LIAM R.")
-        # FIXME: service error when reading the license number returns 'LICWDLACD5DG'
-        # self.assertEqual(id_document.fields.get("DocumentNumber").value, "WDLABCD456DG")
+        self.assertEqual(id_document.fields.get("DocumentNumber").value, "WDLABCD456DG")
         self.assertEqual(id_document.fields.get("DateOfBirth").value, date(1958,1,6))
         self.assertEqual(id_document.fields.get("DateOfExpiration").value, date(2020,8,12))
         self.assertEqual(id_document.fields.get("Sex").value, "M")

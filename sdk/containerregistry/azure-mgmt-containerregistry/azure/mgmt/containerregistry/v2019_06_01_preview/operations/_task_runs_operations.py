@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class TaskRunsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class TaskRunsOperations(object):
         task_run_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TaskRun"
+        # type: (...) -> "_models.TaskRun"
         """Gets the detailed information for a given task run.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -69,7 +69,7 @@ class TaskRunsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -101,7 +101,7 @@ class TaskRunsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TaskRun', pipeline_response)
@@ -117,11 +117,11 @@ class TaskRunsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         task_run_name,  # type: str
-        task_run,  # type: "models.TaskRun"
+        task_run,  # type: "_models.TaskRun"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TaskRun"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRun"]
+        # type: (...) -> "_models.TaskRun"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -158,7 +158,7 @@ class TaskRunsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -178,10 +178,10 @@ class TaskRunsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         task_run_name,  # type: str
-        task_run,  # type: "models.TaskRun"
+        task_run,  # type: "_models.TaskRun"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.TaskRun"]
+        # type: (...) -> LROPoller["_models.TaskRun"]
         """Creates a task run for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -195,8 +195,8 @@ class TaskRunsOperations(object):
         :type task_run: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRun
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either TaskRun or the result of cls(response)
@@ -204,7 +204,7 @@ class TaskRunsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRun"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -230,7 +230,14 @@ class TaskRunsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -284,7 +291,7 @@ class TaskRunsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -311,8 +318,8 @@ class TaskRunsOperations(object):
         :type task_run_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -342,7 +349,14 @@ class TaskRunsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -361,11 +375,11 @@ class TaskRunsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         task_run_name,  # type: str
-        update_parameters,  # type: "models.TaskRunUpdateParameters"
+        update_parameters,  # type: "_models.TaskRunUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TaskRun"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRun"]
+        # type: (...) -> "_models.TaskRun"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -402,7 +416,7 @@ class TaskRunsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -422,10 +436,10 @@ class TaskRunsOperations(object):
         resource_group_name,  # type: str
         registry_name,  # type: str
         task_run_name,  # type: str
-        update_parameters,  # type: "models.TaskRunUpdateParameters"
+        update_parameters,  # type: "_models.TaskRunUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.TaskRun"]
+        # type: (...) -> LROPoller["_models.TaskRun"]
         """Updates a task run with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -439,8 +453,8 @@ class TaskRunsOperations(object):
         :type update_parameters: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRunUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either TaskRun or the result of cls(response)
@@ -448,7 +462,7 @@ class TaskRunsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRun"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -474,7 +488,14 @@ class TaskRunsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -495,7 +516,7 @@ class TaskRunsOperations(object):
         task_run_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TaskRun"
+        # type: (...) -> "_models.TaskRun"
         """Gets the detailed information for a given task run that includes all secrets.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -510,7 +531,7 @@ class TaskRunsOperations(object):
         :rtype: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRun"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRun"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -542,7 +563,7 @@ class TaskRunsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('TaskRun', pipeline_response)
@@ -559,7 +580,7 @@ class TaskRunsOperations(object):
         registry_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TaskRunListResult"]
+        # type: (...) -> Iterable["_models.TaskRunListResult"]
         """Lists all the task runs for a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -572,7 +593,7 @@ class TaskRunsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRunListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TaskRunListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TaskRunListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -619,7 +640,7 @@ class TaskRunsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

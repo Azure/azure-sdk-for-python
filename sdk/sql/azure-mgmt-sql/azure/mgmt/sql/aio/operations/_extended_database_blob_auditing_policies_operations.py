@@ -46,7 +46,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExtendedDatabaseBlobAuditingPolicy":
         """Gets an extended database's blob auditing policy.
 
@@ -112,7 +112,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         server_name: str,
         database_name: str,
         parameters: "_models.ExtendedDatabaseBlobAuditingPolicy",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExtendedDatabaseBlobAuditingPolicy":
         """Creates or updates an extended database's blob auditing policy.
 
@@ -188,7 +188,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ExtendedDatabaseBlobAuditingPolicyListResult"]:
         """Lists extended auditing settings of a database.
 

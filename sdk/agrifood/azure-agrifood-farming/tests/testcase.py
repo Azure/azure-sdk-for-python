@@ -25,7 +25,7 @@ class FarmBeatsTest(AzureTestCase):
     def generate_random_name(self, name):
 
         if self.is_live:
-            created_name = "{}-{}".format(name, random.randint(0, 1000))
+            created_name = "{}-{}".format(name, random.randint(0, 100000))
             self.scrubber.register_name_pair(created_name, name)
             return created_name
         return name
@@ -41,7 +41,7 @@ class FarmBeatsTest(AzureTestCase):
             return client.boundaries.create_or_update(
                 farmer_id=farmer_id,
                 boundary_id=boundary_id,
-                body=Boundary(
+                boundary=Boundary(
                     geometry=Polygon(
                         coordinates=[
                             [

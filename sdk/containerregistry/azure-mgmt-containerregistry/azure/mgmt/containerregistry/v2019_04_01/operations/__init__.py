@@ -7,17 +7,11 @@
 # --------------------------------------------------------------------------
 
 from ._registries_operations import RegistriesOperations
-from ._operations import Operations
-from ._replications_operations import ReplicationsOperations
-from ._webhooks_operations import WebhooksOperations
 from ._runs_operations import RunsOperations
 from ._tasks_operations import TasksOperations
 
 __all__ = [
     'RegistriesOperations',
-    'Operations',
-    'ReplicationsOperations',
-    'WebhooksOperations',
     'RunsOperations',
     'TasksOperations',
 ]

@@ -4,15 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import List, Any, Optional, TYPE_CHECKING
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core._pipeline_client_async import AsyncPipelineClient
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
@@ -44,7 +44,7 @@ class AttestationAdministrationClient(object):
 
     :param str instance_url: base url of the service
     :param credential: Credentials for the caller used to interact with the service.
-    :type credential: azure.core.credentials.TokenCredential
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword AsyncPipelineClient pipeline: If omitted, the standard pipeline is used.
     :keyword AsyncHttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -55,11 +55,10 @@ class AttestationAdministrationClient(object):
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        instance_url,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential, #type: AsyncTokenCredential
+        instance_url, #type: str
+        **kwargs #type: Any
+    ): #type: (...) -> None
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
@@ -68,14 +67,17 @@ class AttestationAdministrationClient(object):
         self._signing_certificates = None
 
     @distributed_trace_async
-    async def get_policy(self, attestation_type, **kwargs): 
-        #type(AttestationType, **Any) -> AttestationResult[str]:
+    async def get_policy(
+        self,
+        attestation_type, #type: AttestationType
+        **kwargs: Any
+        ) -> AttestationResponse[str]:
         """ Retrieves the attestation policy for a specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to retrieve the policy.
-        :return azure.security.attestation.AttestationResponse[str]: Attestation service response encapsulating a string attestation policy.
-
+        :return: Attestation service response encapsulating a string attestation policy.
+        :rtype: azure.security.attestation.AttestationResponse[str]
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         """
@@ -94,16 +96,24 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
     @distributed_trace_async
-    async def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
-        #type:(AttestationType, str, Optional[AttestationSigningKey], **Any) -> AttestationResponse[PolicyResult]
+    async def set_policy(
+        self, 
+        attestation_type, #type: AttestationType
+        attestation_policy, #type: str
+        signing_key=None, #type:AttestationSigningKey
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
 
-        :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
+        :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
+        :type attestation_type: azure.security.attestation.AttestationType
         :param str attestation_policy: Attestation policy to be set.
-        :keyword azure.security.attestation.AttestationSigningKey signing_key: Signing key to be
+        :param signing_key: Signing key to be
             used to sign the policy before sending it to the service.
-        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+        :type signing_key: azure.security.attestation.AttestationSigningKey 
+        :return: Attestation service response encapsulating a :class:`PolicyResult`.
+        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
@@ -130,16 +140,25 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[PolicyResult](token, PolicyResult._from_generated(token.get_body()))
 
     @distributed_trace_async
-    async def reset_policy(self, attestation_type, signing_key=None, **kwargs): 
-        #type:(AttestationType,  Optional[AttestationSigningKey], **dict[str, Any]) -> AttestationResponse[PolicyResult]
+    async def reset_policy(
+        self, 
+        attestation_type, #type: AttestationType
+        signing_key=None, #type: AttestationSigningKey
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[PolicyResult]
         """ Resets the attestation policy for the specified attestation type to the default value.
 
-        :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
+        :param attestation_type: :class:`azure.security.attestation.AttestationType` for 
             which to set the policy.
+        :type attestation_type: azure.security.attestation.AttestationType
         :param str attestation_policy: Attestation policy to be reset.
-        :keyword azure.security.attestation.AttestationSigningKey signing_key: Signing key to be
+        :param signing_key: Signing key to be
             used to sign the policy before sending it to the service.
-        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+
+        :type signing_key: azure.security.attestation.AttestationSigningKey
+
+        :return: Attestation service response encapsulating a :class:`PolicyResult`.
+        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyResult]
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
@@ -164,15 +183,18 @@ class AttestationAdministrationClient(object):
 
 
     @distributed_trace_async
-    async def get_policy_management_certificates(self, **kwargs):
-        #type:(**Any) -> AttestationResponse[list[list[bytes]]]
+    async def get_policy_management_certificates(
+        self, 
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[list[list[bytes]]]
         """ Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only be non-empty if the
         attestation service instance is in Isolated mode.
 
-        :return azure.security.attestation.AttestationResponse[list[list[bytes]]: Attestation service response 
+        :return: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
+        :rtype: azure.security.attestation.AttestationResponse[list[list[bytes]]]
         """
 
         cert_response = await self._client.policy_certificates.get(**kwargs)
@@ -192,16 +214,22 @@ class AttestationAdministrationClient(object):
         return AttestationResponse(token, certificates)
 
     @distributed_trace_async
-    async def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
-        #type:(bytes, AttestationSigningKey, **Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+    async def add_policy_management_certificate(
+        self, 
+        certificate_to_add, #type: bytes
+        signing_key, #type: AttestationSigningKey
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[PolicyCertificatesModificationResult]
         """ Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
         :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
-        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]: Attestation service response 
+        :return: Attestation service response 
             encapsulating the status of the add request.
+
+        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]
 
         The :class:`PolicyCertificatesModificationResult` response to the 
         :meth:`add_policy_management_certificate` API contains two attributes
@@ -233,16 +261,21 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
     @distributed_trace_async
-    async def remove_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
-        #type:(bytes, AttestationSigningKey, **Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+    async def remove_policy_management_certificate(
+        self, 
+        certificate_to_add, #type: bytes
+        signing_key, #type: AttestationSigningKey
+        **kwargs #type: Any
+        ): #type: (...) -> AttestationResponse[PolicyCertificatesModificationResult]
         """ Removes a new policy management certificate to the set of policy management certificates for the instance.
 
         :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
             the list of attestation policy management certificates.
         :param azure.security.attestation.AttestationSigningKey signing_key: Signing Key representing one of 
             the *existing* attestation signing certificates.
-        :return azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]: Attestation service response 
+        :return: Attestation service response 
             encapsulating a list of DER encoded X.509 certificate chains.
+        :rtype: azure.security.attestation.AttestationResponse[azure.security.attestation.PolicyCertificatesModificationResult]
 
         The :class:`PolicyCertificatesModificationResult` response to the 
         :meth:`remove_policy_management_certificate` API contains two attributes
@@ -273,8 +306,9 @@ class AttestationAdministrationClient(object):
                 raise AttestationTokenValidationException("Token Validation of PolicyCertificate Remove API failed.")
         return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
-    async def _get_signers(self, **kwargs):
-        #type(**Any) -> List[AttestationSigner]
+    async def _get_signers(
+        self,
+        **kwargs): #type: (Any) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 

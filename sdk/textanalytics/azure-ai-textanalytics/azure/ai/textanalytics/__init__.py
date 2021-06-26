@@ -31,32 +31,28 @@ from ._models import (
     AssessmentSentiment,
     RecognizePiiEntitiesResult,
     PiiEntity,
-    PiiEntityDomainType,
-    AnalyzeHealthcareEntitiesResultItem,
+    PiiEntityDomain,
+    AnalyzeHealthcareEntitiesResult,
     HealthcareEntity,
     HealthcareEntityDataSource,
     RecognizeEntitiesAction,
     RecognizeLinkedEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    AnalyzeActionsResult,
-    RequestStatistics,
-    AnalyzeActionsType,
-    AnalyzeActionsError,
-    HealthcareEntityRelationRoleType,
+    _AnalyzeActionsType,
     HealthcareRelation,
     HealthcareRelationRole,
     HealthcareEntityAssertion,
-    AnalyzeSentimentAction
+    AnalyzeSentimentAction,
+    PiiEntityCategory,
+    HealthcareEntityRelation,
+    EntityConditionality,
+    EntityCertainty,
+    EntityAssociation,
+    HealthcareEntityCategory
 )
-from ._paging import AnalyzeHealthcareEntitiesResult
-from ._generated.v3_1_preview_5.models import (
-    PiiCategory as PiiEntityCategoryType,
-    RelationType as HealthcareEntityRelationType,
-    Conditionality as EntityConditionality,
-    Certainty as EntityCertainty,
-    Association as EntityAssociation
-)
+
+from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -84,8 +80,7 @@ __all__ = [
     'AssessmentSentiment',
     'RecognizePiiEntitiesResult',
     'PiiEntity',
-    'PiiEntityDomainType',
-    'AnalyzeHealthcareEntitiesResultItem',
+    'PiiEntityDomain',
     'AnalyzeHealthcareEntitiesResult',
     'HealthcareEntity',
     'HealthcareEntityDataSource',
@@ -93,20 +88,19 @@ __all__ = [
     'RecognizeLinkedEntitiesAction',
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
-    'AnalyzeActionsResult',
-    'RequestStatistics',
-    'AnalyzeActionsType',
-    "AnalyzeActionsError",
-    "PiiEntityCategoryType",
-    "HealthcareEntityRelationType",
-    "HealthcareEntityRelationRoleType",
+    '_AnalyzeActionsType',
+    "PiiEntityCategory",
+    "HealthcareEntityRelation",
     "HealthcareRelation",
     "HealthcareRelationRole",
     "HealthcareEntityAssertion",
     "EntityConditionality",
     "EntityCertainty",
     "EntityAssociation",
-    "AnalyzeSentimentAction"
+    "AnalyzeSentimentAction",
+    "AnalyzeHealthcareEntitiesLROPoller",
+    "AnalyzeActionsLROPoller",
+    "HealthcareEntityCategory"
 ]
 
 __version__ = VERSION

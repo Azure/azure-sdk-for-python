@@ -29,7 +29,7 @@ class Operations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.azurestackhci.models
+    :type models: ~azure_stack_hci_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -53,7 +53,7 @@ class Operations(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AvailableOperations, or the result of cls(response)
-        :rtype: ~azure.mgmt.azurestackhci.models.AvailableOperations
+        :rtype: ~azure_stack_hci_client.models.AvailableOperations
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableOperations"]
@@ -81,7 +81,7 @@ class Operations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AvailableOperations', pipeline_response)

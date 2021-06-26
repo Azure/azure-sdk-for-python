@@ -50,7 +50,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         instance_id: str,
         run_command_name: str,
         run_command: "_models.VirtualMachineRunCommand",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineRunCommand":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineRunCommand"]
         error_map = {
@@ -111,7 +111,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         instance_id: str,
         run_command_name: str,
         run_command: "_models.VirtualMachineRunCommand",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualMachineRunCommand"]:
         """The operation to create or update the VMSS VM run command.
 
@@ -127,8 +127,8 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         :type run_command: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommand
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualMachineRunCommand or the result of cls(response)
@@ -192,7 +192,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         instance_id: str,
         run_command_name: str,
         run_command: "_models.VirtualMachineRunCommandUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineRunCommand":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineRunCommand"]
         error_map = {
@@ -249,7 +249,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         instance_id: str,
         run_command_name: str,
         run_command: "_models.VirtualMachineRunCommandUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualMachineRunCommand"]:
         """The operation to update the VMSS VM run command.
 
@@ -265,8 +265,8 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         :type run_command: ~azure.mgmt.compute.v2020_12_01.models.VirtualMachineRunCommandUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualMachineRunCommand or the result of cls(response)
@@ -329,7 +329,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -377,7 +377,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """The operation to delete the VMSS VM run command.
 
@@ -391,8 +391,8 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         :type run_command_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -452,7 +452,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         instance_id: str,
         run_command_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineRunCommand":
         """The operation to get the VMSS VM run command.
 
@@ -522,7 +522,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         vm_scale_set_name: str,
         instance_id: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineRunCommandsListResult"]:
         """The operation to get all run commands of an instance in Virtual Machine Scaleset.
 

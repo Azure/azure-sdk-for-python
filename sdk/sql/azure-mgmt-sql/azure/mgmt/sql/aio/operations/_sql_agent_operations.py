@@ -44,7 +44,7 @@ class SqlAgentOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlAgentConfiguration":
         """Gets current instance sql agent configuration.
 
@@ -104,7 +104,7 @@ class SqlAgentOperations:
         resource_group_name: str,
         managed_instance_name: str,
         parameters: "_models.SqlAgentConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SqlAgentConfiguration":
         """Puts new sql agent configuration to instance.
 

@@ -46,7 +46,7 @@ class LogAnalyticsOperations:
         self,
         location: str,
         parameters: "_models.RequestRateByIntervalInput",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LogAnalyticsOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogAnalyticsOperationResult"]]
         error_map = {
@@ -99,7 +99,7 @@ class LogAnalyticsOperations:
         self,
         location: str,
         parameters: "_models.RequestRateByIntervalInput",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LogAnalyticsOperationResult"]:
         """Export logs that show Api requests made by this subscription in the given time window to show
         throttling activities.
@@ -110,8 +110,8 @@ class LogAnalyticsOperations:
         :type parameters: ~azure.mgmt.compute.v2018_06_01.models.RequestRateByIntervalInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LogAnalyticsOperationResult or the result of cls(response)
@@ -166,7 +166,7 @@ class LogAnalyticsOperations:
         self,
         location: str,
         parameters: "_models.ThrottledRequestsInput",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.LogAnalyticsOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogAnalyticsOperationResult"]]
         error_map = {
@@ -219,7 +219,7 @@ class LogAnalyticsOperations:
         self,
         location: str,
         parameters: "_models.ThrottledRequestsInput",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LogAnalyticsOperationResult"]:
         """Export logs that show total throttled Api requests for this subscription in the given time
         window.
@@ -230,8 +230,8 @@ class LogAnalyticsOperations:
         :type parameters: ~azure.mgmt.compute.v2018_06_01.models.ThrottledRequestsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LogAnalyticsOperationResult or the result of cls(response)

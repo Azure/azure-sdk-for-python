@@ -44,7 +44,7 @@ class ClusterVersionsOperations:
         self,
         location: str,
         cluster_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterCodeVersionsListResult":
         """Gets information about a Service Fabric cluster code version available in the specified location.
 
@@ -106,7 +106,7 @@ class ClusterVersionsOperations:
         location: str,
         environment: Union[str, "_models.Enum8"],
         cluster_version: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterCodeVersionsListResult":
         """Gets information about a Service Fabric cluster code version available for the specified environment.
 
@@ -169,7 +169,7 @@ class ClusterVersionsOperations:
     async def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterCodeVersionsListResult":
         """Gets the list of Service Fabric cluster code versions available for the specified location.
 
@@ -227,7 +227,7 @@ class ClusterVersionsOperations:
         self,
         location: str,
         environment: Union[str, "_models.Enum8"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterCodeVersionsListResult":
         """Gets the list of Service Fabric cluster code versions available for the specified environment.
 

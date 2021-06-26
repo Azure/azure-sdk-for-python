@@ -16,7 +16,7 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
     def test_farmer_operations(self, agrifood_endpoint):
 
         # Setup data
-        farmer_id = "test-farmer-farmer-ops"
+        farmer_id = self.generate_random_name("test-farmer-farmer-ops")
         farmer_name = "Test Farmer"
         farmer_description = "Farmer created during testing."
         farmer_status = "Sample Status"
@@ -32,7 +32,7 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         # Create
         farmer = client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer(
+            farmer=Farmer(
                 name=farmer_name,
                 description=farmer_description,
                 status=farmer_status,
@@ -67,13 +67,12 @@ class FarmHeirarchyTestCase(FarmBeatsTest):
         # Update
         updated_farmer = client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=farmer
+            farmer=farmer
         )
 
         # Assert on immediate response
         assert farmer.name == updated_farmer.name
         assert farmer.created_date_time == updated_farmer.created_date_time
-        assert farmer.modified_date_time != updated_farmer.modified_date_time
 
         # Retrieve updated object
         updated_retrieved_farmer = client.farmers.get(farmer_id=farmer_id)

@@ -70,7 +70,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
 
     def get_coverage(self):
         # type: () -> float
-        """Return the covereage percentage, if `minimum_coverage` was
+        """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
         """

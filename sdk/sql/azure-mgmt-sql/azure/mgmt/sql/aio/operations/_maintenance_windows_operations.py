@@ -46,7 +46,7 @@ class MaintenanceWindowsOperations:
         server_name: str,
         database_name: str,
         maintenance_window_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceWindows":
         """Gets maintenance windows settings for a database.
 
@@ -114,7 +114,7 @@ class MaintenanceWindowsOperations:
         database_name: str,
         maintenance_window_name: str,
         parameters: "_models.MaintenanceWindows",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets maintenance windows settings for a database.
 

@@ -45,7 +45,7 @@ class WebAppsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppCollection"]:
         """Get all apps for a subscription.
 
@@ -101,7 +101,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -116,7 +116,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         include_slots: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppCollection"]:
         """Gets all web, mobile, and API apps in the specified resource group.
 
@@ -180,7 +180,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -195,7 +195,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Site"]:
         """Gets the details of a web, mobile, or API app.
 
@@ -241,7 +241,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -259,7 +259,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_envelope: "_models.Site",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Site":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         error_map = {
@@ -297,7 +297,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -317,7 +317,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_envelope: "_models.Site",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Site"]:
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
@@ -333,8 +333,8 @@ class WebAppsOperations:
         :type site_envelope: ~azure.mgmt.web.v2019_08_01.models.Site
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Site or the result of cls(response)
@@ -393,7 +393,7 @@ class WebAppsOperations:
         name: str,
         delete_metrics: Optional[bool] = None,
         delete_empty_server_farm: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a web, mobile, or API app, or one of the deployment slots.
 
@@ -448,7 +448,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -461,7 +461,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_envelope: "_models.SitePatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Site":
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
@@ -516,7 +516,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -536,7 +536,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         host_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomHostnameAnalysisResult":
         """Analyze a custom hostname.
 
@@ -586,7 +586,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
@@ -602,7 +602,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Applies the configuration settings from the target slot onto the current slot.
 
@@ -655,7 +655,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -668,7 +668,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         request: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupItem":
         """Creates a backup of an app.
 
@@ -722,7 +722,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -737,7 +737,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackupItemCollection"]:
         """Gets existing backups of an app.
 
@@ -799,7 +799,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -815,7 +815,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         backup_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupItem":
         """Gets a backup of an app by its ID.
 
@@ -864,7 +864,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -880,7 +880,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         backup_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a backup of an app by its ID.
 
@@ -929,7 +929,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -943,7 +943,7 @@ class WebAppsOperations:
         name: str,
         backup_id: str,
         request: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupItem":
         """Gets status of a web app backup that may be in progress, including secrets associated with the backup, such as the Azure Storage SAS URL. Also can be used to update the SAS URL for the backup if a new URL is passed in the request body.
 
@@ -1001,7 +1001,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -1018,7 +1018,7 @@ class WebAppsOperations:
         name: str,
         backup_id: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1057,7 +1057,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1071,7 +1071,7 @@ class WebAppsOperations:
         name: str,
         backup_id: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a specific backup to another app (or deployment slot, if specified).
 
@@ -1087,8 +1087,8 @@ class WebAppsOperations:
         :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1144,7 +1144,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CsmPublishingCredentialsPoliciesCollection":
         """Returns whether Scm basic auth is allowed and whether Ftp is allowed for a given site.
 
@@ -1191,7 +1191,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesCollection', pipeline_response)
@@ -1206,7 +1206,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CsmPublishingCredentialsPoliciesEntity":
         """Returns whether FTP is allowed on the site or not.
 
@@ -1252,7 +1252,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1268,7 +1268,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         csm_publishing_access_policies_entity: "_models.CsmPublishingCredentialsPoliciesEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CsmPublishingCredentialsPoliciesEntity":
         """Updates whether FTP is allowed on the site or not.
 
@@ -1321,7 +1321,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1336,7 +1336,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CsmPublishingCredentialsPoliciesEntity":
         """Returns whether Scm basic auth is allowed on the site or not.
 
@@ -1382,7 +1382,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1398,7 +1398,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         csm_publishing_access_policies_entity: "_models.CsmPublishingCredentialsPoliciesEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CsmPublishingCredentialsPoliciesEntity":
         """Updates whether user publishing credentials are allowed on the site or not.
 
@@ -1451,7 +1451,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CsmPublishingCredentialsPoliciesEntity', pipeline_response)
@@ -1466,7 +1466,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SiteConfigResourceCollection"]:
         """List the configurations of an app.
 
@@ -1528,7 +1528,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1544,7 +1544,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         app_settings: "_models.StringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Replaces the application settings of an app.
 
@@ -1597,7 +1597,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -1612,7 +1612,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Gets the application settings of an app.
 
@@ -1658,7 +1658,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -1674,7 +1674,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_auth_settings: "_models.SiteAuthSettings",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteAuthSettings":
         """Updates the Authentication / Authorization settings associated with web app.
 
@@ -1727,7 +1727,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -1742,7 +1742,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteAuthSettings":
         """Gets the Authentication/Authorization settings of an app.
 
@@ -1788,7 +1788,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -1804,7 +1804,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         azure_storage_accounts: "_models.AzureStoragePropertyDictionaryResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureStoragePropertyDictionaryResource":
         """Updates the Azure storage account configurations of an app.
 
@@ -1857,7 +1857,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -1872,7 +1872,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureStoragePropertyDictionaryResource":
         """Gets the Azure storage account configurations of an app.
 
@@ -1918,7 +1918,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -1934,7 +1934,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         request: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupRequest":
         """Updates the backup configuration of an app.
 
@@ -1987,7 +1987,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -2002,7 +2002,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the backup configuration of an app.
 
@@ -2048,7 +2048,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -2060,7 +2060,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupRequest":
         """Gets the backup configuration of an app.
 
@@ -2106,7 +2106,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -2121,7 +2121,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyVaultReferenceCollection":
         """Gets the config reference app settings and status of an app.
 
@@ -2167,7 +2167,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('KeyVaultReferenceCollection', pipeline_response)
@@ -2183,7 +2183,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         app_setting_key: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyVaultReferenceResource":
         """Gets the config reference and status of an app.
 
@@ -2232,7 +2232,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('KeyVaultReferenceResource', pipeline_response)
@@ -2248,7 +2248,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         connection_strings: "_models.ConnectionStringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectionStringDictionary":
         """Replaces the connection strings of an app.
 
@@ -2301,7 +2301,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -2316,7 +2316,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectionStringDictionary":
         """Gets the connection strings of an app.
 
@@ -2362,7 +2362,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -2377,7 +2377,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteLogsConfig":
         """Gets the logging configuration of an app.
 
@@ -2423,7 +2423,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -2439,7 +2439,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_logs_config: "_models.SiteLogsConfig",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteLogsConfig":
         """Updates the logging configuration of an app.
 
@@ -2493,7 +2493,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -2509,7 +2509,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         metadata: "_models.StringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Replaces the metadata of an app.
 
@@ -2562,7 +2562,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -2577,7 +2577,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Gets the metadata of an app.
 
@@ -2623,7 +2623,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -2638,7 +2638,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
@@ -2671,7 +2671,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -2686,7 +2686,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.User"]:
         """Gets the Git/FTP publishing credentials of an app.
 
@@ -2698,8 +2698,8 @@ class WebAppsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either User or the result of cls(response)
@@ -2756,7 +2756,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         push_settings: "_models.PushSettings",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PushSettings":
         """Updates the Push settings associated with web app.
 
@@ -2809,7 +2809,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -2824,7 +2824,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PushSettings":
         """Gets the Push settings associated with web app.
 
@@ -2870,7 +2870,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -2885,7 +2885,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SlotConfigNamesResource":
         """Gets the names of app settings and connection strings that stick to the slot (not swapped).
 
@@ -2932,7 +2932,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SlotConfigNamesResource', pipeline_response)
@@ -2948,7 +2948,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot_config_names: "_models.SlotConfigNamesResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SlotConfigNamesResource":
         """Updates the names of application settings and connection string that remain with the slot during swap operation.
 
@@ -3002,7 +3002,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SlotConfigNamesResource', pipeline_response)
@@ -3017,7 +3017,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Gets the configuration of an app, such as platform version and bitness, default documents, virtual applications, Always On, etc.
 
@@ -3064,7 +3064,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3080,7 +3080,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_config: "_models.SiteConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Updates the configuration of an app.
 
@@ -3133,7 +3133,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3149,7 +3149,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_config: "_models.SiteConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Updates the configuration of an app.
 
@@ -3202,7 +3202,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3217,7 +3217,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SiteConfigurationSnapshotInfoCollection"]:
         """Gets a list of web app configuration snapshots identifiers. Each element of the list contains a timestamp and the ID of the snapshot.
 
@@ -3280,7 +3280,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3296,7 +3296,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         snapshot_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Gets a snapshot of the configuration of an app at a previous point in time.
 
@@ -3345,7 +3345,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -3361,7 +3361,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         snapshot_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reverts the configuration of an app to a previous snapshot.
 
@@ -3410,7 +3410,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3422,7 +3422,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Gets the last lines of docker logs for the given site.
 
@@ -3484,7 +3484,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Gets the ZIP archived docker log files for the given site.
 
@@ -3546,7 +3546,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContinuousWebJobCollection"]:
         """List continuous web jobs for an app, or a deployment slot.
 
@@ -3608,7 +3608,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3624,7 +3624,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ContinuousWebJob"]:
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
@@ -3673,7 +3673,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -3691,7 +3691,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a continuous web job by its ID for an app, or a deployment slot.
 
@@ -3740,7 +3740,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3753,7 +3753,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Start a continuous web job for an app, or a deployment slot.
 
@@ -3802,7 +3802,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3815,7 +3815,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop a continuous web job for an app, or a deployment slot.
 
@@ -3864,7 +3864,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3876,7 +3876,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentCollection"]:
         """List deployments for an app, or a deployment slot.
 
@@ -3938,7 +3938,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -3954,7 +3954,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Get a deployment by its ID for an app, or a deployment slot.
 
@@ -4003,7 +4003,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -4020,7 +4020,7 @@ class WebAppsOperations:
         name: str,
         id: str,
         deployment: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Create a deployment for an app, or a deployment slot.
 
@@ -4076,7 +4076,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -4092,7 +4092,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a deployment by its ID for an app, or a deployment slot.
 
@@ -4141,7 +4141,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4154,7 +4154,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """List deployment log for specific deployment for an app, or a deployment slot.
 
@@ -4204,7 +4204,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -4220,7 +4220,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestoreRequest":
         """Discovers an existing app backup that can be restored from a blob in Azure storage. Use this to get information about the databases stored in a backup.
 
@@ -4275,7 +4275,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RestoreRequest', pipeline_response)
@@ -4290,7 +4290,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IdentifierCollection"]:
         """Lists ownership identifiers for domain associated with web app.
 
@@ -4352,7 +4352,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -4368,7 +4368,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         domain_ownership_identifier_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Identifier":
         """Get domain ownership identifier for web app.
 
@@ -4417,7 +4417,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -4434,7 +4434,7 @@ class WebAppsOperations:
         name: str,
         domain_ownership_identifier_name: str,
         domain_ownership_identifier: "_models.Identifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Identifier":
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
@@ -4491,7 +4491,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -4507,7 +4507,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         domain_ownership_identifier_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a domain ownership identifier for a web app.
 
@@ -4556,7 +4556,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4570,7 +4570,7 @@ class WebAppsOperations:
         name: str,
         domain_ownership_identifier_name: str,
         domain_ownership_identifier: "_models.Identifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Identifier":
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
@@ -4627,7 +4627,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -4642,7 +4642,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MSDeployStatus":
         """Get the status of the last MSDeploy operation.
 
@@ -4688,7 +4688,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -4704,7 +4704,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
@@ -4742,7 +4742,7 @@ class WebAppsOperations:
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -4760,7 +4760,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MSDeployStatus"]:
         """Invoke the MSDeploy web app extension.
 
@@ -4774,8 +4774,8 @@ class WebAppsOperations:
         :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MSDeployStatus or the result of cls(response)
@@ -4832,7 +4832,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployLog"]:
         """Get the MSDeploy Log for the last MSDeploy operation.
 
@@ -4878,7 +4878,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -4895,7 +4895,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FunctionEnvelopeCollection"]:
         """List the functions for a web site, or a deployment slot.
 
@@ -4957,7 +4957,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -4972,7 +4972,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Fetch a short lived token that can be exchanged for a master key.
 
@@ -5018,7 +5018,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -5034,7 +5034,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         function_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FunctionEnvelope"]:
         """Get function information by its ID for web site, or a deployment slot.
 
@@ -5083,7 +5083,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -5102,7 +5102,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         function_envelope: "_models.FunctionEnvelope",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FunctionEnvelope":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelope"]
         error_map = {
@@ -5141,7 +5141,7 @@ class WebAppsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionEnvelope', pipeline_response)
@@ -5158,7 +5158,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         function_envelope: "_models.FunctionEnvelope",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FunctionEnvelope"]:
         """Create function for web site, or a deployment slot.
 
@@ -5174,8 +5174,8 @@ class WebAppsOperations:
         :type function_envelope: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FunctionEnvelope or the result of cls(response)
@@ -5235,7 +5235,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         function_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a function for web site, or a deployment slot.
 
@@ -5284,7 +5284,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5299,7 +5299,7 @@ class WebAppsOperations:
         function_name: str,
         key_name: str,
         key: "_models.KeyInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyInfo":
         """Add or update a function secret.
 
@@ -5358,7 +5358,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -5379,7 +5379,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a function secret.
 
@@ -5431,7 +5431,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5444,7 +5444,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         function_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Get function keys for a function in a web site, or a deployment slot.
 
@@ -5493,7 +5493,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -5509,7 +5509,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         function_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FunctionSecrets":
         """Get function secrets for a function in a web site, or a deployment slot.
 
@@ -5558,7 +5558,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -5573,7 +5573,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostKeys":
         """Get host secrets for a function app.
 
@@ -5619,7 +5619,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostKeys', pipeline_response)
@@ -5634,7 +5634,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """This is to allow calling via powershell and ARM template.
 
@@ -5680,7 +5680,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5692,7 +5692,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Syncs function trigger metadata to the management database.
 
@@ -5738,7 +5738,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5753,7 +5753,7 @@ class WebAppsOperations:
         key_type: str,
         key_name: str,
         key: "_models.KeyInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyInfo":
         """Add or update a host level secret.
 
@@ -5812,7 +5812,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -5833,7 +5833,7 @@ class WebAppsOperations:
         name: str,
         key_type: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a host level secret.
 
@@ -5885,7 +5885,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -5897,7 +5897,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HostNameBindingCollection"]:
         """Get hostname bindings for an app or a deployment slot.
 
@@ -5959,7 +5959,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -5975,7 +5975,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostNameBinding":
         """Get the named hostname binding for an app (or deployment slot, if specified).
 
@@ -6024,7 +6024,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -6041,7 +6041,7 @@ class WebAppsOperations:
         name: str,
         host_name: str,
         host_name_binding: "_models.HostNameBinding",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostNameBinding":
         """Creates a hostname binding for an app.
 
@@ -6098,7 +6098,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -6114,7 +6114,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a hostname binding for an app.
 
@@ -6163,7 +6163,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6177,7 +6177,7 @@ class WebAppsOperations:
         name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Retrieves a specific Service Bus Hybrid Connection used by this Web App.
 
@@ -6229,7 +6229,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6247,7 +6247,7 @@ class WebAppsOperations:
         namespace_name: str,
         relay_name: str,
         connection_envelope: "_models.HybridConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Creates a new Hybrid Connection using a Service Bus relay.
 
@@ -6306,7 +6306,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6323,7 +6323,7 @@ class WebAppsOperations:
         name: str,
         namespace_name: str,
         relay_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Removes a Hybrid Connection from this site.
 
@@ -6375,7 +6375,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6390,7 +6390,7 @@ class WebAppsOperations:
         namespace_name: str,
         relay_name: str,
         connection_envelope: "_models.HybridConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Creates a new Hybrid Connection using a Service Bus relay.
 
@@ -6449,7 +6449,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6464,7 +6464,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Retrieves all Service Bus Hybrid Connections used by this Web App.
 
@@ -6510,7 +6510,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -6525,7 +6525,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Gets hybrid connections configured for an app (or deployment slot, if specified).
 
@@ -6572,7 +6572,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6588,7 +6588,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         entity_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Gets a hybrid connection configuration by its name.
 
@@ -6637,7 +6637,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6654,7 +6654,7 @@ class WebAppsOperations:
         name: str,
         entity_name: str,
         connection_envelope: "_models.RelayServiceConnectionEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
@@ -6711,7 +6711,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6727,7 +6727,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         entity_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a relay service connection by its name.
 
@@ -6776,7 +6776,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -6790,7 +6790,7 @@ class WebAppsOperations:
         name: str,
         entity_name: str,
         connection_envelope: "_models.RelayServiceConnectionEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
@@ -6847,7 +6847,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -6862,7 +6862,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppInstanceCollection"]:
         """Gets all scale-out instances of an app.
 
@@ -6924,7 +6924,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -6940,7 +6940,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebSiteInstanceStatus":
         """Gets all scale-out instances of an app.
 
@@ -6989,7 +6989,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebSiteInstanceStatus', pipeline_response)
@@ -7005,7 +7005,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MSDeployStatus":
         """Get the status of the last MSDeploy operation.
 
@@ -7054,7 +7054,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -7071,7 +7071,7 @@ class WebAppsOperations:
         name: str,
         instance_id: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
@@ -7110,7 +7110,7 @@ class WebAppsOperations:
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7129,7 +7129,7 @@ class WebAppsOperations:
         name: str,
         instance_id: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MSDeployStatus"]:
         """Invoke the MSDeploy web app extension.
 
@@ -7145,8 +7145,8 @@ class WebAppsOperations:
         :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MSDeployStatus or the result of cls(response)
@@ -7206,7 +7206,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployLog"]:
         """Get the MSDeploy Log for the last MSDeploy operation.
 
@@ -7255,7 +7255,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7273,7 +7273,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessInfoCollection"]:
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
@@ -7340,7 +7340,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7357,7 +7357,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -7411,7 +7411,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7430,7 +7430,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Terminate a process by its ID for a web site, or a deployment slot, or specific scaled-out instance in a web site.
 
@@ -7484,7 +7484,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -7498,7 +7498,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Get a memory dump of a process by its ID for a specific scaled-out instance in a web site.
 
@@ -7552,7 +7552,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7571,7 +7571,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessModuleInfoCollection"]:
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
@@ -7641,7 +7641,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7659,7 +7659,7 @@ class WebAppsOperations:
         process_id: str,
         base_address: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessModuleInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -7716,7 +7716,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -7735,7 +7735,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessThreadInfoCollection"]:
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
@@ -7805,7 +7805,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7820,7 +7820,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteCloneability":
         """Shows whether an app can be cloned to another resource group or subscription.
 
@@ -7866,7 +7866,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteCloneability', pipeline_response)
@@ -7881,7 +7881,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackupItemCollection"]:
         """Gets existing backups of an app.
 
@@ -7943,7 +7943,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -7958,7 +7958,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FunctionSecrets":
         """This is to allow calling via powershell and ARM template.
 
@@ -8004,7 +8004,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -8021,7 +8021,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         migration_options: "_models.StorageMigrationOptions",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageMigrationResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageMigrationResponse"]
         error_map = {
@@ -8060,7 +8060,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StorageMigrationResponse', pipeline_response)
@@ -8077,7 +8077,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         migration_options: "_models.StorageMigrationOptions",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.StorageMigrationResponse"]:
         """Restores a web app.
 
@@ -8093,8 +8093,8 @@ class WebAppsOperations:
         :type migration_options: ~azure.mgmt.web.v2019_08_01.models.StorageMigrationOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either StorageMigrationResponse or the result of cls(response)
@@ -8153,7 +8153,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         migration_request_envelope: "_models.MigrateMySqlRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Operation":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Operation"]
         error_map = {
@@ -8191,7 +8191,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Operation', pipeline_response)
@@ -8207,7 +8207,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         migration_request_envelope: "_models.MigrateMySqlRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Operation"]:
         """Migrates a local (in-app) MySql database to a remote MySql database.
 
@@ -8221,8 +8221,8 @@ class WebAppsOperations:
         :type migration_request_envelope: ~azure.mgmt.web.v2019_08_01.models.MigrateMySqlRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Operation or the result of cls(response)
@@ -8279,7 +8279,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MigrateMySqlStatus":
         """Returns the status of MySql in app migration, if one is active, and whether or not MySql in app is enabled.
 
@@ -8326,7 +8326,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrateMySqlStatus', pipeline_response)
@@ -8341,7 +8341,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SwiftVirtualNetwork":
         """Gets a Swift Virtual Network connection.
 
@@ -8387,7 +8387,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -8403,7 +8403,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         connection_envelope: "_models.SwiftVirtualNetwork",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SwiftVirtualNetwork":
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
@@ -8460,7 +8460,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -8475,7 +8475,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Swift Virtual Network connection from an app (or deployment slot).
 
@@ -8521,7 +8521,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -8534,7 +8534,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         connection_envelope: "_models.SwiftVirtualNetwork",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SwiftVirtualNetwork":
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
@@ -8591,7 +8591,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -8607,7 +8607,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         view: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.NetworkFeatures"]:
         """Gets all network features used by the app (or deployment slot, if specified).
 
@@ -8656,7 +8656,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -8674,7 +8674,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -8724,7 +8724,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -8746,7 +8746,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Start capturing network packets for the site (To be deprecated).
 
@@ -8804,7 +8804,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -8822,7 +8822,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
@@ -8861,7 +8861,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -8883,7 +8883,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[List["_models.NetworkTrace"]]:
         """Start capturing network packets for the site.
 
@@ -8901,8 +8901,8 @@ class WebAppsOperations:
         :type sas_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either list of NetworkTrace or the result of cls(response)
@@ -8961,7 +8961,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop ongoing capturing network packets for the site.
 
@@ -9007,7 +9007,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9020,7 +9020,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -9070,7 +9070,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -9086,7 +9086,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -9136,7 +9136,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -9156,7 +9156,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -9206,7 +9206,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -9221,7 +9221,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Generates a new publishing password for an app (or deployment slot, if specified).
 
@@ -9268,7 +9268,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9281,7 +9281,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PerfMonCounterCollection"]:
         """Gets perfmon counters for web app.
 
@@ -9349,7 +9349,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -9364,7 +9364,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SitePhpErrorLogFlag":
         """Gets web app's event logs.
 
@@ -9410,7 +9410,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SitePhpErrorLogFlag', pipeline_response)
@@ -9425,7 +9425,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Gets the premier add-ons of an app.
 
@@ -9471,7 +9471,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9487,7 +9487,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         premier_add_on_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Gets a named add-on of an app.
 
@@ -9536,7 +9536,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9553,7 +9553,7 @@ class WebAppsOperations:
         name: str,
         premier_add_on_name: str,
         premier_add_on: "_models.PremierAddOn",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Updates a named add-on of an app.
 
@@ -9609,7 +9609,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9625,7 +9625,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         premier_add_on_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a premier add-on from an app.
 
@@ -9674,7 +9674,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -9688,7 +9688,7 @@ class WebAppsOperations:
         name: str,
         premier_add_on_name: str,
         premier_add_on: "_models.PremierAddOnPatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Updates a named add-on of an app.
 
@@ -9744,7 +9744,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -9759,7 +9759,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateAccess":
         """Gets data around private site access enablement and authorized Virtual Networks that can access the site.
 
@@ -9806,7 +9806,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -9822,7 +9822,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         access: "_models.PrivateAccess",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateAccess":
         """Sets data around private site access enablement and authorized Virtual Networks that can access the site.
 
@@ -9876,7 +9876,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -9891,7 +9891,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessInfoCollection"]:
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
@@ -9954,7 +9954,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -9970,7 +9970,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         process_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -10020,7 +10020,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -10038,7 +10038,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         process_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Terminate a process by its ID for a web site, or a deployment slot, or specific scaled-out instance in a web site.
 
@@ -10088,7 +10088,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10101,7 +10101,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         process_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Get a memory dump of a process by its ID for a specific scaled-out instance in a web site.
 
@@ -10151,7 +10151,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -10169,7 +10169,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         process_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessModuleInfoCollection"]:
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
@@ -10235,7 +10235,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10252,7 +10252,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         base_address: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessModuleInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -10305,7 +10305,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -10323,7 +10323,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         process_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessThreadInfoCollection"]:
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
@@ -10389,7 +10389,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10404,7 +10404,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PublicCertificateCollection"]:
         """Get public certificates for an app or a deployment slot.
 
@@ -10466,7 +10466,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -10482,7 +10482,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         public_certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PublicCertificate":
         """Get the named public certificate for an app (or deployment slot, if specified).
 
@@ -10531,7 +10531,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -10548,7 +10548,7 @@ class WebAppsOperations:
         name: str,
         public_certificate_name: str,
         public_certificate: "_models.PublicCertificate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PublicCertificate":
         """Creates a hostname binding for an app.
 
@@ -10605,7 +10605,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -10621,7 +10621,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         public_certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a hostname binding for an app.
 
@@ -10670,7 +10670,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10683,7 +10683,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         publishing_profile_options: "_models.CsmPublishingProfileOptions",
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
@@ -10737,7 +10737,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
@@ -10752,7 +10752,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resets the configuration settings of the current slot if they were previously modified by calling the API with POST.
 
@@ -10799,7 +10799,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10813,7 +10813,7 @@ class WebAppsOperations:
         name: str,
         soft_restart: Optional[bool] = None,
         synchronous: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Restarts an app (or deployment slot, if specified).
 
@@ -10869,7 +10869,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10882,7 +10882,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -10920,7 +10920,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -10933,7 +10933,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores an app from a backup blob in Azure Storage.
 
@@ -10947,8 +10947,8 @@ class WebAppsOperations:
         :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -11003,7 +11003,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         restore_request: "_models.DeletedAppRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -11041,7 +11041,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11054,7 +11054,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         restore_request: "_models.DeletedAppRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a deleted web app to this web app.
 
@@ -11068,8 +11068,8 @@ class WebAppsOperations:
         :type restore_request: ~azure.mgmt.web.v2019_08_01.models.DeletedAppRestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -11124,7 +11124,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         restore_request: "_models.SnapshotRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -11162,7 +11162,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11175,7 +11175,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         restore_request: "_models.SnapshotRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a web app from a snapshot.
 
@@ -11190,8 +11190,8 @@ class WebAppsOperations:
         :type restore_request: ~azure.mgmt.web.v2019_08_01.models.SnapshotRestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -11245,7 +11245,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SiteExtensionInfoCollection"]:
         """Get list of siteextensions for a web site, or a deployment slot.
 
@@ -11307,7 +11307,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -11323,7 +11323,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_extension_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SiteExtensionInfo"]:
         """Get site extension information by its ID for a web site, or a deployment slot.
 
@@ -11372,7 +11372,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -11390,7 +11390,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_extension_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SiteExtensionInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SiteExtensionInfo"]]
         error_map = {
@@ -11424,7 +11424,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 429]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -11445,7 +11445,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_extension_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SiteExtensionInfo"]:
         """Install site extension on a web site, or a deployment slot.
 
@@ -11459,8 +11459,8 @@ class WebAppsOperations:
         :type site_extension_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SiteExtensionInfo or the result of cls(response)
@@ -11519,7 +11519,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_extension_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a site extension from a web site, or a deployment slot.
 
@@ -11568,7 +11568,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11581,7 +11581,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         copy_slot_entity: "_models.CsmCopySlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -11619,7 +11619,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -11632,7 +11632,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         copy_slot_entity: "_models.CsmCopySlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copies a deployment slot to another deployment slot of an app.
 
@@ -11647,8 +11647,8 @@ class WebAppsOperations:
         :type copy_slot_entity: ~azure.mgmt.web.v2019_08_01.models.CsmCopySlotEntity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -11702,7 +11702,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppCollection"]:
         """Gets an app's deployment slots.
 
@@ -11764,7 +11764,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -11780,7 +11780,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Site"]:
         """Gets the details of a web, mobile, or API app.
 
@@ -11829,7 +11829,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -11848,7 +11848,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_envelope: "_models.Site",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Site":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Site"]
         error_map = {
@@ -11887,7 +11887,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -11908,7 +11908,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_envelope: "_models.Site",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Site"]:
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
@@ -11927,8 +11927,8 @@ class WebAppsOperations:
         :type site_envelope: ~azure.mgmt.web.v2019_08_01.models.Site
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Site or the result of cls(response)
@@ -11990,7 +11990,7 @@ class WebAppsOperations:
         slot: str,
         delete_metrics: Optional[bool] = None,
         delete_empty_server_farm: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a web, mobile, or API app, or one of the deployment slots.
 
@@ -12050,7 +12050,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12064,7 +12064,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_envelope: "_models.SitePatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Site":
         """Creates a new web, mobile, or API app in an existing resource group, or updates an existing app.
 
@@ -12123,7 +12123,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -12144,7 +12144,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         host_name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomHostnameAnalysisResult":
         """Analyze a custom hostname.
 
@@ -12197,7 +12197,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CustomHostnameAnalysisResult', pipeline_response)
@@ -12214,7 +12214,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Applies the configuration settings from the target slot onto the current slot.
 
@@ -12271,7 +12271,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12285,7 +12285,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         request: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupItem":
         """Creates a backup of an app.
 
@@ -12343,7 +12343,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -12359,7 +12359,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackupItemCollection"]:
         """Gets existing backups of an app.
 
@@ -12425,7 +12425,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -12442,7 +12442,7 @@ class WebAppsOperations:
         name: str,
         backup_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupItem":
         """Gets a backup of an app by its ID.
 
@@ -12495,7 +12495,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -12512,7 +12512,7 @@ class WebAppsOperations:
         name: str,
         backup_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a backup of an app by its ID.
 
@@ -12565,7 +12565,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12580,7 +12580,7 @@ class WebAppsOperations:
         backup_id: str,
         slot: str,
         request: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupItem":
         """Gets status of a web app backup that may be in progress, including secrets associated with the backup, such as the Azure Storage SAS URL. Also can be used to update the SAS URL for the backup if a new URL is passed in the request body.
 
@@ -12641,7 +12641,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupItem', pipeline_response)
@@ -12659,7 +12659,7 @@ class WebAppsOperations:
         backup_id: str,
         slot: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -12699,7 +12699,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -12714,7 +12714,7 @@ class WebAppsOperations:
         backup_id: str,
         slot: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a specific backup to another app (or deployment slot, if specified).
 
@@ -12733,8 +12733,8 @@ class WebAppsOperations:
         :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -12793,7 +12793,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SiteConfigResourceCollection"]:
         """List the configurations of an app.
 
@@ -12859,7 +12859,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -12876,7 +12876,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         app_settings: "_models.StringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Replaces the application settings of an app.
 
@@ -12933,7 +12933,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -12949,7 +12949,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Gets the application settings of an app.
 
@@ -12999,7 +12999,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -13016,7 +13016,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_auth_settings: "_models.SiteAuthSettings",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteAuthSettings":
         """Updates the Authentication / Authorization settings associated with web app.
 
@@ -13072,7 +13072,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -13088,7 +13088,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteAuthSettings":
         """Gets the Authentication/Authorization settings of an app.
 
@@ -13138,7 +13138,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteAuthSettings', pipeline_response)
@@ -13155,7 +13155,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         azure_storage_accounts: "_models.AzureStoragePropertyDictionaryResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureStoragePropertyDictionaryResource":
         """Updates the Azure storage account configurations of an app.
 
@@ -13212,7 +13212,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -13228,7 +13228,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AzureStoragePropertyDictionaryResource":
         """Gets the Azure storage account configurations of an app.
 
@@ -13278,7 +13278,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureStoragePropertyDictionaryResource', pipeline_response)
@@ -13295,7 +13295,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         request: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupRequest":
         """Updates the backup configuration of an app.
 
@@ -13352,7 +13352,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -13368,7 +13368,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the backup configuration of an app.
 
@@ -13418,7 +13418,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -13431,7 +13431,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupRequest":
         """Gets the backup configuration of an app.
 
@@ -13481,7 +13481,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BackupRequest', pipeline_response)
@@ -13498,7 +13498,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         connection_strings: "_models.ConnectionStringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectionStringDictionary":
         """Replaces the connection strings of an app.
 
@@ -13555,7 +13555,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -13571,7 +13571,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConnectionStringDictionary":
         """Gets the connection strings of an app.
 
@@ -13621,7 +13621,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionStringDictionary', pipeline_response)
@@ -13637,7 +13637,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteLogsConfig":
         """Gets the logging configuration of an app.
 
@@ -13687,7 +13687,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -13704,7 +13704,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_logs_config: "_models.SiteLogsConfig",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteLogsConfig":
         """Updates the logging configuration of an app.
 
@@ -13762,7 +13762,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteLogsConfig', pipeline_response)
@@ -13779,7 +13779,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         metadata: "_models.StringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Replaces the metadata of an app.
 
@@ -13836,7 +13836,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -13852,7 +13852,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Gets the metadata of an app.
 
@@ -13902,7 +13902,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -13918,7 +13918,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
@@ -13952,7 +13952,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -13968,7 +13968,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.User"]:
         """Gets the Git/FTP publishing credentials of an app.
 
@@ -13983,8 +13983,8 @@ class WebAppsOperations:
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either User or the result of cls(response)
@@ -14044,7 +14044,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         push_settings: "_models.PushSettings",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PushSettings":
         """Updates the Push settings associated with web app.
 
@@ -14100,7 +14100,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -14116,7 +14116,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PushSettings":
         """Gets the Push settings associated with web app.
 
@@ -14165,7 +14165,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PushSettings', pipeline_response)
@@ -14181,7 +14181,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Gets the configuration of an app, such as platform version and bitness, default documents, virtual applications, Always On, etc.
 
@@ -14232,7 +14232,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14249,7 +14249,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_config: "_models.SiteConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Updates the configuration of an app.
 
@@ -14306,7 +14306,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14323,7 +14323,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_config: "_models.SiteConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Updates the configuration of an app.
 
@@ -14380,7 +14380,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14396,7 +14396,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SiteConfigurationSnapshotInfoCollection"]:
         """Gets a list of web app configuration snapshots identifiers. Each element of the list contains a timestamp and the ID of the snapshot.
 
@@ -14463,7 +14463,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -14480,7 +14480,7 @@ class WebAppsOperations:
         name: str,
         snapshot_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteConfigResource":
         """Gets a snapshot of the configuration of an app at a previous point in time.
 
@@ -14533,7 +14533,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteConfigResource', pipeline_response)
@@ -14550,7 +14550,7 @@ class WebAppsOperations:
         name: str,
         snapshot_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Reverts the configuration of an app to a previous snapshot.
 
@@ -14603,7 +14603,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -14616,7 +14616,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Gets the last lines of docker logs for the given site.
 
@@ -14682,7 +14682,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Gets the ZIP archived docker log files for the given site.
 
@@ -14748,7 +14748,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContinuousWebJobCollection"]:
         """List continuous web jobs for an app, or a deployment slot.
 
@@ -14814,7 +14814,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -14831,7 +14831,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ContinuousWebJob"]:
         """Gets a continuous web job by its ID for an app, or a deployment slot.
 
@@ -14884,7 +14884,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -14903,7 +14903,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a continuous web job by its ID for an app, or a deployment slot.
 
@@ -14956,7 +14956,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -14970,7 +14970,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Start a continuous web job for an app, or a deployment slot.
 
@@ -15023,7 +15023,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15037,7 +15037,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop a continuous web job for an app, or a deployment slot.
 
@@ -15090,7 +15090,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15103,7 +15103,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentCollection"]:
         """List deployments for an app, or a deployment slot.
 
@@ -15169,7 +15169,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -15186,7 +15186,7 @@ class WebAppsOperations:
         name: str,
         id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Get a deployment by its ID for an app, or a deployment slot.
 
@@ -15239,7 +15239,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -15257,7 +15257,7 @@ class WebAppsOperations:
         id: str,
         slot: str,
         deployment: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """Create a deployment for an app, or a deployment slot.
 
@@ -15317,7 +15317,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -15334,7 +15334,7 @@ class WebAppsOperations:
         name: str,
         id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a deployment by its ID for an app, or a deployment slot.
 
@@ -15387,7 +15387,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15401,7 +15401,7 @@ class WebAppsOperations:
         name: str,
         id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Deployment":
         """List deployment log for specific deployment for an app, or a deployment slot.
 
@@ -15455,7 +15455,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Deployment', pipeline_response)
@@ -15472,7 +15472,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RestoreRequest":
         """Discovers an existing app backup that can be restored from a blob in Azure storage. Use this to get information about the databases stored in a backup.
 
@@ -15531,7 +15531,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RestoreRequest', pipeline_response)
@@ -15547,7 +15547,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IdentifierCollection"]:
         """Lists ownership identifiers for domain associated with web app.
 
@@ -15613,7 +15613,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -15630,7 +15630,7 @@ class WebAppsOperations:
         name: str,
         domain_ownership_identifier_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Identifier":
         """Get domain ownership identifier for web app.
 
@@ -15683,7 +15683,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -15701,7 +15701,7 @@ class WebAppsOperations:
         domain_ownership_identifier_name: str,
         slot: str,
         domain_ownership_identifier: "_models.Identifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Identifier":
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
@@ -15762,7 +15762,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -15779,7 +15779,7 @@ class WebAppsOperations:
         name: str,
         domain_ownership_identifier_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a domain ownership identifier for a web app.
 
@@ -15832,7 +15832,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -15847,7 +15847,7 @@ class WebAppsOperations:
         domain_ownership_identifier_name: str,
         slot: str,
         domain_ownership_identifier: "_models.Identifier",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Identifier":
         """Creates a domain ownership identifier for web app, or updates an existing ownership identifier.
 
@@ -15908,7 +15908,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Identifier', pipeline_response)
@@ -15924,7 +15924,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MSDeployStatus":
         """Get the status of the last MSDeploy operation.
 
@@ -15973,7 +15973,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -15990,7 +15990,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
@@ -16029,7 +16029,7 @@ class WebAppsOperations:
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -16048,7 +16048,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MSDeployStatus"]:
         """Invoke the MSDeploy web app extension.
 
@@ -16064,8 +16064,8 @@ class WebAppsOperations:
         :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MSDeployStatus or the result of cls(response)
@@ -16125,7 +16125,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployLog"]:
         """Get the MSDeploy Log for the last MSDeploy operation.
 
@@ -16174,7 +16174,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -16192,7 +16192,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FunctionEnvelopeCollection"]:
         """List the functions for a web site, or a deployment slot.
 
@@ -16257,7 +16257,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -16273,7 +16273,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Fetch a short lived token that can be exchanged for a master key.
 
@@ -16322,7 +16322,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -16339,7 +16339,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.FunctionEnvelope"]:
         """Get function information by its ID for web site, or a deployment slot.
 
@@ -16391,7 +16391,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -16411,7 +16411,7 @@ class WebAppsOperations:
         function_name: str,
         slot: str,
         function_envelope: "_models.FunctionEnvelope",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FunctionEnvelope":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionEnvelope"]
         error_map = {
@@ -16451,7 +16451,7 @@ class WebAppsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionEnvelope', pipeline_response)
@@ -16469,7 +16469,7 @@ class WebAppsOperations:
         function_name: str,
         slot: str,
         function_envelope: "_models.FunctionEnvelope",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FunctionEnvelope"]:
         """Create function for web site, or a deployment slot.
 
@@ -16487,8 +16487,8 @@ class WebAppsOperations:
         :type function_envelope: ~azure.mgmt.web.v2019_08_01.models.FunctionEnvelope
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FunctionEnvelope or the result of cls(response)
@@ -16551,7 +16551,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a function for web site, or a deployment slot.
 
@@ -16603,7 +16603,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -16619,7 +16619,7 @@ class WebAppsOperations:
         key_name: str,
         slot: str,
         key: "_models.KeyInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyInfo":
         """Add or update a function secret.
 
@@ -16681,7 +16681,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -16703,7 +16703,7 @@ class WebAppsOperations:
         function_name: str,
         key_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a function secret.
 
@@ -16758,7 +16758,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -16772,7 +16772,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Get function keys for a function in a web site, or a deployment slot.
 
@@ -16824,7 +16824,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -16841,7 +16841,7 @@ class WebAppsOperations:
         name: str,
         function_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FunctionSecrets":
         """Get function secrets for a function in a web site, or a deployment slot.
 
@@ -16893,7 +16893,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -16909,7 +16909,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostKeys":
         """Get host secrets for a function app.
 
@@ -16958,7 +16958,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostKeys', pipeline_response)
@@ -16974,7 +16974,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """This is to allow calling via powershell and ARM template.
 
@@ -17023,7 +17023,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17036,7 +17036,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Syncs function trigger metadata to the management database.
 
@@ -17085,7 +17085,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17101,7 +17101,7 @@ class WebAppsOperations:
         key_name: str,
         slot: str,
         key: "_models.KeyInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyInfo":
         """Add or update a host level secret.
 
@@ -17163,7 +17163,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -17185,7 +17185,7 @@ class WebAppsOperations:
         key_type: str,
         key_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a host level secret.
 
@@ -17240,7 +17240,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17253,7 +17253,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HostNameBindingCollection"]:
         """Get hostname bindings for an app or a deployment slot.
 
@@ -17319,7 +17319,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -17336,7 +17336,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostNameBinding":
         """Get the named hostname binding for an app (or deployment slot, if specified).
 
@@ -17389,7 +17389,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -17407,7 +17407,7 @@ class WebAppsOperations:
         host_name: str,
         slot: str,
         host_name_binding: "_models.HostNameBinding",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HostNameBinding":
         """Creates a hostname binding for an app.
 
@@ -17468,7 +17468,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HostNameBinding', pipeline_response)
@@ -17485,7 +17485,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         host_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a hostname binding for an app.
 
@@ -17538,7 +17538,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17553,7 +17553,7 @@ class WebAppsOperations:
         namespace_name: str,
         relay_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Retrieves a specific Service Bus Hybrid Connection used by this Web App.
 
@@ -17608,7 +17608,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17627,7 +17627,7 @@ class WebAppsOperations:
         relay_name: str,
         slot: str,
         connection_envelope: "_models.HybridConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Creates a new Hybrid Connection using a Service Bus relay.
 
@@ -17689,7 +17689,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17707,7 +17707,7 @@ class WebAppsOperations:
         namespace_name: str,
         relay_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Removes a Hybrid Connection from this site.
 
@@ -17762,7 +17762,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -17778,7 +17778,7 @@ class WebAppsOperations:
         relay_name: str,
         slot: str,
         connection_envelope: "_models.HybridConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Creates a new Hybrid Connection using a Service Bus relay.
 
@@ -17840,7 +17840,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17856,7 +17856,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HybridConnection":
         """Retrieves all Service Bus Hybrid Connections used by this Web App.
 
@@ -17905,7 +17905,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HybridConnection', pipeline_response)
@@ -17921,7 +17921,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Gets hybrid connections configured for an app (or deployment slot, if specified).
 
@@ -17972,7 +17972,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -17989,7 +17989,7 @@ class WebAppsOperations:
         name: str,
         entity_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Gets a hybrid connection configuration by its name.
 
@@ -18042,7 +18042,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18060,7 +18060,7 @@ class WebAppsOperations:
         entity_name: str,
         slot: str,
         connection_envelope: "_models.RelayServiceConnectionEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
@@ -18121,7 +18121,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18138,7 +18138,7 @@ class WebAppsOperations:
         name: str,
         entity_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a relay service connection by its name.
 
@@ -18191,7 +18191,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -18206,7 +18206,7 @@ class WebAppsOperations:
         entity_name: str,
         slot: str,
         connection_envelope: "_models.RelayServiceConnectionEntity",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RelayServiceConnectionEntity":
         """Creates a new hybrid connection configuration (PUT), or updates an existing one (PATCH).
 
@@ -18267,7 +18267,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RelayServiceConnectionEntity', pipeline_response)
@@ -18283,7 +18283,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebAppInstanceCollection"]:
         """Gets all scale-out instances of an app.
 
@@ -18349,7 +18349,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -18366,7 +18366,7 @@ class WebAppsOperations:
         name: str,
         instance_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebSiteInstanceStatus":
         """Gets all scale-out instances of an app.
 
@@ -18419,7 +18419,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebSiteInstanceStatus', pipeline_response)
@@ -18436,7 +18436,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MSDeployStatus":
         """Get the status of the last MSDeploy operation.
 
@@ -18488,7 +18488,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MSDeployStatus', pipeline_response)
@@ -18506,7 +18506,7 @@ class WebAppsOperations:
         slot: str,
         instance_id: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MSDeployStatus"]]
         error_map = {
@@ -18546,7 +18546,7 @@ class WebAppsOperations:
 
         if response.status_code not in [201, 409]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -18566,7 +18566,7 @@ class WebAppsOperations:
         slot: str,
         instance_id: str,
         ms_deploy: "_models.MSDeploy",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MSDeployStatus"]:
         """Invoke the MSDeploy web app extension.
 
@@ -18584,8 +18584,8 @@ class WebAppsOperations:
         :type ms_deploy: ~azure.mgmt.web.v2019_08_01.models.MSDeploy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MSDeployStatus or the result of cls(response)
@@ -18648,7 +18648,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MSDeployLog"]:
         """Get the MSDeploy Log for the last MSDeploy operation.
 
@@ -18700,7 +18700,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -18719,7 +18719,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessInfoCollection"]:
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
@@ -18790,7 +18790,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -18808,7 +18808,7 @@ class WebAppsOperations:
         process_id: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -18866,7 +18866,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -18886,7 +18886,7 @@ class WebAppsOperations:
         process_id: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Terminate a process by its ID for a web site, or a deployment slot, or specific scaled-out instance in a web site.
 
@@ -18944,7 +18944,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -18959,7 +18959,7 @@ class WebAppsOperations:
         process_id: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Get a memory dump of a process by its ID for a specific scaled-out instance in a web site.
 
@@ -19017,7 +19017,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -19037,7 +19037,7 @@ class WebAppsOperations:
         process_id: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessModuleInfoCollection"]:
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
@@ -19111,7 +19111,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -19130,7 +19130,7 @@ class WebAppsOperations:
         base_address: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessModuleInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -19191,7 +19191,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -19211,7 +19211,7 @@ class WebAppsOperations:
         process_id: str,
         slot: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessThreadInfoCollection"]:
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
@@ -19285,7 +19285,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -19301,7 +19301,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteCloneability":
         """Shows whether an app can be cloned to another resource group or subscription.
 
@@ -19351,7 +19351,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SiteCloneability', pipeline_response)
@@ -19367,7 +19367,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BackupItemCollection"]:
         """Gets existing backups of an app.
 
@@ -19433,7 +19433,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -19449,7 +19449,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FunctionSecrets":
         """This is to allow calling via powershell and ARM template.
 
@@ -19498,7 +19498,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FunctionSecrets', pipeline_response)
@@ -19514,7 +19514,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MigrateMySqlStatus":
         """Returns the status of MySql in app migration, if one is active, and whether or not MySql in app is enabled.
 
@@ -19564,7 +19564,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MigrateMySqlStatus', pipeline_response)
@@ -19580,7 +19580,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SwiftVirtualNetwork":
         """Gets a Swift Virtual Network connection.
 
@@ -19630,7 +19630,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -19647,7 +19647,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         connection_envelope: "_models.SwiftVirtualNetwork",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SwiftVirtualNetwork":
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
@@ -19708,7 +19708,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -19724,7 +19724,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a Swift Virtual Network connection from an app (or deployment slot).
 
@@ -19774,7 +19774,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -19788,7 +19788,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         connection_envelope: "_models.SwiftVirtualNetwork",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SwiftVirtualNetwork":
         """Integrates this Web App with a Virtual Network. This requires that 1) "swiftSupported" is true when doing a GET against this resource, and 2) that the target Subnet has already been delegated, and is not
         in use by another App Service Plan other than the one this App is in.
@@ -19849,7 +19849,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SwiftVirtualNetwork', pipeline_response)
@@ -19866,7 +19866,7 @@ class WebAppsOperations:
         name: str,
         view: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.NetworkFeatures"]:
         """Gets all network features used by the app (or deployment slot, if specified).
 
@@ -19919,7 +19919,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -19938,7 +19938,7 @@ class WebAppsOperations:
         name: str,
         operation_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -19992,7 +19992,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -20015,7 +20015,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> str:
         """Start capturing network packets for the site (To be deprecated).
 
@@ -20076,7 +20076,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)
@@ -20095,7 +20095,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
@@ -20135,7 +20135,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -20158,7 +20158,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[List["_models.NetworkTrace"]]:
         """Start capturing network packets for the site.
 
@@ -20178,8 +20178,8 @@ class WebAppsOperations:
         :type sas_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either list of NetworkTrace or the result of cls(response)
@@ -20241,7 +20241,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop ongoing capturing network packets for the site.
 
@@ -20290,7 +20290,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -20304,7 +20304,7 @@ class WebAppsOperations:
         name: str,
         operation_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -20358,7 +20358,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -20375,7 +20375,7 @@ class WebAppsOperations:
         name: str,
         operation_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -20429,7 +20429,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -20450,7 +20450,7 @@ class WebAppsOperations:
         name: str,
         operation_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         """Gets a named operation for a network trace capturing (or deployment slot, if specified).
 
@@ -20504,7 +20504,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[NetworkTrace]', pipeline_response)
@@ -20520,7 +20520,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Generates a new publishing password for an app (or deployment slot, if specified).
 
@@ -20571,7 +20571,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -20585,7 +20585,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PerfMonCounterCollection"]:
         """Gets perfmon counters for web app.
 
@@ -20656,7 +20656,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -20672,7 +20672,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SitePhpErrorLogFlag":
         """Gets web app's event logs.
 
@@ -20721,7 +20721,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SitePhpErrorLogFlag', pipeline_response)
@@ -20737,7 +20737,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Gets the premier add-ons of an app.
 
@@ -20787,7 +20787,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -20804,7 +20804,7 @@ class WebAppsOperations:
         name: str,
         premier_add_on_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Gets a named add-on of an app.
 
@@ -20857,7 +20857,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -20875,7 +20875,7 @@ class WebAppsOperations:
         premier_add_on_name: str,
         slot: str,
         premier_add_on: "_models.PremierAddOn",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Updates a named add-on of an app.
 
@@ -20935,7 +20935,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -20952,7 +20952,7 @@ class WebAppsOperations:
         name: str,
         premier_add_on_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a premier add-on from an app.
 
@@ -21005,7 +21005,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -21020,7 +21020,7 @@ class WebAppsOperations:
         premier_add_on_name: str,
         slot: str,
         premier_add_on: "_models.PremierAddOnPatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PremierAddOn":
         """Updates a named add-on of an app.
 
@@ -21080,7 +21080,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PremierAddOn', pipeline_response)
@@ -21096,7 +21096,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateAccess":
         """Gets data around private site access enablement and authorized Virtual Networks that can access the site.
 
@@ -21146,7 +21146,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -21163,7 +21163,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         access: "_models.PrivateAccess",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateAccess":
         """Sets data around private site access enablement and authorized Virtual Networks that can access the site.
 
@@ -21220,7 +21220,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateAccess', pipeline_response)
@@ -21236,7 +21236,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnectionResource":
         """Gets a private endpoint connection.
 
@@ -21285,7 +21285,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnectionResource', pipeline_response)
@@ -21302,7 +21302,7 @@ class WebAppsOperations:
         name: str,
         private_endpoint_connection_name: str,
         private_endpoint_wrapper: "_models.PrivateLinkConnectionApprovalRequestResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnectionResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionResource"]
         error_map = {
@@ -21341,7 +21341,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -21362,7 +21362,7 @@ class WebAppsOperations:
         name: str,
         private_endpoint_connection_name: str,
         private_endpoint_wrapper: "_models.PrivateLinkConnectionApprovalRequestResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnectionResource"]:
         """Approves or rejects a private endpoint connection.
 
@@ -21378,8 +21378,8 @@ class WebAppsOperations:
         :type private_endpoint_wrapper: ~azure.mgmt.web.v2019_08_01.models.PrivateLinkConnectionApprovalRequestResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionResource or the result of cls(response)
@@ -21439,9 +21439,9 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        **kwargs
-    ) -> object:
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        **kwargs: Any
+    ) -> Any:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -21473,7 +21473,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -21496,8 +21496,8 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        **kwargs
-    ) -> AsyncLROPoller[object]:
+        **kwargs: Any
+    ) -> AsyncLROPoller[Any]:
         """Deletes a private endpoint connection.
 
         Description for Deletes a private endpoint connection.
@@ -21510,16 +21510,16 @@ class WebAppsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either object or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[object]
+        :return: An instance of AsyncLROPoller that returns either any or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -21569,7 +21569,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourcesWrapper":
         """Gets the private link resources.
 
@@ -21615,7 +21615,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResourcesWrapper', pipeline_response)
@@ -21631,7 +21631,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessInfoCollection"]:
         """Get list of processes for a web site, or a deployment slot, or for a specific scaled-out instance in a web site.
 
@@ -21698,7 +21698,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -21715,7 +21715,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -21769,7 +21769,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -21788,7 +21788,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Terminate a process by its ID for a web site, or a deployment slot, or specific scaled-out instance in a web site.
 
@@ -21842,7 +21842,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -21856,7 +21856,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional[IO]:
         """Get a memory dump of a process by its ID for a specific scaled-out instance in a web site.
 
@@ -21910,7 +21910,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -21929,7 +21929,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessModuleInfoCollection"]:
         """List module information for a process by its ID for a specific scaled-out instance in a web site.
 
@@ -21999,7 +21999,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22017,7 +22017,7 @@ class WebAppsOperations:
         process_id: str,
         base_address: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ProcessModuleInfo"]:
         """Get process information by its ID for a specific scaled-out instance in a web site.
 
@@ -22074,7 +22074,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -22093,7 +22093,7 @@ class WebAppsOperations:
         name: str,
         process_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProcessThreadInfoCollection"]:
         """List the threads in a process by its ID for a specific scaled-out instance in a web site.
 
@@ -22163,7 +22163,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22179,7 +22179,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PublicCertificateCollection"]:
         """Get public certificates for an app or a deployment slot.
 
@@ -22245,7 +22245,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -22262,7 +22262,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         public_certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PublicCertificate":
         """Get the named public certificate for an app (or deployment slot, if specified).
 
@@ -22315,7 +22315,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -22333,7 +22333,7 @@ class WebAppsOperations:
         public_certificate_name: str,
         slot: str,
         public_certificate: "_models.PublicCertificate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PublicCertificate":
         """Creates a hostname binding for an app.
 
@@ -22394,7 +22394,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PublicCertificate', pipeline_response)
@@ -22411,7 +22411,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         public_certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a hostname binding for an app.
 
@@ -22464,7 +22464,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22478,7 +22478,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         publishing_profile_options: "_models.CsmPublishingProfileOptions",
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Gets the publishing profile for an app (or deployment slot, if specified).
 
@@ -22536,7 +22536,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline)
@@ -22552,7 +22552,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resets the configuration settings of the current slot if they were previously modified by calling the API with POST.
 
@@ -22603,7 +22603,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22618,7 +22618,7 @@ class WebAppsOperations:
         slot: str,
         soft_restart: Optional[bool] = None,
         synchronous: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Restarts an app (or deployment slot, if specified).
 
@@ -22678,7 +22678,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22692,7 +22692,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -22731,7 +22731,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22745,7 +22745,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         request: "_models.RestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores an app from a backup blob in Azure Storage.
 
@@ -22762,8 +22762,8 @@ class WebAppsOperations:
         :type request: ~azure.mgmt.web.v2019_08_01.models.RestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -22821,7 +22821,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         restore_request: "_models.DeletedAppRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -22860,7 +22860,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -22874,7 +22874,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         restore_request: "_models.DeletedAppRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a deleted web app to this web app.
 
@@ -22890,8 +22890,8 @@ class WebAppsOperations:
         :type restore_request: ~azure.mgmt.web.v2019_08_01.models.DeletedAppRestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -22949,7 +22949,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         restore_request: "_models.SnapshotRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -22988,7 +22988,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23002,7 +23002,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         restore_request: "_models.SnapshotRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Restores a web app from a snapshot.
 
@@ -23019,8 +23019,8 @@ class WebAppsOperations:
         :type restore_request: ~azure.mgmt.web.v2019_08_01.models.SnapshotRestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -23077,7 +23077,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SiteExtensionInfoCollection"]:
         """Get list of siteextensions for a web site, or a deployment slot.
 
@@ -23143,7 +23143,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23160,7 +23160,7 @@ class WebAppsOperations:
         name: str,
         site_extension_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SiteExtensionInfo"]:
         """Get site extension information by its ID for a web site, or a deployment slot.
 
@@ -23213,7 +23213,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -23232,7 +23232,7 @@ class WebAppsOperations:
         name: str,
         site_extension_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SiteExtensionInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SiteExtensionInfo"]]
         error_map = {
@@ -23267,7 +23267,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 429]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -23289,7 +23289,7 @@ class WebAppsOperations:
         name: str,
         site_extension_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SiteExtensionInfo"]:
         """Install site extension on a web site, or a deployment slot.
 
@@ -23306,8 +23306,8 @@ class WebAppsOperations:
         :type slot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SiteExtensionInfo or the result of cls(response)
@@ -23369,7 +23369,7 @@ class WebAppsOperations:
         name: str,
         site_extension_id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Remove a site extension from a web site, or a deployment slot.
 
@@ -23422,7 +23422,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23436,7 +23436,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         copy_slot_entity: "_models.CsmCopySlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -23475,7 +23475,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23489,7 +23489,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         copy_slot_entity: "_models.CsmCopySlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copies a deployment slot to another deployment slot of an app.
 
@@ -23507,8 +23507,8 @@ class WebAppsOperations:
         :type copy_slot_entity: ~azure.mgmt.web.v2019_08_01.models.CsmCopySlotEntity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -23566,7 +23566,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SlotDifferenceCollection"]:
         """Get the difference in configuration settings between two web app slots.
 
@@ -23642,7 +23642,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23659,7 +23659,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -23698,7 +23698,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -23712,7 +23712,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two deployment slots of an app.
 
@@ -23729,8 +23729,8 @@ class WebAppsOperations:
         :type slot_swap_entity: ~azure.mgmt.web.v2019_08_01.models.CsmSlotEntity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -23787,7 +23787,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotCollection"]:
         """Returns all Snapshots to the user.
 
@@ -23852,7 +23852,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23868,7 +23868,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotCollection"]:
         """Returns all Snapshots to the user from DRSecondary endpoint.
 
@@ -23933,7 +23933,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -23949,7 +23949,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteSourceControl":
         """Gets the source control configuration of an app.
 
@@ -23999,7 +23999,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24023,7 +24023,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_source_control: "_models.SiteSourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteSourceControl":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
@@ -24062,7 +24062,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24086,7 +24086,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_source_control: "_models.SiteSourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SiteSourceControl"]:
         """Updates the source control configuration of an app.
 
@@ -24103,8 +24103,8 @@ class WebAppsOperations:
         :type site_source_control: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SiteSourceControl or the result of cls(response)
@@ -24164,7 +24164,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the source control configuration of an app.
 
@@ -24214,7 +24214,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24228,7 +24228,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         site_source_control: "_models.SiteSourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteSourceControl":
         """Updates the source control configuration of an app.
 
@@ -24285,7 +24285,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24308,7 +24308,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Starts an app (or deployment slot, if specified).
 
@@ -24358,7 +24358,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24374,7 +24374,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
@@ -24414,7 +24414,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -24437,7 +24437,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[List["_models.NetworkTrace"]]:
         """Start capturing network packets for the site.
 
@@ -24457,8 +24457,8 @@ class WebAppsOperations:
         :type sas_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either list of NetworkTrace or the result of cls(response)
@@ -24520,7 +24520,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stops an app (or deployment slot, if specified).
 
@@ -24570,7 +24570,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24583,7 +24583,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop ongoing capturing network packets for the site.
 
@@ -24632,7 +24632,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24645,7 +24645,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sync web app repository.
 
@@ -24694,7 +24694,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24707,7 +24707,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Syncs function trigger metadata to the management database.
 
@@ -24756,7 +24756,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24769,7 +24769,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TriggeredWebJobCollection"]:
         """List triggered web jobs for an app, or a deployment slot.
 
@@ -24835,7 +24835,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -24852,7 +24852,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggeredWebJob"]:
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
@@ -24905,7 +24905,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -24924,7 +24924,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a triggered web job by its ID for an app, or a deployment slot.
 
@@ -24977,7 +24977,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -24991,7 +24991,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TriggeredJobHistoryCollection"]:
         """List a triggered web job's history for an app, or a deployment slot.
 
@@ -25060,7 +25060,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25078,7 +25078,7 @@ class WebAppsOperations:
         web_job_name: str,
         id: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggeredJobHistory"]:
         """Gets a triggered web job's history by its ID for an app, , or a deployment slot.
 
@@ -25135,7 +25135,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -25154,7 +25154,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Run a triggered web job for an app, or a deployment slot.
 
@@ -25207,7 +25207,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25221,7 +25221,7 @@ class WebAppsOperations:
         name: str,
         slot: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmUsageQuotaCollection"]:
         """Gets the quota usage information of an app (or deployment slot, if specified).
 
@@ -25294,7 +25294,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25310,7 +25310,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VnetInfo"]:
         """Gets the virtual networks the app (or deployment slot) is connected to.
 
@@ -25360,7 +25360,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
@@ -25377,7 +25377,7 @@ class WebAppsOperations:
         name: str,
         vnet_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetInfo":
         """Gets a virtual network the app (or deployment slot) is connected to by name.
 
@@ -25430,7 +25430,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -25448,7 +25448,7 @@ class WebAppsOperations:
         vnet_name: str,
         slot: str,
         connection_envelope: "_models.VnetInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetInfo":
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
@@ -25509,7 +25509,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -25526,7 +25526,7 @@ class WebAppsOperations:
         name: str,
         vnet_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a connection from an app (or deployment slot to a named virtual network.
 
@@ -25580,7 +25580,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -25595,7 +25595,7 @@ class WebAppsOperations:
         vnet_name: str,
         slot: str,
         connection_envelope: "_models.VnetInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetInfo":
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
@@ -25656,7 +25656,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -25674,7 +25674,7 @@ class WebAppsOperations:
         vnet_name: str,
         gateway_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VnetGateway"]:
         """Gets an app's Virtual Network gateway.
 
@@ -25730,7 +25730,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -25751,7 +25751,7 @@ class WebAppsOperations:
         gateway_name: str,
         slot: str,
         connection_envelope: "_models.VnetGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetGateway":
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
@@ -25814,7 +25814,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -25833,7 +25833,7 @@ class WebAppsOperations:
         gateway_name: str,
         slot: str,
         connection_envelope: "_models.VnetGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetGateway":
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
@@ -25896,7 +25896,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -25912,7 +25912,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebJobCollection"]:
         """List webjobs for an app, or a deployment slot.
 
@@ -25978,7 +25978,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -25995,7 +25995,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         slot: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebJob":
         """Get webjob information for an app, or a deployment slot.
 
@@ -26048,7 +26048,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebJob', pipeline_response)
@@ -26064,7 +26064,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SlotDifferenceCollection"]:
         """Get the difference in configuration settings between two web app slots.
 
@@ -26136,7 +26136,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26152,7 +26152,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -26190,7 +26190,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26203,7 +26203,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         slot_swap_entity: "_models.CsmSlotEntity",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two deployment slots of an app.
 
@@ -26217,8 +26217,8 @@ class WebAppsOperations:
         :type slot_swap_entity: ~azure.mgmt.web.v2019_08_01.models.CsmSlotEntity
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -26272,7 +26272,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotCollection"]:
         """Returns all Snapshots to the user.
 
@@ -26334,7 +26334,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26349,7 +26349,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotCollection"]:
         """Returns all Snapshots to the user from DRSecondary endpoint.
 
@@ -26411,7 +26411,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -26426,7 +26426,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteSourceControl":
         """Gets the source control configuration of an app.
 
@@ -26472,7 +26472,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26495,7 +26495,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_source_control: "_models.SiteSourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteSourceControl":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SiteSourceControl"]
         error_map = {
@@ -26533,7 +26533,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26556,7 +26556,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_source_control: "_models.SiteSourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SiteSourceControl"]:
         """Updates the source control configuration of an app.
 
@@ -26570,8 +26570,8 @@ class WebAppsOperations:
         :type site_source_control: ~azure.mgmt.web.v2019_08_01.models.SiteSourceControl
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SiteSourceControl or the result of cls(response)
@@ -26628,7 +26628,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the source control configuration of an app.
 
@@ -26674,7 +26674,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26687,7 +26687,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         site_source_control: "_models.SiteSourceControl",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SiteSourceControl":
         """Updates the source control configuration of an app.
 
@@ -26740,7 +26740,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26762,7 +26762,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Starts an app (or deployment slot, if specified).
 
@@ -26808,7 +26808,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -26823,7 +26823,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.NetworkTrace"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.NetworkTrace"]]
         error_map = {
@@ -26862,7 +26862,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -26884,7 +26884,7 @@ class WebAppsOperations:
         duration_in_seconds: Optional[int] = None,
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[List["_models.NetworkTrace"]]:
         """Start capturing network packets for the site.
 
@@ -26902,8 +26902,8 @@ class WebAppsOperations:
         :type sas_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either list of NetworkTrace or the result of cls(response)
@@ -26962,7 +26962,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stops an app (or deployment slot, if specified).
 
@@ -27008,7 +27008,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27020,7 +27020,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Stop ongoing capturing network packets for the site.
 
@@ -27066,7 +27066,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27078,7 +27078,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sync web app repository.
 
@@ -27124,7 +27124,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27136,7 +27136,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Syncs function trigger metadata to the management database.
 
@@ -27182,7 +27182,7 @@ class WebAppsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27194,7 +27194,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TriggeredWebJobCollection"]:
         """List triggered web jobs for an app, or a deployment slot.
 
@@ -27256,7 +27256,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27272,7 +27272,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggeredWebJob"]:
         """Gets a triggered web job by its ID for an app, or a deployment slot.
 
@@ -27321,7 +27321,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -27339,7 +27339,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a triggered web job by its ID for an app, or a deployment slot.
 
@@ -27388,7 +27388,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27401,7 +27401,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TriggeredJobHistoryCollection"]:
         """List a triggered web job's history for an app, or a deployment slot.
 
@@ -27466,7 +27466,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200, 404]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27483,7 +27483,7 @@ class WebAppsOperations:
         name: str,
         web_job_name: str,
         id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.TriggeredJobHistory"]:
         """Gets a triggered web job's history by its ID for an app, , or a deployment slot.
 
@@ -27536,7 +27536,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -27554,7 +27554,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Run a triggered web job for an app, or a deployment slot.
 
@@ -27603,7 +27603,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27616,7 +27616,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmUsageQuotaCollection"]:
         """Gets the quota usage information of an app (or deployment slot, if specified).
 
@@ -27685,7 +27685,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -27700,7 +27700,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.VnetInfo"]:
         """Gets the virtual networks the app (or deployment slot) is connected to.
 
@@ -27746,7 +27746,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('[VnetInfo]', pipeline_response)
@@ -27762,7 +27762,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetInfo":
         """Gets a virtual network the app (or deployment slot) is connected to by name.
 
@@ -27811,7 +27811,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -27828,7 +27828,7 @@ class WebAppsOperations:
         name: str,
         vnet_name: str,
         connection_envelope: "_models.VnetInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetInfo":
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
@@ -27885,7 +27885,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -27901,7 +27901,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         vnet_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a connection from an app (or deployment slot to a named virtual network.
 
@@ -27951,7 +27951,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -27965,7 +27965,7 @@ class WebAppsOperations:
         name: str,
         vnet_name: str,
         connection_envelope: "_models.VnetInfo",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetInfo":
         """Adds a Virtual Network connection to an app or slot (PUT) or updates the connection properties (PATCH).
 
@@ -28022,7 +28022,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetInfo', pipeline_response)
@@ -28039,7 +28039,7 @@ class WebAppsOperations:
         name: str,
         vnet_name: str,
         gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VnetGateway"]:
         """Gets an app's Virtual Network gateway.
 
@@ -28091,7 +28091,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -28111,7 +28111,7 @@ class WebAppsOperations:
         vnet_name: str,
         gateway_name: str,
         connection_envelope: "_models.VnetGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetGateway":
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
@@ -28170,7 +28170,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -28188,7 +28188,7 @@ class WebAppsOperations:
         vnet_name: str,
         gateway_name: str,
         connection_envelope: "_models.VnetGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VnetGateway":
         """Adds a gateway to a connected Virtual Network (PUT) or updates it (PATCH).
 
@@ -28247,7 +28247,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetGateway', pipeline_response)
@@ -28262,7 +28262,7 @@ class WebAppsOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.WebJobCollection"]:
         """List webjobs for an app, or a deployment slot.
 
@@ -28324,7 +28324,7 @@ class WebAppsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -28340,7 +28340,7 @@ class WebAppsOperations:
         resource_group_name: str,
         name: str,
         web_job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.WebJob":
         """Get webjob information for an app, or a deployment slot.
 
@@ -28389,7 +28389,7 @@ class WebAppsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('WebJob', pipeline_response)

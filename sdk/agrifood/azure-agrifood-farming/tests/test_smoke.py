@@ -16,10 +16,11 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
     def test_farmer(self, agrifood_endpoint):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
-        farmer_id = "smoke-test-farmer"
+        farmer_id = self.generate_random_name("smoke-test-farmer")
+
         farmer = client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer()
+            farmer=Farmer()
         )
 
         assert farmer.id == farmer_id
@@ -39,11 +40,13 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
     @FarmBeatsPowerShellPreparer()
     def test_boundary(self, agrifood_endpoint):
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
-        farmer_id = "smoke-test-boundary-farmer"
-        boundary_id = "smoke-test-boundary"
+
+        farmer_id = self.generate_random_name("smoke-test-boundary-farmer")
+        boundary_id = self.generate_random_name("smoke-test-boundary")
+
         farmer = client.farmers.create_or_update(
             farmer_id=farmer_id,
-            body=Farmer()
+            farmer=Farmer()
         )
         boundary = self.create_boundary_if_not_exist(
             client, farmer_id, boundary_id)

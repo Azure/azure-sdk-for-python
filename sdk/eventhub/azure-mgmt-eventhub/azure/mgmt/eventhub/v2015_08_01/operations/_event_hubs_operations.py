@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class EventHubsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class EventHubsOperations(object):
         namespace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.EventHubListResult"]
+        # type: (...) -> Iterable["_models.EventHubListResult"]
         """Gets all the Event Hubs in a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -63,7 +63,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2015_08_01.models.EventHubListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -125,10 +125,10 @@ class EventHubsOperations(object):
         resource_group_name,  # type: str
         namespace_name,  # type: str
         event_hub_name,  # type: str
-        parameters,  # type: "models.EventHubCreateOrUpdateParameters"
+        parameters,  # type: "_models.EventHubCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EventHubResource"
+        # type: (...) -> "_models.EventHubResource"
         """Creates or updates a new Event Hub as a nested resource within a Namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -144,7 +144,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.EventHubResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -256,7 +256,7 @@ class EventHubsOperations(object):
         event_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EventHubResource"
+        # type: (...) -> "_models.EventHubResource"
         """Gets an Event Hubs description for the specified Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -270,7 +270,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.EventHubResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventHubResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventHubResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -319,7 +319,7 @@ class EventHubsOperations(object):
         event_hub_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SharedAccessAuthorizationRuleListResult"]
+        # type: (...) -> Iterable["_models.SharedAccessAuthorizationRuleListResult"]
         """Gets the authorization rules for an Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -333,7 +333,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -397,10 +397,10 @@ class EventHubsOperations(object):
         namespace_name,  # type: str
         event_hub_name,  # type: str
         authorization_rule_name,  # type: str
-        parameters,  # type: "models.SharedAccessAuthorizationRuleCreateOrUpdateParameters"
+        parameters,  # type: "_models.SharedAccessAuthorizationRuleCreateOrUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SharedAccessAuthorizationRuleResource"
+        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
         """Creates or updates an AuthorizationRule for the specified Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -418,7 +418,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -474,7 +474,7 @@ class EventHubsOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SharedAccessAuthorizationRuleResource"
+        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
         """Gets an AuthorizationRule for an Event Hub by rule name.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -490,7 +490,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -541,7 +541,7 @@ class EventHubsOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SharedAccessAuthorizationRuleResource"
+        # type: (...) -> "_models.SharedAccessAuthorizationRuleResource"
         """Gets an AuthorizationRule for an Event Hub by rule name.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -557,7 +557,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.SharedAccessAuthorizationRuleResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SharedAccessAuthorizationRuleResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SharedAccessAuthorizationRuleResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -670,7 +670,7 @@ class EventHubsOperations(object):
         authorization_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceListKeys"
+        # type: (...) -> "_models.ResourceListKeys"
         """Gets the ACS and SAS connection strings for the Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -686,7 +686,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.ResourceListKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -735,10 +735,10 @@ class EventHubsOperations(object):
         namespace_name,  # type: str
         event_hub_name,  # type: str
         authorization_rule_name,  # type: str
-        parameters,  # type: "models.RegenerateKeysParameters"
+        parameters,  # type: "_models.RegenerateKeysParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceListKeys"
+        # type: (...) -> "_models.ResourceListKeys"
         """Regenerates the ACS and SAS connection strings for the Event Hub.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -757,7 +757,7 @@ class EventHubsOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2015_08_01.models.ResourceListKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceListKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceListKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

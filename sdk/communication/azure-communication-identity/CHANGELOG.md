@@ -1,7 +1,8 @@
 # Release History
 
-## 1.0.1 (Unreleased)
-
+## 1.0.1 (2021-06-08)
+### Bug Fixes
+- Fixed async client to use async bearer token credential policy instead of sync policy.
 
 ## 1.0.0 (2021-03-29)
 - Stable release of `azure-communication-identity`.
@@ -24,5 +25,5 @@
 - CommunicationIdentityClient.issue_tokens returns an instance of `azure.core.credentials.AccessToken` instead of `CommunicationUserToken`.
 
 <!-- LINKS -->
-[read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity/README.md
+[read_me]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity/README.md
 [documentation]: https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python

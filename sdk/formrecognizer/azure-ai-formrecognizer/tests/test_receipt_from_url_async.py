@@ -37,7 +37,6 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
             self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
     @pytest.mark.live_test_only
-    @pytest.mark.skip("AAD is not deployed yet")
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()

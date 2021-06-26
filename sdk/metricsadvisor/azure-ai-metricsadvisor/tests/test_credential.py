@@ -32,9 +32,9 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         assert result
 
         # rotate both keys
-        credential.update_subscription_key("xxx")
+        credential.update_key(subscription_key="xxx")
         assert credential.subscription_key == "xxx"
-        credential.update_api_key("xxx")
+        credential.update_key(api_key="xxx")
         assert credential.api_key == "xxx"
 
         # call fails
@@ -42,9 +42,9 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
             result = client.get_feedback(feedback_id=self.feedback_id)
 
         # rotate back to valid credentials
-        credential.update_subscription_key(self.subscription_key)
+        credential.update_key(subscription_key=self.subscription_key)
         assert credential.subscription_key == self.subscription_key
-        credential.update_api_key(self.api_key)
+        credential.update_key(api_key=self.api_key)
         assert credential.api_key == self.api_key
 
         # make successful call
@@ -60,7 +60,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         assert result
 
         # rotate one key
-        credential.update_subscription_key("xxx")
+        credential.update_key(subscription_key="xxx")
         assert credential.subscription_key == "xxx"
         assert credential.api_key == self.api_key
 
@@ -69,7 +69,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
             result = client.get_feedback(feedback_id=self.feedback_id)
 
         # rotate back to valid credentials
-        credential.update_subscription_key(self.subscription_key)
+        credential.update_key(subscription_key=self.subscription_key)
         assert credential.subscription_key == self.subscription_key
         assert credential.api_key == self.api_key
 
@@ -86,7 +86,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
         assert result
 
         # rotate one key
-        credential.update_api_key("xxx")
+        credential.update_key(api_key="xxx")
         assert credential.subscription_key == self.subscription_key
         assert credential.api_key == "xxx"
 
@@ -95,7 +95,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
             result = client.get_feedback(feedback_id=self.feedback_id)
 
         # rotate back to valid credentials
-        credential.update_api_key(self.api_key)
+        credential.update_key(api_key=self.api_key)
         assert credential.subscription_key == self.subscription_key
         assert credential.api_key == self.api_key
 
@@ -105,12 +105,7 @@ class TestMetricsAdvisorCredential(TestMetricsAdvisorClientBase):
 
     def test_credential_bad_input(self):
         credential = MetricsAdvisorKeyCredential(self.subscription_key, self.api_key)
-
-        with pytest.raises(ValueError):
-            credential.update_subscription_key(None)
-        with pytest.raises(ValueError):
-            credential.update_api_key(None)
         with pytest.raises(TypeError):
-            credential.update_subscription_key(subscription_key=34)
+            credential.update_key(subscription_key=34)
         with pytest.raises(TypeError):
-            credential.update_api_key(api_key=34)
+            credential.update_key(api_key=34)

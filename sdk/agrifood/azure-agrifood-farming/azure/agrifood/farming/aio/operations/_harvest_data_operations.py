@@ -77,7 +77,7 @@ class HarvestDataOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HarvestDataListResponse"]:
         """Returns a paginated list of harvest data resources under a particular farm.
 
@@ -325,7 +325,7 @@ class HarvestDataOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.HarvestDataListResponse"]:
         """Returns a paginated list of harvest data resources across all farmers.
 
@@ -538,7 +538,7 @@ class HarvestDataOperations:
         self,
         farmer_id: str,
         harvest_data_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.HarvestData":
         """Get a specified harvest data resource under a particular farmer.
 
@@ -597,8 +597,8 @@ class HarvestDataOperations:
         self,
         farmer_id: str,
         harvest_data_id: str,
-        body: Optional["_models.HarvestData"] = None,
-        **kwargs
+        harvest_data: Optional["_models.HarvestData"] = None,
+        **kwargs: Any
     ) -> "_models.HarvestData":
         """Creates or updates harvest data resource under a particular farmer.
 
@@ -606,8 +606,8 @@ class HarvestDataOperations:
         :type farmer_id: str
         :param harvest_data_id: ID of the harvest data resource.
         :type harvest_data_id: str
-        :param body: Harvest data resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.HarvestData
+        :param harvest_data: Harvest data resource payload to create or update.
+        :type harvest_data: ~azure.agrifood.farming.models.HarvestData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HarvestData, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.HarvestData
@@ -641,8 +641,8 @@ class HarvestDataOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'HarvestData')
+        if harvest_data is not None:
+            body_content = self._serialize.body(harvest_data, 'HarvestData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -671,7 +671,7 @@ class HarvestDataOperations:
         self,
         farmer_id: str,
         harvest_data_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a specified harvest data resource under a particular farmer.
 

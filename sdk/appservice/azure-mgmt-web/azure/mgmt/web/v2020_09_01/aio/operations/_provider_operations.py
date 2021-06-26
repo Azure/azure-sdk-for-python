@@ -44,7 +44,7 @@ class ProviderOperations:
     def get_available_stacks(
         self,
         os_type_selected: Optional[Union[str, "_models.Enum5"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationStackCollection"]:
         """Get available application frameworks and their versions.
 
@@ -100,7 +100,7 @@ class ProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -113,7 +113,7 @@ class ProviderOperations:
 
     def list_operations(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CsmOperationCollection"]:
         """Gets all available operations for the Microsoft.Web resource provider. Also exposes resource metric definitions.
 
@@ -166,7 +166,7 @@ class ProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -180,7 +180,7 @@ class ProviderOperations:
     def get_available_stacks_on_prem(
         self,
         os_type_selected: Optional[Union[str, "_models.Enum6"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationStackCollection"]:
         """Get available application frameworks and their versions.
 
@@ -240,7 +240,7 @@ class ProviderOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
