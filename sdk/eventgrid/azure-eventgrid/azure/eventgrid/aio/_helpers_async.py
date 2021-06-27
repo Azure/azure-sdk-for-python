@@ -9,14 +9,10 @@ from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from .. import _constants as constants
 from .._signature_credential_policy import EventGridSasCredentialPolicy
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-
-
 def _get_authentication_policy_async(credential):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
-    if isinstance(credential, AsyncTokenCredential):
+    if hasattr(credential, "get_token"):
         return AsyncBearerTokenCredentialPolicy(
             credential,
             scopes=constants.DEFAULT_EVENTGRID_SCOPE

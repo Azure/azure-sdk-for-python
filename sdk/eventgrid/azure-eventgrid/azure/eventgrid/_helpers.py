@@ -27,7 +27,6 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.credentials import TokenCredential
 
 def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
@@ -73,7 +72,7 @@ def _generate_hmac(key, message):
 def _get_authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
-    if isinstance(credential, TokenCredential):
+    if hasattr(credential, "get_token"):
         return BearerTokenCredentialPolicy(
             credential,
             scopes=constants.DEFAULT_EVENTGRID_SCOPE
