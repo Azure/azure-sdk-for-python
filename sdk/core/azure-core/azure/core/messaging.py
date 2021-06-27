@@ -159,7 +159,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             kwargs["extensions"] = extensions
 
         try:
-            return cls(
+            event_obj = cls(
                 id=event.get("id"),
                 source=event["source"],
                 type=event["type"],
@@ -173,10 +173,11 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
             if not all([_ in event for _ in ("source", "type")]):
                 if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
                     raise ValueError(
-                        "The event you are trying to parse follows the Eventgrid Schema. You can parse EventGrid events " +
-                        "using EventGridEvent.from_dict method in the azure-eventgrid library."
+                        "The event you are trying to parse follows the Eventgrid Schema. You can parse" +
+                        " EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library."
                     )
                 raise ValueError(
                     "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
                     " The `source` and `type` params are required."
                     )
+        return event_obj
