@@ -118,8 +118,9 @@ def _format_data(data):
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
 
-def set_urlencoded_body(data):
+def set_urlencoded_body(data, has_files):
     body = {}
+    default_headers = {}
     for f, d in data.items():
         if not d:
             continue
@@ -129,9 +130,11 @@ def set_urlencoded_body(data):
         else:
             _verify_data_object(f, d)
         body[f] = d
-    return {
-        "Content-Type": "application/x-www-form-urlencoded"
-    }, body
+    if not has_files:
+        # little hacky, but for files we don't send a content type with
+        # boundary so requests / aiohttp etc deal with it
+        default_headers["Content-Type"] = "application/x-www-form-urlencoded"
+    return default_headers, body
 
 def set_multipart_body(files):
     formatted_files = {

@@ -172,11 +172,7 @@ class HttpRequest:
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(data)
-        if files and data:
-            # little hacky, but for files we don't send a content type with
-            # boundary so requests / aiohttp etc deal with it
-            default_headers.pop("Content-Type")
+            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
         return default_headers
 
     @property
