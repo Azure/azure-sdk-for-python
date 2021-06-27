@@ -225,11 +225,30 @@ def test_bearer_policy_calls_sansio_methods():
     class TestException(Exception):
         pass
 
+    # during the first send...
     transport = Mock(send=Mock(side_effect=TestException))
     policy = TestPolicy(credential, "scope")
     pipeline = Pipeline(transport=transport, policies=[policy])
     with pytest.raises(TestException):
         pipeline.run(HttpRequest("GET", "https://localhost"))
+    policy.on_exception.assert_called_once_with(policy.request)
+
+    # ...or the second
+    def raise_the_second_time(*args, **kwargs):
+        if raise_the_second_time.calls == 0:
+            raise_the_second_time.calls = 1
+            return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
+        raise TestException()
+    raise_the_second_time.calls = 0
+
+    policy = TestPolicy(credential, "scope")
+    policy.on_challenge = Mock(return_value=True)
+    transport = Mock(send=Mock(wraps=raise_the_second_time))
+    pipeline = Pipeline(transport=transport, policies=[policy])
+    with pytest.raises(TestException):
+        pipeline.run(HttpRequest("GET", "https://localhost"))
+    assert transport.send.call_count == 2
+    policy.on_challenge.assert_called_once()
     policy.on_exception.assert_called_once_with(policy.request)
 
 

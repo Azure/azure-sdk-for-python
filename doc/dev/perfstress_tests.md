@@ -11,7 +11,7 @@
 
 # The perfstress framework
 
-The perfstress framework has been added to azure-devtools module. The code can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-devtools/src/azure_devtools/perfstress_tests).
+The perfstress framework has been added to azure-devtools module. The code can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-devtools/src/azure_devtools/perfstress_tests).
 The framework provides a baseclass to inherit from when writing tests, as well as some tools and utilities to facilitate running
 the tests. To start using the framework, make sure that `azure-devtools` is included in the `dev_requirements.txt` for the SDK:
 ```
@@ -29,7 +29,7 @@ The `PerfStressTest` base class is what will be used for all perf test implement
 ```python
 class PerfStressTest:
     args = {}  # Command line arguments
-    
+
     def __init__(self, arguments):
         # The command line args can be accessed on construction.
 
@@ -127,16 +127,16 @@ class ListContainersTest(PerfStressTest):
 
     async def global_setup(self):
         """The global setup is run only once.
-        
+
         Use this for any setup that can be reused multiple times by all test instances.
         """
         await super().global_setup()
         containers = [self.async_service_client.create_container(str(i)) for i in self.args.num_containers]
         await asyncio.wait(containers)
-     
+
      async def global_cleanup(self):
         """The global cleanup is run only once.
-        
+
         Use this to cleanup any resources created in setup.
         """
         async for container in self.async_service_client.list_containers():
@@ -145,7 +145,7 @@ class ListContainersTest(PerfStressTest):
 
     async def close(self):
         """This is run after cleanup.
-        
+
         Use this to close any open handles or clients.
         """
         await self.async_service_client.close()
@@ -153,7 +153,7 @@ class ListContainersTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test.
-        
+
         Try to keep this minimal and focused. Using only a single client API.
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
@@ -163,7 +163,7 @@ class ListContainersTest(PerfStressTest):
 
     async def run_async(self):
         """The asynchronous perf test.
-        
+
         Try to keep this minimal and focused. Using only a single client API.
         Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
@@ -189,7 +189,7 @@ class _StorageStreamTestBase(PerfStressTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        
+
         # Any common attributes
         self.container_name = 'streamperftests'
 
@@ -202,10 +202,10 @@ class _StorageStreamTestBase(PerfStressTest):
 
     async def global_setup(self):
         await super().global_setup()
-        
+
         # Any common setup used by all the streaming tests
         await self.async_service_client.create_container(self.container_name)
-     
+
      async def global_cleanup(self):
         # Any common cleanup used by all the streaming tests
         await self.async_service_client.delete_container(self.container_name)
@@ -218,7 +218,7 @@ class _StorageStreamTestBase(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(ListContainersTest, ListContainersTest).add_arguments(parser)
-        
+
         # Add any common arguments for the streaming test cases
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Number of concurrent threads to upload/download the data. Defaults to 1.', default=1)
         parser.add_argument('--size', nargs='?', type=int, help='Size in bytes for the amount of data to be streamed. Defaults to 1024 bytes', default=1024)
@@ -237,12 +237,12 @@ from ._test_base import _StorageStreamTestBase
 class UploadTest(_StorageStreamTestBase):
     def __init__(self, arguments):
         super().__init__(arguments)
-        
+
         # Setup service clients
         blob_name = "uploadtest"
         self.blob_client = self.service_client.get_blob_client(self.container_name, blob_name)
         self.async_blob_client = self.async_serive_client.get_blob_client(self.container_name, blob_name)
-        
+
         # Setup readable file-like upload data sources, using the configurable 'size' argument
         self.upload_stream = RandomStream(self.args.size)
         self.upload_stream_async = AsyncRandomStream(self.args.size)
@@ -251,7 +251,7 @@ class UploadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.upload_stream.reset()
-        
+
         # Test the upload API
         self.blob_client.upload_blob(
             self.upload_stream,
@@ -263,7 +263,7 @@ class UploadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.upload_stream_async.reset()
-        
+
         # Test the upload API
         await self.async_blob_client.upload_blob(
             self.upload_stream_async,
@@ -291,7 +291,7 @@ class DownloadTest(_StorageStreamTestBase):
 
     async def global_setup(self):
         await super().global_setup()
-        
+
         # Setup the test by uploading data that can be reused by all test instances.
         data = get_random_bytes(self.args.size)
         await self.async_blob_client.upload_blob(data)
@@ -300,7 +300,7 @@ class DownloadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.download_stream.reset()
-        
+
         # Test the API
         stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         stream.readinto(self.download_stream)
@@ -309,7 +309,7 @@ class DownloadTest(_StorageStreamTestBase):
         # The stream needs to be reset at the start of each run.
         # This sets the position index back to 0 with minimal overhead.
         self.download_stream.reset()
-        
+
         # Test the API
         stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
         await stream.readinto(self.download_stream)

@@ -3,7 +3,7 @@
 This package contains a Python SDK for Azure Communication Services for SMS.
 Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms) | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
 
 
 
@@ -99,7 +99,7 @@ sms_responses = sms_client.send(
 
 
 ## Troubleshooting
-SMS operations will throw an exception if the request to the server fails. The SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md). Exceptions will not be thrown if the error is caused by an individual message, only if something fails with the overall request. Please use the successful flag to validate each individual result to verify if the message was sent.
+SMS operations will throw an exception if the request to the server fails. The SMS client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md). Exceptions will not be thrown if the error is caused by an individual message, only if something fails with the overall request. Please use the successful flag to validate each individual result to verify if the message was sent.
 
 ```Python
 try:
@@ -107,7 +107,7 @@ try:
         from_="<leased-phone-number>",
         to=["<to-phone-number-1>", "<to-phone-number-2>", "<to-phone-number-3>"],
         message="Hello World via SMS")
-        
+
     for sms_response in sms_responses:
         if (sms_response.successful):
             print("Message with message id {} was successful sent to {}"
@@ -126,7 +126,7 @@ except Exception as ex:
 
 ### More sample code
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-sms/samples) directory for detailed examples of how to use this library to send an sms.
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-sms/samples) directory for detailed examples of how to use this library to send an sms.
 
 ## Provide Feedback
 
@@ -144,6 +144,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 <!-- LINKS -->
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [handle_sms_events]: https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/handle-sms-events
 [next_steps]:https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python
