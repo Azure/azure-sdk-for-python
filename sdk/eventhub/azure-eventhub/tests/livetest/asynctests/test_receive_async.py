@@ -21,10 +21,13 @@ async def test_receive_end_of_stream_async(connstr_senders):
             assert event.body_as_str() == "Receiving only a single event"
             assert list(event.body)[0] == b"Receiving only a single event"
             on_event.called = True
+            assert event.partition_key == b'0'
             event_str = str(event)
             assert ", offset: " in event_str
             assert ", sequence_number: " in event_str
             assert ", enqueued_time: " in event_str
+            assert ", partition_key: 0" in event_str
+
     on_event.called = False
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
@@ -32,7 +35,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
         task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="@latest"))
         await asyncio.sleep(10)
         assert on_event.called is False
-        senders[0].send(EventData(b"Receiving only a single event"))
+        senders[0].send(EventData(b"Receiving only a single event"), partition_key='0')
         await asyncio.sleep(10)
         assert on_event.called is True
     await task
@@ -63,7 +66,6 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
 
     on_event.event_position = None
     connection_str, senders = connstr_senders
-    senders[0].send(EventData(b"Inclusive"))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
@@ -139,7 +141,7 @@ async def test_receive_over_websocket_async(connstr_senders):
         ed = EventData("Event Number {}".format(i))
         ed.properties = app_prop
         event_list.append(ed)
-    senders[0].send(event_list)
+    senders[0].send(event_list, partition_key="0")
 
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
@@ -149,3 +151,6 @@ async def test_receive_over_websocket_async(connstr_senders):
     assert len(on_event.received) == 5
     for ed in on_event.received:
         assert ed.properties[b"raw_prop"] == b"raw_value"
+        assert ed.partition_key == b'0'
+        ed_str = str(ed)
+        assert ", partition_key=b'0'" in ed_str
