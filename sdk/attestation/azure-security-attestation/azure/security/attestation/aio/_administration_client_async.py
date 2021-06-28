@@ -144,7 +144,7 @@ class AttestationAdministrationClient(object):
         :return: A tuple containing the attestation policy and the token returned
             by the service..
 
-        :rtype: AttestationGetPolicyResult
+        :rtype: Tuple[str, AttestationToken]
 
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -218,7 +218,7 @@ class AttestationAdministrationClient(object):
 
         :return: Result of set policy operation.
 
-        :rtype: AttestationPolicyModificationResult
+        :rtype: Tuple[AttestationPolicyResult, AttestationToken]
 
         :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
@@ -319,7 +319,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
         :return: An :class:`AttestationPolicyResult` object expressing the result of the removal.
-        :rtype: AttestationPolicyModificationResult
+        :rtype: Tuple[AttestationPolicyResult, AttestationToken]
         :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
 
         .. note::
@@ -395,7 +395,7 @@ class AttestationAdministrationClient(object):
             "Not Before" time in the token.
 
         :return: A tuple containing the list of PEM encoded X.509 certificate chains and an attestation token.
-        :rtype: AttestationGetPolicyManagementCertificatesResult
+        :rtype: Tuple[List[List[str]], AttestationToken]
 
         .. admonition:: Example: Retrieving the set of policy management certificates
             for an isolated attestation instance.
@@ -458,7 +458,7 @@ class AttestationAdministrationClient(object):
         :return: Attestation service response
             encapsulating the status of the add request.
 
-        :rtype: AttestationPolicyManagementCertificateResult
+        :rtype: Tuple[AttestationPolicyCertificateResult, AttestationToken]
 
         The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes
@@ -565,7 +565,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Result describing the outcome of the certificate removal.
-        :rtype: AttestationPolicyManagementCertificateResult
+        :rtype: Tuple[AttestationPolicyCertificateResult, AttestationToken]
 
         The :class:`AttestationPolicyCertificateResult` response to the
         :meth:`remove_policy_management_certificate` API contains two attributes
