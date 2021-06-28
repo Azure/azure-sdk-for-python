@@ -344,12 +344,13 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
 
     def test_send_throws_with_bad_credential(self):
         bad_credential = "I am a bad credential"
-        with pytest.raises(ValueError, match="The provided credential should be an instance of AzureSasCredential or AzureKeyCredential"):
+        with pytest.raises(ValueError, match="The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"):
             client = EventGridPublisherClient("eventgrid_endpoint", bad_credential)
 
+    @pytest.mark.skip("Unblock after prod")
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
-    def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         credential = DefaultAzureCredential()
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(

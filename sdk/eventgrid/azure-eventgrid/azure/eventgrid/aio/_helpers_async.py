@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 
@@ -15,7 +14,7 @@ def _get_authentication_policy_async(credential):
     if hasattr(credential, "get_token"):
         return AsyncBearerTokenCredentialPolicy(
             credential,
-            scopes=constants.DEFAULT_EVENTGRID_SCOPE
+            constants.DEFAULT_EVENTGRID_SCOPE
         )
     if isinstance(credential, AzureKeyCredential):
         return AzureKeyCredentialPolicy(

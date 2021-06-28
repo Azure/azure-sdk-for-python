@@ -87,7 +87,7 @@ class EventGridPublisherClient:
 
     @staticmethod
     def _policies(
-        credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential], **kwargs: Any
+        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> List[Any]:
         auth_policy = _get_authentication_policy_async(credential)
         sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)

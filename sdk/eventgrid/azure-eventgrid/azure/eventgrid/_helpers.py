@@ -75,7 +75,7 @@ def _get_authentication_policy(credential):
     if hasattr(credential, "get_token"):
         return BearerTokenCredentialPolicy(
             credential,
-            scopes=constants.DEFAULT_EVENTGRID_SCOPE
+            constants.DEFAULT_EVENTGRID_SCOPE
         )
     if isinstance(credential, AzureKeyCredential):
         return AzureKeyCredentialPolicy(
