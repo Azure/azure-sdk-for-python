@@ -12,7 +12,18 @@ from opencensus.stats import view as view_module
 from logger import get_azure_logger
 
 
-class AzureMonitorMetric:
+class AbstractMonitorMetric:
+    def __init__(self, test_name, test_description=None):
+        pass
+
+    def record_messages_cpu_memory(self, number_of_events, cpu_usage, memory_usage):
+        pass
+
+    def record_error(self, error, extra=None):
+        pass
+
+
+class AzureMonitorMetric(AbstractMonitorMetric):
     def __init__(self, test_name, test_description=None):
         # oc will automatically search for the ENV VAR 'APPLICATIONINSIGHTS_CONNECTION_STRING'
         self.exporter = metrics_exporter.new_metrics_exporter()
