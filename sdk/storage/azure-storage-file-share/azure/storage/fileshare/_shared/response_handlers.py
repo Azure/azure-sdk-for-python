@@ -86,12 +86,12 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
+    if not storage_error.response:
+        raise storage_error
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (PartialBatchErrorException,
                                   ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
         serialized = True
-        if not storage_error.response:
-            raise storage_error
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
