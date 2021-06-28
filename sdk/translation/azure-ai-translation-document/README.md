@@ -475,7 +475,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files_wikipedia]: https://en.wikipedia.org/wiki/Tab-separated_values
-[sample_tsv_file]: ./samples/assets/glossary_sample.tsv
+[sample_tsv_file]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/assets/glossary_sample.tsv
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
