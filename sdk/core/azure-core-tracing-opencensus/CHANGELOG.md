@@ -1,9 +1,9 @@
 
 # Release History
 
-## 1.0.0b7 (2021-04-08)
+## 1.0.0b8 (Unreleased)
 
-- `kind` keyword is now supported while creating the span instance.
+- `kind` keyword is not supported while instantiating the span.
 
 ## 1.0.0b7 (2021-04-08)
 
