@@ -52,7 +52,7 @@ class UsersOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResponseWithContinuationUser"]:
         """List users in a given lab.
 
@@ -148,7 +148,7 @@ class UsersOperations:
         lab_name: str,
         user_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         """Get user.
 
@@ -219,7 +219,7 @@ class UsersOperations:
         lab_name: str,
         user_name: str,
         user: "_models.User",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         """Create or replace an existing User.
 
@@ -296,7 +296,7 @@ class UsersOperations:
         lab_account_name: str,
         lab_name: str,
         user_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -344,7 +344,7 @@ class UsersOperations:
         lab_account_name: str,
         lab_name: str,
         user_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete user. This operation can take a while to complete.
 
@@ -358,8 +358,8 @@ class UsersOperations:
         :type user_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -419,7 +419,7 @@ class UsersOperations:
         lab_name: str,
         user_name: str,
         user: "_models.UserFragment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         """Modify properties of users.
 

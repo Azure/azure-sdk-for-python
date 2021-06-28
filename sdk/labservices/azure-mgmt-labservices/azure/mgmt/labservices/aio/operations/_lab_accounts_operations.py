@@ -49,7 +49,7 @@ class LabAccountsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResponseWithContinuationLabAccount"]:
         """List lab accounts in a subscription.
 
@@ -136,7 +136,7 @@ class LabAccountsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResponseWithContinuationLabAccount"]:
         """List lab accounts in a resource group.
 
@@ -224,7 +224,7 @@ class LabAccountsOperations:
         resource_group_name: str,
         lab_account_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LabAccount":
         """Get lab account.
 
@@ -287,7 +287,7 @@ class LabAccountsOperations:
         resource_group_name: str,
         lab_account_name: str,
         lab_account: "_models.LabAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LabAccount":
         """Create or replace an existing Lab Account.
 
@@ -356,7 +356,7 @@ class LabAccountsOperations:
         self,
         resource_group_name: str,
         lab_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -400,7 +400,7 @@ class LabAccountsOperations:
         self,
         resource_group_name: str,
         lab_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete lab account. This operation can take a while to complete.
 
@@ -410,8 +410,8 @@ class LabAccountsOperations:
         :type lab_account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -465,7 +465,7 @@ class LabAccountsOperations:
         resource_group_name: str,
         lab_account_name: str,
         lab_account: "_models.LabAccountFragment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LabAccount":
         """Modify properties of lab accounts.
 
@@ -531,7 +531,7 @@ class LabAccountsOperations:
         resource_group_name: str,
         lab_account_name: str,
         create_lab_properties: "_models.CreateLabProperties",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Create a lab in a lab account.
 
@@ -594,7 +594,7 @@ class LabAccountsOperations:
         self,
         resource_group_name: str,
         lab_account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GetRegionalAvailabilityResponse":
         """Get regional availability information for each size category configured under a lab account.
 

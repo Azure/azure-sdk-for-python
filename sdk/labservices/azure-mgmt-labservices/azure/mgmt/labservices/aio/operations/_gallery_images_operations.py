@@ -49,7 +49,7 @@ class GalleryImagesOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResponseWithContinuationGalleryImage"]:
         """List gallery images in a given lab account.
 
@@ -141,7 +141,7 @@ class GalleryImagesOperations:
         lab_account_name: str,
         gallery_image_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryImage":
         """Get gallery image.
 
@@ -208,7 +208,7 @@ class GalleryImagesOperations:
         lab_account_name: str,
         gallery_image_name: str,
         gallery_image: "_models.GalleryImage",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryImage":
         """Create or replace an existing Gallery Image.
 
@@ -281,7 +281,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         lab_account_name: str,
         gallery_image_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete gallery image.
 
@@ -341,7 +341,7 @@ class GalleryImagesOperations:
         lab_account_name: str,
         gallery_image_name: str,
         gallery_image: "_models.GalleryImageFragment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryImage":
         """Modify properties of gallery images.
 

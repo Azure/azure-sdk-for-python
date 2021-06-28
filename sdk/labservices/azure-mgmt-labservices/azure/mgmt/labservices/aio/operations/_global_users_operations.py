@@ -47,7 +47,7 @@ class GlobalUsersOperations:
         user_name: str,
         environment_operations_payload: "_models.EnvironmentOperationsPayload",
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GetEnvironmentResponse":
         """Gets the virtual machine details.
 
@@ -113,7 +113,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         operation_batch_status_payload: "_models.OperationBatchStatusPayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationBatchStatusResponse":
         """Get batch operation status.
 
@@ -174,7 +174,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         operation_status_payload: "_models.OperationStatusPayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatusResponse":
         """Gets the status of long running operation.
 
@@ -235,7 +235,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         personal_preferences_operations_payload: "_models.PersonalPreferencesOperationsPayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GetPersonalPreferencesResponse":
         """Get personal preferences for a user.
 
@@ -297,7 +297,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         list_environments_payload: "_models.ListEnvironmentsPayload",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListEnvironmentsResponse":
         """List Environments for the user.
 
@@ -357,7 +357,7 @@ class GlobalUsersOperations:
     async def list_labs(
         self,
         user_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListLabsResponse":
         """List labs for the user.
 
@@ -411,7 +411,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         register_payload: "_models.RegisterPayload",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Register a user to a managed lab.
 
@@ -469,7 +469,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         reset_password_payload: "_models.ResetPasswordPayload",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -516,7 +516,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         reset_password_payload: "_models.ResetPasswordPayload",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Resets the user password on an environment This operation can take a while to complete.
 
@@ -526,8 +526,8 @@ class GlobalUsersOperations:
         :type reset_password_payload: ~azure.mgmt.labservices.models.ResetPasswordPayload
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -578,7 +578,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         environment_operations_payload: "_models.EnvironmentOperationsPayload",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -625,7 +625,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         environment_operations_payload: "_models.EnvironmentOperationsPayload",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts an environment by starting all resources inside the environment. This operation can take
         a while to complete.
@@ -637,8 +637,8 @@ class GlobalUsersOperations:
         :type environment_operations_payload: ~azure.mgmt.labservices.models.EnvironmentOperationsPayload
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -689,7 +689,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         environment_operations_payload: "_models.EnvironmentOperationsPayload",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -736,7 +736,7 @@ class GlobalUsersOperations:
         self,
         user_name: str,
         environment_operations_payload: "_models.EnvironmentOperationsPayload",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops an environment by stopping all resources inside the environment This operation can take a
         while to complete.
@@ -748,8 +748,8 @@ class GlobalUsersOperations:
         :type environment_operations_payload: ~azure.mgmt.labservices.models.EnvironmentOperationsPayload
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

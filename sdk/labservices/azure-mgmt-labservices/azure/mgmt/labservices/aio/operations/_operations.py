@@ -44,7 +44,7 @@ class Operations:
         self,
         location_name: str,
         operation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationResult":
         """Get operation.
 

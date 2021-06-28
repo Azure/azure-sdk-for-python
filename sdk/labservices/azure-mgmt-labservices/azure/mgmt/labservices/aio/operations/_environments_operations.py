@@ -53,7 +53,7 @@ class EnvironmentsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResponseWithContinuationEnvironment"]:
         """List environments in a given environment setting.
 
@@ -153,7 +153,7 @@ class EnvironmentsOperations:
         environment_setting_name: str,
         environment_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Environment":
         """Get environment.
 
@@ -228,7 +228,7 @@ class EnvironmentsOperations:
         environment_setting_name: str,
         environment_name: str,
         environment: "_models.Environment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Environment":
         """Create or replace an existing Environment.
 
@@ -309,7 +309,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -359,7 +359,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete environment. This operation can take a while to complete.
 
@@ -375,8 +375,8 @@ class EnvironmentsOperations:
         :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -439,7 +439,7 @@ class EnvironmentsOperations:
         environment_setting_name: str,
         environment_name: str,
         environment: "_models.EnvironmentFragment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Environment":
         """Modify properties of environments.
 
@@ -516,7 +516,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Claims the environment and assigns it to the user.
 
@@ -584,7 +584,7 @@ class EnvironmentsOperations:
         environment_setting_name: str,
         environment_name: str,
         reset_password_payload: "_models.ResetPasswordPayload",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -640,7 +640,7 @@ class EnvironmentsOperations:
         environment_setting_name: str,
         environment_name: str,
         reset_password_payload: "_models.ResetPasswordPayload",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Resets the user password on an environment This operation can take a while to complete.
 
@@ -658,8 +658,8 @@ class EnvironmentsOperations:
         :type reset_password_payload: ~azure.mgmt.labservices.models.ResetPasswordPayload
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -722,7 +722,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -772,7 +772,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts an environment by starting all resources inside the environment. This operation can take
         a while to complete.
@@ -789,8 +789,8 @@ class EnvironmentsOperations:
         :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -852,7 +852,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -902,7 +902,7 @@ class EnvironmentsOperations:
         lab_name: str,
         environment_setting_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Stops an environment by stopping all resources inside the environment This operation can take a
         while to complete.
@@ -919,8 +919,8 @@ class EnvironmentsOperations:
         :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
