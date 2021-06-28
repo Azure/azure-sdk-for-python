@@ -482,7 +482,6 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_sync_tokens(self, client):
-
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
         sync_token_header = self._order_dict(sync_tokens)
         sync_token_header = ",".join(str(x) for x in sync_token_header.values())
@@ -539,9 +538,9 @@ class AppConfigurationClientTest(AzureTestCase):
         assert changed_flag.enabled == None
         assert changed_flag.value == json.dumps({})
 
-        # with pytest.raises(ValueError):
-        #     set_flag.value = "bad_value"
-        #     _ = set_flag.enabled
+        set_flag.value = "bad_value"
+        assert set_flag.enabled == None
+        assert set_flag.filters == None
 
         client.delete_configuration_setting(changed_flag.key)
 
@@ -565,9 +564,8 @@ class AppConfigurationClientTest(AzureTestCase):
         updated_flag.value = json.dumps({'secret_uri': new_uri2})
         assert updated_flag.secret_id == new_uri2
 
-        # with pytest.raises(ValueError):
-        #     set_flag.value = "bad_value"
-        #     _ = set_flag.secret_id
+        set_flag.value = "bad_value"
+        assert set_flag.secret_id == None
 
         client.delete_configuration_setting(secret_reference.key)
 
