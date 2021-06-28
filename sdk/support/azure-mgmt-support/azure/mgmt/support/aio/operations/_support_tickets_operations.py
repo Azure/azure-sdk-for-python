@@ -46,7 +46,7 @@ class SupportTicketsOperations:
     async def check_name_availability(
         self,
         check_name_availability_input: "_models.CheckNameAvailabilityInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityOutput":
         """Check the availability of a resource name. This API should be used to check the uniqueness of
         the name for support ticket creation for the selected subscription.
@@ -92,7 +92,7 @@ class SupportTicketsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)
@@ -107,7 +107,7 @@ class SupportTicketsOperations:
         self,
         top: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SupportTicketsListResult"]:
         """Lists all the support tickets for an Azure subscription. You can also filter the support
         tickets by *Status* or *CreatedDate* using the $filter parameter. Output will be a paged result
@@ -177,7 +177,7 @@ class SupportTicketsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ExceptionResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -191,7 +191,7 @@ class SupportTicketsOperations:
     async def get(
         self,
         support_ticket_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SupportTicketDetails":
         """Get ticket details for an Azure subscription. Support ticket data is available for 18 months
         after ticket creation. If a ticket was created more than 18 months ago, a request for data
@@ -234,7 +234,7 @@ class SupportTicketsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SupportTicketDetails', pipeline_response)
@@ -249,7 +249,7 @@ class SupportTicketsOperations:
         self,
         support_ticket_name: str,
         update_support_ticket: "_models.UpdateSupportTicket",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SupportTicketDetails":
         """This API allows you to update the severity level, ticket status, and your contact information
         in the support ticket.:code:`<br/>`:code:`<br/>`Note: The severity levels cannot be changed if
@@ -303,7 +303,7 @@ class SupportTicketsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SupportTicketDetails', pipeline_response)
@@ -318,7 +318,7 @@ class SupportTicketsOperations:
         self,
         support_ticket_name: str,
         create_support_ticket_parameters: "_models.SupportTicketDetails",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.SupportTicketDetails"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SupportTicketDetails"]]
         error_map = {
@@ -355,7 +355,7 @@ class SupportTicketsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -372,7 +372,7 @@ class SupportTicketsOperations:
         self,
         support_ticket_name: str,
         create_support_ticket_parameters: "_models.SupportTicketDetails",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SupportTicketDetails"]:
         """Creates a new support ticket for Subscription and Service limits (Quota), Technical, Billing,
         and Subscription Management issues for the specified subscription. Learn the `prerequisites
@@ -388,11 +388,11 @@ class SupportTicketsOperations:
         ticket will reach out to you for consent if your issue requires gathering diagnostic
         information from your Azure resources.:code:`<br/>`:code:`<br/>`\ **Creating a support ticket
         for on-behalf-of**\ : Include *x-ms-authorization-auxiliary* header to provide an auxiliary
-        token as per `documentation <https://docs.microsoft.com/azure/azure-resource-
-        manager/management/authenticate-multi-tenant>`_. The primary token will be from the tenant for
-        whom a support ticket is being raised against the subscription, i.e. Cloud solution provider
-        (CSP) customer tenant. The auxiliary token will be from the Cloud solution provider (CSP)
-        partner tenant.
+        token as per `documentation
+        <https://docs.microsoft.com/azure/azure-resource-manager/management/authenticate-multi-tenant>`_.
+        The primary token will be from the tenant for whom a support ticket is being raised against the
+        subscription, i.e. Cloud solution provider (CSP) customer tenant. The auxiliary token will be
+        from the Cloud solution provider (CSP) partner tenant.
 
         :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
@@ -400,8 +400,8 @@ class SupportTicketsOperations:
         :type create_support_ticket_parameters: ~azure.mgmt.support.models.SupportTicketDetails
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SupportTicketDetails or the result of cls(response)

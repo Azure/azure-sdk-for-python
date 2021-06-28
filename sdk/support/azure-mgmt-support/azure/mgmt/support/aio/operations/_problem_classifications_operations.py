@@ -44,7 +44,7 @@ class ProblemClassificationsOperations:
     def list(
         self,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProblemClassificationsListResult"]:
         """Lists all the problem classifications (categories) available for a specific Azure service.
         Always use the service and problem classifications obtained programmatically. This practice
@@ -103,7 +103,7 @@ class ProblemClassificationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ExceptionResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -118,7 +118,7 @@ class ProblemClassificationsOperations:
         self,
         service_name: str,
         problem_classification_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProblemClassification":
         """Get problem classification details for a specific Azure service.
 
@@ -161,7 +161,7 @@ class ProblemClassificationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProblemClassification', pipeline_response)

@@ -183,8 +183,8 @@ class ContactProfile(msrest.serialization.Model):
     :param phone_number: Phone number. This is required if preferred contact method is phone.
     :type phone_number: str
     :param preferred_time_zone: Required. Time zone of the user. This is the name of the time zone
-     from `Microsoft Time Zone Index Values <https://support.microsoft.com/help/973627/microsoft-
-     time-zone-index-values>`_.
+     from `Microsoft Time Zone Index Values
+     <https://support.microsoft.com/help/973627/microsoft-time-zone-index-values>`_.
     :type preferred_time_zone: str
     :param country: Required. Country of the user. This is the ISO 3166-1 alpha-3 code.
     :type country: str
@@ -839,8 +839,8 @@ class UpdateContactProfile(msrest.serialization.Model):
     :param phone_number: Phone number. This is required if preferred contact method is phone.
     :type phone_number: str
     :param preferred_time_zone: Time zone of the user. This is the name of the time zone from
-     `Microsoft Time Zone Index Values <https://support.microsoft.com/help/973627/microsoft-time-
-     zone-index-values>`_.
+     `Microsoft Time Zone Index Values
+     <https://support.microsoft.com/help/973627/microsoft-time-zone-index-values>`_.
     :type preferred_time_zone: str
     :param country: Country of the user. This is the ISO 3166-1 alpha-3 code.
     :type country: str

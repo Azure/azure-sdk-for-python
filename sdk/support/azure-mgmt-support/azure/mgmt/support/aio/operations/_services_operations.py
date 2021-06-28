@@ -43,7 +43,7 @@ class ServicesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServicesListResult"]:
         """Lists all the Azure services available for support ticket creation. For **Technical** issues,
         select the Service Id that maps to the Azure service/product as displayed in the **Services**
@@ -99,7 +99,7 @@ class ServicesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ExceptionResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -113,7 +113,7 @@ class ServicesOperations:
     async def get(
         self,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Service":
         """Gets a specific Azure service for support ticket creation.
 
@@ -153,7 +153,7 @@ class ServicesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Service', pipeline_response)

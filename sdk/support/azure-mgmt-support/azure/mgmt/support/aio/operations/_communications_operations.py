@@ -47,7 +47,7 @@ class CommunicationsOperations:
         self,
         support_ticket_name: str,
         check_name_availability_input: "_models.CheckNameAvailabilityInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityOutput":
         """Check the availability of a resource name. This API should be used to check the uniqueness of
         the name for adding a new communication to the support ticket.
@@ -96,7 +96,7 @@ class CommunicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)
@@ -112,7 +112,7 @@ class CommunicationsOperations:
         support_ticket_name: str,
         top: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CommunicationsListResult"]:
         """Lists all communications (attachments not included) for a support ticket. :code:`<br/>`</br>
         You can also filter support ticket communications by *CreatedDate* or *CommunicationType* using
@@ -186,7 +186,7 @@ class CommunicationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ExceptionResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -201,7 +201,7 @@ class CommunicationsOperations:
         self,
         support_ticket_name: str,
         communication_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommunicationDetails":
         """Returns communication details for a support ticket.
 
@@ -245,7 +245,7 @@ class CommunicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CommunicationDetails', pipeline_response)
@@ -261,7 +261,7 @@ class CommunicationsOperations:
         support_ticket_name: str,
         communication_name: str,
         create_communication_parameters: "_models.CommunicationDetails",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.CommunicationDetails"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CommunicationDetails"]]
         error_map = {
@@ -299,7 +299,7 @@ class CommunicationsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ExceptionResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -317,7 +317,7 @@ class CommunicationsOperations:
         support_ticket_name: str,
         communication_name: str,
         create_communication_parameters: "_models.CommunicationDetails",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CommunicationDetails"]:
         """Adds a new customer communication to an Azure support ticket.
 
@@ -329,8 +329,8 @@ class CommunicationsOperations:
         :type create_communication_parameters: ~azure.mgmt.support.models.CommunicationDetails
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CommunicationDetails or the result of cls(response)
