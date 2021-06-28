@@ -47,7 +47,7 @@ class AgentPoolsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AgentPoolListResult"]:
         """Gets a list of agent pools in the specified managed cluster.
 
@@ -125,7 +125,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         agent_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AgentPool":
         """Gets the agent pool.
 
@@ -190,7 +190,7 @@ class AgentPoolsOperations:
         resource_name: str,
         agent_pool_name: str,
         parameters: "_models.AgentPool",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AgentPool":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AgentPool"]
         error_map = {
@@ -249,7 +249,7 @@ class AgentPoolsOperations:
         resource_name: str,
         agent_pool_name: str,
         parameters: "_models.AgentPool",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AgentPool"]:
         """Creates or updates an agent pool.
 
@@ -265,8 +265,8 @@ class AgentPoolsOperations:
         :type parameters: ~azure.mgmt.containerservice.v2020_03_01.models.AgentPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AgentPool or the result of cls(response)
@@ -326,7 +326,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         agent_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -372,7 +372,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         agent_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an agent pool.
 
@@ -386,8 +386,8 @@ class AgentPoolsOperations:
         :type agent_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -443,7 +443,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         resource_name: str,
         agent_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AgentPoolUpgradeProfile":
         """Gets upgrade profile for an agent pool.
 
@@ -507,7 +507,7 @@ class AgentPoolsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AgentPoolAvailableVersions":
         """Gets a list of supported versions for the specified agent pool.
 

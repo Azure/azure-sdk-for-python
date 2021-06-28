@@ -5,13 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union, Sequence, Dict, TYPE_CHECKING
+from datetime import timedelta
+from typing import Any, Union, Sequence, Dict, Optional, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError
 from .._generated.aio._monitor_query_client import MonitorQueryClient
 
-from .._generated.models import BatchRequest
+from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
 from .._helpers import process_error, construct_iso8601
-from .._models import LogsQueryResults, LogsQueryRequest, LogsQueryBody, LogsBatchResults
+from .._models import LogsQueryResults, LogsQueryRequest, LogsBatchResults
 from ._helpers_asyc import get_authentication_policy
 
 if TYPE_CHECKING:
@@ -41,7 +42,7 @@ class LogsQueryClient(object):
         self,
         workspace_id: str,
         query: str,
-        duration: str = None,
+        duration: Optional[timedelta] = None,
         **kwargs: Any) -> LogsQueryResults:
         """Execute an Analytics query.
 
@@ -56,9 +57,9 @@ class LogsQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :param str duration: The duration for which to query the data. This can also be accompanied
+        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
          with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+         taken as the end time.
         :keyword datetime start_time: The start time from which to query the data. This should be accompanied
          with either end_time or duration.
         :keyword datetime end_time: The end time till which to query the data. This should be accompanied
@@ -69,14 +70,9 @@ class LogsQueryClient(object):
         :keyword bool include_render: In the query language, it is possible to specify different render options.
          By default, the API does not return information regarding the type of visualization to show.
          If your client requires this information, specify the preference
-        :keyword workspaces: A list of workspaces that are included in the query.
-        :paramtype workspaces: list[str]
-        :keyword qualified_names: A list of qualified workspace names that are included in the query.
-        :paramtype qualified_names: list[str]
-        :keyword workspace_ids: A list of workspace IDs that are included in the query.
-        :paramtype workspace_ids: list[str]
-        :keyword azure_resource_ids: A list of Azure resource IDs that are included in the query.
-        :paramtype azure_resource_ids: list[str]
+        :keyword additional_workspaces: A list of workspaces that are included in the query.
+         These can be qualified workspace names, workspsce Ids or Azure resource Ids.
+        :paramtype additional_workspaces: list[str]
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogsQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -87,6 +83,7 @@ class LogsQueryClient(object):
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
         server_timeout = kwargs.pop("server_timeout", None)
+        additional_workspaces = kwargs.pop("additional_workspaces", None)
 
         prefer = ""
         if server_timeout:
@@ -103,6 +100,7 @@ class LogsQueryClient(object):
         body = LogsQueryBody(
             query=query,
             timespan=timespan,
+            workspaces=additional_workspaces,
             **kwargs
         )
 

@@ -84,8 +84,13 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
                 if "WWW-Authenticate" in response.http_response.headers:
                     request_authorized = await self.on_challenge(request, response)
                     if request_authorized:
-                        response = await self.next.send(request)
-                        await await_result(self.on_response, request, response)
+                        try:
+                            response = await self.next.send(request)
+                            await await_result(self.on_response, request, response)
+                        except Exception:  # pylint:disable=broad-except
+                            handled = await await_result(self.on_exception, request)
+                            if not handled:
+                                raise
 
         return response
 

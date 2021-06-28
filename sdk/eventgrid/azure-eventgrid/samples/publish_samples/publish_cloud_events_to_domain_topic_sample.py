@@ -14,7 +14,6 @@ USAGE:
     1) DOMAIN_ACCESS_KEY - The access key of your eventgrid account.
     2) DOMAIN_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
-    3) DOMAIN_NAME - the name of the topic
 """
 import sys
 import os
@@ -27,7 +26,6 @@ from azure.eventgrid import EventGridPublisherClient
 
 domain_key = os.environ["DOMAIN_ACCESS_KEY"]
 domain_endpoint = os.environ["DOMAIN_TOPIC_HOSTNAME"]
-domain_name = os.environ["DOMAIN_NAME"]
 
 
 # authenticate client
@@ -46,7 +44,7 @@ def publish_event():
             sample_members = sample(services, k=randint(1, 4))      # select random subset of team members
             event = CloudEvent(
                     type="Azure.Sdk.Demo",
-                    source=domain_name,
+                    source='/demo/domain_name',
                     data={"team": sample_members}
                     )
             event_list.append(event)

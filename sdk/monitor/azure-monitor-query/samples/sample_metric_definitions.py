@@ -3,13 +3,9 @@
 
 import os
 from azure.monitor.query import MetricsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = MetricsQueryClient(credential)
 

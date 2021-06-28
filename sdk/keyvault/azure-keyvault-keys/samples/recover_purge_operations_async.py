@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-keyvault-keys/
 #
 # 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates deleting and purging a vault(key) resource for Azure Key Vault.

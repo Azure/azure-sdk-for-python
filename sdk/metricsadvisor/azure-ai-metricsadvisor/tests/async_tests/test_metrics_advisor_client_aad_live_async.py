@@ -131,11 +131,11 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_list_metrics_series_data(self):
         async with self.client:
-            results = self.client.list_metrics_series_data(
+            results = self.client.list_metric_series_data(
                 metric_id=self.metric_id,
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
-                series_to_filter=[
+                series_keys=[
                     {"city": "Los Angeles", "category": "Homemade"}
                 ]
             )

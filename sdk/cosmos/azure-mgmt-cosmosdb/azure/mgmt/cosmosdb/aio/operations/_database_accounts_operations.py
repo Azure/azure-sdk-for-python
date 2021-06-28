@@ -47,7 +47,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountGetResults":
         """Retrieves the properties of an existing Azure Cosmos DB database account.
 
@@ -65,14 +65,14 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -106,14 +106,14 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         update_parameters: "_models.DatabaseAccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountGetResults":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseAccountGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -121,7 +121,7 @@ class DatabaseAccountsOperations:
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -159,7 +159,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         update_parameters: "_models.DatabaseAccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DatabaseAccountGetResults"]:
         """Updates the properties of an existing Azure Cosmos DB database account.
 
@@ -171,8 +171,8 @@ class DatabaseAccountsOperations:
         :type update_parameters: ~azure.mgmt.cosmosdb.models.DatabaseAccountUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DatabaseAccountGetResults or the result of cls(response)
@@ -207,7 +207,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -230,14 +230,14 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         create_update_parameters: "_models.DatabaseAccountCreateUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountGetResults":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseAccountGetResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -245,7 +245,7 @@ class DatabaseAccountsOperations:
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -283,7 +283,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         create_update_parameters: "_models.DatabaseAccountCreateUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DatabaseAccountGetResults"]:
         """Creates or updates an Azure Cosmos DB database account. The "Update" method is preferred when
         performing updates on an account.
@@ -296,8 +296,8 @@ class DatabaseAccountsOperations:
         :type create_update_parameters: ~azure.mgmt.cosmosdb.models.DatabaseAccountCreateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DatabaseAccountGetResults or the result of cls(response)
@@ -332,7 +332,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -354,20 +354,20 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -396,7 +396,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing Azure Cosmos DB database account.
 
@@ -406,8 +406,8 @@ class DatabaseAccountsOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -438,7 +438,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -461,21 +461,21 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         failover_parameters: "_models.FailoverPolicies",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._failover_priority_change_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -509,7 +509,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         failover_parameters: "_models.FailoverPolicies",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Changes the failover priority for the Azure Cosmos DB database account. A failover priority of
         0 indicates a write region. The maximum value for a failover priority = (total number of
@@ -524,8 +524,8 @@ class DatabaseAccountsOperations:
         :type failover_parameters: ~azure.mgmt.cosmosdb.models.FailoverPolicies
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -557,7 +557,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -577,7 +577,7 @@ class DatabaseAccountsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseAccountsListResult"]:
         """Lists all the Azure Cosmos DB database accounts available under the subscription.
 
@@ -591,7 +591,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -644,7 +644,7 @@ class DatabaseAccountsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseAccountsListResult"]:
         """Lists all the Azure Cosmos DB database accounts available under the given resource group.
 
@@ -660,7 +660,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -672,7 +672,7 @@ class DatabaseAccountsOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -715,7 +715,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountListKeysResult":
         """Lists the access keys for the specified Azure Cosmos DB database account.
 
@@ -733,14 +733,14 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.list_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -773,7 +773,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountListConnectionStringsResult":
         """Lists the connection strings for the specified Azure Cosmos DB database account.
 
@@ -791,14 +791,14 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.list_connection_strings.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -832,14 +832,14 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         region_parameter_for_offline: "_models.RegionForOnlineOffline",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -847,7 +847,7 @@ class DatabaseAccountsOperations:
         url = self._offline_region_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -883,7 +883,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         region_parameter_for_offline: "_models.RegionForOnlineOffline",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Offline the specified region for the specified Azure Cosmos DB database account.
 
@@ -895,8 +895,8 @@ class DatabaseAccountsOperations:
         :type region_parameter_for_offline: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -928,7 +928,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -951,14 +951,14 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         region_parameter_for_online: "_models.RegionForOnlineOffline",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -966,7 +966,7 @@ class DatabaseAccountsOperations:
         url = self._online_region_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1002,7 +1002,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         region_parameter_for_online: "_models.RegionForOnlineOffline",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Online the specified region for the specified Azure Cosmos DB database account.
 
@@ -1014,8 +1014,8 @@ class DatabaseAccountsOperations:
         :type region_parameter_for_online: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1047,7 +1047,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -1069,7 +1069,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountListReadOnlyKeysResult":
         """Lists the read-only access keys for the specified Azure Cosmos DB database account.
 
@@ -1087,14 +1087,14 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.get_read_only_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1127,7 +1127,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseAccountListReadOnlyKeysResult":
         """Lists the read-only access keys for the specified Azure Cosmos DB database account.
 
@@ -1145,14 +1145,14 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.list_read_only_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1186,21 +1186,21 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         key_to_regenerate: "_models.DatabaseAccountRegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
         url = self._regenerate_key_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1234,7 +1234,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         key_to_regenerate: "_models.DatabaseAccountRegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Regenerates an access key for the specified Azure Cosmos DB database account.
 
@@ -1246,8 +1246,8 @@ class DatabaseAccountsOperations:
         :type key_to_regenerate: ~azure.mgmt.cosmosdb.models.DatabaseAccountRegenerateKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1279,7 +1279,7 @@ class DatabaseAccountsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
         }
 
@@ -1300,7 +1300,7 @@ class DatabaseAccountsOperations:
     async def check_name_exists(
         self,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks that the Azure Cosmos DB account name already exists. A valid account name may contain
         only lowercase letters, numbers, and the '-' character, and must be between 3 and 50
@@ -1318,7 +1318,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
 
         # Construct URL
         url = self.check_name_exists.metadata['url']  # type: ignore
@@ -1353,7 +1353,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         filter: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricListResult"]:
         """Retrieves the metrics determined by the given filter for the given database account.
 
@@ -1375,7 +1375,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1388,7 +1388,7 @@ class DatabaseAccountsOperations:
                 url = self.list_metrics.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -1433,7 +1433,7 @@ class DatabaseAccountsOperations:
         resource_group_name: str,
         account_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsagesResult"]:
         """Retrieves the usages (most recent data) for the given database account.
 
@@ -1454,7 +1454,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1467,7 +1467,7 @@ class DatabaseAccountsOperations:
                 url = self.list_usages.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -1512,7 +1512,7 @@ class DatabaseAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MetricDefinitionsListResult"]:
         """Retrieves metric definitions for the given database account.
 
@@ -1530,7 +1530,7 @@ class DatabaseAccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1543,7 +1543,7 @@ class DatabaseAccountsOperations:
                 url = self.list_metric_definitions.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)

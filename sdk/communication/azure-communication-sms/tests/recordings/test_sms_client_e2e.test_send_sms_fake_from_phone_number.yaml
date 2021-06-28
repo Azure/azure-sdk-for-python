@@ -11,13 +11,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '274'
+      - '277'
       Content-Type:
       - application/json
-      Date:
-      - Tue, 13 Apr 2021 18:38:02 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:30:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -29,15 +29,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 18:38:03 GMT
+      - Tue, 22 Jun 2021 20:30:28 GMT
       ms-cv:
-      - K5QlPZ6p/0qNhQ7fRebKJg.0
+      - ARQosNcM9EO/b9GJUF1nVg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 11ms
+      - 69ms
     status:
       code: 400
       message: Bad Request

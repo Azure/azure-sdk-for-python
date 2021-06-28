@@ -9,24 +9,8 @@ from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
-SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
-
-SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                         '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
-                         '></StorageServiceStats> '
-
 # --Test Class -----------------------------------------------------------------
 class TableServiceStatsTest(AzureTestCase, TableTestCase):
-
-    @staticmethod
-    def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
-
-    @staticmethod
-    def override_response_body_with_live_status(response):
-        response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
     @tables_decorator

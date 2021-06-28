@@ -6,7 +6,7 @@
 The Azure Core pipeline is a re-structuring of the msrest pipeline introduced in msrest 0.6.0.
 Further discussions on the msrest implementation can be found in the [msrest wiki](https://github.com/Azure/msrest-for-python/wiki/msrest-0.6.0---Pipeline).
 
-The Azure Core Pipeline is an implementation of chained policies as described in the [Azure SDK guidelines](https://github.com/Azure/azure-sdk/blob/master/docs/general/design.md).
+The Azure Core Pipeline is an implementation of chained policies as described in the [Azure SDK guidelines](https://github.com/Azure/azure-sdk/blob/main/docs/general/design.md).
 
 The Python implementation of the pipeline has some mechanisms specific to Python. This is due to the fact that both synchronous and asynchronous implementations of the pipeline must be supported independently.
 
@@ -169,7 +169,7 @@ When creating the transport, "use_env_settings" parameter can be used to enable 
 synchronous_transport = RequestsTransport(use_env_settings=True)
 ```
 
-If "use_env_settings" is set to True(by default), the transport will look for environment variables 
+If "use_env_settings" is set to True(by default), the transport will look for environment variables
 
 - HTTP_PROXY
 - HTTPS_PROXY

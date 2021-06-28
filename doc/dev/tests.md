@@ -35,7 +35,7 @@ C:\Users> python -m venv -p <path/to/Python/Python27/python.exe> py27_venv
 
 ### SDK root directory
 
-In the root directory of our SDK, a number of mandatory files have been added. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/template) project, and modified to your needs.
+In the root directory of our SDK, a number of mandatory files have been added. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/template) project, and modified to your needs.
 
 - README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.docs.microsoft.com/help/contribute-ref/contribute-ref-how-to-document-sdk?branch=master#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
@@ -119,14 +119,14 @@ azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.in
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
-* mypy: runs the mypy static type checker for Python to make sure that our types are valid. In order to opt-in to mypy checks, add your package name to [this](https://github.com/Azure/azure-sdk-for-python/blob/master/eng/tox/mypy_hard_failure_packages.py) list of packages.
+* mypy: runs the mypy static type checker for Python to make sure that our types are valid. In order to opt-in to mypy checks, add your package name to [this](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/mypy_hard_failure_packages.py) list of packages.
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
-* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/master/packages/python-packages/api-stub-generator) tool on your code
+* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/api-stub-generator) tool on your code
 
 ## `devtools_testutils` Package
-The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L99-L350) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
+The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L99-L350) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
 ## Writing New Tests
 SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
@@ -135,7 +135,7 @@ SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-fo
 * Processors for modifying requests and responses when writing or reading recordings (for example, to to avoid recording credential information)
 * Patches for overriding functions and methods that don't work well with testing frameworks (such as long-running operations)
 
-Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
+Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
 ## Define credentials
 When you run tests in playback mode, they use a fake credentials file, located at [`tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake] to simulate authenticating with Azure.
@@ -152,16 +152,16 @@ live-mode: true
 ## Create Live Test Resources
 The Azure Python SDK library has two ways of providing live resources to our tests:
 * Using an ArmTemplate and the PowerShellPreparer (we will demonstrate this one)
-    * [PowerShell preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py)
-    * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/schemaregistry/azure-schemaregistry/tests/test_schema_registry.py#L30-L39) for the schemaregistry library
+    * [PowerShell preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py)
+    * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/schemaregistry/azure-schemaregistry/tests/test_schema_registry.py#L30-L39) for the schemaregistry library
 * Using an individualized preparer such as the storage preparer
-    * [Storage preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
-    * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
+    * [Storage preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
+    * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
 
-If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a PowerShellPreparer for new libraries and those without management plane libraries. The `PowerShellPreparer` uses the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`](https://github.com/Azure/azure-sdk-for-python/tree/master/eng/common/TestResources#live-test-resource-management) directory. For more information about the engineering systems in Azure SDK, check out their [wiki][engsys_wiki]
+If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a PowerShellPreparer for new libraries and those without management plane libraries. The `PowerShellPreparer` uses the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#live-test-resource-management) directory. For more information about the engineering systems in Azure SDK, check out their [wiki][engsys_wiki]
 
 1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be done in the portal by creating the resources and at the very last step (Review + Create) clicking "Download a template for automation". Save this template to a `test-resources.json` file under the directory that contains your library (`sdk/<my-library>/test-resources.json`).
-2. Use the [`New-TestResources.ps1`](https://github.com/Azure/azure-sdk-for-python/tree/master/eng/common/TestResources#on-the-desktop) script to deploy those resources.
+2. Use the [`New-TestResources.ps1`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#on-the-desktop) script to deploy those resources.
 3. Set the environment variables returned from step 2 in your current shell or add them to your `.env` file at the root of the repo to save these secrets. If you choose the latter method, you will have to make sure all the key-value pairs are in the format `<key_name>=<value>`, rather than the  `${env:<key_name>} = '<value>'` formatting used in PowerShell. The names of the environment variables should be in all capital letters, snake case, and be prefixed with the library name. Ie. `TABLES_PRIMARY_KEY`, `FORMRECOGNIZER_ACCOUNT_URL`, `EVENTHUBS_SECRET_KEY`.
 4. Create a partial implementation of the PowerShellPreparer to pass in your specific environment variables. An example implementation is shown below for schemaregistry
 
@@ -269,11 +269,11 @@ Your update should run smooth and have green dots representing passing tests. No
 
 ### Purging Secrets
 
-The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `PowerShellPreparer` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
+The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `PowerShellPreparer` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
 
 #### Special Case: Shared Access Signature
 
-Tests that use the Shared Access Signature (SAS) to authenticate a client should use the [`AzureTestCase.generate_sas`](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L357-L370) method to generate the SAS and purge the value from the recordings. An example of using this method can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/78650ba08523c14227ce8139cba5f4d1e6ed7956/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1628-L1636). The method takes any number of positional arguments, with the first being the method that creates the SAS, and any number of keyword arguments (**kwargs). The method will be purged appropriately and allow for these tests to be run in playback mode.
+Tests that use the Shared Access Signature (SAS) to authenticate a client should use the [`AzureTestCase.generate_sas`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L357-L370) method to generate the SAS and purge the value from the recordings. An example of using this method can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/78650ba08523c14227ce8139cba5f4d1e6ed7956/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1628-L1636). The method takes any number of positional arguments, with the first being the method that creates the SAS, and any number of keyword arguments (**kwargs). The method will be purged appropriately and allow for these tests to be run in playback mode.
 
 ## Functional vs. Unit Tests
 
@@ -338,8 +338,8 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 
 
 <!-- Links -->
-[advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/tests-advanced.md
+[advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
 [azure_devtools]: https://pypi.org/project/azure-devtools/
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
-[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
-[packaging]: https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/packaging.md
+[mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
+[packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md

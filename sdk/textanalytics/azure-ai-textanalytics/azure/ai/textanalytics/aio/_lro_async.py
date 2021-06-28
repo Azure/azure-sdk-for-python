@@ -86,7 +86,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollin
 
     @property
     def _current_body(self):
-        from .._generated.v3_1_preview_5.models import JobMetadata
+        from .._generated.v3_1.models import JobMetadata
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -175,7 +175,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
                 :start-after: [START analyze_healthcare_entities_with_cancellation_async]
                 :end-before: [END analyze_healthcare_entities_with_cancellation_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Cancel an existing health operation.
         """
         polling_interval = kwargs.pop("polling_interval", 5)
@@ -196,7 +196,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
     @property
     def _current_body(self):
-        from .._generated.v3_1_preview_5.models import AnalyzeJobMetadata
+        from .._generated.v3_1.models import AnalyzeJobMetadata
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
