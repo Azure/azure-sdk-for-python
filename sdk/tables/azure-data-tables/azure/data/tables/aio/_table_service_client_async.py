@@ -326,7 +326,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return TableClient(
             self.url,
             table_name=table_name,
-            credential=self.credential,
+            credential=self.credential,  # type: ignore
             api_version=self.api_version,
             pipeline=pipeline,
             location_mode=self._location_mode,

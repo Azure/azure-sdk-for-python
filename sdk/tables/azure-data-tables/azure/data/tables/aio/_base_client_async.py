@@ -48,7 +48,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
         **kwargs: Any
     ) -> None:
-        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
