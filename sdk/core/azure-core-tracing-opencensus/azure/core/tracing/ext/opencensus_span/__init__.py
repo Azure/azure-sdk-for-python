@@ -17,12 +17,12 @@ from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-nam
 from ._version import VERSION
 
 try:
-    from typing import TYPE_CHECKING, Any
+    from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union, Callable, Sequence
+    from typing import Dict, Optional, Union, Callable, Sequence, Any
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
     AttributeValue = Union[
@@ -56,12 +56,26 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :type span: :class: opencensus.trace.Span
         :param name: The name of the OpenCensus span to create if a new span is needed
         :type name: str
+        :keyword SpanKind kind: The span kind of this span.
+        :keyword links: The list of links to be added to the span.
         :paramtype links: list[~azure.core.tracing.Link]
         """
         tracer = self.get_current_tracer()
-        # start_span doesn't support kind argument
-        kind = kwargs.pop("kind", SpanKind.UNSPECIFIED) # pylint: disable=unused-variable
+        value = kwargs.pop('kind', None)
+        kind = (
+            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
+            OpenCensusSpanKind.CLIENT if value == SpanKind.PRODUCER else # No producer in opencensus
+            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
+            OpenCensusSpanKind.CLIENT if value == SpanKind.CONSUMER else # No consumer in opencensus
+            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.INTERNAL else # No internal in opencensus
+            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
+            None
+        ) # type: SpanKind
+        if value and kind is None:
+            raise ValueError("Kind {} is not supported in OpenCensus".format(value))
         self._span_instance = span or tracer.start_span(name=name, **kwargs)
+        if kind is not None:
+            self._span_instance.span_kind = kind
 
     @property
     def span_instance(self):

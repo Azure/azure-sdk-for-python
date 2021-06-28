@@ -3,7 +3,7 @@
 
 ## 1.0.0b8 (Unreleased)
 
-- `kind` keyword is not supported while instantiating the span.
+- Fix for supporting `kind` keyword while instantiating the span.
 
 ## 1.0.0b7 (2021-04-08)
 
