@@ -5,10 +5,12 @@
 #--------------------------------------------------------------------------
 
 import os
+import asyncio
 from argparse import ArgumentParser
 from datetime import timedelta
 
 from azure.servicebus import ServiceBusClient
+from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 
 from stress_test_base import StressTestRunner, StressTestRunnerAsync
 from app_insights_metric import AzureMonitorMetric
@@ -67,7 +69,7 @@ def sync_receive(client, args):
     stress_test.run()
 
 
-def async_receive(client, args):
+async def async_receive(client, args):
     azure_monitor_metric = AzureMonitorMetric("Async ServiceBus Receiver")
     process_monitor = ProcessMonitor("monitor_receiver_stress_async.log", "receiver_stress_async")
     stress_test = StressTestRunnerAsync(
@@ -98,17 +100,20 @@ if __name__ == '__main__':
     parser.add_argument("--max_message_count", type=int, default=1)
 
     args, _ = parser.parse_known_args()
+    loop = asyncio.get_event_loop()
 
-    sb_client = ServiceBusClient.from_connection_string(
-        CONNECTION_STR, logging_enable=args.logging_enable)
+    if args.method.startswith("sync"):
+        sb_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    else:
+        sb_client = AsyncServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
     if args.method == 'sync_send':
         sync_send(sb_client, args)
     elif args.method == 'async_send':
-        async_send(sb_client, args)
+        loop.run_until_complete(async_send(sb_client, args))
     elif args.method == 'sync_receive':
         sync_receive(sb_client, args)
     elif args.method == 'async_receive':
-        async_receive(sb_client, args)
+        loop.run_until_complete(async_receive(sb_client, args))
     else:
-        raise RuntimeError("Must set a method to run stress test")
+        raise RuntimeError("Must set a method to run stress test.")

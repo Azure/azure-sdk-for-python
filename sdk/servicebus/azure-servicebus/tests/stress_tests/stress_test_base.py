@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import concurrent
 import sys
 import asyncio
+import logging
 
 try:
     import psutil
@@ -325,7 +326,7 @@ class StressTestRunnerAsync(StressTestRunner):
         self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
             _logger.info("STARTING SENDER")
-            with sender:
+            async with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     _logger.info("SENDING")
                     try:
