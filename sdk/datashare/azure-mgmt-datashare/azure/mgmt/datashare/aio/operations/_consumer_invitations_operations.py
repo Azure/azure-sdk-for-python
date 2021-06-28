@@ -44,7 +44,7 @@ class ConsumerInvitationsOperations:
     def list_invitations(
         self,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ConsumerInvitationList"]:
         """List the invitations.
 
@@ -115,7 +115,7 @@ class ConsumerInvitationsOperations:
         self,
         location: str,
         invitation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConsumerInvitation":
         """Gets the invitation identified by invitationId.
 
@@ -175,7 +175,7 @@ class ConsumerInvitationsOperations:
         self,
         location: str,
         invitation: "_models.ConsumerInvitation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConsumerInvitation":
         """Rejects the invitation identified by invitationId.
 

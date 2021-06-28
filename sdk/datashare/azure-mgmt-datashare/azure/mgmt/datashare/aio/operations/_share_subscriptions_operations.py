@@ -49,7 +49,7 @@ class ShareSubscriptionsOperations:
         account_name: str,
         share_subscription_name: str,
         share_subscription_synchronization: "_models.ShareSubscriptionSynchronization",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShareSubscriptionSynchronization":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ShareSubscriptionSynchronization"]
         error_map = {
@@ -109,7 +109,7 @@ class ShareSubscriptionsOperations:
         account_name: str,
         share_subscription_name: str,
         share_subscription_synchronization: "_models.ShareSubscriptionSynchronization",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ShareSubscriptionSynchronization"]:
         """Request cancellation of a data share snapshot.
 
@@ -125,8 +125,8 @@ class ShareSubscriptionsOperations:
         :type share_subscription_synchronization: ~azure.mgmt.datashare.models.ShareSubscriptionSynchronization
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ShareSubscriptionSynchronization or the result of cls(response)
@@ -187,7 +187,7 @@ class ShareSubscriptionsOperations:
         account_name: str,
         share_subscription_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SourceShareSynchronizationSettingList"]:
         """Get source share synchronization settings for a shareSubscription.
 
@@ -276,7 +276,7 @@ class ShareSubscriptionsOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SynchronizationDetailsList"]:
         """List data set level details for a share subscription synchronization.
 
@@ -382,7 +382,7 @@ class ShareSubscriptionsOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ShareSubscriptionSynchronizationList"]:
         """List Synchronizations in a share subscription.
 
@@ -476,7 +476,7 @@ class ShareSubscriptionsOperations:
         account_name: str,
         share_subscription_name: str,
         synchronize: "_models.Synchronize",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShareSubscriptionSynchronization":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ShareSubscriptionSynchronization"]
         error_map = {
@@ -536,7 +536,7 @@ class ShareSubscriptionsOperations:
         account_name: str,
         share_subscription_name: str,
         synchronize: "_models.Synchronize",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ShareSubscriptionSynchronization"]:
         """Initiate an asynchronous data share job.
 
@@ -552,8 +552,8 @@ class ShareSubscriptionsOperations:
         :type synchronize: ~azure.mgmt.datashare.models.Synchronize
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ShareSubscriptionSynchronization or the result of cls(response)
@@ -613,7 +613,7 @@ class ShareSubscriptionsOperations:
         resource_group_name: str,
         account_name: str,
         share_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShareSubscription":
         """Get shareSubscription in an account.
 
@@ -679,7 +679,7 @@ class ShareSubscriptionsOperations:
         account_name: str,
         share_subscription_name: str,
         share_subscription: "_models.ShareSubscription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShareSubscription":
         """Create shareSubscription in an account.
 
@@ -755,7 +755,7 @@ class ShareSubscriptionsOperations:
         resource_group_name: str,
         account_name: str,
         share_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResponse"]]
         error_map = {
@@ -807,7 +807,7 @@ class ShareSubscriptionsOperations:
         resource_group_name: str,
         account_name: str,
         share_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResponse"]:
         """Delete shareSubscription in an account.
 
@@ -821,8 +821,8 @@ class ShareSubscriptionsOperations:
         :type share_subscription_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResponse or the result of cls(response)
@@ -883,7 +883,7 @@ class ShareSubscriptionsOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ShareSubscriptionList"]:
         """List of available share subscriptions under an account.
 

@@ -49,7 +49,7 @@ class TriggersOperations:
         account_name: str,
         share_subscription_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Trigger":
         """Get Trigger in a shareSubscription.
 
@@ -119,7 +119,7 @@ class TriggersOperations:
         share_subscription_name: str,
         trigger_name: str,
         trigger: "_models.Trigger",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Trigger":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Trigger"]
         error_map = {
@@ -181,7 +181,7 @@ class TriggersOperations:
         share_subscription_name: str,
         trigger_name: str,
         trigger: "_models.Trigger",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Trigger"]:
         """This method creates a trigger for a share subscription.
 
@@ -200,8 +200,8 @@ class TriggersOperations:
         :type trigger: ~azure.mgmt.datashare.models.Trigger
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Trigger or the result of cls(response)
@@ -264,7 +264,7 @@ class TriggersOperations:
         account_name: str,
         share_subscription_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResponse"]]
         error_map = {
@@ -318,7 +318,7 @@ class TriggersOperations:
         account_name: str,
         share_subscription_name: str,
         trigger_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResponse"]:
         """Delete Trigger in a shareSubscription.
 
@@ -334,8 +334,8 @@ class TriggersOperations:
         :type trigger_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResponse or the result of cls(response)
@@ -397,7 +397,7 @@ class TriggersOperations:
         account_name: str,
         share_subscription_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TriggerList"]:
         """List Triggers in a share subscription.
 

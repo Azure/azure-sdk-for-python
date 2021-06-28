@@ -49,7 +49,7 @@ class DataSetsOperations:
         account_name: str,
         share_name: str,
         data_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataSet":
         """Get DataSet in a share.
 
@@ -119,7 +119,7 @@ class DataSetsOperations:
         share_name: str,
         data_set_name: str,
         data_set: "_models.DataSet",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataSet":
         """Adds a new data set to an existing share.
 
@@ -199,7 +199,7 @@ class DataSetsOperations:
         account_name: str,
         share_name: str,
         data_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -248,7 +248,7 @@ class DataSetsOperations:
         account_name: str,
         share_name: str,
         data_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete DataSet in a share.
 
@@ -264,8 +264,8 @@ class DataSetsOperations:
         :type data_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -326,7 +326,7 @@ class DataSetsOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataSetList"]:
         """List DataSets in a share.
 

@@ -52,7 +52,7 @@ class SharesOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SynchronizationDetailsList"]:
         """List data set level details for a share synchronization.
 
@@ -158,7 +158,7 @@ class SharesOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ShareSynchronizationList"]:
         """List Synchronizations in a share.
 
@@ -251,7 +251,7 @@ class SharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Share":
         """Get a specified share.
 
@@ -317,7 +317,7 @@ class SharesOperations:
         account_name: str,
         share_name: str,
         share: "_models.Share",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Share":
         """Create a share in the given account.
 
@@ -393,7 +393,7 @@ class SharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResponse"]]
         error_map = {
@@ -445,7 +445,7 @@ class SharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResponse"]:
         """Deletes a share.
 
@@ -459,8 +459,8 @@ class SharesOperations:
         :type share_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResponse or the result of cls(response)
@@ -521,7 +521,7 @@ class SharesOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ShareList"]:
         """List of available shares under an account.
 

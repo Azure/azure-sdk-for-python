@@ -47,7 +47,7 @@ class InvitationsOperations:
         account_name: str,
         share_name: str,
         invitation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Invitation":
         """Get Invitation in a share.
 
@@ -117,7 +117,7 @@ class InvitationsOperations:
         share_name: str,
         invitation_name: str,
         invitation: "_models.Invitation",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Invitation":
         """Sends a new invitation to a recipient to access a share.
 
@@ -197,7 +197,7 @@ class InvitationsOperations:
         account_name: str,
         share_name: str,
         invitation_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete Invitation in a share.
 
@@ -265,7 +265,7 @@ class InvitationsOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InvitationList"]:
         """List all Invitations in a share.
 

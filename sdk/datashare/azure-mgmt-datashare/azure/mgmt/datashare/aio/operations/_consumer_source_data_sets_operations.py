@@ -47,7 +47,7 @@ class ConsumerSourceDataSetsOperations:
         account_name: str,
         share_subscription_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ConsumerSourceDataSetList"]:
         """Get source dataSets of a shareSubscription.
 

@@ -120,7 +120,7 @@ class OutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARQUET = "Parquet"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the data set mapping.
+    """Provisioning state of the Account
     """
 
     SUCCEEDED = "Succeeded"

@@ -46,7 +46,7 @@ class AccountsOperations:
     def list_by_subscription(
         self,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AccountList"]:
         """List Accounts in a subscription.
 
@@ -121,7 +121,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Account":
         """Get an account under a resource group.
 
@@ -183,7 +183,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         account: "_models.Account",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Account":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Account"]
         error_map = {
@@ -241,7 +241,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         account: "_models.Account",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Account"]:
         """Create an account in the given resource group.
 
@@ -255,8 +255,8 @@ class AccountsOperations:
         :type account: ~azure.mgmt.datashare.models.Account
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Account or the result of cls(response)
@@ -313,7 +313,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResponse"]]
         error_map = {
@@ -363,7 +363,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResponse"]:
         """Delete an account.
 
@@ -375,8 +375,8 @@ class AccountsOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResponse or the result of cls(response)
@@ -433,7 +433,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         account_update_parameters: "_models.AccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Account":
         """Patch a given account.
 
@@ -501,7 +501,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AccountList"]:
         """List Accounts in a resource group.
 

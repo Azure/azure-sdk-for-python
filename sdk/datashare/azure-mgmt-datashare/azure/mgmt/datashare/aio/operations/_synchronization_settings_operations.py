@@ -49,7 +49,7 @@ class SynchronizationSettingsOperations:
         account_name: str,
         share_name: str,
         synchronization_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SynchronizationSetting":
         """Get synchronizationSetting in a share.
 
@@ -119,7 +119,7 @@ class SynchronizationSettingsOperations:
         share_name: str,
         synchronization_setting_name: str,
         synchronization_setting: "_models.SynchronizationSetting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SynchronizationSetting":
         """Adds a new synchronization setting to an existing share.
 
@@ -199,7 +199,7 @@ class SynchronizationSettingsOperations:
         account_name: str,
         share_name: str,
         synchronization_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationResponse"]]
         error_map = {
@@ -253,7 +253,7 @@ class SynchronizationSettingsOperations:
         account_name: str,
         share_name: str,
         synchronization_setting_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationResponse"]:
         """Delete synchronizationSetting in a share.
 
@@ -269,8 +269,8 @@ class SynchronizationSettingsOperations:
         :type synchronization_setting_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationResponse or the result of cls(response)
@@ -332,7 +332,7 @@ class SynchronizationSettingsOperations:
         account_name: str,
         share_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SynchronizationSettingList"]:
         """List synchronizationSettings in a share.
 

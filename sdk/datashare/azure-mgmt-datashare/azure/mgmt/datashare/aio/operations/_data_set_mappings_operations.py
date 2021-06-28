@@ -47,7 +47,7 @@ class DataSetMappingsOperations:
         account_name: str,
         share_subscription_name: str,
         data_set_mapping_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataSetMapping":
         """Get DataSetMapping in a shareSubscription.
 
@@ -117,7 +117,7 @@ class DataSetMappingsOperations:
         share_subscription_name: str,
         data_set_mapping_name: str,
         data_set_mapping: "_models.DataSetMapping",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataSetMapping":
         """Maps a source data set in the source share to a sink data set in the share subscription.
         Enables copying the data set from source to destination.
@@ -199,7 +199,7 @@ class DataSetMappingsOperations:
         account_name: str,
         share_subscription_name: str,
         data_set_mapping_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete DataSetMapping in a shareSubscription.
 
@@ -267,7 +267,7 @@ class DataSetMappingsOperations:
         skip_token: Optional[str] = None,
         filter: Optional[str] = None,
         orderby: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataSetMappingList"]:
         """List DataSetMappings in a share subscription.
 
