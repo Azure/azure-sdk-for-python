@@ -46,7 +46,7 @@ class EventSourcesOperations:
         environment_name: str,
         event_source_name: str,
         parameters: "_models.EventSourceCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EventSourceResource":
         """Create or update an event source under the specified environment.
 
@@ -120,7 +120,7 @@ class EventSourcesOperations:
         resource_group_name: str,
         environment_name: str,
         event_source_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EventSourceResource":
         """Gets the event source with the specified name in the specified environment.
 
@@ -185,7 +185,7 @@ class EventSourcesOperations:
         environment_name: str,
         event_source_name: str,
         event_source_update_parameters: "_models.EventSourceUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EventSourceResource":
         """Updates the event source with the specified name in the specified subscription, resource group,
         and environment.
@@ -258,7 +258,7 @@ class EventSourcesOperations:
         resource_group_name: str,
         environment_name: str,
         event_source_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the event source with the specified name in the specified subscription, resource group,
         and environment.
@@ -319,7 +319,7 @@ class EventSourcesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EventSourceListResponse":
         """Lists all the available event sources associated with the subscription and within the specified
         resource group and environment.

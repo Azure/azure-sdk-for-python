@@ -46,7 +46,7 @@ class ReferenceDataSetsOperations:
         environment_name: str,
         reference_data_set_name: str,
         parameters: "_models.ReferenceDataSetCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReferenceDataSetResource":
         """Create or update a reference data set in the specified environment.
 
@@ -120,7 +120,7 @@ class ReferenceDataSetsOperations:
         resource_group_name: str,
         environment_name: str,
         reference_data_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReferenceDataSetResource":
         """Gets the reference data set with the specified name in the specified environment.
 
@@ -185,7 +185,7 @@ class ReferenceDataSetsOperations:
         environment_name: str,
         reference_data_set_name: str,
         reference_data_set_update_parameters: "_models.ReferenceDataSetUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReferenceDataSetResource":
         """Updates the reference data set with the specified name in the specified subscription, resource
         group, and environment.
@@ -258,7 +258,7 @@ class ReferenceDataSetsOperations:
         resource_group_name: str,
         environment_name: str,
         reference_data_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the reference data set with the specified name in the specified subscription, resource
         group, and environment.
@@ -319,7 +319,7 @@ class ReferenceDataSetsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ReferenceDataSetListResponse":
         """Lists all the available reference data sets associated with the subscription and within the
         specified resource group and environment.

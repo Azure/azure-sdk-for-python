@@ -72,6 +72,15 @@ class EventSourceResourceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     MICROSOFT_EVENT_HUB = "Microsoft.EventHub"
     MICROSOFT_IO_T_HUB = "Microsoft.IoTHub"
 
+class IngressStartAtType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the ingressStartAt, It can be "EarliestAvailable", "EventSourceCreationTime",
+    "CustomEnqueuedTime".
+    """
+
+    EARLIEST_AVAILABLE = "EarliestAvailable"
+    EVENT_SOURCE_CREATION_TIME = "EventSourceCreationTime"
+    CUSTOM_ENQUEUED_TIME = "CustomEnqueuedTime"
+
 class IngressState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """This string represents the state of ingress operations on an environment. It can be "Disabled",
     "Ready", "Running", "Paused" or "Unknown"

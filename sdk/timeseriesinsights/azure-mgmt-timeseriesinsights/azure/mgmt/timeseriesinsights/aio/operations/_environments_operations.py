@@ -47,7 +47,7 @@ class EnvironmentsOperations:
         resource_group_name: str,
         environment_name: str,
         parameters: "_models.EnvironmentCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.EnvironmentResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.EnvironmentResource"]]
         error_map = {
@@ -105,7 +105,7 @@ class EnvironmentsOperations:
         resource_group_name: str,
         environment_name: str,
         parameters: "_models.EnvironmentCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.EnvironmentResource"]:
         """Create or update an environment in the specified subscription and resource group.
 
@@ -117,8 +117,8 @@ class EnvironmentsOperations:
         :type parameters: ~azure.mgmt.timeseriesinsights.models.EnvironmentCreateOrUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EnvironmentResource or the result of cls(response)
@@ -176,7 +176,7 @@ class EnvironmentsOperations:
         resource_group_name: str,
         environment_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EnvironmentResource":
         """Gets the environment with the specified name in the specified subscription and resource group.
 
@@ -241,7 +241,7 @@ class EnvironmentsOperations:
         resource_group_name: str,
         environment_name: str,
         environment_update_parameters: "_models.EnvironmentUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EnvironmentResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EnvironmentResource"]
         error_map = {
@@ -294,7 +294,7 @@ class EnvironmentsOperations:
         resource_group_name: str,
         environment_name: str,
         environment_update_parameters: "_models.EnvironmentUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.EnvironmentResource"]:
         """Updates the environment with the specified name in the specified subscription and resource
         group.
@@ -309,8 +309,8 @@ class EnvironmentsOperations:
         :type environment_update_parameters: ~azure.mgmt.timeseriesinsights.models.EnvironmentUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either EnvironmentResource or the result of cls(response)
@@ -367,7 +367,7 @@ class EnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the environment with the specified name in the specified subscription and resource
         group.
@@ -423,7 +423,7 @@ class EnvironmentsOperations:
     async def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EnvironmentListResponse":
         """Lists all the available environments associated with the subscription and within the specified
         resource group.
@@ -477,7 +477,7 @@ class EnvironmentsOperations:
 
     async def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EnvironmentListResponse":
         """Lists all the available environments within a subscription, irrespective of the resource
         groups.

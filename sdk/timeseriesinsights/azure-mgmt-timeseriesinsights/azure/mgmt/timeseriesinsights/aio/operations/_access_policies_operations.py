@@ -46,7 +46,7 @@ class AccessPoliciesOperations:
         environment_name: str,
         access_policy_name: str,
         parameters: "_models.AccessPolicyCreateOrUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessPolicyResource":
         """Create or update an access policy in the specified environment.
 
@@ -120,7 +120,7 @@ class AccessPoliciesOperations:
         resource_group_name: str,
         environment_name: str,
         access_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessPolicyResource":
         """Gets the access policy with the specified name in the specified environment.
 
@@ -185,7 +185,7 @@ class AccessPoliciesOperations:
         environment_name: str,
         access_policy_name: str,
         access_policy_update_parameters: "_models.AccessPolicyUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessPolicyResource":
         """Updates the access policy with the specified name in the specified subscription, resource
         group, and environment.
@@ -258,7 +258,7 @@ class AccessPoliciesOperations:
         resource_group_name: str,
         environment_name: str,
         access_policy_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the access policy with the specified name in the specified subscription, resource
         group, and environment.
@@ -319,7 +319,7 @@ class AccessPoliciesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessPolicyListResponse":
         """Lists all the available access policies associated with the environment.
 

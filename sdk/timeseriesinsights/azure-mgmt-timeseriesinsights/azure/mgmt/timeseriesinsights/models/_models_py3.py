@@ -220,6 +220,13 @@ class EventSourceCommonProperties(ResourceProperties):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     """
 
     _validation = {
@@ -231,16 +238,22 @@ class EventSourceCommonProperties(ResourceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
         super(EventSourceCommonProperties, self).__init__(**kwargs)
         self.timestamp_property_name = timestamp_property_name
+        self.type = type
+        self.time = time
 
 
 class AzureEventSourceProperties(EventSourceCommonProperties):
@@ -259,6 +272,13 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -274,6 +294,8 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
     }
 
@@ -282,9 +304,11 @@ class AzureEventSourceProperties(EventSourceCommonProperties):
         *,
         event_source_resource_id: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(AzureEventSourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, **kwargs)
+        super(AzureEventSourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, **kwargs)
         self.event_source_resource_id = event_source_resource_id
 
 
@@ -652,17 +676,17 @@ class EnvironmentUpdateParameters(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: Gen1EnvironmentUpdateParameters, Gen2EnvironmentUpdateParameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
-     "Gen1", "Gen2".
-    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
+    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+     include: "Gen1", "Gen2".
+    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
     :param tags: A set of tags. Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -701,6 +725,13 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -732,6 +763,8 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
@@ -748,9 +781,11 @@ class EventHubEventSourceCommonProperties(AzureEventSourceProperties):
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, **kwargs)
+        super(EventHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, event_source_resource_id=event_source_resource_id, **kwargs)
         self.service_bus_namespace = service_bus_namespace
         self.event_hub_name = event_hub_name
         self.consumer_group_name = consumer_group_name
@@ -836,6 +871,13 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -878,6 +920,8 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
@@ -899,6 +943,8 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         tags: Optional[Dict[str, str]] = None,
         local_timestamp: Optional["LocalTimestamp"] = None,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
         super(EventHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, local_timestamp=local_timestamp, **kwargs)
@@ -906,6 +952,8 @@ class EventHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParam
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.type = type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.service_bus_namespace = service_bus_namespace
         self.event_hub_name = event_hub_name
@@ -930,6 +978,13 @@ class EventHubEventSourceCreationProperties(EventHubEventSourceCommonProperties)
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -966,6 +1021,8 @@ class EventHubEventSourceCreationProperties(EventHubEventSourceCommonProperties)
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
@@ -984,9 +1041,11 @@ class EventHubEventSourceCreationProperties(EventHubEventSourceCommonProperties)
         key_name: str,
         shared_access_key: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        super(EventHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
         self.shared_access_key = shared_access_key
 
 
@@ -1143,6 +1202,14 @@ class EventHubEventSourceResource(EventSourceResource):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type_properties_ingress_start_at_type: The type of the ingressStartAt, It can be
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include:
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type_properties_ingress_start_at_type: str or
+     ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -1185,6 +1252,8 @@ class EventHubEventSourceResource(EventSourceResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'type_properties_ingress_start_at_type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'properties.serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
@@ -1203,6 +1272,8 @@ class EventHubEventSourceResource(EventSourceResource):
         key_name: str,
         tags: Optional[Dict[str, str]] = None,
         timestamp_property_name: Optional[str] = None,
+        type_properties_ingress_start_at_type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
         super(EventHubEventSourceResource, self).__init__(location=location, tags=tags, **kwargs)
@@ -1210,6 +1281,8 @@ class EventHubEventSourceResource(EventSourceResource):
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.type_properties_ingress_start_at_type = type_properties_ingress_start_at_type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.service_bus_namespace = service_bus_namespace
         self.event_hub_name = event_hub_name
@@ -1233,6 +1306,13 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -1264,6 +1344,8 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'service_bus_namespace': {'key': 'serviceBusNamespace', 'type': 'str'},
         'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
@@ -1280,9 +1362,11 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(EventHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        super(EventHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, event_source_resource_id=event_source_resource_id, service_bus_namespace=service_bus_namespace, event_hub_name=event_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
 
 
 class EventSourceUpdateParameters(msrest.serialization.Model):
@@ -1291,17 +1375,17 @@ class EventSourceUpdateParameters(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: EventHubEventSourceUpdateParameters, IoTHubEventSourceUpdateParameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
-     "Microsoft.EventHub", "Microsoft.IoTHub".
-    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
+    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+     include: "Microsoft.EventHub", "Microsoft.IoTHub".
+    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
     :param tags: A set of tags. Key-value pairs of additional properties for the event source.
     :type tags: dict[str, str]
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -1327,11 +1411,11 @@ class EventSourceUpdateParameters(msrest.serialization.Model):
 class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """Parameters supplied to the Update Event Source operation to update an EventHub event source.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
-     "Microsoft.EventHub", "Microsoft.IoTHub".
-    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
+    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+     include: "Microsoft.EventHub", "Microsoft.IoTHub".
+    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
     :param tags: A set of tags. Key-value pairs of additional properties for the event source.
     :type tags: dict[str, str]
     :param timestamp_property_name: The event property that will be used as the event source's
@@ -1350,7 +1434,7 @@ class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -1699,11 +1783,11 @@ class Gen1EnvironmentResourceProperties(Gen1EnvironmentCreationProperties, Envir
 class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a Gen1 environment.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
-     "Gen1", "Gen2".
-    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
+    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+     include: "Gen1", "Gen2".
+    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
     :param tags: A set of tags. Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
     :param sku: The sku of the environment.
@@ -1721,7 +1805,7 @@ class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -1999,11 +2083,11 @@ class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
 class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a Gen2 environment.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
-     "Gen1", "Gen2".
-    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
+    :param kind: Required. The kind of the environment.Constant filled by server.  Possible values
+     include: "Gen1", "Gen2".
+    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
     :param tags: A set of tags. Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
     :param storage_configuration: The storage configuration provides the connection details that
@@ -2018,7 +2102,7 @@ class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -2184,6 +2268,13 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -2211,6 +2302,8 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'consumerGroupName', 'type': 'str'},
@@ -2225,9 +2318,11 @@ class IoTHubEventSourceCommonProperties(AzureEventSourceProperties):
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, **kwargs)
+        super(IoTHubEventSourceCommonProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, event_source_resource_id=event_source_resource_id, **kwargs)
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
         self.key_name = key_name
@@ -2261,6 +2356,13 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -2299,6 +2401,8 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'properties.iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'properties.consumerGroupName', 'type': 'str'},
@@ -2318,6 +2422,8 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         tags: Optional[Dict[str, str]] = None,
         local_timestamp: Optional["LocalTimestamp"] = None,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
         super(IoTHubEventSourceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, local_timestamp=local_timestamp, **kwargs)
@@ -2325,6 +2431,8 @@ class IoTHubEventSourceCreateOrUpdateParameters(EventSourceCreateOrUpdateParamet
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.type = type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
@@ -2348,6 +2456,13 @@ class IoTHubEventSourceCreationProperties(IoTHubEventSourceCommonProperties):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -2380,6 +2495,8 @@ class IoTHubEventSourceCreationProperties(IoTHubEventSourceCommonProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'consumerGroupName', 'type': 'str'},
@@ -2396,9 +2513,11 @@ class IoTHubEventSourceCreationProperties(IoTHubEventSourceCommonProperties):
         key_name: str,
         shared_access_key: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        super(IoTHubEventSourceCreationProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
         self.shared_access_key = shared_access_key
 
 
@@ -2467,6 +2586,14 @@ class IoTHubEventSourceResource(EventSourceResource):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type_properties_ingress_start_at_type: The type of the ingressStartAt, It can be
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include:
+     "EarliestAvailable", "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type_properties_ingress_start_at_type: str or
+     ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -2505,6 +2632,8 @@ class IoTHubEventSourceResource(EventSourceResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
+        'type_properties_ingress_start_at_type': {'key': 'properties.ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'properties.ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'properties.eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'properties.iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'properties.consumerGroupName', 'type': 'str'},
@@ -2521,6 +2650,8 @@ class IoTHubEventSourceResource(EventSourceResource):
         key_name: str,
         tags: Optional[Dict[str, str]] = None,
         timestamp_property_name: Optional[str] = None,
+        type_properties_ingress_start_at_type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
         super(IoTHubEventSourceResource, self).__init__(location=location, tags=tags, **kwargs)
@@ -2528,6 +2659,8 @@ class IoTHubEventSourceResource(EventSourceResource):
         self.provisioning_state = None
         self.creation_time = None
         self.timestamp_property_name = timestamp_property_name
+        self.type_properties_ingress_start_at_type = type_properties_ingress_start_at_type
+        self.time = time
         self.event_source_resource_id = event_source_resource_id
         self.iot_hub_name = iot_hub_name
         self.consumer_group_name = consumer_group_name
@@ -2550,6 +2683,13 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
      timestamp. If a value isn't specified for timestampPropertyName, or if null or empty-string is
      specified, the event creation time will be used.
     :type timestamp_property_name: str
+    :param type: The type of the ingressStartAt, It can be "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime". Possible values include: "EarliestAvailable",
+     "EventSourceCreationTime", "CustomEnqueuedTime".
+    :type type: str or ~azure.mgmt.timeseriesinsights.models.IngressStartAtType
+    :param time: ISO8601 UTC datetime with seconds precision (milliseconds are optional),
+     specifying the date and time that will be the starting point for Events to be consumed.
+    :type time: str
     :param event_source_resource_id: Required. The resource id of the event source in Azure
      Resource Manager.
     :type event_source_resource_id: str
@@ -2577,6 +2717,8 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'timestamp_property_name': {'key': 'timestampPropertyName', 'type': 'str'},
+        'type': {'key': 'ingressStartAt.type', 'type': 'str'},
+        'time': {'key': 'ingressStartAt.time', 'type': 'str'},
         'event_source_resource_id': {'key': 'eventSourceResourceId', 'type': 'str'},
         'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
         'consumer_group_name': {'key': 'consumerGroupName', 'type': 'str'},
@@ -2591,19 +2733,21 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
         consumer_group_name: str,
         key_name: str,
         timestamp_property_name: Optional[str] = None,
+        type: Optional[Union[str, "IngressStartAtType"]] = None,
+        time: Optional[str] = None,
         **kwargs
     ):
-        super(IoTHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
+        super(IoTHubEventSourceResourceProperties, self).__init__(timestamp_property_name=timestamp_property_name, type=type, time=time, event_source_resource_id=event_source_resource_id, iot_hub_name=iot_hub_name, consumer_group_name=consumer_group_name, key_name=key_name, **kwargs)
 
 
 class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """Parameters supplied to the Update Event Source operation to update an IoTHub event source.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
-     "Microsoft.EventHub", "Microsoft.IoTHub".
-    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
+    :param kind: Required. The kind of the event source.Constant filled by server.  Possible values
+     include: "Microsoft.EventHub", "Microsoft.IoTHub".
+    :type kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
     :param tags: A set of tags. Key-value pairs of additional properties for the event source.
     :type tags: dict[str, str]
     :param timestamp_property_name: The event property that will be used as the event source's
@@ -2622,7 +2766,7 @@ class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
