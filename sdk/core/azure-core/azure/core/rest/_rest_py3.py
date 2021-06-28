@@ -457,7 +457,7 @@ class AsyncHttpResponse(_HttpResponseBase):
             self._set_content(b"".join(parts))
         return self._get_content()
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:
+    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # pylint: disable=unused-argument
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
         :param int chunk_size: The maximum size of each chunk iterated over.
