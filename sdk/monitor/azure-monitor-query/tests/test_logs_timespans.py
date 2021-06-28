@@ -115,3 +115,6 @@ def test_duration_to_iso8601():
 
     with pytest.raises(ValueError, match="Start time must be provided along with duration or end time."):
         construct_iso8601(start=datetime.now(UTC()))
+
+    with pytest.raises(ValueError, match="start_time can only be provided with duration or end_time, but not both."):
+        construct_iso8601(end=datetime.now(UTC()), start=datetime(2020, 10, 10), duration=d3)

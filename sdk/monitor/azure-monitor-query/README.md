@@ -247,7 +247,7 @@ response = client.query(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
     start_time=datetime(2021, 5, 25),
-        duration=timedelta(days=1),
+    duration=timedelta(days=1),
     )
 
 for metric in response.metrics:
