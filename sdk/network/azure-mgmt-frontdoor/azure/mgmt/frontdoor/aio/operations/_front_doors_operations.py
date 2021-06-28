@@ -45,7 +45,7 @@ class FrontDoorsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FrontDoorListResult"]:
         """Lists all of the Front Doors within an Azure subscription.
 
@@ -99,7 +99,7 @@ class FrontDoorsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -113,7 +113,7 @@ class FrontDoorsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FrontDoorListResult"]:
         """Lists all of the Front Doors within a resource group under a subscription.
 
@@ -170,7 +170,7 @@ class FrontDoorsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -185,7 +185,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FrontDoor":
         """Gets a Front Door with the specified Front Door name under the specified subscription and
         resource group.
@@ -230,7 +230,7 @@ class FrontDoorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('FrontDoor', pipeline_response)
@@ -246,7 +246,7 @@ class FrontDoorsOperations:
         resource_group_name: str,
         front_door_name: str,
         front_door_parameters: "_models.FrontDoor",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FrontDoor":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FrontDoor"]
         error_map = {
@@ -284,7 +284,7 @@ class FrontDoorsOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -307,7 +307,7 @@ class FrontDoorsOperations:
         resource_group_name: str,
         front_door_name: str,
         front_door_parameters: "_models.FrontDoor",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FrontDoor"]:
         """Creates a new Front Door with a Front Door name under the specified subscription and resource
         group.
@@ -320,8 +320,8 @@ class FrontDoorsOperations:
         :type front_door_parameters: ~azure.mgmt.frontdoor.models.FrontDoor
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FrontDoor or the result of cls(response)
@@ -378,7 +378,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -411,7 +411,7 @@ class FrontDoorsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -423,7 +423,7 @@ class FrontDoorsOperations:
         self,
         resource_group_name: str,
         front_door_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing Front Door with the specified parameters.
 
@@ -433,8 +433,8 @@ class FrontDoorsOperations:
         :type front_door_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -488,7 +488,7 @@ class FrontDoorsOperations:
         resource_group_name: str,
         front_door_name: str,
         custom_domain_properties: "_models.ValidateCustomDomainInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidateCustomDomainOutput":
         """Validates the custom domain mapping to ensure it maps to the correct Front Door endpoint in
         DNS.
@@ -540,7 +540,7 @@ class FrontDoorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateCustomDomainOutput', pipeline_response)

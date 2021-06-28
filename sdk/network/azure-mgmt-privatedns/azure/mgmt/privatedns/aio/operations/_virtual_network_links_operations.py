@@ -51,14 +51,14 @@ class VirtualNetworkLinksOperations:
         parameters: "_models.VirtualNetworkLink",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VirtualNetworkLink"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VirtualNetworkLink"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -117,7 +117,7 @@ class VirtualNetworkLinksOperations:
         parameters: "_models.VirtualNetworkLink",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualNetworkLink"]:
         """Creates or updates a virtual network link to the specified Private DNS zone.
 
@@ -138,8 +138,8 @@ class VirtualNetworkLinksOperations:
         :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkLink or the result of cls(response)
@@ -203,14 +203,14 @@ class VirtualNetworkLinksOperations:
         virtual_network_link_name: str,
         parameters: "_models.VirtualNetworkLink",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VirtualNetworkLink"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VirtualNetworkLink"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -263,7 +263,7 @@ class VirtualNetworkLinksOperations:
         virtual_network_link_name: str,
         parameters: "_models.VirtualNetworkLink",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualNetworkLink"]:
         """Updates a virtual network link to the specified Private DNS zone.
 
@@ -281,8 +281,8 @@ class VirtualNetworkLinksOperations:
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkLink or the result of cls(response)
@@ -344,14 +344,14 @@ class VirtualNetworkLinksOperations:
         private_zone_name: str,
         virtual_network_link_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -393,7 +393,7 @@ class VirtualNetworkLinksOperations:
         private_zone_name: str,
         virtual_network_link_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a virtual network link to the specified Private DNS zone. WARNING: In case of a
         registration virtual network, all auto-registered DNS records in the zone for the virtual
@@ -411,8 +411,8 @@ class VirtualNetworkLinksOperations:
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -469,7 +469,7 @@ class VirtualNetworkLinksOperations:
         resource_group_name: str,
         private_zone_name: str,
         virtual_network_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualNetworkLink":
         """Gets a virtual network link to the specified Private DNS zone.
 
@@ -489,7 +489,7 @@ class VirtualNetworkLinksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -531,7 +531,7 @@ class VirtualNetworkLinksOperations:
         resource_group_name: str,
         private_zone_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualNetworkLinkListResult"]:
         """Lists the virtual network links to the specified Private DNS zone.
 
@@ -552,7 +552,7 @@ class VirtualNetworkLinksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
