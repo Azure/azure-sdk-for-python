@@ -2,6 +2,9 @@
 
 ## 1.15.1 (Unreleased)
 
+### Bug Fixes
+
+- Improved error message in the `from_dict` method of `CloudEvent` when a wrong schema is sent.
 
 ## 1.15.0 (2021-06-04)
 
