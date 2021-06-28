@@ -6,14 +6,10 @@ import pandas as pd
 from datetime import datetime
 from msrest.serialization import UTC
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 # [START client_auth_with_token_cred]
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 # [END client_auth_with_token_cred]
