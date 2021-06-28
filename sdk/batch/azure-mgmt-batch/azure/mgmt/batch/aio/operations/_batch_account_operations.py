@@ -48,7 +48,7 @@ class BatchAccountOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.BatchAccountCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.BatchAccount"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BatchAccount"]]
         error_map = {
@@ -108,7 +108,7 @@ class BatchAccountOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.BatchAccountCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.BatchAccount"]:
         """Creates a new Batch account with the specified parameters. Existing accounts cannot be updated
         with this API and should instead be updated with the Update Batch Account API.
@@ -125,8 +125,8 @@ class BatchAccountOperations:
         :type parameters: ~azure.mgmt.batch.models.BatchAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BatchAccount or the result of cls(response)
@@ -184,7 +184,7 @@ class BatchAccountOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.BatchAccountUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BatchAccount":
         """Updates the properties of an existing Batch account.
 
@@ -249,7 +249,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -298,7 +298,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified Batch account.
 
@@ -308,8 +308,8 @@ class BatchAccountOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -362,7 +362,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BatchAccount":
         """Gets information about the specified Batch account.
 
@@ -418,7 +418,7 @@ class BatchAccountOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BatchAccountListResult"]:
         """Gets information about the Batch accounts associated with the subscription.
 
@@ -485,7 +485,7 @@ class BatchAccountOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BatchAccountListResult"]:
         """Gets information about the Batch accounts associated with the specified resource group.
 
@@ -556,7 +556,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Synchronizes access keys for the auto-storage account configured for the specified Batch
         account.
@@ -613,7 +613,7 @@ class BatchAccountOperations:
         resource_group_name: str,
         account_name: str,
         parameters: "_models.BatchAccountRegenerateKeyParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BatchAccountKeys":
         """Regenerates the specified account key for the Batch account.
 
@@ -678,7 +678,7 @@ class BatchAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BatchAccountKeys":
         """Gets the account keys for the specified Batch account.
 

@@ -47,7 +47,7 @@ class ApplicationOperations:
         account_name: str,
         application_name: str,
         parameters: Optional["_models.Application"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Adds an application to the specified Batch account.
 
@@ -119,7 +119,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an application.
 
@@ -178,7 +178,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Gets information about the specified application.
 
@@ -241,7 +241,7 @@ class ApplicationOperations:
         account_name: str,
         application_name: str,
         parameters: "_models.Application",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Application":
         """Updates settings for the specified application.
 
@@ -310,7 +310,7 @@ class ApplicationOperations:
         resource_group_name: str,
         account_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListApplicationsResult"]:
         """Lists all of the applications in the specified account.
 

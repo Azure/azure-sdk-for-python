@@ -50,7 +50,7 @@ class PoolOperations:
         maxresults: Optional[int] = None,
         select: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListPoolsResult"]:
         """Lists all of the pools in the specified account.
 
@@ -154,7 +154,7 @@ class PoolOperations:
         parameters: "_models.Pool",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pool":
         """Creates a new pool inside the specified account.
 
@@ -238,7 +238,7 @@ class PoolOperations:
         pool_name: str,
         parameters: "_models.Pool",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pool":
         """Updates the properties of an existing pool.
 
@@ -315,7 +315,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -366,7 +366,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified pool.
 
@@ -378,8 +378,8 @@ class PoolOperations:
         :type pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -435,7 +435,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pool":
         """Gets information about the specified pool.
 
@@ -499,7 +499,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pool":
         """Disables automatic scaling for a pool.
 
@@ -563,7 +563,7 @@ class PoolOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Pool":
         """Stops an ongoing resize operation on the pool.
 

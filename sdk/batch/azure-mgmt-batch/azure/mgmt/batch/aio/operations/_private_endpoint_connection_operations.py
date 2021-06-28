@@ -48,7 +48,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListPrivateEndpointConnectionsResult"]:
         """Lists all of the private endpoint connections in the specified account.
 
@@ -127,7 +127,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Gets information about the specified private endpoint connection.
 
@@ -192,7 +192,7 @@ class PrivateEndpointConnectionOperations:
         private_endpoint_connection_name: str,
         parameters: "_models.PrivateEndpointConnection",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PrivateEndpointConnection"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateEndpointConnection"]]
         error_map = {
@@ -257,7 +257,7 @@ class PrivateEndpointConnectionOperations:
         private_endpoint_connection_name: str,
         parameters: "_models.PrivateEndpointConnection",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Updates the properties of an existing private endpoint connection.
 
@@ -276,8 +276,8 @@ class PrivateEndpointConnectionOperations:
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)

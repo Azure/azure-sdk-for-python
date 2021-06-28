@@ -46,7 +46,7 @@ class PrivateLinkResourceOperations:
         resource_group_name: str,
         account_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListPrivateLinkResourcesResult"]:
         """Lists all of the private link resources in the specified account.
 
@@ -125,7 +125,7 @@ class PrivateLinkResourceOperations:
         resource_group_name: str,
         account_name: str,
         private_link_resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Gets information about the specified private link resource.
 

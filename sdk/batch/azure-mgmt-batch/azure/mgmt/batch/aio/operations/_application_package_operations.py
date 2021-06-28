@@ -48,7 +48,7 @@ class ApplicationPackageOperations:
         application_name: str,
         version_name: str,
         parameters: "_models.ActivateApplicationPackageParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationPackage":
         """Activates the specified application package. This should be done after the
         ``ApplicationPackage`` was created and uploaded. This needs to be done before an
@@ -124,7 +124,7 @@ class ApplicationPackageOperations:
         application_name: str,
         version_name: str,
         parameters: Optional["_models.ApplicationPackage"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationPackage":
         """Creates an application package record. The record contains the SAS where the package should be
         uploaded to.  Once it is uploaded the ``ApplicationPackage`` needs to be activated using
@@ -202,7 +202,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an application package record and its associated binary file.
 
@@ -265,7 +265,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationPackage":
         """Gets information about the specified application package.
 
@@ -331,7 +331,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         maxresults: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListApplicationPackagesResult"]:
         """Lists all of the application packages in the specified application.
 

@@ -43,7 +43,7 @@ class LocationOperations:
     async def get_quotas(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BatchLocationQuota":
         """Gets the Batch service quotas for the specified subscription at the given location.
 
@@ -98,7 +98,7 @@ class LocationOperations:
         self,
         location_name: str,
         parameters: "_models.CheckNameAvailabilityParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityResult":
         """Checks whether the Batch account name is available in the specified region.
 
