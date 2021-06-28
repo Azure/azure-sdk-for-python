@@ -473,16 +473,6 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
-    def _to_rest_request(self):
-        from ...rest import HttpRequest as RestHttpRequest
-        return RestHttpRequest(
-            method=self.method,
-            url=self.url,
-            headers=self.headers,
-            files=self.files,
-            data=self.data
-        )
-
 class _HttpResponseBase(object):
     """Represent a HTTP response.
 
@@ -586,9 +576,6 @@ class _HttpResponseBase(object):
         return "<{}: {} {}{}>".format(
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
-
-    def _to_rest_response(self):
-        """Convert PipelineTransport response to a Rest response"""
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method

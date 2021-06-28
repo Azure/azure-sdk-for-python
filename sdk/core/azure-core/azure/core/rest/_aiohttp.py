@@ -107,6 +107,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
 
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -116,6 +117,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
 
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
+
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -141,5 +143,5 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         :rtype: None
         """
         self.is_closed = True
-        self.internal_response.close()
+        self._internal_response.close()
         await asyncio.sleep(0)

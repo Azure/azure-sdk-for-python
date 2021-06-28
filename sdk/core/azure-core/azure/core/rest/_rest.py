@@ -67,7 +67,15 @@ if TYPE_CHECKING:
 class HttpRequest(object):
     """Provisional object that represents an HTTP request.
 
-    **This object is provisional**, meaning it may be changed.
+    **This object is provisional**, meaning it may be changed in a future release.
+
+    It should be passed to your client's `send_request` method.
+
+    >>> from azure.core.rest import HttpRequest
+    >>> request = HttpRequest('GET', 'http://www.example.com')
+    <HttpRequest [GET], url: 'http://www.example.com'>
+    >>> response = client.send_request(request)
+    <HttpResponse: 200 OK>
 
     :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: The url for your request
@@ -188,7 +196,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.request = kwargs.pop("request")
-        self.internal_response = kwargs.pop("internal_response")
+        self._internal_response = kwargs.pop("internal_response")
         self.status_code = None
         self.headers = {}  # type: HeadersType
         self.reason = None
@@ -293,11 +301,19 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
 class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attributes
     """**Provisional** object that represents an HTTP response.
 
-    **This object is provisional**, meaning it may be changed.
+    **This object is provisional**, meaning it may be changed in a future release.
+
+    It is returned from your client's `send_request` method if you pass in
+    an :class:`~azure.core.rest.HttpRequest`
+
+    >>> from azure.core.rest import HttpRequest
+    >>> request = HttpRequest('GET', 'http://www.example.com')
+    <HttpRequest [GET], url: 'http://www.example.com'>
+    >>> response = client.send_request(request)
+    <HttpResponse: 200 OK>
 
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
-    :keyword internal_response: The object returned from the HTTP library.
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -324,7 +340,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     def close(self):
         # type: (...) -> None
         self.is_closed = True
-        self.internal_response.close()
+        self._internal_response.close()
 
     def __exit__(self, *args):
         # type: (...) -> None

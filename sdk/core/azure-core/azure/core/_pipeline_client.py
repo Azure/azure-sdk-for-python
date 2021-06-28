@@ -40,6 +40,7 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
+from .pipeline._tools import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING
@@ -189,7 +190,13 @@ class PipelineClient(PipelineClientBase):
         # type: (HTTPRequestType, Any) -> HTTPResponseType
         """**Provisional** method that runs the network request through the client's chained policies.
 
-        This method is marked as **provisional**, meaning it can be changed
+        This method is marked as **provisional**, meaning it may be changed in a future release.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest('GET', 'http://www.example.com')
+        <HttpRequest [GET], url: 'http://www.example.com'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -202,7 +209,7 @@ class PipelineClient(PipelineClientBase):
         pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
         if rest_request:
-            response = response._to_rest_response()  # pylint: disable=protected-access
+            response = _to_rest_response(response)
             if not kwargs.get("stream", False):
                 response.read()
                 response.close()

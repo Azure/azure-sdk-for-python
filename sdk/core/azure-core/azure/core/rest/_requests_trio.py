@@ -33,8 +33,10 @@ from ..pipeline.transport._requests_trio import TrioStreamDownloadGenerator
 class RestTrioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
     """
+    
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -44,6 +46,7 @@ class RestTrioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTranspor
 
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
+
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -66,10 +69,10 @@ class RestTrioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTranspor
             parts = []
             async for part in self.iter_bytes():  # type: ignore
                 parts.append(part)
-            self.internal_response._content = b"".join(parts)  # pylint: disable=protected-access
+            self._internal_response._content = b"".join(parts)  # pylint: disable=protected-access
         return self.content
 
     async def close(self) -> None:
         self.is_closed = True
-        self.internal_response.close()
+        self._internal_response.close()
         await trio.sleep(0)

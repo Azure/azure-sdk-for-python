@@ -27,29 +27,24 @@ try:
     from ._rest_py3 import (
         HttpRequest,
         HttpResponse,
-        _HttpResponseBase,
     )
 except (SyntaxError, ImportError):
     from ._rest import (  # type: ignore
         HttpRequest,
         HttpResponse,
-        _HttpResponseBase,
     )
 
 __all__ = [
     "HttpRequest",
     "HttpResponse",
-    "_HttpResponseBase",
 ]
 
 try:
     from ._rest_py3 import (  # pylint: disable=unused-import
         AsyncHttpResponse,
-        _AsyncContextManager,
     )
     __all__.extend([
         "AsyncHttpResponse",
-        "_AsyncContextManager",
     ])
 
 except (SyntaxError, ImportError):

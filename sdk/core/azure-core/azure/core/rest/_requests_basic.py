@@ -26,7 +26,7 @@
 from typing import TYPE_CHECKING
 
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
-from . import _HttpResponseBase, HttpResponse
+from ._rest import _HttpResponseBase, HttpResponse
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
 if TYPE_CHECKING:
@@ -42,40 +42,40 @@ def _has_content(response):
 class _RestRequestsTransportResponseBase(_HttpResponseBase):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
-        self.status_code = self.internal_response.status_code
-        self.headers = self.internal_response.headers
-        self.reason = self.internal_response.reason
-        self.content_type = self.internal_response.headers.get('content-type')
+        self.status_code = self._internal_response.status_code
+        self.headers = self._internal_response.headers
+        self.reason = self._internal_response.reason
+        self.content_type = self._internal_response.headers.get('content-type')
 
     @property
     def content(self):
         # type: () -> bytes
-        if not self.internal_response._content_consumed:  # pylint: disable=protected-access
+        if not self._internal_response._content_consumed:  # pylint: disable=protected-access
             # if we just call .content, requests will read in the content.
             # we want to read it in our own way
             raise ResponseNotReadError()
 
         try:
-            return self.internal_response.content
+            return self._internal_response.content
         except RuntimeError:
             # requests throws a RuntimeError if the content for a response is already consumed
             raise ResponseNotReadError()
 
     def _get_content(self):
         """Return the internal response's content"""
-        if not self.internal_response._content_consumed:  # pylint: disable=protected-access
+        if not self._internal_response._content_consumed:  # pylint: disable=protected-access
             # if we just call .content, requests will read in the content.
             # we want to read it in our own way
             return None
         try:
-            return self.internal_response.content
+            return self._internal_response.content
         except RuntimeError:
             # requests throws a RuntimeError if the content for a response is already consumed
             return None
 
     def _set_content(self, val):
         """Set the internal response's content"""
-        self.internal_response._content = val  # pylint: disable=protected-access
+        self._internal_response._content = val  # pylint: disable=protected-access
 
     @_HttpResponseBase.encoding.setter  # type: ignore
     def encoding(self, value):
@@ -89,18 +89,18 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
             # - https://github.com/psf/requests/issues/1737
             # - https://github.com/psf/requests/issues/2086
             from codecs import BOM_UTF8
-            if self.internal_response.content[:3] == BOM_UTF8:
+            if self._internal_response.content[:3] == BOM_UTF8:
                 encoding = "utf-8-sig"
         if encoding:
             if encoding == "utf-8":
                 encoding = "utf-8-sig"
-        self.internal_response.encoding = encoding
+        self._internal_response.encoding = encoding
 
     @property
     def text(self):
         # this will trigger errors if response is not read in
         self.content  # pylint: disable=pointless-statement
-        return self.internal_response.text
+        return self._internal_response.text
 
 def _stream_download_helper(decompress, response):
     if response.is_stream_consumed:
@@ -157,5 +157,5 @@ class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponse
         :rtype: bytes
         """
         if not _has_content(self):
-            self.internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
+            self._internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
         return self.content

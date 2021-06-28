@@ -13,7 +13,7 @@ def _assert_stream_state(response, open):
     # if open is true, check the stream is open.
     # if false, check if everything is closed
     checks = [
-        response.internal_response._content_consumed,
+        response._internal_response._content_consumed,
         response.is_closed,
         response.is_stream_consumed
     ]
@@ -27,12 +27,12 @@ def test_iter_raw(client):
     with client.send_request(request, stream=True) as response:
         raw = b""
         for part in response.iter_raw():
-            assert not response.internal_response._content_consumed
+            assert not response._internal_response._content_consumed
             assert not response.is_closed
             assert response.is_stream_consumed  # we follow httpx behavior here
             raw += part
         assert raw == b"Hello, world!"
-    assert response.internal_response._content_consumed
+    assert response._internal_response._content_consumed
     assert response.is_closed
     assert response.is_stream_consumed
 
@@ -79,11 +79,11 @@ def test_iter_bytes(client):
     with client.send_request(request, stream=True) as response:
         raw = b""
         for chunk in response.iter_bytes():
-            assert not response.internal_response._content_consumed
+            assert not response._internal_response._content_consumed
             assert not response.is_closed
             assert response.is_stream_consumed  # we follow httpx behavior here
             raw += chunk
-        assert response.internal_response._content_consumed
+        assert response._internal_response._content_consumed
         assert response.is_closed
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
@@ -233,4 +233,4 @@ def test_error_reading(client):
         response.raise_for_status()
     response.read()
     assert response.content == b""
-    response.content
+    # try giving a really slow response, see what happens

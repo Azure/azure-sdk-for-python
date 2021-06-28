@@ -87,7 +87,15 @@ class _AsyncContextManager(collections.abc.Awaitable):
 class HttpRequest:
     """**Provisional** object that represents an HTTP request.
 
-    **This object is provisional**, meaning it may be changed.
+    **This object is provisional**, meaning it may be changed in a future release.
+
+    It should be passed to your client's `send_request` method.
+
+    >>> from azure.core.rest import HttpRequest
+    >>> request = HttpRequest('GET', 'http://www.example.com')
+    <HttpRequest [GET], url: 'http://www.example.com'>
+    >>> response = client.send_request(request)
+    <HttpResponse: 200 OK>
 
     :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: The url for your request
@@ -214,10 +222,10 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self,
         *,
         request: HttpRequest,
-        internal_response,
+        **kwargs
     ):
         self.request = request
-        self.internal_response = internal_response
+        self._internal_response = kwargs.pop("internal_response")
         self.status_code = None
         self.headers = {}  # type: HeadersType
         self.reason = None
@@ -304,11 +312,19 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
 class HttpResponse(_HttpResponseBase):
     """**Provisional** object that represents an HTTP response.
 
-    **This object is provisional**, meaning it may be changed.
+    **This object is provisional**, meaning it may be changed in a future release.
+
+    It is returned from your client's `send_request` method if you pass in
+    an :class:`~azure.core.rest.HttpRequest`
+
+    >>> from azure.core.rest import HttpRequest
+    >>> request = HttpRequest('GET', 'http://www.example.com')
+    <HttpRequest [GET], url: 'http://www.example.com'>
+    >>> response = client.send_request(request)
+    <HttpResponse: 200 OK>
 
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
-    :keyword internal_response: The object returned from the HTTP library.
     :ivar int status_code: The status code of this response
     :ivar mapping headers: The response headers
     :ivar str reason: The reason phrase for this response
@@ -338,7 +354,7 @@ class HttpResponse(_HttpResponseBase):
         :rtype: None
         """
         self.is_closed = True
-        self.internal_response.close()
+        self._internal_response.close()
 
     def __exit__(self, *args) -> None:
         self.close()
@@ -401,7 +417,16 @@ class HttpResponse(_HttpResponseBase):
 class AsyncHttpResponse(_HttpResponseBase):
     """**Provisional** object that represents an Async HTTP response.
 
-    **This object is provisional**, meaning it may be changed.
+    **This object is provisional**, meaning it may be changed in a future release.
+
+    It is returned from your async client's `send_request` method if you pass in
+    an :class:`~azure.core.rest.HttpRequest`
+
+    >>> from azure.core.rest import HttpRequest
+    >>> request = HttpRequest('GET', 'http://www.example.com')
+    <HttpRequest [GET], url: 'http://www.example.com'>
+    >>> response = await client.send_request(request)
+    <AsyncHttpResponse: 200 OK>
 
     :keyword request: The request that resulted in this response.
     :paramtype request: ~azure.core.rest.HttpRequest
@@ -444,13 +469,8 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        # If you don't have a yield in an AsyncIterator function,
-        # mypy will think it's a coroutine
-        # see here https://github.com/python/mypy/issues/5385#issuecomment-407281656
-        # So, adding this weird yield thing
-        for _ in []:
-            yield _
         raise NotImplementedError()
+        yield  # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
 
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
@@ -458,13 +478,8 @@ class AsyncHttpResponse(_HttpResponseBase):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        # If you don't have a yield in an AsyncIterator function,
-        # mypy will think it's a coroutine
-        # see here https://github.com/python/mypy/issues/5385#issuecomment-407281656
-        # So, adding this weird yield thing
-        for _ in []:
-            yield _
         raise NotImplementedError()
+        yield  # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
 
     async def iter_text(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the text in the response.
@@ -494,7 +509,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :rtype: None
         """
         self.is_closed = True
-        await self.internal_response.close()
+        await self._internal_response.close()
 
     async def __aexit__(self, *args) -> None:
         await self.close()

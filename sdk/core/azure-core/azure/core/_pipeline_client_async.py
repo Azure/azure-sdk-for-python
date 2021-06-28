@@ -38,6 +38,7 @@ from .pipeline.policies import (
     AsyncRetryPolicy,
 )
 from ._pipeline_client import _prepare_request
+from .pipeline._tools_async import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING, TypeVar
@@ -181,7 +182,7 @@ class AsyncPipelineClient(PipelineClientBase):
         )
         response = pipeline_response.http_response
         if rest_request:
-            rest_response = response._to_rest_response()  # pylint: disable=protected-access
+            rest_response = _to_rest_response(response)
             if not stream:
                 # in this case, the pipeline transport response already called .load_body(), so
                 # the body is loaded. instead of doing response.read(), going to set the body
@@ -204,7 +205,13 @@ class AsyncPipelineClient(PipelineClientBase):
     ) -> Awaitable[AsyncHTTPResponseType]:
         """**Provisional** method that runs the network request through the client's chained policies.
 
-        This method is marked as **provisional**, meaning it can be changed.
+        This method is marked as **provisional**, meaning it may be changed in a future release.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest('GET', 'http://www.example.com')
+        <HttpRequest [GET], url: 'http://www.example.com'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -212,6 +219,6 @@ class AsyncPipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        from .rest import _AsyncContextManager
+        from .rest._rest_py3 import _AsyncContextManager
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
         return _AsyncContextManager(wrapped=wrapped)

@@ -434,12 +434,12 @@ class ODataV4Error(HttpResponseError):
             return str(self._error_format)
         return super(ODataV4Error, self).__str__()
 
-class StreamConsumedError(Exception):
-    """:bolditalic:`Provisional` error thrown if you try to access the stream of a response once consumed.
+class StreamConsumedError(AzureError):
+    """**Provisional** error thrown if you try to access the stream of a response once consumed.
 
-    :bolditalic:`This error is provisional`, meaning it may be changed. It is thrown if you try to
-    read / stream an ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse once
-    the response's stream has been consumed
+    This error is marked as **provisional**, meaning it may be changed in a future release. It is
+    thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
     """
     def __init__(self):
         message = (
@@ -448,12 +448,12 @@ class StreamConsumedError(Exception):
         )
         super(StreamConsumedError, self).__init__(message)
 
-class StreamClosedError(Exception):
-    """:bolditalic:`Provisional` error thrown if you try to access the stream of a response once closed.
+class StreamClosedError(AzureError):
+    """**Provisional** error thrown if you try to access the stream of a response once closed.
 
-    :bolditalic:`This error is provisional`, meaning it may be changed. It is thrown if you try to
-    read / stream an ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse once
-    the response's stream has been closed
+    This error is marked as **provisional**, meaning it may be changed in a future release. It is
+    thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
     """
     def __init__(self):
         message = (
@@ -462,12 +462,12 @@ class StreamClosedError(Exception):
         )
         super(StreamClosedError, self).__init__(message)
 
-class ResponseNotReadError(Exception):
-    """:bolditalic:`Provisional` error thrown if you try to access a response's content without reading first.
+class ResponseNotReadError(AzureError):
+    """**Provisional** error thrown if you try to access a response's content without reading first.
 
-    :bolditalic:`This error is provisional`, meaning it may be changed. It is thrown if you try to
-    access an ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse's content without
-    first reading the response's bytes in first.
+    This error is marked as **provisional**, meaning it may be changed in a future release. It is
+    thrown if you try to access an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse's content without first reading the response's bytes in first.
     """
 
     def __init__(self):
