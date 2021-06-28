@@ -141,6 +141,7 @@ This sample shows sending multiple queries at the same time using batch query AP
 
 ```Python
 import os
+from datetime import timedelta
 import pandas as pd
 from azure.monitor.query import LogsQueryClient, LogsQueryRequest
 from azure.identity import DefaultAzureCredential
@@ -153,13 +154,13 @@ client = LogsQueryClient(credential)
 requests = [
     LogsQueryRequest(
         query="AzureActivity | summarize count()",
-        duration="PT1H",
+        duration=timedelta(hours=1),
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        duration="PT1H",
+        duration=timedelta(hours=1),
         start_time=datetime(2021, 6, 2),
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
@@ -208,6 +209,7 @@ This example shows getting the metrics for an EventGrid subscription. The resour
 
 ```Python
 import os
+from datetime import timedelta
 from azure.monitor.query import MetricsQueryClient
 from azure.identity import DefaultAzureCredential
 
@@ -221,7 +223,7 @@ response = client.query(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
     start_time=datetime(2021, 5, 25),
-    duration='P1D'
+    duration=timedelta(days=1),
     )
 
 for metric in response.metrics:

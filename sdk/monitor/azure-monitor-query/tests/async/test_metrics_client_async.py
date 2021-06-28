@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time, timedelta
 import pytest
 import os
 from azure.identity.aio import ClientSecretCredential
@@ -20,7 +20,7 @@ async def test_metrics_auth():
         os.environ['METRICS_RESOURCE_URI'],
         metric_names=["MatchedEventCount"],
         start_time=datetime(2021, 6, 21),
-        duration='P1D',
+        duration=timedelta(days=1),
         aggregation=['Count']
         )
     assert response

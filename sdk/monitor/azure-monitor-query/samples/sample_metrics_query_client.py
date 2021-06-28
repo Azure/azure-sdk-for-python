@@ -21,7 +21,7 @@ response = client.query(
     metrics_uri,
     metric_names=["MatchedEventCount"],
     start_time=datetime(2021, 6, 21),
-    duration='P1D',
+    duration=timedelta(days=1),
     aggregation=['Count']
     )
 
