@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import collections
 import json
-from typing import Dict, Optional, Any, List, Union
+from typing import Any, Union
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -77,7 +76,9 @@ class ConfigurationSetting(Model):
             try:
                 if key_value.content_type.startswith(
                     FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
-                ) and key_value.key.startswith(FeatureFlagConfigurationSetting._key_prefix):  # type: ignore
+                ) and key_value.key.startswith(  # type: ignore
+                    FeatureFlagConfigurationSetting._key_prefix  # pylint: disable=protected-access
+                ):
                     return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
@@ -164,7 +165,7 @@ class FeatureFlagConfigurationSetting(
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value
+    def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value, super-init-not-called
         # type: (str, **Any) -> None
         if kwargs.pop("key", None) or kwargs.pop("value", None):
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
@@ -200,10 +201,12 @@ class FeatureFlagConfigurationSetting(
     def value(self):
         if self.enabled is None and self.filters is None:
             return self._value
-        elif self.enabled is None:
+        if self.enabled is None:
             self._value = json.dumps({"conditions": {"client_filters": self.filters}})
-        elif self.filters is None:
+            return self._value
+        if self.filters is None:
             self._value = json.dumps({"enabled": self.enabled})
+            return self._value
         return json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
 
     @value.setter
@@ -295,7 +298,7 @@ class FeatureFlagConfigurationSetting(
         enabled = None
         filters = None
         try:
-            temp = json.loads(key_value.value)
+            temp = json.loads(key_value.value)  # type: ignore
             if isinstance(temp, dict):
                 enabled = temp.get("enabled")
                 if "conditions" in temp.keys():
@@ -370,8 +373,8 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key, secret_id, **kwargs):
-        # type: (str, str, Optional[str], **Any) -> None
+    def __init__(self, key, secret_id, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (str, str, **Any) -> None
         if kwargs.pop("value", None):
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         # super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
@@ -399,7 +402,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             self._value = new_value
             self.secret_id = temp.get("secret_uri")
         except(JSONDecodeError, ValueError):
-            self._value= new_value
+            self._value = new_value
             self.secret_id = None
 
 
@@ -430,7 +433,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             return key_value
         secret_uri = None
         try:
-            temp = json.loads(key_value.value)
+            temp = json.loads(key_value.value)  # type: ignore
             secret_uri = temp.get("secret_uri")
         except (ValueError, JSONDecodeError):
             pass
