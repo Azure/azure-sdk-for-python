@@ -26,7 +26,7 @@ class ServiceOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databox.models
+    :type models: ~azure.mgmt.databox.v2019_09_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -45,17 +45,17 @@ class ServiceOperations:
         self,
         location: str,
         available_sku_request: "_models.AvailableSkuRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableSkusResult"]:
         """This method provides the list of available skus for the given subscription and location.
 
         :param location: The location of the resource.
         :type location: str
         :param available_sku_request: Filters for showing the available skus.
-        :type available_sku_request: ~azure.mgmt.databox.models.AvailableSkuRequest
+        :type available_sku_request: ~azure.mgmt.databox.v2019_09_01.models.AvailableSkuRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableSkusResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.models.AvailableSkusResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.v2019_09_01.models.AvailableSkusResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableSkusResult"]
@@ -127,7 +127,7 @@ class ServiceOperations:
         resource_group_name: str,
         location: str,
         available_sku_request: "_models.AvailableSkuRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AvailableSkusResult"]:
         """This method provides the list of available skus for the given subscription, resource group and
         location.
@@ -137,10 +137,10 @@ class ServiceOperations:
         :param location: The location of the resource.
         :type location: str
         :param available_sku_request: Filters for showing the available skus.
-        :type available_sku_request: ~azure.mgmt.databox.models.AvailableSkuRequest
+        :type available_sku_request: ~azure.mgmt.databox.v2019_09_01.models.AvailableSkuRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableSkusResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.models.AvailableSkusResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.v2019_09_01.models.AvailableSkusResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableSkusResult"]
@@ -212,7 +212,7 @@ class ServiceOperations:
         self,
         location: str,
         validate_address: "_models.ValidateAddress",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AddressValidationOutput":
         """[DEPRECATED NOTICE: This operation will soon be removed] This method validates the customer
         shipping address and provide alternate addresses if any.
@@ -220,10 +220,10 @@ class ServiceOperations:
         :param location: The location of the resource.
         :type location: str
         :param validate_address: Shipping address of the customer.
-        :type validate_address: ~azure.mgmt.databox.models.ValidateAddress
+        :type validate_address: ~azure.mgmt.databox.v2019_09_01.models.ValidateAddress
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddressValidationOutput, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.AddressValidationOutput
+        :rtype: ~azure.mgmt.databox.v2019_09_01.models.AddressValidationOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddressValidationOutput"]
@@ -276,7 +276,7 @@ class ServiceOperations:
         resource_group_name: str,
         location: str,
         validation_request: "_models.ValidationRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidationResponse":
         """This method does all necessary pre-job creation validation under resource group.
 
@@ -285,10 +285,10 @@ class ServiceOperations:
         :param location: The location of the resource.
         :type location: str
         :param validation_request: Inputs of the customer.
-        :type validation_request: ~azure.mgmt.databox.models.ValidationRequest
+        :type validation_request: ~azure.mgmt.databox.v2019_09_01.models.ValidationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.ValidationResponse
+        :rtype: ~azure.mgmt.databox.v2019_09_01.models.ValidationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidationResponse"]
@@ -341,17 +341,17 @@ class ServiceOperations:
         self,
         location: str,
         validation_request: "_models.ValidationRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ValidationResponse":
         """This method does all necessary pre-job creation validation under subscription.
 
         :param location: The location of the resource.
         :type location: str
         :param validation_request: Inputs of the customer.
-        :type validation_request: ~azure.mgmt.databox.models.ValidationRequest
+        :type validation_request: ~azure.mgmt.databox.v2019_09_01.models.ValidationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.ValidationResponse
+        :rtype: ~azure.mgmt.databox.v2019_09_01.models.ValidationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidationResponse"]
@@ -403,17 +403,17 @@ class ServiceOperations:
         self,
         location: str,
         region_configuration_request: "_models.RegionConfigurationRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegionConfigurationResponse":
         """This API provides configuration details specific to given region/location.
 
         :param location: The location of the resource.
         :type location: str
         :param region_configuration_request: Request body to get the configuration for the region.
-        :type region_configuration_request: ~azure.mgmt.databox.models.RegionConfigurationRequest
+        :type region_configuration_request: ~azure.mgmt.databox.v2019_09_01.models.RegionConfigurationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionConfigurationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.RegionConfigurationResponse
+        :rtype: ~azure.mgmt.databox.v2019_09_01.models.RegionConfigurationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegionConfigurationResponse"]

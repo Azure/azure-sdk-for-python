@@ -28,7 +28,7 @@ class JobsOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databox.models
+    :type models: ~azure.mgmt.databox.v2018_01_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -46,7 +46,7 @@ class JobsOperations:
     def list(
         self,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobResourceList"]:
         """Lists all the jobs available under the subscription.
 
@@ -55,7 +55,7 @@ class JobsOperations:
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobResourceList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.models.JobResourceList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.v2018_01_01.models.JobResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResourceList"]
@@ -119,7 +119,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobResourceList"]:
         """Lists all the jobs available under the given resource group.
 
@@ -130,7 +130,7 @@ class JobsOperations:
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobResourceList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.models.JobResourceList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.v2018_01_01.models.JobResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResourceList"]
@@ -196,7 +196,7 @@ class JobsOperations:
         resource_group_name: str,
         job_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobResource":
         """Gets information about the specified job.
 
@@ -210,7 +210,7 @@ class JobsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.JobResource
+        :rtype: ~azure.mgmt.databox.v2018_01_01.models.JobResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResource"]
@@ -261,7 +261,7 @@ class JobsOperations:
         resource_group_name: str,
         job_name: str,
         job_resource: "_models.JobResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.JobResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobResource"]]
         error_map = {
@@ -316,7 +316,7 @@ class JobsOperations:
         resource_group_name: str,
         job_name: str,
         job_resource: "_models.JobResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.JobResource"]:
         """Creates a new job with the specified parameters. Existing job cannot be updated with this API
         and should instead be updated with the Update job API.
@@ -327,15 +327,15 @@ class JobsOperations:
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param job_resource: Job details from request body.
-        :type job_resource: ~azure.mgmt.databox.models.JobResource
+        :type job_resource: ~azure.mgmt.databox.v2018_01_01.models.JobResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobResource or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databox.models.JobResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databox.v2018_01_01.models.JobResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -388,7 +388,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -430,7 +430,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a job.
 
@@ -441,8 +441,8 @@ class JobsOperations:
         :type job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -497,7 +497,7 @@ class JobsOperations:
         job_name: str,
         job_resource_update_parameter: "_models.JobResourceUpdateParameter",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.JobResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobResource"]]
         error_map = {
@@ -555,7 +555,7 @@ class JobsOperations:
         job_name: str,
         job_resource_update_parameter: "_models.JobResourceUpdateParameter",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.JobResource"]:
         """Updates the properties of an existing job.
 
@@ -565,18 +565,18 @@ class JobsOperations:
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param job_resource_update_parameter: Job update parameters from request body.
-        :type job_resource_update_parameter: ~azure.mgmt.databox.models.JobResourceUpdateParameter
+        :type job_resource_update_parameter: ~azure.mgmt.databox.v2018_01_01.models.JobResourceUpdateParameter
         :param if_match: Defines the If-Match condition. The patch will be performed only if the ETag
          of the job on the server matches this value.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobResource or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databox.models.JobResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databox.v2018_01_01.models.JobResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -631,7 +631,7 @@ class JobsOperations:
         resource_group_name: str,
         job_name: str,
         shipment_pick_up_request: "_models.ShipmentPickUpRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShipmentPickUpResponse":
         """Book shipment pick up.
 
@@ -641,10 +641,10 @@ class JobsOperations:
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param shipment_pick_up_request: Details of shipment pick up request.
-        :type shipment_pick_up_request: ~azure.mgmt.databox.models.ShipmentPickUpRequest
+        :type shipment_pick_up_request: ~azure.mgmt.databox.v2018_01_01.models.ShipmentPickUpRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ShipmentPickUpResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.ShipmentPickUpResponse
+        :rtype: ~azure.mgmt.databox.v2018_01_01.models.ShipmentPickUpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ShipmentPickUpResponse"]
@@ -698,7 +698,7 @@ class JobsOperations:
         resource_group_name: str,
         job_name: str,
         cancellation_reason: "_models.CancellationReason",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """CancelJob.
 
@@ -708,7 +708,7 @@ class JobsOperations:
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param cancellation_reason: Reason for cancellation.
-        :type cancellation_reason: ~azure.mgmt.databox.models.CancellationReason
+        :type cancellation_reason: ~azure.mgmt.databox.v2018_01_01.models.CancellationReason
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -759,7 +759,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UnencryptedCredentialsList"]:
         """This method gets the unencrypted secrets related to the job.
 
@@ -770,7 +770,7 @@ class JobsOperations:
         :type job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UnencryptedCredentialsList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.models.UnencryptedCredentialsList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databox.v2018_01_01.models.UnencryptedCredentialsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UnencryptedCredentialsList"]

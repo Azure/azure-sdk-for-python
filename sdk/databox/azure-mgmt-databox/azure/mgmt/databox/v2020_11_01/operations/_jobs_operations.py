@@ -32,7 +32,7 @@ class JobsOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databox.models
+    :type models: ~azure.mgmt.databox.v2020_11_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -60,7 +60,7 @@ class JobsOperations(object):
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.models.JobResourceList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.v2020_11_01.models.JobResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResourceList"]
@@ -110,7 +110,7 @@ class JobsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -137,7 +137,7 @@ class JobsOperations(object):
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobResourceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.models.JobResourceList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.v2020_11_01.models.JobResourceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResourceList"]
@@ -188,7 +188,7 @@ class JobsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -219,7 +219,7 @@ class JobsOperations(object):
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.JobResource
+        :rtype: ~azure.mgmt.databox.v2020_11_01.models.JobResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobResource"]
@@ -255,7 +255,7 @@ class JobsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('JobResource', pipeline_response)
@@ -310,7 +310,7 @@ class JobsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -340,15 +340,15 @@ class JobsOperations(object):
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param job_resource: Job details from request body.
-        :type job_resource: ~azure.mgmt.databox.models.JobResource
+        :type job_resource: ~azure.mgmt.databox.v2020_11_01.models.JobResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either JobResource or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databox.models.JobResource]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databox.v2020_11_01.models.JobResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -435,7 +435,7 @@ class JobsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -459,8 +459,8 @@ class JobsOperations(object):
         :type job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -556,7 +556,7 @@ class JobsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -586,18 +586,18 @@ class JobsOperations(object):
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param job_resource_update_parameter: Job update parameters from request body.
-        :type job_resource_update_parameter: ~azure.mgmt.databox.models.JobResourceUpdateParameter
+        :type job_resource_update_parameter: ~azure.mgmt.databox.v2020_11_01.models.JobResourceUpdateParameter
         :param if_match: Defines the If-Match condition. The patch will be performed only if the ETag
          of the job on the server matches this value.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either JobResource or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databox.models.JobResource]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databox.v2020_11_01.models.JobResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -663,10 +663,10 @@ class JobsOperations(object):
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param shipment_pick_up_request: Details of shipment pick up request.
-        :type shipment_pick_up_request: ~azure.mgmt.databox.models.ShipmentPickUpRequest
+        :type shipment_pick_up_request: ~azure.mgmt.databox.v2020_11_01.models.ShipmentPickUpRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ShipmentPickUpResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.ShipmentPickUpResponse
+        :rtype: ~azure.mgmt.databox.v2020_11_01.models.ShipmentPickUpResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ShipmentPickUpResponse"]
@@ -705,7 +705,7 @@ class JobsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ShipmentPickUpResponse', pipeline_response)
@@ -732,7 +732,7 @@ class JobsOperations(object):
          must be between 3 and 24 characters in length and use any alphanumeric and underscore only.
         :type job_name: str
         :param cancellation_reason: Reason for cancellation.
-        :type cancellation_reason: ~azure.mgmt.databox.models.CancellationReason
+        :type cancellation_reason: ~azure.mgmt.databox.v2020_11_01.models.CancellationReason
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -774,7 +774,7 @@ class JobsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -798,7 +798,7 @@ class JobsOperations(object):
         :type job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UnencryptedCredentialsList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.models.UnencryptedCredentialsList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.v2020_11_01.models.UnencryptedCredentialsList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UnencryptedCredentialsList"]
@@ -848,7 +848,7 @@ class JobsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

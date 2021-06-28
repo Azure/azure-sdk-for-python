@@ -30,7 +30,7 @@ class ServiceOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databox.models
+    :type models: ~azure.mgmt.databox.v2020_04_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -61,10 +61,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param available_sku_request: Filters for showing the available skus.
-        :type available_sku_request: ~azure.mgmt.databox.models.AvailableSkuRequest
+        :type available_sku_request: ~azure.mgmt.databox.v2020_04_01.models.AvailableSkuRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableSkusResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.models.AvailableSkusResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.v2020_04_01.models.AvailableSkusResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableSkusResult"]
@@ -122,7 +122,7 @@ class ServiceOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ApiError, response)
+                error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -146,10 +146,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param validate_address: Shipping address of the customer.
-        :type validate_address: ~azure.mgmt.databox.models.ValidateAddress
+        :type validate_address: ~azure.mgmt.databox.v2020_04_01.models.ValidateAddress
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddressValidationOutput, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.AddressValidationOutput
+        :rtype: ~azure.mgmt.databox.v2020_04_01.models.AddressValidationOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddressValidationOutput"]
@@ -187,7 +187,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AddressValidationOutput', pipeline_response)
@@ -213,10 +213,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param validation_request: Inputs of the customer.
-        :type validation_request: ~azure.mgmt.databox.models.ValidationRequest
+        :type validation_request: ~azure.mgmt.databox.v2020_04_01.models.ValidationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.ValidationResponse
+        :rtype: ~azure.mgmt.databox.v2020_04_01.models.ValidationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidationResponse"]
@@ -255,7 +255,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidationResponse', pipeline_response)
@@ -278,10 +278,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param validation_request: Inputs of the customer.
-        :type validation_request: ~azure.mgmt.databox.models.ValidationRequest
+        :type validation_request: ~azure.mgmt.databox.v2020_04_01.models.ValidationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.ValidationResponse
+        :rtype: ~azure.mgmt.databox.v2020_04_01.models.ValidationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidationResponse"]
@@ -319,7 +319,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidationResponse', pipeline_response)
@@ -343,10 +343,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param region_configuration_request: Request body to get the configuration for the region.
-        :type region_configuration_request: ~azure.mgmt.databox.models.RegionConfigurationRequest
+        :type region_configuration_request: ~azure.mgmt.databox.v2020_04_01.models.RegionConfigurationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionConfigurationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.RegionConfigurationResponse
+        :rtype: ~azure.mgmt.databox.v2020_04_01.models.RegionConfigurationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegionConfigurationResponse"]
@@ -384,7 +384,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RegionConfigurationResponse', pipeline_response)
@@ -412,10 +412,10 @@ class ServiceOperations(object):
         :type location: str
         :param region_configuration_request: Request body to get the configuration for the region at
          resource group level.
-        :type region_configuration_request: ~azure.mgmt.databox.models.RegionConfigurationRequest
+        :type region_configuration_request: ~azure.mgmt.databox.v2020_04_01.models.RegionConfigurationRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegionConfigurationResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.RegionConfigurationResponse
+        :rtype: ~azure.mgmt.databox.v2020_04_01.models.RegionConfigurationResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegionConfigurationResponse"]
@@ -454,7 +454,7 @@ class ServiceOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ApiError, response)
+            error = self._deserialize.failsafe_deserialize(_models.ApiError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RegionConfigurationResponse', pipeline_response)

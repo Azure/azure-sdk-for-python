@@ -30,7 +30,7 @@ class ServiceOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databox.models
+    :type models: ~azure.mgmt.databox.v2018_01_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -57,10 +57,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param available_sku_request: Filters for showing the available skus.
-        :type available_sku_request: ~azure.mgmt.databox.models.AvailableSkuRequest
+        :type available_sku_request: ~azure.mgmt.databox.v2018_01_01.models.AvailableSkuRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableSkusResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.models.AvailableSkusResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databox.v2018_01_01.models.AvailableSkusResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableSkusResult"]
@@ -139,10 +139,10 @@ class ServiceOperations(object):
         :param location: The location of the resource.
         :type location: str
         :param validate_address: Shipping address of the customer.
-        :type validate_address: ~azure.mgmt.databox.models.ValidateAddress
+        :type validate_address: ~azure.mgmt.databox.v2018_01_01.models.ValidateAddress
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddressValidationOutput, or the result of cls(response)
-        :rtype: ~azure.mgmt.databox.models.AddressValidationOutput
+        :rtype: ~azure.mgmt.databox.v2018_01_01.models.AddressValidationOutput
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AddressValidationOutput"]

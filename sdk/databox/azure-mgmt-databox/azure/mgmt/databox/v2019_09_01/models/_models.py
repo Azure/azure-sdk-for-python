@@ -18,12 +18,14 @@ class AccountCredentialDetails(msrest.serialization.Model):
     :vartype account_name: str
     :ivar data_destination_type: Data Destination Type. Possible values include: "StorageAccount",
      "ManagedDisk".
-    :vartype data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.DataDestinationType
     :ivar account_connection_string: Connection string of the account endpoint to use the account
      as a storage endpoint on the device.
     :vartype account_connection_string: str
     :ivar share_credential_details: Per share level unencrypted access credentials.
-    :vartype share_credential_details: list[~azure.mgmt.databox.models.ShareCredentialDetails]
+    :vartype share_credential_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.ShareCredentialDetails]
     """
 
     _validation = {
@@ -60,14 +62,16 @@ class AddressValidationOutput(msrest.serialization.Model):
      Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar validation_status: The address validation status. Possible values include: "Valid",
      "Invalid", "Ambiguous".
-    :vartype validation_status: str or ~azure.mgmt.databox.models.AddressValidationStatus
+    :vartype validation_status: str or
+     ~azure.mgmt.databox.v2019_09_01.models.AddressValidationStatus
     :ivar alternate_addresses: List of alternate addresses.
-    :vartype alternate_addresses: list[~azure.mgmt.databox.models.ShippingAddress]
+    :vartype alternate_addresses: list[~azure.mgmt.databox.v2019_09_01.models.ShippingAddress]
     """
 
     _validation = {
@@ -108,9 +112,10 @@ class ValidationInputResponse(msrest.serialization.Model):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     """
 
     _validation = {
@@ -147,14 +152,16 @@ class AddressValidationProperties(ValidationInputResponse):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar validation_status: The address validation status. Possible values include: "Valid",
      "Invalid", "Ambiguous".
-    :vartype validation_status: str or ~azure.mgmt.databox.models.AddressValidationStatus
+    :vartype validation_status: str or
+     ~azure.mgmt.databox.v2019_09_01.models.AddressValidationStatus
     :ivar alternate_addresses: List of alternate addresses.
-    :vartype alternate_addresses: list[~azure.mgmt.databox.models.ShippingAddress]
+    :vartype alternate_addresses: list[~azure.mgmt.databox.v2019_09_01.models.ShippingAddress]
     """
 
     _validation = {
@@ -253,7 +260,7 @@ class AvailableSkuRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar transfer_type: Required. Type of the transfer. Default value: "ImportToAzure".
+    :ivar transfer_type: Type of the transfer. Has constant value: "ImportToAzure".
     :vartype transfer_type: str
     :param country: Required. ISO country code. Country for hardware shipment. For codes check:
      https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements.
@@ -262,7 +269,7 @@ class AvailableSkuRequest(msrest.serialization.Model):
      https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
     :type location: str
     :param sku_names: Sku Names to filter for available skus.
-    :type sku_names: list[str or ~azure.mgmt.databox.models.SkuName]
+    :type sku_names: list[str or ~azure.mgmt.databox.v2019_09_01.models.SkuName]
     """
 
     _validation = {
@@ -296,7 +303,7 @@ class AvailableSkusResult(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of available skus.
-    :vartype value: list[~azure.mgmt.databox.models.SkuInformation]
+    :vartype value: list[~azure.mgmt.databox.v2019_09_01.models.SkuInformation]
     :param next_link: Link for the next set of skus.
     :type next_link: str
     """
@@ -356,7 +363,7 @@ class CloudError(msrest.serialization.Model):
     :param target: Error target.
     :type target: str
     :param details: More detailed error information.
-    :type details: list[~azure.mgmt.databox.models.CloudError]
+    :type details: list[~azure.mgmt.databox.v2019_09_01.models.CloudError]
     """
 
     _validation = {
@@ -398,7 +405,8 @@ class ContactDetails(msrest.serialization.Model):
     :param email_list: Required. List of Email-ids to be notified about job progress.
     :type email_list: list[str]
     :param notification_preference: Notification preference for a job stage.
-    :type notification_preference: list[~azure.mgmt.databox.models.NotificationPreference]
+    :type notification_preference:
+     list[~azure.mgmt.databox.v2019_09_01.models.NotificationPreference]
     """
 
     _validation = {
@@ -439,7 +447,7 @@ class CopyLogDetails(msrest.serialization.Model):
 
     :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type copy_log_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     """
 
     _validation = {
@@ -471,7 +479,8 @@ class CopyProgress(msrest.serialization.Model):
     :vartype storage_account_name: str
     :ivar data_destination_type: Data Destination Type. Possible values include: "StorageAccount",
      "ManagedDisk".
-    :vartype data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.DataDestinationType
     :ivar account_id: Id of the account where the data needs to be uploaded.
     :vartype account_id: str
     :ivar bytes_sent_to_cloud: Amount of data uploaded by the job as of now.
@@ -551,7 +560,8 @@ class ValidationRequest(msrest.serialization.Model):
 
     :param individual_request_details: Required. List of request details contain validationType and
      its request as key and value respectively.
-    :type individual_request_details: list[~azure.mgmt.databox.models.ValidationInputRequest]
+    :type individual_request_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.ValidationInputRequest]
     :param validation_category: Required. Identify the nature of validation.Constant filled by
      server.
     :type validation_category: str
@@ -587,7 +597,8 @@ class CreateJobValidations(ValidationRequest):
 
     :param individual_request_details: Required. List of request details contain validationType and
      its request as key and value respectively.
-    :type individual_request_details: list[~azure.mgmt.databox.models.ValidationInputRequest]
+    :type individual_request_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.ValidationInputRequest]
     :param validation_category: Required. Identify the nature of validation.Constant filled by
      server.
     :type validation_category: str
@@ -623,7 +634,8 @@ class ValidationInputRequest(msrest.serialization.Model):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     """
 
     _validation = {
@@ -655,10 +667,11 @@ class CreateOrderLimitForSubscriptionValidationRequest(ValidationInputRequest):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :param device_type: Required. Device type to be used for the job. Possible values include:
      "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    :type device_type: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     """
 
     _validation = {
@@ -691,12 +704,13 @@ class CreateOrderLimitForSubscriptionValidationResponseProperties(ValidationInpu
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar status: Create order limit validation status. Possible values include: "Valid",
      "Invalid", "Skipped".
-    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.ValidationStatus
     """
 
     _validation = {
@@ -729,7 +743,7 @@ class DataBoxAccountCopyLogDetails(CopyLogDetails):
 
     :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type copy_log_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :ivar account_name: Destination account name.
     :vartype account_name: str
     :ivar copy_log_link: Link for copy logs.
@@ -767,7 +781,7 @@ class DataBoxDiskCopyLogDetails(CopyLogDetails):
 
     :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type copy_log_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :ivar disk_serial_number: Disk Serial Number.
     :vartype disk_serial_number: str
     :ivar error_log_link: Link for copy error logs.
@@ -815,7 +829,7 @@ class DataBoxDiskCopyProgress(msrest.serialization.Model):
     :ivar status: The Status of the copy. Possible values include: "NotStarted", "InProgress",
      "Completed", "CompletedWithErrors", "Failed", "NotReturned", "HardwareError",
      "DeviceFormatted", "DeviceMetadataModified", "StorageAccountNotAccessible", "UnsupportedData".
-    :vartype status: str or ~azure.mgmt.databox.models.CopyStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.CopyStatus
     """
 
     _validation = {
@@ -853,30 +867,31 @@ class JobDetails(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
+    :vartype job_stages: list[~azure.mgmt.databox.v2019_09_01.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
+    :type contact_details: ~azure.mgmt.databox.v2019_09_01.models.ContactDetails
     :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.databox.v2019_09_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype return_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :type destination_account_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
+    :vartype error_details: list[~azure.mgmt.databox.v2019_09_01.models.JobErrorDetails]
     :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
      Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :type preferences: ~azure.mgmt.databox.v2019_09_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2019_09_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
@@ -898,7 +913,7 @@ class JobDetails(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -922,7 +937,7 @@ class JobDetails(msrest.serialization.Model):
         **kwargs
     ):
         super(JobDetails, self).__init__(**kwargs)
-        self.expected_data_size_in_terabytes = kwargs.get('expected_data_size_in_terabytes', None)
+        self.expected_data_size_in_tera_bytes = kwargs.get('expected_data_size_in_tera_bytes', None)
         self.job_stages = None
         self.contact_details = kwargs['contact_details']
         self.shipping_address = kwargs['shipping_address']
@@ -944,30 +959,31 @@ class DataBoxDiskJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
+    :vartype job_stages: list[~azure.mgmt.databox.v2019_09_01.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
+    :type contact_details: ~azure.mgmt.databox.v2019_09_01.models.ContactDetails
     :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.databox.v2019_09_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype return_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :type destination_account_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
+    :vartype error_details: list[~azure.mgmt.databox.v2019_09_01.models.JobErrorDetails]
     :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
      Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :type preferences: ~azure.mgmt.databox.v2019_09_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2019_09_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
@@ -977,7 +993,7 @@ class DataBoxDiskJobDetails(JobDetails):
      will be checked against an int.
     :type preferred_disks: dict[str, int]
     :ivar copy_progress: Copy progress per disk.
-    :vartype copy_progress: list[~azure.mgmt.databox.models.DataBoxDiskCopyProgress]
+    :vartype copy_progress: list[~azure.mgmt.databox.v2019_09_01.models.DataBoxDiskCopyProgress]
     :ivar disks_and_size_details: Contains the map of disk serial number to the disk size being
      used for the job. Is returned only after the disks are shipped to the customer.
     :vartype disks_and_size_details: dict[str, int]
@@ -1002,7 +1018,7 @@ class DataBoxDiskJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -1043,9 +1059,9 @@ class JobSecrets(msrest.serialization.Model):
 
     :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
      filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_secrets_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :type dc_access_security_code: ~azure.mgmt.databox.models.DcAccessSecurityCode
+    :type dc_access_security_code: ~azure.mgmt.databox.v2019_09_01.models.DcAccessSecurityCode
     """
 
     _validation = {
@@ -1079,11 +1095,11 @@ class DataBoxDiskJobSecrets(JobSecrets):
 
     :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
      filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_secrets_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :type dc_access_security_code: ~azure.mgmt.databox.models.DcAccessSecurityCode
+    :type dc_access_security_code: ~azure.mgmt.databox.v2019_09_01.models.DcAccessSecurityCode
     :ivar disk_secrets: Contains the list of secrets object for that device.
-    :vartype disk_secrets: list[~azure.mgmt.databox.models.DiskSecret]
+    :vartype disk_secrets: list[~azure.mgmt.databox.v2019_09_01.models.DiskSecret]
     :ivar pass_key: PassKey for the disk Job.
     :vartype pass_key: str
     :ivar is_passkey_user_defined: Whether passkey was provided by user.
@@ -1125,7 +1141,7 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
 
     :param copy_log_details_type: Required. Indicates the type of job details.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type copy_log_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :ivar account_name: Destination account name.
     :vartype account_name: str
     :ivar copy_log_link: Link for copy logs.
@@ -1161,36 +1177,37 @@ class DataBoxHeavyJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
+    :vartype job_stages: list[~azure.mgmt.databox.v2019_09_01.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
+    :type contact_details: ~azure.mgmt.databox.v2019_09_01.models.ContactDetails
     :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.databox.v2019_09_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype return_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :type destination_account_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
+    :vartype error_details: list[~azure.mgmt.databox.v2019_09_01.models.JobErrorDetails]
     :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
      Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :type preferences: ~azure.mgmt.databox.v2019_09_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2019_09_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
     :ivar copy_progress: Copy progress per account.
-    :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
+    :vartype copy_progress: list[~azure.mgmt.databox.v2019_09_01.models.CopyProgress]
     :param device_password: Set Device password for unlocking Databox Heavy.
     :type device_password: str
     """
@@ -1211,7 +1228,7 @@ class DataBoxHeavyJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -1247,11 +1264,11 @@ class DataBoxHeavyJobSecrets(JobSecrets):
 
     :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
      filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_secrets_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :type dc_access_security_code: ~azure.mgmt.databox.models.DcAccessSecurityCode
+    :type dc_access_security_code: ~azure.mgmt.databox.v2019_09_01.models.DcAccessSecurityCode
     :ivar cabinet_pod_secrets: Contains the list of secret objects for a databox heavy job.
-    :vartype cabinet_pod_secrets: list[~azure.mgmt.databox.models.DataBoxHeavySecret]
+    :vartype cabinet_pod_secrets: list[~azure.mgmt.databox.v2019_09_01.models.DataBoxHeavySecret]
     """
 
     _validation = {
@@ -1284,12 +1301,14 @@ class DataBoxHeavySecret(msrest.serialization.Model):
     :ivar device_password: Password for out of the box experience on device.
     :vartype device_password: str
     :ivar network_configurations: Network configuration of the appliance.
-    :vartype network_configurations: list[~azure.mgmt.databox.models.ApplianceNetworkConfiguration]
+    :vartype network_configurations:
+     list[~azure.mgmt.databox.v2019_09_01.models.ApplianceNetworkConfiguration]
     :ivar encoded_validation_cert_pub_key: The base 64 encoded public key to authenticate with the
      device.
     :vartype encoded_validation_cert_pub_key: str
     :ivar account_credential_details: Per account level access credentials.
-    :vartype account_credential_details: list[~azure.mgmt.databox.models.AccountCredentialDetails]
+    :vartype account_credential_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.AccountCredentialDetails]
     """
 
     _validation = {
@@ -1327,36 +1346,37 @@ class DataBoxJobDetails(JobDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_terabytes: The expected size of the data, which needs to be
+    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
+    :vartype job_stages: list[~azure.mgmt.databox.v2019_09_01.models.JobStages]
     :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
+    :type contact_details: ~azure.mgmt.databox.v2019_09_01.models.ContactDetails
     :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.databox.v2019_09_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype return_package: ~azure.mgmt.databox.v2019_09_01.models.PackageShippingDetails
     :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :type destination_account_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
+    :vartype error_details: list[~azure.mgmt.databox.v2019_09_01.models.JobErrorDetails]
     :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
      Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_details_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :type preferences: ~azure.mgmt.databox.v2019_09_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2019_09_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
     :ivar copy_progress: Copy progress per storage account.
-    :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
+    :vartype copy_progress: list[~azure.mgmt.databox.v2019_09_01.models.CopyProgress]
     :param device_password: Set Device password for unlocking Databox.
     :type device_password: str
     """
@@ -1377,7 +1397,7 @@ class DataBoxJobDetails(JobDetails):
     }
 
     _attribute_map = {
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
         'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
         'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
         'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
@@ -1411,11 +1431,11 @@ class DataboxJobSecrets(JobSecrets):
 
     :param job_secrets_type: Required. Used to indicate what type of job secrets object.Constant
      filled by server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :type job_secrets_type: str or ~azure.mgmt.databox.v2019_09_01.models.ClassDiscriminator
     :param dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :type dc_access_security_code: ~azure.mgmt.databox.models.DcAccessSecurityCode
+    :type dc_access_security_code: ~azure.mgmt.databox.v2019_09_01.models.DcAccessSecurityCode
     :param pod_secrets: Contains the list of secret objects for a job.
-    :type pod_secrets: list[~azure.mgmt.databox.models.DataBoxSecret]
+    :type pod_secrets: list[~azure.mgmt.databox.v2019_09_01.models.DataBoxSecret]
     """
 
     _validation = {
@@ -1446,12 +1466,12 @@ class ScheduleAvailabilityRequest(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param storage_location: Required. Location for data transfer.
-     For locations check: https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-
-     version=2018-01-01.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
     :type storage_location: str
     :param sku_name: Required. Sku Name for which the order is to be scheduled.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :type sku_name: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     """
 
     _validation = {
@@ -1483,12 +1503,12 @@ class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     All required parameters must be populated in order to send to Azure.
 
     :param storage_location: Required. Location for data transfer.
-     For locations check: https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-
-     version=2018-01-01.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
     :type storage_location: str
     :param sku_name: Required. Sku Name for which the order is to be scheduled.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :type sku_name: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     """
 
     _validation = {
@@ -1519,12 +1539,14 @@ class DataBoxSecret(msrest.serialization.Model):
     :ivar device_password: Password for out of the box experience on device.
     :vartype device_password: str
     :ivar network_configurations: Network configuration of the appliance.
-    :vartype network_configurations: list[~azure.mgmt.databox.models.ApplianceNetworkConfiguration]
+    :vartype network_configurations:
+     list[~azure.mgmt.databox.v2019_09_01.models.ApplianceNetworkConfiguration]
     :ivar encoded_validation_cert_pub_key: The base 64 encoded public key to authenticate with the
      device.
     :vartype encoded_validation_cert_pub_key: str
     :ivar account_credential_details: Per account level access credentials.
-    :vartype account_credential_details: list[~azure.mgmt.databox.models.AccountCredentialDetails]
+    :vartype account_credential_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.AccountCredentialDetails]
     """
 
     _validation = {
@@ -1564,9 +1586,11 @@ class DataDestinationDetailsValidationRequest(ValidationInputRequest):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :param destination_account_details: Required. Destination account details list.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :type destination_account_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationAccountDetails]
     :param location: Required. Location of stamp or geo.
     :type location: str
     """
@@ -1604,12 +1628,13 @@ class DataDestinationDetailsValidationResponseProperties(ValidationInputResponse
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar status: Data destination details validation status. Possible values include: "Valid",
      "Invalid", "Skipped".
-    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.ValidationStatus
     """
 
     _validation = {
@@ -1643,8 +1668,8 @@ class DcAccessSecurityCode(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'forward_dc_access_code': {'key': 'forwardDcAccessCode', 'type': 'str'},
-        'reverse_dc_access_code': {'key': 'reverseDcAccessCode', 'type': 'str'},
+        'forward_dc_access_code': {'key': 'forwardDCAccessCode', 'type': 'str'},
+        'reverse_dc_access_code': {'key': 'reverseDCAccessCode', 'type': 'str'},
     }
 
     def __init__(
@@ -1666,7 +1691,7 @@ class DestinationAccountDetails(msrest.serialization.Model):
 
     :param data_destination_type: Required. Data Destination Type.Constant filled by server.
      Possible values include: "StorageAccount", "ManagedDisk".
-    :type data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
+    :type data_destination_type: str or ~azure.mgmt.databox.v2019_09_01.models.DataDestinationType
     :param account_id: Arm Id of the destination where the data has to be moved.
     :type account_id: str
     :param share_password: Share password to be shared by all shares in SA.
@@ -1704,7 +1729,7 @@ class DestinationManagedDiskDetails(DestinationAccountDetails):
 
     :param data_destination_type: Required. Data Destination Type.Constant filled by server.
      Possible values include: "StorageAccount", "ManagedDisk".
-    :type data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
+    :type data_destination_type: str or ~azure.mgmt.databox.v2019_09_01.models.DataDestinationType
     :param account_id: Arm Id of the destination where the data has to be moved.
     :type account_id: str
     :param share_password: Share password to be shared by all shares in SA.
@@ -1748,7 +1773,7 @@ class DestinationStorageAccountDetails(DestinationAccountDetails):
 
     :param data_destination_type: Required. Data Destination Type.Constant filled by server.
      Possible values include: "StorageAccount", "ManagedDisk".
-    :type data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
+    :type data_destination_type: str or ~azure.mgmt.databox.v2019_09_01.models.DataDestinationType
     :param account_id: Arm Id of the destination where the data has to be moved.
     :type account_id: str
     :param share_password: Share password to be shared by all shares in SA.
@@ -1814,27 +1839,27 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     All required parameters must be populated in order to send to Azure.
 
     :param storage_location: Required. Location for data transfer.
-     For locations check: https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-
-     version=2018-01-01.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
     :type storage_location: str
     :param sku_name: Required. Sku Name for which the order is to be scheduled.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type sku_name: str or ~azure.mgmt.databox.models.SkuName
-    :param expected_data_size_in_terabytes: Required. The expected size of the data, which needs to
-     be transferred in this job, in terabytes.
-    :type expected_data_size_in_terabytes: int
+    :type sku_name: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
+    :param expected_data_size_in_tera_bytes: Required. The expected size of the data, which needs
+     to be transferred in this job, in terabytes.
+    :type expected_data_size_in_tera_bytes: int
     """
 
     _validation = {
         'storage_location': {'required': True},
         'sku_name': {'required': True},
-        'expected_data_size_in_terabytes': {'required': True},
+        'expected_data_size_in_tera_bytes': {'required': True},
     }
 
     _attribute_map = {
         'storage_location': {'key': 'storageLocation', 'type': 'str'},
         'sku_name': {'key': 'skuName', 'type': 'str'},
-        'expected_data_size_in_terabytes': {'key': 'expectedDataSizeInTerabytes', 'type': 'int'},
+        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
     }
 
     def __init__(
@@ -1843,7 +1868,7 @@ class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     ):
         super(DiskScheduleAvailabilityRequest, self).__init__(**kwargs)
         self.sku_name = 'DataBoxDisk'  # type: str
-        self.expected_data_size_in_terabytes = kwargs['expected_data_size_in_terabytes']
+        self.expected_data_size_in_tera_bytes = kwargs['expected_data_size_in_tera_bytes']
 
 
 class DiskSecret(msrest.serialization.Model):
@@ -1913,12 +1938,12 @@ class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest):
     All required parameters must be populated in order to send to Azure.
 
     :param storage_location: Required. Location for data transfer.
-     For locations check: https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-
-     version=2018-01-01.
+     For locations check:
+     https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
     :type storage_location: str
     :param sku_name: Required. Sku Name for which the order is to be scheduled.Constant filled by
      server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :type sku_name: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     """
 
     _validation = {
@@ -2012,7 +2037,7 @@ class Resource(msrest.serialization.Model):
      can be used in viewing and grouping this resource (across resource groups).
     :type tags: dict[str, str]
     :param sku: Required. The sku type.
-    :type sku: ~azure.mgmt.databox.models.Sku
+    :type sku: ~azure.mgmt.databox.v2019_09_01.models.Sku
     """
 
     _validation = {
@@ -2052,7 +2077,7 @@ class JobResource(Resource):
      can be used in viewing and grouping this resource (across resource groups).
     :type tags: dict[str, str]
     :param sku: Required. The sku type.
-    :type sku: ~azure.mgmt.databox.models.Sku
+    :type sku: ~azure.mgmt.databox.v2019_09_01.models.Sku
     :ivar name: Name of the object.
     :vartype name: str
     :ivar id: Id of the object.
@@ -2070,20 +2095,20 @@ class JobResource(Resource):
      "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
      "Failed_IssueDetectedAtAzureDC", "Aborted", "CompletedWithWarnings",
      "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC".
-    :vartype status: str or ~azure.mgmt.databox.models.StageName
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.StageName
     :ivar start_time: Time at which the job was started in UTC ISO 8601 format.
     :vartype start_time: ~datetime.datetime
     :ivar error: Top level error for the job.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :param details: Details of a job run. This field will only be sent for expand details filter.
-    :type details: ~azure.mgmt.databox.models.JobDetails
+    :type details: ~azure.mgmt.databox.v2019_09_01.models.JobDetails
     :ivar cancellation_reason: Reason for cancellation.
     :vartype cancellation_reason: str
     :param delivery_type: Delivery type of Job. Possible values include: "NonScheduled",
-     "Scheduled".
-    :type delivery_type: str or ~azure.mgmt.databox.models.JobDeliveryType
+     "Scheduled". Default value: "NonScheduled".
+    :type delivery_type: str or ~azure.mgmt.databox.v2019_09_01.models.JobDeliveryType
     :param delivery_info: Delivery Info of Job.
-    :type delivery_info: ~azure.mgmt.databox.models.JobDeliveryInfo
+    :type delivery_info: ~azure.mgmt.databox.v2019_09_01.models.JobDeliveryInfo
     :ivar is_cancellable_without_fee: Flag to indicate cancellation of scheduled job.
     :vartype is_cancellable_without_fee: bool
     """
@@ -2140,7 +2165,7 @@ class JobResource(Resource):
         self.error = None
         self.details = kwargs.get('details', None)
         self.cancellation_reason = None
-        self.delivery_type = kwargs.get('delivery_type', None)
+        self.delivery_type = kwargs.get('delivery_type', "NonScheduled")
         self.delivery_info = kwargs.get('delivery_info', None)
         self.is_cancellable_without_fee = None
 
@@ -2149,7 +2174,7 @@ class JobResourceList(msrest.serialization.Model):
     """Job Resource Collection.
 
     :param value: List of job resources.
-    :type value: list[~azure.mgmt.databox.models.JobResource]
+    :type value: list[~azure.mgmt.databox.v2019_09_01.models.JobResource]
     :param next_link: Link for the next set of job resources.
     :type next_link: str
     """
@@ -2175,9 +2200,10 @@ class JobResourceUpdateParameter(msrest.serialization.Model):
      can be used in viewing and grouping this resource (across resource groups).
     :type tags: dict[str, str]
     :param details: Details of a job to be updated.
-    :type details: ~azure.mgmt.databox.models.UpdateJobDetails
+    :type details: ~azure.mgmt.databox.v2019_09_01.models.UpdateJobDetails
     :param destination_account_details: Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :type destination_account_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationAccountDetails]
     """
 
     _attribute_map = {
@@ -2206,18 +2232,18 @@ class JobStages(msrest.serialization.Model):
      "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
      "Failed_IssueDetectedAtAzureDC", "Aborted", "CompletedWithWarnings",
      "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC".
-    :vartype stage_name: str or ~azure.mgmt.databox.models.StageName
+    :vartype stage_name: str or ~azure.mgmt.databox.v2019_09_01.models.StageName
     :ivar display_name: Display name of the job stage.
     :vartype display_name: str
     :ivar stage_status: Status of the job stage. Possible values include: "None", "InProgress",
      "Succeeded", "Failed", "Cancelled", "Cancelling", "SucceededWithErrors".
-    :vartype stage_status: str or ~azure.mgmt.databox.models.StageStatus
+    :vartype stage_status: str or ~azure.mgmt.databox.v2019_09_01.models.StageStatus
     :ivar stage_time: Time for the job stage in UTC ISO 8601 format.
     :vartype stage_time: ~datetime.datetime
     :ivar job_stage_details: Job Stage Details.
-    :vartype job_stage_details: object
+    :vartype job_stage_details: any
     :ivar error_details: Error details for the stage.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
+    :vartype error_details: list[~azure.mgmt.databox.v2019_09_01.models.JobErrorDetails]
     """
 
     _validation = {
@@ -2258,7 +2284,7 @@ class NotificationPreference(msrest.serialization.Model):
 
     :param stage_name: Required. Name of the stage. Possible values include: "DevicePrepared",
      "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy".
-    :type stage_name: str or ~azure.mgmt.databox.models.NotificationStageName
+    :type stage_name: str or ~azure.mgmt.databox.v2019_09_01.models.NotificationStageName
     :param send_notification: Required. Notification is required or not.
     :type send_notification: bool
     """
@@ -2279,7 +2305,7 @@ class NotificationPreference(msrest.serialization.Model):
     ):
         super(NotificationPreference, self).__init__(**kwargs)
         self.stage_name = kwargs['stage_name']
-        self.send_notification = kwargs['send_notification']
+        self.send_notification = kwargs.get('send_notification', True)
 
 
 class Operation(msrest.serialization.Model):
@@ -2291,9 +2317,9 @@ class Operation(msrest.serialization.Model):
      {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}.
     :vartype name: str
     :ivar display: Operation display values.
-    :vartype display: ~azure.mgmt.databox.models.OperationDisplay
+    :vartype display: ~azure.mgmt.databox.v2019_09_01.models.OperationDisplay
     :ivar properties: Operation properties.
-    :vartype properties: object
+    :vartype properties: any
     :ivar origin: Origin of the operation. Can be : user|system|user,system.
     :vartype origin: str
     """
@@ -2360,7 +2386,7 @@ class OperationList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations.
-    :vartype value: list[~azure.mgmt.databox.models.Operation]
+    :vartype value: list[~azure.mgmt.databox.v2019_09_01.models.Operation]
     :param next_link: Link for the next set of operations.
     :type next_link: str
     """
@@ -2424,7 +2450,7 @@ class Preferences(msrest.serialization.Model):
     :param preferred_data_center_region: Preferred Data Center Region.
     :type preferred_data_center_region: list[str]
     :param transport_preferences: Preferences related to the shipment logistics of the sku.
-    :type transport_preferences: ~azure.mgmt.databox.models.TransportPreferences
+    :type transport_preferences: ~azure.mgmt.databox.v2019_09_01.models.TransportPreferences
     """
 
     _attribute_map = {
@@ -2450,12 +2476,13 @@ class PreferencesValidationRequest(ValidationInputRequest):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :param preference: Preference requested with respect to transport type and data center.
-    :type preference: ~azure.mgmt.databox.models.Preferences
+    :type preference: ~azure.mgmt.databox.v2019_09_01.models.Preferences
     :param device_type: Required. Device type to be used for the job. Possible values include:
      "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    :type device_type: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     """
 
     _validation = {
@@ -2490,12 +2517,13 @@ class PreferencesValidationResponseProperties(ValidationInputResponse):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar status: Validation status of requested data center and transport. Possible values
      include: "Valid", "Invalid", "Skipped".
-    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.ValidationStatus
     """
 
     _validation = {
@@ -2524,10 +2552,12 @@ class RegionConfigurationRequest(msrest.serialization.Model):
 
     :param schedule_availability_request: Request body to get the availability for scheduling
      orders.
-    :type schedule_availability_request: ~azure.mgmt.databox.models.ScheduleAvailabilityRequest
+    :type schedule_availability_request:
+     ~azure.mgmt.databox.v2019_09_01.models.ScheduleAvailabilityRequest
     :param transport_availability_request: Request body to get the transport availability for given
      sku.
-    :type transport_availability_request: ~azure.mgmt.databox.models.TransportAvailabilityRequest
+    :type transport_availability_request:
+     ~azure.mgmt.databox.v2019_09_01.models.TransportAvailabilityRequest
     """
 
     _attribute_map = {
@@ -2551,10 +2581,10 @@ class RegionConfigurationResponse(msrest.serialization.Model):
 
     :ivar schedule_availability_response: Schedule availability for given sku in a region.
     :vartype schedule_availability_response:
-     ~azure.mgmt.databox.models.ScheduleAvailabilityResponse
+     ~azure.mgmt.databox.v2019_09_01.models.ScheduleAvailabilityResponse
     :ivar transport_availability_response: Transport options available for given sku in a region.
     :vartype transport_availability_response:
-     ~azure.mgmt.databox.models.TransportAvailabilityResponse
+     ~azure.mgmt.databox.v2019_09_01.models.TransportAvailabilityResponse
     """
 
     _validation = {
@@ -2610,13 +2640,14 @@ class ShareCredentialDetails(msrest.serialization.Model):
     :vartype share_name: str
     :ivar share_type: Type of the share. Possible values include: "UnknownType", "HCS",
      "BlockBlob", "PageBlob", "AzureFile", "ManagedDisk".
-    :vartype share_type: str or ~azure.mgmt.databox.models.ShareDestinationFormatType
+    :vartype share_type: str or ~azure.mgmt.databox.v2019_09_01.models.ShareDestinationFormatType
     :ivar user_name: User name for the share.
     :vartype user_name: str
     :ivar password: Password for the share.
     :vartype password: str
     :ivar supported_access_protocols: Access protocols supported on the device.
-    :vartype supported_access_protocols: list[str or ~azure.mgmt.databox.models.AccessProtocol]
+    :vartype supported_access_protocols: list[str or
+     ~azure.mgmt.databox.v2019_09_01.models.AccessProtocol]
     """
 
     _validation = {
@@ -2739,8 +2770,8 @@ class ShippingAddress(msrest.serialization.Model):
     :param company_name: Name of the company.
     :type company_name: str
     :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
-    :type address_type: str or ~azure.mgmt.databox.models.AddressType
+     "Commercial". Default value: "None".
+    :type address_type: str or ~azure.mgmt.databox.v2019_09_01.models.AddressType
     """
 
     _validation = {
@@ -2776,7 +2807,7 @@ class ShippingAddress(msrest.serialization.Model):
         self.postal_code = kwargs['postal_code']
         self.zip_extended_code = kwargs.get('zip_extended_code', None)
         self.company_name = kwargs.get('company_name', None)
-        self.address_type = kwargs.get('address_type', None)
+        self.address_type = kwargs.get('address_type', "None")
 
 
 class Sku(msrest.serialization.Model):
@@ -2786,7 +2817,7 @@ class Sku(msrest.serialization.Model):
 
     :param name: Required. The sku name. Possible values include: "DataBox", "DataBoxDisk",
      "DataBoxHeavy".
-    :type name: str or ~azure.mgmt.databox.models.SkuName
+    :type name: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     :param display_name: The display name of the sku.
     :type display_name: str
     :param family: The sku family.
@@ -2824,11 +2855,12 @@ class SkuAvailabilityValidationRequest(ValidationInputRequest):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :param device_type: Required. Device type to be used for the job. Possible values include:
      "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type device_type: str or ~azure.mgmt.databox.models.SkuName
-    :ivar transfer_type: Required. Type of the transfer. Default value: "ImportToAzure".
+    :type device_type: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
+    :ivar transfer_type: Type of the transfer. Has constant value: "ImportToAzure".
     :vartype transfer_type: str
     :param country: Required. ISO country code. Country for hardware shipment. For codes check:
      https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements.
@@ -2878,12 +2910,13 @@ class SkuAvailabilityValidationResponseProperties(ValidationInputResponse):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar status: Sku availability validation status. Possible values include: "Valid", "Invalid",
      "Skipped".
-    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.ValidationStatus
     """
 
     _validation = {
@@ -2973,21 +3006,21 @@ class SkuInformation(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar sku: The Sku.
-    :vartype sku: ~azure.mgmt.databox.models.Sku
+    :vartype sku: ~azure.mgmt.databox.v2019_09_01.models.Sku
     :ivar enabled: The sku is enabled or not.
     :vartype enabled: bool
     :ivar destination_to_service_location_map: The map of destination location to service location.
     :vartype destination_to_service_location_map:
-     list[~azure.mgmt.databox.models.DestinationToServiceLocationMap]
+     list[~azure.mgmt.databox.v2019_09_01.models.DestinationToServiceLocationMap]
     :ivar capacity: Capacity of the Sku.
-    :vartype capacity: ~azure.mgmt.databox.models.SkuCapacity
+    :vartype capacity: ~azure.mgmt.databox.v2019_09_01.models.SkuCapacity
     :ivar costs: Cost of the Sku.
-    :vartype costs: list[~azure.mgmt.databox.models.SkuCost]
+    :vartype costs: list[~azure.mgmt.databox.v2019_09_01.models.SkuCost]
     :ivar api_versions: Api versions that support this Sku.
     :vartype api_versions: list[str]
     :ivar disabled_reason: Reason why the Sku is disabled. Possible values include: "None",
      "Country", "Region", "Feature", "OfferType", "NoSubscriptionInfo".
-    :vartype disabled_reason: str or ~azure.mgmt.databox.models.SkuDisabledReason
+    :vartype disabled_reason: str or ~azure.mgmt.databox.v2019_09_01.models.SkuDisabledReason
     :ivar disabled_reason_message: Message for why the Sku is disabled.
     :vartype disabled_reason_message: str
     :ivar required_feature: Required feature to access the sku.
@@ -3043,7 +3076,8 @@ class SubscriptionIsAllowedToCreateJobValidationRequest(ValidationInputRequest):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     """
 
     _validation = {
@@ -3073,12 +3107,13 @@ class SubscriptionIsAllowedToCreateJobValidationResponseProperties(ValidationInp
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :ivar error: Error code and message of validation response.
-    :vartype error: ~azure.mgmt.databox.models.Error
+    :vartype error: ~azure.mgmt.databox.v2019_09_01.models.Error
     :ivar status: Validation status of subscription permission to create job. Possible values
      include: "Valid", "Invalid", "Skipped".
-    :vartype status: str or ~azure.mgmt.databox.models.ValidationStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.ValidationStatus
     """
 
     _validation = {
@@ -3109,7 +3144,7 @@ class TransportAvailabilityDetails(msrest.serialization.Model):
 
     :ivar shipment_type: Transport Shipment Type supported for given region. Possible values
      include: "CustomerManaged", "MicrosoftManaged".
-    :vartype shipment_type: str or ~azure.mgmt.databox.models.TransportShipmentTypes
+    :vartype shipment_type: str or ~azure.mgmt.databox.v2019_09_01.models.TransportShipmentTypes
     """
 
     _validation = {
@@ -3133,7 +3168,7 @@ class TransportAvailabilityRequest(msrest.serialization.Model):
 
     :param sku_name: Type of the device. Possible values include: "DataBox", "DataBoxDisk",
      "DataBoxHeavy".
-    :type sku_name: str or ~azure.mgmt.databox.models.SkuName
+    :type sku_name: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     """
 
     _attribute_map = {
@@ -3155,7 +3190,7 @@ class TransportAvailabilityResponse(msrest.serialization.Model):
 
     :ivar transport_availability_details: List of transport availability details for given region.
     :vartype transport_availability_details:
-     list[~azure.mgmt.databox.models.TransportAvailabilityDetails]
+     list[~azure.mgmt.databox.v2019_09_01.models.TransportAvailabilityDetails]
     """
 
     _validation = {
@@ -3181,7 +3216,8 @@ class TransportPreferences(msrest.serialization.Model):
 
     :param preferred_shipment_type: Required. Indicates Shipment Logistics type that the customer
      preferred. Possible values include: "CustomerManaged", "MicrosoftManaged".
-    :type preferred_shipment_type: str or ~azure.mgmt.databox.models.TransportShipmentTypes
+    :type preferred_shipment_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.TransportShipmentTypes
     """
 
     _validation = {
@@ -3208,7 +3244,7 @@ class UnencryptedCredentials(msrest.serialization.Model):
     :ivar job_name: Name of the job.
     :vartype job_name: str
     :ivar job_secrets: Secrets related to this job.
-    :vartype job_secrets: ~azure.mgmt.databox.models.JobSecrets
+    :vartype job_secrets: ~azure.mgmt.databox.v2019_09_01.models.JobSecrets
     """
 
     _validation = {
@@ -3234,7 +3270,7 @@ class UnencryptedCredentialsList(msrest.serialization.Model):
     """List of unencrypted credentials for accessing device.
 
     :param value: List of unencrypted credentials.
-    :type value: list[~azure.mgmt.databox.models.UnencryptedCredentials]
+    :type value: list[~azure.mgmt.databox.v2019_09_01.models.UnencryptedCredentials]
     :param next_link: Link for the next set of unencrypted credentials.
     :type next_link: str
     """
@@ -3257,9 +3293,9 @@ class UpdateJobDetails(msrest.serialization.Model):
     """Job details for update.
 
     :param contact_details: Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
+    :type contact_details: ~azure.mgmt.databox.v2019_09_01.models.ContactDetails
     :param shipping_address: Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.databox.v2019_09_01.models.ShippingAddress
     """
 
     _attribute_map = {
@@ -3285,14 +3321,15 @@ class ValidateAddress(ValidationInputRequest):
      server.  Possible values include: "ValidateAddress", "ValidateDataDestinationDetails",
      "ValidateSubscriptionIsAllowedToCreateJob", "ValidatePreferences", "ValidateCreateOrderLimit",
      "ValidateSkuAvailability".
-    :type validation_type: str or ~azure.mgmt.databox.models.ValidationInputDiscriminator
+    :type validation_type: str or
+     ~azure.mgmt.databox.v2019_09_01.models.ValidationInputDiscriminator
     :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :type shipping_address: ~azure.mgmt.databox.v2019_09_01.models.ShippingAddress
     :param device_type: Required. Device type to be used for the job. Possible values include:
      "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    :type device_type: str or ~azure.mgmt.databox.v2019_09_01.models.SkuName
     :param transport_preferences: Preferences related to the shipment logistics of the sku.
-    :type transport_preferences: ~azure.mgmt.databox.models.TransportPreferences
+    :type transport_preferences: ~azure.mgmt.databox.v2019_09_01.models.TransportPreferences
     """
 
     _validation = {
@@ -3326,10 +3363,11 @@ class ValidationResponse(msrest.serialization.Model):
 
     :ivar status: Overall validation status. Possible values include: "AllValidToProceed",
      "InputsRevisitRequired", "CertainInputValidationsSkipped".
-    :vartype status: str or ~azure.mgmt.databox.models.OverallValidationStatus
+    :vartype status: str or ~azure.mgmt.databox.v2019_09_01.models.OverallValidationStatus
     :ivar individual_response_details: List of response details contain validationType and its
      response as key and value respectively.
-    :vartype individual_response_details: list[~azure.mgmt.databox.models.ValidationInputResponse]
+    :vartype individual_response_details:
+     list[~azure.mgmt.databox.v2019_09_01.models.ValidationInputResponse]
     """
 
     _validation = {
