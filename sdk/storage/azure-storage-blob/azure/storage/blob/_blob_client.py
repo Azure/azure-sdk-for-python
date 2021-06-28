@@ -55,7 +55,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob, _any_conditions)
-from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, ParquetDialect, QuickQueryDialect, \
+from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
     DelimitedJsonDialect, DelimitedTextDialect
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
@@ -833,13 +833,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (str, **Any) -> Dict[str, Any]
         delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
-        if input_format == QuickQueryDialect.ParquetDialect:
-            input_format = ParquetDialect()
         if input_format == QuickQueryDialect.DelimitedJsonDialect:
             input_format = DelimitedJsonDialect()
         if input_format == QuickQueryDialect.DelimitedTextDialect:
             input_format = DelimitedTextDialect()
-        input_parquet_format = isinstance(input_format, ParquetDialect)
+        input_parquet_format = input_format == "ParquetDialect"
         if input_format and not input_parquet_format:
             try:
                 delimiter = input_format.lineterminator
@@ -850,14 +848,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                     raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
                                      "DelimitedJsonDialect or ParquetDialect")
         output_format = kwargs.pop('output_format', None)
-        if output_format == QuickQueryDialect.ParquetDialect:
-            output_format = ParquetDialect()
         if output_format == QuickQueryDialect.DelimitedJsonDialect:
             output_format = DelimitedJsonDialect()
         if output_format == QuickQueryDialect.DelimitedTextDialect:
             output_format = DelimitedTextDialect()
         if output_format:
-            if isinstance(output_format, ParquetDialect):
+            if output_format == "ParquetDialect":
                 raise ValueError("ParquetDialect is invalid as an output format.")
             try:
                 delimiter = output_format.lineterminator
@@ -911,10 +907,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or DelimitedJsonDialect or ParquetDialect.
+            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
-            or ~azure.storage.blob.ParquetDialect or ~azure.storage.blob.QuickQueryDialect or str
+            or ~azure.storage.blob.QuickQueryDialect or str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
             as it is represented in the blob (Parquet formats default to DelimitedTextDialect).

@@ -75,11 +75,6 @@ class QuickQueryDialect(str, Enum):
     ParquetDialect = 'ParquetDialect'
 
 
-class ParquetDialect(object):
-    """Defines parquet input serialization for a blob query request."""
-    pass
-
-
 class SequenceNumberAction(str, Enum):
     """Sequence number actions."""
 

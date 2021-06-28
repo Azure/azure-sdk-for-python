@@ -18,7 +18,7 @@ from azure.storage.blob import (
 )
 
 # ------------------------------------------------------------------------------
-from azure.storage.blob._models import ArrowDialect, ArrowType, ParquetDialect, QuickQueryDialect
+from azure.storage.blob._models import ArrowDialect, ArrowType, QuickQueryDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
@@ -982,6 +982,6 @@ class StorageQuickQueryTest(StorageTestCase):
 
         with self.assertRaises(ValueError):
             blob_client.query_blob(
-                expression, blob_format=ParquetDialect(), output_format=ParquetDialect(), on_error=on_error)
+                expression, blob_format="ParquetDialect", output_format="ParquetDialect", on_error=on_error)
 
 # ------------------------------------------------------------------------------
