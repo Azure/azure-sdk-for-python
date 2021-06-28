@@ -196,3 +196,18 @@ async def test_stream_with_return_pipeline_response(client):
         parts.append(line)
     assert parts == ['Hello,\n', 'world!']
     await client.close()
+
+@pytest.mark.asyncio
+async def test_error_reading(client):
+    request = HttpRequest("GET", "/errors/403")
+    async with client.send_request(request, stream=True) as response:
+        await response.read()
+        assert response.content == b""
+    response.content
+
+    response = await client.send_request(request, stream=True)
+    with pytest.raises(HttpResponseError):
+        response.raise_for_status()
+    await response.read()
+    assert response.content == b""
+    await client.close()

@@ -221,3 +221,16 @@ def test_stream_with_return_pipeline_response(client):
     assert hasattr(pipeline_response, "http_response")
     assert hasattr(pipeline_response, "context")
     assert list(pipeline_response.http_response.iter_lines()) == ['Hello,\n', 'world!']
+
+def test_error_reading(client):
+    request = HttpRequest("GET", "/errors/403")
+    with client.send_request(request, stream=True) as response:
+        response.read()
+        assert response.content == b""
+
+    response = client.send_request(request, stream=True)
+    with pytest.raises(HttpResponseError):
+        response.raise_for_status()
+    response.read()
+    assert response.content == b""
+    response.content
