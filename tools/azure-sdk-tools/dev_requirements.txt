@@ -1,1 +1,2 @@
+azure-mgmt-storage>=17.0.0
 -e ../azure-devtools
