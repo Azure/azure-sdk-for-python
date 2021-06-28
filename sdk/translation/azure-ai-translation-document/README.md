@@ -330,7 +330,7 @@ The following section provides some insights for some of the advanced translatio
 ### Glossaries
 Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translator provides support for glossaries. 
 
-#### How To Create Glossary File:
+#### **How To Create Glossary File**
 
 Document Translator supports glossaries in the following formats:
 
@@ -339,10 +339,10 @@ Document Translator supports glossaries in the following formats:
 |Localization Interchange File Format|.xlf. , xliff|A parallel document format, export of Translation Memory systems. The languages used are defined inside the file.|
 |Tab Separated Values/TAB|.tsv/.tab|A tab-delimited raw-data file used by spreadsheet programs.
 
-For .tsv files, you can read more about the format  [here][tsv_files].
-, and you can also see a sample .tsv file [here][sample_tsv_file]
+For .tsv/.tab files, you can read more about the format  [here][tsv_files]
+, and you can also see a sample file [here][sample_tsv_file].
 
-#### How Use Glossaries in Document Translator:
+#### **How Use Glossaries in Document Translator**
 In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the following sample:
 
 ```python
