@@ -50,7 +50,7 @@ class ZonesOperations:
         parameters: "_models.Zone",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Zone":
         """Creates or updates a DNS zone. Does not modify DNS records within the zone.
 
@@ -131,7 +131,7 @@ class ZonesOperations:
         resource_group_name: str,
         zone_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -178,7 +178,7 @@ class ZonesOperations:
         resource_group_name: str,
         zone_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a DNS zone. WARNING: All DNS records in the zone will also be deleted. This operation
         cannot be undone.
@@ -192,8 +192,8 @@ class ZonesOperations:
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -247,7 +247,7 @@ class ZonesOperations:
         self,
         resource_group_name: str,
         zone_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Zone":
         """Gets a DNS zone. Retrieves the zone properties, but not the record sets within the zone.
 
@@ -307,7 +307,7 @@ class ZonesOperations:
         zone_name: str,
         parameters: "_models.ZoneUpdate",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Zone":
         """Updates a DNS zone. Does not modify DNS records within the zone.
 
@@ -378,7 +378,7 @@ class ZonesOperations:
         self,
         resource_group_name: str,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ZoneListResult"]:
         """Lists the DNS zones within a resource group.
 
@@ -453,7 +453,7 @@ class ZonesOperations:
     def list(
         self,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ZoneListResult"]:
         """Lists the DNS zones in all resource groups in a subscription.
 

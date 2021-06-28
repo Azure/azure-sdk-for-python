@@ -43,7 +43,7 @@ class DnsResourceReferenceOperations:
     async def get_by_target_resources(
         self,
         parameters: "_models.DnsResourceReferenceRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DnsResourceReferenceResult":
         """Returns the DNS records specified by the referencing targetResourceIds.
 

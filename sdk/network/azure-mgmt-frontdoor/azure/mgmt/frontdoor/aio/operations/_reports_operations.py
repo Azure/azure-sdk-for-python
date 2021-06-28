@@ -49,7 +49,7 @@ class ReportsOperations:
         aggregation_interval: Union[str, "_models.LatencyScorecardAggregationInterval"],
         end_date_time_utc: Optional[str] = None,
         country: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LatencyScorecard":
         """Gets a Latency Scorecard for a given Experiment.
 
@@ -110,7 +110,7 @@ class ReportsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LatencyScorecard', pipeline_response)
@@ -132,7 +132,7 @@ class ReportsOperations:
         timeseries_type: Union[str, "_models.TimeseriesType"],
         endpoint: Optional[str] = None,
         country: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Timeseries":
         """Gets a Timeseries for a given Experiment.
 
@@ -202,7 +202,7 @@ class ReportsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Timeseries', pipeline_response)

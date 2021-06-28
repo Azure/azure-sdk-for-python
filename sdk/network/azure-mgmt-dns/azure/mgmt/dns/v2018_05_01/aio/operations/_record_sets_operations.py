@@ -49,7 +49,7 @@ class RecordSetsOperations:
         record_type: Union[str, "_models.RecordType"],
         parameters: "_models.RecordSet",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Updates a record set within a DNS zone.
 
@@ -131,7 +131,7 @@ class RecordSetsOperations:
         parameters: "_models.RecordSet",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Creates or updates a record set within a DNS zone.
 
@@ -221,7 +221,7 @@ class RecordSetsOperations:
         relative_record_set_name: str,
         record_type: Union[str, "_models.RecordType"],
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a record set from a DNS zone. This operation cannot be undone.
 
@@ -291,7 +291,7 @@ class RecordSetsOperations:
         zone_name: str,
         relative_record_set_name: str,
         record_type: Union[str, "_models.RecordType"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Gets a record set.
 
@@ -358,7 +358,7 @@ class RecordSetsOperations:
         record_type: Union[str, "_models.RecordType"],
         top: Optional[int] = None,
         recordsetnamesuffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists the record sets of a specified type in a DNS zone.
 
@@ -448,7 +448,7 @@ class RecordSetsOperations:
         zone_name: str,
         top: Optional[int] = None,
         recordsetnamesuffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists all record sets in a DNS zone.
 
@@ -535,7 +535,7 @@ class RecordSetsOperations:
         zone_name: str,
         top: Optional[int] = None,
         record_set_name_suffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists all record sets in a DNS zone.
 
