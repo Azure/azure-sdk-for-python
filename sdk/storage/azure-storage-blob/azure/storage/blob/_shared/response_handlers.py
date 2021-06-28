@@ -174,7 +174,7 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     error.args = (error.message,)
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")   # pylint: disable=exec-used
+        exec("raise error from None")   # pylint: disable=exec-used # nosec
     except SyntaxError:
         raise error
 
