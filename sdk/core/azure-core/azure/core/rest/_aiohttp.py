@@ -122,7 +122,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         async for part in iter_bytes_helper(
             AioHttpStreamDownloadGenerator,
             self,
-            content=self._content
+            content=self.content if self._content is not None else None
         ):
             yield part
         await self.close()
