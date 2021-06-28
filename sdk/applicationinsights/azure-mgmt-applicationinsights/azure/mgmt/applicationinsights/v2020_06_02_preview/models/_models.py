@@ -99,7 +99,7 @@ class OperationLive(msrest.serialization.Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {

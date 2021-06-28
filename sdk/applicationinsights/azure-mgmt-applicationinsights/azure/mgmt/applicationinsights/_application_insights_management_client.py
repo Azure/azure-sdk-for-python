@@ -9,12 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import ApplicationInsightsManagementClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,9 +47,10 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     """
@@ -75,9 +85,9 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        base_url=None,  # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
         if not base_url:
@@ -101,7 +111,6 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
            * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.applicationinsights.v2017_10_01.models>`
            * 2018-05-01-preview: :mod:`v2018_05_01_preview.models<azure.mgmt.applicationinsights.v2018_05_01_preview.models>`
            * 2018-06-17-preview: :mod:`v2018_06_17_preview.models<azure.mgmt.applicationinsights.v2018_06_17_preview.models>`
-           * 2019-09-01-preview: :mod:`v2019_09_01_preview.models<azure.mgmt.applicationinsights.v2019_09_01_preview.models>`
            * 2019-10-17-preview: :mod:`v2019_10_17_preview.models<azure.mgmt.applicationinsights.v2019_10_17_preview.models>`
            * 2020-02-02-preview: :mod:`v2020_02_02_preview.models<azure.mgmt.applicationinsights.v2020_02_02_preview.models>`
            * 2020-03-01-preview: :mod:`v2020_03_01_preview.models<azure.mgmt.applicationinsights.v2020_03_01_preview.models>`
@@ -118,9 +127,6 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2018-06-17-preview':
             from .v2018_06_17_preview import models
-            return models
-        elif api_version == '2019-09-01-preview':
-            from .v2019_09_01_preview import models
             return models
         elif api_version == '2019-10-17-preview':
             from .v2019_10_17_preview import models
@@ -368,14 +374,11 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2015-05-01: :class:`Operations<azure.mgmt.applicationinsights.v2015_05_01.operations.Operations>`
-           * 2019-09-01-preview: :class:`Operations<azure.mgmt.applicationinsights.v2019_09_01_preview.operations.Operations>`
            * 2020-06-02-preview: :class:`Operations<azure.mgmt.applicationinsights.v2020_06_02_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import Operations as OperationClass
-        elif api_version == '2019-09-01-preview':
-            from .v2019_09_01_preview.operations import Operations as OperationClass
         elif api_version == '2020-06-02-preview':
             from .v2020_06_02_preview.operations import Operations as OperationClass
         else:
@@ -396,32 +399,6 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_05_01_preview.operations import ProactiveDetectionConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'proactive_detection_configurations'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def queries(self):
-        """Instance depends on the API version:
-
-           * 2019-09-01-preview: :class:`QueriesOperations<azure.mgmt.applicationinsights.v2019_09_01_preview.operations.QueriesOperations>`
-        """
-        api_version = self._get_api_version('queries')
-        if api_version == '2019-09-01-preview':
-            from .v2019_09_01_preview.operations import QueriesOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'queries'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def query_packs(self):
-        """Instance depends on the API version:
-
-           * 2019-09-01-preview: :class:`QueryPacksOperations<azure.mgmt.applicationinsights.v2019_09_01_preview.operations.QueryPacksOperations>`
-        """
-        api_version = self._get_api_version('query_packs')
-        if api_version == '2019-09-01-preview':
-            from .v2019_09_01_preview.operations import QueryPacksOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'query_packs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property

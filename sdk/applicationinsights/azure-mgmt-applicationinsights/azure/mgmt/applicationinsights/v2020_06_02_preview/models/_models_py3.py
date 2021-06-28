@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -109,7 +109,7 @@ class OperationLive(msrest.serialization.Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: object
+    :type properties: any
     """
 
     _attribute_map = {
@@ -125,7 +125,7 @@ class OperationLive(msrest.serialization.Model):
         name: Optional[str] = None,
         display: Optional["OperationInfo"] = None,
         origin: Optional[str] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(OperationLive, self).__init__(**kwargs)
