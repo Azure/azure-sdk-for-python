@@ -109,7 +109,7 @@ class AttestationClient(object):
 
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
 
-        :rtype: List[azure.security.attestation.AttestationSigner]
+        :rtype: List[~azure.security.attestation.AttestationSigner]
 
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
@@ -273,7 +273,7 @@ class AttestationClient(object):
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
 
-        :rtype: Tuple[azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. admonition:: Example: Simple OpenEnclave attestation.
 
