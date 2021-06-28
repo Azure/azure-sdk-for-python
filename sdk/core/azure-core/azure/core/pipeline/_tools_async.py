@@ -33,32 +33,33 @@ async def await_result(func, *args, **kwargs):
         return await result  # type: ignore
     return result
 
-def to_rest_response(pipeline_transport_response):
-    response_type = None
+def _get_response_type(pipeline_transport_response):
     try:
         from .transport import AioHttpTransportResponse
         from ..rest._aiohttp import RestAioHttpTransportResponse
         if isinstance(pipeline_transport_response, AioHttpTransportResponse):
-            response_type = RestAioHttpTransportResponse
+            return RestAioHttpTransportResponse
     except ImportError:
         pass
     try:
         from .transport import AsyncioRequestsTransportResponse
         from ..rest._requests_asyncio import RestAsyncioRequestsTransportResponse
         if isinstance(pipeline_transport_response, AsyncioRequestsTransportResponse):
-            response_type = RestAsyncioRequestsTransportResponse
+            return RestAsyncioRequestsTransportResponse
     except ImportError:
         pass
     try:
         from .transport import TrioRequestsTransportResponse
         from ..rest._requests_trio import RestTrioRequestsTransportResponse
         if isinstance(pipeline_transport_response, TrioRequestsTransportResponse):
-            response_type = RestTrioRequestsTransportResponse
+            return RestTrioRequestsTransportResponse
     except ImportError:
         pass
-    if not response_type:
-        from ..rest import AsyncHttpResponse
-        response_type = AsyncHttpResponse
+    from ..rest import AsyncHttpResponse
+    return AsyncHttpResponse
+
+def to_rest_response(pipeline_transport_response):
+    response_type = _get_response_type(pipeline_transport_response)
     response = response_type(
         request=to_rest_request(pipeline_transport_response.request),
         internal_response=pipeline_transport_response.internal_response,

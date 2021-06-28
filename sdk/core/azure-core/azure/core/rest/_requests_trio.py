@@ -33,7 +33,6 @@ from ..pipeline.transport._requests_trio import TrioStreamDownloadGenerator
 class RestTrioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    
     async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
