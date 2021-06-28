@@ -23,25 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import AsyncIterator
+from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
+from . import AsyncHttpResponse
+from ._requests_basic import _RestRequestsTransportResponseBase
+from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
-def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, raise that this runner can't handle it."""
-    result = func(*args, **kwargs)
-    if hasattr(result, "__await__"):
-        raise TypeError(
-            "Policy {} returned awaitable object in non-async pipeline.".format(func)
-        )
-    return result
+class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
+    """Asynchronous streaming of data from the response.
+    """
 
-def to_rest_response_helper(pipeline_transport_response, response_type):
-    response = response_type(
-        request=pipeline_transport_response.request._to_rest_request(),  # pylint: disable=protected-access
-        internal_response=pipeline_transport_response.internal_response,
-    )
-    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
-    return response
+    async def iter_raw(self) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
-def set_block_size(response):
-    if hasattr(response, "block_size"):
-        return response.block_size
-    return response._connection_data_block_size  # pylint: disable=protected-access
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+
+        async for part in iter_raw_helper(AsyncioStreamDownloadGenerator, self):
+            yield part
+        await self.close()
+
+    async def iter_bytes(self) -> AsyncIterator[bytes]:
+        """Asynchronously iterates over the response's bytes. Will decompress in the process
+
+        :return: An async iterator of bytes from the response
+        :rtype: AsyncIterator[bytes]
+        """
+        async for part in iter_bytes_helper(AsyncioStreamDownloadGenerator, self):
+            yield part
+        await self.close()

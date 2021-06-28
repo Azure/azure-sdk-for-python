@@ -40,11 +40,12 @@ from .pipeline.policies import (
 from ._pipeline_client import _prepare_request
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import TYPE_CHECKING, TypeVar
 except ImportError:
     TYPE_CHECKING = False
 
-from .rest import HttpRequest, _AsyncContextManager, AsyncHttpResponse
+HTTPRequestType = TypeVar("HTTPRequestType")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 
 if TYPE_CHECKING:
     from typing import (
@@ -195,11 +196,11 @@ class AsyncPipelineClient(PipelineClientBase):
 
     def send_request(
         self,
-        request: HttpRequest,
+        request: HTTPRequestType,
         *,
         stream: bool = False,
         **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    ) -> Awaitable[AsyncHTTPResponseType]:
         """**Provisional** method that runs the network request through the client's chained policies.
 
         This method is marked as **provisional**, meaning it can be changed.
@@ -210,5 +211,6 @@ class AsyncPipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
+        from .rest import _AsyncContextManager
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
         return _AsyncContextManager(wrapped=wrapped)

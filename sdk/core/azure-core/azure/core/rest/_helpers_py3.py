@@ -24,9 +24,17 @@
 #
 # --------------------------------------------------------------------------
 import collections.abc
-from typing import AsyncIterable, Dict, Iterable, Tuple, Union
+from typing import (
+    AsyncIterable,
+    Dict,
+    Iterable,
+    Tuple,
+    Union,
+    Callable,
+    AsyncIterator as AsyncIteratorType
+)
+from ..exceptions import StreamConsumedError, StreamClosedError
 
-from six import Iterator
 from ._helpers import (
     _shared_set_content_body,
     HeadersType
@@ -45,3 +53,47 @@ def set_content_body(content: ContentType) -> Tuple[
         "Unexpected type for 'content': '{}'. ".format(type(content)) +
         "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"
     )
+
+def _stream_download_helper(
+    decompress: bool,
+    stream_download_generator: Callable,
+    response,
+) -> AsyncIteratorType[bytes]:
+    if response.is_stream_consumed:
+        raise StreamConsumedError()
+    if response.is_closed:
+        raise StreamClosedError()
+
+    response.is_stream_consumed = True
+    return stream_download_generator(
+        pipeline=None,
+        response=response,
+        decompress=decompress,
+    )
+
+async def iter_bytes_helper(
+    stream_download_generator: Callable,
+    response,
+) -> AsyncIteratorType[bytes]:
+    if response._has_content():  # pylint: disable=protected-access
+        yield response._get_content()  # pylint: disable=protected-access
+    else:
+        async for part in _stream_download_helper(
+            decompress=True,
+            stream_download_generator=stream_download_generator,
+            response=response,
+        ):
+            response._num_bytes_downloaded += len(part)
+            yield part
+
+async def iter_raw_helper(
+    stream_download_generator: Callable,
+    response,
+) -> AsyncIteratorType[bytes]:
+    async for part in _stream_download_helper(
+        decompress=False,
+        stream_download_generator=stream_download_generator,
+        response=response,
+    ):
+        response._num_bytes_downloaded += len(part)
+        yield part

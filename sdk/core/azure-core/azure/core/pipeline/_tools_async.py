@@ -23,8 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Optional, Callable, AsyncIterator
-from ..exceptions import StreamClosedError, StreamConsumedError
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
@@ -33,47 +31,3 @@ async def await_result(func, *args, **kwargs):
         # type ignore on await: https://github.com/python/mypy/issues/7587
         return await result  # type: ignore
     return result
-
-def _stream_download_helper(
-    decompress: bool,
-    stream_download_generator: Callable,
-    response,
-) -> AsyncIterator[bytes]:
-    if response.is_stream_consumed:
-        raise StreamConsumedError()
-    if response.is_closed:
-        raise StreamClosedError()
-
-    response.is_stream_consumed = True
-    return stream_download_generator(
-        pipeline=None,
-        response=response,
-        decompress=decompress,
-    )
-
-async def iter_bytes_helper(
-    stream_download_generator: Callable,
-    response,
-) -> AsyncIterator[bytes]:
-    if response._has_content():  # pylint: disable=protected-access
-        yield response._get_content()  # pylint: disable=protected-access
-    else:
-        async for part in _stream_download_helper(
-            decompress=True,
-            stream_download_generator=stream_download_generator,
-            response=response,
-        ):
-            response._num_bytes_downloaded += len(part)
-            yield part
-
-async def iter_raw_helper(
-    stream_download_generator: Callable,
-    response,
-) -> AsyncIterator[bytes]:
-    async for part in _stream_download_helper(
-        decompress=False,
-        stream_download_generator=stream_download_generator,
-        response=response,
-    ):
-        response._num_bytes_downloaded += len(part)
-        yield part

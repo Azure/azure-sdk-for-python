@@ -42,16 +42,11 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse, _read_raw_stream, _RestRequestsTransportResponseBase
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import to_rest_response_helper, set_block_size
-from .._tools_async import (
-    iter_raw_helper,
-    iter_bytes_helper,
-)
-from ...rest import (
-    AsyncHttpResponse as RestAsyncHttpResponse,
-)
+
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -114,35 +109,8 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
     def _to_rest_response(self):
+        from ...rest._requests_trio import RestTrioRequestsTransportResponse
         return to_rest_response_helper(self, RestTrioRequestsTransportResponse)
-
-class RestTrioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
-    """Asynchronous streaming of data from the response.
-    """
-    async def iter_raw(self) -> AsyncIteratorType[bytes]:
-        """Asynchronously iterates over the response's bytes. Will not decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_raw_helper(TrioStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
-        """Asynchronously iterates over the response's bytes. Will decompress in the process
-
-        :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
-        """
-        async for part in iter_bytes_helper(TrioStreamDownloadGenerator, self):
-            yield part
-        await self.close()
-
-    async def close(self) -> None:
-        self.is_closed = True
-        self.internal_response.close()
-        await trio.sleep(0)
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore

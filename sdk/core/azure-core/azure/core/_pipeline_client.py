@@ -40,7 +40,6 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
-from .rest import HttpResponse
 
 try:
     from typing import TYPE_CHECKING
@@ -59,8 +58,10 @@ if TYPE_CHECKING:
         Callable,
         Iterator,
         cast,
+        TypeVar
     )  # pylint: disable=unused-import
-    from .rest import HttpRequest
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -185,7 +186,7 @@ class PipelineClient(PipelineClientBase):
 
 
     def send_request(self, request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+        # type: (HTTPRequestType, Any) -> HTTPResponseType
         """**Provisional** method that runs the network request through the client's chained policies.
 
         This method is marked as **provisional**, meaning it can be changed

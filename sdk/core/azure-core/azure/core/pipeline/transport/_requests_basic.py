@@ -36,27 +36,17 @@ import requests
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError,
-    ResponseNotReadError,
+    ServiceResponseError
 )
 from . import HttpRequest # pylint: disable=unused-import
 
 from ._base import (
     HttpTransport,
     HttpResponse,
-    _HttpResponseBase,
-)
-from ...rest import (
-    _HttpResponseBase as _RestHttpResponseBase,
-    HttpResponse as RestHttpResponse,
+    _HttpResponseBase
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
-from .._tools import (
-    to_rest_response_helper,
-    iter_bytes_helper,
-    iter_raw_helper,
-    set_block_size,
-)
+from .._tools import to_rest_response_helper, set_block_size
 
 PipelineType = TypeVar("PipelineType")
 
@@ -81,6 +71,7 @@ def _read_raw_stream(response, chunk_size=1):
             if not chunk:
                 break
             yield chunk
+
     # following behavior from requests iter_content, we set content consumed to True
     response._content_consumed = True  # pylint: disable=protected-access
 
@@ -173,58 +164,6 @@ class StreamDownloadGenerator(object):
             raise
     next = __next__  # Python 2 compatibility.
 
-class _RestRequestsTransportResponseBase(_RestHttpResponseBase):
-    def __init__(self, **kwargs):
-        super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
-        self.status_code = self.internal_response.status_code
-        self.headers = self.internal_response.headers
-        self.reason = self.internal_response.reason
-        self.content_type = self.internal_response.headers.get('content-type')
-
-    def _get_content(self):
-        """Return the internal response's content"""
-        if not self.internal_response._content_consumed:  # pylint: disable=protected-access
-            # if we just call .content, requests will read in the content.
-            # we want to read it in our own way
-            return None
-        try:
-            return self.internal_response.content
-        except RuntimeError:
-            # requests throws a RuntimeError if the content for a response is already consumed
-            return None
-
-    def _set_content(self, val):
-        """Set the internal response's content"""
-        self.internal_response._content = val  # pylint: disable=protected-access
-
-    def _has_content(self):
-        return self._get_content() is not None
-
-    @_RestHttpResponseBase.encoding.setter  # type: ignore
-    def encoding(self, value):
-        # type: (str) -> None
-        # ignoring setter bc of known mypy issue https://github.com/python/mypy/issues/1465
-        self._encoding = value
-        encoding = value
-        if not encoding:
-            # There is a few situation where "requests" magic doesn't fit us:
-            # - https://github.com/psf/requests/issues/654
-            # - https://github.com/psf/requests/issues/1737
-            # - https://github.com/psf/requests/issues/2086
-            from codecs import BOM_UTF8
-            if self.internal_response.content[:3] == BOM_UTF8:
-                encoding = "utf-8-sig"
-        if encoding:
-            if encoding == "utf-8":
-                encoding = "utf-8-sig"
-        self.internal_response.encoding = encoding
-
-    @property
-    def text(self):
-        if not self._has_content():
-            raise ResponseNotReadError()
-        return self.internal_response.text
-
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
@@ -235,33 +174,9 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
     def _to_rest_response(self):
+        from ...rest._requests_basic import RestRequestsTransportResponse
         return to_rest_response_helper(self, RestRequestsTransportResponse)
 
-class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
-
-    def iter_bytes(self):
-        # type: () -> Iterator[bytes]
-        """Iterates over the response's bytes. Will decompress in the process
-
-        :return: An iterator of bytes from the response
-        :rtype: Iterator[str]
-        """
-        return iter_bytes_helper(
-            stream_download_generator=StreamDownloadGenerator,
-            response=self,
-        )
-
-    def iter_raw(self):
-        # type: () -> Iterator[bytes]
-        """Iterates over the response's bytes. Will not decompress in the process
-
-        :return: An iterator of bytes from the response
-        :rtype: Iterator[str]
-        """
-        return iter_raw_helper(
-            stream_download_generator=StreamDownloadGenerator,
-            response=self,
-        )
 
 class RequestsTransport(HttpTransport):
     """Implements a basic requests HTTP sender.

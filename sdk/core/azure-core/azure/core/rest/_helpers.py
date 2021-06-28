@@ -41,6 +41,7 @@ from typing import (
     Iterable,
     Iterator,
     cast,
+    Callable,
 )
 import xml.etree.ElementTree as ET
 import six
