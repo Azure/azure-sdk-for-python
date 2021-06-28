@@ -46,7 +46,7 @@ class MonitoringSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MonitoringSettingResource":
         """Get the Monitoring Setting and its properties.
 
@@ -106,7 +106,7 @@ class MonitoringSettingsOperations:
         resource_group_name: str,
         service_name: str,
         monitoring_setting_resource: "_models.MonitoringSettingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MonitoringSettingResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MonitoringSettingResource"]
         error_map = {
@@ -163,7 +163,7 @@ class MonitoringSettingsOperations:
         resource_group_name: str,
         service_name: str,
         monitoring_setting_resource: "_models.MonitoringSettingResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MonitoringSettingResource"]:
         """Update the Monitoring Setting.
 
@@ -176,8 +176,8 @@ class MonitoringSettingsOperations:
         :type monitoring_setting_resource: ~azure.mgmt.appplatform.v2020_07_01.models.MonitoringSettingResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MonitoringSettingResource or the result of cls(response)
@@ -235,7 +235,7 @@ class MonitoringSettingsOperations:
         resource_group_name: str,
         service_name: str,
         monitoring_setting_resource: "_models.MonitoringSettingResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MonitoringSettingResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.MonitoringSettingResource"]
         error_map = {
@@ -292,7 +292,7 @@ class MonitoringSettingsOperations:
         resource_group_name: str,
         service_name: str,
         monitoring_setting_resource: "_models.MonitoringSettingResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MonitoringSettingResource"]:
         """Update the Monitoring Setting.
 
@@ -305,8 +305,8 @@ class MonitoringSettingsOperations:
         :type monitoring_setting_resource: ~azure.mgmt.appplatform.v2020_07_01.models.MonitoringSettingResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MonitoringSettingResource or the result of cls(response)
