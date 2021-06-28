@@ -191,6 +191,7 @@ class AsyncPipelineClient(PipelineClientBase):
             response = rest_response
         if return_pipeline_response:
             pipeline_response.http_response = response
+            pipeline_response.http_request = request
             return pipeline_response
         return response
 

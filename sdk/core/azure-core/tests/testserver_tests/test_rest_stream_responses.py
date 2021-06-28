@@ -213,3 +213,11 @@ def test_iter_read_back_and_forth(client):
         response.read()
     with pytest.raises(ResponseNotReadError):
         response.text
+
+def test_stream_with_return_pipeline_response(client):
+    request = HttpRequest("GET", "/basic/lines")
+    pipeline_response = client.send_request(request, stream=True, _return_pipeline_response=True)
+    assert hasattr(pipeline_response, "http_request")
+    assert hasattr(pipeline_response, "http_response")
+    assert hasattr(pipeline_response, "context")
+    assert list(pipeline_response.http_response.iter_lines()) == ['Hello,\n', 'world!']

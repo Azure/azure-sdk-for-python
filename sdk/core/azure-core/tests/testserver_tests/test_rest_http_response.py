@@ -287,21 +287,12 @@ def test_put_xml_basic(send_request):
     )
     send_request(request)
 
-class MockHttpRequest(HttpRequest):
-    """Use this to check how many times _convert() was called"""
-    def __init__(self, *args, **kwargs):
-        super(MockHttpRequest, self).__init__(*args, **kwargs)
-        self.num_calls_to_convert = 0
-
-    def _convert(self):
-        self.num_calls_to_convert += 1
-        return super(MockHttpRequest, self)._convert()
-
-
-def test_request_no_conversion(send_request):
-    request = MockHttpRequest("GET", "/basic/string")
-    response = send_request(
-        request=request,
-    )
-    assert response.status_code == 200
-    assert request.num_calls_to_convert == 0
+def test_send_request_return_pipeline_response(client):
+    # we use return_pipeline_response for some cases in autorest
+    request = HttpRequest("GET", "/basic/string")
+    response = client.send_request(request, _return_pipeline_response=True)
+    assert hasattr(response, "http_request")
+    assert hasattr(response, "http_response")
+    assert hasattr(response, "context")
+    assert response.http_response.text == "Hello, world!"
+    assert hasattr(response.http_request, "content")
