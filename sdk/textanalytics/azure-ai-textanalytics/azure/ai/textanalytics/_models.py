@@ -495,7 +495,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             id=healthcare_result.id,
             entities=entities,
             entity_relations=relations,
-            warnings=healthcare_result.warnings,
+            warnings=[TextAnalyticsWarning._from_generated(w) for w in healthcare_result.warnings],  # pylint: disable=protected-access
             statistics=TextDocumentStatistics._from_generated(healthcare_result.statistics),  # pylint: disable=protected-access
         )
 
