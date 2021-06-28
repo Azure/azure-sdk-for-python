@@ -45,7 +45,7 @@ class ProductsOperations:
         self,
         resource_group: str,
         registration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProductList"]:
         """Returns a list of products.
 
@@ -121,7 +121,7 @@ class ProductsOperations:
         resource_group: str,
         registration_name: str,
         product_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Product":
         """Returns the specified product.
 
@@ -184,7 +184,7 @@ class ProductsOperations:
         resource_group: str,
         registration_name: str,
         product_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ExtendedProduct":
         """Returns the extended properties of a product.
 
@@ -248,7 +248,7 @@ class ProductsOperations:
         registration_name: str,
         product_name: str,
         device_configuration: Optional["_models.DeviceConfiguration"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProductList":
         """Returns a list of products.
 
@@ -322,7 +322,7 @@ class ProductsOperations:
         registration_name: str,
         product_name: str,
         device_configuration: Optional["_models.DeviceConfiguration"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Product":
         """Returns the specified product.
 
@@ -396,7 +396,7 @@ class ProductsOperations:
         registration_name: str,
         product_name: str,
         marketplace_product_log_update: Optional["_models.MarketplaceProductLogUpdate"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProductLog":
         """Returns the specified product.
 

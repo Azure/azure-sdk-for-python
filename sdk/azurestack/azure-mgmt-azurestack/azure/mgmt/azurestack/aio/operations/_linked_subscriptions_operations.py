@@ -44,7 +44,7 @@ class LinkedSubscriptionsOperations:
     def list_by_resource_group(
         self,
         resource_group: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LinkedSubscriptionsList"]:
         """Returns a list of all linked subscriptions under current resource group.
 
@@ -114,7 +114,7 @@ class LinkedSubscriptionsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.LinkedSubscriptionsList"]:
         """Returns a list of all linked subscriptions under current subscription.
 
@@ -183,7 +183,7 @@ class LinkedSubscriptionsOperations:
         self,
         resource_group: str,
         linked_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LinkedSubscription":
         """Returns the properties of a Linked Subscription resource.
 
@@ -242,7 +242,7 @@ class LinkedSubscriptionsOperations:
         self,
         resource_group: str,
         linked_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete the requested Linked Subscription resource.
 
@@ -299,7 +299,7 @@ class LinkedSubscriptionsOperations:
         resource_group: str,
         linked_subscription_name: str,
         resource: "_models.LinkedSubscriptionParameter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LinkedSubscription":
         """Create or update a linked subscription resource.
 
@@ -370,7 +370,7 @@ class LinkedSubscriptionsOperations:
         resource_group: str,
         linked_subscription_name: str,
         resource: "_models.LinkedSubscriptionParameter",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LinkedSubscription":
         """Patch a Linked Subscription resource.
 

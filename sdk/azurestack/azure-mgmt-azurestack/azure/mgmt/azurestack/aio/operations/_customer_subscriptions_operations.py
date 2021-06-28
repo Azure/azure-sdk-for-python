@@ -45,7 +45,7 @@ class CustomerSubscriptionsOperations:
         self,
         resource_group: str,
         registration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CustomerSubscriptionList"]:
         """Returns a list of products.
 
@@ -121,7 +121,7 @@ class CustomerSubscriptionsOperations:
         resource_group: str,
         registration_name: str,
         customer_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomerSubscription":
         """Returns the specified product.
 
@@ -184,7 +184,7 @@ class CustomerSubscriptionsOperations:
         resource_group: str,
         registration_name: str,
         customer_subscription_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a customer subscription under a registration.
 
@@ -245,7 +245,7 @@ class CustomerSubscriptionsOperations:
         registration_name: str,
         customer_subscription_name: str,
         customer_creation_parameters: "_models.CustomerSubscription",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomerSubscription":
         """Creates a new customer subscription under a registration.
 

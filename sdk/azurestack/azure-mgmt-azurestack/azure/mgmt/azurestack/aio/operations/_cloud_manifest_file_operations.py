@@ -42,7 +42,7 @@ class CloudManifestFileOperations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudManifestFileResponse":
         """Returns a cloud specific manifest JSON file with latest version.
 
@@ -91,7 +91,7 @@ class CloudManifestFileOperations:
         self,
         verification_version: str,
         version_creation_date: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudManifestFileResponse":
         """Returns a cloud specific manifest JSON file.
 
