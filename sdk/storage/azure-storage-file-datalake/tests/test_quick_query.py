@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+import os
 
 import pytest
 
@@ -878,7 +879,7 @@ class StorageQuickQueryTest(StorageTestCase):
         expression = "select * from blobstorage where id < 1;"
         expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
 
-        parquet_path = "parquet.parquet"
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 
