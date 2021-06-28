@@ -50,7 +50,25 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         self.headers = CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
-        self._decompress = True
+        self._decompress = None
+        self._decompressed_content = None
+
+    def _get_content(self):
+        if not self._decompress:
+            return self._content
+        enc = self.headers.get('Content-Encoding')
+        if not enc:
+            return self._content
+        enc = enc.lower()
+        if enc in ("gzip", "deflate"):
+            if self._decompressed_content:
+                return self._decompressed_content
+            import zlib
+            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+            decompressor = zlib.decompressobj(wbits=zlib_mode)
+            self._decompressed_content = decompressor.decompress(self._content)
+            return self._decompressed_content
+        return self._content
 
     @property
     def text(self) -> str:

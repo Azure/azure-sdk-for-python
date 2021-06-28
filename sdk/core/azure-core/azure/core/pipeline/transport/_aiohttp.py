@@ -362,4 +362,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     def _to_rest_response(self):
         from ...rest._aiohttp import RestAioHttpTransportResponse
-        return to_rest_response_helper(self, RestAioHttpTransportResponse)
+        response = to_rest_response_helper(self, RestAioHttpTransportResponse)
+        response._decompress = self._decompress  # pylint: disable=protected-access
+        return response
