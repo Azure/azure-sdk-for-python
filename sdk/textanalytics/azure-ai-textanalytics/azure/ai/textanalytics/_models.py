@@ -496,7 +496,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             entities=entities,
             entity_relations=relations,
             warnings=healthcare_result.warnings,
-            statistics=healthcare_result.statistics,
+            statistics=TextDocumentStatistics._from_generated(healthcare_result.statistics),  # pylint: disable=protected-access
         )
 
     def __repr__(self):
