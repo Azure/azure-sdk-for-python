@@ -900,7 +900,7 @@ class StorageQuickQueryTest(StorageTestCase):
             errors.append(error)
 
         expression = "SELECT * from BlobStorage"
-        parquet_path = "parquet.parquet"
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 
