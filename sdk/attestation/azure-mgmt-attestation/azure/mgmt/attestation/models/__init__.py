@@ -18,7 +18,12 @@ try:
     from ._models_py3 import OperationList
     from ._models_py3 import OperationsDefinition
     from ._models_py3 import OperationsDisplayDefinition
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from ._models import AttestationProvider  # type: ignore
@@ -32,11 +37,19 @@ except (SyntaxError, ImportError):
     from ._models import OperationList  # type: ignore
     from ._models import OperationsDefinition  # type: ignore
     from ._models import OperationsDisplayDefinition  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkServiceConnectionState  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
 
 from ._attestation_management_client_enums import (
     AttestationServiceStatus,
+    CreatedByType,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
 )
 
 __all__ = [
@@ -51,7 +64,15 @@ __all__ = [
     'OperationList',
     'OperationsDefinition',
     'OperationsDisplayDefinition',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkServiceConnectionState',
     'Resource',
+    'SystemData',
     'TrackedResource',
     'AttestationServiceStatus',
+    'CreatedByType',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
 ]

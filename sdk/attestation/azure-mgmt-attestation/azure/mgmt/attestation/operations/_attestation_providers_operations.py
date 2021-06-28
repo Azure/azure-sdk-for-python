@@ -55,7 +55,7 @@ class AttestationProvidersOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param provider_name: Name of the attestation service instance.
+        :param provider_name: Name of the attestation provider.
         :type provider_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AttestationProvider, or the result of cls(response)
@@ -67,14 +67,14 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'providerName': self._serialize.url("provider_name", provider_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -111,11 +111,11 @@ class AttestationProvidersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AttestationProvider"
-        """Creates or updates the Attestation Provider.
+        """Creates a new Attestation Provider.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param provider_name: Name of the attestation service instance.
+        :param provider_name: Name of the attestation provider.
         :type provider_name: str
         :param creation_params: Client supplied parameters.
         :type creation_params: ~azure.mgmt.attestation.models.AttestationServiceCreationParams
@@ -129,7 +129,7 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -137,7 +137,7 @@ class AttestationProvidersOperations(object):
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'providerName': self._serialize.url("provider_name", provider_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -186,7 +186,7 @@ class AttestationProvidersOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param provider_name: Name of the attestation service instance.
+        :param provider_name: Name of the attestation provider.
         :type provider_name: str
         :param update_params: Client supplied parameters.
         :type update_params: ~azure.mgmt.attestation.models.AttestationServicePatchParams
@@ -200,7 +200,7 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -208,7 +208,7 @@ class AttestationProvidersOperations(object):
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'providerName': self._serialize.url("provider_name", provider_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -264,14 +264,14 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'providerName': self._serialize.url("provider_name", provider_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -314,7 +314,7 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -368,13 +368,13 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.list_by_resource_group.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -420,7 +420,7 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
@@ -474,7 +474,7 @@ class AttestationProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01-preview"
+        api_version = "2020-10-01"
         accept = "application/json"
 
         # Construct URL
