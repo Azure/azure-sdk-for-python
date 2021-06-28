@@ -17,6 +17,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
 from .._constants import DEFAULT_TOKEN_REFRESH_RETRY_DELAY, DEFAULT_REFRESH_OFFSET
+from .._internal import resolve_tenant
 
 try:
     from typing import TYPE_CHECKING
@@ -44,10 +45,15 @@ if TYPE_CHECKING:
 class AadClientBase(ABC):
     _POST = ["POST"]
 
-    def __init__(self, tenant_id, client_id, authority=None, cache=None, **kwargs):
-        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
-        authority = normalize_authority(authority) if authority else get_default_authority()
-        self._token_endpoint = "/".join((authority, tenant_id, "oauth2/v2.0/token"))
+    def __init__(
+        self, tenant_id, client_id, authority=None, cache=None, allow_multitenant_authentication=False, **kwargs
+    ):
+        # type: (str, str, Optional[str], Optional[TokenCache], bool, **Any) -> None
+        self._authority = normalize_authority(authority) if authority else get_default_authority()
+
+        self._tenant_id = tenant_id
+        self._allow_multitenant = allow_multitenant_authentication
+
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
@@ -55,9 +61,14 @@ class AadClientBase(ABC):
         self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
         self._last_refresh_time = 0
 
-    def get_cached_access_token(self, scopes, query=None):
-        # type: (Iterable[str], Optional[dict]) -> Optional[AccessToken]
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes), query=query)
+    def get_cached_access_token(self, scopes, **kwargs):
+        # type: (Iterable[str], **Any) -> Optional[AccessToken]
+        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        tokens = self._cache.find(
+            TokenCache.CredentialType.ACCESS_TOKEN,
+            target=list(scopes),
+            query={"client_id": self._client_id, "realm": tenant},
+        )
         for token in tokens:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
@@ -91,7 +102,7 @@ class AadClientBase(ABC):
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        self._last_refresh_time = request_time   # no matter succeed or not, update the last refresh time
+        self._last_refresh_time = request_time  # no matter succeed or not, update the last refresh time
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
@@ -133,17 +144,18 @@ class AadClientBase(ABC):
         # caching is the final step because 'add' mutates 'content'
         self._cache.add(
             event={
+                "client_id": self._client_id,
                 "response": content,
                 "scope": response.http_request.body["scope"].split(),
-                "client_id": self._client_id,
+                "token_endpoint": response.http_request.url,
             },
             now=request_time,
         )
 
         return token
 
-    def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
-        # type: (Iterable[str], str, str, Optional[str]) -> HttpRequest
+    def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
+        # type: (Iterable[str], str, str, Optional[str], **Any) -> HttpRequest
         data = {
             "client_id": self._client_id,
             "code": code,
@@ -154,14 +166,13 @@ class AadClientBase(ABC):
         if client_secret:
             data["client_secret"] = client_secret
 
-        request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
-        )
+        request = self._post(data, **kwargs)
         return request
 
-    def _get_client_certificate_request(self, scopes, certificate):
-        # type: (Iterable[str], AadClientCertificate) -> HttpRequest
-        assertion = self._get_jwt_assertion(certificate)
+    def _get_client_certificate_request(self, scopes, certificate, **kwargs):
+        # type: (Iterable[str], AadClientCertificate, **Any) -> HttpRequest
+        audience = self._get_token_url(**kwargs)
+        assertion = self._get_jwt_assertion(certificate, audience)
         data = {
             "client_assertion": assertion,
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
@@ -170,26 +181,22 @@ class AadClientBase(ABC):
             "scope": " ".join(scopes),
         }
 
-        request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
-        )
+        request = self._post(data, **kwargs)
         return request
 
-    def _get_client_secret_request(self, scopes, secret):
-        # type: (Iterable[str], str) -> HttpRequest
+    def _get_client_secret_request(self, scopes, secret, **kwargs):
+        # type: (Iterable[str], str, **Any) -> HttpRequest
         data = {
             "client_id": self._client_id,
             "client_secret": secret,
             "grant_type": "client_credentials",
             "scope": " ".join(scopes),
         }
-        request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
-        )
+        request = self._post(data, **kwargs)
         return request
 
-    def _get_jwt_assertion(self, certificate):
-        # type: (AadClientCertificate) -> str
+    def _get_jwt_assertion(self, certificate, audience):
+        # type: (AadClientCertificate, str) -> str
         now = int(time.time())
         header = six.ensure_binary(
             json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
@@ -198,7 +205,7 @@ class AadClientBase(ABC):
             json.dumps(
                 {
                     "jti": str(uuid4()),
-                    "aud": self._token_endpoint,
+                    "aud": audience,
                     "iss": self._client_id,
                     "sub": self._client_id,
                     "nbf": now,
@@ -213,8 +220,8 @@ class AadClientBase(ABC):
 
         return jwt_bytes.decode("utf-8")
 
-    def _get_refresh_token_request(self, scopes, refresh_token):
-        # type: (Iterable[str], str) -> HttpRequest
+    def _get_refresh_token_request(self, scopes, refresh_token, **kwargs):
+        # type: (Iterable[str], str, **Any) -> HttpRequest
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -222,10 +229,18 @@ class AadClientBase(ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request AAD include home_account_id in its response
         }
-        request = HttpRequest(
-            "POST", self._token_endpoint, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=data
-        )
+        request = self._post(data, **kwargs)
         return request
+
+    def _get_token_url(self, **kwargs):
+        # type: (**Any) -> str
+        tenant = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
+
+    def _post(self, data, **kwargs):
+        # type: (dict, **Any) -> HttpRequest
+        url = self._get_token_url(**kwargs)
+        return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
 
 
 def _scrub_secrets(response):
