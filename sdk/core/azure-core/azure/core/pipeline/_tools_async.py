@@ -64,5 +64,7 @@ def to_rest_response(pipeline_transport_response):
         request=to_rest_request(pipeline_transport_response.request),
         internal_response=pipeline_transport_response.internal_response,
     )
+    if hasattr(pipeline_transport_response, "_decompress"):
+        response._decompress = pipeline_transport_response._decompress
     response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
     return response
