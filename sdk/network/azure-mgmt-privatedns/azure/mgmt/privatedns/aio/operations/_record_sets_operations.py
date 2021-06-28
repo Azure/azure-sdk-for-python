@@ -50,7 +50,7 @@ class RecordSetsOperations:
         parameters: "_models.RecordSet",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Creates or updates a record set within a Private DNS zone.
 
@@ -82,7 +82,7 @@ class RecordSetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -141,7 +141,7 @@ class RecordSetsOperations:
         relative_record_set_name: str,
         parameters: "_models.RecordSet",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Updates a record set within a Private DNS zone.
 
@@ -169,7 +169,7 @@ class RecordSetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -221,7 +221,7 @@ class RecordSetsOperations:
         record_type: Union[str, "_models.RecordType"],
         relative_record_set_name: str,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a record set from a Private DNS zone. This operation cannot be undone.
 
@@ -248,7 +248,7 @@ class RecordSetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -291,7 +291,7 @@ class RecordSetsOperations:
         private_zone_name: str,
         record_type: Union[str, "_models.RecordType"],
         relative_record_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Gets a record set.
 
@@ -313,7 +313,7 @@ class RecordSetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -358,7 +358,7 @@ class RecordSetsOperations:
         record_type: Union[str, "_models.RecordType"],
         top: Optional[int] = None,
         recordsetnamesuffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists the record sets of a specified type in a Private DNS zone.
 
@@ -385,7 +385,7 @@ class RecordSetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -448,7 +448,7 @@ class RecordSetsOperations:
         private_zone_name: str,
         top: Optional[int] = None,
         recordsetnamesuffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists all record sets in a Private DNS zone.
 
@@ -473,7 +473,7 @@ class RecordSetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
+        api_version = "2020-06-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):

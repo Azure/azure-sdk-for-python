@@ -43,7 +43,7 @@ class FrontDoorNameAvailabilityOperations:
     async def check(
         self,
         check_front_door_name_availability_input: "_models.CheckNameAvailabilityInput",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CheckNameAvailabilityOutput":
         """Check the availability of a Front Door resource name.
 
@@ -84,7 +84,7 @@ class FrontDoorNameAvailabilityOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('CheckNameAvailabilityOutput', pipeline_response)

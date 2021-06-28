@@ -253,8 +253,8 @@ class PrivateZone(TrackedResource):
      be ignored.
     :vartype number_of_virtual_network_links: long
     :ivar max_number_of_virtual_network_links_with_registration: The maximum number of virtual
-     networks that can be linked to this Private DNS zone with registration enabled. This is a read-
-     only property and any attempt to set this value will be ignored.
+     networks that can be linked to this Private DNS zone with registration enabled. This is a
+     read-only property and any attempt to set this value will be ignored.
     :vartype max_number_of_virtual_network_links_with_registration: long
     :ivar number_of_virtual_network_links_with_registration: The current number of virtual networks
      that are linked to this Private DNS zone with registration enabled. This is a read-only
@@ -264,6 +264,8 @@ class PrivateZone(TrackedResource):
      and any attempt to set this value will be ignored. Possible values include: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.privatedns.models.ProvisioningState
+    :ivar internal_id: Private zone internal Id.
+    :vartype internal_id: str
     """
 
     _validation = {
@@ -277,6 +279,7 @@ class PrivateZone(TrackedResource):
         'max_number_of_virtual_network_links_with_registration': {'readonly': True},
         'number_of_virtual_network_links_with_registration': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'internal_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -293,6 +296,7 @@ class PrivateZone(TrackedResource):
         'max_number_of_virtual_network_links_with_registration': {'key': 'properties.maxNumberOfVirtualNetworkLinksWithRegistration', 'type': 'long'},
         'number_of_virtual_network_links_with_registration': {'key': 'properties.numberOfVirtualNetworkLinksWithRegistration', 'type': 'long'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'internal_id': {'key': 'properties.internalId', 'type': 'str'},
     }
 
     def __init__(
@@ -312,6 +316,7 @@ class PrivateZone(TrackedResource):
         self.max_number_of_virtual_network_links_with_registration = None
         self.number_of_virtual_network_links_with_registration = None
         self.provisioning_state = None
+        self.internal_id = None
 
 
 class PrivateZoneListResult(msrest.serialization.Model):
@@ -399,7 +404,7 @@ class PtrRecord(msrest.serialization.Model):
         self.ptrdname = ptrdname
 
 
-class RecordSet(Resource):
+class RecordSet(ProxyResource):
     """Describes a DNS record set (a collection of DNS records with the same name and type) in a Private DNS zone.
 
     Variables are only populated by the server, and will be ignored when sending a request.

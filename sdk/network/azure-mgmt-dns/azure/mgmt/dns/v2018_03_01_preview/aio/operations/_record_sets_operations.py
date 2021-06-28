@@ -49,7 +49,7 @@ class RecordSetsOperations:
         record_type: Union[str, "_models.RecordType"],
         parameters: "_models.RecordSet",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Updates a record set within a DNS zone.
 
@@ -84,7 +84,7 @@ class RecordSetsOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'str'),
@@ -131,7 +131,7 @@ class RecordSetsOperations:
         parameters: "_models.RecordSet",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Creates or updates a record set within a DNS zone.
 
@@ -170,7 +170,7 @@ class RecordSetsOperations:
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'str'),
@@ -221,7 +221,7 @@ class RecordSetsOperations:
         relative_record_set_name: str,
         record_type: Union[str, "_models.RecordType"],
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a record set from a DNS zone. This operation cannot be undone.
 
@@ -254,7 +254,7 @@ class RecordSetsOperations:
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'str'),
@@ -291,7 +291,7 @@ class RecordSetsOperations:
         zone_name: str,
         relative_record_set_name: str,
         record_type: Union[str, "_models.RecordType"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecordSet":
         """Gets a record set.
 
@@ -319,7 +319,7 @@ class RecordSetsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
             'relativeRecordSetName': self._serialize.url("relative_record_set_name", relative_record_set_name, 'str', skip_quote=True),
             'recordType': self._serialize.url("record_type", record_type, 'str'),
@@ -358,7 +358,7 @@ class RecordSetsOperations:
         record_type: Union[str, "_models.RecordType"],
         top: Optional[int] = None,
         recordsetnamesuffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists the record sets of a specified type in a DNS zone.
 
@@ -397,7 +397,7 @@ class RecordSetsOperations:
                 # Construct URL
                 url = self.list_by_type.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
                     'recordType': self._serialize.url("record_type", record_type, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
@@ -448,7 +448,7 @@ class RecordSetsOperations:
         zone_name: str,
         top: Optional[int] = None,
         recordsetnamesuffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists all record sets in a DNS zone.
 
@@ -485,7 +485,7 @@ class RecordSetsOperations:
                 # Construct URL
                 url = self.list_by_dns_zone.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
@@ -535,7 +535,7 @@ class RecordSetsOperations:
         zone_name: str,
         top: Optional[int] = None,
         record_set_name_suffix: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecordSetListResult"]:
         """Lists all record sets in a DNS zone.
 
@@ -572,7 +572,7 @@ class RecordSetsOperations:
                 # Construct URL
                 url = self.list_all_by_dns_zone.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
