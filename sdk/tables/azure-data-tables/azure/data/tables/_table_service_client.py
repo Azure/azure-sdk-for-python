@@ -27,6 +27,7 @@ from ._serialize import _parameter_filter_substitution
 if TYPE_CHECKING:
     from ._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
+
 class TableServiceClient(TablesBaseClient):
     """A client to interact with the Table Service at the account level.
 
