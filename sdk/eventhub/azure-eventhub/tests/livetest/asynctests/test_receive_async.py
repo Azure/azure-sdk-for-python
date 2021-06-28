@@ -21,6 +21,10 @@ async def test_receive_end_of_stream_async(connstr_senders):
             assert event.body_as_str() == "Receiving only a single event"
             assert list(event.body)[0] == b"Receiving only a single event"
             on_event.called = True
+            event_str = str(event)
+            assert ", offset: " in event_str
+            assert ", sequence_number: " in event_str
+            assert ", enqueued_time: " in event_str
     on_event.called = False
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
