@@ -47,7 +47,7 @@ class RegisteredServersOperations:
         self,
         resource_group_name: str,
         storage_sync_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RegisteredServerArray"]:
         """Get a given registered server list.
 
@@ -78,7 +78,7 @@ class RegisteredServersOperations:
                 url = self.list_by_storage_sync_service.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -123,7 +123,7 @@ class RegisteredServersOperations:
         resource_group_name: str,
         storage_sync_service_name: str,
         server_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegisteredServer":
         """Get a given registered server.
 
@@ -150,7 +150,7 @@ class RegisteredServersOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }
@@ -190,7 +190,7 @@ class RegisteredServersOperations:
         storage_sync_service_name: str,
         server_id: str,
         parameters: "_models.RegisteredServerCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.RegisteredServer"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RegisteredServer"]]
         error_map = {
@@ -205,7 +205,7 @@ class RegisteredServersOperations:
         url = self._create_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }
@@ -257,7 +257,7 @@ class RegisteredServersOperations:
         storage_sync_service_name: str,
         server_id: str,
         parameters: "_models.RegisteredServerCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RegisteredServer"]:
         """Add a new registered server.
 
@@ -271,8 +271,8 @@ class RegisteredServersOperations:
         :type parameters: ~azure.mgmt.storagesync.models.RegisteredServerCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RegisteredServer or the result of cls(response)
@@ -312,7 +312,7 @@ class RegisteredServersOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }
@@ -336,7 +336,7 @@ class RegisteredServersOperations:
         resource_group_name: str,
         storage_sync_service_name: str,
         server_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -350,7 +350,7 @@ class RegisteredServersOperations:
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }
@@ -393,7 +393,7 @@ class RegisteredServersOperations:
         resource_group_name: str,
         storage_sync_service_name: str,
         server_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete the given registered server.
 
@@ -405,8 +405,8 @@ class RegisteredServersOperations:
         :type server_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -438,7 +438,7 @@ class RegisteredServersOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }
@@ -463,7 +463,7 @@ class RegisteredServersOperations:
         storage_sync_service_name: str,
         server_id: str,
         parameters: "_models.TriggerRolloverRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -478,7 +478,7 @@ class RegisteredServersOperations:
         url = self._trigger_rollover_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }
@@ -526,7 +526,7 @@ class RegisteredServersOperations:
         storage_sync_service_name: str,
         server_id: str,
         parameters: "_models.TriggerRolloverRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers Server certificate rollover.
 
@@ -540,8 +540,8 @@ class RegisteredServersOperations:
         :type parameters: ~azure.mgmt.storagesync.models.TriggerRolloverRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -574,7 +574,7 @@ class RegisteredServersOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'serverId': self._serialize.url("server_id", server_id, 'str'),
         }

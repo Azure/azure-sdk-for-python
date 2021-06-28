@@ -38,9 +38,8 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
 
     :param name: Required. The name to check for availability.
     :type name: str
-    :ivar type: Required. The resource type. Must be set to
-     Microsoft.StorageSync/storageSyncServices. Default value:
-     "Microsoft.StorageSync/storageSyncServices".
+    :ivar type: The resource type. Must be set to Microsoft.StorageSync/storageSyncServices. Has
+     constant value: "Microsoft.StorageSync/storageSyncServices".
     :vartype type: str
     """
 
@@ -205,6 +204,9 @@ class CloudEndpoint(ProxyResource):
     :type last_workflow_id: str
     :param last_operation_name: Resource Last Operation Name.
     :type last_operation_name: str
+    :ivar change_enumeration_status: Cloud endpoint change enumeration status.
+    :vartype change_enumeration_status:
+     ~azure.mgmt.storagesync.models.CloudEndpointChangeEnumerationStatus
     """
 
     _validation = {
@@ -212,6 +214,7 @@ class CloudEndpoint(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'backup_enabled': {'readonly': True},
+        'change_enumeration_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -227,6 +230,7 @@ class CloudEndpoint(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
+        'change_enumeration_status': {'key': 'properties.changeEnumerationStatus', 'type': 'CloudEndpointChangeEnumerationStatus'},
     }
 
     def __init__(
@@ -243,6 +247,7 @@ class CloudEndpoint(ProxyResource):
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.last_workflow_id = kwargs.get('last_workflow_id', None)
         self.last_operation_name = kwargs.get('last_operation_name', None)
+        self.change_enumeration_status = None
 
 
 class CloudEndpointArray(msrest.serialization.Model):
@@ -262,6 +267,133 @@ class CloudEndpointArray(msrest.serialization.Model):
     ):
         super(CloudEndpointArray, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class CloudEndpointChangeEnumerationActivity(msrest.serialization.Model):
+    """Cloud endpoint change enumeration activity object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp.
+    :vartype last_updated_timestamp: ~datetime.datetime
+    :ivar operation_state: Change enumeration operation state. Possible values include:
+     "InitialEnumerationInProgress", "EnumerationInProgress".
+    :vartype operation_state: str or
+     ~azure.mgmt.storagesync.models.CloudEndpointChangeEnumerationActivityState
+    :ivar status_code: When non-zero, indicates an issue that is delaying change enumeration.
+    :vartype status_code: int
+    :ivar started_timestamp: Timestamp when change enumeration started.
+    :vartype started_timestamp: ~datetime.datetime
+    :ivar processed_files_count: Count of files processed.
+    :vartype processed_files_count: long
+    :ivar processed_directories_count: Count of directories processed.
+    :vartype processed_directories_count: long
+    :ivar total_files_count: Total count of files enumerated.
+    :vartype total_files_count: long
+    :ivar total_directories_count: Total count of directories enumerated.
+    :vartype total_directories_count: long
+    :ivar total_size_bytes: Total enumerated size in bytes.
+    :vartype total_size_bytes: long
+    :ivar progress_percent: Progress percentage for change enumeration run, excluding processing of
+     deletes.
+    :vartype progress_percent: int
+    :ivar minutes_remaining: Estimate of time remaining for the enumeration run.
+    :vartype minutes_remaining: int
+    :ivar total_counts_state: Change enumeration total counts state. Possible values include:
+     "Calculating", "Final".
+    :vartype total_counts_state: str or
+     ~azure.mgmt.storagesync.models.CloudEndpointChangeEnumerationTotalCountsState
+    :ivar deletes_progress_percent: Progress percentage for processing deletes. This is done
+     separately from the rest of the enumeration run.
+    :vartype deletes_progress_percent: int
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'operation_state': {'readonly': True},
+        'status_code': {'readonly': True},
+        'started_timestamp': {'readonly': True},
+        'processed_files_count': {'readonly': True, 'minimum': 0},
+        'processed_directories_count': {'readonly': True, 'minimum': 0},
+        'total_files_count': {'readonly': True, 'minimum': 0},
+        'total_directories_count': {'readonly': True, 'minimum': 0},
+        'total_size_bytes': {'readonly': True, 'minimum': 0},
+        'progress_percent': {'readonly': True, 'maximum': 100, 'minimum': 0},
+        'minutes_remaining': {'readonly': True, 'minimum': 0},
+        'total_counts_state': {'readonly': True},
+        'deletes_progress_percent': {'readonly': True, 'maximum': 100, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'operation_state': {'key': 'operationState', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'int'},
+        'started_timestamp': {'key': 'startedTimestamp', 'type': 'iso-8601'},
+        'processed_files_count': {'key': 'processedFilesCount', 'type': 'long'},
+        'processed_directories_count': {'key': 'processedDirectoriesCount', 'type': 'long'},
+        'total_files_count': {'key': 'totalFilesCount', 'type': 'long'},
+        'total_directories_count': {'key': 'totalDirectoriesCount', 'type': 'long'},
+        'total_size_bytes': {'key': 'totalSizeBytes', 'type': 'long'},
+        'progress_percent': {'key': 'progressPercent', 'type': 'int'},
+        'minutes_remaining': {'key': 'minutesRemaining', 'type': 'int'},
+        'total_counts_state': {'key': 'totalCountsState', 'type': 'str'},
+        'deletes_progress_percent': {'key': 'deletesProgressPercent', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CloudEndpointChangeEnumerationActivity, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.operation_state = None
+        self.status_code = None
+        self.started_timestamp = None
+        self.processed_files_count = None
+        self.processed_directories_count = None
+        self.total_files_count = None
+        self.total_directories_count = None
+        self.total_size_bytes = None
+        self.progress_percent = None
+        self.minutes_remaining = None
+        self.total_counts_state = None
+        self.deletes_progress_percent = None
+
+
+class CloudEndpointChangeEnumerationStatus(msrest.serialization.Model):
+    """Cloud endpoint change enumeration status object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp.
+    :vartype last_updated_timestamp: ~datetime.datetime
+    :ivar last_enumeration_status: Status of last completed change enumeration.
+    :vartype last_enumeration_status:
+     ~azure.mgmt.storagesync.models.CloudEndpointLastChangeEnumerationStatus
+    :ivar activity: Change enumeration activity.
+    :vartype activity: ~azure.mgmt.storagesync.models.CloudEndpointChangeEnumerationActivity
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'last_enumeration_status': {'readonly': True},
+        'activity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'last_enumeration_status': {'key': 'lastEnumerationStatus', 'type': 'CloudEndpointLastChangeEnumerationStatus'},
+        'activity': {'key': 'activity', 'type': 'CloudEndpointChangeEnumerationActivity'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CloudEndpointChangeEnumerationStatus, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.last_enumeration_status = None
+        self.activity = None
 
 
 class CloudEndpointCreateParameters(ProxyResource):
@@ -312,6 +444,56 @@ class CloudEndpointCreateParameters(ProxyResource):
         self.azure_file_share_name = kwargs.get('azure_file_share_name', None)
         self.storage_account_tenant_id = kwargs.get('storage_account_tenant_id', None)
         self.friendly_name = kwargs.get('friendly_name', None)
+
+
+class CloudEndpointLastChangeEnumerationStatus(msrest.serialization.Model):
+    """Cloud endpoint change enumeration status object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar started_timestamp: Timestamp when change enumeration started.
+    :vartype started_timestamp: ~datetime.datetime
+    :ivar completed_timestamp: Timestamp when change enumeration completed.
+    :vartype completed_timestamp: ~datetime.datetime
+    :ivar namespace_files_count: Count of files in the namespace.
+    :vartype namespace_files_count: long
+    :ivar namespace_directories_count: Count of directories in the namespace.
+    :vartype namespace_directories_count: long
+    :ivar namespace_size_bytes: Namespace size in bytes.
+    :vartype namespace_size_bytes: long
+    :ivar next_run_timestamp: Timestamp of when change enumeration is expected to run again.
+    :vartype next_run_timestamp: ~datetime.datetime
+    """
+
+    _validation = {
+        'started_timestamp': {'readonly': True},
+        'completed_timestamp': {'readonly': True},
+        'namespace_files_count': {'readonly': True, 'minimum': 0},
+        'namespace_directories_count': {'readonly': True, 'minimum': 0},
+        'namespace_size_bytes': {'readonly': True, 'minimum': 0},
+        'next_run_timestamp': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'started_timestamp': {'key': 'startedTimestamp', 'type': 'iso-8601'},
+        'completed_timestamp': {'key': 'completedTimestamp', 'type': 'iso-8601'},
+        'namespace_files_count': {'key': 'namespaceFilesCount', 'type': 'long'},
+        'namespace_directories_count': {'key': 'namespaceDirectoriesCount', 'type': 'long'},
+        'namespace_size_bytes': {'key': 'namespaceSizeBytes', 'type': 'long'},
+        'next_run_timestamp': {'key': 'nextRunTimestamp', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CloudEndpointLastChangeEnumerationStatus, self).__init__(**kwargs)
+        self.started_timestamp = None
+        self.completed_timestamp = None
+        self.namespace_files_count = None
+        self.namespace_directories_count = None
+        self.namespace_size_bytes = None
+        self.next_run_timestamp = None
 
 
 class CloudTieringCachePerformance(msrest.serialization.Model):
@@ -1171,12 +1353,12 @@ class RegisteredServer(ProxyResource):
     :vartype agent_version_expiration_date: ~datetime.datetime
     :param server_os_version: Registered Server OS Version.
     :type server_os_version: str
-    :ivar server_management_error_code: Registered Server Management Error Code.
-    :vartype server_management_error_code: int
-    :ivar last_heart_beat: Registered Server last heart beat.
-    :vartype last_heart_beat: ~datetime.datetime
-    :ivar provisioning_state: Registered Server Provisioning State.
-    :vartype provisioning_state: str
+    :param server_management_error_code: Registered Server Management Error Code.
+    :type server_management_error_code: int
+    :param last_heart_beat: Registered Server last heart beat.
+    :type last_heart_beat: str
+    :param provisioning_state: Registered Server Provisioning State.
+    :type provisioning_state: str
     :param server_role: Registered Server serverRole.
     :type server_role: str
     :param cluster_id: Registered Server clusterId.
@@ -1185,26 +1367,26 @@ class RegisteredServer(ProxyResource):
     :type cluster_name: str
     :param server_id: Registered Server serverId.
     :type server_id: str
-    :ivar storage_sync_service_uid: Registered Server storageSyncServiceUid.
-    :vartype storage_sync_service_uid: str
-    :ivar last_workflow_id: Registered Server lastWorkflowId.
-    :vartype last_workflow_id: str
-    :ivar last_operation_name: Resource Last Operation Name.
-    :vartype last_operation_name: str
-    :ivar discovery_endpoint_uri: Resource discoveryEndpointUri.
-    :vartype discovery_endpoint_uri: str
-    :ivar resource_location: Resource Location.
-    :vartype resource_location: str
-    :ivar service_location: Service Location.
-    :vartype service_location: str
+    :param storage_sync_service_uid: Registered Server storageSyncServiceUid.
+    :type storage_sync_service_uid: str
+    :param last_workflow_id: Registered Server lastWorkflowId.
+    :type last_workflow_id: str
+    :param last_operation_name: Resource Last Operation Name.
+    :type last_operation_name: str
+    :param discovery_endpoint_uri: Resource discoveryEndpointUri.
+    :type discovery_endpoint_uri: str
+    :param resource_location: Resource Location.
+    :type resource_location: str
+    :param service_location: Service Location.
+    :type service_location: str
     :param friendly_name: Friendly Name.
     :type friendly_name: str
-    :ivar management_endpoint_uri: Management Endpoint Uri.
-    :vartype management_endpoint_uri: str
-    :ivar monitoring_endpoint_uri: Telemetry Endpoint Uri.
-    :vartype monitoring_endpoint_uri: str
-    :ivar monitoring_configuration: Monitoring Configuration.
-    :vartype monitoring_configuration: str
+    :param management_endpoint_uri: Management Endpoint Uri.
+    :type management_endpoint_uri: str
+    :param monitoring_endpoint_uri: Telemetry Endpoint Uri.
+    :type monitoring_endpoint_uri: str
+    :param monitoring_configuration: Monitoring Configuration.
+    :type monitoring_configuration: str
     :ivar server_name: Server name.
     :vartype server_name: str
     """
@@ -1215,18 +1397,6 @@ class RegisteredServer(ProxyResource):
         'type': {'readonly': True},
         'agent_version_status': {'readonly': True},
         'agent_version_expiration_date': {'readonly': True},
-        'server_management_error_code': {'readonly': True},
-        'last_heart_beat': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'storage_sync_service_uid': {'readonly': True},
-        'last_workflow_id': {'readonly': True},
-        'last_operation_name': {'readonly': True},
-        'discovery_endpoint_uri': {'readonly': True},
-        'resource_location': {'readonly': True},
-        'service_location': {'readonly': True},
-        'management_endpoint_uri': {'readonly': True},
-        'monitoring_endpoint_uri': {'readonly': True},
-        'monitoring_configuration': {'readonly': True},
         'server_name': {'readonly': True},
     }
 
@@ -1240,7 +1410,7 @@ class RegisteredServer(ProxyResource):
         'agent_version_expiration_date': {'key': 'properties.agentVersionExpirationDate', 'type': 'iso-8601'},
         'server_os_version': {'key': 'properties.serverOSVersion', 'type': 'str'},
         'server_management_error_code': {'key': 'properties.serverManagementErrorCode', 'type': 'int'},
-        'last_heart_beat': {'key': 'properties.lastHeartBeat', 'type': 'iso-8601'},
+        'last_heart_beat': {'key': 'properties.lastHeartBeat', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'server_role': {'key': 'properties.serverRole', 'type': 'str'},
         'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
@@ -1269,23 +1439,23 @@ class RegisteredServer(ProxyResource):
         self.agent_version_status = None
         self.agent_version_expiration_date = None
         self.server_os_version = kwargs.get('server_os_version', None)
-        self.server_management_error_code = None
-        self.last_heart_beat = None
-        self.provisioning_state = None
+        self.server_management_error_code = kwargs.get('server_management_error_code', None)
+        self.last_heart_beat = kwargs.get('last_heart_beat', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.server_role = kwargs.get('server_role', None)
         self.cluster_id = kwargs.get('cluster_id', None)
         self.cluster_name = kwargs.get('cluster_name', None)
         self.server_id = kwargs.get('server_id', None)
-        self.storage_sync_service_uid = None
-        self.last_workflow_id = None
-        self.last_operation_name = None
-        self.discovery_endpoint_uri = None
-        self.resource_location = None
-        self.service_location = None
+        self.storage_sync_service_uid = kwargs.get('storage_sync_service_uid', None)
+        self.last_workflow_id = kwargs.get('last_workflow_id', None)
+        self.last_operation_name = kwargs.get('last_operation_name', None)
+        self.discovery_endpoint_uri = kwargs.get('discovery_endpoint_uri', None)
+        self.resource_location = kwargs.get('resource_location', None)
+        self.service_location = kwargs.get('service_location', None)
         self.friendly_name = kwargs.get('friendly_name', None)
-        self.management_endpoint_uri = None
-        self.monitoring_endpoint_uri = None
-        self.monitoring_configuration = None
+        self.management_endpoint_uri = kwargs.get('management_endpoint_uri', None)
+        self.monitoring_endpoint_uri = kwargs.get('monitoring_endpoint_uri', None)
+        self.monitoring_configuration = kwargs.get('monitoring_configuration', None)
         self.server_name = None
 
 
@@ -1479,6 +1649,9 @@ class ServerEndpoint(ProxyResource):
      to cloud behavior to pre-populate before local access. Possible values include:
      "DownloadNewAndModifiedFiles", "UpdateLocallyCachedFiles".
     :type local_cache_mode: str or ~azure.mgmt.storagesync.models.LocalCacheMode
+    :param initial_upload_policy: Policy for how the initial upload sync session is performed.
+     Possible values include: "ServerAuthoritative", "Merge".
+    :type initial_upload_policy: str or ~azure.mgmt.storagesync.models.InitialUploadPolicy
     :ivar server_name: Server name.
     :vartype server_name: str
     """
@@ -1522,6 +1695,7 @@ class ServerEndpoint(ProxyResource):
         'recall_status': {'key': 'properties.recallStatus', 'type': 'ServerEndpointRecallStatus'},
         'initial_download_policy': {'key': 'properties.initialDownloadPolicy', 'type': 'str'},
         'local_cache_mode': {'key': 'properties.localCacheMode', 'type': 'str'},
+        'initial_upload_policy': {'key': 'properties.initialUploadPolicy', 'type': 'str'},
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
     }
 
@@ -1548,6 +1722,7 @@ class ServerEndpoint(ProxyResource):
         self.recall_status = None
         self.initial_download_policy = kwargs.get('initial_download_policy', None)
         self.local_cache_mode = kwargs.get('local_cache_mode', None)
+        self.initial_upload_policy = kwargs.get('initial_upload_policy', None)
         self.server_name = None
 
 
@@ -1577,6 +1752,8 @@ class ServerEndpointBackgroundDataDownloadActivity(msrest.serialization.Model):
 
     :ivar timestamp: Timestamp when properties were updated.
     :vartype timestamp: ~datetime.datetime
+    :ivar started_timestamp: Timestamp when the operation started.
+    :vartype started_timestamp: ~datetime.datetime
     :ivar percent_progress: Progress percentage.
     :vartype percent_progress: int
     :ivar downloaded_bytes: Running count of bytes downloaded.
@@ -1585,12 +1762,14 @@ class ServerEndpointBackgroundDataDownloadActivity(msrest.serialization.Model):
 
     _validation = {
         'timestamp': {'readonly': True},
+        'started_timestamp': {'readonly': True},
         'percent_progress': {'readonly': True, 'maximum': 100, 'minimum': 0},
         'downloaded_bytes': {'readonly': True, 'minimum': 0},
     }
 
     _attribute_map = {
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'started_timestamp': {'key': 'startedTimestamp', 'type': 'iso-8601'},
         'percent_progress': {'key': 'percentProgress', 'type': 'int'},
         'downloaded_bytes': {'key': 'downloadedBytes', 'type': 'long'},
     }
@@ -1601,6 +1780,7 @@ class ServerEndpointBackgroundDataDownloadActivity(msrest.serialization.Model):
     ):
         super(ServerEndpointBackgroundDataDownloadActivity, self).__init__(**kwargs)
         self.timestamp = None
+        self.started_timestamp = None
         self.percent_progress = None
         self.downloaded_bytes = None
 
@@ -1715,6 +1895,9 @@ class ServerEndpointCreateParameters(ProxyResource):
      to cloud behavior to pre-populate before local access. Possible values include:
      "DownloadNewAndModifiedFiles", "UpdateLocallyCachedFiles".
     :type local_cache_mode: str or ~azure.mgmt.storagesync.models.LocalCacheMode
+    :param initial_upload_policy: Policy for how the initial upload sync session is performed.
+     Possible values include: "ServerAuthoritative", "Merge".
+    :type initial_upload_policy: str or ~azure.mgmt.storagesync.models.InitialUploadPolicy
     """
 
     _validation = {
@@ -1739,6 +1922,7 @@ class ServerEndpointCreateParameters(ProxyResource):
         'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
         'initial_download_policy': {'key': 'properties.initialDownloadPolicy', 'type': 'str'},
         'local_cache_mode': {'key': 'properties.localCacheMode', 'type': 'str'},
+        'initial_upload_policy': {'key': 'properties.initialUploadPolicy', 'type': 'str'},
     }
 
     def __init__(
@@ -1748,7 +1932,7 @@ class ServerEndpointCreateParameters(ProxyResource):
         super(ServerEndpointCreateParameters, self).__init__(**kwargs)
         self.server_local_path = kwargs.get('server_local_path', None)
         self.cloud_tiering = kwargs.get('cloud_tiering', None)
-        self.volume_free_space_percent = kwargs.get('volume_free_space_percent', None)
+        self.volume_free_space_percent = kwargs.get('volume_free_space_percent', 20)
         self.tier_files_older_than_days = kwargs.get('tier_files_older_than_days', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.server_resource_id = kwargs.get('server_resource_id', None)
@@ -1756,6 +1940,7 @@ class ServerEndpointCreateParameters(ProxyResource):
         self.offline_data_transfer_share_name = kwargs.get('offline_data_transfer_share_name', None)
         self.initial_download_policy = kwargs.get('initial_download_policy', None)
         self.local_cache_mode = kwargs.get('local_cache_mode', None)
+        self.initial_upload_policy = kwargs.get('initial_upload_policy', None)
 
 
 class ServerEndpointFilesNotSyncingError(msrest.serialization.Model):
@@ -1878,6 +2063,8 @@ class ServerEndpointSyncActivityStatus(msrest.serialization.Model):
     :ivar sync_mode: Sync mode. Possible values include: "Regular", "NamespaceDownload",
      "InitialUpload", "SnapshotUpload", "InitialFullDownload".
     :vartype sync_mode: str or ~azure.mgmt.storagesync.models.ServerEndpointSyncMode
+    :ivar session_minutes_remaining: Session minutes remaining (if available).
+    :vartype session_minutes_remaining: int
     """
 
     _validation = {
@@ -1888,6 +2075,7 @@ class ServerEndpointSyncActivityStatus(msrest.serialization.Model):
         'applied_bytes': {'readonly': True, 'minimum': 0},
         'total_bytes': {'readonly': True, 'minimum': 0},
         'sync_mode': {'readonly': True},
+        'session_minutes_remaining': {'readonly': True, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -1898,6 +2086,7 @@ class ServerEndpointSyncActivityStatus(msrest.serialization.Model):
         'applied_bytes': {'key': 'appliedBytes', 'type': 'long'},
         'total_bytes': {'key': 'totalBytes', 'type': 'long'},
         'sync_mode': {'key': 'syncMode', 'type': 'str'},
+        'session_minutes_remaining': {'key': 'sessionMinutesRemaining', 'type': 'int'},
     }
 
     def __init__(
@@ -1912,6 +2101,7 @@ class ServerEndpointSyncActivityStatus(msrest.serialization.Model):
         self.applied_bytes = None
         self.total_bytes = None
         self.sync_mode = None
+        self.session_minutes_remaining = None
 
 
 class ServerEndpointSyncSessionStatus(msrest.serialization.Model):
@@ -2466,7 +2656,7 @@ class SubscriptionState(msrest.serialization.Model):
     :ivar istransitioning: Is Transitioning.
     :vartype istransitioning: bool
     :param properties: Subscription state properties.
-    :type properties: object
+    :type properties: any
     """
 
     _validation = {
@@ -2566,7 +2756,7 @@ class SyncGroupCreateParameters(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :param properties: The parameters used to create the sync group.
-    :type properties: object
+    :type properties: any
     """
 
     _validation = {
@@ -2652,17 +2842,17 @@ class Workflow(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar last_step_name: last step name.
-    :vartype last_step_name: str
-    :ivar status: workflow status. Possible values include: "active", "expired", "succeeded",
+    :param last_step_name: last step name.
+    :type last_step_name: str
+    :param status: workflow status. Possible values include: "active", "expired", "succeeded",
      "aborted", "failed".
-    :vartype status: str or ~azure.mgmt.storagesync.models.WorkflowStatus
-    :ivar operation: operation direction. Possible values include: "do", "undo", "cancel".
-    :vartype operation: str or ~azure.mgmt.storagesync.models.OperationDirection
-    :ivar steps: workflow steps.
-    :vartype steps: str
-    :ivar last_operation_id: workflow last operation identifier.
-    :vartype last_operation_id: str
+    :type status: str or ~azure.mgmt.storagesync.models.WorkflowStatus
+    :param operation: operation direction. Possible values include: "do", "undo", "cancel".
+    :type operation: str or ~azure.mgmt.storagesync.models.OperationDirection
+    :param steps: workflow steps.
+    :type steps: str
+    :param last_operation_id: workflow last operation identifier.
+    :type last_operation_id: str
     :ivar command_name: workflow command name.
     :vartype command_name: str
     :ivar created_timestamp: workflow created timestamp.
@@ -2675,11 +2865,6 @@ class Workflow(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'last_step_name': {'readonly': True},
-        'status': {'readonly': True},
-        'operation': {'readonly': True},
-        'steps': {'readonly': True},
-        'last_operation_id': {'readonly': True},
         'command_name': {'readonly': True},
         'created_timestamp': {'readonly': True},
         'last_status_timestamp': {'readonly': True},
@@ -2704,11 +2889,11 @@ class Workflow(ProxyResource):
         **kwargs
     ):
         super(Workflow, self).__init__(**kwargs)
-        self.last_step_name = None
-        self.status = None
-        self.operation = None
-        self.steps = None
-        self.last_operation_id = None
+        self.last_step_name = kwargs.get('last_step_name', None)
+        self.status = kwargs.get('status', None)
+        self.operation = kwargs.get('operation', None)
+        self.steps = kwargs.get('steps', None)
+        self.last_operation_id = kwargs.get('last_operation_id', None)
         self.command_name = None
         self.created_timestamp = None
         self.last_status_timestamp = None

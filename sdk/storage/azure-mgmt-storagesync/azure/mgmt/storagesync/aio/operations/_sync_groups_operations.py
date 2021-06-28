@@ -45,7 +45,7 @@ class SyncGroupsOperations:
         self,
         resource_group_name: str,
         storage_sync_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SyncGroupArray"]:
         """Get a SyncGroup List.
 
@@ -76,7 +76,7 @@ class SyncGroupsOperations:
                 url = self.list_by_storage_sync_service.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -122,7 +122,7 @@ class SyncGroupsOperations:
         storage_sync_service_name: str,
         sync_group_name: str,
         parameters: "_models.SyncGroupCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SyncGroup":
         """Create a new SyncGroup.
 
@@ -152,7 +152,7 @@ class SyncGroupsOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
         }
@@ -195,7 +195,7 @@ class SyncGroupsOperations:
         resource_group_name: str,
         storage_sync_service_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SyncGroup":
         """Get a given SyncGroup.
 
@@ -222,7 +222,7 @@ class SyncGroupsOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
         }
@@ -261,7 +261,7 @@ class SyncGroupsOperations:
         resource_group_name: str,
         storage_sync_service_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a given SyncGroup.
 
@@ -288,7 +288,7 @@ class SyncGroupsOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
         }

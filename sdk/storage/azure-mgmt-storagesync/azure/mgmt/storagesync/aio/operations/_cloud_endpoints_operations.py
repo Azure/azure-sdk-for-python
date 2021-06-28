@@ -50,7 +50,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.CloudEndpointCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.CloudEndpoint"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CloudEndpoint"]]
         error_map = {
@@ -65,7 +65,7 @@ class CloudEndpointsOperations:
         url = self._create_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -120,7 +120,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.CloudEndpointCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CloudEndpoint"]:
         """Create a new CloudEndpoint.
 
@@ -136,8 +136,8 @@ class CloudEndpointsOperations:
         :type parameters: ~azure.mgmt.storagesync.models.CloudEndpointCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CloudEndpoint or the result of cls(response)
@@ -178,7 +178,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -204,7 +204,7 @@ class CloudEndpointsOperations:
         storage_sync_service_name: str,
         sync_group_name: str,
         cloud_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CloudEndpoint":
         """Get a given CloudEndpoint.
 
@@ -233,7 +233,7 @@ class CloudEndpointsOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -274,7 +274,7 @@ class CloudEndpointsOperations:
         storage_sync_service_name: str,
         sync_group_name: str,
         cloud_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -288,7 +288,7 @@ class CloudEndpointsOperations:
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -335,7 +335,7 @@ class CloudEndpointsOperations:
         storage_sync_service_name: str,
         sync_group_name: str,
         cloud_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a given CloudEndpoint.
 
@@ -349,8 +349,8 @@ class CloudEndpointsOperations:
         :type cloud_endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -383,7 +383,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -408,7 +408,7 @@ class CloudEndpointsOperations:
         resource_group_name: str,
         storage_sync_service_name: str,
         sync_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CloudEndpointArray"]:
         """Get a CloudEndpoint List.
 
@@ -441,7 +441,7 @@ class CloudEndpointsOperations:
                 url = self.list_by_sync_group.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
                     'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
                 }
@@ -489,7 +489,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -504,7 +504,7 @@ class CloudEndpointsOperations:
         url = self._pre_backup_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -555,7 +555,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Pre Backup a given CloudEndpoint.
 
@@ -571,8 +571,8 @@ class CloudEndpointsOperations:
         :type parameters: ~azure.mgmt.storagesync.models.BackupRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -606,7 +606,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -633,7 +633,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.PostBackupResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PostBackupResponse"]]
         error_map = {
@@ -648,7 +648,7 @@ class CloudEndpointsOperations:
         url = self._post_backup_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -702,7 +702,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.BackupRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PostBackupResponse"]:
         """Post Backup a given CloudEndpoint.
 
@@ -718,8 +718,8 @@ class CloudEndpointsOperations:
         :type parameters: ~azure.mgmt.storagesync.models.BackupRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PostBackupResponse or the result of cls(response)
@@ -761,7 +761,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -788,7 +788,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.PreRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -803,7 +803,7 @@ class CloudEndpointsOperations:
         url = self._pre_restore_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -849,7 +849,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.PreRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Pre Restore a given CloudEndpoint.
 
@@ -865,8 +865,8 @@ class CloudEndpointsOperations:
         :type parameters: ~azure.mgmt.storagesync.models.PreRestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -900,7 +900,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -926,7 +926,7 @@ class CloudEndpointsOperations:
         storage_sync_service_name: str,
         sync_group_name: str,
         cloud_endpoint_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Restore Heartbeat a given CloudEndpoint.
 
@@ -955,7 +955,7 @@ class CloudEndpointsOperations:
         url = self.restoreheartbeat.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -995,7 +995,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.PostRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1010,7 +1010,7 @@ class CloudEndpointsOperations:
         url = self._post_restore_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -1056,7 +1056,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.PostRestoreRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Post Restore a given CloudEndpoint.
 
@@ -1072,8 +1072,8 @@ class CloudEndpointsOperations:
         :type parameters: ~azure.mgmt.storagesync.models.PostRestoreRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1107,7 +1107,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -1134,7 +1134,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.TriggerChangeDetectionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1149,7 +1149,7 @@ class CloudEndpointsOperations:
         url = self._trigger_change_detection_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),
@@ -1195,7 +1195,7 @@ class CloudEndpointsOperations:
         sync_group_name: str,
         cloud_endpoint_name: str,
         parameters: "_models.TriggerChangeDetectionParameters",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers detection of changes performed on Azure File share connected to the specified Azure
         File Sync Cloud Endpoint.
@@ -1212,8 +1212,8 @@ class CloudEndpointsOperations:
         :type parameters: ~azure.mgmt.storagesync.models.TriggerChangeDetectionParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1247,7 +1247,7 @@ class CloudEndpointsOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
             'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
             'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str'),

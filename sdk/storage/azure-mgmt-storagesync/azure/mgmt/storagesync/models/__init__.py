@@ -12,7 +12,10 @@ try:
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudEndpoint
     from ._models_py3 import CloudEndpointArray
+    from ._models_py3 import CloudEndpointChangeEnumerationActivity
+    from ._models_py3 import CloudEndpointChangeEnumerationStatus
     from ._models_py3 import CloudEndpointCreateParameters
+    from ._models_py3 import CloudEndpointLastChangeEnumerationStatus
     from ._models_py3 import CloudTieringCachePerformance
     from ._models_py3 import CloudTieringDatePolicyStatus
     from ._models_py3 import CloudTieringFilesNotTiering
@@ -80,7 +83,10 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityResult  # type: ignore
     from ._models import CloudEndpoint  # type: ignore
     from ._models import CloudEndpointArray  # type: ignore
+    from ._models import CloudEndpointChangeEnumerationActivity  # type: ignore
+    from ._models import CloudEndpointChangeEnumerationStatus  # type: ignore
     from ._models import CloudEndpointCreateParameters  # type: ignore
+    from ._models import CloudEndpointLastChangeEnumerationStatus  # type: ignore
     from ._models import CloudTieringCachePerformance  # type: ignore
     from ._models import CloudTieringDatePolicyStatus  # type: ignore
     from ._models import CloudTieringFilesNotTiering  # type: ignore
@@ -145,9 +151,12 @@ except (SyntaxError, ImportError):
 
 from ._microsoft_storage_sync_enums import (
     ChangeDetectionMode,
+    CloudEndpointChangeEnumerationActivityState,
+    CloudEndpointChangeEnumerationTotalCountsState,
     FeatureStatus,
     IncomingTrafficPolicy,
     InitialDownloadPolicy,
+    InitialUploadPolicy,
     LocalCacheMode,
     NameAvailabilityReason,
     OperationDirection,
@@ -169,7 +178,10 @@ __all__ = [
     'CheckNameAvailabilityResult',
     'CloudEndpoint',
     'CloudEndpointArray',
+    'CloudEndpointChangeEnumerationActivity',
+    'CloudEndpointChangeEnumerationStatus',
     'CloudEndpointCreateParameters',
+    'CloudEndpointLastChangeEnumerationStatus',
     'CloudTieringCachePerformance',
     'CloudTieringDatePolicyStatus',
     'CloudTieringFilesNotTiering',
@@ -232,9 +244,12 @@ __all__ = [
     'Workflow',
     'WorkflowArray',
     'ChangeDetectionMode',
+    'CloudEndpointChangeEnumerationActivityState',
+    'CloudEndpointChangeEnumerationTotalCountsState',
     'FeatureStatus',
     'IncomingTrafficPolicy',
     'InitialDownloadPolicy',
+    'InitialUploadPolicy',
     'LocalCacheMode',
     'NameAvailabilityReason',
     'OperationDirection',

@@ -46,7 +46,7 @@ class OperationStatusOperations:
         location_name: str,
         workflow_id: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationStatus":
         """Get Operation status.
 
@@ -75,7 +75,7 @@ class OperationStatusOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'workflowId': self._serialize.url("workflow_id", workflow_id, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),

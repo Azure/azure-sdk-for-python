@@ -33,6 +33,20 @@ class ChangeDetectionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "Default"
     RECURSIVE = "Recursive"
 
+class CloudEndpointChangeEnumerationActivityState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """State of change enumeration activity
+    """
+
+    INITIAL_ENUMERATION_IN_PROGRESS = "InitialEnumerationInProgress"
+    ENUMERATION_IN_PROGRESS = "EnumerationInProgress"
+
+class CloudEndpointChangeEnumerationTotalCountsState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """State of the total counts of change enumeration activity
+    """
+
+    CALCULATING = "Calculating"
+    FINAL = "Final"
+
 class FeatureStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of the Feature Status
     """
@@ -55,9 +69,16 @@ class InitialDownloadPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     NAMESPACE_THEN_MODIFIED_FILES = "NamespaceThenModifiedFiles"
     AVOID_TIERED_FILES = "AvoidTieredFiles"
 
+class InitialUploadPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Policy for how the initial upload sync session is performed.
+    """
+
+    SERVER_AUTHORITATIVE = "ServerAuthoritative"
+    MERGE = "Merge"
+
 class LocalCacheMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Policy for enabling follow-the-sun business models: link local cache to cloud behavior to pre-
-    populate before local access.
+    """Policy for enabling follow-the-sun business models: link local cache to cloud behavior to
+    pre-populate before local access.
     """
 
     DOWNLOAD_NEW_AND_MODIFIED_FILES = "DownloadNewAndModifiedFiles"

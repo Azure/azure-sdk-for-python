@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationEntityListResult"]:
         """Lists all of the available Storage Sync Rest API operations.
 
