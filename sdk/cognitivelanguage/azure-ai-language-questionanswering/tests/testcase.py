@@ -44,9 +44,9 @@ class QuestionAnsweringTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(QuestionAnsweringTest, self).__init__(method_name)
-        self.scrubber.register_name_pair(os.environ["QNA_ACCOUNT"], TEST_ENDPOINT)
-        self.scrubber.register_name_pair(os.environ["QNA_KEY"], TEST_KEY)
-        self.scrubber.register_name_pair(os.environ["QNA_PROJECT"], TEST_PROJECT)
+        self.scrubber.register_name_pair(os.environ.get("QNA_ACCOUNT"), TEST_ENDPOINT)
+        self.scrubber.register_name_pair(os.environ.get("QNA_KEY"), TEST_KEY)
+        self.scrubber.register_name_pair(os.environ.get("QNA_PROJECT"), TEST_PROJECT)
 
     def get_oauth_endpoint(self):
         raise NotImplementedError()
