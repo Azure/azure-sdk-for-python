@@ -330,7 +330,7 @@ The following section provides some insights for some of the advanced translatio
 ### Glossaries
 Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translator provides support for glossaries. 
 
-#### **How To Create Glossary File**
+#### How To Create Glossary File
 
 Document Translator supports glossaries in the following formats:
 
@@ -342,59 +342,20 @@ Document Translator supports glossaries in the following formats:
 For .tsv/.tab files, you can read more about the format  [here][tsv_files_wikipedia]
 , and you can also see a sample file [here][sample_tsv_file].
 
-#### **How Use Glossaries in Document Translator**
+#### How Use Glossaries in Document Translator
 In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
 
 ### Custom Translation Models
 Instead of using Document Translator's engine for translation, you can use your own custom azure machine/deep learning model.
+
+#### How To Create a Custom Translation Model
 For more info on how to create and provision your own custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
 
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import (
-    DocumentTranslationClient,
-    DocumentTranslationInput,
-    TranslationTarget
-)
+#### How To Use a Custom Translation Model With Document Translator
+In order to use a custom translation model with Document Translator, you first 
+need to create and deploy your model, then follow the code sample [sample_translation_with_custom_model.py][sample_translation_with_custom_model]. to use with Document translator.
 
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-source_container_sas_url_en = "<sas-url-en>"
-target_container_sas_url_es = "<sas-url-es>"
-target_container_sas_url_fr = "<sas-url-fr>"
-category_id = "<custom_model_id>"
-
-client = DocumentTranslationClient(endpoint, credential)
-
-inputs = DocumentTranslationInput(
-            source_url=source_container_url,
-            targets=[
-                TranslationTarget(
-                    target_url=target_container_url,
-                    language_code="es",
-                    category_id=category_id
-                )
-            ]
-        )
-
-job = client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
-
-job_result = client.wait_until_done(job.id)  # type: JobStatusResult
-
-print("Job status: {}".format(job_result.status))
-print("Job created on: {}".format(job_result.created_on))
-print("Job last updated on: {}".format(job_result.last_updated_on))
-print("Total number of translations on documents: {}".format(job_result.documents_total_count))
-
-print("\nOf total documents...")
-print("{} failed".format(job_result.documents_failed_count))
-print("{} succeeded".format(job_result.documents_succeeded_count))
-```
 
 ## Troubleshooting
 
@@ -509,10 +470,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
 [sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
+[sample_translation_with_custom_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_custom_model.py
+[sample_translation_with_custom_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_custom_model_async.py
 
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files_wikipedia]: https://en.wikipedia.org/wiki/Tab-separated_values
-[sample_tsv_file]: ./samples/glossary-files/sample.tsv
+[sample_tsv_file]: ./samples/assets/glossary_sample.tsv
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
