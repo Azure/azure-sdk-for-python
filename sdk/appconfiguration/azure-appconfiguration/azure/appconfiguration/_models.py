@@ -167,7 +167,7 @@ class FeatureFlagConfigurationSetting(
 
     def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value, super-init-not-called
         # type: (str, **Any) -> None
-        if kwargs.pop("key", None) or kwargs.pop("value", None):
+        if "key" in kwargs.keys() or "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         # super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id
@@ -241,7 +241,6 @@ class FeatureFlagConfigurationSetting(
 
     def _to_generated(self):
         # type: () -> KeyValue
-
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -296,7 +295,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     def __init__(self, key, secret_id, **kwargs):  # pylint: disable=super-init-not-called
         # type: (str, str, **Any) -> None
-        if kwargs.pop("value", None):
+        if "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
         self.label = kwargs.pop("label", None)
