@@ -3,6 +3,10 @@
 
 ## 1.0.0b7 (2021-04-08)
 
+- `kind` keyword is now supported while creating the span instance.
+
+## 1.0.0b7 (2021-04-08)
+
 - `Link` and `SpanKind` can now be added while creating the span instance.
 
 ## 1.0.0b6 (2020-05-04)
