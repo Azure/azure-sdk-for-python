@@ -6,12 +6,12 @@ import asyncio
 from datetime import datetime
 import urllib3
 from azure.monitor.query.aio import MetricsQueryClient
-from azure.identity.aio import ClientSecretCredential
+from azure.identity.aio import DefaultAzureCredential
 
 urllib3.disable_warnings()
 
 async def query_metrics():
-    credential  = ClientSecretCredential(
+    credential  = DefaultAzureCredential(
             client_id = os.environ['AZURE_CLIENT_ID'],
             client_secret = os.environ['AZURE_CLIENT_SECRET'],
             tenant_id = os.environ['AZURE_TENANT_ID']

@@ -5,14 +5,10 @@ from datetime import datetime
 import os
 import pandas as pd
 from azure.monitor.query import LogsQueryClient, LogsQueryRequest
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 

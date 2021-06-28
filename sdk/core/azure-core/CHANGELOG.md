@@ -10,6 +10,10 @@ requests and sends them through our pipelines.
 - Add new ***provisional*** errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
 are thrown if you mishandle streamed responses from the provisional `azure.core.rest` module
 
+### Bug Fixes
+
+- Improved error message in the `from_dict` method of `CloudEvent` when a wrong schema is sent.
+
 ## 1.15.0 (2021-06-04)
 
 ### New Features

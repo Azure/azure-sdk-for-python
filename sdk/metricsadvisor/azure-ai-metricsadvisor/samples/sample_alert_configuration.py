@@ -193,7 +193,7 @@ def sample_list_alerts(alert_config_id):
     for result in results:
         tolist.append(result)
         print("Alert id: {}".format(result.id))
-        print("Create on: {}".format(result.created_on))
+        print("Create time: {}".format(result.created_time))
     return tolist
     # [END list_alerts]
 
@@ -214,7 +214,7 @@ def sample_list_anomalies_for_alert(alert_config_id, alert_id):
             alert_id=alert_id,
         )
     for result in results:
-        print("Create on: {}".format(result.created_on))
+        print("Create time: {}".format(result.created_time))
         print("Severity: {}".format(result.severity))
         print("Status: {}".format(result.status))
 
