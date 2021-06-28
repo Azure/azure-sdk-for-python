@@ -56,7 +56,7 @@ async def test_iter_with_error(client):
     assert response.is_closed
 
 @pytest.mark.asyncio
-async def test_iter_raw_with_chunksize(client):
+async def test_iter_raw_with_chunksize_5(client):
     request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
@@ -65,12 +65,18 @@ async def test_iter_raw_with_chunksize(client):
             parts.append(part)
         assert parts == [b'Hello', b', wor', b'ld!']
 
+@pytest.mark.asyncio
+async def test_iter_raw_with_chunksize_13(client):
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         parts = []
         async for part in response.iter_raw(chunk_size=13):
             parts.append(part)
         assert parts == [b"Hello, world!"]
 
+@pytest.mark.asyncio
+async def test_iter_raw_with_chunksize_20(client):
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         parts = []
         async for part in response.iter_raw(chunk_size=20):
@@ -102,7 +108,7 @@ async def test_iter_bytes(client):
         assert raw == b"Hello, world!"
 
 @pytest.mark.asyncio
-async def test_iter_bytes_with_chunk_size(client):
+async def test_iter_bytes_with_chunk_size_5(client):
     request = HttpRequest("GET", "/streams/basic")
 
     async with client.send_request(request, stream=True) as response:
@@ -111,12 +117,18 @@ async def test_iter_bytes_with_chunk_size(client):
             parts.append(part)
         assert parts == [b"Hello", b", wor", b"ld!"]
 
+@pytest.mark.asyncio
+async def test_iter_bytes_with_chunk_size_13(client):
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         parts = []
         async for part in response.iter_bytes(chunk_size=13):
             parts.append(part)
         assert parts == [b"Hello, world!"]
 
+@pytest.mark.asyncio
+async def test_iter_bytes_with_chunk_size_20(client):
+    request = HttpRequest("GET", "/streams/basic")
     async with client.send_request(request, stream=True) as response:
         parts = []
         async for part in response.iter_bytes(chunk_size=20):
