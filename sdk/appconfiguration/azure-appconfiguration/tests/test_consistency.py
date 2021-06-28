@@ -109,6 +109,8 @@ class AppConfigurationClientTest(AzureTestCase):
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = "hello world"
+        assert set_flag.enabled == None
+        assert set_flag.filters == None
         # with pytest.raises(ValueError):
         #     a = set_flag.enabled
         # with pytest.raises(ValueError):
