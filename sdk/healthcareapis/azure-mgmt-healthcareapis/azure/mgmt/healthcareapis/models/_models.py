@@ -213,7 +213,7 @@ class OperationResultsDescription(msrest.serialization.Model):
     :ivar start_time: The time that the operation was started.
     :vartype start_time: str
     :param properties: Additional properties of the operation result.
-    :type properties: object
+    :type properties: any
     """
 
     _validation = {

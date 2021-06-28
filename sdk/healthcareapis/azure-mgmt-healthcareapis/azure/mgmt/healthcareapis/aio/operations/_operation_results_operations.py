@@ -44,7 +44,7 @@ class OperationResultsOperations:
         self,
         location_name: str,
         operation_result_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> Union["_models.OperationResultsDescription", "_models.ErrorDetails"]:
         """Get the operation result for a long running operation.
 

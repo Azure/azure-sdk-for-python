@@ -44,7 +44,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourceListResultDescription":
         """Gets the private link resources that need to be created for a service.
 
@@ -104,7 +104,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourceDescription":
         """Gets a private link resource that need to be created for a service.
 

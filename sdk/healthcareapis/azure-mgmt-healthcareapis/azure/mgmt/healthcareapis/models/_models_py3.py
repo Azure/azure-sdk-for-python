@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -227,7 +227,7 @@ class OperationResultsDescription(msrest.serialization.Model):
     :ivar start_time: The time that the operation was started.
     :vartype start_time: str
     :param properties: Additional properties of the operation result.
-    :type properties: object
+    :type properties: any
     """
 
     _validation = {
@@ -248,7 +248,7 @@ class OperationResultsDescription(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         **kwargs
     ):
         super(OperationResultsDescription, self).__init__(**kwargs)
