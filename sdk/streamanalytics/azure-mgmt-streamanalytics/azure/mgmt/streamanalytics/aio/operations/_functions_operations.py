@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class FunctionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,11 +48,11 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        function: "models.Function",
+        function: "_models.Function",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.Function":
+        **kwargs: Any
+    ) -> "_models.Function":
         """Creates a function or replaces an already existing function under an existing streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -76,7 +76,7 @@ class FunctionsOperations:
         :rtype: ~stream_analytics_management_client.models.Function
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Function"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Function"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -139,10 +139,10 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        function: "models.Function",
+        function: "_models.Function",
         if_match: Optional[str] = None,
-        **kwargs
-    ) -> "models.Function":
+        **kwargs: Any
+    ) -> "_models.Function":
         """Updates an existing function under an existing streaming job. This can be used to partially
         update (ie. update one or two properties) a function without affecting the rest the job or
         function definition.
@@ -167,7 +167,7 @@ class FunctionsOperations:
         :rtype: ~stream_analytics_management_client.models.Function
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Function"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Function"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,7 +223,7 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a function from the streaming job.
 
@@ -280,8 +280,8 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        **kwargs
-    ) -> "models.Function":
+        **kwargs: Any
+    ) -> "_models.Function":
         """Gets details about the specified function.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -295,7 +295,7 @@ class FunctionsOperations:
         :rtype: ~stream_analytics_management_client.models.Function
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Function"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Function"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -344,8 +344,8 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         select: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.FunctionListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.FunctionListResult"]:
         """Lists all of the functions under the specified streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -361,7 +361,7 @@ class FunctionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.FunctionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FunctionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FunctionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -425,10 +425,10 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        function: Optional["models.Function"] = None,
-        **kwargs
-    ) -> Optional["models.ResourceTestStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ResourceTestStatus"]]
+        function: Optional["_models.Function"] = None,
+        **kwargs: Any
+    ) -> Optional["_models.ResourceTestStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ResourceTestStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -485,9 +485,9 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        function: Optional["models.Function"] = None,
-        **kwargs
-    ) -> AsyncLROPoller["models.ResourceTestStatus"]:
+        function: Optional["_models.Function"] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ResourceTestStatus"]:
         """Tests if the information provided for a function is valid. This can range from testing the
         connection to the underlying web service behind the function or making sure the function code
         provided is syntactically correct.
@@ -506,8 +506,8 @@ class FunctionsOperations:
         :type function: ~stream_analytics_management_client.models.Function
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ResourceTestStatus or the result of cls(response)
@@ -515,7 +515,7 @@ class FunctionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceTestStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceTestStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -541,7 +541,14 @@ class FunctionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+            'functionName': self._serialize.url("function_name", function_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -560,9 +567,9 @@ class FunctionsOperations:
         resource_group_name: str,
         job_name: str,
         function_name: str,
-        function_retrieve_default_definition_parameters: Optional["models.FunctionRetrieveDefaultDefinitionParameters"] = None,
-        **kwargs
-    ) -> "models.Function":
+        function_retrieve_default_definition_parameters: Optional["_models.FunctionRetrieveDefaultDefinitionParameters"] = None,
+        **kwargs: Any
+    ) -> "_models.Function":
         """Retrieves the default definition of a function based on the parameters specified.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -579,7 +586,7 @@ class FunctionsOperations:
         :rtype: ~stream_analytics_management_client.models.Function
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Function"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Function"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

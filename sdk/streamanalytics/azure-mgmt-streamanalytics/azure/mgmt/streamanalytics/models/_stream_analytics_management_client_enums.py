@@ -39,16 +39,21 @@ class ClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     Canceled
     """
 
-    SUCCEEDED = "Succeeded"  #: The cluster provisioning succeeded.
-    FAILED = "Failed"  #: The cluster provisioning failed.
-    CANCELED = "Canceled"  #: The cluster provisioning was canceled.
-    IN_PROGRESS = "InProgress"  #: The cluster provisioning was inprogress.
+    #: The cluster provisioning succeeded.
+    SUCCEEDED = "Succeeded"
+    #: The cluster provisioning failed.
+    FAILED = "Failed"
+    #: The cluster provisioning was canceled.
+    CANCELED = "Canceled"
+    #: The cluster provisioning was inprogress.
+    IN_PROGRESS = "InProgress"
 
 class ClusterSkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests.
     """
 
-    DEFAULT = "Default"  #: The default SKU.
+    #: The default SKU.
+    DEFAULT = "Default"
 
 class CompatibilityLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Controls certain runtime behaviors of the streaming job.
@@ -93,16 +98,26 @@ class JobState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current execution state of the streaming job.
     """
 
-    CREATED = "Created"  #: The job is currently in the Created state.
-    STARTING = "Starting"  #: The job is currently in the Starting state.
-    RUNNING = "Running"  #: The job is currently in the Running state.
-    STOPPING = "Stopping"  #: The job is currently in the Stopping state.
-    STOPPED = "Stopped"  #: The job is currently in the Stopped state.
-    DELETING = "Deleting"  #: The job is currently in the Deleting state.
-    FAILED = "Failed"  #: The job is currently in the Failed state.
-    DEGRADED = "Degraded"  #: The job is currently in the Degraded state.
-    RESTARTING = "Restarting"  #: The job is currently in the Restarting state.
-    SCALING = "Scaling"  #: The job is currently in the Scaling state.
+    #: The job is currently in the Created state.
+    CREATED = "Created"
+    #: The job is currently in the Starting state.
+    STARTING = "Starting"
+    #: The job is currently in the Running state.
+    RUNNING = "Running"
+    #: The job is currently in the Stopping state.
+    STOPPING = "Stopping"
+    #: The job is currently in the Stopped state.
+    STOPPED = "Stopped"
+    #: The job is currently in the Deleting state.
+    DELETING = "Deleting"
+    #: The job is currently in the Failed state.
+    FAILED = "Failed"
+    #: The job is currently in the Degraded state.
+    DEGRADED = "Degraded"
+    #: The job is currently in the Restarting state.
+    RESTARTING = "Restarting"
+    #: The job is currently in the Scaling state.
+    SCALING = "Scaling"
 
 class JobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'.

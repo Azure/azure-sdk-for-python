@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class TransformationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,12 +49,12 @@ class TransformationsOperations(object):
         resource_group_name,  # type: str
         job_name,  # type: str
         transformation_name,  # type: str
-        transformation,  # type: "models.Transformation"
+        transformation,  # type: "_models.Transformation"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Transformation"
+        # type: (...) -> "_models.Transformation"
         """Creates a transformation or replaces an already existing transformation under an existing
         streaming job.
 
@@ -80,7 +80,7 @@ class TransformationsOperations(object):
         :rtype: ~stream_analytics_management_client.models.Transformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Transformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Transformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -143,11 +143,11 @@ class TransformationsOperations(object):
         resource_group_name,  # type: str
         job_name,  # type: str
         transformation_name,  # type: str
-        transformation,  # type: "models.Transformation"
+        transformation,  # type: "_models.Transformation"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Transformation"
+        # type: (...) -> "_models.Transformation"
         """Updates an existing transformation under an existing streaming job. This can be used to
         partially update (ie. update one or two properties) a transformation without affecting the rest
         the job or transformation definition.
@@ -173,7 +173,7 @@ class TransformationsOperations(object):
         :rtype: ~stream_analytics_management_client.models.Transformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Transformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Transformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -231,7 +231,7 @@ class TransformationsOperations(object):
         transformation_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Transformation"
+        # type: (...) -> "_models.Transformation"
         """Gets details about the specified transformation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -245,7 +245,7 @@ class TransformationsOperations(object):
         :rtype: ~stream_analytics_management_client.models.Transformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Transformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Transformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

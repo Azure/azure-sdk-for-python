@@ -23,8 +23,8 @@ class FunctionProperties(msrest.serialization.Model):
     :param type: Required. Indicates the type of function.Constant filled by server.
     :type type: str
     :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
-     to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
+     to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
     :param inputs:
     :type inputs: list[~stream_analytics_management_client.models.FunctionInput]
@@ -74,8 +74,8 @@ class AggregateFunctionProperties(FunctionProperties):
     :param type: Required. Indicates the type of function.Constant filled by server.
     :type type: str
     :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
-     to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
+     to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
     :param inputs:
     :type inputs: list[~stream_analytics_management_client.models.FunctionInput]
@@ -152,7 +152,7 @@ class AvroSerialization(Serialization):
     :type type: str or ~stream_analytics_management_client.models.EventSerializationType
     :param properties: The properties that are associated with the Avro serialization type.
      Required on PUT (CreateOrReplace) requests.
-    :type properties: object
+    :type properties: any
     """
 
     _validation = {
@@ -554,8 +554,6 @@ class FunctionRetrieveDefaultDefinitionParameters(msrest.serialization.Model):
 class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
     """The parameters needed to retrieve the default function definition for an Azure Machine Learning web service function.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param binding_type: Required. Indicates the function binding type.Constant filled by server.
@@ -563,13 +561,13 @@ class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(Fun
     :param execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
      web service.
     :type execute_endpoint: str
-    :ivar udf_type: The function type. Default value: "Scalar".
-    :vartype udf_type: str
+    :param udf_type: The function type. The only acceptable values to pass in are None and
+     "Scalar". The default value is None.
+    :type udf_type: str
     """
 
     _validation = {
         'binding_type': {'required': True},
-        'udf_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -578,8 +576,6 @@ class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(Fun
         'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
     }
 
-    udf_type = "Scalar"
-
     def __init__(
         self,
         **kwargs
@@ -587,6 +583,7 @@ class AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters(Fun
         super(AzureMachineLearningServiceFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
         self.binding_type = 'Microsoft.MachineLearningServices'  # type: str
         self.execute_endpoint = kwargs.get('execute_endpoint', None)
+        self.udf_type = kwargs.get('udf_type', None)
 
 
 class AzureMachineLearningServiceInputColumn(msrest.serialization.Model):
@@ -676,8 +673,8 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
     :param type: Required. Indicates the function binding type.Constant filled by server.
     :type type: str
     :param endpoint: The Request-Response execute endpoint of the Azure Machine Learning Studio.
-     Find out more here: https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-
-     consume-web-services#request-response-service-rrs.
+     Find out more here:
+     https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-consume-web-services#request-response-service-rrs.
     :type endpoint: str
     :param api_key: The API key used to authenticate with Request-Response endpoint.
     :type api_key: str
@@ -720,23 +717,21 @@ class AzureMachineLearningStudioFunctionBinding(FunctionBinding):
 class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
     """The parameters needed to retrieve the default function definition for an Azure Machine Learning Studio function.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param binding_type: Required. Indicates the function binding type.Constant filled by server.
     :type binding_type: str
     :param execute_endpoint: The Request-Response execute endpoint of the Azure Machine Learning
-     Studio. Find out more here: https://docs.microsoft.com/en-us/azure/machine-learning/machine-
-     learning-consume-web-services#request-response-service-rrs.
+     Studio. Find out more here:
+     https://docs.microsoft.com/en-us/azure/machine-learning/machine-learning-consume-web-services#request-response-service-rrs.
     :type execute_endpoint: str
-    :ivar udf_type: The function type. Default value: "Scalar".
-    :vartype udf_type: str
+    :param udf_type: The function type. The only acceptable values to pass in are None and
+     "Scalar". The default value is None.
+    :type udf_type: str
     """
 
     _validation = {
         'binding_type': {'required': True},
-        'udf_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -745,8 +740,6 @@ class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(Func
         'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
     }
 
-    udf_type = "Scalar"
-
     def __init__(
         self,
         **kwargs
@@ -754,6 +747,7 @@ class AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters(Func
         super(AzureMachineLearningStudioFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
         self.binding_type = 'Microsoft.MachineLearning/WebService'  # type: str
         self.execute_endpoint = kwargs.get('execute_endpoint', None)
+        self.udf_type = kwargs.get('udf_type', None)
 
 
 class AzureMachineLearningStudioInputColumn(msrest.serialization.Model):
@@ -762,8 +756,8 @@ class AzureMachineLearningStudioInputColumn(msrest.serialization.Model):
     :param name: The name of the input column.
     :type name: str
     :param data_type: The (Azure Machine Learning supported) data type of the input column. A list
-     of valid  Azure Machine Learning data types are described at https://msdn.microsoft.com/en-
-     us/library/azure/dn905923.aspx .
+     of valid  Azure Machine Learning data types are described at
+     https://msdn.microsoft.com/en-us/library/azure/dn905923.aspx .
     :type data_type: str
     :param map_to: The zero based index of the function parameter this input maps to.
     :type map_to: int
@@ -815,8 +809,8 @@ class AzureMachineLearningStudioOutputColumn(msrest.serialization.Model):
     :param name: The name of the output column.
     :type name: str
     :param data_type: The (Azure Machine Learning supported) data type of the output column. A list
-     of valid  Azure Machine Learning data types are described at https://msdn.microsoft.com/en-
-     us/library/azure/dn905923.aspx .
+     of valid  Azure Machine Learning data types are described at
+     https://msdn.microsoft.com/en-us/library/azure/dn905923.aspx .
     :type data_type: str
     """
 
@@ -1327,10 +1321,10 @@ class BlobDataSourceProperties(msrest.serialization.Model):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1377,10 +1371,10 @@ class BlobOutputDataSource(OutputDataSource):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1433,10 +1427,10 @@ class BlobOutputDataSourceProperties(BlobDataSourceProperties):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1483,10 +1477,10 @@ class BlobReferenceInputDataSource(ReferenceInputDataSource):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1534,10 +1528,10 @@ class BlobReferenceInputDataSourceProperties(BlobDataSourceProperties):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1612,10 +1606,10 @@ class BlobStreamInputDataSource(StreamInputDataSource):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1668,10 +1662,10 @@ class BlobStreamInputDataSourceProperties(BlobDataSourceProperties):
     :type container: str
     :param path_pattern: The blob path pattern. Not a regular expression. It represents a pattern
      against which blob names will be matched to determine whether or not they should be included as
-     input or output to the job. See https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-input or https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for a more detailed explanation and
-     example.
+     input or output to the job. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a more
+     detailed explanation and example.
     :type path_pattern: str
     :param date_format: The date format. Wherever {date} appears in pathPattern, the value of this
      property is used as the date format instead.
@@ -1702,7 +1696,7 @@ class BlobStreamInputDataSourceProperties(BlobDataSourceProperties):
 
 
 class Resource(msrest.serialization.Model):
-    """Resource.
+    """The base resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2101,21 +2095,19 @@ class CSharpFunctionBinding(FunctionBinding):
 class CSharpFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
     """The parameters needed to retrieve the default function definition for a CSharp function.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param binding_type: Required. Indicates the function binding type.Constant filled by server.
     :type binding_type: str
     :param script: The CSharp code containing a single function definition.
     :type script: str
-    :ivar udf_type: The function type. Default value: "Scalar".
-    :vartype udf_type: str
+    :param udf_type: The function type. The only acceptable values to pass in are None and
+     "Scalar". The default value is None.
+    :type udf_type: str
     """
 
     _validation = {
         'binding_type': {'required': True},
-        'udf_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -2124,8 +2116,6 @@ class CSharpFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultD
         'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
     }
 
-    udf_type = "Scalar"
-
     def __init__(
         self,
         **kwargs
@@ -2133,6 +2123,7 @@ class CSharpFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultD
         super(CSharpFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
         self.binding_type = 'Microsoft.StreamAnalytics/CLRUdf'  # type: str
         self.script = kwargs.get('script', None)
+        self.udf_type = kwargs.get('udf_type', None)
 
 
 class CsvSerialization(Serialization):
@@ -2145,9 +2136,10 @@ class CsvSerialization(Serialization):
      "Csv", "Avro", "Json", "CustomClr", "Parquet".
     :type type: str or ~stream_analytics_management_client.models.EventSerializationType
     :param field_delimiter: Specifies the delimiter that will be used to separate comma-separated
-     value (CSV) records. See https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-
-     analytics-input or https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-
-     output for a list of supported values. Required on PUT (CreateOrReplace) requests.
+     value (CSV) records. See
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-input or
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for a list of
+     supported values. Required on PUT (CreateOrReplace) requests.
     :type field_delimiter: str
     :param encoding: Specifies the encoding of the incoming data in the case of input and the
      encoding of outgoing data in the case of output. Required on PUT (CreateOrReplace) requests.
@@ -2292,9 +2284,9 @@ class DocumentDbOutputDataSource(OutputDataSource):
     :type database: str
     :param collection_name_pattern: The collection name pattern for the collections to be used. The
      collection name format can be constructed using the optional {partition} token, where
-     partitions start from 0. See the DocumentDB section of https://docs.microsoft.com/en-
-     us/rest/api/streamanalytics/stream-analytics-output for more information. Required on PUT
-     (CreateOrReplace) requests.
+     partitions start from 0. See the DocumentDB section of
+     https://docs.microsoft.com/en-us/rest/api/streamanalytics/stream-analytics-output for more
+     information. Required on PUT (CreateOrReplace) requests.
     :type collection_name_pattern: str
     :param partition_key: The name of the field in output events used to specify the key for
      partitioning output across collections. If 'collectionNamePattern' contains the {partition}
@@ -2337,11 +2329,11 @@ class Error(msrest.serialization.Model):
     """Common error representation.
 
     :param error: Error definition properties.
-    :type error: ~stream_analytics_management_client.models.ErrorAutoGenerated
+    :type error: ~stream_analytics_management_client.models.ErrorError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorAutoGenerated'},
+        'error': {'key': 'error', 'type': 'ErrorError'},
     }
 
     def __init__(
@@ -2350,37 +2342,6 @@ class Error(msrest.serialization.Model):
     ):
         super(Error, self).__init__(**kwargs)
         self.error = kwargs.get('error', None)
-
-
-class ErrorAutoGenerated(msrest.serialization.Model):
-    """Error definition properties.
-
-    :param code: Error code.
-    :type code: str
-    :param message: Error message.
-    :type message: str
-    :param target: Error target.
-    :type target: str
-    :param details: Error details.
-    :type details: list[~stream_analytics_management_client.models.ErrorDetails]
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetails]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAutoGenerated, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
 
 
 class ErrorDetails(msrest.serialization.Model):
@@ -2408,6 +2369,37 @@ class ErrorDetails(msrest.serialization.Model):
         self.code = kwargs.get('code', None)
         self.target = kwargs.get('target', None)
         self.message = kwargs.get('message', None)
+
+
+class ErrorError(msrest.serialization.Model):
+    """Error definition properties.
+
+    :param code: Error code.
+    :type code: str
+    :param message: Error message.
+    :type message: str
+    :param target: Error target.
+    :type target: str
+    :param details: Error details.
+    :type details: list[~stream_analytics_management_client.models.ErrorDetails]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetails]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -2982,8 +2974,8 @@ class FunctionOutput(msrest.serialization.Model):
     """Describes the output of a function.
 
     :param data_type: The (Azure Stream Analytics supported) data type of the function output. A
-     list of valid Azure Stream Analytics data types are described at https://msdn.microsoft.com/en-
-     us/library/azure/dn835065.aspx.
+     list of valid Azure Stream Analytics data types are described at
+     https://msdn.microsoft.com/en-us/library/azure/dn835065.aspx.
     :type data_type: str
     """
 
@@ -3239,8 +3231,6 @@ class JavaScriptFunctionBinding(FunctionBinding):
 class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefaultDefinitionParameters):
     """The parameters needed to retrieve the default function definition for a JavaScript function.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param binding_type: Required. Indicates the function binding type.Constant filled by server.
@@ -3248,13 +3238,13 @@ class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefa
     :param script: The JavaScript code containing a single function definition. For example:
      'function (x, y) { return x + y; }'.
     :type script: str
-    :ivar udf_type: The function type. Default value: "Scalar".
-    :vartype udf_type: str
+    :param udf_type: The function type. The only acceptable values to pass in are None and
+     "Scalar". The default value is None.
+    :type udf_type: str
     """
 
     _validation = {
         'binding_type': {'required': True},
-        'udf_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -3263,8 +3253,6 @@ class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefa
         'udf_type': {'key': 'bindingRetrievalProperties.udfType', 'type': 'str'},
     }
 
-    udf_type = "Scalar"
-
     def __init__(
         self,
         **kwargs
@@ -3272,6 +3260,7 @@ class JavaScriptFunctionRetrieveDefaultDefinitionParameters(FunctionRetrieveDefa
         super(JavaScriptFunctionRetrieveDefaultDefinitionParameters, self).__init__(**kwargs)
         self.binding_type = 'Microsoft.StreamAnalytics/JavascriptUdf'  # type: str
         self.script = kwargs.get('script', None)
+        self.udf_type = kwargs.get('udf_type', None)
 
 
 class StorageAccount(msrest.serialization.Model):
@@ -3575,7 +3564,7 @@ class ParquetSerialization(Serialization):
     :type type: str or ~stream_analytics_management_client.models.EventSerializationType
     :param properties: The properties that are associated with the Parquet serialization type.
      Required on PUT (CreateOrReplace) requests.
-    :type properties: object
+    :type properties: any
     """
 
     _validation = {
@@ -3722,7 +3711,41 @@ class PowerBIOutputDataSourceProperties(OAuthBasedDataSourceProperties):
         self.authentication_mode = kwargs.get('authentication_mode', None)
 
 
-class PrivateEndpoint(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class PrivateEndpoint(ProxyResource):
     """Complete information about the private endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3901,40 +3924,6 @@ class PrivateLinkServiceConnection(msrest.serialization.Model):
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class ReferenceInputProperties(InputProperties):
     """The properties that are associated with an input containing reference data.
 
@@ -4030,8 +4019,8 @@ class ScalarFunctionProperties(FunctionProperties):
     :param type: Required. Indicates the type of function.Constant filled by server.
     :type type: str
     :ivar etag: The current entity tag for the function. This is an opaque string. You can use it
-     to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
+     to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
     :param inputs:
     :type inputs: list[~stream_analytics_management_client.models.FunctionInput]
@@ -4369,9 +4358,9 @@ class StreamingJob(TrackedResource):
      have a value of -1.
     :type events_late_arrival_max_delay_in_seconds: int
     :param data_locale: The data locale of the stream analytics job. Value should be the name of a
-     supported .NET Culture from the set https://msdn.microsoft.com/en-
-     us/library/system.globalization.culturetypes(v=vs.110).aspx. Defaults to 'en-US' if none
-     specified.
+     supported .NET Culture from the set
+     https://msdn.microsoft.com/en-us/library/system.globalization.culturetypes(v=vs.110).aspx.
+     Defaults to 'en-US' if none specified.
     :type data_locale: str
     :param compatibility_level: Controls certain runtime behaviors of the streaming job. Possible
      values include: "1.0".
@@ -4398,16 +4387,16 @@ class StreamingJob(TrackedResource):
      transformation.
     :type functions: list[~stream_analytics_management_client.models.Function]
     :ivar etag: The current entity tag for the streaming job. This is an opaque string. You can use
-     it to detect whether the resource has changed between requests. You can also use it in the If-
-     Match or If-None-Match headers for write operations for optimistic concurrency.
+     it to detect whether the resource has changed between requests. You can also use it in the
+     If-Match or If-None-Match headers for write operations for optimistic concurrency.
     :vartype etag: str
     :param job_storage_account: The properties that are associated with an Azure Storage account
      with MSI.
     :type job_storage_account: ~stream_analytics_management_client.models.JobStorageAccount
-    :ivar content_storage_policy: Valid values are JobStorageAccount and SystemAccount. If set to
+    :param content_storage_policy: Valid values are JobStorageAccount and SystemAccount. If set to
      JobStorageAccount, this requires the user to also specify jobStorageAccount property. .
      Possible values include: "SystemAccount", "JobStorageAccount".
-    :vartype content_storage_policy: str or
+    :type content_storage_policy: str or
      ~stream_analytics_management_client.models.ContentStoragePolicy
     :param externals: The storage account where the custom code artifacts are located.
     :type externals: ~stream_analytics_management_client.models.External
@@ -4425,7 +4414,6 @@ class StreamingJob(TrackedResource):
         'last_output_event_time': {'readonly': True},
         'created_date': {'readonly': True},
         'etag': {'readonly': True},
-        'content_storage_policy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4488,7 +4476,7 @@ class StreamingJob(TrackedResource):
         self.functions = kwargs.get('functions', None)
         self.etag = None
         self.job_storage_account = kwargs.get('job_storage_account', None)
-        self.content_storage_policy = None
+        self.content_storage_policy = kwargs.get('content_storage_policy', None)
         self.externals = kwargs.get('externals', None)
         self.cluster = kwargs.get('cluster', None)
 
