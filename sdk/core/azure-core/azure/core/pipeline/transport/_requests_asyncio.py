@@ -151,7 +151,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = set_block_size(response, chunk_size=kwargs.pop("chunk_size", None), **kwargs)
+        self.block_size = set_block_size(response)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -200,24 +200,22 @@ class RestAsyncioRequestsTransportResponse(RestAsyncHttpResponse, _RestRequestsT
     """Asynchronous streaming of data from the response.
     """
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
+    async def iter_raw(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_raw_helper(AsyncioRequestsTransportResponse, self, chunk_size):
+        async for part in iter_raw_helper(AsyncioRequestsTransportResponse, self):
             yield part
         await self.close()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
+    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_bytes_helper(AsyncioRequestsTransportResponse, self, chunk_size):
+        async for part in iter_bytes_helper(AsyncioRequestsTransportResponse, self):
             yield part
         await self.close()

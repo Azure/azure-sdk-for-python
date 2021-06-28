@@ -216,7 +216,6 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         *,
         request: HttpRequest,
         internal_response,
-        **kwargs  # pylint: disable=unused-argument
     ):
         self.request = request
         self.internal_response = internal_response
@@ -367,43 +366,39 @@ class HttpResponse(_HttpResponseBase):
             self._set_content(b"".join(self.iter_bytes()))
         return self.content
 
-    def iter_raw(self, chunk_size: Optional[int] = None) -> Iterator[bytes]:
+    def iter_raw(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
         raise NotImplementedError()
 
-    def iter_bytes(self, chunk_size: Optional[int] = None) -> Iterator[bytes]:
+    def iter_bytes(self) -> Iterator[bytes]:
         """Iterates over the response's bytes. Will decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
         raise NotImplementedError()
 
-    def iter_text(self, chunk_size: int = None) -> Iterator[str]:
+    def iter_text(self) -> Iterator[str]:
         """Iterates over the text in the response.
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An iterator of string. Each string chunk will be a text from the response
         :rtype: Iterator[str]
         """
-        for byte in self.iter_bytes(chunk_size):
+        for byte in self.iter_bytes():
             text = byte.decode(self.encoding or "utf-8")
             yield text
 
-    def iter_lines(self, chunk_size: int = None) -> Iterator[str]:
+    def iter_lines(self) -> Iterator[str]:
         """Iterates over the lines in the response.
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An iterator of string. Each string chunk will be a line from the response
         :rtype: Iterator[str]
         """
-        for text in self.iter_text(chunk_size):
+        for text in self.iter_text():
             lines = parse_lines_from_text(text)
             for line in lines:
                 yield line
@@ -456,10 +451,9 @@ class AsyncHttpResponse(_HttpResponseBase):
             self._set_content(b"".join(parts))
         return self._get_content()
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # pylint: disable=unused-argument
+    async def iter_raw(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -471,10 +465,9 @@ class AsyncHttpResponse(_HttpResponseBase):
             yield _
         raise NotImplementedError()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIterator[bytes]:  # pylint: disable=unused-argument
+    async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -486,25 +479,23 @@ class AsyncHttpResponse(_HttpResponseBase):
             yield _
         raise NotImplementedError()
 
-    async def iter_text(self, chunk_size: int = None) -> AsyncIterator[str]:  # pylint: disable=unused-argument
+    async def iter_text(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the text in the response.
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of string. Each string chunk will be a text from the response
         :rtype: AsyncIterator[str]
         """
-        async for byte in self.iter_bytes(chunk_size):  # type: ignore
+        async for byte in self.iter_bytes():  # type: ignore
             text = byte.decode(self.encoding or "utf-8")
             yield text
 
-    async def iter_lines(self, chunk_size: int = None) -> AsyncIterator[str]:
+    async def iter_lines(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the lines in the response.
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of string. Each string chunk will be a line from the response
         :rtype: AsyncIterator[str]
         """
-        async for text in self.iter_text(chunk_size):
+        async for text in self.iter_text():
             lines = parse_lines_from_text(text)
             for line in lines:
                 yield line

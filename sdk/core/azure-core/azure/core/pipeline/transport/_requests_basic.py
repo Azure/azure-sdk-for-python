@@ -140,7 +140,7 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = set_block_size(response, chunk_size=kwargs.pop("chunk_size", None), **kwargs)
+        self.block_size = set_block_size(response)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
@@ -239,20 +239,28 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
 class RestRequestsTransportResponse(RestHttpResponse, _RestRequestsTransportResponseBase):
 
-    def iter_bytes(self, chunk_size=None):
-        # type: (Optional[int]) -> Iterator[bytes]
+    def iter_bytes(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will decompress in the process
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
         return iter_bytes_helper(
             stream_download_generator=StreamDownloadGenerator,
             response=self,
-            chunk_size=chunk_size,
         )
 
-    def iter_raw(self, chunk_size=None):
-        # type: (Optional[int]) -> Iterator[bytes]
+    def iter_raw(self):
+        # type: () -> Iterator[bytes]
+        """Iterates over the response's bytes. Will not decompress in the process
+
+        :return: An iterator of bytes from the response
+        :rtype: Iterator[str]
+        """
         return iter_raw_helper(
             stream_download_generator=StreamDownloadGenerator,
             response=self,
-            chunk_size=chunk_size,
         )
 
 class RequestsTransport(HttpTransport):

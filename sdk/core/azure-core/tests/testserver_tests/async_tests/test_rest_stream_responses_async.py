@@ -56,34 +56,6 @@ async def test_iter_with_error(client):
     assert response.is_closed
 
 @pytest.mark.asyncio
-async def test_iter_raw_with_chunksize_5(client):
-    request = HttpRequest("GET", "/streams/basic")
-
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_raw(chunk_size=5):
-            parts.append(part)
-        assert parts == [b'Hello', b', wor', b'ld!']
-
-@pytest.mark.asyncio
-async def test_iter_raw_with_chunksize_13(client):
-    request = HttpRequest("GET", "/streams/basic")
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_raw(chunk_size=13):
-            parts.append(part)
-        assert parts == [b"Hello, world!"]
-
-@pytest.mark.asyncio
-async def test_iter_raw_with_chunksize_20(client):
-    request = HttpRequest("GET", "/streams/basic")
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_raw(chunk_size=20):
-            parts.append(part)
-        assert parts == [b"Hello, world!"]
-
-@pytest.mark.asyncio
 async def test_iter_raw_num_bytes_downloaded(client):
     request = HttpRequest("GET", "/streams/basic")
 
@@ -108,34 +80,6 @@ async def test_iter_bytes(client):
         assert raw == b"Hello, world!"
 
 @pytest.mark.asyncio
-async def test_iter_bytes_with_chunk_size_5(client):
-    request = HttpRequest("GET", "/streams/basic")
-
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_bytes(chunk_size=5):
-            parts.append(part)
-        assert parts == [b"Hello", b", wor", b"ld!"]
-
-@pytest.mark.asyncio
-async def test_iter_bytes_with_chunk_size_13(client):
-    request = HttpRequest("GET", "/streams/basic")
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_bytes(chunk_size=13):
-            parts.append(part)
-        assert parts == [b"Hello, world!"]
-
-@pytest.mark.asyncio
-async def test_iter_bytes_with_chunk_size_20(client):
-    request = HttpRequest("GET", "/streams/basic")
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_bytes(chunk_size=20):
-            parts.append(part)
-        assert parts == [b"Hello, world!"]
-
-@pytest.mark.asyncio
 async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
@@ -144,28 +88,6 @@ async def test_iter_text(client):
         async for part in response.iter_text():
             content += part
         assert content == "Hello, world!"
-
-@pytest.mark.asyncio
-async def test_iter_text_with_chunk_size(client):
-    request = HttpRequest("GET", "/basic/string")
-
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_text(chunk_size=5):
-            parts.append(part)
-        assert parts == ["Hello", ", wor", "ld!"]
-
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_text(chunk_size=13):
-            parts.append(part)
-        assert parts == ["Hello, world!"]
-
-    async with client.send_request(request, stream=True) as response:
-        parts = []
-        async for part in response.iter_text(chunk_size=20):
-            parts.append(part)
-        assert parts == ["Hello, world!"]
 
 @pytest.mark.asyncio
 async def test_iter_lines(client):

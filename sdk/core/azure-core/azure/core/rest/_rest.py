@@ -352,29 +352,29 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
             self._set_content(b"".join(self.iter_bytes()))
         return self.content
 
-    def iter_raw(self, chunk_size=None):
-        # type: (Optional[int]) -> Iterator[bytes]
+    def iter_raw(self):
+        # type: () -> Iterator[bytes]
         """Iterate over the raw response bytes
         """
         raise NotImplementedError()
 
-    def iter_bytes(self, chunk_size=None):
-        # type: (Optional[int]) -> Iterator[bytes]
+    def iter_bytes(self):
+        # type: () -> Iterator[bytes]
         """Iterate over the response bytes
         """
         raise NotImplementedError()
 
-    def iter_text(self, chunk_size=None):
-        # type: (int) -> Iterator[str]
+    def iter_text(self):
+        # type: () -> Iterator[str]
         """Iterate over the response text
         """
-        for byte in self.iter_bytes(chunk_size):
+        for byte in self.iter_bytes():
             text = byte.decode(self.encoding or "utf-8")
             yield text
 
-    def iter_lines(self, chunk_size=None):
-        # type: (int) -> Iterator[str]
-        for text in self.iter_text(chunk_size):
+    def iter_lines(self):
+        # type: () -> Iterator[str]
+        for text in self.iter_text():
             lines = parse_lines_from_text(text)
             for line in lines:
                 yield line

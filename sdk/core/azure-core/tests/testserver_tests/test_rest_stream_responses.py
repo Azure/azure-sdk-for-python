@@ -64,21 +64,6 @@ def test_iter_with_error(client):
             raise ValueError("Should error before entering")
     assert response.is_closed
 
-def test_iter_raw_with_chunksize(client):
-    request = HttpRequest("GET", "/streams/basic")
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_raw(chunk_size=5)]
-        assert parts == [b"Hello", b", wor", b"ld!"]
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_raw(chunk_size=13)]
-        assert parts == [b"Hello, world!"]
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_raw(chunk_size=20)]
-        assert parts == [b"Hello, world!"]
-
 def test_iter_raw_num_bytes_downloaded(client):
     request = HttpRequest("GET", "/streams/basic")
 
@@ -103,21 +88,6 @@ def test_iter_bytes(client):
         assert response.is_stream_consumed
         assert raw == b"Hello, world!"
 
-def test_iter_bytes_with_chunk_size(client):
-    request = HttpRequest("GET", "/streams/basic")
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_bytes(chunk_size=5)]
-        assert parts == [b"Hello", b", wor", b"ld!"]
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_bytes(chunk_size=13)]
-        assert parts == [b"Hello, world!"]
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_bytes(chunk_size=20)]
-        assert parts == [b"Hello, world!"]
-
 def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
@@ -126,21 +96,6 @@ def test_iter_text(client):
         for part in response.iter_text():
             content += part
         assert content == "Hello, world!"
-
-def test_iter_text_with_chunk_size(client):
-    request = HttpRequest("GET", "/basic/string")
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_text(chunk_size=5)]
-        assert parts == ["Hello", ", wor", "ld!"]
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_text(chunk_size=13)]
-        assert parts == ["Hello, world!"]
-
-    with client.send_request(request, stream=True) as response:
-        parts = [part for part in response.iter_text(chunk_size=20)]
-        assert parts == ["Hello, world!"]
 
 def test_iter_lines(client):
     request = HttpRequest("GET", "/basic/lines")

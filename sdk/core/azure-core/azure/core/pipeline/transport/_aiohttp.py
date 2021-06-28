@@ -220,11 +220,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True, **kwargs) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = set_block_size(response, chunk_size=kwargs.pop("chunk_size", None), **kwargs)
+        self.block_size = set_block_size(response)
         self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
@@ -377,9 +377,8 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
         *,
         request: RestHttpRequest,
         internal_response,
-        **kwargs
     ):
-        super().__init__(request=request, internal_response=internal_response, **kwargs)
+        super().__init__(request=request, internal_response=internal_response)
         self.status_code = internal_response.status
         self.headers = CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
@@ -417,25 +416,23 @@ class RestAioHttpTransportResponse(RestAsyncHttpResponse):
 
         return content.decode(encoding)
 
-    async def iter_raw(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
+    async def iter_raw(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_raw_helper(AioHttpStreamDownloadGenerator, self, chunk_size):
+        async for part in iter_raw_helper(AioHttpStreamDownloadGenerator, self):
             yield part
         await self.close()
 
-    async def iter_bytes(self, chunk_size: int = None) -> AsyncIteratorType[bytes]:
+    async def iter_bytes(self) -> AsyncIteratorType[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
 
-        :param int chunk_size: The maximum size of each chunk iterated over.
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_bytes_helper(AioHttpStreamDownloadGenerator, self, chunk_size):
+        async for part in iter_bytes_helper(AioHttpStreamDownloadGenerator, self):
             yield part
         await self.close()
 
