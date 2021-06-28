@@ -26,6 +26,7 @@ from .._generated.models import (
     TimeMode as AlertQueryTimeMode,
     SeriesIdentity,
     FeedbackDimensionFilter,
+    DimensionGroupIdentity,
 )
 from .._generated.aio import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._helpers import convert_to_sub_feedback, convert_datetime, get_authentication_policy
@@ -58,9 +59,6 @@ class MetricsAdvisorClient(object):
         which requires both subscription key and API key. Or an object which can provide an access
         token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
-    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
     def __init__(self, endpoint, credential, **kwargs):
@@ -378,7 +376,8 @@ class MetricsAdvisorClient(object):
         # type: (...) -> AsyncItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop('skip', None)
-        filter_condition = kwargs.pop('filter', None)
+        condition = kwargs.pop('filter', None)
+        filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
@@ -494,7 +493,7 @@ class MetricsAdvisorClient(object):
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
+        :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -510,7 +509,8 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        dimension_filter = kwargs.pop('dimension_filter', None)
+        dimension = kwargs.pop('dimension_filter', None)
+        dimension_filter = DimensionGroupIdentity(dimension=dimension)
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
@@ -545,7 +545,8 @@ class MetricsAdvisorClient(object):
         **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
 
-        filter_condition = kwargs.pop('filter', None)
+        condition = kwargs.pop('filter', None)
+        filter_condition = condition._to_generated() if condition else None
         converted_start_time = convert_datetime(start_time)
         converted_end_time = convert_datetime(end_time)
 

@@ -15,7 +15,7 @@ from functools import partial
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from ._base_client import TextAnalyticsClientBase
+from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
@@ -95,14 +95,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :start-after: [START create_ta_client_with_key]
             :end-before: [END create_ta_client_with_key]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the TextAnalyticsClient with endpoint and API key.
 
         .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START create_ta_client_with_aad]
             :end-before: [END create_ta_client_with_aad]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
@@ -174,7 +174,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START detect_language]
                 :end-before: [END detect_language]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
@@ -256,7 +256,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START recognize_entities]
                 :end-before: [END recognize_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -324,12 +324,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
-        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomain
         :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
-            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
+            `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
@@ -355,7 +355,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START recognize_pii_entities]
                 :end-before: [END recognize_pii_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -390,7 +390,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
                 raise ValueError(
-                    "'recognize_pii_entities' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
                 )
             raise error
         except HttpResponseError as error:
@@ -457,7 +457,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START recognize_linked_entities]
                 :end-before: [END recognize_linked_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize linked entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -489,7 +489,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._client.models(api_version="v3.1-preview.5").HealthcareJobState.deserialize(
+        healthcare_result = self._client.models(api_version="v3.1").HealthcareJobState.deserialize(
             raw_response
         )
         return healthcare_paged_result(
@@ -506,7 +506,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[AnalyzeHealthcareEntitiesResult]]
+    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]  # pylint: disable=line-too-long
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -514,10 +514,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         We also extract the relations found between entities, for example in "The subject took 100 mg of ibuprofen",
         we would extract the relationship between the "100 mg" dosage and the "ibuprofen" medication.
-
-        NOTE: this endpoint is currently in gated preview, meaning your subscription needs to be allow-listed
-        for you to use this endpoint. More information about that here:
-        https://aka.ms/text-analytics-health-request-access
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -551,10 +547,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
-            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult`.
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
+            Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -563,7 +561,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START analyze_healthcare_entities]
                 :end-before: [END analyze_healthcare_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize healthcare entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -606,7 +604,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' method is only available for API version \
-                    V3_1_PREVIEW and up."
+                    V3_1 and up."
                 )
             raise error
 
@@ -671,7 +669,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START extract_key_phrases]
                 :end-before: [END extract_key_phrases]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Extract the key phrases in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -723,7 +721,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             aspect-based sentiment analysis). If set to true, the returned
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
-            API version v3.1-preview and up.
+            API version v3.1 and up.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -747,7 +745,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        .. versionadded:: v3.1-preview
+        .. versionadded:: v3.1
             The *show_opinion_mining* parameter.
             The *string_index_type* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
@@ -763,7 +761,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START analyze_sentiment]
                 :end-before: [END analyze_sentiment]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Analyze sentiment in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -785,6 +783,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
+            if self._api_version == TextAnalyticsApiVersion.V3_0 and show_opinion_mining:
+                raise ValueError(
+                    "'show_opinion_mining' is only available for API version v3.1 and up"
+                )
             kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
@@ -795,17 +797,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
-        except TypeError as error:
-            if "opinion_mining" in str(error):
-                raise ValueError(
-                    "'show_opinion_mining' is only available for API version v3.1-preview and up"
-                )
-            raise error
         except HttpResponseError as error:
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._client.models(api_version="v3.1-preview.5").AnalyzeJobState.deserialize(
+        analyze_result = self._client.models(api_version="v3.1").AnalyzeJobState.deserialize(
             raw_response
         )
         return analyze_paged_result(
@@ -824,7 +820,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult]]]]  # pylint: disable=line-too-long
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -870,7 +866,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[
             RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or DocumentError
             ]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -880,7 +876,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :start-after: [START analyze]
                 :end-before: [END analyze]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Start a long-running operation to perform a variety of text analysis
                     actions over a batch of documents.
         """
@@ -888,7 +884,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.5").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -899,7 +895,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES]
@@ -924,7 +920,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -947,7 +943,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_actions' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
                 )
             raise error
 

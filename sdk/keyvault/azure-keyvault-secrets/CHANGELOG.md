@@ -1,6 +1,17 @@
 # Release History
 
-## 4.3.0 (2020-06-17)
+## 4.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 4.3.0 (2021-06-22)
 This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.
 ### Fixed
 - Correct typing for async paging methods
@@ -112,9 +123,9 @@ https://aka.ms/azure-sdk-preview1-python.
 This library is not a direct replacement for `azure-keyvault`. Applications
 using that library would require code changes to use `azure-keyvault-secrets`.
 This package's
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/README.md)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/samples)
 demonstrate the new API.
 
 ### Major changes from `azure-keyvault`
@@ -128,9 +139,9 @@ only)
     the synchronous client in `azure.keyvault.secrets`
 - Authentication using `azure-identity` credentials
   - see this package's
-  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/README.md)
+  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/README.md)
   , and the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 
 ### `azure-keyvault` features not implemented in this library

@@ -47,7 +47,6 @@ from .._generated.models._microsoft_azure_metrics_advisor_restapi_open_ap_iv2_en
 from .._generated.models import (
     FeedbackQueryTimeMode,
     RootCause,
-    DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
     EnrichmentStatus,
@@ -120,6 +119,7 @@ from ._models import (
     DatasourceServicePrincipalInKeyVault,
     DatasourceCredential,
     DataFeedSource,
+    DetectionAnomalyFilterCondition,
 )
 
 

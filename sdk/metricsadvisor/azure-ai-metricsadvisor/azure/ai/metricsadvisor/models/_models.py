@@ -94,6 +94,7 @@ from .._generated.models import (
     ServicePrincipalInKVParamPatch as _ServicePrincipalInKVParamPatch,
     ServicePrincipalInKVCredential as _ServicePrincipalInKVCredential,
     ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
+    DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
 )
 
 if TYPE_CHECKING:
@@ -2700,24 +2701,24 @@ class AnomalyAlert(object):
     :vartype id: str
     :ivar timestamp: anomaly time.
     :vartype timestamp: ~datetime.datetime
-    :ivar created_on: created time.
-    :vartype created_on: ~datetime.datetime
-    :ivar modified_on: modified time.
-    :vartype modified_on: ~datetime.datetime
+    :ivar created_time: created time.
+    :vartype created_time: ~datetime.datetime
+    :ivar modified_time: modified time.
+    :vartype modified_time: ~datetime.datetime
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get('id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_on', None)
-        self.modified_on = kwargs.get('modified_on', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.modified_time = kwargs.get('modified_time', None)
 
     def __repr__(self):
-        return "AnomalyAlert(id={}, timestamp={}, created_on={}, modified_on={})".format(
+        return "AnomalyAlert(id={}, timestamp={}, created_time={}, modified_time={})".format(
                     self.id,
                     self.timestamp,
-                    self.created_on,
-                    self.modified_on
+                    self.created_time,
+                    self.modified_time
                 )[:1024]
 
     @classmethod
@@ -2725,8 +2726,8 @@ class AnomalyAlert(object):
         return cls(
             id=alert.alert_id,
             timestamp=alert.timestamp,
-            created_on=alert.created_time,
-            modified_on=alert.modified_time
+            created_time=alert.created_time,
+            modified_time=alert.modified_time
         )
 
 
@@ -2777,7 +2778,7 @@ class DataPointAnomaly(msrest.serialization.Model):
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'detection_configuration_id': {'key': 'detectionConfigurationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
         'dimension': {'key': 'dimension', 'type': '{str}'},
         'severity': {'key': 'severity', 'type': 'str'},
@@ -2792,19 +2793,19 @@ class DataPointAnomaly(msrest.serialization.Model):
         self.metric_id = kwargs.get('metric_id', None)
         self.detection_configuration_id = kwargs.get('detection_configuration_id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_on', None)
+        self.created_time = kwargs.get('created_time', None)
         self.modified_time = kwargs.get('modified_time', None)
         self.dimension = kwargs.get('dimension', None)
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
 
     def __repr__(self):
-        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_on={}, " \
+        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_time={}, " \
                "modified_time={}, dimension={}, severity={}, status={})".format(
                     self.metric_id,
                     self.detection_configuration_id,
                     self.timestamp,
-                    self.created_on,
+                    self.created_time,
                     self.modified_time,
                     self.dimension,
                     self.severity,
@@ -2826,7 +2827,7 @@ class DataPointAnomaly(msrest.serialization.Model):
             metric_id=anomaly_result.metric_id,
             detection_configuration_id=anomaly_result.anomaly_detection_configuration_id,
             timestamp=anomaly_result.timestamp,
-            created_on=anomaly_result.created_time,
+            created_time=anomaly_result.created_time,
             modified_time=anomaly_result.modified_time,
             dimension=anomaly_result.dimension,
             severity=severity,
@@ -3840,4 +3841,41 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
             data_source_credential_name=self.name,
             data_source_credential_description=self.description,
             parameters=param_patch,
+        )
+
+class DetectionAnomalyFilterCondition(msrest.serialization.Model):
+    """DetectionAnomalyFilterCondition.
+
+    :param series_group_key: dimension filter.
+    :type series_group_key: dict[str, str]
+    :param severity_filter:
+    :type severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
+    """
+
+    _attribute_map = {
+        'series_group_key': {'key': 'seriesGroupKey', 'type': '{str}'},
+        'severity_filter': {'key': 'severityFilter', 'type': 'SeverityFilterCondition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
+        self.series_group_key = kwargs.get('series_group_key', None)
+        self.severity_filter = kwargs.get('severity_filter', None)
+
+    @classmethod
+    def _from_generated(cls, source):
+        series_group_key = source.dimension_filter.dimension if source.dimension_filter else None
+        return cls(
+            series_group_key=series_group_key,
+            severity_filter=source.severity_filter.key_vault_endpoint
+        )
+
+    def _to_generated(self):
+        dimension_filter = _DimensionGroupIdentity(dimension=self.series_group_key)
+        return _DetectionAnomalyFilterCondition(
+            dimension_filter=dimension_filter,
+            severity_filter=self.severity_filter
         )

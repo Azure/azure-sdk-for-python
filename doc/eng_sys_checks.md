@@ -9,7 +9,7 @@
 
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.
 
-Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
+Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
 
 As a contributor, you will see the build jobs run in two modes: `Nightly Scheduled` and `Pull Request`.
 
@@ -28,7 +28,7 @@ Example PR build:
 In both `public` and `internal` projects, all builds allow a filter to be introduced at build time to narrow the set of packages build/tested.
 
 1. Click `Run New` on your target build.
-2. Before clicking `run` against `master` or your target commit, click `Variables` and add a variable. Add variable `BuildTargetingString` with value of a valid glob string.
+2. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable. Add variable `BuildTargetingString` with value of a valid glob string.
    1. For example, setting filter string `azure-mgmt-*` will filter a build to only management packages. A value of `azure-keyvault-secrets` will result in only building THAT specific package.
 3. Once it's set, run the build!
 
@@ -38,7 +38,7 @@ All build definitions allow choice at queue time as to which `tox` environments 
 
 1. Find your target service `internal` build.
 2. Click `Run New`.
-3. Before clicking `run` against `master` or your target commit, click `Variables` and add a variable of name `Run.ToxCustomEnvs`. The value should be a comma separated list of tox environments that you want to run in the test phase.
+3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `Run.ToxCustomEnvs`. The value should be a comma separated list of tox environments that you want to run in the test phase.
 4. Once it's set, run the build!
 
 This is an example setting of that narrows the default set from `whl, sdist, depends, latestdependency, minimumdependency`.
@@ -110,7 +110,7 @@ python -m black -l 120 <path/to/service_directory>
 
 #### Change log verification
 
-Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/)
+Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/)
 
 ## PR Validation Checks
 Each pull request runs various tests using `pytest` in addition to all the tests mentioned above in analyze check. Pull request validation performs 3 different types of test: `whl, sdist and depends`. The following section explains the purpose of each of these tests and how to execute them locally. All pull requests are validated on multiple python versions across different platforms. Find the test matrix below.
@@ -259,7 +259,6 @@ Value: true
 •   Regression test
 Variable name: `Run.Regression`
 Value: true
-
 
 #### Autorest Automation
 This check will automatically create PRs with updated generated code whenever autorest has made an update that results in a change to the generated code for a package.

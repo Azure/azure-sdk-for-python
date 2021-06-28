@@ -9,6 +9,7 @@ from .resource_testcase import (
 from .storage_testcase import (
     FakeStorageAccount,
     StorageAccountPreparer,
+    BlobAccountPreparer,
     CachedStorageAccountPreparer,
 )
 from .keyvault_preparer import KeyVaultPreparer
@@ -20,6 +21,7 @@ __all__ = [
     "FakeResource",
     "ResourceGroupPreparer",
     "StorageAccountPreparer",
+    "BlobAccountPreparer",
     "CachedStorageAccountPreparer",
     "FakeStorageAccount",
     "AzureTestCase",
