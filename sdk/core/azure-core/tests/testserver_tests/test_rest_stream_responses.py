@@ -119,7 +119,7 @@ def test_sync_streaming_response(client):
         assert response.content == b"Hello, world!"
         assert response.is_closed
 
-def test_cannot_read_after_stream_consumed(client):
+def test_cannot_read_after_stream_consumed(client, port):
     request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
@@ -132,16 +132,19 @@ def test_cannot_read_after_stream_consumed(client):
         with pytest.raises(StreamConsumedError) as ex:
             response.read()
 
-    assert "You are attempting to read or stream content that has already been streamed." in str(ex.value)
+    assert "<HttpRequest [GET], url: 'http://localhost:{}/streams/basic'>".format(port) in str(ex.value)
+    assert "You have likely already consumed this stream, so it can not be accessed anymore" in str(ex.value)
 
-def test_cannot_read_after_response_closed(client):
+def test_cannot_read_after_response_closed(port, client):
     request = HttpRequest("GET", "/streams/basic")
 
     with client.send_request(request, stream=True) as response:
         response.close()
         with pytest.raises(StreamClosedError) as ex:
             response.read()
-    assert "The response's content can no longer be read or streamed, since the response has already been closed." in str(ex.value)
+    # breaking up assert into multiple lines
+    assert "<HttpRequest [GET], url: 'http://localhost:{}/streams/basic'>".format(port) in str(ex.value)
+    assert "can no longer be read or streamed, since the response has already been closed" in str(ex.value)
 
 def test_decompress_plain_no_header(client):
     # thanks to Xiang Yan for this test!

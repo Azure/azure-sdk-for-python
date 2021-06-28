@@ -36,7 +36,6 @@ except ImportError:  # pragma: no cover
     import chardet  # type: ignore
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from ..exceptions import ResponseNotReadError
 
 
 class RestAioHttpTransportResponse(AsyncHttpResponse):
@@ -51,28 +50,6 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         self.headers = CIMultiDict(internal_response.headers)  # type: ignore
         self.reason = internal_response.reason
         self.content_type = internal_response.headers.get('content-type')
-        self._decompress = None
-        self._decompressed_content = None
-
-    @property
-    def content(self) -> bytes:
-        if self._content is None:
-            raise ResponseNotReadError()
-        if not self._decompress:
-            return self._content
-        enc = self.headers.get('Content-Encoding')
-        if not enc:
-            return self._content
-        enc = enc.lower()
-        if enc in ("gzip", "deflate"):
-            if self._decompressed_content:
-                return self._decompressed_content
-            import zlib
-            zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-            decompressor = zlib.decompressobj(wbits=zlib_mode)
-            self._decompressed_content = decompressor.decompress(self._content)
-            return self._decompressed_content
-        return self._content
 
     @property
     def text(self) -> str:
@@ -124,7 +101,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         async for part in iter_bytes_helper(
             AioHttpStreamDownloadGenerator,
             self,
-            content=self.content if self._content is not None else None
+            content=self._content
         ):
             yield part
         await self.close()

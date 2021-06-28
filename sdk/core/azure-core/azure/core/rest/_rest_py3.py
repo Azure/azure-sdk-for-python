@@ -306,7 +306,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
     def content(self) -> bytes:
         """Return the response's content in bytes."""
         if self._content is None:
-            raise ResponseNotReadError()
+            raise ResponseNotReadError(self)
         return self._content
 
 class HttpResponse(_HttpResponseBase):
@@ -458,7 +458,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         """
         if self._content is None:
             parts = []
-            async for part in self.iter_bytes():  # type: ignore
+            async for part in self.iter_bytes():
                 parts.append(part)
             self._content = b"".join(parts)
         return self._content
@@ -470,7 +470,8 @@ class AsyncHttpResponse(_HttpResponseBase):
         :rtype: AsyncIterator[bytes]
         """
         raise NotImplementedError()
-        yield  # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
 
     async def iter_bytes(self) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
@@ -479,7 +480,8 @@ class AsyncHttpResponse(_HttpResponseBase):
         :rtype: AsyncIterator[bytes]
         """
         raise NotImplementedError()
-        yield  # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
+        yield  # pylint: disable=unreachable
 
     async def iter_text(self) -> AsyncIterator[str]:
         """Asynchronously iterates over the text in the response.

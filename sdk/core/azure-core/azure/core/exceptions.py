@@ -441,10 +441,12 @@ class StreamConsumedError(AzureError):
     thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
     """
-    def __init__(self):
+    def __init__(self, response):
         message = (
-            "You are attempting to read or stream content that has already been streamed. "
-            "You have likely already consumed this stream, so it can not be accessed anymore."
+            "You are attempting to read or stream the content from request {}. "\
+            "You have likely already consumed this stream, so it can not be accessed anymore.".format(
+                response.request
+            )
         )
         super(StreamConsumedError, self).__init__(message)
 
@@ -455,10 +457,10 @@ class StreamClosedError(AzureError):
     thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
     """
-    def __init__(self):
+    def __init__(self, response):
         message = (
-            "The response's content can no longer be read or streamed, since the "
-            "response has already been closed."
+            "The content for response from request {} can no longer be read or streamed, since the "\
+            "response has already been closed.".format(response.request)
         )
         super(StreamClosedError, self).__init__(message)
 
@@ -470,8 +472,11 @@ class ResponseNotReadError(AzureError):
     ~azure.core.rest.AsyncHttpResponse's content without first reading the response's bytes in first.
     """
 
-    def __init__(self):
+    def __init__(self, response):
         message = (
-            "You have not read in the response's bytes yet. Call response.read() first."
+            "You have not read in the bytes for the response from request {}. "\
+            "Call .read() on the response first.".format(
+                response.request
+            )
         )
         super(ResponseNotReadError, self).__init__(message)

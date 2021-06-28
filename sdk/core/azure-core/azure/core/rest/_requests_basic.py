@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from ..exceptions import ResponseNotReadError, StreamConsumedError, StreamClosedError
 from ._rest import _HttpResponseBase, HttpResponse
@@ -53,13 +53,13 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
         if not self._internal_response._content_consumed:  # pylint: disable=protected-access
             # if we just call .content, requests will read in the content.
             # we want to read it in our own way
-            raise ResponseNotReadError()
+            raise ResponseNotReadError(self)
 
         try:
             return self._internal_response.content
         except RuntimeError:
             # requests throws a RuntimeError if the content for a response is already consumed
-            raise ResponseNotReadError()
+            raise ResponseNotReadError(self)
 
     def _get_content(self):
         """Return the internal response's content"""
@@ -104,9 +104,9 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
 
 def _stream_download_helper(decompress, response):
     if response.is_stream_consumed:
-        raise StreamConsumedError()
+        raise StreamConsumedError(response)
     if response.is_closed:
-        raise StreamClosedError()
+        raise StreamClosedError(response)
 
     response.is_stream_consumed = True
     stream_download = StreamDownloadGenerator(
@@ -127,7 +127,9 @@ class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponse
         :rtype: Iterator[str]
         """
         if _has_content(self):
-            yield self.content
+            chunk_size = cast(int, self._connection_data_block_size)
+            for i in range(0, len(self.content), chunk_size):
+                yield self.content[i : i + chunk_size]
         else:
             for part in _stream_download_helper(
                 decompress=True,

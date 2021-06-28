@@ -61,9 +61,9 @@ def _stream_download_helper(
     response,
 ) -> AsyncIteratorType[bytes]:
     if response.is_stream_consumed:
-        raise StreamConsumedError()
+        raise StreamConsumedError(response)
     if response.is_closed:
-        raise StreamClosedError()
+        raise StreamClosedError(response)
 
     response.is_stream_consumed = True
     return stream_download_generator(
@@ -77,8 +77,10 @@ async def iter_bytes_helper(
     response,
     content: Optional[bytes],
 ) -> AsyncIteratorType[bytes]:
-    if content:  # pylint: disable=protected-access
-        yield content # pylint: disable=protected-access
+    if content:
+        chunk_size = response._connection_data_block_size  # pylint: disable=protected-access
+        for i in range(0, len(content), chunk_size):
+            yield content[i : i + chunk_size]
     else:
         async for part in _stream_download_helper(
             decompress=True,

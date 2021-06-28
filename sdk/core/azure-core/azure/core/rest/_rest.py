@@ -205,7 +205,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         self._num_bytes_downloaded = 0
         self.content_type = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
-        self._connection_data_block_size = None
+        self._connection_data_block_size = None  # type: Optional[int]
         self._content = None  # type: Optional[bytes]
 
     @property
@@ -286,7 +286,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         # type: (...) -> bytes
         """Return the response's content in bytes."""
         if self._content is None:
-            raise ResponseNotReadError()
+            raise ResponseNotReadError(self)
         return self._content
 
     def __repr__(self):
