@@ -328,14 +328,21 @@ Note that you will need to install the [azure-storage-blob][azure_storage_blob] 
 The following section provides some insights for some of the advanced translation features such as glossaries and custom translation models.
 
 ### Glossaries
-Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translator provides support for glossaries. Document Translator supports glossaries in the following formats:
+Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translator provides support for glossaries. 
+
+#### How To Create Glossary File:
+
+Document Translator supports glossaries in the following formats:
 
 |**File Type**|**Extension**|**Description**|
 |----------------|-------------|-------------|
 |Localization Interchange File Format|.xlf. , xliff|A parallel document format, export of Translation Memory systems. The languages used are defined inside the file.|
 |Tab Separated Values/TAB|.tsv/.tab|A tab-delimited raw-data file used by spreadsheet programs.
 
-You can read more about - for example - tsv files [here][tsv_files].\
+For .tsv files, you can read more about the format  [here][tsv_files].
+, and you can also see a sample .tsv file [here][sample_tsv_file]
+
+#### How Use Glossaries in Document Translator:
 In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the following sample:
 
 ```python
@@ -552,6 +559,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files]: https://en.wikipedia.org/wiki/Tab-separated_values
+[sample_tsv_file]: ./samples/glossary-files/sample.tsv
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
