@@ -83,7 +83,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
             try:
                 for link in links:
                     ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(link.headers)
-                    self._span_instance.links.append(
+                    self._span_instance.add_link(
                         Link(
                             trace_id=ctx.trace_id,
                             span_id=ctx.span_id,
