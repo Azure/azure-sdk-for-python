@@ -16,7 +16,6 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
-from .._constants import DEFAULT_TOKEN_REFRESH_RETRY_DELAY, DEFAULT_REFRESH_OFFSET
 from .._internal import resolve_tenant
 
 try:
@@ -57,9 +56,6 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
-        self._token_refresh_retry_delay = DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
-        self._last_refresh_time = 0
 
     def get_cached_access_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
@@ -102,8 +98,6 @@ class AadClientBase(ABC):
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        self._last_refresh_time = request_time  # no matter succeed or not, update the last refresh time
-
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
         if response.http_request.body.get("grant_type") == "refresh_token":
