@@ -43,7 +43,7 @@ class ResourceSkusOperations:
 
     def list_skus(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceSkusResult"]:
         """Get supported SKUs.
 

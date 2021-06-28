@@ -47,7 +47,7 @@ class TasksOperations:
         service_name: str,
         project_name: str,
         task_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TaskList"]:
         """Get tasks in a service.
 
@@ -136,7 +136,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         parameters: "_models.ProjectTask",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Create or update task.
 
@@ -219,7 +219,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Get task information.
 
@@ -294,7 +294,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete task.
 
@@ -366,7 +366,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         parameters: "_models.ProjectTask",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Create or update task.
 
@@ -444,7 +444,7 @@ class TasksOperations:
         service_name: str,
         project_name: str,
         task_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectTask":
         """Cancel a task.
 
@@ -515,7 +515,7 @@ class TasksOperations:
         project_name: str,
         task_name: str,
         parameters: "_models.CommandProperties",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CommandProperties":
         """Execute a command on a task.
 

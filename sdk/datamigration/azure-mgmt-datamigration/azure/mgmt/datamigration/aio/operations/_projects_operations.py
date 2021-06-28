@@ -45,7 +45,7 @@ class ProjectsOperations:
         self,
         group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProjectList"]:
         """Get projects in a service.
 
@@ -125,7 +125,7 @@ class ProjectsOperations:
         service_name: str,
         project_name: str,
         parameters: "_models.Project",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Project":
         """Create or update project.
 
@@ -202,7 +202,7 @@ class ProjectsOperations:
         group_name: str,
         service_name: str,
         project_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Project":
         """Get project information.
 
@@ -269,7 +269,7 @@ class ProjectsOperations:
         service_name: str,
         project_name: str,
         delete_running_tasks: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete project.
 
@@ -337,7 +337,7 @@ class ProjectsOperations:
         service_name: str,
         project_name: str,
         parameters: "_models.Project",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Project":
         """Update project.
 

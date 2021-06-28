@@ -44,7 +44,7 @@ class UsagesOperations:
     def list(
         self,
         location: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.QuotaList"]:
         """Get resource quotas and usage information.
 

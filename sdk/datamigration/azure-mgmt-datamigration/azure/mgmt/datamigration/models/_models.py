@@ -5723,15 +5723,17 @@ class MigrateSchemaSqlServerSqlDbTaskOutput(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier.
     :vartype id: str
-    :ivar result_type: Result type.Constant filled by server.
+    :ivar result_type: Required. Result type.Constant filled by server.
     :vartype result_type: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'result_type': {'readonly': True},
+        'result_type': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
@@ -5757,9 +5759,11 @@ class MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSchemaSqlServerS
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier.
     :vartype id: str
-    :ivar result_type: Result type.Constant filled by server.
+    :ivar result_type: Required. Result type.Constant filled by server.
     :vartype result_type: str
     :ivar database_name: The name of the database.
     :vartype database_name: str
@@ -5789,7 +5793,7 @@ class MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSchemaSqlServerS
 
     _validation = {
         'id': {'readonly': True},
-        'result_type': {'readonly': True},
+        'result_type': {'required': True, 'readonly': True},
         'database_name': {'readonly': True},
         'state': {'readonly': True},
         'stage': {'readonly': True},
@@ -5840,9 +5844,11 @@ class MigrateSchemaSqlServerSqlDbTaskOutputError(MigrateSchemaSqlServerSqlDbTask
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier.
     :vartype id: str
-    :ivar result_type: Result type.Constant filled by server.
+    :ivar result_type: Required. Result type.Constant filled by server.
     :vartype result_type: str
     :ivar command_text: Schema command which failed.
     :vartype command_text: str
@@ -5852,7 +5858,7 @@ class MigrateSchemaSqlServerSqlDbTaskOutputError(MigrateSchemaSqlServerSqlDbTask
 
     _validation = {
         'id': {'readonly': True},
-        'result_type': {'readonly': True},
+        'result_type': {'required': True, 'readonly': True},
         'command_text': {'readonly': True},
         'error_text': {'readonly': True},
     }
@@ -5879,9 +5885,11 @@ class MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel(MigrateSchemaSqlServer
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier.
     :vartype id: str
-    :ivar result_type: Result type.Constant filled by server.
+    :ivar result_type: Required. Result type.Constant filled by server.
     :vartype result_type: str
     :ivar state: Overall state of the schema migration. Possible values include: "None",
      "InProgress", "Failed", "Warning", "Completed", "Skipped", "Stopped".
@@ -5902,7 +5910,7 @@ class MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel(MigrateSchemaSqlServer
 
     _validation = {
         'id': {'readonly': True},
-        'result_type': {'readonly': True},
+        'result_type': {'required': True, 'readonly': True},
         'state': {'readonly': True},
         'started_on': {'readonly': True},
         'ended_on': {'readonly': True},
@@ -5997,9 +6005,11 @@ class MigrateSchemaSqlTaskOutputError(MigrateSchemaSqlServerSqlDbTaskOutput):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier.
     :vartype id: str
-    :ivar result_type: Result type.Constant filled by server.
+    :ivar result_type: Required. Result type.Constant filled by server.
     :vartype result_type: str
     :ivar error: Migration error.
     :vartype error: ~azure.mgmt.datamigration.models.ReportableException
@@ -6007,7 +6017,7 @@ class MigrateSchemaSqlTaskOutputError(MigrateSchemaSqlServerSqlDbTaskOutput):
 
     _validation = {
         'id': {'readonly': True},
-        'result_type': {'readonly': True},
+        'result_type': {'required': True, 'readonly': True},
         'error': {'readonly': True},
     }
 

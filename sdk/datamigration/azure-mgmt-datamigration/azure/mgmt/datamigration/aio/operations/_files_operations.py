@@ -46,7 +46,7 @@ class FilesOperations:
         group_name: str,
         service_name: str,
         project_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.FileList"]:
         """Get files in a project.
 
@@ -129,7 +129,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectFile":
         """Get file information.
 
@@ -200,7 +200,7 @@ class FilesOperations:
         project_name: str,
         file_name: str,
         parameters: "_models.ProjectFile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectFile":
         """Create a file resource.
 
@@ -280,7 +280,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete file.
 
@@ -347,7 +347,7 @@ class FilesOperations:
         project_name: str,
         file_name: str,
         parameters: "_models.ProjectFile",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProjectFile":
         """Update a file.
 
@@ -423,7 +423,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileStorageInfo":
         """Request storage information for downloading the file content.
 
@@ -493,7 +493,7 @@ class FilesOperations:
         service_name: str,
         project_name: str,
         file_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FileStorageInfo":
         """Request information for reading and writing file content.
 
