@@ -31,6 +31,7 @@ from typing import (
     Tuple,
     Union,
     Callable,
+    Optional,
     AsyncIterator as AsyncIteratorType
 )
 from ..exceptions import StreamConsumedError, StreamClosedError
@@ -74,9 +75,10 @@ def _stream_download_helper(
 async def iter_bytes_helper(
     stream_download_generator: Callable,
     response,
+    content: Optional[bytes],
 ) -> AsyncIteratorType[bytes]:
-    if response._has_content():  # pylint: disable=protected-access
-        yield response._get_content()  # pylint: disable=protected-access
+    if content:  # pylint: disable=protected-access
+        yield content # pylint: disable=protected-access
     else:
         async for part in _stream_download_helper(
             decompress=True,

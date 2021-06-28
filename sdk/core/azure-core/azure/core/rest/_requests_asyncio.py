@@ -27,7 +27,7 @@ from typing import AsyncIterator
 import asyncio
 from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
 from . import AsyncHttpResponse
-from ._requests_basic import _RestRequestsTransportResponseBase
+from ._requests_basic import _RestRequestsTransportResponseBase, _has_content
 from ..pipeline.transport._requests_asyncio import AsyncioStreamDownloadGenerator
 
 class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTransportResponseBase): # type: ignore
@@ -51,7 +51,11 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTrans
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_bytes_helper(AsyncioStreamDownloadGenerator, self):
+        async for part in iter_bytes_helper(
+            AsyncioStreamDownloadGenerator,
+            self,
+            content=self.content if _has_content(self) else None
+        ):
             yield part
         await self.close()
 
@@ -64,3 +68,16 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTrans
         self.is_closed = True
         self.internal_response.close()
         await asyncio.sleep(0)
+
+    async def read(self) -> bytes:
+        """Read the response's bytes into memory.
+
+        :return: The response's bytes
+        :rtype: bytes
+        """
+        if not _has_content(self):
+            parts = []
+            async for part in self.iter_bytes():  # type: ignore
+                parts.append(part)
+            self.internal_response._content = b"".join(parts)  # pylint: disable=protected-access
+        return self.content

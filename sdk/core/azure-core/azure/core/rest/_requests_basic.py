@@ -32,6 +32,13 @@ from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 if TYPE_CHECKING:
     from typing import Iterator
 
+def _has_content(response):
+    try:
+        response.content  # pylint: disable=pointless-statement
+        return True
+    except ResponseNotReadError:
+        return False
+
 class _RestRequestsTransportResponseBase(_HttpResponseBase):
     def __init__(self, **kwargs):
         super(_RestRequestsTransportResponseBase, self).__init__(**kwargs)
@@ -39,6 +46,20 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
         self.headers = self.internal_response.headers
         self.reason = self.internal_response.reason
         self.content_type = self.internal_response.headers.get('content-type')
+
+    @property
+    def content(self):
+        # type: () -> bytes
+        if not self.internal_response._content_consumed:  # pylint: disable=protected-access
+            # if we just call .content, requests will read in the content.
+            # we want to read it in our own way
+            raise ResponseNotReadError()
+
+        try:
+            return self.internal_response.content
+        except RuntimeError:
+            # requests throws a RuntimeError if the content for a response is already consumed
+            raise ResponseNotReadError()
 
     def _get_content(self):
         """Return the internal response's content"""
@@ -55,9 +76,6 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
     def _set_content(self, val):
         """Set the internal response's content"""
         self.internal_response._content = val  # pylint: disable=protected-access
-
-    def _has_content(self):
-        return self._get_content() is not None
 
     @_HttpResponseBase.encoding.setter  # type: ignore
     def encoding(self, value):
@@ -80,8 +98,8 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
 
     @property
     def text(self):
-        if not self._has_content():
-            raise ResponseNotReadError()
+        # this will trigger errors if response is not read in
+        self.content  # pylint: disable=pointless-statement
         return self.internal_response.text
 
 def _stream_download_helper(decompress, response):
@@ -108,8 +126,8 @@ class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponse
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        if self._has_content():
-            yield self._get_content()
+        if _has_content(self):
+            yield self.content
         else:
             for part in _stream_download_helper(
                 decompress=True,
@@ -130,3 +148,14 @@ class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponse
         ):
             yield raw_bytes
         self.close()
+
+    def read(self):
+        # type: () -> bytes
+        """Read the response's bytes.
+
+        :return: The read in bytes
+        :rtype: bytes
+        """
+        if not _has_content(self):
+            self.internal_response._content = b"".join(self.iter_bytes())  # pylint: disable=protected-access
+        return self.content

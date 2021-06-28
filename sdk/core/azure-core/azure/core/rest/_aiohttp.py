@@ -36,6 +36,7 @@ except ImportError:  # pragma: no cover
     import chardet  # type: ignore
 from ._helpers_py3 import iter_raw_helper, iter_bytes_helper
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
+from ..exceptions import ResponseNotReadError
 
 
 class RestAioHttpTransportResponse(AsyncHttpResponse):
@@ -53,7 +54,10 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         self._decompress = None
         self._decompressed_content = None
 
-    def _get_content(self):
+    @property
+    def content(self) -> bytes:
+        if self._content is None:
+            raise ResponseNotReadError()
         if not self._decompress:
             return self._content
         enc = self.headers.get('Content-Encoding')
@@ -115,7 +119,11 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
-        async for part in iter_bytes_helper(AioHttpStreamDownloadGenerator, self):
+        async for part in iter_bytes_helper(
+            AioHttpStreamDownloadGenerator,
+            self,
+            content=self._content
+        ):
             yield part
         await self.close()
 

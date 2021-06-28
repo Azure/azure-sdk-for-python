@@ -198,7 +198,7 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         self.content_type = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._connection_data_block_size = None
-        self._content = None
+        self._content = None  # type: Optional[bytes]
 
     @property
     def url(self):
@@ -216,18 +216,6 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         if encoding is None or not lookup_encoding(encoding):
             return None
         return encoding
-
-    def _get_content(self):
-        """Return the internal response's content"""
-        return self._content
-
-    def _set_content(self, val):
-        """Set the internal response's content"""
-        self._content = val
-
-    def _has_content(self):
-        """How to check if your internal response has content"""
-        return self._content is not None
 
     @property
     def encoding(self):
@@ -270,8 +258,8 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        if not self._has_content():
-            raise ResponseNotReadError()
+        # this will trigger errors if response is not read in
+        self.content  # pylint: disable=pointless-statement
         if not self._json:
             self._json = loads(self.text)
         return self._json
@@ -289,9 +277,9 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
     def content(self):
         # type: (...) -> bytes
         """Return the response's content in bytes."""
-        if not self._has_content():
+        if self._content is None:
             raise ResponseNotReadError()
-        return cast(bytes, self._get_content())
+        return self._content
 
     def __repr__(self):
         # type: (...) -> str
@@ -348,8 +336,8 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
         Read the response's bytes.
 
         """
-        if not self._has_content():
-            self._set_content(b"".join(self.iter_bytes()))
+        if self._content is None:
+            self._content = b"".join(self.iter_bytes())
         return self.content
 
     def iter_raw(self):
