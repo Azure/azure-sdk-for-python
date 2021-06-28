@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -523,9 +523,9 @@ class AlertProperties(msrest.serialization.Model):
     :param essentials: This object contains consistent fields across different monitor services.
     :type essentials: ~azure.mgmt.alertsmanagement.models.Essentials
     :ivar context: Any object.
-    :vartype context: object
+    :vartype context: any
     :ivar egress_config: Any object.
-    :vartype egress_config: object
+    :vartype egress_config: any
     """
 
     _validation = {
@@ -1055,7 +1055,7 @@ class Detector(msrest.serialization.Model):
     :param id: Required. The detector id.
     :type id: str
     :param parameters: The detector's parameters.'.
-    :type parameters: dict[str, object]
+    :type parameters: dict[str, any]
     :param name: The Smart Detector name. By default this is not populated, unless it's specified
      in expandDetector.
     :type name: str
@@ -1087,7 +1087,7 @@ class Detector(msrest.serialization.Model):
         self,
         *,
         id: str,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         supported_resource_types: Optional[List[str]] = None,
@@ -1614,7 +1614,7 @@ class PatchObject(msrest.serialization.Model):
     """Data contract for patch.
 
     :param tags: A set of tags. tags to be updated.
-    :type tags: object
+    :type tags: any
     :param status: Indicates if the given action rule is enabled or disabled. Possible values
      include: "Enabled", "Disabled".
     :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
@@ -1628,7 +1628,7 @@ class PatchObject(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[object] = None,
+        tags: Optional[Any] = None,
         status: Optional[Union[str, "ActionRuleStatus"]] = None,
         **kwargs
     ):

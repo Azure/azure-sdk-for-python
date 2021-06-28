@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationsList"]:
         """List all operations available through Azure Alerts Management Resource Provider.
 

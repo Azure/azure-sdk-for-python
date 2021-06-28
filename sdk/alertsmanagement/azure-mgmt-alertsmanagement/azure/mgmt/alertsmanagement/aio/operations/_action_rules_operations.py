@@ -53,7 +53,7 @@ class ActionRulesOperations:
         alert_rule_id: Optional[str] = None,
         action_group: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ActionRulesList"]:
         """Get all action rule in a given subscription.
 
@@ -153,7 +153,7 @@ class ActionRulesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -177,7 +177,7 @@ class ActionRulesOperations:
         alert_rule_id: Optional[str] = None,
         action_group: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ActionRulesList"]:
         """Get all action rules created in a resource group.
 
@@ -281,7 +281,7 @@ class ActionRulesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -296,7 +296,7 @@ class ActionRulesOperations:
         self,
         resource_group_name: str,
         action_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ActionRule":
         """Get action rule by name.
 
@@ -342,7 +342,7 @@ class ActionRulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -360,7 +360,7 @@ class ActionRulesOperations:
         resource_group_name: str,
         action_rule_name: str,
         action_rule: "_models.ActionRule",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ActionRule":
         """Create/update an action rule.
 
@@ -413,7 +413,7 @@ class ActionRulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -430,7 +430,7 @@ class ActionRulesOperations:
         self,
         resource_group_name: str,
         action_rule_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Delete action rule.
 
@@ -476,7 +476,7 @@ class ActionRulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -494,7 +494,7 @@ class ActionRulesOperations:
         resource_group_name: str,
         action_rule_name: str,
         action_rule_patch: "_models.PatchObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ActionRule":
         """Patch action rule.
 
@@ -547,7 +547,7 @@ class ActionRulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
