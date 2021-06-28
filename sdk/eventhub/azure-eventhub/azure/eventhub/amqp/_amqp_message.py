@@ -488,34 +488,34 @@ class AmqpMessageProperties(DictMixin):
      The message producer is usually responsible for setting the message-id in such a way that it
      is assured to be globally unique. A broker MAY discard a message as a duplicate if the value
      of the message-id matches that of a previously received message sent to the same node.
-    :vartype message_id: Optional[Union[str, bytes, uuid.UUID]]
+    :vartype message_id: Optional[bytes]
     :ivar user_id: The identity of the user responsible for producing the message. The client sets
      this value, and it MAY be authenticated by intermediaries.
-    :vartype user_id: Optional[Union[str, bytes]]
+    :vartype user_id: Optional[bytes]
     :ivar to: The to field identifies the node that is the intended destination of the message.
      On any given transfer this might not be the node at the receiving end of the link.
-    :vartype to: Optional[Union[str, bytes]]
+    :vartype to: Optional[bytes]
     :ivar subject: A common field for summary information about the message content and purpose.
-    :vartype subject: Optional[Union[str, bytes]]
+    :vartype subject: Optional[bytes]
     :ivar reply_to: The address of the node to send replies to.
-    :vartype reply_to: Optional[Union[str, bytes]]
+    :vartype reply_to: Optional[bytes]
     :ivar correlation_id: his is a client-specific id that can be used to mark or identify messages between clients.
-    :vartype correlation_id: Optional[Union[str, bytes]]
+    :vartype correlation_id: Optional[bytes]
     :ivar content_type: The RFC-2046 MIME type for the message's application-data section (body).
-    :vartype content_type: Optional[Union[str, bytes]]
+    :vartype content_type: Optional[bytes]
     :ivar content_encoding: The content-encoding property is used as a modifier to the content-type.
-    :vartype content_encoding: Optional[Union[str, bytes]]
+    :vartype content_encoding: Optional[bytes]
     :ivar creation_time: An absolute time when this message was created.
     :vartype creation_time: Optional[int]
     :ivar absolute_expiry_time: An absolute time when this message is considered to be expired.
     :vartype absolute_expiry_time: Optional[int]
     :ivar group_id: Identifies the group the message belongs to.
-    :vartype group_id: Optional[Union[str, bytes]]
+    :vartype group_id: Optional[bytes]
     :ivar group_sequence: The relative position of this message within its group.
     :vartype group_sequence: Optional[int]
     :ivar reply_to_group_id: This is a client-specific id that is used so that client can send replies
      to this message to a specific group.
-    :vartype reply_to_group_id: Optional[Union[str, bytes]]
+    :vartype reply_to_group_id: Optional[bytes]
     """
     def __init__(self, **kwargs):
         self.message_id = kwargs.get("message_id")
