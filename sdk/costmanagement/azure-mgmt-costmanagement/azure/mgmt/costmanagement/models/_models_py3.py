@@ -1392,7 +1392,7 @@ class QueryAggregation(msrest.serialization.Model):
     :param name: Required. The name of the column to aggregate.
     :type name: str
     :param function: Required. The name of the aggregation function to use. Possible values
-     include: "Sum".
+     include: "Avg", "Max", "Min", "Sum".
     :type function: str or ~azure.mgmt.costmanagement.models.FunctionType
     """
 
@@ -1875,7 +1875,7 @@ class ReportConfigAggregation(msrest.serialization.Model):
     :param name: Required. The name of the column to aggregate.
     :type name: str
     :param function: Required. The name of the aggregation function to use. Possible values
-     include: "Sum".
+     include: "Avg", "Max", "Min", "Sum".
     :type function: str or ~azure.mgmt.costmanagement.models.FunctionType
     """
 
