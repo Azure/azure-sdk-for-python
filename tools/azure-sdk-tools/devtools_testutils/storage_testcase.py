@@ -14,8 +14,11 @@ except:
     pass
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.models import StorageAccount, Endpoints, BlobServiceProperties, DeleteRetentionPolicy, \
-    LastAccessTimeTrackingPolicy
+from azure.mgmt.storage.models import StorageAccount, Endpoints, BlobServiceProperties, DeleteRetentionPolicy
+try:
+    from azure.mgmt.storage.models import LastAccessTimeTrackingPolicy
+except ImportError:
+    pass
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
