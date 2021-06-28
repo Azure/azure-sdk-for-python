@@ -10,7 +10,7 @@ from ._question_answering_client import QuestionAnsweringClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['QuestionAnsweringClient'']
+__all__ = ['QuestionAnsweringClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

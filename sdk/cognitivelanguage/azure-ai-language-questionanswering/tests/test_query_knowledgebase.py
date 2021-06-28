@@ -13,9 +13,9 @@ from testcase import (
     GlobalQuestionAnsweringAccountPreparer
 )
 
-from azure.ai.language.questionanswer import QuestionAnsweringClient
-from azure.ai.language.questionanswer.rest import *
-from azure.ai.language.questionanswer.models import (
+from azure.ai.language.questionanswering import QuestionAnsweringClient
+from azure.ai.language.questionanswering.rest import *
+from azure.ai.language.questionanswering.models import (
     KnowledgebaseQueryParameters,
     KnowledgebaseAnswerRequestContext,
     AnswerSpanRequest,

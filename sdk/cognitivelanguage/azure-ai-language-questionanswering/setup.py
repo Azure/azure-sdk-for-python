@@ -10,7 +10,7 @@ import re
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
-PACKAGE_NAME = "azure-ai-language-questionanswer"
+PACKAGE_NAME = "azure-ai-language-questionanswering"
 PACKAGE_PPRINT_NAME = "Question Answering"
 
 # a-b-c => a/b/c

@@ -14,13 +14,13 @@ from testcase import (
 )
 from asynctestcase import AsyncQuestionAnsweringTest
 
-from azure.ai.language.questionanswer.models import (
+from azure.ai.language.questionanswering.models import (
     KnowledgebaseQueryParameters,
     KnowledgebaseAnswerRequestContext,
     AnswerSpanRequest,
 )
-from azure.ai.language.questionanswer.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswer.rest import *
+from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
+from azure.ai.language.questionanswering.rest import *
 
 
 class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
