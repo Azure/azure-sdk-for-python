@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class HealthMonitorsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,8 +51,8 @@ class HealthMonitorsOperations:
         resource_name: str,
         filter: Optional[str] = None,
         expand: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.HealthMonitorList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.HealthMonitorList"]:
         """Get the current health status of all monitors of a virtual machine. Optional parameters: $expand (retrieve the monitor's evidence and configuration) and $filter (filter by monitor name).
 
         Get the current health status of all monitors of a virtual machine. Optional parameters:
@@ -70,8 +70,8 @@ class HealthMonitorsOperations:
         :type resource_collection_name: str
         :param resource_name: The name of the virtual machine.
         :type resource_name: str
-        :param filter: Optionally filter by monitor name. Example: $filter=monitorName eq 'logical-
-         disks|C:|disk-free-space-mb.'.
+        :param filter: Optionally filter by monitor name. Example: $filter=monitorName eq
+         'logical-disks|C:|disk-free-space-mb.'.
         :type filter: str
         :param expand: Optionally expand the monitor’s evidence and/or configuration. Example:
          $expand=evidence,configuration.
@@ -81,7 +81,7 @@ class HealthMonitorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~workload_monitor_api.models.HealthMonitorList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitorList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthMonitorList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -134,7 +134,7 @@ class HealthMonitorsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -154,8 +154,8 @@ class HealthMonitorsOperations:
         resource_name: str,
         monitor_id: str,
         expand: Optional[str] = None,
-        **kwargs
-    ) -> "models.HealthMonitor":
+        **kwargs: Any
+    ) -> "_models.HealthMonitor":
         """Get the current health status of a monitor of a virtual machine. Optional parameter: $expand (retrieve the monitor's evidence and configuration).
 
         Get the current health status of a monitor of a virtual machine. Optional parameter: $expand
@@ -182,7 +182,7 @@ class HealthMonitorsOperations:
         :rtype: ~workload_monitor_api.models.HealthMonitor
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitor"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthMonitor"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -218,7 +218,7 @@ class HealthMonitorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HealthMonitor', pipeline_response)
@@ -241,8 +241,8 @@ class HealthMonitorsOperations:
         expand: Optional[str] = None,
         start_timestamp_utc: Optional[datetime.datetime] = None,
         end_timestamp_utc: Optional[datetime.datetime] = None,
-        **kwargs
-    ) -> AsyncIterable["models.HealthMonitorStateChangeList"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.HealthMonitorStateChangeList"]:
         """Get the health state changes of a monitor of a virtual machine within the provided time window (default is the last 24 hours). Optional parameters: $expand (retrieve the monitor's evidence and configuration) and $filter (filter by heartbeat condition).
 
         Get the health state changes of a monitor of a virtual machine within the provided time window
@@ -276,7 +276,7 @@ class HealthMonitorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~workload_monitor_api.models.HealthMonitorStateChangeList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitorStateChangeList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthMonitorStateChangeList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -334,7 +334,7 @@ class HealthMonitorsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -355,8 +355,8 @@ class HealthMonitorsOperations:
         monitor_id: str,
         timestamp_unix: str,
         expand: Optional[str] = None,
-        **kwargs
-    ) -> "models.HealthMonitorStateChange":
+        **kwargs: Any
+    ) -> "_models.HealthMonitorStateChange":
         """Get the health state change of a monitor of a virtual machine at the provided timestamp. Optional parameter: $expand (retrieve the monitor's evidence and configuration).
 
         Get the health state change of a monitor of a virtual machine at the provided timestamp.
@@ -385,7 +385,7 @@ class HealthMonitorsOperations:
         :rtype: ~workload_monitor_api.models.HealthMonitorStateChange
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitorStateChange"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthMonitorStateChange"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -422,7 +422,7 @@ class HealthMonitorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HealthMonitorStateChange', pipeline_response)

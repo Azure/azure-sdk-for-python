@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -159,10 +159,10 @@ class HealthMonitor(Resource):
     :param last_reported_timestamp: Timestamp of the monitor's last reported health state.
     :type last_reported_timestamp: str
     :param evidence: Evidence validating the monitor's current health state.
-    :type evidence: object
+    :type evidence: any
     :param monitor_configuration: The configuration settings at the time of the monitor's health
      evaluation.
-    :type monitor_configuration: object
+    :type monitor_configuration: any
     """
 
     _validation = {
@@ -200,8 +200,8 @@ class HealthMonitor(Resource):
         evaluation_timestamp: Optional[str] = None,
         current_state_first_observed_timestamp: Optional[str] = None,
         last_reported_timestamp: Optional[str] = None,
-        evidence: Optional[object] = None,
-        monitor_configuration: Optional[object] = None,
+        evidence: Optional[Any] = None,
+        monitor_configuration: Optional[Any] = None,
         **kwargs
     ):
         super(HealthMonitor, self).__init__(**kwargs)
@@ -273,10 +273,10 @@ class HealthMonitorStateChange(Resource):
      "Healthy", "Critical", "Warning", "Unknown", "Disabled", "None".
     :vartype current_monitor_state: str or ~workload_monitor_api.models.HealthState
     :param evidence: Evidence validating the monitor's current health state.
-    :type evidence: object
+    :type evidence: any
     :param monitor_configuration: The configuration settings at the time of the monitor's health
      evaluation.
-    :type monitor_configuration: object
+    :type monitor_configuration: any
     """
 
     _validation = {
@@ -310,8 +310,8 @@ class HealthMonitorStateChange(Resource):
         monitored_object: Optional[str] = None,
         evaluation_timestamp: Optional[str] = None,
         current_state_first_observed_timestamp: Optional[str] = None,
-        evidence: Optional[object] = None,
-        monitor_configuration: Optional[object] = None,
+        evidence: Optional[Any] = None,
+        monitor_configuration: Optional[Any] = None,
         **kwargs
     ):
         super(HealthMonitorStateChange, self).__init__(**kwargs)

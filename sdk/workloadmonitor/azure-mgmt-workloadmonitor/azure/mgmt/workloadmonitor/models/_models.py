@@ -148,10 +148,10 @@ class HealthMonitor(Resource):
     :param last_reported_timestamp: Timestamp of the monitor's last reported health state.
     :type last_reported_timestamp: str
     :param evidence: Evidence validating the monitor's current health state.
-    :type evidence: object
+    :type evidence: any
     :param monitor_configuration: The configuration settings at the time of the monitor's health
      evaluation.
-    :type monitor_configuration: object
+    :type monitor_configuration: any
     """
 
     _validation = {
@@ -249,10 +249,10 @@ class HealthMonitorStateChange(Resource):
      "Healthy", "Critical", "Warning", "Unknown", "Disabled", "None".
     :vartype current_monitor_state: str or ~workload_monitor_api.models.HealthState
     :param evidence: Evidence validating the monitor's current health state.
-    :type evidence: object
+    :type evidence: any
     :param monitor_configuration: The configuration settings at the time of the monitor's health
      evaluation.
-    :type monitor_configuration: object
+    :type monitor_configuration: any
     """
 
     _validation = {
