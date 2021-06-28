@@ -45,7 +45,7 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Peering":
         """Gets an existing peering with the specified name under the given subscription and resource
         group.
@@ -106,7 +106,7 @@ class PeeringsOperations:
         resource_group_name: str,
         peering_name: str,
         peering: "_models.Peering",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Peering":
         """Creates a new peering or updates an existing peering with the specified name under the given
         subscription and resource group.
@@ -177,7 +177,7 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an existing peering with the specified name under the given subscription and resource
         group.
@@ -235,7 +235,7 @@ class PeeringsOperations:
         resource_group_name: str,
         peering_name: str,
         tags: "_models.ResourceTags",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Peering":
         """Updates tags for a peering with the specified name under the given subscription and resource
         group.
@@ -301,7 +301,7 @@ class PeeringsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringListResult"]:
         """Lists all of the peerings under the given subscription and resource group.
 
@@ -371,7 +371,7 @@ class PeeringsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringListResult"]:
         """Lists all of the peerings under the given subscription.
 

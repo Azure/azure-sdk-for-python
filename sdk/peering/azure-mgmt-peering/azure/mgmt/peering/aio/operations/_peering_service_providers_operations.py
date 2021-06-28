@@ -43,7 +43,7 @@ class PeeringServiceProvidersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringServiceProviderListResult"]:
         """Lists all of the available peering service locations for the specified kind of peering.
 

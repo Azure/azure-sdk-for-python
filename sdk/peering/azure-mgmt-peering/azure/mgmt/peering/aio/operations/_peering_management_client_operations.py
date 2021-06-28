@@ -23,7 +23,7 @@ class PeeringManagementClientOperationsMixin:
     async def check_service_provider_availability(
         self,
         check_service_provider_availability_input: "_models.CheckServiceProviderAvailabilityInput",
-        **kwargs
+        **kwargs: Any
     ) -> Union[str, "_models.Enum0"]:
         """Checks if the peering service provider is present within 1000 miles of customer's location.
 

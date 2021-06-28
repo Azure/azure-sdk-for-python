@@ -45,7 +45,7 @@ class LegacyPeeringsOperations:
         self,
         peering_location: str,
         kind: Union[str, "_models.Enum1"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringListResult"]:
         """Lists all of the legacy peerings under the given subscription matching the specified kind and
         location.

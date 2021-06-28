@@ -45,7 +45,7 @@ class PeeringServicePrefixesOperations:
         resource_group_name: str,
         peering_service_name: str,
         prefix_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeeringServicePrefix":
         """Gets the peering service prefix.
 
@@ -109,7 +109,7 @@ class PeeringServicePrefixesOperations:
         peering_service_name: str,
         prefix_name: str,
         peering_service_prefix: "_models.PeeringServicePrefix",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeeringServicePrefix":
         """Creates or updates the peering prefix.
 
@@ -183,7 +183,7 @@ class PeeringServicePrefixesOperations:
         resource_group_name: str,
         peering_service_name: str,
         prefix_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """removes the peering prefix.
 

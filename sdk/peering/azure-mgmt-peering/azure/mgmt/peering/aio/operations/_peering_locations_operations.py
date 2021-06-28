@@ -45,7 +45,7 @@ class PeeringLocationsOperations:
         self,
         kind: Union[str, "_models.Enum14"],
         direct_peering_type: Optional[Union[str, "_models.Enum15"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringLocationListResult"]:
         """Lists all of the available peering locations for the specified kind of peering.
 

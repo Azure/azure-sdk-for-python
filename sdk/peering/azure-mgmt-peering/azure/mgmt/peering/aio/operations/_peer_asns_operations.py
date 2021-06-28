@@ -44,7 +44,7 @@ class PeerAsnsOperations:
     async def get(
         self,
         peer_asn_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeerAsn":
         """Gets the peer ASN with the specified name under the given subscription.
 
@@ -100,7 +100,7 @@ class PeerAsnsOperations:
         self,
         peer_asn_name: str,
         peer_asn: "_models.PeerAsn",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeerAsn":
         """Creates a new peer ASN or updates an existing peer ASN with the specified name under the given
         subscription.
@@ -167,7 +167,7 @@ class PeerAsnsOperations:
     async def delete(
         self,
         peer_asn_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an existing peer ASN with the specified name under the given subscription.
 
@@ -218,7 +218,7 @@ class PeerAsnsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeerAsnListResult"]:
         """Lists all of the peer ASNs under the given subscription.
 

@@ -45,7 +45,7 @@ class PrefixesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringServicePrefixListResult"]:
         """Lists the peerings prefix in the resource group.
 

@@ -45,7 +45,7 @@ class PeeringServicesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeeringService":
         """Gets an existing peering service with the specified name under the given subscription and
         resource group.
@@ -106,7 +106,7 @@ class PeeringServicesOperations:
         resource_group_name: str,
         peering_service_name: str,
         peering_service: "_models.PeeringService",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeeringService":
         """Creates a new peering service or updates an existing peering with the specified name under the
         given subscription and resource group.
@@ -177,7 +177,7 @@ class PeeringServicesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an existing peering service with the specified name under the given subscription and
         resource group.
@@ -235,7 +235,7 @@ class PeeringServicesOperations:
         resource_group_name: str,
         peering_service_name: str,
         tags: "_models.ResourceTags",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PeeringService":
         """Updates tags for a peering service with the specified name under the given subscription and
         resource group.
@@ -301,7 +301,7 @@ class PeeringServicesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringServiceListResult"]:
         """Lists all of the peering services under the given subscription and resource group.
 
@@ -371,7 +371,7 @@ class PeeringServicesOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PeeringServiceListResult"]:
         """Lists all of the peerings under the given subscription.
 
