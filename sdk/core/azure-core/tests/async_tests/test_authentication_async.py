@@ -164,14 +164,14 @@ async def test_bearer_policy_calls_sansio_methods():
 
     class TestPolicy(AsyncBearerTokenCredentialPolicy):
         def __init__(self, *args, **kwargs):
-            super(TestPolicy, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.on_exception = Mock(return_value=False)
             self.on_request = Mock()
             self.on_response = Mock()
 
         async def send(self, request):
             self.request = request
-            self.response = await super(TestPolicy, self).send(request)
+            self.response = await super().send(request)
             return self.response
 
     credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", int(time.time()) + 3600))))
@@ -188,11 +188,30 @@ async def test_bearer_policy_calls_sansio_methods():
     class TestException(Exception):
         pass
 
+    # during the first send...
     transport = Mock(send=Mock(side_effect=TestException))
     policy = TestPolicy(credential, "scope")
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     with pytest.raises(TestException):
         await pipeline.run(HttpRequest("GET", "https://localhost"))
+    policy.on_exception.assert_called_once_with(policy.request)
+
+    # ...or the second
+    async def fake_send(*args, **kwargs):
+        if fake_send.calls == 0:
+            fake_send.calls = 1
+            return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
+        raise TestException()
+    fake_send.calls = 0
+
+    policy = TestPolicy(credential, "scope")
+    policy.on_challenge = Mock(return_value=get_completed_future(True))
+    transport = Mock(send=Mock(wraps=fake_send))
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+    with pytest.raises(TestException):
+        await pipeline.run(HttpRequest("GET", "https://localhost"))
+    assert transport.send.call_count == 2
+    policy.on_challenge.assert_called_once()
     policy.on_exception.assert_called_once_with(policy.request)
 
 

@@ -16,21 +16,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"veterinarian","category":"PersonType","offset":28,"length":12,"confidenceScore":0.97}],"warnings":[]},{"id":"2","entities":[{"text":"un","category":"Quantity","subcategory":"Number","offset":8,"length":2,"confidenceScore":0.8}],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
+      string: "{\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\":\"veterinarian\"\
+        ,\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"confidenceScore\"\
+        :1.0}],\"warnings\":[]},{\"id\":\"2\",\"entities\":[{\"text\":\"un\",\"category\"\
+        :\"Quantity\",\"subcategory\":\"Number\",\"offset\":8,\"length\":2,\"confidenceScore\"\
+        :0.8},{\"text\":\"Espa\xF1ol\",\"category\":\"Skill\",\"offset\":31,\"length\"\
+        :7,\"confidenceScore\":0.92}],\"warnings\":[]},{\"id\":\"3\",\"entities\"\
+        :[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2021-06-01\"}"
     headers:
       apim-request-id:
-      - 7d0d5277-6cbb-44f1-91b8-f9ea2b8118f4
+      - 62e1fee2-1ab5-4397-82d2-ae507df8d3d7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Tue, 18 May 2021 17:47:54 GMT
+      - Wed, 23 Jun 2021 01:56:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '32'
     status:
       code: 200
       message: OK

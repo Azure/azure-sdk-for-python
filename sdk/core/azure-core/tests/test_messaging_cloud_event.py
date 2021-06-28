@@ -436,3 +436,37 @@ def test_cloud_custom_dict_ms_precision_is_eq_six_z_not():
     assert date_obj.day == 18
     assert date_obj.hour == 20
     assert date_obj.microsecond == 123456
+
+def test_eventgrid_event_schema_raises():
+    cloud_custom_dict = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "data":{"team": "event grid squad"},
+        "dataVersion": "1.0",
+        "subject":"Azure.Sdk.Sample",
+        "eventTime":"2020-08-07T02:06:08.11969Z",
+        "eventType":"pull request",
+    }
+    with pytest.raises(ValueError, match="The event you are trying to parse follows the Eventgrid Schema. You can parse EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library."):
+        CloudEvent.from_dict(cloud_custom_dict)
+
+def test_wrong_schema_raises_no_source():
+    cloud_custom_dict = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "data":{"team": "event grid squad"},
+        "type":"Azure.Sdk.Sample",
+        "time":"2020-08-07T02:06:08.11969Z",
+        "specversion":"1.0",
+    }
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. The `source` and `type` params are required."):
+        CloudEvent.from_dict(cloud_custom_dict)
+
+def test_wrong_schema_raises_no_type():
+    cloud_custom_dict = {
+        "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
+        "data":{"team": "event grid squad"},
+        "source":"Azure/Sdk/Sample",
+        "time":"2020-08-07T02:06:08.11969Z",
+        "specversion":"1.0",
+    }
+    with pytest.raises(ValueError, match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. The `source` and `type` params are required."):
+        CloudEvent.from_dict(cloud_custom_dict)
