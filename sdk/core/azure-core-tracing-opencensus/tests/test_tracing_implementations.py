@@ -129,6 +129,13 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
 
+    def test_passing_kind_in_ctor(self):
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(kind=SpanKind.CLIENT)
+            assert wrapped_class.kind == SpanKind.CLIENT
+
     def test_set_http_attributes(self):
         with ContextHelper():
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
