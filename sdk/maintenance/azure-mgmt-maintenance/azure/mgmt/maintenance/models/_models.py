@@ -380,7 +380,7 @@ class Operation(msrest.serialization.Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: str
+    :type properties: any
     :param is_data_action: Indicates whether the operation is a data action.
     :type is_data_action: bool
     """
@@ -389,7 +389,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 

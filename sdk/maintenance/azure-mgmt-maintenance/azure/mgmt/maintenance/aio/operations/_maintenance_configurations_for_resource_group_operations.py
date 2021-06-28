@@ -44,7 +44,7 @@ class MaintenanceConfigurationsForResourceGroupOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListMaintenanceConfigurationsResult"]:
         """Get Configuration records within a subscription and resource group.
 

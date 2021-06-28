@@ -43,7 +43,7 @@ class PublicMaintenanceConfigurationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListMaintenanceConfigurationsResult"]:
         """Get Public Maintenance Configuration records.
 
@@ -113,7 +113,7 @@ class PublicMaintenanceConfigurationsOperations:
     async def get(
         self,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Get Public Maintenance Configuration record.
 

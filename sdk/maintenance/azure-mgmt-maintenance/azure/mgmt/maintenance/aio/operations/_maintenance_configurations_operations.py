@@ -45,7 +45,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Get Configuration record.
 
@@ -107,7 +107,7 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         configuration: "_models.MaintenanceConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Create or Update configuration record.
 
@@ -175,7 +175,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MaintenanceConfiguration"]:
         """Delete Configuration record.
 
@@ -239,7 +239,7 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         configuration: "_models.MaintenanceConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Patch configuration record.
 
@@ -305,7 +305,7 @@ class MaintenanceConfigurationsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListMaintenanceConfigurationsResult"]:
         """Get Configuration records within a subscription.
 

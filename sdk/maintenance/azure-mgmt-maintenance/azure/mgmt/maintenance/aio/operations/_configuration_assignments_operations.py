@@ -51,7 +51,7 @@ class ConfigurationAssignmentsOperations:
         resource_name: str,
         configuration_assignment_name: str,
         configuration_assignment: "_models.ConfigurationAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConfigurationAssignment":
         """Create configuration assignment.
 
@@ -139,7 +139,7 @@ class ConfigurationAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         configuration_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ConfigurationAssignment"]:
         """Unregister configuration for resource.
 
@@ -221,7 +221,7 @@ class ConfigurationAssignmentsOperations:
         resource_name: str,
         configuration_assignment_name: str,
         configuration_assignment: "_models.ConfigurationAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ConfigurationAssignment":
         """Create configuration assignment.
 
@@ -301,7 +301,7 @@ class ConfigurationAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         configuration_assignment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ConfigurationAssignment"]:
         """Unregister configuration for resource.
 
@@ -377,7 +377,7 @@ class ConfigurationAssignmentsOperations:
         resource_parent_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListConfigurationAssignmentsResult"]:
         """List configurationAssignments for resource.
 
@@ -468,7 +468,7 @@ class ConfigurationAssignmentsOperations:
         provider_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListConfigurationAssignmentsResult"]:
         """List configurationAssignments for resource.
 

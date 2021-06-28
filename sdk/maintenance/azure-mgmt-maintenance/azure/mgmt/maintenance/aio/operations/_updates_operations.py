@@ -49,7 +49,7 @@ class UpdatesOperations:
         resource_parent_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListUpdatesResult"]:
         """Get Updates to resource.
 
@@ -140,7 +140,7 @@ class UpdatesOperations:
         provider_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListUpdatesResult"]:
         """Get Updates to resource.
 

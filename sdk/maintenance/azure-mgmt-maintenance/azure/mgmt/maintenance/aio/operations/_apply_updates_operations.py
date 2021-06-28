@@ -50,7 +50,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Track Updates to resource with parent.
 
@@ -129,7 +129,7 @@ class ApplyUpdatesOperations:
         resource_type: str,
         resource_name: str,
         apply_update_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Track Updates to resource.
 
@@ -203,7 +203,7 @@ class ApplyUpdatesOperations:
         resource_parent_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Apply Updates to resource with parent.
 
@@ -278,7 +278,7 @@ class ApplyUpdatesOperations:
         provider_name: str,
         resource_type: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplyUpdate":
         """Apply Updates to resource.
 
@@ -343,7 +343,7 @@ class ApplyUpdatesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListApplyUpdate"]:
         """Get Configuration records within a subscription.
 
