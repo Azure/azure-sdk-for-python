@@ -339,58 +339,11 @@ Document Translator supports glossaries in the following formats:
 |Localization Interchange File Format|.xlf. , xliff|A parallel document format, export of Translation Memory systems. The languages used are defined inside the file.|
 |Tab Separated Values/TAB|.tsv/.tab|A tab-delimited raw-data file used by spreadsheet programs.
 
-For .tsv/.tab files, you can read more about the format  [here][tsv_files]
+For .tsv/.tab files, you can read more about the format  [here][tsv_files_wikipedia]
 , and you can also see a sample file [here][sample_tsv_file].
 
 #### **How Use Glossaries in Document Translator**
-In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the following sample:
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import (
-    DocumentTranslationClient,
-    DocumentTranslationInput,
-    TranslationTarget,
-    TranslationGlossary
-)
-
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-source_container_sas_url_en = "<sas-url-en>"
-target_container_sas_url_es = "<sas-url-es>"
-target_container_sas_url_fr = "<sas-url-fr>"
-glossary_url = "<glossary-url-sas>"
-
-client = DocumentTranslationClient(endpoint, credential)
-
-inputs = DocumentTranslationInput(
-            source_url=source_container_url,
-            targets=[
-                TranslationTarget(
-                    target_url=target_container_url,
-                    language_code="es",
-                    glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
-                )
-            ]
-        )
-
-job = client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
-
-job_result = client.wait_until_done(job.id)  # type: JobStatusResult
-
-print("Job status: {}".format(job_result.status))
-print("Job created on: {}".format(job_result.created_on))
-print("Job last updated on: {}".format(job_result.last_updated_on))
-print("Total number of translations on documents: {}".format(job_result.documents_total_count))
-
-print("\nOf total documents...")
-print("{} failed".format(job_result.documents_failed_count))
-print("{} succeeded".format(job_result.documents_succeeded_count))
-```
+In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
 
 ### Custom Translation Models
@@ -558,7 +511,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
-[tsv_files]: https://en.wikipedia.org/wiki/Tab-separated_values
+[tsv_files_wikipedia]: https://en.wikipedia.org/wiki/Tab-separated_values
 [sample_tsv_file]: ./samples/glossary-files/sample.tsv
 
 [cla]: https://cla.microsoft.com
