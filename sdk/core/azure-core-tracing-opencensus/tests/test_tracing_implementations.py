@@ -12,7 +12,7 @@ except ImportError:
     import mock
 
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.attributes import Attributes
 from opencensus.trace.span import SpanKind as OpenCensusSpanKind
@@ -134,6 +134,18 @@ class TestOpencensusWrapper(unittest.TestCase):
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
             parent = trace.start_span()
             wrapped_class = OpenCensusSpan(kind=SpanKind.CLIENT)
+            assert wrapped_class.kind == SpanKind.CLIENT
+
+    def test_passing_links_in_ctor(self):
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(
+                links=[Link(
+                    headers= {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
+                    )
+                ]
+            )
             assert wrapped_class.kind == SpanKind.CLIENT
 
     def test_set_http_attributes(self):

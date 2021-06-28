@@ -73,9 +73,26 @@ class OpenCensusSpan(HttpSpanMixin, object):
         ) # type: SpanKind
         if value and kind is None:
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
+
+        links = kwargs.pop('links', None)
         self._span_instance = span or tracer.start_span(name=name, **kwargs)
         if kind is not None:
             self._span_instance.span_kind = kind
+
+        if links:
+            try:
+                for link in links:
+                    ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(link.headers)
+                    self._span_instance.links.append(
+                        Link(
+                            trace_id=ctx.trace_id,
+                            span_id=ctx.span_id,
+                            attributes=link.attributes
+                        ))
+            except AttributeError:
+                # we will just send the links as is if it's not ~azure.core.tracing.Link without any validation
+                # assuming user knows what they are doing.
+                self._span_instance.links = links
 
     @property
     def span_instance(self):
