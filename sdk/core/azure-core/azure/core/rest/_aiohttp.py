@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
+import asyncio
 import codecs
 from typing import AsyncIterator
 from multidict import CIMultiDict
@@ -106,3 +107,13 @@ class RestAioHttpTransportResponse(AsyncHttpResponse):
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+    async def close(self) -> None:
+        """Close the response.
+
+        :return: None
+        :rtype: None
+        """
+        self.is_closed = True
+        self.internal_response.close()
+        await asyncio.sleep(0)

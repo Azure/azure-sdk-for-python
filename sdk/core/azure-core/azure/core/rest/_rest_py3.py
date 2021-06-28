@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import copy
-import asyncio
 import cgi
 import collections
 import collections.abc
@@ -507,8 +506,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         :rtype: None
         """
         self.is_closed = True
-        self.internal_response.close()
-        await asyncio.sleep(0)
+        await self.internal_response.close()
 
     async def __aexit__(self, *args) -> None:
         await self.close()

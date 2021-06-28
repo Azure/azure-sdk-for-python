@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from typing import AsyncIterator
+import asyncio
 from ._helpers_py3 import iter_bytes_helper, iter_raw_helper
 from . import AsyncHttpResponse
 from ._requests_basic import _RestRequestsTransportResponseBase
@@ -53,3 +54,13 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponse, _RestRequestsTrans
         async for part in iter_bytes_helper(AsyncioStreamDownloadGenerator, self):
             yield part
         await self.close()
+
+    async def close(self) -> None:
+        """Close the response.
+
+        :return: None
+        :rtype: None
+        """
+        self.is_closed = True
+        self.internal_response.close()
+        await asyncio.sleep(0)
