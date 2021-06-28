@@ -48,7 +48,7 @@ class CustomResourceProviderOperations:
         resource_group_name: str,
         resource_provider_name: str,
         resource_provider: "_models.CustomRPManifest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomRPManifest":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CustomRPManifest"]
         error_map = {
@@ -106,7 +106,7 @@ class CustomResourceProviderOperations:
         resource_group_name: str,
         resource_provider_name: str,
         resource_provider: "_models.CustomRPManifest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CustomRPManifest"]:
         """Creates or updates the custom resource provider.
 
@@ -119,8 +119,8 @@ class CustomResourceProviderOperations:
         :type resource_provider: ~azure.mgmt.customproviders.models.CustomRPManifest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CustomRPManifest or the result of cls(response)
@@ -177,7 +177,7 @@ class CustomResourceProviderOperations:
         self,
         resource_group_name: str,
         resource_provider_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -222,7 +222,7 @@ class CustomResourceProviderOperations:
         self,
         resource_group_name: str,
         resource_provider_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the custom resource provider.
 
@@ -232,8 +232,8 @@ class CustomResourceProviderOperations:
         :type resource_provider_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -286,7 +286,7 @@ class CustomResourceProviderOperations:
         self,
         resource_group_name: str,
         resource_provider_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomRPManifest":
         """Gets the custom resource provider manifest.
 
@@ -346,7 +346,7 @@ class CustomResourceProviderOperations:
         resource_group_name: str,
         resource_provider_name: str,
         patchable_resource: "_models.ResourceProvidersUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CustomRPManifest":
         """Updates an existing custom resource provider. The only value that can be updated via PATCH
         currently is the tags.
@@ -412,7 +412,7 @@ class CustomResourceProviderOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListByCustomRPManifest"]:
         """Gets all the custom resource providers within a resource group.
 
@@ -482,7 +482,7 @@ class CustomResourceProviderOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ListByCustomRPManifest"]:
         """Gets all the custom resource providers within a subscription.
 

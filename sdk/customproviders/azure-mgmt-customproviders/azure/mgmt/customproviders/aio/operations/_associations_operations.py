@@ -48,7 +48,7 @@ class AssociationsOperations:
         scope: str,
         association_name: str,
         association: "_models.Association",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Association":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Association"]
         error_map = {
@@ -105,13 +105,14 @@ class AssociationsOperations:
         scope: str,
         association_name: str,
         association: "_models.Association",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Association"]:
         """Create or update an association.
 
         :param scope: The scope of the association. The scope can be any valid REST resource instance.
-         For example, use '/subscriptions/{subscription-id}/resourceGroups/{resource-group-
-         name}/providers/Microsoft.Compute/virtualMachines/{vm-name}' for a virtual machine resource.
+         For example, use
+         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.Compute/virtualMachines/{vm-name}'
+         for a virtual machine resource.
         :type scope: str
         :param association_name: The name of the association.
         :type association_name: str
@@ -119,8 +120,8 @@ class AssociationsOperations:
         :type association: ~azure.mgmt.customproviders.models.Association
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Association or the result of cls(response)
@@ -176,7 +177,7 @@ class AssociationsOperations:
         self,
         scope: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -220,7 +221,7 @@ class AssociationsOperations:
         self,
         scope: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete an association.
 
@@ -230,8 +231,8 @@ class AssociationsOperations:
         :type association_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -283,7 +284,7 @@ class AssociationsOperations:
         self,
         scope: str,
         association_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Association":
         """Get an association.
 
@@ -340,7 +341,7 @@ class AssociationsOperations:
     def list_all(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AssociationsList"]:
         """Gets all association for the given scope.
 

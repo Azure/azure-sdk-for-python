@@ -116,8 +116,9 @@ class AssociationsOperations(object):
         """Create or update an association.
 
         :param scope: The scope of the association. The scope can be any valid REST resource instance.
-         For example, use '/subscriptions/{subscription-id}/resourceGroups/{resource-group-
-         name}/providers/Microsoft.Compute/virtualMachines/{vm-name}' for a virtual machine resource.
+         For example, use
+         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.Compute/virtualMachines/{vm-name}'
+         for a virtual machine resource.
         :type scope: str
         :param association_name: The name of the association.
         :type association_name: str
@@ -125,8 +126,8 @@ class AssociationsOperations(object):
         :type association: ~azure.mgmt.customproviders.models.Association
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Association or the result of cls(response)
@@ -238,8 +239,8 @@ class AssociationsOperations(object):
         :type association_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

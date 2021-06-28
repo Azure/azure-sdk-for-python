@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceProviderOperationList"]:
         """The list of operations provided by Microsoft CustomProviders.
 
