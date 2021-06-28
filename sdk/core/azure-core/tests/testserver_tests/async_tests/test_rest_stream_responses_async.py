@@ -134,7 +134,7 @@ async def test_cannot_read_after_response_closed(client):
 
     with pytest.raises(StreamClosedError) as ex:
         await response.read()
-    assert "You can not try to read or stream this response's content, since the response's stream has been closed" in str(ex.value)
+    assert "The response's content can no longer be read or streamed, since the response has already been closed." in str(ex.value)
 
 @pytest.mark.asyncio
 async def test_decompress_plain_no_header(client):

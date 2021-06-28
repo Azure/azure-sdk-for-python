@@ -457,8 +457,8 @@ class StreamClosedError(Exception):
     """
     def __init__(self):
         message = (
-            "You can not try to read or stream this response's content, since the "
-            "response's stream has been closed."
+            "The response's content can no longer be read or streamed, since the "
+            "response has already been closed."
         )
         super(StreamClosedError, self).__init__(message)
 
