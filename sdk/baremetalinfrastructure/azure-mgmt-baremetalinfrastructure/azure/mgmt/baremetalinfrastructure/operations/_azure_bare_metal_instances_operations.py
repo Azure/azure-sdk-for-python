@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class AzureBareMetalInstancesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -66,7 +66,7 @@ class AzureBareMetalInstancesOperations(object):
         url = self._start_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -85,7 +85,7 @@ class AzureBareMetalInstancesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -108,8 +108,8 @@ class AzureBareMetalInstancesOperations(object):
         :type azure_bare_metal_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -138,7 +138,13 @@ class AzureBareMetalInstancesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -171,7 +177,7 @@ class AzureBareMetalInstancesOperations(object):
         url = self._restart_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -190,7 +196,7 @@ class AzureBareMetalInstancesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -213,8 +219,8 @@ class AzureBareMetalInstancesOperations(object):
         :type azure_bare_metal_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -243,7 +249,13 @@ class AzureBareMetalInstancesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -276,7 +288,7 @@ class AzureBareMetalInstancesOperations(object):
         url = self._shutdown_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -295,7 +307,7 @@ class AzureBareMetalInstancesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -318,8 +330,8 @@ class AzureBareMetalInstancesOperations(object):
         :type azure_bare_metal_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -348,7 +360,13 @@ class AzureBareMetalInstancesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -366,7 +384,7 @@ class AzureBareMetalInstancesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AzureBareMetalInstancesListResult"]
+        # type: (...) -> Iterable["_models.AzureBareMetalInstancesListResult"]
         """Gets a list of Azure BareMetal instances in the specified subscription.
 
         Gets a list of AzureBareMetal instances in the specified subscription. The operations returns
@@ -377,7 +395,7 @@ class AzureBareMetalInstancesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~bare_metal_infrastructure_client.models.AzureBareMetalInstancesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureBareMetalInstancesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureBareMetalInstancesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -422,7 +440,7 @@ class AzureBareMetalInstancesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -438,7 +456,7 @@ class AzureBareMetalInstancesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AzureBareMetalInstancesListResult"]
+        # type: (...) -> Iterable["_models.AzureBareMetalInstancesListResult"]
         """Gets a list of AzureBareMetal instances in the specified subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -448,7 +466,7 @@ class AzureBareMetalInstancesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~bare_metal_infrastructure_client.models.AzureBareMetalInstancesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureBareMetalInstancesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureBareMetalInstancesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -466,7 +484,7 @@ class AzureBareMetalInstancesOperations(object):
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -494,7 +512,7 @@ class AzureBareMetalInstancesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -511,7 +529,7 @@ class AzureBareMetalInstancesOperations(object):
         azure_bare_metal_instance_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AzureBareMetalInstance"
+        # type: (...) -> "_models.AzureBareMetalInstance"
         """Gets an Azure BareMetal instance.
 
         Gets an Azure BareMetal instance for the specified subscription, resource group, and instance
@@ -526,7 +544,7 @@ class AzureBareMetalInstancesOperations(object):
         :rtype: ~bare_metal_infrastructure_client.models.AzureBareMetalInstance
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureBareMetalInstance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureBareMetalInstance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -538,7 +556,7 @@ class AzureBareMetalInstancesOperations(object):
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -557,7 +575,7 @@ class AzureBareMetalInstancesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureBareMetalInstance', pipeline_response)
@@ -587,7 +605,7 @@ class AzureBareMetalInstancesOperations(object):
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -606,7 +624,7 @@ class AzureBareMetalInstancesOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -632,8 +650,8 @@ class AzureBareMetalInstancesOperations(object):
         :type azure_bare_metal_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -662,7 +680,13 @@ class AzureBareMetalInstancesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -680,10 +704,10 @@ class AzureBareMetalInstancesOperations(object):
         self,
         resource_group_name,  # type: str
         azure_bare_metal_instance_name,  # type: str
-        tags_parameter,  # type: "models.Tags"
+        tags_parameter,  # type: "_models.Tags"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AzureBareMetalInstance"
+        # type: (...) -> "_models.AzureBareMetalInstance"
         """Patches the Tags field of a Azure BareMetal instance.
 
         Patches the Tags field of a Azure BareMetal instance for the specified subscription, resource
@@ -700,7 +724,7 @@ class AzureBareMetalInstancesOperations(object):
         :rtype: ~bare_metal_infrastructure_client.models.AzureBareMetalInstance
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureBareMetalInstance"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureBareMetalInstance"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -713,7 +737,7 @@ class AzureBareMetalInstancesOperations(object):
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'azureBareMetalInstanceName': self._serialize.url("azure_bare_metal_instance_name", azure_bare_metal_instance_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -736,7 +760,7 @@ class AzureBareMetalInstancesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('AzureBareMetalInstance', pipeline_response)
