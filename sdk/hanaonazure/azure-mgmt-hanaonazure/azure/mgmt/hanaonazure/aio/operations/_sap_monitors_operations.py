@@ -45,7 +45,7 @@ class SapMonitorsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SapMonitorListResult"]:
         """Gets a list of SAP monitors in the specified subscription.
 
@@ -117,7 +117,7 @@ class SapMonitorsOperations:
         self,
         resource_group_name: str,
         sap_monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SapMonitor":
         """Gets properties of a SAP monitor.
 
@@ -180,7 +180,7 @@ class SapMonitorsOperations:
         resource_group_name: str,
         sap_monitor_name: str,
         sap_monitor_parameter: "_models.SapMonitor",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SapMonitor":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SapMonitor"]
         error_map = {
@@ -238,7 +238,7 @@ class SapMonitorsOperations:
         resource_group_name: str,
         sap_monitor_name: str,
         sap_monitor_parameter: "_models.SapMonitor",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.SapMonitor"]:
         """Creates a SAP monitor.
 
@@ -252,8 +252,8 @@ class SapMonitorsOperations:
         :type sap_monitor_parameter: ~azure.mgmt.hanaonazure.models.SapMonitor
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SapMonitor or the result of cls(response)
@@ -310,7 +310,7 @@ class SapMonitorsOperations:
         self,
         resource_group_name: str,
         sap_monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -355,7 +355,7 @@ class SapMonitorsOperations:
         self,
         resource_group_name: str,
         sap_monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a SAP monitor.
 
@@ -367,8 +367,8 @@ class SapMonitorsOperations:
         :type sap_monitor_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -422,7 +422,7 @@ class SapMonitorsOperations:
         resource_group_name: str,
         sap_monitor_name: str,
         tags_parameter: "_models.Tags",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SapMonitor":
         """Patches the Tags field of a SAP monitor.
 

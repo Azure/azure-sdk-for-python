@@ -47,7 +47,7 @@ class ProviderInstancesOperations:
         self,
         resource_group_name: str,
         sap_monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProviderInstanceListResult"]:
         """Gets a list of provider instances in the specified SAP monitor.
 
@@ -126,7 +126,7 @@ class ProviderInstancesOperations:
         resource_group_name: str,
         sap_monitor_name: str,
         provider_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProviderInstance":
         """Gets properties of a provider instance.
 
@@ -193,7 +193,7 @@ class ProviderInstancesOperations:
         sap_monitor_name: str,
         provider_instance_name: str,
         provider_instance_parameter: "_models.ProviderInstance",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ProviderInstance":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderInstance"]
         error_map = {
@@ -253,7 +253,7 @@ class ProviderInstancesOperations:
         sap_monitor_name: str,
         provider_instance_name: str,
         provider_instance_parameter: "_models.ProviderInstance",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ProviderInstance"]:
         """Creates a provider instance.
 
@@ -270,8 +270,8 @@ class ProviderInstancesOperations:
         :type provider_instance_parameter: ~azure.mgmt.hanaonazure.models.ProviderInstance
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ProviderInstance or the result of cls(response)
@@ -331,7 +331,7 @@ class ProviderInstancesOperations:
         resource_group_name: str,
         sap_monitor_name: str,
         provider_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -378,7 +378,7 @@ class ProviderInstancesOperations:
         resource_group_name: str,
         sap_monitor_name: str,
         provider_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a provider instance.
 
@@ -393,8 +393,8 @@ class ProviderInstancesOperations:
         :type provider_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
