@@ -149,7 +149,9 @@ issuancerules {
             credential, os.environ.get("ATTESTATION_AAD_URL")
         ) as admin_client:
 
-            set_result, _ = await admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
+            set_result, _ = await admin_client.reset_policy(
+                AttestationType.OPEN_ENCLAVE
+            )
             print("Policy reset result: ", set_result.policy_resolution)
         # [END reset_aad_policy]
 

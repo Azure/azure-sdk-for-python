@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import base64
 
+
 def pem_from_base64(base64_value, header_type):
     # type: (str, str) -> str
     pem = "-----BEGIN " + header_type + "-----\n"
@@ -20,10 +21,9 @@ def pem_from_base64(base64_value, header_type):
 def base64url_encode(unencoded):
     # type: (bytes)->str
     base64val = base64.urlsafe_b64encode(unencoded)
-    strip_trailing = base64val.split(b"=")[
-        0
-    ]  # pick the string before the trailing =
+    strip_trailing = base64val.split(b"=")[0]  # pick the string before the trailing =
     return strip_trailing.decode("utf-8")
+
 
 def base64url_decode(encoded):
     # type: (str)->bytes

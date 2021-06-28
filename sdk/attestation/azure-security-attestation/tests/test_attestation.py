@@ -209,7 +209,7 @@ class AttestationTest(AzureTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = base64url_decode(_open_enclave_report)
         runtime_data = base64url_decode(_runtime_data)
-        response, _= attest_client.attest_open_enclave(
+        response, _ = attest_client.attest_open_enclave(
             oe_report, runtime_data=runtime_data
         )
         assert response.enclave_held_data == runtime_data
@@ -225,7 +225,7 @@ class AttestationTest(AzureTestCase):
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
 
-        assert token.body().iss == response.issuer
+        assert token._get_body().iss == response.issuer
 
         response, token = attest_client.attest_open_enclave(
             oe_report,
@@ -243,7 +243,7 @@ class AttestationTest(AzureTestCase):
     @AllInstanceTypes
     def test_attest_open_enclave(self, **kwargs):
         # type: (str, **Any) -> None
-        self._test_attest_open_enclave(kwargs.pop('instance_url'))
+        self._test_attest_open_enclave(kwargs.pop("instance_url"))
 
     def _test_attest_sgx_enclave(self, base_uri):
         # type: (str) -> None
@@ -273,7 +273,7 @@ class AttestationTest(AzureTestCase):
     @AllInstanceTypes
     def test_attest_sgx_enclave(self, **kwargs):
         # type: (str, **Any) -> None
-        self._test_attest_sgx_enclave(kwargs.pop('instance_url'))
+        self._test_attest_sgx_enclave(kwargs.pop("instance_url"))
 
     @AttestationPreparer()
     def test_tpm_attestation(self, attestation_aad_url):

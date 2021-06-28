@@ -226,13 +226,13 @@ class AsyncAzureAttestationTest(AzureTestCase):
         assert response.runtime_claims.get("jwk") is not None
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
-        assert token.body().iss == response.issuer
+        assert token._get_body().iss == response.issuer
 
     @AttestationPreparer()
     @AllInstanceTypes
     async def test_shared_attest_open_enclave(self, **kwargs):
         # type: (str, **Any) -> None
-        await self._test_attest_open_enclave(kwargs.pop('instance_url'))
+        await self._test_attest_open_enclave(kwargs.pop("instance_url"))
 
     async def _test_attest_sgx_enclave(self, base_uri):
         # type: (str) -> None
@@ -261,7 +261,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
     @AllInstanceTypes
     async def test_attest_sgx_enclave(self, **kwargs):
         # type: (str, **Any) -> None
-        await self._test_attest_sgx_enclave(kwargs.pop('instance_url'))
+        await self._test_attest_sgx_enclave(kwargs.pop("instance_url"))
 
     @AttestationPreparer()
     async def test_tpm_attestation(self, attestation_aad_url):

@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
     T = TypeVar("T")
 
+
 def AllAttestationTypes(
     __func=None,  # type: Callable[..., T]
     **kwargs  # type: Any

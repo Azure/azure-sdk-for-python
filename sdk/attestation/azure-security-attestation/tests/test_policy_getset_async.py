@@ -40,15 +40,21 @@ from azure.security.attestation import (
 )
 
 from dotenv import find_dotenv, load_dotenv
+
 load_dotenv(find_dotenv())
+
 
 class AsyncPolicyGetSetTests(AzureTestCase):
     @AttestationPreparer()
     @AllAttestationTypes
     @AllInstanceTypes
     async def test_get_policy_async(self, **kwargs):
-        attest_client = self.create_admin_client(kwargs.pop("instance_url", kwargs.pop('attestation_aad_url')))
-        policy, token = await attest_client.get_policy(kwargs.pop("attestation_type", AttestationType.SGX_ENCLAVE))
+        attest_client = self.create_admin_client(
+            kwargs.pop("instance_url", kwargs.pop("attestation_aad_url"))
+        )
+        policy, token = await attest_client.get_policy(
+            kwargs.pop("attestation_type", AttestationType.SGX_ENCLAVE)
+        )
         assert policy.startswith("version") or len(policy) == 0
         print("Token: ", token)
         await attest_client.close()

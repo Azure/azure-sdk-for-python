@@ -54,10 +54,6 @@ class AttestationClient(object):
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-    :keyword ~azure.core.pipeline.Pipeline pipeline: If omitted, the standard pipeline is used.
-    :keyword ~azure.core.pipeline.transport.HttpTransport transport: If omitted, the standard pipeline is used.
-    :keyword list[~azure.core.pipeline.policies.HTTPPolicy] policies: If omitted, the standard pipeline is used.
-
     .. tip::
         The `validate_token`, `validation_callback`, `validate_signature`,
         `validate_expiration`, `validate_not_before_time`, `validate_issuer`, and
@@ -125,29 +121,24 @@ class AttestationClient(object):
     def attest_sgx_enclave(
         self,
         quote,  # type: bytes
-        inittime_json=None,  # type: bytes
-        inittime_data=None,  # type: bytes
-        runtime_json=None,  # type: bytes
-        runtime_data=None,  # type: bytes
         **kwargs  # type: Dict[str, Any]
     ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :param bytes inittime_data: Data presented at the time that the SGX
+        :keyword bytes inittime_data: Data presented at the time that the SGX
             enclave was initialized.
-        :param bytes inittime_json: Data presented at the time that the SGX
+        :keyword bytes inittime_json: Data presented at the time that the SGX
             enclave was initialized, JSON encoded.
-        :param bytes runtime_data: Data presented at the time that the open_enclave
+        :keyword bytes runtime_data: Data presented at the time that the open_enclave
             report was created.
-        :param bytes runtime_json: Data presented at the time that the open_enclave
+        :keyword bytes runtime_json: Data presented at the time that the open_enclave
             report was created. JSON Encoded.
-        :keyword draft_policy: "draft" or "experimental" policy to be used with
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
-        :paramtype draft_policy: str
         :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
@@ -181,6 +172,12 @@ class AttestationClient(object):
         For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
+
+        inittime_json = kwargs.pop("inittime_json", None)  # type: bytes
+        inittime_data = kwargs.pop("inittime_data", None)  # type: bytes
+        runtime_json = kwargs.pop("runtime_json", None)  # type: bytes
+        runtime_data = kwargs.pop("runtime_data", None)  # type: bytes
+
         if inittime_json and inittime_data:
             raise ValueError("Cannot provide both inittime_json and inittime_data.")
         if runtime_json and runtime_data:
@@ -228,29 +225,23 @@ class AttestationClient(object):
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return AttestationResult._from_generated(token.body()), token
+        return AttestationResult._from_generated(token._get_body()), token
 
     @distributed_trace
     def attest_open_enclave(
-        self,
-        report,
-        inittime_json=None,  # type: bytes
-        inittime_data=None,  # type: bytes
-        runtime_json=None,  # type: bytes
-        runtime_data=None,  # type: bytes
-        **kwargs  # type: Dict[str, Any]
+        self, report, **kwargs  # type: Dict[str, Any]
     ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm)
             SGX enclave
-        :param bytes inittime_data: Data presented at the time that the SGX
+        :keyword bytes inittime_data: Data presented at the time that the SGX
             enclave was initialized.
-        :param bytes inittime_json: Data presented at the time that the SGX
+        :keyword bytes inittime_json: Data presented at the time that the SGX
             enclave was initialized, JSON encoded.
-        :param bytes runtime_data: Data presented at the time that the open_enclave
+        :keyword bytes runtime_data: Data presented at the time that the open_enclave
             report was created.
-        :param bytes runtime_json: Data presented at the time that the open_enclave
+        :keyword bytes runtime_json: Data presented at the time that the open_enclave
             report was created. JSON Encoded.
         :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this
@@ -302,6 +293,11 @@ class AttestationClient(object):
 
         """
 
+        inittime_json = kwargs.pop("inittime_json", None)  # type: bytes
+        inittime_data = kwargs.pop("inittime_data", None)  # type: bytes
+        runtime_json = kwargs.pop("runtime_json", None)  # type: bytes
+        runtime_data = kwargs.pop("runtime_data", None)  # type: bytes
+
         if inittime_json and inittime_data:
             raise ValueError("Cannot provide both inittime_json and inittime_data.")
         if runtime_json and runtime_data:
@@ -350,22 +346,22 @@ class AttestationClient(object):
 
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token.body()), token
+        return AttestationResult._from_generated(token._get_body()), token
 
     @distributed_trace
-    def attest_tpm(self, request, **kwargs):
+    def attest_tpm(self, content, **kwargs):
         # type: (str, **Any) -> str
         """Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param str request: Incoming request to send to the TPM attestation service.
+        :param str content: Data to send to the TPM attestation service.
         :returns: A structure containing the response from the TPM attestation.
         :rtype: str
         """
 
         response = self._client.attestation.attest_tpm(
-            request.encode("ascii"), **kwargs
+            content.encode("ascii"), **kwargs
         )
         return response.data.decode("ascii")
 

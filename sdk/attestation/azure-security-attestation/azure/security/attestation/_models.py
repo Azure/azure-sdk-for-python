@@ -91,9 +91,7 @@ class AttestationPolicyCertificateResult(object):
         # type: (GeneratedPolicyCertificatesModificationResult) -> AttestationPolicyCertificateResult
         if not generated:
             return cls
-        return cls(
-            generated.certificate_thumbprint, generated.certificate_resolution
-        )
+        return cls(generated.certificate_thumbprint, generated.certificate_resolution)
 
 
 class AttestationPolicyResult(object):
@@ -233,7 +231,7 @@ class AttestationResult(object):
             mr_signer=generated.mr_signer,
             svn=generated.svn,
             enclave_held_data=generated.enclave_held_data,
-            sgx_collateral=generated.sgx_collateral
+            sgx_collateral=generated.sgx_collateral,
         )
 
     @property
@@ -721,7 +719,7 @@ class AttestationToken(object):
         if "validation_callback" in kwargs:
             kwargs.get("validation_callback")(self, signer)
 
-    def body(self):
+    def _get_body(self):
         # type: () -> Any
         """Returns the body of the attestation token as an object.
 
@@ -813,10 +811,7 @@ class AttestationToken(object):
         """Validate the static properties in the attestation token."""
         if self._body:
             time_now = datetime.now()
-            if (
-                kwargs.get("validate_expiration", True)
-                and self.expires is not None
-            ):
+            if kwargs.get("validate_expiration", True) and self.expires is not None:
                 if time_now > self.expires:
                     delta = time_now - self.expires
                     if delta.total_seconds() > kwargs.get("validation_slack", 0.5):

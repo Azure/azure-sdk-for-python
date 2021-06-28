@@ -33,7 +33,7 @@ AttestationPreparer = functools.partial(
     # fake resources. It also must match the region in which the live tests
     # are run. If it does not match, then the recording will not
     # correctly rewrite the attestation_xxx_urls.
-    attestation_location_short_name="eus",  
+    attestation_location_short_name="eus",
     attestation_client_id="xxxx",
     attestation_client_secret="secret",
     attestation_tenant_id="tenant",

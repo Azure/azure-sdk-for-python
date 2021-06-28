@@ -22,6 +22,7 @@ from typing import Awaitable, Callable, Dict, Optional, Any, TypeVar, overload
 
 T = TypeVar("T")
 
+
 def AllAttestationTypes(func: Callable[..., Awaitable[T]] = None, **kwargs: Any):
     """Decorator to apply to function to add attestation_type kwarg for each attestation type."""
 
@@ -37,9 +38,7 @@ def AllAttestationTypes(func: Callable[..., Awaitable[T]] = None, **kwargs: Any)
 
 
 def AllInstanceTypes(
-    func: Callable[..., Awaitable[T]] = None,
-    include_shared: bool = True,
-    **kwargs: Any
+    func: Callable[..., Awaitable[T]] = None, include_shared: bool = True, **kwargs: Any
 ):
     """Decorator to apply to function to add instance_url kwarg for each instance type."""
 

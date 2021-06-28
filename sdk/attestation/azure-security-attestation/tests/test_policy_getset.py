@@ -282,7 +282,9 @@ class PolicyGetSetTests(AzureTestCase):
         )
 
         # Add a new certificate.
-        result, _ = admin_client.add_policy_management_certificate(pem_certificate_to_add)
+        result, _ = admin_client.add_policy_management_certificate(
+            pem_certificate_to_add
+        )
         assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Add it again - this should be ok.
@@ -335,4 +337,3 @@ class PolicyGetSetTests(AzureTestCase):
             **kwargs
         )
         return attest_client
-
