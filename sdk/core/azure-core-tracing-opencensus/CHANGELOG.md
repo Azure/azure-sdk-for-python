@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0b8 (2021-07-01)
 
 - Fix for supporting `kind` keyword while instantiating the span.
 
