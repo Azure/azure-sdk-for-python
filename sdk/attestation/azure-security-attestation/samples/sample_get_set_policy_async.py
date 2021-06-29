@@ -57,7 +57,7 @@ from azure.security.attestation.aio import (
 from azure.security.attestation import (
     AttestationType,
     AttestationToken,
-    StoredAttestationPolicy,
+    AttestationPolicyToken,
     CertificateModification,
 )
 
@@ -250,8 +250,8 @@ issuancerules {};
 
             # Create an Attestation Token object representing the stored
             # attestation policy.
-            expected_policy = AttestationToken(
-                body=StoredAttestationPolicy(policy_to_set),
+            expected_policy = AttestationPolicyToken(
+                policy_to_set,
                 signing_key=rsa_key,
                 signing_certificate=cert,
             )

@@ -33,7 +33,7 @@ from attestation_preparer import AttestationPreparer
 from azure.security.attestation.aio import AttestationAdministrationClient
 from azure.security.attestation import (
     AttestationType,
-    StoredAttestationPolicy,
+    AttestationPolicyToken,
     AttestationToken,
     PolicyModification,
     CertificateModification,
@@ -74,9 +74,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         new_policy, _ = await attest_client.get_policy(attestation_type)
         assert new_policy == attestation_policy
 
-        expected_policy = AttestationToken(
-            body=StoredAttestationPolicy(attestation_policy)
-        )
+        expected_policy = AttestationPolicyToken(attestation_policy)
+
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.to_jwt_string().encode("utf-8"))
         expected_hash = hasher.finalize()
@@ -151,8 +150,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         policy, _ = await attest_client.get_policy(attestation_type)
         assert policy == attestation_policy
 
-        expected_policy = AttestationToken(
-            body=StoredAttestationPolicy(attestation_policy),
+        expected_policy = AttestationPolicyToken(attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
         )
@@ -192,8 +190,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         policy, _ = await attest_client.get_policy(attestation_type)
         assert policy == attestation_policy
 
-        expected_policy = AttestationToken(
-            body=StoredAttestationPolicy(attestation_policy),
+        expected_policy = AttestationPolicyToken(attestation_policy,
             signing_key=key,
             signing_certificate=decoded_cert,
         )

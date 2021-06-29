@@ -919,6 +919,21 @@ class AttestationToken(object):
         return_value += base64url_encode(signature)
         return return_value
 
+class AttestationPolicyToken(AttestationToken):
+    """
+    An `AttestationPolicyToken` is an AttestationToken object specialized for
+    use in attestation policy :func:`AttestationAdministrationClient.set_policy`
+    operations. It expresses the JSON Web Signature object sent to the
+    attestation service to set the token.
+
+    This token can thus be used to validate the hash returned by the `set_policy` API.
+
+    """
+    def __init__(self, policy, **kwargs):
+        # type: (str, Dict[str, Any]) -> None
+        AttestationToken.__init__(self,
+            body=StoredAttestationPolicy(policy), **kwargs)
+
 
 class AttestationTokenValidationException(ValueError):
     """Thrown when an attestation token validation fails.

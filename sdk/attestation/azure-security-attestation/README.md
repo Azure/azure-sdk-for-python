@@ -217,13 +217,13 @@ There are two properties provided in the [PolicyResult][attestation_policy_resul
 * [policy_signer][attestation_policy_result_parameters] - if the `set_policy` call included a signing certificate, this will be the certificate provided at the time of the `set_policy` call. If no policy signer was set, this will be null.
 * [policy_token_hash][attestation_policy_result_parameters] - this is the hash of the [JSON Web Token][json_web_token] sent to the service.
 
-To verify the hash, clients can generate an attestation token and verify the hash generated from that token:
+To verify the hash, clients can generate an attestation policy token and verify the hash generated from that token:
 
 ```python
 from cryptography.hazmat.primitives import hashes
 
-expected_policy = AttestationToken(
-    body=StoredAttestationPolicy(attestation_policy),
+expected_policy = AttestationPolicyToken(
+    attestation_policy,
     signing_key=key,
     signing_certificate=signing_certificate)
 hasher = hashes.Hash(hashes.SHA256())

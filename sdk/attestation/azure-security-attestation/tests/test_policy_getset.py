@@ -34,10 +34,10 @@ from helpers import pem_from_base64, base64url_encode, base64url_decode
 from azure.security.attestation import (
     AttestationAdministrationClient,
     AttestationType,
-    StoredAttestationPolicy,
     AttestationToken,
     PolicyModification,
     CertificateModification,
+    AttestationPolicyToken
 )
 
 
@@ -67,9 +67,8 @@ class PolicyGetSetTests(AzureTestCase):
         new_policy = attest_client.get_policy(attestation_type)[0]
         assert new_policy == attestation_policy
 
-        expected_policy = AttestationToken(
-            body=StoredAttestationPolicy(attestation_policy)
-        )
+        expected_policy = AttestationPolicyToken(attestation_policy)
+
         hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())
         hasher.update(expected_policy.to_jwt_string().encode("utf-8"))
         expected_hash = hasher.finalize()
@@ -141,8 +140,7 @@ class PolicyGetSetTests(AzureTestCase):
         policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert policy == attestation_policy
 
-        expected_policy = AttestationToken(
-            body=StoredAttestationPolicy(attestation_policy),
+        expected_policy = AttestationPolicyToken(attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
         )
@@ -181,8 +179,8 @@ class PolicyGetSetTests(AzureTestCase):
         new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert new_policy == attestation_policy
 
-        expected_policy = AttestationToken(
-            body=StoredAttestationPolicy(attestation_policy),
+        expected_policy = AttestationPolicyToken(
+            attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
         )

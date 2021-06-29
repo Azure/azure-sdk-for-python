@@ -438,7 +438,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace_async
     async def add_policy_management_certificate(
-        self, certificate_to_add: str, /, **kwargs: Any
+        self, certificate_to_add: str, **kwargs: Any
     ) -> AttestationPolicyManagementCertificateResult:
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
@@ -550,7 +550,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace_async
     async def remove_policy_management_certificate(
-        self, certificate_to_remove: str, /, **kwargs: Any
+        self, certificate_to_remove: str, *args, **kwargs: Any
     ) -> AttestationPolicyManagementCertificateResult:
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
