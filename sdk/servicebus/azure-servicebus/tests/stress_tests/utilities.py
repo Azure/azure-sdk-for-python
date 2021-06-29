@@ -6,13 +6,13 @@
 
 import logging
 import sys
-import time
-from azure.servicebus._common.utils import utc_now
+
 
 def _get_default_handler():
     handler = logging.StreamHandler(stream=sys.stdout)
     handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
     return handler
+
 
 def _build_logger(name, level):
     logger = logging.getLogger(name)
@@ -21,6 +21,7 @@ def _build_logger(name, level):
         handler = _get_default_handler()
         logger.addHandler(handler)
     return logger
+
 
 # Note: This was the initial generic logger entry point, kept to allow us to
 # move to more fine-grained logging controls incrementally.
@@ -43,7 +44,3 @@ def print_message(_logger, message):
     except (TypeError, AttributeError):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time_utc))
-
-
-def sleep_until_expired(entity):
-    time.sleep(max(0,(entity.locked_until_utc - utc_now()).total_seconds()+1))
