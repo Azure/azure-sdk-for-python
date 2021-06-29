@@ -14,8 +14,11 @@ except:
     pass
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.models import StorageAccount, Endpoints, BlobServiceProperties, DeleteRetentionPolicy, \
-    LastAccessTimeTrackingPolicy
+try:
+    # Note: these models are only available from v17.0.0 and higher, if you need them you'll also need azure-core 1.4.0 and higher
+    from azure.mgmt.storage.models import StorageAccount, Endpoints, LastAccessTimeTrackingPolicy, BlobServiceProperties, DeleteRetentionPolicy
+except ImportError:
+    pass
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
