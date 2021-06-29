@@ -29,7 +29,8 @@ from azure.storage.blob import (
     ResourceTypes,
     AccountSasPermissions, generate_container_sas, ContainerClient, CustomerProvidedEncryptionKey,
 )
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 LARGE_APPEND_BLOB_SIZE = 64 * 1024

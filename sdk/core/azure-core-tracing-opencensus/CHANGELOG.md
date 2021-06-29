@@ -1,6 +1,10 @@
 
 # Release History
 
+## 1.0.0b8 (Unreleased)
+
+- Fix for supporting `kind` keyword while instantiating the span.
+
 ## 1.0.0b7 (2021-04-08)
 
 - `Link` and `SpanKind` can now be added while creating the span instance.

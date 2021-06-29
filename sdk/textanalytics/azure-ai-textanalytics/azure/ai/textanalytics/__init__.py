@@ -31,7 +31,7 @@ from ._models import (
     AssessmentSentiment,
     RecognizePiiEntitiesResult,
     PiiEntity,
-    PiiEntityDomainType,
+    PiiEntityDomain,
     AnalyzeHealthcareEntitiesResult,
     HealthcareEntity,
     HealthcareEntityDataSource,
@@ -40,19 +40,18 @@ from ._models import (
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
     _AnalyzeActionsType,
-    HealthcareEntityRelationRoleType,
     HealthcareRelation,
     HealthcareRelationRole,
     HealthcareEntityAssertion,
-    AnalyzeSentimentAction
+    AnalyzeSentimentAction,
+    PiiEntityCategory,
+    HealthcareEntityRelation,
+    EntityConditionality,
+    EntityCertainty,
+    EntityAssociation,
+    HealthcareEntityCategory
 )
-from ._generated.v3_1_preview_5.models import (
-    PiiCategory as PiiEntityCategoryType,
-    RelationType as HealthcareEntityRelationType,
-    Conditionality as EntityConditionality,
-    Certainty as EntityCertainty,
-    Association as EntityAssociation
-)
+
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
 __all__ = [
@@ -81,7 +80,7 @@ __all__ = [
     'AssessmentSentiment',
     'RecognizePiiEntitiesResult',
     'PiiEntity',
-    'PiiEntityDomainType',
+    'PiiEntityDomain',
     'AnalyzeHealthcareEntitiesResult',
     'HealthcareEntity',
     'HealthcareEntityDataSource',
@@ -90,9 +89,8 @@ __all__ = [
     'RecognizePiiEntitiesAction',
     'ExtractKeyPhrasesAction',
     '_AnalyzeActionsType',
-    "PiiEntityCategoryType",
-    "HealthcareEntityRelationType",
-    "HealthcareEntityRelationRoleType",
+    "PiiEntityCategory",
+    "HealthcareEntityRelation",
     "HealthcareRelation",
     "HealthcareRelationRole",
     "HealthcareEntityAssertion",
@@ -102,6 +100,7 @@ __all__ = [
     "AnalyzeSentimentAction",
     "AnalyzeHealthcareEntitiesLROPoller",
     "AnalyzeActionsLROPoller",
+    "HealthcareEntityCategory"
 ]
 
 __version__ = VERSION

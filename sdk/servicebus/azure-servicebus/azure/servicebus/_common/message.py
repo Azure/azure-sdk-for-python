@@ -310,7 +310,7 @@ class ServiceBusMessage(
                 )
             )
 
-        if value and value != self.session_id:
+        if value and self.session_id and value != self.session_id:
             raise ValueError(
                 "partition_key:{} cannot be set to a different value than session_id:{}".format(
                     value, self.session_id
@@ -355,7 +355,7 @@ class ServiceBusMessage(
                 self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE:
             if not self._raw_amqp_message.properties:
                 self._raw_amqp_message.properties = AmqpMessageProperties()
-            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple()))
+            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple())) * 1000
             self._raw_amqp_message.properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
                 self._raw_amqp_message.properties.creation_time + self._raw_amqp_message.header.time_to_live

@@ -2,31 +2,24 @@
 # Licensed under the MIT License.
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from msrest.serialization import UTC
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
-# [START client_auth_with_token_cred]
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
-# [END client_auth_with_token_cred]
 
 # Response time trend 
 # request duration over the last 12 hours. 
-# [START send_logs_query]
 query = """AppRequests |
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
 end_time = datetime.now(UTC())
 
 # returns LogsQueryResults 
-response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration='PT1H', end_time=end_time)
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query, duration=timedelta(hours=1), end_time=end_time)
 
 if not response.tables:
     print("No results for the query")

@@ -36,7 +36,7 @@ import asyncio
 
 class AuthenticationSampleAsync(object):
 
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
 
     async def authentication_with_api_key_credential_form_recognizer_client_async(self):
         # [START create_fr_client_with_key_async]

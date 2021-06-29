@@ -13,8 +13,8 @@ jobs:
     - job: smoke_test_eligibility
       displayName: Check Smoke Test Eligibility
       pool:
-        name: "azsdk-pool-mms-ubuntu-1804-general"
-        vmImage: "MMSUbuntu18.04"
+        name: "azsdk-pool-mms-ubuntu-2004-general"
+        vmImage: "MMSUbuntu20.04"
       steps:
         - ${{ each artifact in parameters.Artifacts }}:
           - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(artifact.skipPublishPackage, 'true')) }}:

@@ -9,11 +9,14 @@
 try:
     from ._models_py3 import ARMProxyResource
     from ._models_py3 import ARMResourceProperties
+    from ._models_py3 import AnalyticalStorageConfiguration
     from ._models_py3 import ApiProperties
     from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AutoscaleSettings
     from ._models_py3 import AutoscaleSettingsResource
+    from ._models_py3 import BackupInformation
     from ._models_py3 import BackupPolicy
+    from ._models_py3 import BackupPolicyMigrationState
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
     from ._models_py3 import CassandraKeyspaceGetPropertiesOptions
@@ -36,6 +39,8 @@ try:
     from ._models_py3 import ConflictResolutionPolicy
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
+    from ._models_py3 import ContinuousBackupInformation
+    from ._models_py3 import ContinuousBackupRestoreLocation
     from ._models_py3 import ContinuousModeBackupPolicy
     from ._models_py3 import CorsPolicy
     from ._models_py3 import CreateUpdateOptions
@@ -48,6 +53,7 @@ try:
     from ._models_py3 import DatabaseAccountRegenerateKeyParameters
     from ._models_py3 import DatabaseAccountUpdateParameters
     from ._models_py3 import DatabaseAccountsListResult
+    from ._models_py3 import DatabaseRestoreResource
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExcludedPath
     from ._models_py3 import ExtendedResourceProperties
@@ -120,6 +126,26 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
+    from ._models_py3 import RestorableDatabaseAccountGetResult
+    from ._models_py3 import RestorableDatabaseAccountsListResult
+    from ._models_py3 import RestorableLocationResource
+    from ._models_py3 import RestorableMongodbCollectionGetResult
+    from ._models_py3 import RestorableMongodbCollectionPropertiesResource
+    from ._models_py3 import RestorableMongodbCollectionsListResult
+    from ._models_py3 import RestorableMongodbDatabaseGetResult
+    from ._models_py3 import RestorableMongodbDatabasePropertiesResource
+    from ._models_py3 import RestorableMongodbDatabasesListResult
+    from ._models_py3 import RestorableMongodbResourcesListResult
+    from ._models_py3 import RestorableSqlContainerGetResult
+    from ._models_py3 import RestorableSqlContainerPropertiesResource
+    from ._models_py3 import RestorableSqlContainerPropertiesResourceContainer
+    from ._models_py3 import RestorableSqlContainersListResult
+    from ._models_py3 import RestorableSqlDatabaseGetResult
+    from ._models_py3 import RestorableSqlDatabasePropertiesResource
+    from ._models_py3 import RestorableSqlDatabasePropertiesResourceDatabase
+    from ._models_py3 import RestorableSqlDatabasesListResult
+    from ._models_py3 import RestorableSqlResourcesListResult
+    from ._models_py3 import RestoreParameters
     from ._models_py3 import SpatialSpec
     from ._models_py3 import SqlContainerCreateUpdateParameters
     from ._models_py3 import SqlContainerGetPropertiesOptions
@@ -154,6 +180,7 @@ try:
     from ._models_py3 import SqlUserDefinedFunctionGetResults
     from ._models_py3 import SqlUserDefinedFunctionListResult
     from ._models_py3 import SqlUserDefinedFunctionResource
+    from ._models_py3 import SystemData
     from ._models_py3 import TableCreateUpdateParameters
     from ._models_py3 import TableGetPropertiesOptions
     from ._models_py3 import TableGetPropertiesResource
@@ -173,11 +200,14 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ARMProxyResource  # type: ignore
     from ._models import ARMResourceProperties  # type: ignore
+    from ._models import AnalyticalStorageConfiguration  # type: ignore
     from ._models import ApiProperties  # type: ignore
     from ._models import AutoUpgradePolicyResource  # type: ignore
     from ._models import AutoscaleSettings  # type: ignore
     from ._models import AutoscaleSettingsResource  # type: ignore
+    from ._models import BackupInformation  # type: ignore
     from ._models import BackupPolicy  # type: ignore
+    from ._models import BackupPolicyMigrationState  # type: ignore
     from ._models import Capability  # type: ignore
     from ._models import CassandraKeyspaceCreateUpdateParameters  # type: ignore
     from ._models import CassandraKeyspaceGetPropertiesOptions  # type: ignore
@@ -200,6 +230,8 @@ except (SyntaxError, ImportError):
     from ._models import ConflictResolutionPolicy  # type: ignore
     from ._models import ConsistencyPolicy  # type: ignore
     from ._models import ContainerPartitionKey  # type: ignore
+    from ._models import ContinuousBackupInformation  # type: ignore
+    from ._models import ContinuousBackupRestoreLocation  # type: ignore
     from ._models import ContinuousModeBackupPolicy  # type: ignore
     from ._models import CorsPolicy  # type: ignore
     from ._models import CreateUpdateOptions  # type: ignore
@@ -212,6 +244,7 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseAccountRegenerateKeyParameters  # type: ignore
     from ._models import DatabaseAccountUpdateParameters  # type: ignore
     from ._models import DatabaseAccountsListResult  # type: ignore
+    from ._models import DatabaseRestoreResource  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ExcludedPath  # type: ignore
     from ._models import ExtendedResourceProperties  # type: ignore
@@ -284,6 +317,26 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource  # type: ignore
     from ._models import RegionForOnlineOffline  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import RestorableDatabaseAccountGetResult  # type: ignore
+    from ._models import RestorableDatabaseAccountsListResult  # type: ignore
+    from ._models import RestorableLocationResource  # type: ignore
+    from ._models import RestorableMongodbCollectionGetResult  # type: ignore
+    from ._models import RestorableMongodbCollectionPropertiesResource  # type: ignore
+    from ._models import RestorableMongodbCollectionsListResult  # type: ignore
+    from ._models import RestorableMongodbDatabaseGetResult  # type: ignore
+    from ._models import RestorableMongodbDatabasePropertiesResource  # type: ignore
+    from ._models import RestorableMongodbDatabasesListResult  # type: ignore
+    from ._models import RestorableMongodbResourcesListResult  # type: ignore
+    from ._models import RestorableSqlContainerGetResult  # type: ignore
+    from ._models import RestorableSqlContainerPropertiesResource  # type: ignore
+    from ._models import RestorableSqlContainerPropertiesResourceContainer  # type: ignore
+    from ._models import RestorableSqlContainersListResult  # type: ignore
+    from ._models import RestorableSqlDatabaseGetResult  # type: ignore
+    from ._models import RestorableSqlDatabasePropertiesResource  # type: ignore
+    from ._models import RestorableSqlDatabasePropertiesResourceDatabase  # type: ignore
+    from ._models import RestorableSqlDatabasesListResult  # type: ignore
+    from ._models import RestorableSqlResourcesListResult  # type: ignore
+    from ._models import RestoreParameters  # type: ignore
     from ._models import SpatialSpec  # type: ignore
     from ._models import SqlContainerCreateUpdateParameters  # type: ignore
     from ._models import SqlContainerGetPropertiesOptions  # type: ignore
@@ -318,6 +371,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlUserDefinedFunctionGetResults  # type: ignore
     from ._models import SqlUserDefinedFunctionListResult  # type: ignore
     from ._models import SqlUserDefinedFunctionResource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TableCreateUpdateParameters  # type: ignore
     from ._models import TableGetPropertiesOptions  # type: ignore
     from ._models import TableGetPropertiesResource  # type: ignore
@@ -336,10 +390,15 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetworkRule  # type: ignore
 
 from ._cosmos_db_management_client_enums import (
+    AnalyticalStorageSchemaType,
+    ApiType,
+    BackupPolicyMigrationStatus,
     BackupPolicyType,
     CompositePathSortOrder,
     ConflictResolutionMode,
     ConnectorOffer,
+    CreateMode,
+    CreatedByType,
     DataType,
     DatabaseAccountKind,
     DefaultConsistencyLevel,
@@ -348,10 +407,12 @@ from ._cosmos_db_management_client_enums import (
     KeyKind,
     NetworkAclBypass,
     NotebookWorkspaceName,
+    OperationType,
     PartitionKind,
     PrimaryAggregationType,
     PublicNetworkAccess,
     ResourceIdentityType,
+    RestoreMode,
     RoleDefinitionType,
     ServerVersion,
     SpatialType,
@@ -363,11 +424,14 @@ from ._cosmos_db_management_client_enums import (
 __all__ = [
     'ARMProxyResource',
     'ARMResourceProperties',
+    'AnalyticalStorageConfiguration',
     'ApiProperties',
     'AutoUpgradePolicyResource',
     'AutoscaleSettings',
     'AutoscaleSettingsResource',
+    'BackupInformation',
     'BackupPolicy',
+    'BackupPolicyMigrationState',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
     'CassandraKeyspaceGetPropertiesOptions',
@@ -390,6 +454,8 @@ __all__ = [
     'ConflictResolutionPolicy',
     'ConsistencyPolicy',
     'ContainerPartitionKey',
+    'ContinuousBackupInformation',
+    'ContinuousBackupRestoreLocation',
     'ContinuousModeBackupPolicy',
     'CorsPolicy',
     'CreateUpdateOptions',
@@ -402,6 +468,7 @@ __all__ = [
     'DatabaseAccountRegenerateKeyParameters',
     'DatabaseAccountUpdateParameters',
     'DatabaseAccountsListResult',
+    'DatabaseRestoreResource',
     'ErrorResponse',
     'ExcludedPath',
     'ExtendedResourceProperties',
@@ -474,6 +541,26 @@ __all__ = [
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
+    'RestorableDatabaseAccountGetResult',
+    'RestorableDatabaseAccountsListResult',
+    'RestorableLocationResource',
+    'RestorableMongodbCollectionGetResult',
+    'RestorableMongodbCollectionPropertiesResource',
+    'RestorableMongodbCollectionsListResult',
+    'RestorableMongodbDatabaseGetResult',
+    'RestorableMongodbDatabasePropertiesResource',
+    'RestorableMongodbDatabasesListResult',
+    'RestorableMongodbResourcesListResult',
+    'RestorableSqlContainerGetResult',
+    'RestorableSqlContainerPropertiesResource',
+    'RestorableSqlContainerPropertiesResourceContainer',
+    'RestorableSqlContainersListResult',
+    'RestorableSqlDatabaseGetResult',
+    'RestorableSqlDatabasePropertiesResource',
+    'RestorableSqlDatabasePropertiesResourceDatabase',
+    'RestorableSqlDatabasesListResult',
+    'RestorableSqlResourcesListResult',
+    'RestoreParameters',
     'SpatialSpec',
     'SqlContainerCreateUpdateParameters',
     'SqlContainerGetPropertiesOptions',
@@ -508,6 +595,7 @@ __all__ = [
     'SqlUserDefinedFunctionGetResults',
     'SqlUserDefinedFunctionListResult',
     'SqlUserDefinedFunctionResource',
+    'SystemData',
     'TableCreateUpdateParameters',
     'TableGetPropertiesOptions',
     'TableGetPropertiesResource',
@@ -524,10 +612,15 @@ __all__ = [
     'Usage',
     'UsagesResult',
     'VirtualNetworkRule',
+    'AnalyticalStorageSchemaType',
+    'ApiType',
+    'BackupPolicyMigrationStatus',
     'BackupPolicyType',
     'CompositePathSortOrder',
     'ConflictResolutionMode',
     'ConnectorOffer',
+    'CreateMode',
+    'CreatedByType',
     'DataType',
     'DatabaseAccountKind',
     'DefaultConsistencyLevel',
@@ -536,10 +629,12 @@ __all__ = [
     'KeyKind',
     'NetworkAclBypass',
     'NotebookWorkspaceName',
+    'OperationType',
     'PartitionKind',
     'PrimaryAggregationType',
     'PublicNetworkAccess',
     'ResourceIdentityType',
+    'RestoreMode',
     'RoleDefinitionType',
     'ServerVersion',
     'SpatialType',

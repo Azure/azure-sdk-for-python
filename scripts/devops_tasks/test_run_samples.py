@@ -52,7 +52,9 @@ TIMEOUT_SAMPLES = {
         "recv_with_checkpoint_by_time_interval_async.py": (10),
         "recv_with_checkpoint_store_async.py": (10),
         "recv_with_custom_starting_position_async.py": (10),
-        "sample_code_eventhub_async.py": (10)
+        "sample_code_eventhub_async.py": (10),
+        "send_and_receive_amqp_annotated_message.py": (10),
+        "send_and_receive_amqp_annotated_message_async.py": (10)
     },
     "azure-eventhub-checkpointstoreblob": {
         "receive_events_using_checkpoint_store.py": (10),

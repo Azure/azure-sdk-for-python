@@ -13,4 +13,4 @@
 This package's
 [documentation](https://aka.ms/azsdk-python-storage-blob-changefeed-ref)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob-changefeed/samples)
