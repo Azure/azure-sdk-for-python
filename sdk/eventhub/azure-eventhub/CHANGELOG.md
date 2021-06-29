@@ -1,6 +1,6 @@
 # Release History
 
-## 5.6.0 (Unreleased)
+## 5.6.0 (2021-07-07)
 
 ### Features Added
 
@@ -14,6 +14,11 @@
   - Introduced new classes `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` for accessing amqp header and properties.
   - Added new property `body_type` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpMessageBodyType`.
   - Added new read-only property `raw_amqp_message` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpAnnotatedMessage`.
+
+### Fixed
+
+- Updated uAMQP dependency to 1.4.1.
+  - Fixed a bug that attributes creation_time, absolute_expiry_time and group_sequence on MessageProperties should be compatible with integer types on Python 2.7.
 
 ## 5.5.0 (2021-05-13)
 
