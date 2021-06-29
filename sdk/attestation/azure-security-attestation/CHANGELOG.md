@@ -75,6 +75,7 @@ policy = response[0]
   * The `issuance_time` property on `AttestationToken` was renamed to `issued_on`.
   * The `not_before_time` property on `AttestationToken` was renamed to `not_before`.
 * The `StoredAttestationPolicy` model type has been removed. To validate the attestation policy hash, use the `AttestationPolicyToken` model object instead.
+* The `get_openidmetadata` API has been renamed `get_open_id_metadata`.
 
 ### Key Bugs Fixed
 
