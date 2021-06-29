@@ -188,7 +188,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, **kwargs):
-        # type:(Union[str, AttestationType], str, **Any) -> Tuple[AttestationPolicyResult, AttestationToken]
+        # type: (Union[str, AttestationType], str, **Any) -> Tuple[AttestationPolicyResult, AttestationToken]
         """Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -294,7 +294,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def reset_policy(self, attestation_type, **kwargs):
-        # type:(Union[str, AttestationType], **Dict[str, Any]) -> Tuple[AttestationPolicyResult, AttestationToken]
+        # type: (Union[str, AttestationType], **Dict[str, Any]) -> Tuple[AttestationPolicyResult, AttestationToken]
         """Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -386,7 +386,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
-        # type:(**Any) -> Tuple[List[List[str]], AttestationToken]
+        # type: (**Any) -> Tuple[List[List[str]], AttestationToken]
         """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the

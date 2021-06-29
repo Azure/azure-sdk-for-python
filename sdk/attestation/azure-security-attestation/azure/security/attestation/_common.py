@@ -59,7 +59,7 @@ def validate_signing_keys(signing_key_pem, certificate_pem):
 
     :staticmethod:
     """
-    # type (str, str) -> cryptography.hazmat.primatives.asymmetric.ec | cryptography.hazmat.primatives.asymmetric.rsa, Certificate
+    # type: (str, str) -> cryptography.hazmat.primatives.asymmetric.ec | cryptography.hazmat.primatives.asymmetric.rsa, Certificate
 
     # Start by making sure that both signing key and certificate are present.
     if signing_key_pem and not certificate_pem:

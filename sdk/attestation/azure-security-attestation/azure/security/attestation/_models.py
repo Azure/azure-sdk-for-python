@@ -64,7 +64,7 @@ class AttestationSigner(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (JSONWebKey)->AttestationSigner
+        # type: (JSONWebKey) -> AttestationSigner
         if not generated:
             return cls
         return cls(generated.x5_c, generated.kid)
@@ -82,7 +82,7 @@ class AttestationPolicyCertificateResult(object):
     """
 
     def __init__(self, certificate_thumbprint, certificate_resolution):
-        # type: (str, CertificateModification, AttestationToken)->None
+        # type: (str, CertificateModification, AttestationToken) -> None
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
 
@@ -123,7 +123,7 @@ class AttestationPolicyResult(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (GeneratedPolicyResult, str)->AttestationPolicyResult
+        # type: (GeneratedPolicyResult, str) -> AttestationPolicyResult
         # If we have a generated policy result or policy text, return that.
         if generated:
             return cls(
@@ -142,7 +142,7 @@ class AttestationResult(object):
     """
 
     def __init__(self, **kwargs):
-        # type: (Dict[str,Any])->None
+        # type: (Dict[str,Any]) -> None
         """
         :keyword issuer: Entity which issued the attestation token.
         :paramtype issuer: str
@@ -531,7 +531,7 @@ class AttestationToken(object):
 
     @property
     def algorithm(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token Header "alg".
 
         See `RFC 7515 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1>`_ for details.
@@ -542,7 +542,7 @@ class AttestationToken(object):
 
     @property
     def key_id(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token Header "kid".
 
         See `RFC 7515 Section 4.1.4 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4>`_ for details.
@@ -551,7 +551,7 @@ class AttestationToken(object):
 
     @property
     def expires(self):
-        # type:() -> Union[datetime, None]
+        # type: () -> Union[datetime, None]
         """Expiration time for the token."""
         exp = self._body.get("exp")
         if exp:
@@ -560,7 +560,7 @@ class AttestationToken(object):
 
     @property
     def not_before(self):
-        # type:() -> Union[datetime, None]
+        # type: () -> Union[datetime, None]
         """Time before which the token is invalid."""
         nbf = self._body.get("nbf")
         if nbf:
@@ -569,7 +569,7 @@ class AttestationToken(object):
 
     @property
     def issued(self):
-        # type:() -> Union[datetime, None]
+        # type: () -> Union[datetime, None]
         """Time when the token was issued."""
         iat = self._body.get("iat")
         if iat:
@@ -578,7 +578,7 @@ class AttestationToken(object):
 
     @property
     def content_type(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token Header "content type".
 
         See `RFC 7515 Section 4.1.10 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10>`_ for details.
@@ -587,7 +587,7 @@ class AttestationToken(object):
 
     @property
     def critical(self):
-        # type:() -> Union[bool, None]
+        # type: () -> Union[bool, None]
         """Json Web Token Header "Critical".
 
         See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>`_ for details.
@@ -596,7 +596,7 @@ class AttestationToken(object):
 
     @property
     def key_url(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token Header "Key URL".
 
         See `RFC 7515 Section 4.1.2 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2>`_ for details.
@@ -605,7 +605,7 @@ class AttestationToken(object):
 
     @property
     def x509_url(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token Header "X509 URL".
 
         See `RFC 7515 Section 4.1.5 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5>`_ for details.
@@ -614,7 +614,7 @@ class AttestationToken(object):
 
     @property
     def type(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token Header "typ".
 
         `RFC 7515 Section 4.1.9 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9>`_ for details.
@@ -623,7 +623,7 @@ class AttestationToken(object):
 
     @property
     def certificate_thumbprint(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """The "thumbprint" of the certificate used to sign the request.
 
         `RFC 7515 Section 4.1.7 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7>`_ for details.
@@ -632,7 +632,7 @@ class AttestationToken(object):
 
     @property
     def certificate_sha256_thumbprint(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """The "thumbprint" of the certificate used to sign the request generated using the SHA256 algorithm.
 
         `RFC 7515 Section 4.1.8 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8>`_ for details.
@@ -641,7 +641,7 @@ class AttestationToken(object):
 
     @property
     def issuer(self):
-        # type:() -> Union[str, None]
+        # type: () -> Union[str, None]
         """Json Web Token "iss" claim.
 
         `RFC 7519 Section 4.1.1 <https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>`_ for details.
@@ -650,7 +650,7 @@ class AttestationToken(object):
 
     @property
     def x509_certificate_chain(self):
-        # type:() -> Union[list[str], None]
+        # type: () -> Union[list[str], None]
         """An array of Base64 encoded X.509 certificates which represent a certificate chain used to sign the token.
 
         See `RFC 7515 Section 4.1.6 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6>`_ for details.
@@ -661,12 +661,12 @@ class AttestationToken(object):
         return None
 
     def _json_web_key(self):
-        # type:() -> Union[JSONWebKey, None]
+        # type: () -> Union[JSONWebKey, None]
         jwk = self._header.get("jwk")
         return JSONWebKey.deserialize(jwk)
 
     def to_jwt_string(self):
-        # type:() -> str
+        # type: () -> str
         """Returns a string serializing the JSON Web Token
 
         :rtype: str
@@ -674,13 +674,13 @@ class AttestationToken(object):
         return self._token
 
     def _validate_token(self, signers=None, **kwargs):
-        # type: (list[AttestationSigner], **Any) -> None
+        # type: (List[AttestationSigner], **Any) -> None
         """Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
 
         :param azure.security.attestation.TokenValidationOptions options: Options to be used when validating
             the token.
-        :param list[azure.security.attestation.AttestationSigner] signers: Potential signers for the token.
+        :param List[azure.security.attestation.AttestationSigner] signers: Potential signers for the token.
             If the signers parameter is specified, validate_token will only
             consider the signers as potential signatories for the token, otherwise
             it will consider attributes in the header of the token.
@@ -735,7 +735,7 @@ class AttestationToken(object):
             return self._body
 
     def _get_candidate_signing_certificates(self, signing_certificates):
-        # type: (list[AttestationSigner]) -> list[AttestationSigner]
+        # type: (List[AttestationSigner]) -> List[AttestationSigner]
 
         candidates = []
         desired_key_id = self.key_id
@@ -770,11 +770,11 @@ class AttestationToken(object):
         return candidates
 
     def _get_certificates_from_x5c(self, x5clist):
-        # type:(list[str]) -> list[Certificate]
+        # type: (list[str]) -> list[Certificate]
         return [base64.b64decode(b64cert) for b64cert in x5clist]
 
     def _validate_signature(self, candidate_certificates):
-        # type:(list[AttestationSigner]) -> AttestationSigner
+        # type: (list[AttestationSigner]) -> AttestationSigner
         signed_data = (
             base64url_encode(self.header_bytes)
             + "."
@@ -807,7 +807,7 @@ class AttestationToken(object):
         return None
 
     def _validate_static_properties(self, **kwargs):
-        # type:(Any, **Any) -> bool
+        # type: (Any, **Any) -> bool
         """Validate the static properties in the attestation token."""
         if self._body:
             time_now = datetime.now()
