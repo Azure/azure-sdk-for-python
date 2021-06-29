@@ -23,14 +23,14 @@ import base64
 
 
 def base64url_encode(unencoded):
-    # type: (bytes)->str
+    # type: (bytes) -> str
     base64val = base64.urlsafe_b64encode(unencoded)
     strip_trailing = base64val.split(b"=")[0]  # pick the string before the trailing =
     return strip_trailing.decode("utf-8")
 
 
 def base64url_decode(encoded):
-    # type: (str)->bytes
+    # type: (str) -> bytes
     padding_added = encoded + "=" * ((len(encoded) * -1) % 4)
     return base64.urlsafe_b64decode(padding_added.encode("utf-8"))
 
