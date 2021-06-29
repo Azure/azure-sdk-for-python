@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 import os
 import uuid
-import base64
-import gzip
-from os import path, remove
 
 import pytest
 
@@ -152,10 +149,6 @@ class StorageGetBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/testgzip.txt.gz"))
-        data = self.get_random_bytes(1024*1024*1024)
-
-        with gzip.open(file_path, 'wb') as stream2:
-            stream2.write(data)
 
         with open(file_path, 'rb') as stream:
             data = stream.read()

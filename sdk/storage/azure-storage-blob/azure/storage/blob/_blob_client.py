@@ -807,6 +807,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
         :keyword bool decompress:
             This is True by default. Set it to False to disable the blob content auto-decompress.
+            eg. If the content-type of the blob is set to gizip, setting decompress to False to avoid unzipping.
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to

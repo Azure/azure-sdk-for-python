@@ -6,25 +6,20 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
-import gzip
 import os
-import unittest
 import uuid
 
 import pytest
-from azure.core.exceptions import HttpResponseError
 
+from _shared.testcase import (
+    StorageTestCase,
+    GlobalStorageAccountPreparer
+)
+from azure.core.exceptions import HttpResponseError
 from azure.storage.fileshare import (
     ShareFileClient,
     ShareServiceClient,
-    FileProperties,
     ContentSettings)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import (
-    StorageTestCase,
-    LogCaptured,
-    GlobalStorageAccountPreparer
-)
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
@@ -145,10 +140,6 @@ class StorageGetFileTest(StorageTestCase):
         file_name = self._get_file_reference()
         file_client = self.fsc.get_share_client(self.share_name).get_file_client(file_name)
         file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/testgzip.txt.gz"))
-        data = self.get_random_bytes(1024 * 1024 * 1024)
-
-        with gzip.open(file_path, 'wb') as stream2:
-            stream2.write(data)
 
         with open(file_path, 'rb') as stream:
             data = stream.read()
