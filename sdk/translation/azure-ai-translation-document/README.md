@@ -354,7 +354,7 @@ For more info on how to create, provision, and deploy your own custom Azure tran
 
 #### **How To Use a Custom Translation Model With Document Translation**
 In order to use a custom translation model with Document Translation, you first 
-need to create and deploy your model, then follow the code sample [sample_translation_with_custom_model.py][sample_translation_with_custom_model]. to use with Document Translation.
+need to create and deploy your model, then follow the code sample [sample_translation_with_custom_model.py][sample_translation_with_custom_model] to use with Document Translation.
 
 
 ## Troubleshooting
