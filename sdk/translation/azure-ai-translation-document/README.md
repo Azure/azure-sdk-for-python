@@ -334,13 +334,11 @@ Glossaries are domain-specific dictionaries. For example, if you want to transla
 
 Document Translation supports glossaries in the following formats:
 
-|**File Type**|**Extension**|**Description**|
-|----------------|-------------|-------------|
-|Localization Interchange File Format|.xlf. , xliff|A parallel document format, export of Translation Memory systems. The languages used are defined inside the file.|
-|Tab Separated Values/TAB|.tsv/.tab|A tab-delimited raw-data file used by spreadsheet programs.
-
-For .tsv/.tab files, you can read more about the format  [here][tsv_files_wikipedia]
-, and you can also see a sample file [here][sample_tsv_file].
+|**File Type**|**Extension**|**Description**|**Samples**|
+|---------------|---------------|---------------|---------------|
+|Tab-Separated Values/TAB|.tsv, .tab|Read more on [wikipedia][tsv_files_wikipedia]|[glossary_sample.tsv][sample_tsv_file]|
+|Comma-Seperated Values|.csv|Read more on [wikipedia][csv_files_wikipedia]|[glossary_sample.csv][sample_csv_file]|
+|Localization Interchange File Format|.xlf, .xliff|Read more on [wikipedia][xlf_files_wikipedia]|[glossary_sample.xlf][sample_xlf_file]|
 
 #### **How Use Glossaries in Document Translation**
 In order to use glossaries with Document Translation, you first need to upload your glossaries file to some blob container, and then provide the SaS url to of this blob container - which contains the glossary files - to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries]. (Note: Don't conflate with blob container with the one you use for the documents you want to translate i.e. source container).
@@ -475,7 +473,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [tsv_files_wikipedia]: https://wikipedia.org/wiki/Tab-separated_values
+[xlf_files_wikipedia]: https://wikipedia.org/wiki/XLIFF
+[csv_files_wikipedia]: https://wikipedia.org/wiki/Comma-separated_values
 [sample_tsv_file]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/assets/glossary_sample.tsv
+[sample_csv_file]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/assets/glossary_sample.csv
+[sample_xlf_file]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/assets/glossary_sample.xlf
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
