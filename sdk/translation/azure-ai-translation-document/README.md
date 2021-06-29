@@ -328,11 +328,11 @@ Note that you will need to install the [azure-storage-blob][azure_storage_blob] 
 The following section provides some insights for some of the advanced translation features such as glossaries and custom translation models.
 
 ### **Glossaries**
-Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translator provides support for glossaries. 
+Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary or you simply need specific translation. This is why Document Translation provides support for glossaries. 
 
 #### **How To Create Glossary File**
 
-Document Translator supports glossaries in the following formats:
+Document Translation supports glossaries in the following formats:
 
 |**File Type**|**Extension**|**Description**|
 |----------------|-------------|-------------|
@@ -342,19 +342,19 @@ Document Translator supports glossaries in the following formats:
 For .tsv/.tab files, you can read more about the format  [here][tsv_files_wikipedia]
 , and you can also see a sample file [here][sample_tsv_file].
 
-#### **How Use Glossaries in Document Translator**
-In order to use glossaries with Document Translator, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translator as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
+#### **How Use Glossaries in Document Translation**
+In order to use glossaries with Document Translation, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
 
 ### **Custom Translation Models**
-Instead of using Document Translator's engine for translation, you can use your own custom azure machine/deep learning model.
+Instead of using Document Translation's engine for translation, you can use your own custom azure machine/deep learning model.
 
 #### **How To Create a Custom Translation Model**
-For more info on how to create and provision your own custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
+For more info on how to create, provision, and deploy your own custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
 
-#### **How To Use a Custom Translation Model With Document Translator**
-In order to use a custom translation model with Document Translator, you first 
-need to create and deploy your model, then follow the code sample [sample_translation_with_custom_model.py][sample_translation_with_custom_model]. to use with Document translator.
+#### **How To Use a Custom Translation Model With Document Translation**
+In order to use a custom translation model with Document Translation, you first 
+need to create and deploy your model, then follow the code sample [sample_translation_with_custom_model.py][sample_translation_with_custom_model]. to use with Document Translation.
 
 
 ## Troubleshooting
