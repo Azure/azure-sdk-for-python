@@ -47,7 +47,7 @@ class AttestationClient(object):
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
         an exception.
-    :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -78,7 +78,7 @@ class AttestationClient(object):
         self._signing_certificates = None
 
     @distributed_trace_async
-    async def get_openidmetadata(self, **kwargs: Any) -> Dict[str, Any]:
+    async def get_open_id_metadata(self, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
@@ -141,7 +141,7 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -251,7 +251,7 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.

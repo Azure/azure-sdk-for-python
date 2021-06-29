@@ -82,7 +82,7 @@ class AttestationClient(object):
         self._signing_certificates = None
 
     @distributed_trace
-    def get_openidmetadata(self, **kwargs):
+    def get_open_id_metadata(self, **kwargs):
         # type: (Dict[str, Any]) -> Dict[str, Any]
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 

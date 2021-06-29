@@ -89,7 +89,7 @@ class AttestationClientCreateSamples(object):
             credentials, endpoint=self.aad_url
         ) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
-            openid_metadata = await client.get_openidmetadata()
+            openid_metadata = await client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
             print(" Issuer: ", openid_metadata["issuer"])
             await client.close()
@@ -121,7 +121,7 @@ class AttestationClientCreateSamples(object):
             credentials, self.aad_url
         ) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
-            openid_metadata = await client.get_openidmetadata()
+            openid_metadata = await client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
             print(" Issuer: ", openid_metadata["issuer"])
 

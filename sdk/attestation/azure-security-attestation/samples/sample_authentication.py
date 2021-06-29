@@ -83,7 +83,7 @@ class AttestationClientCreateSamples(object):
         # And now create an AttestationClient.
         with AttestationClient(DefaultAzureCredential(), self.aad_url) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
-            openid_metadata = client.get_openidmetadata()
+            openid_metadata = client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
             print(" Issuer: ", openid_metadata["issuer"])
 
@@ -109,7 +109,7 @@ class AttestationClientCreateSamples(object):
 
         with AttestationClient(DefaultAzureCredential(), shared_url) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
-            openid_metadata = client.get_openidmetadata()
+            openid_metadata = client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
             print(" Issuer: ", openid_metadata["issuer"])
 
