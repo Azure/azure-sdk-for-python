@@ -1,5 +1,5 @@
 -e ../../../tools/azure-sdk-tools
-git+https://github.com/Azure/azure-sdk-for-python@rest_layer#subdirectory=sdk/core/azure-core&egg=azure-core
+../../core/azure-core
 -e ../../../tools/azure-devtools
 -e ../../cognitiveservices/azure-mgmt-cognitiveservices
 -e ../../identity/azure-identity
