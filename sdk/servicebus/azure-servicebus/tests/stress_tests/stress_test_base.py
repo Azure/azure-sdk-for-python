@@ -21,10 +21,10 @@ from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusMess
 from azure.servicebus.exceptions import MessageAlreadySettled
 
 
-from utilities import _build_logger
+import logger
 from app_insights_metric import AbstractMonitorMetric
 from process_monitor import AbstractProcessMonitor
-_logger = _build_logger("stress-test", logging.WARN)
+_logger = logger.get_base_logger("stress-test.log", "stress_test", logging.WARN)
 
 
 class ReceiveType:
