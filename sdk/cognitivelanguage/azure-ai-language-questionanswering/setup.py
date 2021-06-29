@@ -70,7 +70,7 @@ setup(
         "msrest>=0.5.0"
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-ai-nspkg'],
+        ":python_version<'3.0'": ['futures', 'azure-ai-language-nspkg'],
         ":python_version<'3.5'": ["typing"]
     },
     project_urls={
