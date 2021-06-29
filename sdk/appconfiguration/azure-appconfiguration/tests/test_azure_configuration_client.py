@@ -536,7 +536,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
         changed_flag.value = json.dumps({})
         assert changed_flag.enabled == None
-        assert changed_flag.value == json.dumps({})
+        assert changed_flag.value == json.dumps({'enabled': None, "conditions": {"client_filters": None}})
 
         set_flag.value = "bad_value"
         assert set_flag.enabled == None

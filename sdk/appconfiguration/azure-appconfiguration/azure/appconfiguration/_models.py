@@ -169,7 +169,6 @@ class FeatureFlagConfigurationSetting(
         # type: (str, **Any) -> None
         if "key" in kwargs.keys() or "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
-        # super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         self.feature_id = feature_id
         self.key = self._key_prefix + self.feature_id
         self.label = kwargs.get("label", None)
@@ -186,15 +185,17 @@ class FeatureFlagConfigurationSetting(
 
     @property
     def value(self):
-        if self.enabled is None and self.filters is None:
+        try:
+            temp = json.loads(self._value)
+            temp["enabled"] = self.enabled
+
+            if "conditions" not in temp.keys():
+                temp["conditions"] = {}
+            temp["conditions"]["client_filters"] = self.filters
+            self._value = json.dumps(temp)
             return self._value
-        if self.enabled is None:
-            self._value = json.dumps({"conditions": {"client_filters": self.filters}})
+        except (JSONDecodeError, ValueError):
             return self._value
-        if self.filters is None:
-            self._value = json.dumps({"enabled": self.enabled})
-            return self._value
-        return json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
 
     @value.setter
     def value(self, new_value):
@@ -311,8 +312,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     @property
     def value(self):
-        self._value = json.dumps({"secret_uri": self.secret_id})
-        return self._value
+        try:
+            temp = json.loads(self._value)
+            temp["secret_uri"] = self.secret_id
+            self._value = json.dumps(temp)
+            return self._value
+        except (JSONDecodeError, ValueError):
+            return self._value
 
     @value.setter
     def value(self, new_value):
