@@ -347,10 +347,10 @@ In order to use glossaries with Document Translation, you first need to upload y
 
 
 ### **Custom Translation Models**
-Instead of using Document Translation's engine for translation, you can use your own custom azure machine/deep learning model.
+Instead of using Document Translation's engine for translation, you can use your own custom Azure machine/deep learning model.
 
 #### **How To Create a Custom Translation Model**
-For more info on how to create, provision, and deploy your own custom azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
+For more info on how to create, provision, and deploy your own custom Azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
 
 #### **How To Use a Custom Translation Model With Document Translation**
 In order to use a custom translation model with Document Translation, you first 
@@ -376,7 +376,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 ### Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation][azure_core_ref_docs]
+The Azure-Core [reference documentation][azure_core_ref_docs]
 describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
