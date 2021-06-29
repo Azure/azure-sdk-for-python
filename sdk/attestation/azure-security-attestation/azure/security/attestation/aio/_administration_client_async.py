@@ -438,12 +438,13 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace_async
     async def add_policy_management_certificate(
-        self, certificate_to_add: str, **kwargs: Any
+        self, certificate_to_add: str, *args, **kwargs: Any
     ) -> AttestationPolicyManagementCertificateResult:
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to
             the list of attestation policy management certificates.
+        :param Any args: Ignored - used to force certificate_to_add to be positional only.
         :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
         :keyword str signing_certificate: PEM encoded signing certificate which is one of
@@ -550,12 +551,13 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace_async
     async def remove_policy_management_certificate(
-        self, certificate_to_remove: str, **kwargs: Any
+        self, certificate_to_remove: str, *args, **kwargs: Any
     ) -> AttestationPolicyManagementCertificateResult:
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
         :param str certificate_to_remove: PEM encoded X.509 certificate to remove from
             the list of attestation policy management certificates.
+        :param Any args: Ignored - used to force certificate_to_remove to be positional only.
         :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
         :keyword str signing_certificate: PEM encoded signing certificate which is one of
