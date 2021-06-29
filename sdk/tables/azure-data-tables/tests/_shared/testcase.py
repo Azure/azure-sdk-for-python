@@ -463,8 +463,6 @@ class TableTestCase(object):
         assert stats["geo_replication"]["status"] == "unavailable"
         assert stats["geo_replication"]["last_sync_time"] is None
 
-<<<<<<< HEAD
-=======
     @staticmethod
     def override_response_body_with_unavailable_status(response):
         response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
@@ -498,4 +496,3 @@ class RetryCounter(object):
 
     def simple_count(self, retry_context):
         self.count += 1
->>>>>>> 15523b712402fc928ee58f2a5311ac9ea703699c
