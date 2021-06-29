@@ -16,7 +16,13 @@ except:
 try:
     # Note: these models are only available from v17.0.0 and higher, if you need them you'll also need azure-core 1.4.0 and higher
     from azure.mgmt.storage import StorageManagementClient
-    from azure.mgmt.storage.models import StorageAccount, Endpoints, LastAccessTimeTrackingPolicy, BlobServiceProperties, DeleteRetentionPolicy
+    from azure.mgmt.storage.models import (
+        StorageAccount,
+        Endpoints,
+        LastAccessTimeTrackingPolicy,
+        BlobServiceProperties,
+        DeleteRetentionPolicy,
+    )
 except ImportError:
     pass
 
@@ -146,10 +152,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
 
 
 class BlobAccountPreparer(StorageAccountPreparer):
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         self.is_versioning_enabled = kwargs.pop("is_versioning_enabled", None)
         self.is_last_access_time_enabled = kwargs.pop("is_last_access_time_enabled", None)
         self.container_retention_days = kwargs.pop("container_retention_days", None)
@@ -172,8 +175,9 @@ class BlobAccountPreparer(StorageAccountPreparer):
         if self.is_versioning_enabled is True:
             props.is_versioning_enabled = True
         if self.container_retention_days:
-            props.container_delete_retention_policy = DeleteRetentionPolicy(enabled=True,
-                                                                            days=self.container_retention_days)
+            props.container_delete_retention_policy = DeleteRetentionPolicy(
+                enabled=True, days=self.container_retention_days
+            )
         if self.is_last_access_time_enabled:
             props.last_access_time_tracking_policy = LastAccessTimeTrackingPolicy(enable=True)
 

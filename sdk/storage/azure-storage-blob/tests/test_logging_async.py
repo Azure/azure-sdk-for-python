@@ -32,7 +32,7 @@ from azure.storage.blob._shared.shared_access_signature import QueryStringConsta
 from _shared.testcase import (
     LogCaptured, GlobalStorageAccountPreparer
 )
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
 if sys.version_info >= (3,):
