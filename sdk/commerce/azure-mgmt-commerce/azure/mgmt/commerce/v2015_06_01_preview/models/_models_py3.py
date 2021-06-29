@@ -6,6 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
+from typing import Dict, List, Optional
+
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
@@ -26,11 +29,14 @@ class ErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = code
+        self.message = message
 
 
 class InfoField(msrest.serialization.Model):
@@ -46,10 +52,12 @@ class InfoField(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        project: Optional[str] = None,
         **kwargs
     ):
         super(InfoField, self).__init__(**kwargs)
-        self.project = kwargs.get('project', None)
+        self.project = project
 
 
 class MeterInfo(msrest.serialization.Model):
@@ -96,19 +104,30 @@ class MeterInfo(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        meter_id: Optional[str] = None,
+        meter_name: Optional[str] = None,
+        meter_category: Optional[str] = None,
+        meter_sub_category: Optional[str] = None,
+        unit: Optional[str] = None,
+        meter_tags: Optional[List[str]] = None,
+        meter_region: Optional[str] = None,
+        meter_rates: Optional[Dict[str, float]] = None,
+        effective_date: Optional[datetime.datetime] = None,
+        included_quantity: Optional[float] = None,
         **kwargs
     ):
         super(MeterInfo, self).__init__(**kwargs)
-        self.meter_id = kwargs.get('meter_id', None)
-        self.meter_name = kwargs.get('meter_name', None)
-        self.meter_category = kwargs.get('meter_category', None)
-        self.meter_sub_category = kwargs.get('meter_sub_category', None)
-        self.unit = kwargs.get('unit', None)
-        self.meter_tags = kwargs.get('meter_tags', None)
-        self.meter_region = kwargs.get('meter_region', None)
-        self.meter_rates = kwargs.get('meter_rates', None)
-        self.effective_date = kwargs.get('effective_date', None)
-        self.included_quantity = kwargs.get('included_quantity', None)
+        self.meter_id = meter_id
+        self.meter_name = meter_name
+        self.meter_category = meter_category
+        self.meter_sub_category = meter_sub_category
+        self.unit = unit
+        self.meter_tags = meter_tags
+        self.meter_region = meter_region
+        self.meter_rates = meter_rates
+        self.effective_date = effective_date
+        self.included_quantity = included_quantity
 
 
 class OfferTermInfo(msrest.serialization.Model):
@@ -121,7 +140,7 @@ class OfferTermInfo(msrest.serialization.Model):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
+    :type name: str or ~azure.mgmt.commerce.v2015_06_01_preview.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     """
@@ -141,11 +160,13 @@ class OfferTermInfo(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        effective_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(OfferTermInfo, self).__init__(**kwargs)
         self.name = None  # type: Optional[str]
-        self.effective_date = kwargs.get('effective_date', None)
+        self.effective_date = effective_date
 
 
 class MonetaryCommitment(OfferTermInfo):
@@ -155,7 +176,7 @@ class MonetaryCommitment(OfferTermInfo):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
+    :type name: str or ~azure.mgmt.commerce.v2015_06_01_preview.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     :param tiered_discount: The list of key/value pairs for the tiered meter rates, in the format
@@ -179,12 +200,16 @@ class MonetaryCommitment(OfferTermInfo):
 
     def __init__(
         self,
+        *,
+        effective_date: Optional[datetime.datetime] = None,
+        tiered_discount: Optional[Dict[str, float]] = None,
+        excluded_meter_ids: Optional[List[str]] = None,
         **kwargs
     ):
-        super(MonetaryCommitment, self).__init__(**kwargs)
+        super(MonetaryCommitment, self).__init__(effective_date=effective_date, **kwargs)
         self.name = 'Monetary Commitment'  # type: str
-        self.tiered_discount = kwargs.get('tiered_discount', None)
-        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
+        self.tiered_discount = tiered_discount
+        self.excluded_meter_ids = excluded_meter_ids
 
 
 class MonetaryCredit(OfferTermInfo):
@@ -194,7 +219,7 @@ class MonetaryCredit(OfferTermInfo):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
+    :type name: str or ~azure.mgmt.commerce.v2015_06_01_preview.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     :param credit: The amount of credit provided under the terms of the given offer level.
@@ -216,12 +241,16 @@ class MonetaryCredit(OfferTermInfo):
 
     def __init__(
         self,
+        *,
+        effective_date: Optional[datetime.datetime] = None,
+        credit: Optional[float] = None,
+        excluded_meter_ids: Optional[List[str]] = None,
         **kwargs
     ):
-        super(MonetaryCredit, self).__init__(**kwargs)
+        super(MonetaryCredit, self).__init__(effective_date=effective_date, **kwargs)
         self.name = 'Monetary Credit'  # type: str
-        self.credit = kwargs.get('credit', None)
-        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
+        self.credit = credit
+        self.excluded_meter_ids = excluded_meter_ids
 
 
 class RateCardQueryParameters(msrest.serialization.Model):
@@ -230,9 +259,9 @@ class RateCardQueryParameters(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param offer_durable_id: Required. The Offer ID parameter consists of the 'MS-AZR-' prefix,
-     plus the Offer ID number (e.g., MS-AZR-0026P). See https://azure.microsoft.com/en-
-     us/support/legal/offer-details/ for more information on the list of available Offer IDs,
-     country/region availability, and billing currency.
+     plus the Offer ID number (e.g., MS-AZR-0026P). See
+     https://azure.microsoft.com/en-us/support/legal/offer-details/ for more information on the list
+     of available Offer IDs, country/region availability, and billing currency.
     :type offer_durable_id: str
     :param currency: Required. The currency in which the rates need to be provided.
     :type currency: str
@@ -258,13 +287,18 @@ class RateCardQueryParameters(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        offer_durable_id: str,
+        currency: str,
+        locale: str,
+        region_info: str,
         **kwargs
     ):
         super(RateCardQueryParameters, self).__init__(**kwargs)
-        self.offer_durable_id = kwargs['offer_durable_id']
-        self.currency = kwargs['currency']
-        self.locale = kwargs['locale']
-        self.region_info = kwargs['region_info']
+        self.offer_durable_id = offer_durable_id
+        self.currency = currency
+        self.locale = locale
+        self.region_info = region_info
 
 
 class RecurringCharge(OfferTermInfo):
@@ -274,7 +308,7 @@ class RecurringCharge(OfferTermInfo):
 
     :param name: Required. Name of the offer term.Constant filled by server.  Possible values
      include: "Recurring Charge", "Monetary Commitment", "Monetary Credit".
-    :type name: str or ~azure.mgmt.commerce.models.OfferTermInfoEnum
+    :type name: str or ~azure.mgmt.commerce.v2015_06_01_preview.models.OfferTermInfoEnum
     :param effective_date: Indicates the date from which the offer term is effective.
     :type effective_date: ~datetime.datetime
     :param recurring_charge: The amount of recurring charge as per the offer term.
@@ -293,11 +327,14 @@ class RecurringCharge(OfferTermInfo):
 
     def __init__(
         self,
+        *,
+        effective_date: Optional[datetime.datetime] = None,
+        recurring_charge: Optional[int] = None,
         **kwargs
     ):
-        super(RecurringCharge, self).__init__(**kwargs)
+        super(RecurringCharge, self).__init__(effective_date=effective_date, **kwargs)
         self.name = 'Recurring Charge'  # type: str
-        self.recurring_charge = kwargs.get('recurring_charge', None)
+        self.recurring_charge = recurring_charge
 
 
 class ResourceRateCardInfo(msrest.serialization.Model):
@@ -310,9 +347,9 @@ class ResourceRateCardInfo(msrest.serialization.Model):
     :param is_tax_included: All rates are pretax, so this will always be returned as 'false'.
     :type is_tax_included: bool
     :param offer_terms: A list of offer terms.
-    :type offer_terms: list[~azure.mgmt.commerce.models.OfferTermInfo]
+    :type offer_terms: list[~azure.mgmt.commerce.v2015_06_01_preview.models.OfferTermInfo]
     :param meters: A list of meters.
-    :type meters: list[~azure.mgmt.commerce.models.MeterInfo]
+    :type meters: list[~azure.mgmt.commerce.v2015_06_01_preview.models.MeterInfo]
     """
 
     _attribute_map = {
@@ -325,14 +362,20 @@ class ResourceRateCardInfo(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        currency: Optional[str] = None,
+        locale: Optional[str] = None,
+        is_tax_included: Optional[bool] = None,
+        offer_terms: Optional[List["OfferTermInfo"]] = None,
+        meters: Optional[List["MeterInfo"]] = None,
         **kwargs
     ):
         super(ResourceRateCardInfo, self).__init__(**kwargs)
-        self.currency = kwargs.get('currency', None)
-        self.locale = kwargs.get('locale', None)
-        self.is_tax_included = kwargs.get('is_tax_included', None)
-        self.offer_terms = kwargs.get('offer_terms', None)
-        self.meters = kwargs.get('meters', None)
+        self.currency = currency
+        self.locale = locale
+        self.is_tax_included = is_tax_included
+        self.offer_terms = offer_terms
+        self.meters = meters
 
 
 class UsageAggregation(msrest.serialization.Model):
@@ -366,7 +409,7 @@ class UsageAggregation(msrest.serialization.Model):
     :param meter_region: Region of the meterId used for billing purposes.
     :type meter_region: str
     :param info_fields: Key-value pairs of instance details (legacy format).
-    :type info_fields: ~azure.mgmt.commerce.models.InfoField
+    :type info_fields: ~azure.mgmt.commerce.v2015_06_01_preview.models.InfoField
     :param instance_data: Key-value pairs of instance details represented as a string.
     :type instance_data: str
     """
@@ -391,31 +434,47 @@ class UsageAggregation(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        meter_id: Optional[str] = None,
+        usage_start_time: Optional[datetime.datetime] = None,
+        usage_end_time: Optional[datetime.datetime] = None,
+        quantity: Optional[float] = None,
+        unit: Optional[str] = None,
+        meter_name: Optional[str] = None,
+        meter_category: Optional[str] = None,
+        meter_sub_category: Optional[str] = None,
+        meter_region: Optional[str] = None,
+        info_fields: Optional["InfoField"] = None,
+        instance_data: Optional[str] = None,
         **kwargs
     ):
         super(UsageAggregation, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.meter_id = kwargs.get('meter_id', None)
-        self.usage_start_time = kwargs.get('usage_start_time', None)
-        self.usage_end_time = kwargs.get('usage_end_time', None)
-        self.quantity = kwargs.get('quantity', None)
-        self.unit = kwargs.get('unit', None)
-        self.meter_name = kwargs.get('meter_name', None)
-        self.meter_category = kwargs.get('meter_category', None)
-        self.meter_sub_category = kwargs.get('meter_sub_category', None)
-        self.meter_region = kwargs.get('meter_region', None)
-        self.info_fields = kwargs.get('info_fields', None)
-        self.instance_data = kwargs.get('instance_data', None)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.subscription_id = subscription_id
+        self.meter_id = meter_id
+        self.usage_start_time = usage_start_time
+        self.usage_end_time = usage_end_time
+        self.quantity = quantity
+        self.unit = unit
+        self.meter_name = meter_name
+        self.meter_category = meter_category
+        self.meter_sub_category = meter_sub_category
+        self.meter_region = meter_region
+        self.info_fields = info_fields
+        self.instance_data = instance_data
 
 
 class UsageAggregationListResult(msrest.serialization.Model):
     """The Get UsageAggregates operation response.
 
     :param value: Gets or sets details for the requested aggregation.
-    :type value: list[~azure.mgmt.commerce.models.UsageAggregation]
+    :type value: list[~azure.mgmt.commerce.v2015_06_01_preview.models.UsageAggregation]
     :param next_link: Gets or sets the link to the next set of results.
     :type next_link: str
     """
@@ -427,8 +486,11 @@ class UsageAggregationListResult(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        value: Optional[List["UsageAggregation"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         super(UsageAggregationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
+        self.value = value
+        self.next_link = next_link

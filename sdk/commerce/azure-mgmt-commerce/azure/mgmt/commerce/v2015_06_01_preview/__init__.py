@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._usage_management_client import UsageManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['UsageManagementClient']
 
 try:

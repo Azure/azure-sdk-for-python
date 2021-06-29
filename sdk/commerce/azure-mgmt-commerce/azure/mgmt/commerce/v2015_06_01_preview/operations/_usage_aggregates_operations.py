@@ -31,7 +31,7 @@ class UsageAggregatesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.commerce.models
+    :type models: ~azure.mgmt.commerce.v2015_06_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -70,14 +70,14 @@ class UsageAggregatesOperations(object):
         :type show_details: bool
         :param aggregation_granularity: ``Daily`` (default) returns the data in daily granularity,
          ``Hourly`` returns the data in hourly granularity.
-        :type aggregation_granularity: str or ~azure.mgmt.commerce.models.AggregationGranularity
+        :type aggregation_granularity: str or ~azure.mgmt.commerce.v2015_06_01_preview.models.AggregationGranularity
         :param continuation_token_parameter: Used when a continuation token string is provided in the
          response body of the previous call, enabling paging through a large result set. If not present,
          the data is retrieved from the beginning of the day/hour (based on the granularity) passed in.
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either UsageAggregationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.commerce.models.UsageAggregationListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.commerce.v2015_06_01_preview.models.UsageAggregationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageAggregationListResult"]
@@ -133,7 +133,7 @@ class UsageAggregatesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

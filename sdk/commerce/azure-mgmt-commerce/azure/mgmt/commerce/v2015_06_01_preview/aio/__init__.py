@@ -8,9 +8,3 @@
 
 from ._usage_management_client import UsageManagementClient
 __all__ = ['UsageManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
