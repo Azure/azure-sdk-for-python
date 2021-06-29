@@ -1,5 +1,11 @@
 # Release History
 
+## 1.3.0 (2021-06-29)
+
+### Features
+
+- Support CAE
+
 ## 1.3.0b3 (2021-06-07)
 
 ### Changed
