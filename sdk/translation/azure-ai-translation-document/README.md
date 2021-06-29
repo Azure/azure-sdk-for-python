@@ -343,7 +343,7 @@ For .tsv/.tab files, you can read more about the format  [here][tsv_files_wikipe
 , and you can also see a sample file [here][sample_tsv_file].
 
 #### **How Use Glossaries in Document Translation**
-In order to use glossaries with Document Translation, you first need to upload your glossaries file to a blob container, and then provide it's SaS url to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
+In order to use glossaries with Document Translation, you first need to upload your glossaries file to some blob container, and then provide the SaS url to of this blob container - which contains the glossary files - to Document Translation as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries]. (Note: Don't conflate with blob container with the one you use for the documents you want to translate i.e. source container).
 
 
 ### **Custom Translation Models**
