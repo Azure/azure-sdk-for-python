@@ -16,7 +16,6 @@ from azure.storage.blob import ContentSettings as BlobContentSettings
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
-from azure.storage.blob import ParquetDialect as BlobParquetDialect
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
@@ -720,11 +719,6 @@ class ArrowDialect(BlobArrowDialect):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
-
-
-class ParquetDialect(BlobParquetDialect):
-    """Defines parquet input serialization for a file query request."""
-    pass
 
 
 class QuickQueryDialect(str, Enum):
