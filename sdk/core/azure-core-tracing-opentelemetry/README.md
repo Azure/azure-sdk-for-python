@@ -61,7 +61,7 @@ exporter = ConsoleSpanExporter()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 trace.get_tracer_provider().add_span_processor(
-    SimpleExportSpanProcessor(exporter)
+    SimpleSpanProcessor(exporter)
 )
 
 # Example with Storage SDKs
