@@ -184,11 +184,15 @@ class AsyncPipelineClient(PipelineClientBase):
         if rest_request:
             rest_response = _to_rest_response(response)
             if not kwargs.get("stream"):
-                # in this case, the pipeline transport response already called .load_body(), so
-                # the body is loaded. instead of doing response.read(), going to set the body
-                # to the internal content
-                rest_response._content = response.body()  # pylint: disable=protected-access
-                await rest_response.close()
+                try:
+                    # in this case, the pipeline transport response already called .load_body(), so
+                    # the body is loaded. instead of doing response.read(), going to set the body
+                    # to the internal content
+                    rest_response._content = response.body()  # pylint: disable=protected-access
+                    await rest_response.close()
+                except Exception as exc:
+                    await rest_response.close()
+                    raise exc
             response = rest_response
         if return_pipeline_response:
             pipeline_response.http_response = response

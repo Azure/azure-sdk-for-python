@@ -210,9 +210,13 @@ class PipelineClient(PipelineClientBase):
         response = pipeline_response.http_response
         if rest_request:
             response = _to_rest_response(response)
-            if not kwargs.get("stream", False):
-                response.read()
+            try:
+                if not kwargs.get("stream", False):
+                    response.read()
+                    response.close()
+            except Exception as exc:
                 response.close()
+                raise exc
         if return_pipeline_response:
             pipeline_response.http_response = response
             pipeline_response.http_request = request
