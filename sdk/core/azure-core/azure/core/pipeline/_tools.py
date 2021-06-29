@@ -32,3 +32,40 @@ def await_result(func, *args, **kwargs):
             "Policy {} returned awaitable object in non-async pipeline.".format(func)
         )
     return result
+
+def to_rest_request(pipeline_transport_request):
+    from ..rest import HttpRequest as RestHttpRequest
+    return RestHttpRequest(
+        method=pipeline_transport_request.method,
+        url=pipeline_transport_request.url,
+        headers=pipeline_transport_request.headers,
+        files=pipeline_transport_request.files,
+        data=pipeline_transport_request.data
+    )
+
+def to_rest_response(pipeline_transport_response):
+    from .transport._requests_basic import RequestsTransportResponse
+    from ..rest._requests_basic import RestRequestsTransportResponse
+    from ..rest import HttpResponse
+    if isinstance(pipeline_transport_response, RequestsTransportResponse):
+        response_type = RestRequestsTransportResponse
+    else:
+        response_type = HttpResponse
+    response = response_type(
+        request=to_rest_request(pipeline_transport_response.request),
+        internal_response=pipeline_transport_response.internal_response,
+    )
+    response._connection_data_block_size = pipeline_transport_response.block_size  # pylint: disable=protected-access
+    return response
+
+def get_block_size(response):
+    try:
+        return response._connection_data_block_size  # pylint: disable=protected-access
+    except AttributeError:
+        return response.block_size
+
+def get_internal_response(response):
+    try:
+        return response._internal_response  # pylint: disable=protected-access
+    except AttributeError:
+        return response.internal_response
