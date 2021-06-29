@@ -893,6 +893,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
         task_order = [_determine_action_type(action) for action in actions]
+        if len(task_order) != len(set(task_order)):
+            raise ValueError("Multiple of the same action is not currently supported.")
 
         try:
             analyze_tasks = self._client.models(api_version='v3.1').JobManifestTasks(
