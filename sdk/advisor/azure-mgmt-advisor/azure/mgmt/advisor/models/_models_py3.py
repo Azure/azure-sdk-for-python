@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -424,11 +424,20 @@ class ResourceMetadata(msrest.serialization.Model):
     :type resource_id: str
     :param source: Source from which recommendation is generated.
     :type source: str
+    :param action: The action to view resource.
+    :type action: dict[str, any]
+    :param singular: The singular user friendly name of resource type. eg: virtual machine.
+    :type singular: str
+    :param plural: The plural user friendly name of resource type. eg: virtual machines.
+    :type plural: str
     """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
+        'action': {'key': 'action', 'type': '{object}'},
+        'singular': {'key': 'singular', 'type': 'str'},
+        'plural': {'key': 'plural', 'type': 'str'},
     }
 
     def __init__(
@@ -436,11 +445,17 @@ class ResourceMetadata(msrest.serialization.Model):
         *,
         resource_id: Optional[str] = None,
         source: Optional[str] = None,
+        action: Optional[Dict[str, Any]] = None,
+        singular: Optional[str] = None,
+        plural: Optional[str] = None,
         **kwargs
     ):
         super(ResourceMetadata, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.source = source
+        self.action = action
+        self.singular = singular
+        self.plural = plural
 
 
 class ResourceRecommendationBase(Resource):
@@ -468,7 +483,7 @@ class ResourceRecommendationBase(Resource):
      recommendation.
     :type last_updated: ~datetime.datetime
     :param metadata: The recommendation metadata.
-    :type metadata: dict[str, object]
+    :type metadata: dict[str, any]
     :param recommendation_type_id: The recommendation-type GUID.
     :type recommendation_type_id: str
     :param risk: The potential risk of not implementing the recommendation. Possible values
@@ -482,6 +497,21 @@ class ResourceRecommendationBase(Resource):
     :type extended_properties: dict[str, str]
     :param resource_metadata: Metadata of resource that was assessed.
     :type resource_metadata: ~azure.mgmt.advisor.models.ResourceMetadata
+    :param description: The detailed description of recommendation.
+    :type description: str
+    :param label: The label of recommendation.
+    :type label: str
+    :param learn_more_link: The link to learn more about recommendation and generation logic.
+    :type learn_more_link: str
+    :param potential_benefits: The potential benefit of implementing recommendation.
+    :type potential_benefits: str
+    :param actions: The list of recommended actions to implement recommendation.
+    :type actions: list[dict[str, any]]
+    :param remediation: The automated way to apply recommendation.
+    :type remediation: dict[str, any]
+    :param exposed_metadata_properties: The recommendation metadata properties exposed to customer
+     to provide additional information.
+    :type exposed_metadata_properties: dict[str, any]
     """
 
     _validation = {
@@ -506,6 +536,13 @@ class ResourceRecommendationBase(Resource):
         'suppression_ids': {'key': 'properties.suppressionIds', 'type': '[str]'},
         'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
         'resource_metadata': {'key': 'properties.resourceMetadata', 'type': 'ResourceMetadata'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'learn_more_link': {'key': 'properties.learnMoreLink', 'type': 'str'},
+        'potential_benefits': {'key': 'properties.potentialBenefits', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[{object}]'},
+        'remediation': {'key': 'properties.remediation', 'type': '{object}'},
+        'exposed_metadata_properties': {'key': 'properties.exposedMetadataProperties', 'type': '{object}'},
     }
 
     def __init__(
@@ -516,13 +553,20 @@ class ResourceRecommendationBase(Resource):
         impacted_field: Optional[str] = None,
         impacted_value: Optional[str] = None,
         last_updated: Optional[datetime.datetime] = None,
-        metadata: Optional[Dict[str, object]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
         recommendation_type_id: Optional[str] = None,
         risk: Optional[Union[str, "Risk"]] = None,
         short_description: Optional["ShortDescription"] = None,
         suppression_ids: Optional[List[str]] = None,
         extended_properties: Optional[Dict[str, str]] = None,
         resource_metadata: Optional["ResourceMetadata"] = None,
+        description: Optional[str] = None,
+        label: Optional[str] = None,
+        learn_more_link: Optional[str] = None,
+        potential_benefits: Optional[str] = None,
+        actions: Optional[List[Dict[str, Any]]] = None,
+        remediation: Optional[Dict[str, Any]] = None,
+        exposed_metadata_properties: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(ResourceRecommendationBase, self).__init__(**kwargs)
@@ -538,6 +582,13 @@ class ResourceRecommendationBase(Resource):
         self.suppression_ids = suppression_ids
         self.extended_properties = extended_properties
         self.resource_metadata = resource_metadata
+        self.description = description
+        self.label = label
+        self.learn_more_link = learn_more_link
+        self.potential_benefits = potential_benefits
+        self.actions = actions
+        self.remediation = remediation
+        self.exposed_metadata_properties = exposed_metadata_properties
 
 
 class ResourceRecommendationBaseListResult(msrest.serialization.Model):

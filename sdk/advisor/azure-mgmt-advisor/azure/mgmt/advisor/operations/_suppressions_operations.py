@@ -18,7 +18,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -52,7 +52,7 @@ class SuppressionsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union["_models.SuppressionContract", "_models.ArmErrorResponse"]
+        # type: (...) -> "_models.SuppressionContract"
         """Obtains the details of a suppression.
 
         :param resource_uri: The fully qualified Azure Resource Manager identifier of the resource to
@@ -63,13 +63,15 @@ class SuppressionsOperations(object):
         :param name: The name of the suppression.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SuppressionContract or ArmErrorResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.advisor.models.SuppressionContract or ~azure.mgmt.advisor.models.ArmErrorResponse
+        :return: SuppressionContract, or the result of cls(response)
+        :rtype: ~azure.mgmt.advisor.models.SuppressionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.SuppressionContract", "_models.ArmErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SuppressionContract"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ArmErrorResponse, response), error_format=ARMErrorFormat),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-01-01"
@@ -96,15 +98,12 @@ class SuppressionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SuppressionContract', pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize('ArmErrorResponse', pipeline_response)
+        deserialized = self._deserialize('SuppressionContract', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -120,7 +119,7 @@ class SuppressionsOperations(object):
         suppression_contract,  # type: "_models.SuppressionContract"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Union["_models.SuppressionContract", "_models.ArmErrorResponse"]
+        # type: (...) -> "_models.SuppressionContract"
         """Enables the snoozed or dismissed attribute of a recommendation. The snoozed or dismissed
         attribute is referred to as a suppression. Use this API to create or update the snoozed or
         dismissed status of a recommendation.
@@ -136,13 +135,15 @@ class SuppressionsOperations(object):
          duration.
         :type suppression_contract: ~azure.mgmt.advisor.models.SuppressionContract
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SuppressionContract or ArmErrorResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.advisor.models.SuppressionContract or ~azure.mgmt.advisor.models.ArmErrorResponse
+        :return: SuppressionContract, or the result of cls(response)
+        :rtype: ~azure.mgmt.advisor.models.SuppressionContract
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["_models.SuppressionContract", "_models.ArmErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SuppressionContract"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ArmErrorResponse, response), error_format=ARMErrorFormat),
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-01-01"
@@ -174,15 +175,12 @@ class SuppressionsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SuppressionContract', pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize('ArmErrorResponse', pipeline_response)
+        deserialized = self._deserialize('SuppressionContract', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -219,6 +217,7 @@ class SuppressionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-01-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -235,6 +234,7 @@ class SuppressionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -242,7 +242,8 @@ class SuppressionsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -317,8 +318,9 @@ class SuppressionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

@@ -43,7 +43,7 @@ class RecommendationsOperations:
 
     async def generate(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Initiates the recommendation generation or computation process for a subscription. This
         operation is asynchronous. The generated recommendations are stored in a cache in the Advisor
@@ -60,6 +60,7 @@ class RecommendationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-01-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.generate.metadata['url']  # type: ignore
@@ -74,6 +75,7 @@ class RecommendationsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -81,7 +83,8 @@ class RecommendationsOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
@@ -95,7 +98,7 @@ class RecommendationsOperations:
     async def get_generate_status(
         self,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Retrieves the status of the recommendation computation or generation process. Invoke this API
         after calling the generation recommendation. The URI of this API is returned in the Location
@@ -115,6 +118,7 @@ class RecommendationsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-01-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_generate_status.metadata['url']  # type: ignore
@@ -130,6 +134,7 @@ class RecommendationsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -137,7 +142,8 @@ class RecommendationsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -149,7 +155,7 @@ class RecommendationsOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceRecommendationBaseListResult"]:
         """Obtains cached recommendations for a subscription. The recommendations are generated or
         computed by invoking generateRecommendations.
@@ -220,8 +226,9 @@ class RecommendationsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -234,7 +241,7 @@ class RecommendationsOperations:
         self,
         resource_uri: str,
         recommendation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceRecommendationBase":
         """Obtains details of a cached recommendation.
 
@@ -278,7 +285,8 @@ class RecommendationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ArmErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceRecommendationBase', pipeline_response)
 
