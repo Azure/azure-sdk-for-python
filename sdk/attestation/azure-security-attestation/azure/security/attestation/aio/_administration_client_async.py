@@ -491,7 +491,7 @@ class AttestationAdministrationClient(object):
 
         """
 
-        if len(args) > 1 or len(args) == 0:
+        if len(args) != 1:
             raise TypeError(
                 "add_policy_management_certificate takes a single positional parameter. found {}".format(
                     len(args)
@@ -609,7 +609,7 @@ class AttestationAdministrationClient(object):
 
         """
 
-        if len(args) > 1 or len(args) == 0:
+        if len(args) != 1:
             raise TypeError(
                 "remove_policy_management_certificate takes a single positional parameter. found {}".format(
                     len(args)
@@ -679,7 +679,7 @@ class AttestationAdministrationClient(object):
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
-            if self._signing_certificates == None:
+            if not self._signing_certificates:
                 signing_certificates = await self._client.signing_certificates.get(
                     **kwargs
                 )

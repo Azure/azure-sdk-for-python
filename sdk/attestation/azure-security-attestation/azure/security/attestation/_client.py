@@ -370,7 +370,7 @@ class AttestationClient(object):
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
-            if self._signing_certificates is None:
+            if not self._signing_certificates:
                 signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
