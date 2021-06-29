@@ -62,12 +62,16 @@ setup(
         # For example, for storage, this would mean adding 'azure.storage' 
         # in addition to the default 'azure' that is seen here.
         'azure'
+        'azure.ai',
+        'azure.ai.language',
     ]),
     install_requires=[
-        'azure-core<2.0.0,>=1.10.0',
+        'azure-core<2.0.0,>=1.16.0',
+        "msrest>=0.6.19"
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['futures', 'azure-ai-nspkg<2.0.0,>=1.0.0'],
+        ":python_version<'3.5'": ["typing"]
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
