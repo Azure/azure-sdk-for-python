@@ -27,6 +27,7 @@ from azure.storage.blob import (
     generate_container_sas,
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient, ContentSettings)
+from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
