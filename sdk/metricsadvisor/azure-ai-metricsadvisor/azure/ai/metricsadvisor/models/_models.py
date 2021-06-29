@@ -94,6 +94,7 @@ from .._generated.models import (
     ServicePrincipalInKVParamPatch as _ServicePrincipalInKVParamPatch,
     ServicePrincipalInKVCredential as _ServicePrincipalInKVCredential,
     ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
+    DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
 )
 
 if TYPE_CHECKING:
@@ -182,7 +183,7 @@ class MetricAnomalyAlertConfigurationsOperator(str, Enum):
     XOR = "XOR"
 
 
-class DetectionConditionsOperator(str, Enum):
+class DetectionConditionOperator(str, Enum):
 
     AND = "AND"
     OR = "OR"
@@ -253,7 +254,7 @@ class DataFeedMissingDataPointFillSettings(object):
     :keyword fill_type: The type of fill missing point for anomaly detection. Possible
         values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
         "SmartFilling".
-    :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
+    :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
     :keyword float custom_fill_value: The value of fill missing point for anomaly detection
         if "CustomValue" fill type is specified.
     """
@@ -777,6 +778,7 @@ class AnomalyAlertConfiguration(object):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
+    :keyword list[str] dimensions_to_split_alert: dimensions used to split alert.
 
     """
     def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
@@ -787,17 +789,19 @@ class AnomalyAlertConfiguration(object):
         self.id = kwargs.get('id', None)
         self.description = kwargs.get('description', None)
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
+        self.dimensions_to_split_alert = kwargs.get('dimensions_to_split_alert', None)
 
     def __repr__(self):
         return "AnomalyAlertConfiguration(id={}, name={}, description={}, cross_metrics_operator={}, hook_ids={}, " \
-               "metric_alert_configurations={})".format(
-                    self.id,
-                    self.name,
-                    self.description,
-                    self.cross_metrics_operator,
-                    self.hook_ids,
-                    repr(self.metric_alert_configurations)
-                )[:1024]
+               "metric_alert_configurations={}, dimensions_to_split_alert={})".format(
+            self.id,
+            self.name,
+            self.description,
+            self.cross_metrics_operator,
+            self.hook_ids,
+            repr(self.metric_alert_configurations),
+            self.dimensions_to_split_alert
+        )[:1024]
 
     @classmethod
     def _from_generated(cls, config):
@@ -810,7 +814,8 @@ class AnomalyAlertConfiguration(object):
             metric_alert_configurations=[
                 MetricAlertConfiguration._from_generated(c)
                 for c in config.metric_alerting_configurations
-            ]
+            ],
+            dimensions_to_split_alert=config.split_alert_by_dimensions
         )
 
     def _to_generated(self):
@@ -821,7 +826,8 @@ class AnomalyAlertConfiguration(object):
             ],
             hook_ids=self.hook_ids,
             cross_metrics_operator=self.cross_metrics_operator,
-            description=self.description
+            description=self.description,
+            split_alert_by_dimensions=self.dimensions_to_split_alert
         )
 
     def _to_generated_patch(
@@ -839,7 +845,8 @@ class AnomalyAlertConfiguration(object):
             ] if metric_alert_configurations else None,
             hook_ids=hook_ids or self.hook_ids,
             cross_metrics_operator=cross_metrics_operator or self.cross_metrics_operator,
-            description=description or self.description
+            description=description or self.description,
+            split_alert_by_dimensions=self.dimensions_to_split_alert
         )
 
 
@@ -944,16 +951,16 @@ class AnomalyDetectionConfiguration(object):
 class DataFeedSource(dict):
     """DataFeedSource base class
 
-    :param data_source_type: Required. data source type.Constant filled by server.  Possible values
+    :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :type data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
-    :keyword authentication_type: authentication type for corresponding data source. Possible values
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
+    :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :paramtype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
-    :keyword str credential_id: The datasource credential id.
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
+    :ivar str credential_id: The datasource credential id.
     """
     def __init__(self, data_source_type, **kwargs):
         # type: (str, **Any) -> None
@@ -969,11 +976,11 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query.
     :keyword str azure_cloud: Azure cloud environment.
@@ -1037,11 +1044,11 @@ class AzureBlobDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param container: Required. Container.
     :type container: str
@@ -1106,11 +1113,11 @@ class AzureCosmosDbDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param sql_query: Required. Query script.
     :type sql_query: str
@@ -1183,11 +1190,11 @@ class AzureDataExplorerDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param query: Required. Query script.
     :type query: str
@@ -1255,11 +1262,11 @@ class AzureTableDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query script.
     :param str table: Required. Table name.
@@ -1317,11 +1324,11 @@ class AzureEventHubsDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: The connection string of this Azure Event Hubs.
     :param str consumer_group: Required. The consumer group to be used in this data feed.
@@ -1373,11 +1380,11 @@ class InfluxDbDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: InfluxDB connection string.
     :keyword str database: Database name.
@@ -1447,11 +1454,11 @@ class MySqlDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: Database connection string.
     :param str query: Required. Query script.
@@ -1503,11 +1510,11 @@ class PostgreSqlDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: Database connection string.
     :param str query: Required. Query script.
@@ -1559,11 +1566,11 @@ class SqlServerDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :param str query: Required. Query script.
     :keyword str connection_string: Database connection string.
@@ -1635,11 +1642,11 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str account_name: Account name.
     :keyword str account_key: Account key.
@@ -1736,11 +1743,11 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str tenant_id: The tenant id of service principal that have access to this Log
      Analytics.
@@ -1824,11 +1831,11 @@ class MongoDbDataFeedSource(DataFeedSource):
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
      "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV". Default is "Basic".
-    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DataSourceAuthenticationType
+    :vartype authentication_type: str or ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :keyword str credential_id: The datasource credential id.
     :keyword str connection_string: MongoDb connection string.
     :keyword str database: Database name.
@@ -2077,11 +2084,11 @@ class WebNotificationHook(NotificationHook):
 class MetricDetectionCondition(object):
     """MetricDetectionCondition.
 
-    :keyword cross_conditions_operator: condition operator
+    :keyword condition_operator: condition operator
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
-    :paramtype cross_conditions_operator: str or
-     ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+    :paramtype condition_operator: str or
+     ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2091,15 +2098,15 @@ class MetricDetectionCondition(object):
     """
 
     def __init__(self, **kwargs):
-        self.cross_conditions_operator = kwargs.get('cross_conditions_operator', None)
+        self.condition_operator = kwargs.get('condition_operator', None)
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
         self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
         self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
 
     def __repr__(self):
-        return "MetricDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+        return "MetricDetectionCondition(condition_operator={}, smart_detection_condition={}, " \
                "hard_threshold_condition={}, change_threshold_condition={})".format(
-                    self.cross_conditions_operator,
+                    self.condition_operator,
                     repr(self.smart_detection_condition),
                     repr(self.hard_threshold_condition),
                     repr(self.change_threshold_condition)
@@ -2108,7 +2115,7 @@ class MetricDetectionCondition(object):
     @classmethod
     def _from_generated(cls, condition):
         return cls(
-            cross_conditions_operator=condition.condition_operator,
+            condition_operator=condition.condition_operator,
             smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
             hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
             change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition)
@@ -2116,7 +2123,7 @@ class MetricDetectionCondition(object):
 
     def _to_generated(self):
         return _WholeMetricConfiguration(
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated()
@@ -2127,7 +2134,7 @@ class MetricDetectionCondition(object):
 
     def _to_generated_patch(self):
         return _WholeMetricConfigurationPatch(
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated_patch()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated_patch()
@@ -2373,11 +2380,11 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
 
     :param series_group_key: Required. dimension specified for series group.
     :type series_group_key: dict[str, str]
-    :keyword cross_conditions_operator: condition operator
+    :keyword condition_operator: condition operator
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
-    :paramtype cross_conditions_operator: str or
-        ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+    :paramtype condition_operator: str or
+        ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2392,9 +2399,9 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
         self.series_group_key = series_group_key
 
     def __repr__(self):
-        return "MetricSeriesGroupDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+        return "MetricSeriesGroupDetectionCondition(condition_operator={}, smart_detection_condition={}, " \
                "hard_threshold_condition={}, change_threshold_condition={}, series_group_key={})".format(
-                    self.cross_conditions_operator,
+                    self.condition_operator,
                     repr(self.smart_detection_condition),
                     repr(self.hard_threshold_condition),
                     repr(self.change_threshold_condition),
@@ -2405,7 +2412,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
     def _from_generated(cls, condition):
         return cls(
             series_group_key=condition.group.dimension,
-            cross_conditions_operator=condition.condition_operator,
+            condition_operator=condition.condition_operator,
             smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
             hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
             change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition)
@@ -2414,7 +2421,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
     def _to_generated(self):
         return _DimensionGroupConfiguration(
             group=_DimensionGroupIdentity(dimension=self.series_group_key),
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated()
@@ -2429,11 +2436,11 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
 
     :param series_key: Required. dimension specified for series.
     :type series_key: dict[str, str]
-    :keyword cross_conditions_operator: condition operator
+    :keyword condition_operator: condition operator
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
-    :paramtype cross_conditions_operator: str or
-        ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+    :paramtype condition_operator: str or
+        ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2448,9 +2455,9 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
         self.series_key = series_key
 
     def __repr__(self):
-        return "MetricSingleSeriesDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+        return "MetricSingleSeriesDetectionCondition(condition_operator={}, smart_detection_condition={}, " \
                "hard_threshold_condition={}, change_threshold_condition={}, series_key={})".format(
-                    self.cross_conditions_operator,
+                    self.condition_operator,
                     repr(self.smart_detection_condition),
                     repr(self.hard_threshold_condition),
                     repr(self.change_threshold_condition),
@@ -2461,7 +2468,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
     def _from_generated(cls, condition):
         return cls(
             series_key=condition.series.dimension,
-            cross_conditions_operator=condition.condition_operator,
+            condition_operator=condition.condition_operator,
             smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
             hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
             change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition)
@@ -2470,7 +2477,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
     def _to_generated(self):
         return _SeriesConfiguration(
             series=_SeriesIdentity(dimension=self.series_key),
-            condition_operator=self.cross_conditions_operator,
+            condition_operator=self.condition_operator,
             smart_detection_condition=self.smart_detection_condition._to_generated()
             if self.smart_detection_condition else None,
             hard_threshold_condition=self.hard_threshold_condition._to_generated()
@@ -2694,24 +2701,24 @@ class AnomalyAlert(object):
     :vartype id: str
     :ivar timestamp: anomaly time.
     :vartype timestamp: ~datetime.datetime
-    :ivar created_on: created time.
-    :vartype created_on: ~datetime.datetime
-    :ivar modified_on: modified time.
-    :vartype modified_on: ~datetime.datetime
+    :ivar created_time: created time.
+    :vartype created_time: ~datetime.datetime
+    :ivar modified_time: modified time.
+    :vartype modified_time: ~datetime.datetime
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get('id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_on', None)
-        self.modified_on = kwargs.get('modified_on', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.modified_time = kwargs.get('modified_time', None)
 
     def __repr__(self):
-        return "AnomalyAlert(id={}, timestamp={}, created_on={}, modified_on={})".format(
+        return "AnomalyAlert(id={}, timestamp={}, created_time={}, modified_time={})".format(
                     self.id,
                     self.timestamp,
-                    self.created_on,
-                    self.modified_on
+                    self.created_time,
+                    self.modified_time
                 )[:1024]
 
     @classmethod
@@ -2719,8 +2726,8 @@ class AnomalyAlert(object):
         return cls(
             id=alert.alert_id,
             timestamp=alert.timestamp,
-            created_on=alert.created_time,
-            modified_on=alert.modified_time
+            created_time=alert.created_time,
+            modified_time=alert.modified_time
         )
 
 
@@ -2771,7 +2778,7 @@ class DataPointAnomaly(msrest.serialization.Model):
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'detection_configuration_id': {'key': 'detectionConfigurationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
         'dimension': {'key': 'dimension', 'type': '{str}'},
         'severity': {'key': 'severity', 'type': 'str'},
@@ -2786,19 +2793,19 @@ class DataPointAnomaly(msrest.serialization.Model):
         self.metric_id = kwargs.get('metric_id', None)
         self.detection_configuration_id = kwargs.get('detection_configuration_id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_on', None)
+        self.created_time = kwargs.get('created_time', None)
         self.modified_time = kwargs.get('modified_time', None)
         self.dimension = kwargs.get('dimension', None)
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
 
     def __repr__(self):
-        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_on={}, " \
+        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_time={}, " \
                "modified_time={}, dimension={}, severity={}, status={})".format(
                     self.metric_id,
                     self.detection_configuration_id,
                     self.timestamp,
-                    self.created_on,
+                    self.created_time,
                     self.modified_time,
                     self.dimension,
                     self.severity,
@@ -2820,7 +2827,7 @@ class DataPointAnomaly(msrest.serialization.Model):
             metric_id=anomaly_result.metric_id,
             detection_configuration_id=anomaly_result.anomaly_detection_configuration_id,
             timestamp=anomaly_result.timestamp,
-            created_on=anomaly_result.created_time,
+            created_time=anomaly_result.created_time,
             modified_time=anomaly_result.modified_time,
             dimension=anomaly_result.dimension,
             severity=severity,
@@ -2967,26 +2974,78 @@ class IncidentRootCause(msrest.serialization.Model):
             description=root_cause.description,
         )
 
-class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-instance-attributes
+class MetricFeedback(dict):
+    """Feedback base class
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
+     include: "Anomaly", "ChangePoint", "Period", "Comment".
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :ivar created_time: feedback created time.
+    :vartype created_time: ~datetime.datetime
+    :ivar user_principal: user who gives this feedback.
+    :vartype user_principal: str
+    :ivar str metric_id: Required. metric unique id.
+    :ivar dict[str, str] dimension_key: Required. metric dimension filter.
+    """
+    _attribute_map = {
+        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
+        'metric_id': {'key': 'metricId', 'type': 'str'},
+        'dimension_key': {'key': 'dimensionKey', 'type': '{str}'},
+    }
+
+    def __init__(
+            self,
+            feedback_type,
+            metric_id,
+            dimension_key,
+            **kwargs
+    ):
+        super(MetricFeedback, self).__init__(**kwargs)
+        self.feedback_type = feedback_type  # type: str
+        self.id = kwargs.get('id', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.user_principal = kwargs.get('user_principal', None)
+        self.metric_id = metric_id
+        self.dimension_key = dimension_key
+
+    def __repr__(self):
+        return "MetricFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, " \
+               "dimension_key={})".format(
+                    self.feedback_type,
+                    self.id,
+                    self.created_time,
+                    self.user_principal,
+                    self.metric_id,
+                    self.dimension_key,
+                )[:1024]
+
+    def _to_generated_patch(self):
+        pass
+
+class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param start_time: Required. the start timestamp of feedback timerange.
     :type start_time: ~datetime.datetime
     :param end_time: Required. the end timestamp of feedback timerange, when equals to startTime
@@ -3026,13 +3085,12 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         value,
         **kwargs
     ):
-        super(AnomalyFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'Anomaly'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(AnomalyFeedback, self).__init__(
+            feedback_type='Anomaly',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3090,26 +3148,22 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
             anomaly_detection_configuration_snapshot=self.anomaly_detection_configuration_snapshot
         )
 
-class ChangePointFeedback(msrest.serialization.Model):
+class ChangePointFeedback(MetricFeedback):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param start_time: Required. the start timestamp of feedback timerange.
     :type start_time: ~datetime.datetime
     :param end_time: Required. the end timestamp of feedback timerange, when equals to startTime
@@ -3140,13 +3194,12 @@ class ChangePointFeedback(msrest.serialization.Model):
         value,
         **kwargs
     ):
-        super(ChangePointFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'ChangePoint'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(ChangePointFeedback, self).__init__(
+            feedback_type='ChangePoint',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3195,26 +3248,22 @@ class ChangePointFeedback(msrest.serialization.Model):
             value=value,
         )
 
-class CommentFeedback(msrest.serialization.Model):
+class CommentFeedback(MetricFeedback):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param start_time: the start timestamp of feedback timerange.
     :type start_time: ~datetime.datetime
     :param end_time: the end timestamp of feedback timerange, when equals to startTime means only
@@ -3245,13 +3294,12 @@ class CommentFeedback(msrest.serialization.Model):
         value,
         **kwargs
     ):
-        super(CommentFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'Comment'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(CommentFeedback, self).__init__(
+            feedback_type='Comment',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3300,26 +3348,22 @@ class CommentFeedback(msrest.serialization.Model):
             value=value,
         )
 
-class PeriodFeedback(msrest.serialization.Model):
+class PeriodFeedback(MetricFeedback):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param feedback_type: Required. feedback type.Constant filled by server.  Possible values
+    :ivar feedback_type: Required. feedback type.Constant filled by server.  Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
-    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar id: feedback unique id.
-    :vartype id: str
-    :ivar created_time: feedback created time.
-    :vartype created_time: ~datetime.datetime
-    :ivar user_principal: user who gives this feedback.
-    :vartype user_principal: str
-    :param metric_id: Required. metric unique id.
-    :type metric_id: str
-    :param dimension_key: Required. metric dimension filter.
-    :type dimension_key: dict[str, str]
+    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :ivar str id: feedback unique id.
+    :keyword created_time: feedback created time.
+    :paramtype created_time: ~datetime.datetime
+    :keyword str user_principal: user who gives this feedback.
+    :param str metric_id: Required. metric unique id.
+    :param dict[str, str] dimension_key: Required. metric dimension filter.
     :param value: Required.
     :type value: int
     :param period_type: Required. the type of setting period. Possible values include:
@@ -3346,13 +3390,12 @@ class PeriodFeedback(msrest.serialization.Model):
         period_type,
         **kwargs
     ):
-        super(PeriodFeedback, self).__init__(**kwargs)
-        self.feedback_type = 'Period'  # type: str
-        self.id = kwargs.get('id', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.user_principal = kwargs.get('user_principal', None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super(PeriodFeedback, self).__init__(
+            feedback_type='Period',
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            **kwargs
+        )
         self.value = value
         self.period_type = period_type
 
@@ -3404,7 +3447,7 @@ class DatasourceCredential(dict):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3447,7 +3490,7 @@ class DatasourceSqlConnectionString(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3519,7 +3562,7 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3591,7 +3634,7 @@ class DatasourceServicePrincipal(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3683,7 +3726,7 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
      server.  Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
     :type credential_type: str or
-     ~azure.ai.metricsadvisor.models.DataSourceCredentialType
+     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
     :ivar id: Unique id of data source credential.
     :vartype id: str
     :param name: Required. Name of data source credential.
@@ -3798,4 +3841,41 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
             data_source_credential_name=self.name,
             data_source_credential_description=self.description,
             parameters=param_patch,
+        )
+
+class DetectionAnomalyFilterCondition(msrest.serialization.Model):
+    """DetectionAnomalyFilterCondition.
+
+    :param series_group_key: dimension filter.
+    :type series_group_key: dict[str, str]
+    :param severity_filter:
+    :type severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
+    """
+
+    _attribute_map = {
+        'series_group_key': {'key': 'seriesGroupKey', 'type': '{str}'},
+        'severity_filter': {'key': 'severityFilter', 'type': 'SeverityFilterCondition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
+        self.series_group_key = kwargs.get('series_group_key', None)
+        self.severity_filter = kwargs.get('severity_filter', None)
+
+    @classmethod
+    def _from_generated(cls, source):
+        series_group_key = source.dimension_filter.dimension if source.dimension_filter else None
+        return cls(
+            series_group_key=series_group_key,
+            severity_filter=source.severity_filter.key_vault_endpoint
+        )
+
+    def _to_generated(self):
+        dimension_filter = _DimensionGroupIdentity(dimension=self.series_group_key)
+        return _DetectionAnomalyFilterCondition(
+            dimension_filter=dimension_filter,
+            severity_filter=self.severity_filter
         )

@@ -45,7 +45,7 @@ class RestorableMongodbDatabasesOperations:
         self,
         location: str,
         instance_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RestorableMongodbDatabasesListResult"]:
         """Show the event feed of all mutations done on all the Azure Cosmos DB MongoDB databases under
         the restorable account.  This helps in scenario where database was accidentally deleted to get
@@ -66,7 +66,7 @@ class RestorableMongodbDatabasesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-04-01-preview"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):

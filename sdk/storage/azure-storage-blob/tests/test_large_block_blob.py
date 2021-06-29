@@ -52,7 +52,10 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
 
         if self.is_live:
-            self.bsc.create_container(self.container_name)
+            try:
+                self.bsc.create_container(self.container_name)
+            except:
+                pass
 
     def _teardown(self, file_name):
         if path.isfile(file_name):
@@ -171,9 +174,12 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2)
+            blob.upload_blob(stream, max_concurrency=2, overwrite=True)
+
+        block_list = blob.get_block_list()
 
         # Assert
+        self.assertIsNot(len(block_list), 0)
         self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 

@@ -1,5 +1,16 @@
 # Release History
 
+## 4.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
 ## 4.3.0 (2021-06-09)
 
   **New Features**
@@ -25,7 +36,7 @@
 
 ## 4.0.0 (2021-03-09)
 
-  **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid. Users migrating from `v1.x` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/migration_guide.md).
+  **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid. Users migrating from `v1.x` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/migration_guide.md).
 
   **New Features**
   - `azure-eventgrid` package now supports `azure.core.messaging.CloudEvent` which honors the CNCF CloudEvent spec.
@@ -60,7 +71,7 @@
   - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
   - `EventGridConsumer`is now removed. Please see the samples to see how events can be deserialized.
   - `CustomEvent` model is removed. Dictionaries must be used to send a custom schema.
-  
+
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.
   - `EventGridPublisherClient` now appropriately throws a `ValueError` if an invalid credential is passed during initialization.

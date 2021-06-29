@@ -4,15 +4,17 @@
 
 Azure Key Vault helps solve the following problems:
 - Vault administration (this library) - role-based access control (RBAC), and vault-level backup and restore options
-- Cryptographic key management ([azure-keyvault-keys](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys)) - create, store, and control
+- Cryptographic key management ([azure-keyvault-keys](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys)) - create, store, and control
 access to the keys used to encrypt your data
 - Secrets management
-([azure-keyvault-secrets](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets)) -
+([azure-keyvault-secrets](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets)) -
 securely store and control access to tokens, passwords, certificates, API keys,
 and other secrets
 - Certificate management
-([azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)) -
+([azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates)) -
 create, manage, and deploy public and private SSL/TLS certificates
+
+[Package (PyPI)][pypi_package_administration] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs]
 
 ## Getting started
 ### Install packages
@@ -26,7 +28,7 @@ authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
-* Python 2.7, 3.5.3, or later
+* Python 2.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 * A [managed HSM][managed_hsm]. If you need to create one, see the final two steps in the next section for details on creating the managed HSM with the Azure CLI.
 
 ### Authenticate the client
@@ -77,10 +79,11 @@ a more appropriate name for your service principal.
     export AZURE_TENANT_ID="tenant id"
     ```
 
-* Create the managed HSM and grant the above mentioned application authorization to perform administrative operations on the managed HSM (replace `<your-resource-group-name>` and `<your-managed-hsm-name>` with your own, unique names and `<your-service-principal-object-id>` with the value from above):
+* Create the managed HSM and grant the above mentioned service principal authorization to perform administrative operations on the managed HSM (replace `<your-resource-group-name>` and `<your-managed-hsm-name>` with your own, unique names and `<your-service-principal-object-id>` with the value from above):
     ```Bash
     az keyvault create --hsm-name "<your-managed-hsm-name>" --resource-group "<your-resource-group-name>" --administrators <your-service-principal-object-id> --location "<your-azure-location>"
     ```
+  This service principal is automatically added to the "Managed HSM Administrators" [built-in role][built_in_roles].
 
 * Activate your managed HSM to enable key and role management. Detailed instructions can be found in [this quickstart guide](https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli#activate-your-managed-hsm). Create three self signed certificates and download the [Security Domain](https://docs.microsoft.com/azure/key-vault/managed-hsm/security-domain) for your managed HSM:
     > **Important:** Create and store the RSA key pairs and security domain file generated in this step securely.
@@ -95,6 +98,18 @@ a more appropriate name for your service principal.
     ```Bash
     az keyvault show --hsm-name "<your-managed-hsm-name>"
     ```
+
+#### Controlling access to your managed HSM
+The designated administrators assigned during creation are automatically added to the "Managed HSM Administrators" [built-in role][built_in_roles],
+who are able to download a security domain and [manage roles for data plane access][access_control], among other limited permissions.
+
+To perform other actions on keys, you need to assign principals to other roles such as "Managed HSM Crypto User", which can perform non-destructive key operations:
+
+```Bash
+az keyvault role assignment create --hsm-name <your-managed-hsm-name> --role "Managed HSM Crypto User" --scope / --assignee-object-id <principal-or-user-object-ID> --assignee-principal-type <principal-type>
+```
+
+Please read [best practices][best_practices] for properly securing your managed HSM.
 
 #### Create a client
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
@@ -266,7 +281,7 @@ print(role_assignment.role_definition_id)
 ### Perform a full key backup
 Back up your entire collection of keys. The backing store for full key backups is a blob storage container using Shared Access Signature authentication.
 
-For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
+For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
 Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
 
 ```python
@@ -294,7 +309,7 @@ print(backup_operation.folder_url)
 Restore your entire collection of keys from a backup. The data source for a full key restore is a storage blob accessed using Shared Access Signature authentication.
 You will also need the `azure_storage_blob_container_uri` from the [above snippet](#perform-a-full-key-backup).
 
-For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
+For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
 Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
 
 ```python
@@ -364,11 +379,14 @@ For more information, see the
 contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
+[access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
 [azure_cloud_shell]: https://shell.azure.com/bash
-[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
-[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#azure-core-library-exceptions
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
+[best_practices]: https://docs.microsoft.com/azure/key-vault/managed-hsm/best-practices
+[built_in_roles]: https://docs.microsoft.com/azure/key-vault/managed-hsm/built-in-roles
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/

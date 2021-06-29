@@ -33,6 +33,9 @@ TIMEOUT_SAMPLES = {
 }
 """
 TIMEOUT_SAMPLES = {
+    "azure-eventgrid": {
+        "consume_cloud_events_from_storage_queue.py": (10),
+    },
     "azure-eventhub": {
         "receive_batch_with_checkpoint.py": (10),
         "recv.py": (10),
@@ -49,7 +52,9 @@ TIMEOUT_SAMPLES = {
         "recv_with_checkpoint_by_time_interval_async.py": (10),
         "recv_with_checkpoint_store_async.py": (10),
         "recv_with_custom_starting_position_async.py": (10),
-        "sample_code_eventhub_async.py": (10)
+        "sample_code_eventhub_async.py": (10),
+        "send_and_receive_amqp_annotated_message.py": (10),
+        "send_and_receive_amqp_annotated_message_async.py": (10)
     },
     "azure-eventhub-checkpointstoreblob": {
         "receive_events_using_checkpoint_store.py": (10),
@@ -76,10 +81,7 @@ IGNORED_SAMPLES = {
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
-        "consume_eventgrid_events_from_service_bus_queue.py",
-        "consume_cloud_events_from_storage_queue.py",
-        "sample_publish_events_to_a_topic_using_sas_credential.py",
-        "sample_publish_events_to_a_topic_using_sas_credential_async.py"],
+        "consume_eventgrid_events_from_service_bus_queue.py"],
     "azure-eventhub": [
         "connection_to_custom_endpoint_address.py",
         "proxy.py",

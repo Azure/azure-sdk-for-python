@@ -10,15 +10,136 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class BatchRequest(msrest.serialization.Model):
-    """An array of requests.
+class BatchQueryRequest(msrest.serialization.Model):
+    """An single request in a batch.
 
-    :param requests: An single request in a batch.
-    :type requests: list[~monitor_query_client.models.LogQueryRequest]
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The error details.
+    :type id: str
+    :param headers: Dictionary of :code:`<string>`.
+    :type headers: dict[str, str]
+    :param body: Required. The Analytics query. Learn more about the `Analytics query syntax
+     <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+    :type body: ~monitor_query_client.models.QueryBody
+    :ivar path:  Default value: "/query".
+    :vartype path: str
+    :ivar method:  Default value: "POST".
+    :vartype method: str
+    :param workspace: Required. Workspace Id to be included in the query.
+    :type workspace: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'body': {'required': True},
+        'path': {'constant': True},
+        'method': {'constant': True},
+        'workspace': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'body': {'key': 'body', 'type': 'QueryBody'},
+        'path': {'key': 'path', 'type': 'str'},
+        'method': {'key': 'method', 'type': 'str'},
+        'workspace': {'key': 'workspace', 'type': 'str'},
+    }
+
+    path = "/query"
+    method = "POST"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BatchQueryRequest, self).__init__(**kwargs)
+        self.id = kwargs['id']
+        self.headers = kwargs.get('headers', None)
+        self.body = kwargs['body']
+        self.workspace = kwargs['workspace']
+
+
+class BatchQueryResponse(msrest.serialization.Model):
+    """BatchQueryResponse.
+
+    :param id:
+    :type id: str
+    :param status:
+    :type status: int
+    :param body: Contains the tables, columns & rows resulting from a query.
+    :type body: ~monitor_query_client.models.BatchQueryResults
+    :param headers: Dictionary of :code:`<string>`.
+    :type headers: dict[str, str]
     """
 
     _attribute_map = {
-        'requests': {'key': 'requests', 'type': '[LogQueryRequest]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'int'},
+        'body': {'key': 'body', 'type': 'BatchQueryResults'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BatchQueryResponse, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.status = kwargs.get('status', None)
+        self.body = kwargs.get('body', None)
+        self.headers = kwargs.get('headers', None)
+
+
+class BatchQueryResults(msrest.serialization.Model):
+    """Contains the tables, columns & rows resulting from a query.
+
+    :param tables: The list of tables, columns and rows.
+    :type tables: list[~monitor_query_client.models.Table]
+    :param statistics: Statistics represented in JSON format.
+    :type statistics: object
+    :param render: Visualization data in JSON format.
+    :type render: object
+    :param error: The code and message for an error.
+    :type error: ~monitor_query_client.models.ErrorInfo
+    """
+
+    _attribute_map = {
+        'tables': {'key': 'tables', 'type': '[Table]'},
+        'statistics': {'key': 'statistics', 'type': 'object'},
+        'render': {'key': 'render', 'type': 'object'},
+        'error': {'key': 'error', 'type': 'ErrorInfo'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BatchQueryResults, self).__init__(**kwargs)
+        self.tables = kwargs.get('tables', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.render = kwargs.get('render', None)
+        self.error = kwargs.get('error', None)
+
+
+class BatchRequest(msrest.serialization.Model):
+    """An array of requests.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param requests: Required. An single request in a batch.
+    :type requests: list[~monitor_query_client.models.BatchQueryRequest]
+    """
+
+    _validation = {
+        'requests': {'required': True},
+    }
+
+    _attribute_map = {
+        'requests': {'key': 'requests', 'type': '[BatchQueryRequest]'},
     }
 
     def __init__(
@@ -26,21 +147,18 @@ class BatchRequest(msrest.serialization.Model):
         **kwargs
     ):
         super(BatchRequest, self).__init__(**kwargs)
-        self.requests = kwargs.get('requests', None)
+        self.requests = kwargs['requests']
 
 
 class BatchResponse(msrest.serialization.Model):
-    """Response to a batch.
+    """Response to a batch query.
 
     :param responses: An array of responses corresponding to each individual request in a batch.
-    :type responses: list[~monitor_query_client.models.LogQueryResponse]
-    :param error: Error response for a batch request.
-    :type error: ~monitor_query_client.models.BatchResponseError
+    :type responses: list[~monitor_query_client.models.BatchQueryResponse]
     """
 
     _attribute_map = {
-        'responses': {'key': 'responses', 'type': '[LogQueryResponse]'},
-        'error': {'key': 'error', 'type': 'BatchResponseError'},
+        'responses': {'key': 'responses', 'type': '[BatchQueryResponse]'},
     }
 
     def __init__(
@@ -49,71 +167,24 @@ class BatchResponse(msrest.serialization.Model):
     ):
         super(BatchResponse, self).__init__(**kwargs)
         self.responses = kwargs.get('responses', None)
-        self.error = kwargs.get('error', None)
-
-
-class BatchResponseError(msrest.serialization.Model):
-    """Error response for a batch request.
-
-    :param message: The error message describing the cause of the error.
-    :type message: str
-    :param code: The error code.
-    :type code: str
-    :param inner_error:
-    :type inner_error: ~monitor_query_client.models.BatchResponseErrorInnerError
-    """
-
-    _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'BatchResponseErrorInnerError'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResponseError, self).__init__(**kwargs)
-        self.message = kwargs.get('message', None)
-        self.code = kwargs.get('code', None)
-        self.inner_error = kwargs.get('inner_error', None)
-
-
-class BatchResponseErrorInnerError(msrest.serialization.Model):
-    """BatchResponseErrorInnerError.
-
-    :param code:
-    :type code: str
-    :param message:
-    :type message: str
-    :param details:
-    :type details: list[~monitor_query_client.models.ErrorDetails]
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetails]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResponseErrorInnerError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.details = kwargs.get('details', None)
 
 
 class Column(msrest.serialization.Model):
     """A column in a table.
 
-    :param name: The name of this column.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of this column.
     :type name: str
-    :param type: The data type of this column.
-    :type type: str
+    :param type: Required. The data type of this column. Possible values include: "bool",
+     "datetime", "dynamic", "int", "long", "real", "string", "guid", "decimal", "timespan".
+    :type type: str or ~monitor_query_client.models.LogsColumnType
     """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -125,8 +196,8 @@ class Column(msrest.serialization.Model):
         **kwargs
     ):
         super(Column, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        self.name = kwargs['name']
+        self.type = kwargs['type']
 
 
 class ErrorDetail(msrest.serialization.Model):
@@ -174,33 +245,6 @@ class ErrorDetail(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
         self.resources = kwargs.get('resources', None)
         self.additional_properties = kwargs.get('additional_properties', None)
-
-
-class ErrorDetails(msrest.serialization.Model):
-    """ErrorDetails.
-
-    :param code:
-    :type code: str
-    :param message:
-    :type message: str
-    :param target:
-    :type target: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
 
 
 class ErrorInfo(msrest.serialization.Model):
@@ -321,81 +365,6 @@ class LocalizableString(msrest.serialization.Model):
         super(LocalizableString, self).__init__(**kwargs)
         self.value = kwargs['value']
         self.localized_value = kwargs.get('localized_value', None)
-
-
-class LogQueryRequest(msrest.serialization.Model):
-    """An single request in a batch.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param id: The error details.
-    :type id: str
-    :param headers: Dictionary of :code:`<string>`.
-    :type headers: dict[str, str]
-    :param body: The Analytics query. Learn more about the `Analytics query syntax
-     <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
-    :type body: ~monitor_query_client.models.QueryBody
-    :ivar path:  Default value: "/query".
-    :vartype path: str
-    :ivar method:  Default value: "POST".
-    :vartype method: str
-    :param workspace: Workspace Id to be included in the query.
-    :type workspace: str
-    """
-
-    _validation = {
-        'path': {'constant': True},
-        'method': {'constant': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'body': {'key': 'body', 'type': 'QueryBody'},
-        'path': {'key': 'path', 'type': 'str'},
-        'method': {'key': 'method', 'type': 'str'},
-        'workspace': {'key': 'workspace', 'type': 'str'},
-    }
-
-    path = "/query"
-    method = "POST"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LogQueryRequest, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.headers = kwargs.get('headers', None)
-        self.body = kwargs.get('body', None)
-        self.workspace = kwargs.get('workspace', None)
-
-
-class LogQueryResponse(msrest.serialization.Model):
-    """LogQueryResponse.
-
-    :param id:
-    :type id: str
-    :param status:
-    :type status: int
-    :param body: Contains the tables, columns & rows resulting from a query.
-    :type body: ~monitor_query_client.models.QueryResults
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'int'},
-        'body': {'key': 'body', 'type': 'QueryResults'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LogQueryResponse, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.body = kwargs.get('body', None)
 
 
 class MetadataApplication(msrest.serialization.Model):
@@ -1162,7 +1131,7 @@ class MetadataTableColumnsItem(msrest.serialization.Model):
     :param description: The description of the column.
     :type description: str
     :param type: Required. The data type of the column. Possible values include: "bool",
-     "datetime", "dynamic", "int", "long", "real", "string".
+     "datetime", "dynamic", "int", "long", "real", "string", "guid", "decimal", "timespan".
     :type type: str or ~monitor_query_client.models.MetadataColumnDataType
     :param is_preferred_facet: A flag indicating this column is a preferred facet.
     :type is_preferred_facet: bool
@@ -1349,10 +1318,16 @@ class Metric(msrest.serialization.Model):
     :param name: Required. the name and the display name of the metric, i.e. it is localizable
      string.
     :type name: ~monitor_query_client.models.LocalizableString
-    :param unit: Required. the unit of the metric. Possible values include: "Count", "Bytes",
+    :param display_description: Detailed description of this metric.
+    :type display_description: str
+    :param error_code: 'Success' or the error details on query failures for this metric.
+    :type error_code: str
+    :param error_message: Error message encountered querying this specific metric.
+    :type error_message: str
+    :param unit: Required. The unit of the metric. Possible values include: "Count", "Bytes",
      "Seconds", "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
      "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :type unit: str or ~monitor_query_client.models.Unit
+    :type unit: str or ~monitor_query_client.models.MetricUnit
     :param timeseries: Required. the time series returned when a data query is performed.
     :type timeseries: list[~monitor_query_client.models.TimeSeriesElement]
     """
@@ -1369,6 +1344,9 @@ class Metric(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'error_code': {'key': 'errorCode', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'timeseries': {'key': 'timeseries', 'type': '[TimeSeriesElement]'},
     }
@@ -1381,6 +1359,9 @@ class Metric(msrest.serialization.Model):
         self.id = kwargs['id']
         self.type = kwargs['type']
         self.name = kwargs['name']
+        self.display_description = kwargs.get('display_description', None)
+        self.error_code = kwargs.get('error_code', None)
+        self.error_message = kwargs.get('error_message', None)
         self.unit = kwargs['unit']
         self.timeseries = kwargs['timeseries']
 
@@ -1421,10 +1402,17 @@ class MetricDefinition(msrest.serialization.Model):
     :type namespace: str
     :param name: the name and the display name of the metric, i.e. it is a localizable string.
     :type name: ~monitor_query_client.models.LocalizableString
-    :param unit: the unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
+    :param display_description: Detailed description of this metric.
+    :type display_description: str
+    :param category: Custom category name for this metric.
+    :type category: str
+    :param metric_class: The class of the metric. Possible values include: "Availability",
+     "Transactions", "Errors", "Latency", "Saturation".
+    :type metric_class: str or ~monitor_query_client.models.MetricClass
+    :param unit: The unit of the metric. Possible values include: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", "BitsPerSecond".
-    :type unit: str or ~monitor_query_client.models.Unit
+    :type unit: str or ~monitor_query_client.models.MetricUnit
     :param primary_aggregation_type: the primary aggregation type value defining how to use the
      values for display. Possible values include: "None", "Average", "Count", "Minimum", "Maximum",
      "Total".
@@ -1446,6 +1434,9 @@ class MetricDefinition(msrest.serialization.Model):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'namespace': {'key': 'namespace', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'metric_class': {'key': 'metricClass', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'primary_aggregation_type': {'key': 'primaryAggregationType', 'type': 'str'},
         'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
@@ -1463,6 +1454,9 @@ class MetricDefinition(msrest.serialization.Model):
         self.resource_id = kwargs.get('resource_id', None)
         self.namespace = kwargs.get('namespace', None)
         self.name = kwargs.get('name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.category = kwargs.get('category', None)
+        self.metric_class = kwargs.get('metric_class', None)
         self.unit = kwargs.get('unit', None)
         self.primary_aggregation_type = kwargs.get('primary_aggregation_type', None)
         self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
@@ -1499,12 +1493,14 @@ class MetricDefinitionCollection(msrest.serialization.Model):
 class MetricNamespace(msrest.serialization.Model):
     """Metric namespace class specifies the metadata for a metric namespace.
 
-    :param id: The ID of the metricNamespace.
+    :param id: The ID of the metric namespace.
     :type id: str
     :param type: The type of the namespace.
     :type type: str
-    :param name: The name of the namespace.
+    :param name: The escaped name of the namespace.
     :type name: str
+    :param classification: Kind of namespace. Possible values include: "Platform", "Custom", "Qos".
+    :type classification: str or ~monitor_query_client.models.NamespaceClassification
     :param properties: Properties which include the fully qualified namespace name.
     :type properties: ~monitor_query_client.models.MetricNamespaceName
     """
@@ -1513,6 +1509,7 @@ class MetricNamespace(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'classification': {'key': 'classification', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'MetricNamespaceName'},
     }
 
@@ -1524,6 +1521,7 @@ class MetricNamespace(msrest.serialization.Model):
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
         self.name = kwargs.get('name', None)
+        self.classification = kwargs.get('classification', None)
         self.properties = kwargs.get('properties', None)
 
 
@@ -1630,12 +1628,6 @@ class QueryBody(msrest.serialization.Model):
     :type timespan: str
     :param workspaces: A list of workspaces that are included in the query.
     :type workspaces: list[str]
-    :param qualified_names: A list of qualified workspace names that are included in the query.
-    :type qualified_names: list[str]
-    :param workspace_ids: A list of workspace IDs that are included in the query.
-    :type workspace_ids: list[str]
-    :param azure_resource_ids: A list of Azure resource IDs that are included in the query.
-    :type azure_resource_ids: list[str]
     """
 
     _validation = {
@@ -1646,9 +1638,6 @@ class QueryBody(msrest.serialization.Model):
         'query': {'key': 'query', 'type': 'str'},
         'timespan': {'key': 'timespan', 'type': 'str'},
         'workspaces': {'key': 'workspaces', 'type': '[str]'},
-        'qualified_names': {'key': 'qualifiedNames', 'type': '[str]'},
-        'workspace_ids': {'key': 'workspaceIds', 'type': '[str]'},
-        'azure_resource_ids': {'key': 'azureResourceIds', 'type': '[str]'},
     }
 
     def __init__(
@@ -1659,23 +1648,32 @@ class QueryBody(msrest.serialization.Model):
         self.query = kwargs['query']
         self.timespan = kwargs.get('timespan', None)
         self.workspaces = kwargs.get('workspaces', None)
-        self.qualified_names = kwargs.get('qualified_names', None)
-        self.workspace_ids = kwargs.get('workspace_ids', None)
-        self.azure_resource_ids = kwargs.get('azure_resource_ids', None)
 
 
 class QueryResults(msrest.serialization.Model):
     """Contains the tables, columns & rows resulting from a query.
 
-    :param tables: The list of tables, columns and rows.
+    All required parameters must be populated in order to send to Azure.
+
+    :param tables: Required. The list of tables, columns and rows.
     :type tables: list[~monitor_query_client.models.Table]
-    :param errors:
-    :type errors: ~monitor_query_client.models.ErrorDetails
+    :param statistics: Any object.
+    :type statistics: object
+    :param render: Any object.
+    :type render: object
+    :param error: The code and message for an error.
+    :type error: ~monitor_query_client.models.ErrorInfo
     """
+
+    _validation = {
+        'tables': {'required': True},
+    }
 
     _attribute_map = {
         'tables': {'key': 'tables', 'type': '[Table]'},
-        'errors': {'key': 'errors', 'type': 'ErrorDetails'},
+        'statistics': {'key': 'statistics', 'type': 'object'},
+        'render': {'key': 'render', 'type': 'object'},
+        'error': {'key': 'error', 'type': 'ErrorInfo'},
     }
 
     def __init__(
@@ -1683,8 +1681,10 @@ class QueryResults(msrest.serialization.Model):
         **kwargs
     ):
         super(QueryResults, self).__init__(**kwargs)
-        self.tables = kwargs.get('tables', None)
-        self.errors = kwargs.get('errors', None)
+        self.tables = kwargs['tables']
+        self.statistics = kwargs.get('statistics', None)
+        self.render = kwargs.get('render', None)
+        self.error = kwargs.get('error', None)
 
 
 class Response(msrest.serialization.Model):
@@ -1692,7 +1692,7 @@ class Response(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cost: The integer value representing the cost of the query, for data case.
+    :param cost: The integer value representing the relative cost of the query.
     :type cost: int
     :param timespan: Required. The timespan for which the data was retrieved. Its value consists of
      two datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned
@@ -1702,9 +1702,9 @@ class Response(msrest.serialization.Model):
      may be adjusted in the future and returned back from what was originally requested.  This is
      not present if a metadata request was made.
     :type interval: ~datetime.timedelta
-    :param namespace: The namespace of the metrics been queried.
+    :param namespace: The namespace of the metrics being queried.
     :type namespace: str
-    :param resourceregion: The region of the resource been queried for metrics.
+    :param resourceregion: The region of the resource being queried for metrics.
     :type resourceregion: str
     :param value: Required. the value of the collection.
     :type value: list[~monitor_query_client.models.Metric]
@@ -1748,7 +1748,7 @@ class Table(msrest.serialization.Model):
     :param columns: Required. The list of columns in this table.
     :type columns: list[~monitor_query_client.models.Column]
     :param rows: Required. The resulting rows from this query.
-    :type rows: list[list[str]]
+    :type rows: list[list[object]]
     """
 
     _validation = {
@@ -1760,7 +1760,7 @@ class Table(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'columns': {'key': 'columns', 'type': '[Column]'},
-        'rows': {'key': 'rows', 'type': '[[str]]'},
+        'rows': {'key': 'rows', 'type': '[[object]]'},
     }
 
     def __init__(

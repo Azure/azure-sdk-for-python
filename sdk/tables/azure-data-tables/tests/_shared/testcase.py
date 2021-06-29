@@ -23,12 +23,21 @@ from azure.data.tables import (
     TableMetrics,
     TableServiceClient,
 )
+from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import is_live
 
 SLEEP_DELAY = 30
 
 TEST_TABLE_PREFIX = "pytablesync"
+
+SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
+                                '></StorageServiceStats> '
+
+SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                         '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
+                         '></StorageServiceStats> '
 
 
 class FakeTokenCredential(object):
@@ -80,6 +89,11 @@ class TableTestCase(object):
             start=datetime.now() - timedelta(hours=24),
             expiry=datetime.now() + timedelta(days=8),
         )
+
+    def get_token_credential(self):
+        if is_live():
+            return DefaultAzureCredential()
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -421,10 +435,10 @@ class TableTestCase(object):
         metadata = self.table.create_entity(entity)
         return entity, metadata["etag"]
 
-    def _set_up(self, account_name, account_key, url="table"):
+    def _set_up(self, account_name, credential, url="table"):
         self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
-            self.account_url(account_name, url), credential=account_key, table_name=self.table_name
+            self.account_url(account_name, url), credential=credential, table_name=self.table_name
         )
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
@@ -449,3 +463,39 @@ class TableTestCase(object):
         assert stats["geo_replication"]["status"] == "unavailable"
         assert stats["geo_replication"]["last_sync_time"] is None
 
+<<<<<<< HEAD
+=======
+    @staticmethod
+    def override_response_body_with_unavailable_status(response):
+        response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
+
+    @staticmethod
+    def override_response_body_with_live_status(response):
+        response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
+
+class ResponseCallback(object):
+    def __init__(self, status=None, new_status=None):
+        self.status = status
+        self.new_status = new_status
+        self.first = True
+        self.count = 0
+
+    def override_first_status(self, response):
+        if self.first and response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
+            self.first = False
+        self.count += 1
+
+    def override_status(self, response):
+        if response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
+        self.count += 1
+
+
+class RetryCounter(object):
+    def __init__(self):
+        self.count = 0
+
+    def simple_count(self, retry_context):
+        self.count += 1
+>>>>>>> 15523b712402fc928ee58f2a5311ac9ea703699c

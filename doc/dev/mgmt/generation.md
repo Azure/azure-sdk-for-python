@@ -1,8 +1,8 @@
 # Generation of SDK
 
-Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/swagger_conf.md)), this page explains how to generate your packages.
+Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/swagger_conf.md)), this page explains how to generate your packages.
 
-IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) in your currently loaded virtual environment.
 
 ## Building the code
 
@@ -33,13 +33,13 @@ autorest readme.md --python --use="@microsoft.azure/autorest.python@~4.0.71" --p
 
 Which means "Generate the Python code for the Swagger mentioned in this readme, using autorest for Pyton v4.0.71 or above (but not v5), do not generate async files, generate multiapi if supported (if not ignore), and assume the package was already generated and it's an update"
 
-In pratical terms, this is not necessary since the Python SDK has the necessary tooling to simplify to just specify the readme.md:
+In practical terms, this is not necessary since the Python SDK has the necessary tooling to simplify to just specify the readme.md:
 
 - Checkout the branch
 - Checkout the RestAPI specs repo
 - Call the tool: `python -m packaging_tools.generate_sdk -v -m restapi_path/readme.md` changing the last path to the readme you want to generate.
 
-The common configuration to pass to all generation are located in the [swagger_to_sdk.json file](https://github.com/Azure/azure-sdk-for-python/blob/master/swagger_to_sdk_config.json)
+The common configuration to pass to all generation are located in the [swagger_to_sdk.json file](https://github.com/Azure/azure-sdk-for-python/blob/main/swagger_to_sdk_config.json)
 
 ### Automation bot
 

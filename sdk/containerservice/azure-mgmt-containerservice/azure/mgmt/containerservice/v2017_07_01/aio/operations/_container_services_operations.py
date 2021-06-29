@@ -45,7 +45,7 @@ class ContainerServicesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContainerServiceListResult"]:
         """Gets a list of container services in the specified subscription.
 
@@ -118,7 +118,7 @@ class ContainerServicesOperations:
         resource_group_name: str,
         container_service_name: str,
         parameters: "_models.ContainerService",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContainerService":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ContainerService"]
         error_map = {
@@ -178,7 +178,7 @@ class ContainerServicesOperations:
         resource_group_name: str,
         container_service_name: str,
         parameters: "_models.ContainerService",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ContainerService"]:
         """Creates or updates a container service.
 
@@ -194,8 +194,8 @@ class ContainerServicesOperations:
         :type parameters: ~azure.mgmt.containerservice.v2017_07_01.models.ContainerService
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ContainerService or the result of cls(response)
@@ -252,7 +252,7 @@ class ContainerServicesOperations:
         self,
         resource_group_name: str,
         container_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ContainerService":
         """Gets the properties of the specified container service.
 
@@ -315,7 +315,7 @@ class ContainerServicesOperations:
         self,
         resource_group_name: str,
         container_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -357,7 +357,7 @@ class ContainerServicesOperations:
         self,
         resource_group_name: str,
         container_service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified container service.
 
@@ -373,8 +373,8 @@ class ContainerServicesOperations:
         :type container_service_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -426,7 +426,7 @@ class ContainerServicesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContainerServiceListResult"]:
         """Gets a list of container services in the specified resource group.
 
@@ -501,7 +501,7 @@ class ContainerServicesOperations:
         self,
         location: str,
         resource_type: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OrchestratorVersionProfileListResult":
         """Gets a list of supported orchestrators in the specified subscription.
 

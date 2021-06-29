@@ -320,7 +320,7 @@ class StorageRetryTest(StorageTestCase):
     def test_retry_secondary(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
 
-        This test is special, since in pratical term, we don't have time to wait
+        This test is special, since in practical term, we don't have time to wait
         for the georeplication to be done (can take a loooooong time).
         So for the purpose of this test, we fake a 408 on the primary request,
         and then we check we do a 408. AND DONE.

@@ -25,7 +25,7 @@ Use the client library to:
 - Close connections
 - Grant/revoke/check permissions for an existing connection
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/webpubsub/azure-messaging-webpubsubservice) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/webpubsub/azure-messaging-webpubsubservice) | [Product documentation][webpubsubservice_docs]
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice) | [Product documentation][webpubsubservice_docs]
 
 ## Getting started
 
@@ -68,7 +68,7 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 >>> response = client.send_request(request)
 >>> response
 <RequestsTransportResponse: 202 Accepted>
->>> response.status_code 
+>>> response.status_code
 202
 >>> with open('file.json', 'r') as f:
 >>>    request = build_send_to_all_request('ahub', content=f, content_type='application/json')
@@ -139,7 +139,7 @@ additional questions or comments.
 [webpubsubservice_docs]: https://aka.ms/awps/doc
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
-[webpubsubservice_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/__init__.py
+[webpubsubservice_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/__init__.py
 [package]: https://pypi.org/project/azure-messaging-webpubsubservice/
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [cla]: https://cla.microsoft.com

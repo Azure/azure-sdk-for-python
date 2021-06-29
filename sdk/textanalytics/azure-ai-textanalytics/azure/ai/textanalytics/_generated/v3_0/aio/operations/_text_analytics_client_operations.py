@@ -24,7 +24,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EntitiesResult":
         """Named Entity Recognition.
 
@@ -100,7 +100,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.EntityLinkingResult":
         """Linked entities from a well-known knowledge base.
 
@@ -175,7 +175,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.KeyPhraseResult":
         """Key Phrases.
 
@@ -250,7 +250,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.LanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.LanguageResult":
         """Detect Language.
 
@@ -326,7 +326,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SentimentResponse":
         """Sentiment.
 

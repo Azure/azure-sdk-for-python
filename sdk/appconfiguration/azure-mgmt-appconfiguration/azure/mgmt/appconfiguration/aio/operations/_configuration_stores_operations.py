@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ConfigurationStoresOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class ConfigurationStoresOperations:
     def list(
         self,
         skip_token: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ConfigurationStoreListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ConfigurationStoreListResult"]:
         """Lists the configuration stores for a given subscription.
 
         :param skip_token: A skip token is used to continue retrieving items after an operation returns
@@ -60,12 +60,12 @@ class ConfigurationStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.ConfigurationStoreListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStoreListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStoreListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -107,7 +107,7 @@ class ConfigurationStoresOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -122,8 +122,8 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ConfigurationStoreListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ConfigurationStoreListResult"]:
         """Lists the configuration stores for a given resource group.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -139,12 +139,12 @@ class ConfigurationStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.ConfigurationStoreListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStoreListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStoreListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -187,7 +187,7 @@ class ConfigurationStoresOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -202,8 +202,8 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        **kwargs
-    ) -> "models.ConfigurationStore":
+        **kwargs: Any
+    ) -> "_models.ConfigurationStore":
         """Gets the properties of the specified configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -216,12 +216,12 @@ class ConfigurationStoresOperations:
         :rtype: ~app_configuration_management_client.models.ConfigurationStore
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStore"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -247,7 +247,7 @@ class ConfigurationStoresOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConfigurationStore', pipeline_response)
@@ -262,15 +262,15 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        config_store_creation_parameters: "models.ConfigurationStore",
-        **kwargs
-    ) -> "models.ConfigurationStore":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
+        config_store_creation_parameters: "_models.ConfigurationStore",
+        **kwargs: Any
+    ) -> "_models.ConfigurationStore":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStore"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -301,7 +301,7 @@ class ConfigurationStoresOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -320,9 +320,9 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        config_store_creation_parameters: "models.ConfigurationStore",
-        **kwargs
-    ) -> AsyncLROPoller["models.ConfigurationStore"]:
+        config_store_creation_parameters: "_models.ConfigurationStore",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ConfigurationStore"]:
         """Creates a configuration store with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -334,8 +334,8 @@ class ConfigurationStoresOperations:
         :type config_store_creation_parameters: ~app_configuration_management_client.models.ConfigurationStore
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigurationStore or the result of cls(response)
@@ -343,7 +343,7 @@ class ConfigurationStoresOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStore"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -368,7 +368,13 @@ class ConfigurationStoresOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -386,14 +392,14 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -419,7 +425,7 @@ class ConfigurationStoresOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -431,7 +437,7 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a configuration store.
 
@@ -442,8 +448,8 @@ class ConfigurationStoresOperations:
         :type config_store_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -472,7 +478,13 @@ class ConfigurationStoresOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -490,15 +502,15 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        config_store_update_parameters: "models.ConfigurationStoreUpdateParameters",
-        **kwargs
-    ) -> "models.ConfigurationStore":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
+        config_store_update_parameters: "_models.ConfigurationStoreUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.ConfigurationStore":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStore"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -529,7 +541,7 @@ class ConfigurationStoresOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -548,9 +560,9 @@ class ConfigurationStoresOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
-        config_store_update_parameters: "models.ConfigurationStoreUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.ConfigurationStore"]:
+        config_store_update_parameters: "_models.ConfigurationStoreUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ConfigurationStore"]:
         """Updates a configuration store with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -562,8 +574,8 @@ class ConfigurationStoresOperations:
         :type config_store_update_parameters: ~app_configuration_management_client.models.ConfigurationStoreUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigurationStore or the result of cls(response)
@@ -571,7 +583,7 @@ class ConfigurationStoresOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConfigurationStore"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -596,7 +608,13 @@ class ConfigurationStoresOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -615,8 +633,8 @@ class ConfigurationStoresOperations:
         resource_group_name: str,
         config_store_name: str,
         skip_token: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.ApiKeyListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ApiKeyListResult"]:
         """Lists the access key for the specified configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -634,12 +652,12 @@ class ConfigurationStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.ApiKeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiKeyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiKeyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -683,7 +701,7 @@ class ConfigurationStoresOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -692,15 +710,15 @@ class ConfigurationStoresOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/ListKeys'}  # type: ignore
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/listKeys'}  # type: ignore
 
     async def regenerate_key(
         self,
         resource_group_name: str,
         config_store_name: str,
-        regenerate_key_parameters: "models.RegenerateKeyParameters",
-        **kwargs
-    ) -> "models.ApiKey":
+        regenerate_key_parameters: "_models.RegenerateKeyParameters",
+        **kwargs: Any
+    ) -> "_models.ApiKey":
         """Regenerates an access key for the specified configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -715,12 +733,12 @@ class ConfigurationStoresOperations:
         :rtype: ~app_configuration_management_client.models.ApiKey
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiKey"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiKey"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2021-03-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -751,7 +769,7 @@ class ConfigurationStoresOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApiKey', pipeline_response)
@@ -760,72 +778,4 @@ class ConfigurationStoresOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/RegenerateKey'}  # type: ignore
-
-    async def list_key_value(
-        self,
-        resource_group_name: str,
-        config_store_name: str,
-        list_key_value_parameters: "models.ListKeyValueParameters",
-        **kwargs
-    ) -> "models.KeyValue":
-        """Lists a configuration store key-value.
-
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs.
-        :type resource_group_name: str
-        :param config_store_name: The name of the configuration store.
-        :type config_store_name: str
-        :param list_key_value_parameters: The parameters for retrieving a key-value.
-        :type list_key_value_parameters: ~app_configuration_management_client.models.ListKeyValueParameters
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KeyValue, or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.KeyValue
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.list_key_value.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(list_key_value_parameters, 'ListKeyValueParameters')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('KeyValue', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    list_key_value.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/listKeyValue'}  # type: ignore
+    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/regenerateKey'}  # type: ignore
