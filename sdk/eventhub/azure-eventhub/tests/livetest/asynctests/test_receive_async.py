@@ -66,6 +66,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
 
     on_event.event_position = None
     connection_str, senders = connstr_senders
+    senders[0].send(EventData(b"Inclusive"))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
@@ -153,4 +154,4 @@ async def test_receive_over_websocket_async(connstr_senders):
         assert ed.properties[b"raw_prop"] == b"raw_value"
         assert ed.partition_key == b'0'
         ed_str = str(ed)
-        assert ", partition_key=b'0'" in ed_str
+        assert ", partition_key=" in ed_str

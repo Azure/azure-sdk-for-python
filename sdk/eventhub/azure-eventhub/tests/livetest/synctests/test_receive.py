@@ -160,4 +160,4 @@ def test_receive_over_websocket_sync(connstr_senders):
         assert ed.properties[b"raw_prop"] == b"raw_value"
         assert ed.partition_key == b'0'
         ed_str = str(ed)
-        assert ", partition_key=b'0'" in ed_str
+        assert ", partition_key=" in ed_str
