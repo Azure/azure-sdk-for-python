@@ -55,7 +55,7 @@ from azure.security.attestation import (
     AttestationClient,
     AttestationToken,
     CertificateModification,
-    AttestationPolicyToken
+    AttestationPolicyToken,
 )
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
@@ -242,9 +242,11 @@ issuancerules {};
             print("Policy Signer: ", set_result.policy_signer.certificates[0])
             print("Certificate:   ", cert)
 
-            # Create an Attestation Token object representing the 
+            # Create an Attestation Token object representing the
             # attestation policy.
-            expected_policy = AttestationPolicyToken(policy_to_set, signing_key=rsa_key, signing_certificate=cert)
+            expected_policy = AttestationPolicyToken(
+                policy_to_set, signing_key=rsa_key, signing_certificate=cert
+            )
 
             # Generate the Sha256 hash of the attestation token.
             hasher = hashes.Hash(hashes.SHA256(), backend=default_backend())

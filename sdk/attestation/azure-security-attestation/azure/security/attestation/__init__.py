@@ -15,9 +15,8 @@ from ._models import (
     AttestationPolicyCertificateResult,
     AttestationType,
     PolicyModification,
-#    StoredAttestationPolicy,
     CertificateModification,
-    AttestationPolicyToken
+    AttestationPolicyToken,
 )
 from ._version import VERSION
 
@@ -31,11 +30,10 @@ __all__ = [
     "AttestationPolicyResult",
     "AttestationPolicyCertificateResult",
     "AttestationResult",
-#    "StoredAttestationPolicy",
     "CertificateModification",
     "PolicyModification",
     "AttestationTokenValidationException",
-    "AttestationPolicyToken"
+    "AttestationPolicyToken",
 ]
 
 try:

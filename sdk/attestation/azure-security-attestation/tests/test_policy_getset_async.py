@@ -150,7 +150,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         policy, _ = await attest_client.get_policy(attestation_type)
         assert policy == attestation_policy
 
-        expected_policy = AttestationPolicyToken(attestation_policy,
+        expected_policy = AttestationPolicyToken(
+            attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
         )
@@ -190,7 +191,8 @@ class AsyncPolicyGetSetTests(AzureTestCase):
         policy, _ = await attest_client.get_policy(attestation_type)
         assert policy == attestation_policy
 
-        expected_policy = AttestationPolicyToken(attestation_policy,
+        expected_policy = AttestationPolicyToken(
+            attestation_policy,
             signing_key=key,
             signing_certificate=decoded_cert,
         )

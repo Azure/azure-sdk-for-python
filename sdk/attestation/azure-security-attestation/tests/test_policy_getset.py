@@ -37,7 +37,7 @@ from azure.security.attestation import (
     AttestationToken,
     PolicyModification,
     CertificateModification,
-    AttestationPolicyToken
+    AttestationPolicyToken,
 )
 
 
@@ -140,7 +140,8 @@ class PolicyGetSetTests(AzureTestCase):
         policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert policy == attestation_policy
 
-        expected_policy = AttestationPolicyToken(attestation_policy,
+        expected_policy = AttestationPolicyToken(
+            attestation_policy,
             signing_key=key,
             signing_certificate=signing_certificate,
         )

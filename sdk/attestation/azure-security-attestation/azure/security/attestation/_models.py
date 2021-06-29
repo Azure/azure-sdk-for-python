@@ -919,6 +919,7 @@ class AttestationToken(object):
         return_value += base64url_encode(signature)
         return return_value
 
+
 class AttestationPolicyToken(AttestationToken):
     """
     An `AttestationPolicyToken` is an AttestationToken object specialized for
@@ -928,11 +929,13 @@ class AttestationPolicyToken(AttestationToken):
 
     This token can thus be used to validate the hash returned by the `set_policy` API.
 
+    :param str policy: Attestation Policy to be used in the body of the token.
+
     """
+
     def __init__(self, policy, **kwargs):
         # type: (str, Dict[str, Any]) -> None
-        AttestationToken.__init__(self,
-            body=StoredAttestationPolicy(policy), **kwargs)
+        AttestationToken.__init__(self, body=StoredAttestationPolicy(policy), **kwargs)
 
 
 class AttestationTokenValidationException(ValueError):
