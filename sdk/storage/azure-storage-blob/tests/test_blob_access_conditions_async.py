@@ -29,7 +29,7 @@ from azure.storage.blob import (
     generate_container_sas, CustomerProvidedEncryptionKey,
 )
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 from azure.storage.blob.aio import (
     BlobServiceClient,

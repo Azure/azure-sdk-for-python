@@ -14,6 +14,8 @@ from .storage_testcase import (
 )
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
+from .helpers import ResponseCallback, RetryCounter
+from .fake_credential import FakeTokenCredential
 
 __all__ = [
     "AzureMgmtTestCase",
@@ -31,4 +33,7 @@ __all__ = [
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
+    "ResponseCallback",
+    "RetryCounter",
+    "FakeTokenCredential",
 ]

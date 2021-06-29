@@ -52,6 +52,9 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
+  - name: ValidateFormatting
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -112,6 +115,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
