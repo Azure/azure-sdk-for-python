@@ -87,7 +87,6 @@ async def iter_bytes_helper(
             stream_download_generator=stream_download_generator,
             response=response,
         ):
-            response._num_bytes_downloaded += len(part)
             yield part
 
 async def iter_raw_helper(
@@ -99,5 +98,4 @@ async def iter_raw_helper(
         stream_download_generator=stream_download_generator,
         response=response,
     ):
-        response._num_bytes_downloaded += len(part)
         yield part

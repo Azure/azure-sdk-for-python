@@ -56,16 +56,6 @@ async def test_iter_with_error(client):
     assert response.is_closed
 
 @pytest.mark.asyncio
-async def test_iter_raw_num_bytes_downloaded(client):
-    request = HttpRequest("GET", "/streams/basic")
-
-    async with client.send_request(request, stream=True) as response:
-        num_downloaded = response.num_bytes_downloaded
-        async for part in response.iter_raw():
-            assert len(part) == (response.num_bytes_downloaded - num_downloaded)
-            num_downloaded = response.num_bytes_downloaded
-
-@pytest.mark.asyncio
 async def test_iter_bytes(client):
     request = HttpRequest("GET", "/streams/basic")
 

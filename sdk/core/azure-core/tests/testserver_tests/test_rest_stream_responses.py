@@ -64,15 +64,6 @@ def test_iter_with_error(client):
             raise ValueError("Should error before entering")
     assert response.is_closed
 
-def test_iter_raw_num_bytes_downloaded(client):
-    request = HttpRequest("GET", "/streams/basic")
-
-    with client.send_request(request, stream=True) as response:
-        num_downloaded = response.num_bytes_downloaded
-        for part in response.iter_raw():
-            assert len(part) == (response.num_bytes_downloaded - num_downloaded)
-            num_downloaded = response.num_bytes_downloaded
-
 def test_iter_bytes(client):
     request = HttpRequest("GET", "/streams/basic")
 

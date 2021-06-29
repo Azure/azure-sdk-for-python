@@ -231,7 +231,6 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
-        self._num_bytes_downloaded = 0
         self.content_type = None
         self._connection_data_block_size = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
@@ -264,11 +263,6 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
         return self.content.decode(encoding)
-
-    @property
-    def num_bytes_downloaded(self) -> int:
-        """See how many bytes of your stream response have been downloaded"""
-        return self._num_bytes_downloaded
 
     def json(self) -> Any:
         """Returns the whole body as a json object.
@@ -329,8 +323,6 @@ class HttpResponse(_HttpResponseBase):
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
      whether the stream has been fully consumed
-    :ivar int num_bytes_downloaded: The number of bytes in your stream that
-     have been downloaded
     """
 
     def __enter__(self) -> "HttpResponse":
@@ -435,8 +427,6 @@ class AsyncHttpResponse(_HttpResponseBase):
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
      whether the stream has been fully consumed
-    :ivar int num_bytes_downloaded: The number of bytes in your stream that
-     have been downloaded
     """
 
     async def read(self) -> bytes:

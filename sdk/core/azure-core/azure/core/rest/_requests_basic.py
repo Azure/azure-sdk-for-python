@@ -104,7 +104,6 @@ def _stream_download_helper(decompress, response):
         decompress=decompress,
     )
     for part in stream_download:
-        response._num_bytes_downloaded += len(part)
         yield part
 
 class RestRequestsTransportResponse(HttpResponse, _RestRequestsTransportResponseBase):

@@ -201,7 +201,6 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         self.reason = None
         self.is_closed = False
         self.is_stream_consumed = False
-        self._num_bytes_downloaded = 0
         self.content_type = None
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
         self._connection_data_block_size = None  # type: Optional[int]
@@ -238,12 +237,6 @@ class _HttpResponseBase(object):  # pylint: disable=too-many-instance-attributes
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
         return self.content.decode(encoding)
-
-    @property
-    def num_bytes_downloaded(self):
-        # type: (...) -> int
-        """See how many bytes of your stream response have been downloaded"""
-        return self._num_bytes_downloaded
 
     def json(self):
         # type: (...) -> Any
@@ -316,8 +309,6 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=too-many-instance-attr
     :ivar bool is_closed: Whether the network connection has been closed yet
     :ivar bool is_stream_consumed: When getting a stream response, checks
      whether the stream has been fully consumed
-    :ivar int num_bytes_downloaded: The number of bytes in your stream that
-     have been downloaded
     """
 
     def __enter__(self):
