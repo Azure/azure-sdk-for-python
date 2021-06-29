@@ -25,28 +25,20 @@ A **token credential** is necessary to instantiate both the LogsQueryClient and 
 
 ```Python
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 ```
 
 ```Python
 from azure.monitor.query import MetricsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = MetricsQueryClient(credential)
 ```
@@ -114,14 +106,10 @@ This sample shows getting a log query. to handle the response and view it in a t
 import os
 import pandas as pd
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -153,29 +141,26 @@ This sample shows sending multiple queries at the same time using batch query AP
 
 ```Python
 import os
+from datetime import timedelta
 import pandas as pd
 from azure.monitor.query import LogsQueryClient, LogsQueryRequest
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
 requests = [
     LogsQueryRequest(
         query="AzureActivity | summarize count()",
-        duration="PT1H",
+        duration=timedelta(hours=1),
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
-        duration="PT1H",
+        duration=timedelta(hours=1),
         start_time=datetime(2021, 6, 2),
         workspace= os.environ['LOG_WORKSPACE_ID']
     ),
@@ -204,14 +189,10 @@ This sample shows setting a server timeout in seconds. A GateWay timeout is rais
 import os
 import pandas as pd
 from azure.monitor.query import LogsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -228,15 +209,12 @@ This example shows getting the metrics for an EventGrid subscription. The resour
 
 ```Python
 import os
+from datetime import timedelta
 from azure.monitor.query import MetricsQueryClient
-from azure.identity import ClientSecretCredential
+from azure.identity import DefaultAzureCredential
 
 
-credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+credential  = DefaultAzureCredential()
 
 client = MetricsQueryClient(credential)
 
@@ -245,7 +223,7 @@ response = client.query(
     metrics_uri,
     metric_names=["PublishSuccessCount"],
     start_time=datetime(2021, 5, 25),
-    duration='P1D'
+    duration=timedelta(days=1),
     )
 
 for metric in response.metrics:
@@ -293,7 +271,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-query-src]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/
 [python-query-pypi]: https://aka.ms/azsdk-python-monitor-query-pypi
 [python-query-product-docs]: https://docs.microsoft.com/azure/azure-monitor/
-[python-query-ref-docs]: https://docs.microsoft.com/python/api/overview/azure/?view=azure-python
+[python-query-ref-docs]: https://docs.microsoft.com/python/api/overview/azure/monitor-query-readme?view=azure-python-preview
 [python-query-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/samples
 [python-query-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/

@@ -1,5 +1,20 @@
 # Release History
 
+## 5.6.0 (Unreleased)
+
+### Features Added
+
+- Added support for sending AMQP annotated message which allows full access to the AMQP message fields.
+  - Introduced new namespace `azure.eventhub.amqp`.
+  - Added new enum class `azure.eventhub.amqp.AmqpMessageBodyType` to represent the body type of the message which includes:
+    - `DATA`: The body of message consists of one or more data sections and each section contains opaque binary data.
+    - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
+    - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
+  - Introduced new class `azure.eventhub.amqp.AmqpAnnotatedMessage` for accessing low-level amqp message sections which can be instantiated for sending.
+  - Introduced new classes `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` for accessing amqp header and properties.
+  - Added new property `body_type` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpMessageBodyType`.
+  - Added new read-only property `raw_amqp_message` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpAnnotatedMessage`.
+
 ## 5.5.0 (2021-05-13)
 
 **New Features**

@@ -17,7 +17,7 @@ try:
 except ImportError:
     from urllib2 import quote
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from azure.core.exceptions import (
     ResourceExistsError, ResourceModifiedError, HttpResponseError)
 from azure.storage.blob import (
@@ -25,7 +25,7 @@ from azure.storage.blob import (
     BlobBlock, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_container_sas,
     ContainerSasPermissions, BlobClient, generate_blob_sas, BlobSasPermissions)
 
-from _shared.service_versions import is_version_before, ServiceVersion
+from devtools_testutils.storage import StorageTestCase, is_version_before, ServiceVersion
 
 #------------------------------------------------------------------------------
 

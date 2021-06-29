@@ -17,7 +17,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import BlobType, BlobBlock, CustomerProvidedEncryptionKey, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",

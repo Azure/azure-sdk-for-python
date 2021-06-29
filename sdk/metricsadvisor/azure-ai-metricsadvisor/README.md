@@ -364,14 +364,14 @@ results = client.list_alerts(
 )
 for result in results:
     print("Alert id: {}".format(result.id))
-    print("Create on: {}".format(result.created_on))
+    print("Create time: {}".format(result.created_time))
 
 results = client.list_anomalies(
     alert_configuration_id=alert_config_id,
     alert_id=alert_id,
 )
 for result in results:
-    print("Create on: {}".format(result.created_on))
+    print("Create time: {}".format(result.created_time))
     print("Severity: {}".format(result.severity))
     print("Status: {}".format(result.status))
 ```

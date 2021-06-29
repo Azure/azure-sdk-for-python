@@ -1,5 +1,12 @@
 # Azure SDK for Python - Engineering System
 
+* [Target a specific package](#targeting-a-specific-package-at-build-time)
+* [Skip a tox test environment](#skipping-a-tox-test-environment-at-queue-time)
+* [Analyze Checks](#analyze-checks)
+* [PR Validation Checks](#pr-validation-checks)
+* [Nightly CI Checks](#nightly-ci-checks)
+* [Nightly Live Checks](#nightly-live-checks)
+
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.
 
 Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
@@ -44,16 +51,25 @@ Any combination of valid valid tox environments will work. Reference either this
 Analyze job in both nightly CI and pull request validation pipeline runs a set of static analysis using external and internal tools. Following are the list of these static analysis.
 
 #### MyPy
-`Mypy` is a static analysis tool that runs type checking of python package. Following are the steps to run `MyPy` locally for a specific package
+[`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. MyPy is an opt-in check for packages. Following are the steps to run `MyPy` locally for a specific package:
+
+1. Add the package name to the end of the [`mypy_hard_failure_packages.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/mypy_hard_failure_packages.py) file:
+```python
+MYPY_HARD_FAILURE_OPTED = [
+    ...,
+    "azure-my-package",
+]
+```
 1. Go to root of the package
-2. Execute following command
+2. Execute following command:
    ```tox -e mypy -c ../../../eng/tox/tox.ini ```
 
+
 #### Pylint
-`Pylint` is a static analysis tool to run lint checking. Following are the steps to run `pylint` locally for a specific package.
+[`Pylint`](https://pypi.org/project/pylint/) is a static analysis tool to run lint checking, it is automatically run on all PRs. Following are the steps to run `pylint` locally for a specific package.
 
 1. Go to root of the package.
-2. Execute following command
+2. Execute following command:
    ```tox -e pylint -c ../../../eng/tox/tox.ini```
 
 
@@ -67,6 +83,30 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 
 #### ApiStubGen
 `ApiStubGen` is an internal tool used to create API stub to help reviewing public APIs in our SDK package using [`APIViewTool`.](https://apiview.dev/) This tool also has some built in lint checks available and purpose of having this step in analyze job is to ensure any  change in code is not impacting stubbing process and also to have more and more custom lint checks added in future.
+
+#### black
+
+[black](https://pypi.org/project/black) is an opinionated code formatter for Python source code.
+
+#### Opt-in
+
+Make the following change to your projects `ci.yml`:
+
+```yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+        ...
+        ValidateFormatting: true
+        ...
+```
+
+#### Running locally
+To run locally first install `black` from pip if you do not have it already (the pipeline uses version 21.6b0). Currently, we use the `-l 120` option to allow lines up to 120 characters (consistent with our `pylint` check).
+```bash
+python -m pip install black==21.6b0
+python -m black -l 120 <path/to/service_directory>
+```
 
 #### Change log verification
 
@@ -182,7 +222,7 @@ As mentioned earlier, regression test or reverse dependency test is added to avo
 `azure-eventhub`
 `azure-storage-blob`
 
-Our regression framework automatically finds any such package that is added as required package so this list is not hardcoded.
+Our regression framework automatically finds any such package that is added as required package, so this list is not hardcoded.
 
 We have two different set of regression tests to verify regression scenarios against oldest and latest released dependent packages.
 •   Regression using latest released dependent package
@@ -219,3 +259,42 @@ Value: true
 •   Regression test
 Variable name: `Run.Regression`
 Value: true
+
+#### Autorest Automation
+This check will automatically create PRs with updated generated code whenever autorest has made an update that results in a change to the generated code for a package.
+
+##### Opt-in
+
+Make the following change to your projects `ci.yml`:
+
+```yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+        ...
+        VerifyAutorest: true
+        ...
+```
+
+##### Running locally
+
+To run autorest automation locally run the following command from the home of `azure-sdk-for-python`
+```bash
+azure-sdk-for-python> python scripts/devop_tasks/verify_autorest.py --service_directory <your_service_directory>
+```
+
+## Nightly Live Checks
+
+There are additional checks that run in live tests.
+
+#### Running Samples
+
+Samples for a library can be run as part of the nightly checks. To opt-in to the check edit the `tests.yml` file to look like:
+```yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ...
+      MatrixReplace:
+        - TestSamples=.*/true
+```

@@ -17,6 +17,7 @@ from azure.storage.blob import (
     StorageErrorCode,
     BlobProperties,
     ContentSettings)
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'

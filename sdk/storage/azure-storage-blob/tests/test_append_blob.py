@@ -26,8 +26,8 @@ from azure.storage.blob import (
     BlobSasPermissions)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, StorageAccountPreparer, \
-    GlobalResourceGroupPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, StorageAccountPreparer, GlobalResourceGroupPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
