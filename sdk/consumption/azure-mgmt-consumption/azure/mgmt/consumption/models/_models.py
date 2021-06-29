@@ -40,17 +40,49 @@ class Amount(msrest.serialization.Model):
         self.value = None
 
 
+class AmountWithExchangeRate(msrest.serialization.Model):
+    """The amount with exchange rate.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar exchange_rate: The exchange rate.
+    :vartype exchange_rate: float
+    :ivar exchange_rate_month: The exchange rate month.
+    :vartype exchange_rate_month: int
+    """
+
+    _validation = {
+        'exchange_rate': {'readonly': True},
+        'exchange_rate_month': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'exchange_rate': {'key': 'exchangeRate', 'type': 'float'},
+        'exchange_rate_month': {'key': 'exchangeRateMonth', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AmountWithExchangeRate, self).__init__(**kwargs)
+        self.exchange_rate = None
+        self.exchange_rate_month = None
+
+
 class Resource(msrest.serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     """
@@ -59,6 +91,7 @@ class Resource(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
     }
 
@@ -66,6 +99,7 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -77,6 +111,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.etag = None
         self.tags = None
 
 
@@ -85,12 +120,14 @@ class Balance(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar currency: The ISO currency in which the meter is charged, for example, USD.
@@ -133,6 +170,7 @@ class Balance(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'currency': {'readonly': True},
         'beginning_balance': {'readonly': True},
@@ -154,6 +192,7 @@ class Balance(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
         'beginning_balance': {'key': 'properties.beginningBalance', 'type': 'float'},
@@ -323,13 +362,15 @@ class Budget(ProxyResource):
      Future start date should not be more than twelve months. Past start date should  be selected
      within the timegrain period. There are no restrictions on the end date.
     :type time_period: ~azure.mgmt.consumption.models.BudgetTimePeriod
-    :param filter: May be used to filter budgets by resource group, resource, or meter.
+    :param filter: May be used to filter budgets by user-specified dimensions and/or tags.
     :type filter: ~azure.mgmt.consumption.models.BudgetFilter
     :ivar current_spend: The current amount of cost which is being tracked for a budget.
     :vartype current_spend: ~azure.mgmt.consumption.models.CurrentSpend
     :param notifications: Dictionary of notifications associated with the budget. Budget can have
      up to five notifications.
     :type notifications: dict[str, ~azure.mgmt.consumption.models.Notification]
+    :ivar forecast_spend: The forecasted cost which is being tracked for a budget.
+    :vartype forecast_spend: ~azure.mgmt.consumption.models.ForecastSpend
     """
 
     _validation = {
@@ -337,6 +378,7 @@ class Budget(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'current_spend': {'readonly': True},
+        'forecast_spend': {'readonly': True},
     }
 
     _attribute_map = {
@@ -351,6 +393,7 @@ class Budget(ProxyResource):
         'filter': {'key': 'properties.filter', 'type': 'BudgetFilter'},
         'current_spend': {'key': 'properties.currentSpend', 'type': 'CurrentSpend'},
         'notifications': {'key': 'properties.notifications', 'type': '{Notification}'},
+        'forecast_spend': {'key': 'properties.forecastSpend', 'type': 'ForecastSpend'},
     }
 
     def __init__(
@@ -365,6 +408,7 @@ class Budget(ProxyResource):
         self.filter = kwargs.get('filter', None)
         self.current_spend = None
         self.notifications = kwargs.get('notifications', None)
+        self.forecast_spend = None
 
 
 class BudgetComparisonExpression(msrest.serialization.Model):
@@ -383,7 +427,7 @@ class BudgetComparisonExpression(msrest.serialization.Model):
     _validation = {
         'name': {'required': True},
         'operator': {'required': True},
-        'values': {'required': True, 'min_items': 1},
+        'values': {'required': True},
     }
 
     _attribute_map = {
@@ -414,10 +458,6 @@ class BudgetFilter(msrest.serialization.Model):
     :param tags: A set of tags. Has comparison expression for a tag.
     :type tags: ~azure.mgmt.consumption.models.BudgetComparisonExpression
     """
-
-    _validation = {
-        'and_property': {'min_items': 2},
-    }
 
     _attribute_map = {
         'and_property': {'key': 'and', 'type': '[BudgetFilterProperties]'},
@@ -555,12 +595,14 @@ class ChargeSummary(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of charge summary.Constant filled by server.
@@ -572,6 +614,7 @@ class ChargeSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
     }
@@ -580,6 +623,7 @@ class ChargeSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -605,16 +649,21 @@ class CreditBalanceSummary(msrest.serialization.Model):
     :vartype estimated_balance: ~azure.mgmt.consumption.models.Amount
     :ivar current_balance: Current balance.
     :vartype current_balance: ~azure.mgmt.consumption.models.Amount
+    :ivar estimated_balance_in_billing_currency: Estimated balance in billing currency.
+    :vartype estimated_balance_in_billing_currency:
+     ~azure.mgmt.consumption.models.AmountWithExchangeRate
     """
 
     _validation = {
         'estimated_balance': {'readonly': True},
         'current_balance': {'readonly': True},
+        'estimated_balance_in_billing_currency': {'readonly': True},
     }
 
     _attribute_map = {
         'estimated_balance': {'key': 'estimatedBalance', 'type': 'Amount'},
         'current_balance': {'key': 'currentBalance', 'type': 'Amount'},
+        'estimated_balance_in_billing_currency': {'key': 'estimatedBalanceInBillingCurrency', 'type': 'AmountWithExchangeRate'},
     }
 
     def __init__(
@@ -624,6 +673,7 @@ class CreditBalanceSummary(msrest.serialization.Model):
         super(CreditBalanceSummary, self).__init__(**kwargs)
         self.estimated_balance = None
         self.current_balance = None
+        self.estimated_balance_in_billing_currency = None
 
 
 class CreditSummary(Resource):
@@ -631,12 +681,14 @@ class CreditSummary(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar balance_summary: Summary of balances associated with this credit summary.
@@ -647,28 +699,42 @@ class CreditSummary(Resource):
     :vartype expired_credit: ~azure.mgmt.consumption.models.Amount
     :ivar pending_eligible_charges: Pending eligible charges.
     :vartype pending_eligible_charges: ~azure.mgmt.consumption.models.Amount
+    :ivar credit_currency: The credit currency.
+    :vartype credit_currency: str
+    :ivar billing_currency: The billing currency.
+    :vartype billing_currency: str
+    :ivar reseller: Credit's reseller.
+    :vartype reseller: ~azure.mgmt.consumption.models.Reseller
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'balance_summary': {'readonly': True},
         'pending_credit_adjustments': {'readonly': True},
         'expired_credit': {'readonly': True},
         'pending_eligible_charges': {'readonly': True},
+        'credit_currency': {'readonly': True},
+        'billing_currency': {'readonly': True},
+        'reseller': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'balance_summary': {'key': 'properties.balanceSummary', 'type': 'CreditBalanceSummary'},
         'pending_credit_adjustments': {'key': 'properties.pendingCreditAdjustments', 'type': 'Amount'},
         'expired_credit': {'key': 'properties.expiredCredit', 'type': 'Amount'},
         'pending_eligible_charges': {'key': 'properties.pendingEligibleCharges', 'type': 'Amount'},
+        'credit_currency': {'key': 'properties.creditCurrency', 'type': 'str'},
+        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
+        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
     }
 
     def __init__(
@@ -680,6 +746,9 @@ class CreditSummary(Resource):
         self.pending_credit_adjustments = None
         self.expired_credit = None
         self.pending_eligible_charges = None
+        self.credit_currency = None
+        self.billing_currency = None
+        self.reseller = None
 
 
 class CurrentSpend(msrest.serialization.Model):
@@ -710,6 +779,36 @@ class CurrentSpend(msrest.serialization.Model):
         super(CurrentSpend, self).__init__(**kwargs)
         self.amount = None
         self.unit = None
+
+
+class DownloadProperties(msrest.serialization.Model):
+    """The properties of the price sheet download.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar download_url: The link (url) to download the pricesheet.
+    :vartype download_url: str
+    :ivar valid_till: Download link validity.
+    :vartype valid_till: str
+    """
+
+    _validation = {
+        'download_url': {'readonly': True},
+        'valid_till': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'download_url': {'key': 'downloadUrl', 'type': 'str'},
+        'valid_till': {'key': 'validTill', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DownloadProperties, self).__init__(**kwargs)
+        self.download_url = None
+        self.valid_till = None
 
 
 class ErrorDetails(msrest.serialization.Model):
@@ -805,40 +904,82 @@ class EventSummary(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar transaction_date: Transaction date.
+    :ivar transaction_date: The date of the event.
     :vartype transaction_date: ~datetime.datetime
-    :ivar description: Transaction description.
+    :ivar description: The description of the event.
     :vartype description: str
-    :ivar new_credit: New Credit.
+    :ivar new_credit: The amount of new credit or commitment for NewCredit or SettleCharges event.
     :vartype new_credit: ~azure.mgmt.consumption.models.Amount
-    :ivar adjustments: Adjustments amount.
+    :ivar adjustments: The amount of balance adjustment. The property is not available for
+     ConsumptionCommitment lots.
     :vartype adjustments: ~azure.mgmt.consumption.models.Amount
-    :ivar credit_expired: Credit expired.
+    :ivar credit_expired: The amount of expired credit or commitment for NewCredit or SettleCharges
+     event.
     :vartype credit_expired: ~azure.mgmt.consumption.models.Amount
-    :ivar charges: Charges amount.
+    :ivar charges: The amount of charges for events of type SettleCharges and
+     PendingEligibleCharges.
     :vartype charges: ~azure.mgmt.consumption.models.Amount
-    :ivar closed_balance: Closed balance.
+    :ivar closed_balance: The balance after the event.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
-    :param event_type: The type of event. Possible values include: "SettledCharges",
+    :param event_type: Identifies the type of the event. Possible values include: "SettledCharges",
      "PendingCharges", "PendingAdjustments", "PendingNewCredit", "PendingExpiredCredit", "UnKnown",
      "NewCredit".
     :type event_type: str or ~azure.mgmt.consumption.models.EventType
-    :ivar invoice_number: Invoice number.
+    :ivar invoice_number: The number which uniquely identifies the invoice on which the event was
+     billed. This will be empty for unbilled events.
     :vartype invoice_number: str
+    :ivar billing_profile_id: The ID that uniquely identifies the billing profile for which the
+     event happened. The property is only available for billing account of type
+     MicrosoftCustomerAgreement.
+    :vartype billing_profile_id: str
+    :ivar billing_profile_display_name: The display name of the billing profile for which the event
+     happened. The property is only available for billing account of type
+     MicrosoftCustomerAgreement.
+    :vartype billing_profile_display_name: str
+    :ivar lot_id: The ID that uniquely identifies the lot for which the event happened.
+    :vartype lot_id: str
+    :ivar lot_source: Identifies the source of the lot for which the event happened.
+    :vartype lot_source: str
+    :ivar canceled_credit: Amount of canceled credit.
+    :vartype canceled_credit: ~azure.mgmt.consumption.models.Amount
+    :ivar credit_currency: The credit currency of the event.
+    :vartype credit_currency: str
+    :ivar billing_currency: The billing currency of the event.
+    :vartype billing_currency: str
+    :ivar reseller: The reseller of the event.
+    :vartype reseller: ~azure.mgmt.consumption.models.Reseller
+    :ivar credit_expired_in_billing_currency: The amount of expired credit or commitment for
+     NewCredit or SettleCharges event in billing currency.
+    :vartype credit_expired_in_billing_currency:
+     ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar new_credit_in_billing_currency: The amount of new credit or commitment for NewCredit or
+     SettleCharges event in billing currency.
+    :vartype new_credit_in_billing_currency: ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar adjustments_in_billing_currency: The amount of balance adjustment in billing currency.
+    :vartype adjustments_in_billing_currency: ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar charges_in_billing_currency: The amount of charges for events of type SettleCharges and
+     PendingEligibleCharges in billing currency.
+    :vartype charges_in_billing_currency: ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar closed_balance_in_billing_currency: The balance in billing currency after the event.
+    :vartype closed_balance_in_billing_currency:
+     ~azure.mgmt.consumption.models.AmountWithExchangeRate
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'transaction_date': {'readonly': True},
         'description': {'readonly': True},
@@ -848,12 +989,26 @@ class EventSummary(Resource):
         'charges': {'readonly': True},
         'closed_balance': {'readonly': True},
         'invoice_number': {'readonly': True},
+        'billing_profile_id': {'readonly': True},
+        'billing_profile_display_name': {'readonly': True},
+        'lot_id': {'readonly': True},
+        'lot_source': {'readonly': True},
+        'canceled_credit': {'readonly': True},
+        'credit_currency': {'readonly': True},
+        'billing_currency': {'readonly': True},
+        'reseller': {'readonly': True},
+        'credit_expired_in_billing_currency': {'readonly': True},
+        'new_credit_in_billing_currency': {'readonly': True},
+        'adjustments_in_billing_currency': {'readonly': True},
+        'charges_in_billing_currency': {'readonly': True},
+        'closed_balance_in_billing_currency': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'transaction_date': {'key': 'properties.transactionDate', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -864,6 +1019,19 @@ class EventSummary(Resource):
         'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
         'event_type': {'key': 'properties.eventType', 'type': 'str'},
         'invoice_number': {'key': 'properties.invoiceNumber', 'type': 'str'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
+        'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
+        'lot_id': {'key': 'properties.lotId', 'type': 'str'},
+        'lot_source': {'key': 'properties.lotSource', 'type': 'str'},
+        'canceled_credit': {'key': 'properties.canceledCredit', 'type': 'Amount'},
+        'credit_currency': {'key': 'properties.creditCurrency', 'type': 'str'},
+        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
+        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
+        'credit_expired_in_billing_currency': {'key': 'properties.creditExpiredInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        'new_credit_in_billing_currency': {'key': 'properties.newCreditInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        'adjustments_in_billing_currency': {'key': 'properties.adjustmentsInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        'charges_in_billing_currency': {'key': 'properties.chargesInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        'closed_balance_in_billing_currency': {'key': 'properties.closedBalanceInBillingCurrency', 'type': 'AmountWithExchangeRate'},
     }
 
     def __init__(
@@ -880,6 +1048,19 @@ class EventSummary(Resource):
         self.closed_balance = None
         self.event_type = kwargs.get('event_type', None)
         self.invoice_number = None
+        self.billing_profile_id = None
+        self.billing_profile_display_name = None
+        self.lot_id = None
+        self.lot_source = None
+        self.canceled_credit = None
+        self.credit_currency = None
+        self.billing_currency = None
+        self.reseller = None
+        self.credit_expired_in_billing_currency = None
+        self.new_credit_in_billing_currency = None
+        self.adjustments_in_billing_currency = None
+        self.charges_in_billing_currency = None
+        self.closed_balance_in_billing_currency = None
 
 
 class Forecast(Resource):
@@ -887,18 +1068,22 @@ class Forecast(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar usage_date: The usage date of the forecast.
     :vartype usage_date: str
-    :param grain: The granularity of forecast. Possible values include: "Daily", "Monthly",
-     "Yearly".
+    :param grain: The granularity of forecast. Please note that Yearly is not currently supported
+     in this API. The API will provide responses in the Monthly grain if Yearly is selected. To get
+     yearly grain data, please use our newer Forecast API. Possible values include: "Daily",
+     "Monthly", "Yearly".
     :type grain: str or ~azure.mgmt.consumption.models.Grain
     :ivar charge: The amount of charge.
     :vartype charge: float
@@ -917,6 +1102,7 @@ class Forecast(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'usage_date': {'readonly': True},
         'charge': {'readonly': True},
@@ -928,6 +1114,7 @@ class Forecast(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'usage_date': {'key': 'properties.usageDate', 'type': 'str'},
         'grain': {'key': 'properties.grain', 'type': 'str'},
@@ -1010,6 +1197,95 @@ class ForecastsListResult(msrest.serialization.Model):
         self.value = None
 
 
+class ForecastSpend(msrest.serialization.Model):
+    """The forecasted cost which is being tracked for a budget.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar amount: The forecasted cost for the total time period which is being tracked by the
+     budget. This value is only provided if the budget contains a forecast alert type.
+    :vartype amount: float
+    :ivar unit: The unit of measure for the budget amount.
+    :vartype unit: str
+    """
+
+    _validation = {
+        'amount': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'amount': {'key': 'amount', 'type': 'float'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ForecastSpend, self).__init__(**kwargs)
+        self.amount = None
+        self.unit = None
+
+
+class HighCasedErrorDetails(msrest.serialization.Model):
+    """The details of the error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HighCasedErrorDetails, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+
+
+class HighCasedErrorResponse(msrest.serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message. 
+
+Some Error responses: 
+
+
+* 
+  429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header. 
+
+* 
+  503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
+
+    :param error: The details of the error.
+    :type error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'HighCasedErrorDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HighCasedErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
 class LegacyChargeSummary(ChargeSummary):
     """Legacy charge summary.
 
@@ -1017,12 +1293,14 @@ class LegacyChargeSummary(ChargeSummary):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of charge summary.Constant filled by server.
@@ -1048,6 +1326,7 @@ class LegacyChargeSummary(ChargeSummary):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_period_id': {'readonly': True},
@@ -1063,6 +1342,7 @@ class LegacyChargeSummary(ChargeSummary):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
@@ -1133,12 +1413,14 @@ class ReservationRecommendation(Resource, ResourceAttributes):
     :vartype location: str
     :ivar sku: Resource sku.
     :vartype sku: str
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of reservation recommendation.Constant filled by
@@ -1152,6 +1434,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
     }
@@ -1162,6 +1445,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -1181,6 +1465,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
         self.id = None
         self.name = None
         self.type = None
+        self.etag = None
         self.tags = None
         self.kind = 'ReservationRecommendation'  # type: str
 
@@ -1196,12 +1481,14 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :vartype location: str
     :ivar sku: Resource sku.
     :vartype sku: str
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of reservation recommendation.Constant filled by
@@ -1210,7 +1497,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
     :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
-    :vartype instance_flexibility_ratio: int
+    :vartype instance_flexibility_ratio: float
     :ivar instance_flexibility_group: The instance Flexibility Group.
     :vartype instance_flexibility_group: str
     :ivar normalized_size: The normalized Size.
@@ -1219,6 +1506,8 @@ class LegacyReservationRecommendation(ReservationRecommendation):
     :vartype recommended_quantity_normalized: float
     :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
+    :ivar resource_type: The azure resource type.
+    :vartype resource_type: str
     :ivar term: RI recommendations in one or three year terms.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
@@ -1243,6 +1532,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'look_back_period': {'readonly': True},
@@ -1251,6 +1541,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         'normalized_size': {'readonly': True},
         'recommended_quantity_normalized': {'readonly': True},
         'meter_id': {'readonly': True},
+        'resource_type': {'readonly': True},
         'term': {'readonly': True},
         'cost_with_no_reserved_instances': {'readonly': True},
         'recommended_quantity': {'readonly': True},
@@ -1267,14 +1558,16 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'float'},
         'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
         'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
         'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
         'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
         'term': {'key': 'properties.term', 'type': 'str'},
         'cost_with_no_reserved_instances': {'key': 'properties.costWithNoReservedInstances', 'type': 'float'},
         'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'float'},
@@ -1297,6 +1590,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):
         self.normalized_size = None
         self.recommended_quantity_normalized = None
         self.meter_id = None
+        self.resource_type = None
         self.term = None
         self.cost_with_no_reserved_instances = None
         self.recommended_quantity = None
@@ -1619,12 +1913,14 @@ class UsageDetail(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of usage details.Constant filled by server.  Possible
@@ -1636,6 +1932,7 @@ class UsageDetail(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
     }
@@ -1644,6 +1941,7 @@ class UsageDetail(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -1667,12 +1965,14 @@ class LegacyUsageDetail(UsageDetail):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of usage details.Constant filled by server.  Possible
@@ -1728,13 +2028,13 @@ class LegacyUsageDetail(UsageDetail):
     :ivar consumed_service: Consumed service name. Name of the azure resource provider that emits
      the usage or was purchased. This value is not provided for marketplace usage.
     :vartype consumed_service: str
-    :ivar resource_id: Azure resource manager resource identifier.
+    :ivar resource_id: Unique identifier of the Azure Resource Manager usage detail resource.
     :vartype resource_id: str
     :ivar resource_name: Resource Name.
     :vartype resource_name: str
-    :ivar service_info1: Service Info 1.
+    :ivar service_info1: Service-specific metadata.
     :vartype service_info1: str
-    :ivar service_info2: Service Info 2.
+    :ivar service_info2: Legacy field with optional service-specific metadata.
     :vartype service_info2: str
     :ivar additional_info: Additional details of this usage item. By default this is not populated,
      unless it's specified in $expand. Use this field to get usage line item specific details such
@@ -1785,6 +2085,7 @@ class LegacyUsageDetail(UsageDetail):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_account_id': {'readonly': True},
@@ -1835,6 +2136,7 @@ class LegacyUsageDetail(UsageDetail):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
@@ -1966,32 +2268,55 @@ class LotSummary(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar original_amount: Original amount.
+    :ivar original_amount: The original amount of a lot.
     :vartype original_amount: ~azure.mgmt.consumption.models.Amount
-    :ivar closed_balance: Closed balance.
+    :ivar closed_balance: The balance as of the last invoice.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
-    :ivar source: Lot source. Possible values include: "PurchasedCredit", "PromotionalCredit".
+    :ivar source: The source of the lot. Possible values include: "PurchasedCredit",
+     "PromotionalCredit", "ConsumptionCommitment".
     :vartype source: str or ~azure.mgmt.consumption.models.LotSource
-    :ivar start_date: Start date.
+    :ivar start_date: The date when the lot became effective.
     :vartype start_date: ~datetime.datetime
-    :ivar expiration_date: Expiration date.
+    :ivar expiration_date: The expiration date of a lot.
     :vartype expiration_date: ~datetime.datetime
-    :ivar po_number: PO number.
+    :ivar po_number: The po number of the invoice on which the lot was added. This property is not
+     available for ConsumptionCommitment lots.
     :vartype po_number: str
+    :ivar purchase_date: The date when the lot was added.
+    :vartype purchase_date: ~datetime.datetime
+    :ivar status: The status of the lot. Possible values include: "None", "Active", "Inactive",
+     "Expired", "Complete", "Canceled".
+    :vartype status: str or ~azure.mgmt.consumption.models.Status
+    :ivar credit_currency: The currency of the lot.
+    :vartype credit_currency: str
+    :ivar billing_currency: The billing currency of the lot.
+    :vartype billing_currency: str
+    :ivar original_amount_in_billing_currency: The original amount of a lot in billing currency.
+    :vartype original_amount_in_billing_currency:
+     ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar closed_balance_in_billing_currency: The balance as of the last invoice in billing
+     currency.
+    :vartype closed_balance_in_billing_currency:
+     ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar reseller: The reseller of the lot.
+    :vartype reseller: ~azure.mgmt.consumption.models.Reseller
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'original_amount': {'readonly': True},
         'closed_balance': {'readonly': True},
@@ -1999,12 +2324,20 @@ class LotSummary(Resource):
         'start_date': {'readonly': True},
         'expiration_date': {'readonly': True},
         'po_number': {'readonly': True},
+        'purchase_date': {'readonly': True},
+        'status': {'readonly': True},
+        'credit_currency': {'readonly': True},
+        'billing_currency': {'readonly': True},
+        'original_amount_in_billing_currency': {'readonly': True},
+        'closed_balance_in_billing_currency': {'readonly': True},
+        'reseller': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'original_amount': {'key': 'properties.originalAmount', 'type': 'Amount'},
         'closed_balance': {'key': 'properties.closedBalance', 'type': 'Amount'},
@@ -2012,6 +2345,13 @@ class LotSummary(Resource):
         'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
         'po_number': {'key': 'properties.poNumber', 'type': 'str'},
+        'purchase_date': {'key': 'properties.purchaseDate', 'type': 'iso-8601'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'credit_currency': {'key': 'properties.creditCurrency', 'type': 'str'},
+        'billing_currency': {'key': 'properties.billingCurrency', 'type': 'str'},
+        'original_amount_in_billing_currency': {'key': 'properties.originalAmountInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        'closed_balance_in_billing_currency': {'key': 'properties.closedBalanceInBillingCurrency', 'type': 'AmountWithExchangeRate'},
+        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
     }
 
     def __init__(
@@ -2025,6 +2365,13 @@ class LotSummary(Resource):
         self.start_date = None
         self.expiration_date = None
         self.po_number = None
+        self.purchase_date = None
+        self.status = None
+        self.credit_currency = None
+        self.billing_currency = None
+        self.original_amount_in_billing_currency = None
+        self.closed_balance_in_billing_currency = None
+        self.reseller = None
 
 
 class ManagementGroupAggregatedCostResult(Resource):
@@ -2032,12 +2379,14 @@ class ManagementGroupAggregatedCostResult(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the aggregated cost belongs
@@ -2069,6 +2418,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
         'usage_start': {'readonly': True},
@@ -2083,6 +2433,7 @@ class ManagementGroupAggregatedCostResult(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
         'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
@@ -2114,16 +2465,18 @@ class ManagementGroupAggregatedCostResult(Resource):
 
 
 class Marketplace(Resource):
-    """An marketplace resource.
+    """A marketplace resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the usage belongs to.
@@ -2138,6 +2491,8 @@ class Marketplace(Resource):
     :vartype offer_name: str
     :ivar resource_group: The name of resource group.
     :vartype resource_group: str
+    :ivar additional_info: Additional information.
+    :vartype additional_info: str
     :ivar order_number: The order number.
     :vartype order_number: str
     :ivar instance_name: The name of the resource instance that the usage is about.
@@ -2184,6 +2539,7 @@ class Marketplace(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
         'usage_start': {'readonly': True},
@@ -2191,6 +2547,7 @@ class Marketplace(Resource):
         'resource_rate': {'readonly': True},
         'offer_name': {'readonly': True},
         'resource_group': {'readonly': True},
+        'additional_info': {'readonly': True},
         'order_number': {'readonly': True},
         'instance_name': {'readonly': True},
         'instance_id': {'readonly': True},
@@ -2216,6 +2573,7 @@ class Marketplace(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
         'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
@@ -2223,6 +2581,7 @@ class Marketplace(Resource):
         'resource_rate': {'key': 'properties.resourceRate', 'type': 'float'},
         'offer_name': {'key': 'properties.offerName', 'type': 'str'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'additional_info': {'key': 'properties.additionalInfo', 'type': 'str'},
         'order_number': {'key': 'properties.orderNumber', 'type': 'str'},
         'instance_name': {'key': 'properties.instanceName', 'type': 'str'},
         'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
@@ -2255,6 +2614,7 @@ class Marketplace(Resource):
         self.resource_rate = None
         self.offer_name = None
         self.resource_group = None
+        self.additional_info = None
         self.order_number = None
         self.instance_name = None
         self.instance_id = None
@@ -2429,12 +2789,14 @@ class ModernChargeSummary(ChargeSummary):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of charge summary.Constant filled by server.
@@ -2468,6 +2830,7 @@ class ModernChargeSummary(ChargeSummary):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_period_id': {'readonly': True},
@@ -2487,6 +2850,7 @@ class ModernChargeSummary(ChargeSummary):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
@@ -2532,21 +2896,25 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :vartype location: str
     :ivar sku: Resource sku.
     :vartype sku: str
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of reservation recommendation.Constant filled by
      server.  Possible values include: "legacy", "modern".
     :type kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
+    :ivar location_properties_location: Resource Location.
+    :vartype location_properties_location: str
     :ivar look_back_period: The number of days of usage to look back for recommendation.
-    :vartype look_back_period: str
+    :vartype look_back_period: int
     :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
-    :vartype instance_flexibility_ratio: int
+    :vartype instance_flexibility_ratio: float
     :ivar instance_flexibility_group: The instance Flexibility Group.
     :vartype instance_flexibility_group: str
     :ivar normalized_size: The normalized Size.
@@ -2571,6 +2939,8 @@ class ModernReservationRecommendation(ReservationRecommendation):
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
     """
 
     _validation = {
@@ -2579,8 +2949,10 @@ class ModernReservationRecommendation(ReservationRecommendation):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
+        'location_properties_location': {'readonly': True},
         'look_back_period': {'readonly': True},
         'instance_flexibility_ratio': {'readonly': True},
         'instance_flexibility_group': {'readonly': True},
@@ -2595,6 +2967,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
         'first_usage_date': {'readonly': True},
         'scope': {'readonly': True},
         'sku_properties': {'readonly': True},
+        'sku_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2603,10 +2976,12 @@ class ModernReservationRecommendation(ReservationRecommendation):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'str'},
-        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'int'},
+        'location_properties_location': {'key': 'properties.location', 'type': 'str'},
+        'look_back_period': {'key': 'properties.lookBackPeriod', 'type': 'int'},
+        'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'float'},
         'instance_flexibility_group': {'key': 'properties.instanceFlexibilityGroup', 'type': 'str'},
         'normalized_size': {'key': 'properties.normalizedSize', 'type': 'str'},
         'recommended_quantity_normalized': {'key': 'properties.recommendedQuantityNormalized', 'type': 'float'},
@@ -2619,6 +2994,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
         'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
+        'sku_name': {'key': 'properties.skuName', 'type': 'str'},
     }
 
     def __init__(
@@ -2627,6 +3003,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
     ):
         super(ModernReservationRecommendation, self).__init__(**kwargs)
         self.kind = 'modern'  # type: str
+        self.location_properties_location = None
         self.look_back_period = None
         self.instance_flexibility_ratio = None
         self.instance_flexibility_group = None
@@ -2641,6 +3018,7 @@ class ModernReservationRecommendation(ReservationRecommendation):
         self.first_usage_date = None
         self.scope = None
         self.sku_properties = None
+        self.sku_name = None
 
 
 class ModernReservationTransaction(ReservationTransactionResource):
@@ -2820,12 +3198,14 @@ class ModernUsageDetail(UsageDetail):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param kind: Required. Specifies the kind of usage details.Constant filled by server.  Possible
@@ -2894,9 +3274,9 @@ class ModernUsageDetail(UsageDetail):
     :ivar consumed_service: Consumed service name. Name of the azure resource provider that emits
      the usage or was purchased. This value is not provided for marketplace usage.
     :vartype consumed_service: str
-    :ivar service_info1: Service Info 1.
+    :ivar service_info1: Service-specific metadata.
     :vartype service_info1: str
-    :ivar service_info2: Service Info 2.
+    :ivar service_info2: Legacy field with optional service-specific metadata.
     :vartype service_info2: str
     :ivar additional_info: Additional details of this usage item. Use this field to get usage line
      item specific details such as the actual VM Size (ServiceType) or the ratio in which the
@@ -2966,8 +3346,8 @@ class ModernUsageDetail(UsageDetail):
     :vartype previous_invoice_id: str
     :ivar pricing_currency_code: Pricing Billing Currency.
     :vartype pricing_currency_code: str
-    :ivar product_identifier: Identifer for the product that has accrued charges by consumption or
-     purchase . This is the concatenated key of productId and SKuId in partner center.
+    :ivar product_identifier: Identifier for the product that has accrued charges by consumption or
+     purchase . This is the concatenated key of productId and SkuId in partner center.
     :vartype product_identifier: str
     :ivar resource_location_normalized: Resource Location Normalized.
     :vartype resource_location_normalized: str
@@ -3006,12 +3386,15 @@ class ModernUsageDetail(UsageDetail):
     :ivar partner_earned_credit_applied: Flag to indicate if partner earned credit has been applied
      or not.
     :vartype partner_earned_credit_applied: str
+    :ivar pay_g_price: Retail price for the resource.
+    :vartype pay_g_price: float
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'kind': {'required': True},
         'billing_account_id': {'readonly': True},
@@ -3079,12 +3462,14 @@ class ModernUsageDetail(UsageDetail):
         'payg_cost_in_usd': {'readonly': True},
         'partner_earned_credit_rate': {'readonly': True},
         'partner_earned_credit_applied': {'readonly': True},
+        'pay_g_price': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
@@ -3152,6 +3537,7 @@ class ModernUsageDetail(UsageDetail):
         'payg_cost_in_usd': {'key': 'properties.paygCostInUSD', 'type': 'float'},
         'partner_earned_credit_rate': {'key': 'properties.partnerEarnedCreditRate', 'type': 'float'},
         'partner_earned_credit_applied': {'key': 'properties.partnerEarnedCreditApplied', 'type': 'str'},
+        'pay_g_price': {'key': 'properties.payGPrice', 'type': 'float'},
     }
 
     def __init__(
@@ -3225,6 +3611,7 @@ class ModernUsageDetail(UsageDetail):
         self.payg_cost_in_usd = None
         self.partner_earned_credit_rate = None
         self.partner_earned_credit_applied = None
+        self.pay_g_price = None
 
 
 class Notification(msrest.serialization.Model):
@@ -3242,15 +3629,19 @@ class Notification(msrest.serialization.Model):
      1000.
     :type threshold: float
     :param contact_emails: Required. Email addresses to send the budget notification to when the
-     threshold is exceeded.
+     threshold is exceeded. Must have at least one contact email or contact group specified at the
+     Subscription or Resource Group scopes. All other scopes must have at least one contact email
+     specified.
     :type contact_emails: list[str]
     :param contact_roles: Contact roles to send the budget notification to when the threshold is
      exceeded.
     :type contact_roles: list[str]
     :param contact_groups: Action groups to send the budget notification to when the threshold is
-     exceeded.
+     exceeded. Must be provided as a fully qualified Azure resource id. Only supported at
+     Subscription or Resource Group scopes.
     :type contact_groups: list[str]
-    :param threshold_type: The type of threshold. Possible values include: "Actual".
+    :param threshold_type: The type of threshold. Possible values include: "Actual". Default value:
+     "Actual".
     :type threshold_type: str or ~azure.mgmt.consumption.models.ThresholdType
     """
 
@@ -3258,7 +3649,7 @@ class Notification(msrest.serialization.Model):
         'enabled': {'required': True},
         'operator': {'required': True},
         'threshold': {'required': True},
-        'contact_emails': {'required': True, 'max_items': 50, 'min_items': 1},
+        'contact_emails': {'required': True, 'max_items': 50, 'min_items': 0},
         'contact_groups': {'max_items': 50, 'min_items': 0},
     }
 
@@ -3283,7 +3674,7 @@ class Notification(msrest.serialization.Model):
         self.contact_emails = kwargs['contact_emails']
         self.contact_roles = kwargs.get('contact_roles', None)
         self.contact_groups = kwargs.get('contact_groups', None)
-        self.threshold_type = kwargs.get('threshold_type', None)
+        self.threshold_type = kwargs.get('threshold_type', "Actual")
 
 
 class Operation(msrest.serialization.Model):
@@ -3291,6 +3682,8 @@ class Operation(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar id: Operation Id.
+    :vartype id: str
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :param display: The object that represents the operation.
@@ -3298,10 +3691,12 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
@@ -3311,6 +3706,7 @@ class Operation(msrest.serialization.Model):
         **kwargs
     ):
         super(Operation, self).__init__(**kwargs)
+        self.id = None
         self.name = None
         self.display = kwargs.get('display', None)
 
@@ -3326,18 +3722,22 @@ class OperationDisplay(msrest.serialization.Model):
     :vartype resource: str
     :ivar operation: Operation type: Read, write, delete, etc.
     :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _validation = {
         'provider': {'readonly': True},
         'resource': {'readonly': True},
         'operation': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(
@@ -3348,6 +3748,7 @@ class OperationDisplay(msrest.serialization.Model):
         self.provider = None
         self.resource = None
         self.operation = None
+        self.description = None
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -3452,36 +3853,44 @@ class PriceSheetResult(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar pricesheets: Price sheet.
     :vartype pricesheets: list[~azure.mgmt.consumption.models.PriceSheetProperties]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
+    :ivar download: Pricesheet download details.
+    :vartype download: ~azure.mgmt.consumption.models.MeterDetails
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'pricesheets': {'readonly': True},
         'next_link': {'readonly': True},
+        'download': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'pricesheets': {'key': 'properties.pricesheets', 'type': '[PriceSheetProperties]'},
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
+        'download': {'key': 'properties.download', 'type': 'MeterDetails'},
     }
 
     def __init__(
@@ -3491,6 +3900,37 @@ class PriceSheetResult(Resource):
         super(PriceSheetResult, self).__init__(**kwargs)
         self.pricesheets = None
         self.next_link = None
+        self.download = None
+
+
+class Reseller(msrest.serialization.Model):
+    """The reseller properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar reseller_id: The reseller property ID.
+    :vartype reseller_id: str
+    :ivar reseller_description: The reseller property description.
+    :vartype reseller_description: str
+    """
+
+    _validation = {
+        'reseller_id': {'readonly': True},
+        'reseller_description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'reseller_id': {'key': 'resellerId', 'type': 'str'},
+        'reseller_description': {'key': 'resellerDescription', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Reseller, self).__init__(**kwargs)
+        self.reseller_id = None
+        self.reseller_description = None
 
 
 class ReservationDetail(Resource):
@@ -3498,12 +3938,14 @@ class ReservationDetail(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
@@ -3544,6 +3986,7 @@ class ReservationDetail(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'reservation_order_id': {'readonly': True},
         'instance_flexibility_ratio': {'readonly': True},
@@ -3562,6 +4005,7 @@ class ReservationDetail(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
         'instance_flexibility_ratio': {'key': 'properties.instanceFlexibilityRatio', 'type': 'str'},
@@ -3684,12 +4128,14 @@ class ReservationRecommendationDetailsModel(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :param location: Resource Location.
@@ -3716,6 +4162,7 @@ class ReservationRecommendationDetailsModel(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'currency': {'readonly': True},
         'resource': {'readonly': True},
@@ -3729,6 +4176,7 @@ class ReservationRecommendationDetailsModel(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
@@ -3913,16 +4361,20 @@ class ReservationRecommendationsListResult(msrest.serialization.Model):
     :vartype value: list[~azure.mgmt.consumption.models.ReservationRecommendation]
     :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
+    :ivar previous_link: The link (url) to the previous page of results.
+    :vartype previous_link: str
     """
 
     _validation = {
         'value': {'readonly': True},
         'next_link': {'readonly': True},
+        'previous_link': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ReservationRecommendation]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'previous_link': {'key': 'previousLink', 'type': 'str'},
     }
 
     def __init__(
@@ -3932,6 +4384,7 @@ class ReservationRecommendationsListResult(msrest.serialization.Model):
         super(ReservationRecommendationsListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+        self.previous_link = None
 
 
 class ReservationSummariesListResult(msrest.serialization.Model):
@@ -3969,12 +4422,14 @@ class ReservationSummary(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The ID that uniquely identifies an event.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
     :ivar reservation_order_id: The reservation order ID is the identifier for a reservation
@@ -4027,6 +4482,7 @@ class ReservationSummary(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'tags': {'readonly': True},
         'reservation_order_id': {'readonly': True},
         'reservation_id': {'readonly': True},
@@ -4049,6 +4505,7 @@ class ReservationSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
         'reservation_id': {'key': 'properties.reservationId', 'type': 'str'},
@@ -4154,10 +4611,13 @@ class Tag(msrest.serialization.Model):
 
     :param key: Tag key.
     :type key: str
+    :param value: Tag values.
+    :type value: list[str]
     """
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[str]'},
     }
 
     def __init__(
@@ -4166,6 +4626,7 @@ class Tag(msrest.serialization.Model):
     ):
         super(Tag, self).__init__(**kwargs)
         self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class TagsResult(ProxyResource):
@@ -4184,12 +4645,18 @@ class TagsResult(ProxyResource):
     :type e_tag: str
     :param tags: A set of tags. A list of Tag.
     :type tags: list[~azure.mgmt.consumption.models.Tag]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    :ivar previous_link: The link (url) to the previous page of results.
+    :vartype previous_link: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'next_link': {'readonly': True},
+        'previous_link': {'readonly': True},
     }
 
     _attribute_map = {
@@ -4198,6 +4665,8 @@ class TagsResult(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
+        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
+        'previous_link': {'key': 'properties.previousLink', 'type': 'str'},
     }
 
     def __init__(
@@ -4206,6 +4675,8 @@ class TagsResult(ProxyResource):
     ):
         super(TagsResult, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+        self.next_link = None
+        self.previous_link = None
 
 
 class UsageDetailsListResult(msrest.serialization.Model):

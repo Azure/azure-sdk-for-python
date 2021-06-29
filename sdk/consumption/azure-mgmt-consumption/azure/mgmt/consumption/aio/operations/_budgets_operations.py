@@ -44,7 +44,7 @@ class BudgetsOperations:
     def list(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.BudgetsListResult"]:
         """Lists all budgets for the defined scope.
 
@@ -73,7 +73,7 @@ class BudgetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -113,7 +113,7 @@ class BudgetsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -128,7 +128,7 @@ class BudgetsOperations:
         self,
         scope: str,
         budget_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Budget":
         """Gets the budget for the scope by budget name.
 
@@ -159,7 +159,7 @@ class BudgetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -184,7 +184,7 @@ class BudgetsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Budget', pipeline_response)
@@ -200,11 +200,11 @@ class BudgetsOperations:
         scope: str,
         budget_name: str,
         parameters: "_models.Budget",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Budget":
-        """The operation to create or update a budget. Update operation requires latest eTag to be set in
-        the request mandatorily. You may obtain the latest eTag by performing a get operation. Create
-        operation does not require eTag.
+        """The operation to create or update a budget. You can optionally provide an eTag if desired as a
+        form of concurrency control. To obtain the latest eTag for a given budget, perform a get
+        operation prior to your put operation.
 
         :param scope: The scope associated with budget operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
@@ -235,7 +235,7 @@ class BudgetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -265,7 +265,7 @@ class BudgetsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -284,7 +284,7 @@ class BudgetsOperations:
         self,
         scope: str,
         budget_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The operation to delete a budget.
 
@@ -315,7 +315,7 @@ class BudgetsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -340,7 +340,7 @@ class BudgetsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

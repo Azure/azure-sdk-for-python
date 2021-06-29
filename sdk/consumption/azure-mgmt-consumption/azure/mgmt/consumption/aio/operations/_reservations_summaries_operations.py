@@ -46,7 +46,7 @@ class ReservationsSummariesOperations:
         reservation_order_id: str,
         grain: Union[str, "_models.Datagrain"],
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationSummariesListResult"]:
         """Lists the reservations summaries for daily or monthly grain.
 
@@ -67,7 +67,7 @@ class ReservationsSummariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -110,7 +110,7 @@ class ReservationsSummariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -127,7 +127,7 @@ class ReservationsSummariesOperations:
         reservation_id: str,
         grain: Union[str, "_models.Datagrain"],
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationSummariesListResult"]:
         """Lists the reservations summaries for daily or monthly grain.
 
@@ -150,7 +150,7 @@ class ReservationsSummariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -194,7 +194,7 @@ class ReservationsSummariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -214,7 +214,7 @@ class ReservationsSummariesOperations:
         filter: Optional[str] = None,
         reservation_id: Optional[str] = None,
         reservation_order_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ReservationSummariesListResult"]:
         """Lists the reservations summaries for the defined scope daily or monthly grain.
 
@@ -249,7 +249,7 @@ class ReservationsSummariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -300,7 +300,7 @@ class ReservationsSummariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

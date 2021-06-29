@@ -52,8 +52,8 @@ class PriceSheetOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.PriceSheetResult"
-        """Gets the price sheet for a scope by subscriptionId. Price sheet is available via this API only
-        for May 1, 2014 or later.
+        """Gets the price sheet for a subscription. Price sheet is available via this API only for May 1,
+        2014 or later.
 
         :param expand: May be used to expand the properties/meterDetails within a price sheet. By
          default, these fields are not included when returning price sheet.
@@ -74,7 +74,7 @@ class PriceSheetOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -104,7 +104,7 @@ class PriceSheetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PriceSheetResult', pipeline_response)
@@ -148,7 +148,7 @@ class PriceSheetOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
@@ -179,7 +179,7 @@ class PriceSheetOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PriceSheetResult', pipeline_response)

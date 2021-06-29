@@ -46,8 +46,8 @@ class ReservationRecommendationDetailsOperations(object):
 
     def get(
         self,
-        billing_scope,  # type: str
-        scope,  # type: Union[str, "_models.Scope"]
+        scope,  # type: str
+        scope1,  # type: Union[str, "_models.Scope"]
         region,  # type: str
         term,  # type: Union[str, "_models.Term"]
         look_back_period,  # type: Union[str, "_models.LookBackPeriod"]
@@ -57,15 +57,15 @@ class ReservationRecommendationDetailsOperations(object):
         # type: (...) -> Optional["_models.ReservationRecommendationDetailsModel"]
         """Details of a reservation recommendation for what-if analysis of reserved instances.
 
-        :param billing_scope: The scope associated with reservation recommendation details operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription scope,
+        :param scope: The scope associated with reservation recommendation details operations. This
+         includes '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resource group scope,
          /providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for BillingAccount scope, and
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
          for billingProfile scope.
-        :type billing_scope: str
-        :param scope: Scope of the reservation.
-        :type scope: str or ~azure.mgmt.consumption.models.Scope
+        :type scope: str
+        :param scope1: Scope of the reservation.
+        :type scope1: str or ~azure.mgmt.consumption.models.Scope
         :param region: Used to select the region the recommendation should be generated for.
         :type region: str
         :param term: Specify length of reservation recommendation term.
@@ -86,20 +86,20 @@ class ReservationRecommendationDetailsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-10-01"
+        api_version = "2021-05-01"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'billingScope': self._serialize.url("billing_scope", billing_scope, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['scope'] = self._serialize.query("scope", scope, 'str')
+        query_parameters['scope'] = self._serialize.query("scope1", scope1, 'str')
         query_parameters['region'] = self._serialize.query("region", region, 'str')
         query_parameters['term'] = self._serialize.query("term", term, 'str')
         query_parameters['lookBackPeriod'] = self._serialize.query("look_back_period", look_back_period, 'str')
@@ -115,7 +115,7 @@ class ReservationRecommendationDetailsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.HighCasedErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -126,4 +126,4 @@ class ReservationRecommendationDetailsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{billingScope}/providers/Microsoft.Consumption/reservationRecommendationDetails'}  # type: ignore
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/reservationRecommendationDetails'}  # type: ignore

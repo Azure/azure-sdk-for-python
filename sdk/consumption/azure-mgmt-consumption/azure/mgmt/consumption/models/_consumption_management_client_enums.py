@@ -69,11 +69,13 @@ class ChargeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class Datagrain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    DAILY_GRAIN = "daily"  #: Daily grain of data.
-    MONTHLY_GRAIN = "monthly"  #: Monthly grain of data.
+    #: Daily grain of data.
+    DAILY_GRAIN = "daily"
+    #: Monthly grain of data.
+    MONTHLY_GRAIN = "monthly"
 
 class EventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of event.
+    """Identifies the type of the event.
     """
 
     SETTLED_CHARGES = "SettledCharges"
@@ -85,7 +87,9 @@ class EventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEW_CREDIT = "NewCredit"
 
 class Grain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The granularity of forecast.
+    """The granularity of forecast. Please note that Yearly is not currently supported in this API.
+    The API will provide responses in the Monthly grain if Yearly is selected. To get yearly grain
+    data, please use our newer Forecast API.
     """
 
     DAILY = "Daily"
@@ -94,22 +98,29 @@ class Grain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class LookBackPeriod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    LAST07_DAYS = "Last7Days"  #: Use 7 days of data for recommendations.
-    LAST30_DAYS = "Last30Days"  #: Use 30 days of data for recommendations.
-    LAST60_DAYS = "Last60Days"  #: Use 60 days of data for recommendations.
+    #: Use 7 days of data for recommendations.
+    LAST07_DAYS = "Last7Days"
+    #: Use 30 days of data for recommendations.
+    LAST30_DAYS = "Last30Days"
+    #: Use 60 days of data for recommendations.
+    LAST60_DAYS = "Last60Days"
 
 class LotSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Lot source.
+    """The source of the lot.
     """
 
     PURCHASED_CREDIT = "PurchasedCredit"
     PROMOTIONAL_CREDIT = "PromotionalCredit"
+    CONSUMPTION_COMMITMENT = "ConsumptionCommitment"
 
 class Metrictype(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    ACTUAL_COST_METRIC_TYPE = "actualcost"  #: Actual cost data.
-    AMORTIZED_COST_METRIC_TYPE = "amortizedcost"  #: Amortized cost data.
-    USAGE_METRIC_TYPE = "usage"  #: Usage data.
+    #: Actual cost data.
+    ACTUAL_COST_METRIC_TYPE = "actualcost"
+    #: Amortized cost data.
+    AMORTIZED_COST_METRIC_TYPE = "amortizedcost"
+    #: Usage data.
+    USAGE_METRIC_TYPE = "usage"
 
 class OperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The comparison operator.
@@ -131,10 +142,23 @@ class Scope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SINGLE = "Single"
     SHARED = "Shared"
 
+class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of the lot.
+    """
+
+    NONE = "None"
+    ACTIVE = "Active"
+    INACTIVE = "Inactive"
+    EXPIRED = "Expired"
+    COMPLETE = "Complete"
+    CANCELED = "Canceled"
+
 class Term(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    P1_Y = "P1Y"  #: 1 year reservation term.
-    P3_Y = "P3Y"  #: 3 year reservation term.
+    #: 1 year reservation term.
+    P1_Y = "P1Y"
+    #: 3 year reservation term.
+    P3_Y = "P3Y"
 
 class ThresholdType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of threshold
