@@ -50,7 +50,7 @@ class TagOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagCollection"]:
         """Lists all Tags associated with the Operation.
 
@@ -83,7 +83,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +133,7 @@ class TagOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -151,7 +151,7 @@ class TagOperations:
         api_id: str,
         operation_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state version of the tag specified by its identifier.
 
@@ -177,7 +177,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -206,7 +206,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -225,7 +225,7 @@ class TagOperations:
         api_id: str,
         operation_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Get tag associated with the Operation.
 
@@ -251,7 +251,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -280,7 +280,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -300,7 +300,7 @@ class TagOperations:
         api_id: str,
         operation_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Assign tag to the Operation.
 
@@ -326,7 +326,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -355,7 +355,7 @@ class TagOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -377,7 +377,7 @@ class TagOperations:
         api_id: str,
         operation_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Detach the tag from the Operation.
 
@@ -403,7 +403,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -432,7 +432,7 @@ class TagOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -448,7 +448,7 @@ class TagOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagCollection"]:
         """Lists all Tags associated with the API.
 
@@ -478,7 +478,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -527,7 +527,7 @@ class TagOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -544,7 +544,7 @@ class TagOperations:
         service_name: str,
         api_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state version of the tag specified by its identifier.
 
@@ -567,7 +567,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -595,7 +595,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -613,7 +613,7 @@ class TagOperations:
         service_name: str,
         api_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Get tag associated with the API.
 
@@ -636,7 +636,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -664,7 +664,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -683,7 +683,7 @@ class TagOperations:
         service_name: str,
         api_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Assign tag to the Api.
 
@@ -706,7 +706,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -734,7 +734,7 @@ class TagOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -758,7 +758,7 @@ class TagOperations:
         service_name: str,
         api_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Detach the tag from the Api.
 
@@ -781,7 +781,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -809,7 +809,7 @@ class TagOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -825,7 +825,7 @@ class TagOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagCollection"]:
         """Lists all Tags associated with the Product.
 
@@ -855,7 +855,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -904,7 +904,7 @@ class TagOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -921,7 +921,7 @@ class TagOperations:
         service_name: str,
         product_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state version of the tag specified by its identifier.
 
@@ -944,7 +944,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -972,7 +972,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -990,7 +990,7 @@ class TagOperations:
         service_name: str,
         product_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Get tag associated with the Product.
 
@@ -1013,7 +1013,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1041,7 +1041,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1060,7 +1060,7 @@ class TagOperations:
         service_name: str,
         product_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Assign tag to the Product.
 
@@ -1083,7 +1083,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1111,7 +1111,7 @@ class TagOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1132,7 +1132,7 @@ class TagOperations:
         service_name: str,
         product_id: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Detach the tag from the Product.
 
@@ -1155,7 +1155,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1183,7 +1183,7 @@ class TagOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1199,7 +1199,7 @@ class TagOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         scope: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagCollection"]:
         """Lists a collection of tags defined within a service instance.
 
@@ -1229,7 +1229,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1279,7 +1279,7 @@ class TagOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1295,7 +1295,7 @@ class TagOperations:
         resource_group_name: str,
         service_name: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state version of the tag specified by its identifier.
 
@@ -1315,7 +1315,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1342,7 +1342,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1359,7 +1359,7 @@ class TagOperations:
         resource_group_name: str,
         service_name: str,
         tag_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Gets the details of the tag specified by its identifier.
 
@@ -1379,7 +1379,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1406,7 +1406,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1426,7 +1426,7 @@ class TagOperations:
         tag_id: str,
         parameters: "_models.TagCreateUpdateParameters",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Creates a tag.
 
@@ -1451,7 +1451,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1485,7 +1485,7 @@ class TagOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1510,7 +1510,7 @@ class TagOperations:
         tag_id: str,
         if_match: str,
         parameters: "_models.TagCreateUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagContract":
         """Updates the details of the tag specified by its identifier.
 
@@ -1535,7 +1535,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1568,7 +1568,7 @@ class TagOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1587,7 +1587,7 @@ class TagOperations:
         service_name: str,
         tag_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specific tag of the API Management service instance.
 
@@ -1610,7 +1610,7 @@ class TagOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -1638,7 +1638,7 @@ class TagOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

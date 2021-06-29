@@ -48,7 +48,7 @@ class IssueOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.IssueCollection"]:
         """Lists a collection of issues in the specified service instance.
 
@@ -79,7 +79,7 @@ class IssueOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -127,7 +127,7 @@ class IssueOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -143,7 +143,7 @@ class IssueOperations:
         resource_group_name: str,
         service_name: str,
         issue_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.IssueContract":
         """Gets API Management issue details.
 
@@ -164,7 +164,7 @@ class IssueOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -191,7 +191,7 @@ class IssueOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

@@ -46,7 +46,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AccessInformationCollection"]:
         """Returns list of access infos - for Git and Management endpoints.
 
@@ -66,7 +66,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -110,7 +110,7 @@ class TenantAccessOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -126,7 +126,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, "_models.AccessIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Tenant access metadata.
 
@@ -146,7 +146,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -173,7 +173,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -190,7 +190,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, "_models.AccessIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessInformationContract":
         """Get tenant access information details without secrets.
 
@@ -210,7 +210,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -237,7 +237,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -257,7 +257,7 @@ class TenantAccessOperations:
         access_name: Union[str, "_models.AccessIdName"],
         if_match: str,
         parameters: "_models.AccessInformationCreateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessInformationContract":
         """Update tenant access information details.
 
@@ -282,7 +282,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -315,7 +315,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -335,7 +335,7 @@ class TenantAccessOperations:
         access_name: Union[str, "_models.AccessIdName"],
         if_match: str,
         parameters: "_models.AccessInformationUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessInformationContract":
         """Update tenant access information details.
 
@@ -360,7 +360,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -393,7 +393,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -411,7 +411,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, "_models.AccessIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Regenerate primary access key.
 
@@ -431,7 +431,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -458,7 +458,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -471,7 +471,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, "_models.AccessIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Regenerate secondary access key.
 
@@ -491,7 +491,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -518,7 +518,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -531,7 +531,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, "_models.AccessIdName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AccessInformationSecretsContract":
         """Get tenant access information details.
 
@@ -551,7 +551,7 @@ class TenantAccessOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -578,7 +578,7 @@ class TenantAccessOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

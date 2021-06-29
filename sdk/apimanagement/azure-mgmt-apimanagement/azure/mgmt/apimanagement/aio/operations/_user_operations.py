@@ -49,7 +49,7 @@ class UserOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         expand_groups: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UserCollection"]:
         """Lists a collection of registered users in the specified service instance.
 
@@ -83,7 +83,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +133,7 @@ class UserOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -149,7 +149,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the user specified by its identifier.
 
@@ -169,7 +169,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -196,7 +196,7 @@ class UserOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -213,7 +213,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserContract":
         """Gets the details of the user specified by its identifier.
 
@@ -233,7 +233,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -260,7 +260,7 @@ class UserOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -281,7 +281,7 @@ class UserOperations:
         parameters: "_models.UserCreateParameters",
         notify: Optional[bool] = None,
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserContract":
         """Creates or Updates a user.
 
@@ -308,7 +308,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -344,7 +344,7 @@ class UserOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -369,7 +369,7 @@ class UserOperations:
         user_id: str,
         if_match: str,
         parameters: "_models.UserUpdateParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserContract":
         """Updates the details of the user specified by its identifier.
 
@@ -394,7 +394,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -427,7 +427,7 @@ class UserOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -449,7 +449,7 @@ class UserOperations:
         delete_subscriptions: Optional[bool] = None,
         notify: Optional[bool] = None,
         app_type: Optional[Union[str, "_models.AppType"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes specific user.
 
@@ -479,7 +479,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -513,7 +513,7 @@ class UserOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -526,7 +526,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GenerateSsoUrlResult":
         """Retrieves a redirection URL containing an authentication token for signing a given user into
         the developer portal.
@@ -547,7 +547,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -574,7 +574,7 @@ class UserOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('GenerateSsoUrlResult', pipeline_response)
@@ -591,7 +591,7 @@ class UserOperations:
         service_name: str,
         user_id: str,
         parameters: "_models.UserTokenParameters",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UserTokenResult":
         """Gets the Shared Access Authorization Token for the User.
 
@@ -613,7 +613,7 @@ class UserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -645,7 +645,7 @@ class UserOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('UserTokenResult', pipeline_response)

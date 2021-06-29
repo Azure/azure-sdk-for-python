@@ -52,7 +52,7 @@ class ApiOperations:
         skip: Optional[int] = None,
         tags: Optional[str] = None,
         expand_api_version_set: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApiCollection"]:
         """Lists all APIs of the API Management service instance.
 
@@ -87,7 +87,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -139,7 +139,7 @@ class ApiOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -155,7 +155,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the API specified by its identifier.
 
@@ -176,7 +176,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -203,7 +203,7 @@ class ApiOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -220,7 +220,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiContract":
         """Gets the details of the API specified by its identifier.
 
@@ -241,7 +241,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json, application/vnd.swagger.doc+json, application/vnd.oai.openapi+json, application/vnd.sun.wadl+xml, application/wsdl+xml"
 
         # Construct URL
@@ -268,7 +268,7 @@ class ApiOperations:
 
         if response.status_code not in [200, 200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -293,14 +293,14 @@ class ApiOperations:
         api_id: str,
         parameters: "_models.ApiCreateOrUpdateParameter",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ApiContract"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApiContract"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -334,7 +334,7 @@ class ApiOperations:
 
         if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -360,7 +360,7 @@ class ApiOperations:
         api_id: str,
         parameters: "_models.ApiCreateOrUpdateParameter",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApiContract"]:
         """Creates new or updates existing specified API of the API Management service instance.
 
@@ -378,8 +378,8 @@ class ApiOperations:
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApiContract or the result of cls(response)
@@ -445,7 +445,7 @@ class ApiOperations:
         api_id: str,
         if_match: str,
         parameters: "_models.ApiUpdateContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiContract":
         """Updates the specified API of the API Management service instance.
 
@@ -471,7 +471,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -504,7 +504,7 @@ class ApiOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -524,7 +524,7 @@ class ApiOperations:
         api_id: str,
         if_match: str,
         delete_revisions: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified API of the API Management service instance.
 
@@ -550,7 +550,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -580,7 +580,7 @@ class ApiOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -596,7 +596,7 @@ class ApiOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         include_not_tagged_apis: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagResourceCollection"]:
         """Lists a collection of apis associated with tags.
 
@@ -630,7 +630,7 @@ class ApiOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -680,7 +680,7 @@ class ApiOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

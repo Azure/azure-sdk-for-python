@@ -14,6 +14,7 @@ try:
     from ._models_py3 import AccessInformationUpdateParameters
     from ._models_py3 import AdditionalLocation
     from ._models_py3 import ApiCollection
+    from ._models_py3 import ApiContactInformation
     from ._models_py3 import ApiContract
     from ._models_py3 import ApiContractProperties
     from ._models_py3 import ApiContractUpdateProperties
@@ -23,6 +24,7 @@ try:
     from ._models_py3 import ApiEntityBaseContract
     from ._models_py3 import ApiExportResult
     from ._models_py3 import ApiExportResultValue
+    from ._models_py3 import ApiLicenseInformation
     from ._models_py3 import ApiManagementServiceApplyNetworkConfigurationParameters
     from ._models_py3 import ApiManagementServiceBackupRestoreParameters
     from ._models_py3 import ApiManagementServiceBaseProperties
@@ -282,6 +284,7 @@ except (SyntaxError, ImportError):
     from ._models import AccessInformationUpdateParameters  # type: ignore
     from ._models import AdditionalLocation  # type: ignore
     from ._models import ApiCollection  # type: ignore
+    from ._models import ApiContactInformation  # type: ignore
     from ._models import ApiContract  # type: ignore
     from ._models import ApiContractProperties  # type: ignore
     from ._models import ApiContractUpdateProperties  # type: ignore
@@ -291,6 +294,7 @@ except (SyntaxError, ImportError):
     from ._models import ApiEntityBaseContract  # type: ignore
     from ._models import ApiExportResult  # type: ignore
     from ._models import ApiExportResultValue  # type: ignore
+    from ._models import ApiLicenseInformation  # type: ignore
     from ._models import ApiManagementServiceApplyNetworkConfigurationParameters  # type: ignore
     from ._models import ApiManagementServiceBackupRestoreParameters  # type: ignore
     from ._models import ApiManagementServiceBaseProperties  # type: ignore
@@ -559,6 +563,8 @@ from ._api_management_client_enums import (
     BearerTokenSendingMethod,
     BearerTokenSendingMethods,
     CertificateConfigurationStoreName,
+    CertificateSource,
+    CertificateStatus,
     ClientAuthenticationMethod,
     ConfigurationIdName,
     Confirmation,
@@ -607,6 +613,7 @@ __all__ = [
     'AccessInformationUpdateParameters',
     'AdditionalLocation',
     'ApiCollection',
+    'ApiContactInformation',
     'ApiContract',
     'ApiContractProperties',
     'ApiContractUpdateProperties',
@@ -616,6 +623,7 @@ __all__ = [
     'ApiEntityBaseContract',
     'ApiExportResult',
     'ApiExportResultValue',
+    'ApiLicenseInformation',
     'ApiManagementServiceApplyNetworkConfigurationParameters',
     'ApiManagementServiceBackupRestoreParameters',
     'ApiManagementServiceBaseProperties',
@@ -882,6 +890,8 @@ __all__ = [
     'BearerTokenSendingMethod',
     'BearerTokenSendingMethods',
     'CertificateConfigurationStoreName',
+    'CertificateSource',
+    'CertificateStatus',
     'ClientAuthenticationMethod',
     'ConfigurationIdName',
     'Confirmation',

@@ -45,7 +45,7 @@ class NotificationRecipientUserOperations:
         resource_group_name: str,
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecipientUserCollection":
         """Gets the list of the Notification Recipient User subscribed to the notification.
 
@@ -65,7 +65,7 @@ class NotificationRecipientUserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -92,7 +92,7 @@ class NotificationRecipientUserOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('RecipientUserCollection', pipeline_response)
@@ -109,7 +109,7 @@ class NotificationRecipientUserOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Determine if the Notification Recipient User is subscribed to the notification.
 
@@ -131,7 +131,7 @@ class NotificationRecipientUserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -159,7 +159,7 @@ class NotificationRecipientUserOperations:
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -174,7 +174,7 @@ class NotificationRecipientUserOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecipientUserContract":
         """Adds the API Management User to the list of Recipients for the Notification.
 
@@ -196,7 +196,7 @@ class NotificationRecipientUserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -224,7 +224,7 @@ class NotificationRecipientUserOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -245,7 +245,7 @@ class NotificationRecipientUserOperations:
         service_name: str,
         notification_name: Union[str, "_models.NotificationName"],
         user_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Removes the API Management user from the list of Notification.
 
@@ -267,7 +267,7 @@ class NotificationRecipientUserOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -295,7 +295,7 @@ class NotificationRecipientUserOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

@@ -61,9 +61,9 @@ class QuotaByPeriodKeysOperations(object):
         :param service_name: The name of the API Management service.
         :type service_name: str
         :param quota_counter_key: Quota counter key identifier.This is the result of expression defined
-         in counter-key attribute of the quota-by-key policy.For Example, if you specify counter-
-         key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined as
-         counter-key="@("b"+"a")" then it will be accessible by "ba" key.
+         in counter-key attribute of the quota-by-key policy.For Example, if you specify
+         counter-key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined
+         as counter-key="@("b"+"a")" then it will be accessible by "ba" key.
         :type quota_counter_key: str
         :param quota_period_key: Quota period key identifier.
         :type quota_period_key: str
@@ -77,7 +77,7 @@ class QuotaByPeriodKeysOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -105,7 +105,7 @@ class QuotaByPeriodKeysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterContract', pipeline_response)
@@ -133,9 +133,9 @@ class QuotaByPeriodKeysOperations(object):
         :param service_name: The name of the API Management service.
         :type service_name: str
         :param quota_counter_key: Quota counter key identifier.This is the result of expression defined
-         in counter-key attribute of the quota-by-key policy.For Example, if you specify counter-
-         key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined as
-         counter-key="@("b"+"a")" then it will be accessible by "ba" key.
+         in counter-key attribute of the quota-by-key policy.For Example, if you specify
+         counter-key="boo" in the policy, then it’s accessible by "boo" counter key. But if it’s defined
+         as counter-key="@("b"+"a")" then it will be accessible by "ba" key.
         :type quota_counter_key: str
         :param quota_period_key: Quota period key identifier.
         :type quota_period_key: str
@@ -151,7 +151,7 @@ class QuotaByPeriodKeysOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -184,7 +184,7 @@ class QuotaByPeriodKeysOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('QuotaCounterContract', pipeline_response)

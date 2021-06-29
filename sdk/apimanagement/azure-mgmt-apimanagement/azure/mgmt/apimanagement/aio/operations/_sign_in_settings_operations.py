@@ -44,7 +44,7 @@ class SignInSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Gets the entity state (Etag) version of the SignInSettings.
 
@@ -62,7 +62,7 @@ class SignInSettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -88,7 +88,7 @@ class SignInSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -104,7 +104,7 @@ class SignInSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PortalSigninSettings":
         """Get Sign In Settings for the Portal.
 
@@ -122,7 +122,7 @@ class SignInSettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -148,7 +148,7 @@ class SignInSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -167,7 +167,7 @@ class SignInSettingsOperations:
         service_name: str,
         if_match: str,
         parameters: "_models.PortalSigninSettings",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update Sign-In settings.
 
@@ -190,7 +190,7 @@ class SignInSettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -222,7 +222,7 @@ class SignInSettingsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -236,7 +236,7 @@ class SignInSettingsOperations:
         service_name: str,
         parameters: "_models.PortalSigninSettings",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PortalSigninSettings":
         """Create or Update Sign-In settings.
 
@@ -259,7 +259,7 @@ class SignInSettingsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -292,7 +292,7 @@ class SignInSettingsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PortalSigninSettings', pipeline_response)

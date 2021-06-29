@@ -49,7 +49,7 @@ class ApiReleaseOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ApiReleaseCollection"]:
         """Lists all releases of an API. An API release is created when making an API Revision current.
         Releases are also used to rollback to previous revisions. Results will be paged and can be
@@ -79,7 +79,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -128,7 +128,7 @@ class ApiReleaseOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -145,7 +145,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Returns the etag of an API release.
 
@@ -168,7 +168,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -196,7 +196,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -214,7 +214,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiReleaseContract":
         """Returns the details of an API release.
 
@@ -237,7 +237,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -265,7 +265,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -286,7 +286,7 @@ class ApiReleaseOperations:
         release_id: str,
         parameters: "_models.ApiReleaseContract",
         if_match: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiReleaseContract":
         """Creates a new Release for the API.
 
@@ -314,7 +314,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -349,7 +349,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -375,7 +375,7 @@ class ApiReleaseOperations:
         release_id: str,
         if_match: str,
         parameters: "_models.ApiReleaseContract",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApiReleaseContract":
         """Updates the details of the release of the API specified by its identifier.
 
@@ -403,7 +403,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -437,7 +437,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -457,7 +457,7 @@ class ApiReleaseOperations:
         api_id: str,
         release_id: str,
         if_match: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the specified release in the API.
 
@@ -483,7 +483,7 @@ class ApiReleaseOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -512,7 +512,7 @@ class ApiReleaseOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

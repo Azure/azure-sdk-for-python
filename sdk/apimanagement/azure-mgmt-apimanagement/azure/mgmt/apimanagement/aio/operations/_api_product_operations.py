@@ -49,7 +49,7 @@ class ApiProductOperations:
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProductCollection"]:
         """Lists all Products, which the API is part of.
 
@@ -77,7 +77,7 @@ class ApiProductOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -126,7 +126,7 @@ class ApiProductOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
