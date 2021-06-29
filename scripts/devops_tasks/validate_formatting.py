@@ -60,8 +60,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
-    if bool(args.validate):
+    if args.validate != "False":
         run_black(args.service_directory)
         check_diff("sdk/{}".format(args.service_directory))
     else:
