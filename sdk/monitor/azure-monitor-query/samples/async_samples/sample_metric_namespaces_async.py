@@ -4,10 +4,10 @@
 import os
 import asyncio
 from azure.monitor.query.aio import MetricsQueryClient
-from azure.identity.aio import ClientSecretCredential
+from azure.identity.aio import DefaultAzureCredential
 
 async def list_namespaces():
-    credential  = ClientSecretCredential(
+    credential  = DefaultAzureCredential(
             client_id = os.environ['AZURE_CLIENT_ID'],
             client_secret = os.environ['AZURE_CLIENT_SECRET'],
             tenant_id = os.environ['AZURE_TENANT_ID']

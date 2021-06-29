@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List, Mapping, Union
+from typing import Dict, Optional, Any, List, Mapping, Union, TYPE_CHECKING
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -50,6 +50,8 @@ from ._policies import (
 )
 from ._sdk_moniker import SDK_MONIKER
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 
@@ -71,7 +73,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         account_url,  # type: Any
-        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]]
+        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -394,7 +396,7 @@ def format_query_string(sas_token, credential):
             "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
     if sas_token and not credential:
         query_str += sas_token
-    elif isinstance(credential, (AzureSasCredential, AzureNamedKeyCredential)):
+    elif credential:
         return "", credential
     return query_str.rstrip("?&"), None
 

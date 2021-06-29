@@ -86,7 +86,7 @@ def _check_string_index_type_arg(string_index_type_arg, api_version, string_inde
     if api_version == "v3.0":
         if string_index_type_arg is not None:
             raise ValueError(
-                "'string_index_type' is only available for API version V3_1_PREVIEW and up"
+                "'string_index_type' is only available for API version V3_1 and up"
             )
 
     else:

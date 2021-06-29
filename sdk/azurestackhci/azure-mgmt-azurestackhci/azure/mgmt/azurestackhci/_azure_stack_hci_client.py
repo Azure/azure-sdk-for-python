@@ -19,23 +19,30 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import AzureStackHCIClientConfiguration
-from .operations import Operations
+from .operations import ArcSettingsOperations
 from .operations import ClustersOperations
+from .operations import ExtensionsOperations
+from .operations import Operations
 from . import models
 
 
 class AzureStackHCIClient(object):
     """Azure Stack HCI management service.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure_stack_hci_client.operations.Operations
+    :ivar arc_settings: ArcSettingsOperations operations
+    :vartype arc_settings: azure_stack_hci_client.operations.ArcSettingsOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure_stack_hci_client.operations.ClustersOperations
+    :ivar extensions: ExtensionsOperations operations
+    :vartype extensions: azure_stack_hci_client.operations.ExtensionsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure_stack_hci_client.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -56,9 +63,13 @@ class AzureStackHCIClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
+        self.arc_settings = ArcSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.extensions = ExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):

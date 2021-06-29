@@ -49,7 +49,7 @@ def test_http_request_serialization():
     request = HttpRequest(
         "DELETE",
         "/container0/blob0",
-        # Use OrderedDict to get consistent test result on 3.5 where order is not guaranted
+        # Use OrderedDict to get consistent test result on 3.5 where order is not guaranteed
         headers=OrderedDict({
             "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
             "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",

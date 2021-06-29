@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast
+from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -38,6 +38,9 @@ from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class TableClient(AsyncTablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
@@ -52,7 +55,7 @@ class TableClient(AsyncTablesBaseClient):
         endpoint: str,
         table_name: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
@@ -61,11 +64,12 @@ class TableClient(AsyncTablesBaseClient):
         :param str table_name: The table name.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
-            or AzureSasCredential from azure-core.
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+            AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
         :paramtype credential:
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+            :class:`~azure.core.credentials.AzureSasCredential` or
+            :class:`~azure.core.credentials.TokenCredential`
 
         :returns: None
         """

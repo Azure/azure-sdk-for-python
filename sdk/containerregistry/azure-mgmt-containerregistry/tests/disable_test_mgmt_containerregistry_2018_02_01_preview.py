@@ -276,7 +276,7 @@ class MgmtACRTest20180201Preview(AzureMgmtTestCase):
 
     def _create_build_step(self, build_step_name, build_task_name, registry_name, resource_group_name, location):
         docker_build_step = DockerBuildStep(
-            branch='master',
+            branch='main',
             image_names=['repo:tag'],
             is_push_enabled=True,
             no_cache=False,
@@ -294,7 +294,7 @@ class MgmtACRTest20180201Preview(AzureMgmtTestCase):
         ).result()
 
         self.assertEqual(build_step.name, build_step_name)
-        self.assertEqual(build_step.properties.branch, 'master')
+        self.assertEqual(build_step.properties.branch, 'main')
         self.assertEqual(build_step.properties.image_names, ['repo:tag'])
         self.assertEqual(build_step.properties.is_push_enabled, True)
         self.assertEqual(build_step.properties.no_cache, False)

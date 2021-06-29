@@ -128,8 +128,13 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                 if "WWW-Authenticate" in response.http_response.headers:
                     request_authorized = self.on_challenge(request, response)
                     if request_authorized:
-                        response = self.next.send(request)
-                        self.on_response(request, response)
+                        try:
+                            response = self.next.send(request)
+                            self.on_response(request, response)
+                        except Exception:  # pylint:disable=broad-except
+                            handled = self.on_exception(request)
+                            if not handled:
+                                raise
 
         return response
 

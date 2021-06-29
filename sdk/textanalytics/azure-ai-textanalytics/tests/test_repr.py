@@ -8,7 +8,7 @@
 import pytest
 import datetime
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_5 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1 import models as _generated_models
 
 # All features return a tuple of the object and the repr of the obejct
 

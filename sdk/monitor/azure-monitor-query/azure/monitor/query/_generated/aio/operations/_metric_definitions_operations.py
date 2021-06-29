@@ -113,4 +113,4 @@ class MetricDefinitionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricDefinitions'}  # type: ignore
+    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/metricDefinitions'}  # type: ignore

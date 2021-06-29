@@ -45,7 +45,7 @@ class MaintenanceConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MaintenanceConfigurationListResult"]:
         """Gets a list of maintenance configurations in the specified managed cluster.
 
@@ -123,7 +123,7 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         config_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Gets the maintenance configuration.
 
@@ -188,7 +188,7 @@ class MaintenanceConfigurationsOperations:
         resource_name: str,
         config_name: str,
         parameters: "_models.MaintenanceConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MaintenanceConfiguration":
         """Creates or updates a maintenance configurations.
 
@@ -260,7 +260,7 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         config_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a maintenance configuration.
 
