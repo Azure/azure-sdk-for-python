@@ -245,7 +245,7 @@ class FeatureFlagConfigurationSetting(
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=self._value,
+            value=self.value,
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
