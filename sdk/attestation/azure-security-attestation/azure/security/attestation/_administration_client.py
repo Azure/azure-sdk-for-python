@@ -44,7 +44,7 @@ from cryptography.x509 import load_pem_x509_certificate
 class AttestationAdministrationClient(object):
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
-    The :class:`~AttestationAdministrationClient` object implements the policy
+    The :class:`~azure.security.attestation.AttestationAdministrationClient` object implements the policy
     management and policy certificate management functions.
 
     :param credential: Credentials for the caller used to interact with the service.
@@ -505,7 +505,11 @@ class AttestationAdministrationClient(object):
         """
 
         if len(args) > 1 or len(args) == 0:
-            raise TypeError('add_policy_management_certificate takes a single positional parameter. found {}'.format(len(args)))
+            raise TypeError(
+                "add_policy_management_certificate takes a single positional parameter. found {}".format(
+                    len(args)
+                )
+            )
         certificate_to_add = args[0]
 
         signing_key = kwargs.pop("signing_key", self._signing_key)
@@ -519,7 +523,9 @@ class AttestationAdministrationClient(object):
             )
 
         # Verify that the provided certificate is a valid PEM encoded X.509 certificate
-        certificate_to_add = load_pem_x509_certificate(certificate_to_add.encode("ascii"))
+        certificate_to_add = load_pem_x509_certificate(
+            certificate_to_add.encode("ascii")
+        )
 
         jwk = JSONWebKey(
             kty="RSA",
@@ -610,9 +616,12 @@ class AttestationAdministrationClient(object):
         """
 
         if len(args) > 1 or len(args) == 0:
-            raise TypeError('remove_policy_management_certificate takes a single positional parameter. found {}'.format(len(args)))
+            raise TypeError(
+                "remove_policy_management_certificate takes a single positional parameter. found {}".format(
+                    len(args)
+                )
+            )
         certificate_to_remove = args[0]
-
 
         signing_key = kwargs.pop("signing_key", self._signing_key)
         signing_certificate = kwargs.pop(

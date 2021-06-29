@@ -492,7 +492,11 @@ class AttestationAdministrationClient(object):
         """
 
         if len(args) > 1 or len(args) == 0:
-            raise TypeError('add_policy_management_certificate takes a single positional parameter. found {}'.format(len(args)))
+            raise TypeError(
+                "add_policy_management_certificate takes a single positional parameter. found {}".format(
+                    len(args)
+                )
+            )
         certificate_to_add = args[0]
 
         signing_key = kwargs.pop("signing_key", None)
@@ -606,10 +610,12 @@ class AttestationAdministrationClient(object):
         """
 
         if len(args) > 1 or len(args) == 0:
-            raise TypeError('remove_policy_management_certificate takes a single positional parameter. found {}'.format(len(args)))
+            raise TypeError(
+                "remove_policy_management_certificate takes a single positional parameter. found {}".format(
+                    len(args)
+                )
+            )
         certificate_to_remove = args[0]
-
-
 
         signing_key = kwargs.pop("signing_key", None)
         signing_certificate = kwargs.pop("signing_certificate", None)
