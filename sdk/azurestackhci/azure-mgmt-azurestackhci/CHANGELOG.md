@@ -1,5 +1,13 @@
 # Release History
 
+## 6.1.0b1 (2021-06-29)
+
+**Features**
+
+  - Model Cluster has a new parameter cloud_management_endpoint
+  - Added operation group ArcSettingsOperations
+  - Added operation group ExtensionsOperations
+
 ## 6.0.0 (2021-05-20)
 
 - GA release
