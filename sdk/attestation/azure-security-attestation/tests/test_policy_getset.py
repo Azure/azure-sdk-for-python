@@ -280,7 +280,16 @@ class PolicyGetSetTests(AzureTestCase):
             signing_certificate=pem_signing_cert,
         )
 
-        # Add a new certificate.
+        # Test 0 positional parameters, should throw.
+        with pytest.raises(TypeError):
+            admin_client.add_policy_management_certificate()
+
+        # And test more than one positional parameter. Should also throw.
+        with pytest.raises(TypeError):
+            admin_client.add_policy_management_certificate(pem_certificate_to_add, pem_certificate_to_add)
+
+        # Now let's do something meaningful :). Add a new certificate, using
+        # the key and cert specified when the admin client was created.
         result, _ = admin_client.add_policy_management_certificate(
             pem_certificate_to_add
         )

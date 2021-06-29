@@ -450,13 +450,12 @@ class AttestationAdministrationClient(object):
         return certificates, token
 
     @distributed_trace
-    def add_policy_management_certificate(self, certificate_to_add, *args, **kwargs):
-        # type:(str, *Any, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
+    def add_policy_management_certificate(self, *args, **kwargs):
+        # type: (*str, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to
             the list of attestation policy management certificates.
-        :param Any args: Ignored - used to force certificate_to_add to be positional-only.
         :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
         :keyword str signing_certificate: PEM encoded signing certificate which is one of
@@ -504,6 +503,11 @@ class AttestationAdministrationClient(object):
                 :caption: Adding a policy management certificate.
 
         """
+
+        if len(args) > 1 or len(args) == 0:
+            raise TypeError('add_policy_management_certificate takes a single positional parameter. found {}'.format(len(args)))
+        certificate_to_add = args[0]
+
         signing_key = kwargs.pop("signing_key", self._signing_key)
         signing_certificate = kwargs.pop(
             "signing_certificate", self._signing_certificate
@@ -555,14 +559,12 @@ class AttestationAdministrationClient(object):
         )
 
     @distributed_trace
-    def remove_policy_management_certificate(self, certificate_to_remove, *args, **kwargs):
-        # type:(bytes, *Any, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
+    def remove_policy_management_certificate(self, *args, **kwargs):
+        # type: (*str, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
-        :param bytes certificate_to_remove: PEM encoded X.509 certificate to remove from
+        :param str certificate_to_remove: PEM encoded X.509 certificate to remove from
             the list of attestation policy management certificates.
-        :param Any args: Ignored - used to force certificate_to_remove to be 
-            positional-only.
         :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
         :keyword str signing_certificate: PEM encoded signing certificate which is one of
@@ -606,6 +608,12 @@ class AttestationAdministrationClient(object):
                 :caption: Removing a policy management certificate.
 
         """
+
+        if len(args) > 1 or len(args) == 0:
+            raise TypeError('remove_policy_management_certificate takes a single positional parameter. found {}'.format(len(args)))
+        certificate_to_remove = args[0]
+
+
         signing_key = kwargs.pop("signing_key", self._signing_key)
         signing_certificate = kwargs.pop(
             "signing_certificate", self._signing_certificate

@@ -33,14 +33,14 @@ AttestationPreparer = functools.partial(
     # fake resources. It also must match the region in which the live tests
     # are run. If it does not match, then the recording will not
     # correctly rewrite the attestation_xxx_urls.
-    attestation_location_short_name="eus",
+    attestation_location_short_name="wus",
     attestation_client_id="xxxx",
     attestation_client_secret="secret",
     attestation_tenant_id="tenant",
     # Note: attestation_isolated_url and attestation_aad_url must have the
     # same region as the attestation_location_short_name. Otherwise there is a
     # possiblity that the rewriting rules will miss these URLs.
-    attestation_isolated_url="https://fakeresource.eus.attest.azure.net",
-    attestation_aad_url="https://fakeresource.eus.attest.azure.net",
+    attestation_isolated_url="https://fakeresource.wus.attest.azure.net",
+    attestation_aad_url="https://fakeresource.wus.attest.azure.net",
     #            attestation_resource_manager_url='https://resourcemanager/zzz'
 )
