@@ -47,13 +47,13 @@ class RegistrationDefinitionsOperations:
         self,
         scope: str,
         registration_definition_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegistrationDefinition":
         """Gets the registration definition details.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_definition_id: Guid of the registration definition.
+        :param registration_definition_id: The GUID of the registration definition.
         :type registration_definition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegistrationDefinition, or the result of cls(response)
@@ -105,13 +105,13 @@ class RegistrationDefinitionsOperations:
         self,
         registration_definition_id: str,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the registration definition.
 
-        :param registration_definition_id: Guid of the registration definition.
+        :param registration_definition_id: The GUID of the registration definition.
         :type registration_definition_id: str
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -161,7 +161,7 @@ class RegistrationDefinitionsOperations:
         registration_definition_id: str,
         scope: str,
         request_body: "_models.RegistrationDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegistrationDefinition":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistrationDefinition"]
         error_map = {
@@ -218,20 +218,20 @@ class RegistrationDefinitionsOperations:
         registration_definition_id: str,
         scope: str,
         request_body: "_models.RegistrationDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RegistrationDefinition"]:
         """Creates or updates a registration definition.
 
-        :param registration_definition_id: Guid of the registration definition.
+        :param registration_definition_id: The GUID of the registration definition.
         :type registration_definition_id: str
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param request_body: The parameters required to create new registration definition.
+        :param request_body: The parameters required to create a new registration definition.
         :type request_body: ~azure.mgmt.managedservices.models.RegistrationDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RegistrationDefinition or the result of cls(response)
@@ -286,11 +286,11 @@ class RegistrationDefinitionsOperations:
     def list(
         self,
         scope: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RegistrationDefinitionList"]:
         """Gets a list of the registration definitions.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistrationDefinitionList or the result of cls(response)

@@ -4,7 +4,7 @@
     "client": {
         "name": "ManagedServicesClient",
         "filename": "_managed_services_client",
-        "description": "Specification for ManagedServices.",
+        "description": "The specification for ManagedServices.",
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,

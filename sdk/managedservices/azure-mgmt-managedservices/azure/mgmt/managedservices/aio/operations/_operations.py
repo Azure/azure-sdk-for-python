@@ -42,7 +42,7 @@ class Operations:
 
     async def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OperationList":
         """Gets a list of the operations.
 

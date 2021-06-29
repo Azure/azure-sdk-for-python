@@ -55,14 +55,14 @@ class RegistrationAssignmentsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.RegistrationAssignment"
-        """Gets the details of specified registration assignment.
+        """Gets the details of the specified registration assignment.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_assignment_id: Guid of the registration assignment.
+        :param registration_assignment_id: The GUID of the registration assignment.
         :type registration_assignment_id: str
-        :param expand_registration_definition: Tells whether to return registration definition details
-         also along with registration assignment details.
+        :param expand_registration_definition: The flag indicating whether to return the registration
+         definition details along with the registration assignment details.
         :type expand_registration_definition: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegistrationAssignment, or the result of cls(response)
@@ -166,14 +166,14 @@ class RegistrationAssignmentsOperations(object):
         # type: (...) -> LROPoller[None]
         """Deletes the specified registration assignment.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_assignment_id: Guid of the registration assignment.
+        :param registration_assignment_id: The GUID of the registration assignment.
         :type registration_assignment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -289,16 +289,16 @@ class RegistrationAssignmentsOperations(object):
         # type: (...) -> LROPoller["_models.RegistrationAssignment"]
         """Creates or updates a registration assignment.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_assignment_id: Guid of the registration assignment.
+        :param registration_assignment_id: The GUID of the registration assignment.
         :type registration_assignment_id: str
         :param request_body: The parameters required to create new registration assignment.
         :type request_body: ~azure.mgmt.managedservices.models.RegistrationAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either RegistrationAssignment or the result of cls(response)
@@ -359,10 +359,10 @@ class RegistrationAssignmentsOperations(object):
         # type: (...) -> Iterable["_models.RegistrationAssignmentList"]
         """Gets a list of the registration assignments.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param expand_registration_definition: Tells whether to return registration definition details
-         also along with registration assignment details.
+        :param expand_registration_definition: The flag indicating whether to return the registration
+         definition details along with the registration assignment details.
         :type expand_registration_definition: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistrationAssignmentList or the result of cls(response)

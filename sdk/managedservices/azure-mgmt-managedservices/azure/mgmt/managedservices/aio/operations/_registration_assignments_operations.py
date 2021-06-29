@@ -48,16 +48,16 @@ class RegistrationAssignmentsOperations:
         scope: str,
         registration_assignment_id: str,
         expand_registration_definition: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegistrationAssignment":
-        """Gets the details of specified registration assignment.
+        """Gets the details of the specified registration assignment.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_assignment_id: Guid of the registration assignment.
+        :param registration_assignment_id: The GUID of the registration assignment.
         :type registration_assignment_id: str
-        :param expand_registration_definition: Tells whether to return registration definition details
-         also along with registration assignment details.
+        :param expand_registration_definition: The flag indicating whether to return the registration
+         definition details along with the registration assignment details.
         :type expand_registration_definition: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegistrationAssignment, or the result of cls(response)
@@ -111,7 +111,7 @@ class RegistrationAssignmentsOperations:
         self,
         scope: str,
         registration_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -155,18 +155,18 @@ class RegistrationAssignmentsOperations:
         self,
         scope: str,
         registration_assignment_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified registration assignment.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_assignment_id: Guid of the registration assignment.
+        :param registration_assignment_id: The GUID of the registration assignment.
         :type registration_assignment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -219,7 +219,7 @@ class RegistrationAssignmentsOperations:
         scope: str,
         registration_assignment_id: str,
         request_body: "_models.RegistrationAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RegistrationAssignment":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistrationAssignment"]
         error_map = {
@@ -276,20 +276,20 @@ class RegistrationAssignmentsOperations:
         scope: str,
         registration_assignment_id: str,
         request_body: "_models.RegistrationAssignment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.RegistrationAssignment"]:
         """Creates or updates a registration assignment.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_assignment_id: Guid of the registration assignment.
+        :param registration_assignment_id: The GUID of the registration assignment.
         :type registration_assignment_id: str
         :param request_body: The parameters required to create new registration assignment.
         :type request_body: ~azure.mgmt.managedservices.models.RegistrationAssignment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RegistrationAssignment or the result of cls(response)
@@ -345,14 +345,14 @@ class RegistrationAssignmentsOperations:
         self,
         scope: str,
         expand_registration_definition: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RegistrationAssignmentList"]:
         """Gets a list of the registration assignments.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param expand_registration_definition: Tells whether to return registration definition details
-         also along with registration assignment details.
+        :param expand_registration_definition: The flag indicating whether to return the registration
+         definition details along with the registration assignment details.
         :type expand_registration_definition: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistrationAssignmentList or the result of cls(response)

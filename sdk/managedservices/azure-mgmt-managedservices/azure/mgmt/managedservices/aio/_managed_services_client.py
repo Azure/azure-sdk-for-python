@@ -26,7 +26,7 @@ from .. import models
 
 
 class ManagedServicesClient(object):
-    """Specification for ManagedServices.
+    """The specification for ManagedServices.
 
     :ivar registration_definitions: RegistrationDefinitionsOperations operations
     :vartype registration_definitions: azure.mgmt.managedservices.aio.operations.RegistrationDefinitionsOperations

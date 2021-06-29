@@ -8,6 +8,7 @@
 
 try:
     from ._models_py3 import Authorization
+    from ._models_py3 import EligibleApprover
     from ._models_py3 import EligibleAuthorization
     from ._models_py3 import ErrorDefinition
     from ._models_py3 import ErrorResponse
@@ -29,6 +30,7 @@ try:
     from ._models_py3 import RegistrationDefinitionProperties
 except (SyntaxError, ImportError):
     from ._models import Authorization  # type: ignore
+    from ._models import EligibleApprover  # type: ignore
     from ._models import EligibleAuthorization  # type: ignore
     from ._models import ErrorDefinition  # type: ignore
     from ._models import ErrorResponse  # type: ignore
@@ -56,6 +58,7 @@ from ._managed_services_client_enums import (
 
 __all__ = [
     'Authorization',
+    'EligibleApprover',
     'EligibleAuthorization',
     'ErrorDefinition',
     'ErrorResponse',

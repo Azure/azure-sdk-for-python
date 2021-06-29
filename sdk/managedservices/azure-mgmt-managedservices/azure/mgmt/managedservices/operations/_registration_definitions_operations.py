@@ -56,9 +56,9 @@ class RegistrationDefinitionsOperations(object):
         # type: (...) -> "_models.RegistrationDefinition"
         """Gets the registration definition details.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param registration_definition_id: Guid of the registration definition.
+        :param registration_definition_id: The GUID of the registration definition.
         :type registration_definition_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegistrationDefinition, or the result of cls(response)
@@ -115,9 +115,9 @@ class RegistrationDefinitionsOperations(object):
         # type: (...) -> None
         """Deletes the registration definition.
 
-        :param registration_definition_id: Guid of the registration definition.
+        :param registration_definition_id: The GUID of the registration definition.
         :type registration_definition_id: str
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -230,16 +230,16 @@ class RegistrationDefinitionsOperations(object):
         # type: (...) -> LROPoller["_models.RegistrationDefinition"]
         """Creates or updates a registration definition.
 
-        :param registration_definition_id: Guid of the registration definition.
+        :param registration_definition_id: The GUID of the registration definition.
         :type registration_definition_id: str
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param request_body: The parameters required to create new registration definition.
+        :param request_body: The parameters required to create a new registration definition.
         :type request_body: ~azure.mgmt.managedservices.models.RegistrationDefinition
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either RegistrationDefinition or the result of cls(response)
@@ -299,7 +299,7 @@ class RegistrationDefinitionsOperations(object):
         # type: (...) -> Iterable["_models.RegistrationDefinitionList"]
         """Gets a list of the registration definitions.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistrationDefinitionList or the result of cls(response)

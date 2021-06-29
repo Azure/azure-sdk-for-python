@@ -45,14 +45,14 @@ class MarketplaceRegistrationDefinitionsOperations:
         self,
         scope: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MarketplaceRegistrationDefinitionList"]:
         """Gets a list of the marketplace registration definitions for the marketplace identifier.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param filter: The filter query parameter. Might be used to filter marketplace registration
-         definition by plan identifier, publisher, version etc.
+        :param filter: The filter query parameter to filter marketplace registration definitions by
+         plan identifier, publisher, version etc.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MarketplaceRegistrationDefinitionList or the result of cls(response)
@@ -121,13 +121,13 @@ class MarketplaceRegistrationDefinitionsOperations:
         self,
         scope: str,
         marketplace_identifier: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MarketplaceRegistrationDefinition":
         """Get the marketplace registration definition for the marketplace identifier.
 
-        :param scope: Scope of the resource.
+        :param scope: The scope of the resource.
         :type scope: str
-        :param marketplace_identifier: Market place identifier. Expected Formats -
+        :param marketplace_identifier: The Azure Marketplace identifier. Expected formats:
          {publisher}.{product[-preview]}.{planName}.{version} or
          {publisher}.{product[-preview]}.{planName} or {publisher}.{product[-preview]} or {publisher}).
         :type marketplace_identifier: str

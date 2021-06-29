@@ -27,14 +27,14 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class MultiFactorAuthProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """MFA provider.
+    """The multi-factor authorization provider to be used for just-in-time access requests.
     """
 
     AZURE = "Azure"
     NONE = "None"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current state of the registration definition.
+    """The current provisioning state of the registration definition.
     """
 
     NOT_SPECIFIED = "NotSpecified"

@@ -16,23 +16,21 @@ from ._managed_services_client_enums import *
 
 
 class Authorization(msrest.serialization.Model):
-    """Authorization tuple containing principal Id (of user/service principal/security group) and role definition id.
+    """The Azure Active Directory principal identifier and Azure built-in role that describes the access the principal will receive on the delegated resource in the managed tenant.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param principal_id: Required. Principal Id of the security group/service principal/user that
-     would be assigned permissions to the projected subscription.
+    :param principal_id: Required. The identifier of the Azure Active Directory principal.
     :type principal_id: str
-    :param principal_id_display_name: Display name of the principal Id.
+    :param principal_id_display_name: The display name of the Azure Active Directory principal.
     :type principal_id_display_name: str
-    :param role_definition_id: Required. The role definition identifier. This role will define all
-     the permissions that the security group/service principal/user must have on the projected
-     subscription. This role cannot be an owner role.
+    :param role_definition_id: Required. The identifier of the Azure built-in role that defines the
+     permissions that the Azure Active Directory principal will have on the projected scope.
     :type role_definition_id: str
     :param delegated_role_definition_ids: The delegatedRoleDefinitionIds field is required when the
      roleDefinitionId refers to the User Access Administrator Role. It is the list of role
      definition ids which define all the permissions that the user in the authorization can assign
-     to other security groups/service principals/users.
+     to other principals.
     :type delegated_role_definition_ids: list[str]
     """
 
@@ -64,21 +62,51 @@ class Authorization(msrest.serialization.Model):
         self.delegated_role_definition_ids = delegated_role_definition_ids
 
 
-class EligibleAuthorization(msrest.serialization.Model):
-    """Eligible authorization tuple containing principle Id (of user/service principal/security group), role definition id, and the just-in-time access setting.
+class EligibleApprover(msrest.serialization.Model):
+    """Defines the Azure Active Directory principal that can approve any just-in-time access requests by the principal defined in the EligibleAuthorization.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param principal_id: Required. Principal Id of the security group/service principal/user that
-     would be delegated permissions to the projected subscription.
+    :param principal_id: Required. The identifier of the Azure Active Directory principal.
     :type principal_id: str
-    :param principal_id_display_name: Display name of the principal Id.
+    :param principal_id_display_name: The display name of the Azure Active Directory principal.
     :type principal_id_display_name: str
-    :param role_definition_id: Required. The role definition identifier. This role will delegate
-     all the permissions that the security group/service principal/user must have on the projected
-     subscription. This role cannot be an owner role.
+    """
+
+    _validation = {
+        'principal_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'principal_id_display_name': {'key': 'principalIdDisplayName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        principal_id: str,
+        principal_id_display_name: Optional[str] = None,
+        **kwargs
+    ):
+        super(EligibleApprover, self).__init__(**kwargs)
+        self.principal_id = principal_id
+        self.principal_id_display_name = principal_id_display_name
+
+
+class EligibleAuthorization(msrest.serialization.Model):
+    """The Azure Active Directory principal identifier, Azure built-in role, and just-in-time access policy that describes the just-in-time access the principal will receive on the delegated resource in the managed tenant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param principal_id: Required. The identifier of the Azure Active Directory principal.
+    :type principal_id: str
+    :param principal_id_display_name: The display name of the Azure Active Directory principal.
+    :type principal_id_display_name: str
+    :param role_definition_id: Required. The identifier of the Azure built-in role that defines the
+     permissions that the Azure Active Directory principal will have on the projected scope.
     :type role_definition_id: str
-    :param just_in_time_access_policy: Just-in-time access policy setting.
+    :param just_in_time_access_policy: The just-in-time access policy setting.
     :type just_in_time_access_policy: ~azure.mgmt.managedservices.models.JustInTimeAccessPolicy
     """
 
@@ -111,15 +139,15 @@ class EligibleAuthorization(msrest.serialization.Model):
 
 
 class ErrorDefinition(msrest.serialization.Model):
-    """Error response indicates Azure Resource Manager is not able to process the incoming request. The reason is provided in the error message.
+    """The error response indicating why the incoming request wasn’t able to be processed.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
+    :param code: Required. The error code.
     :type code: str
-    :param message: Required. Error message indicating why the operation failed.
+    :param message: Required. The error message indicating why the operation failed.
     :type message: str
-    :param details: Internal error details.
+    :param details: The internal error details.
     :type details: list[~azure.mgmt.managedservices.models.ErrorDefinition]
     """
 
@@ -174,13 +202,17 @@ class JustInTimeAccessPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param multi_factor_auth_provider: Required. MFA provider. Possible values include: "Azure",
+    :param multi_factor_auth_provider: Required. The multi-factor authorization provider to be used
+     for just-in-time access requests. Possible values include: "Azure", "None". Default value:
      "None".
     :type multi_factor_auth_provider: str or
      ~azure.mgmt.managedservices.models.MultiFactorAuthProvider
-    :param maximum_activation_duration: Maximum access duration in ISO 8601 format.  The default
-     value is "PT8H".
+    :param maximum_activation_duration: The maximum access duration in ISO 8601 format for
+     just-in-time access requests.
     :type maximum_activation_duration: ~datetime.timedelta
+    :param managed_by_tenant_approvers: The list of managedByTenant approvers for the eligible
+     authorization.
+    :type managed_by_tenant_approvers: list[~azure.mgmt.managedservices.models.EligibleApprover]
     """
 
     _validation = {
@@ -190,18 +222,21 @@ class JustInTimeAccessPolicy(msrest.serialization.Model):
     _attribute_map = {
         'multi_factor_auth_provider': {'key': 'multiFactorAuthProvider', 'type': 'str'},
         'maximum_activation_duration': {'key': 'maximumActivationDuration', 'type': 'duration'},
+        'managed_by_tenant_approvers': {'key': 'managedByTenantApprovers', 'type': '[EligibleApprover]'},
     }
 
     def __init__(
         self,
         *,
-        multi_factor_auth_provider: Union[str, "MultiFactorAuthProvider"],
-        maximum_activation_duration: Optional[datetime.timedelta] = None,
+        multi_factor_auth_provider: Union[str, "MultiFactorAuthProvider"] = "None",
+        maximum_activation_duration: Optional[datetime.timedelta] = "PT8H",
+        managed_by_tenant_approvers: Optional[List["EligibleApprover"]] = None,
         **kwargs
     ):
         super(JustInTimeAccessPolicy, self).__init__(**kwargs)
         self.multi_factor_auth_provider = multi_factor_auth_provider
         self.maximum_activation_duration = maximum_activation_duration
+        self.managed_by_tenant_approvers = managed_by_tenant_approvers
 
 
 class MarketplaceRegistrationDefinition(msrest.serialization.Model):
@@ -209,16 +244,17 @@ class MarketplaceRegistrationDefinition(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of a marketplace registration definition.
+    :param properties: The properties of the marketplace registration definition.
     :type properties:
      ~azure.mgmt.managedservices.models.MarketplaceRegistrationDefinitionProperties
-    :param plan: Plan details for the managed services.
+    :param plan: The details for the Managed Services offer’s plan in Azure Marketplace.
     :type plan: ~azure.mgmt.managedservices.models.Plan
-    :ivar id: Fully qualified path of the marketplace registration definition.
+    :ivar id: The fully qualified path of the marketplace registration definition.
     :vartype id: str
-    :ivar type: Type of the resource.
+    :ivar type: The type of the Azure resource
+     (Microsoft.ManagedServices/marketplaceRegistrationDefinitions).
     :vartype type: str
-    :ivar name: Name of the marketplace registration definition.
+    :ivar name: The name of the marketplace registration definition.
     :vartype name: str
     """
 
@@ -252,13 +288,13 @@ class MarketplaceRegistrationDefinition(msrest.serialization.Model):
 
 
 class MarketplaceRegistrationDefinitionList(msrest.serialization.Model):
-    """List of marketplace registration definitions.
+    """The list of marketplace registration definitions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of marketplace registration definitions.
+    :ivar value: The list of marketplace registration definitions.
     :vartype value: list[~azure.mgmt.managedservices.models.MarketplaceRegistrationDefinition]
-    :ivar next_link: Link to next page of marketplace registration definitions.
+    :ivar next_link: The link to the next page of marketplace registration definitions.
     :vartype next_link: str
     """
 
@@ -282,18 +318,19 @@ class MarketplaceRegistrationDefinitionList(msrest.serialization.Model):
 
 
 class MarketplaceRegistrationDefinitionProperties(msrest.serialization.Model):
-    """Properties of a marketplace registration definition.
+    """The properties of the marketplace registration definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param managed_by_tenant_id: Required. Id of the managedBy tenant.
+    :param managed_by_tenant_id: Required. The identifier of the managedBy tenant.
     :type managed_by_tenant_id: str
-    :param authorizations: Required. Authorization tuple containing principal id of the
-     user/security group or service principal and id of the build-in role.
+    :param authorizations: Required. The collection of authorization objects describing the access
+     Azure Active Directory principals in the managedBy tenant will receive on the delegated
+     resource in the managed tenant.
     :type authorizations: list[~azure.mgmt.managedservices.models.Authorization]
-    :param eligible_authorizations: Eligible PIM authorization tuple containing principal id of the
-     user/security group or service principal, id of the built-in role, and just-in-time access
-     policy setting.
+    :param eligible_authorizations: The collection of eligible authorization objects describing the
+     just-in-time access Azure Active Directory principals in the managedBy tenant will receive on
+     the delegated resource in the managed tenant.
     :type eligible_authorizations: list[~azure.mgmt.managedservices.models.EligibleAuthorization]
     :param offer_display_name: The marketplace offer display name.
     :type offer_display_name: str
@@ -338,11 +375,11 @@ class MarketplaceRegistrationDefinitionProperties(msrest.serialization.Model):
 
 
 class Operation(msrest.serialization.Model):
-    """Object that describes a single Microsoft.ManagedServices operation.
+    """The object that describes a single Microsoft.ManagedServices operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :ivar name: The operation name with the format: {provider}/{resource}/{operation}.
     :vartype name: str
     :ivar display: The object that represents the operation.
     :vartype display: ~azure.mgmt.managedservices.models.OperationDisplay
@@ -370,14 +407,13 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.ManagedServices.
+    :param provider: The service provider.
     :type provider: str
-    :param resource: Resource on which the operation is performed: Registration definition,
-     registration assignment etc.
+    :param resource: The resource on which the operation is performed.
     :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
+    :param operation: The operation type.
     :type operation: str
-    :param description: Description of the operation.
+    :param description: The description of the operation.
     :type description: str
     """
 
@@ -405,11 +441,11 @@ class OperationDisplay(msrest.serialization.Model):
 
 
 class OperationList(msrest.serialization.Model):
-    """List of the operations.
+    """The list of the operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of Microsoft.ManagedServices operations.
+    :ivar value: The list of Microsoft.ManagedServices operations.
     :vartype value: list[~azure.mgmt.managedservices.models.Operation]
     """
 
@@ -430,17 +466,17 @@ class OperationList(msrest.serialization.Model):
 
 
 class Plan(msrest.serialization.Model):
-    """Plan details for the managed services.
+    """The details for the Managed Services offer’s plan in Azure Marketplace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The plan name.
+    :param name: Required. Azure Marketplace plan name.
     :type name: str
-    :param publisher: Required. The publisher ID.
+    :param publisher: Required. Azure Marketplace publisher ID.
     :type publisher: str
-    :param product: Required. The product code.
+    :param product: Required. Azure Marketplace product code.
     :type product: str
-    :param version: Required. The plan's version.
+    :param version: Required. Azure Marketplace plan's version.
     :type version: str
     """
 
@@ -475,17 +511,17 @@ class Plan(msrest.serialization.Model):
 
 
 class RegistrationAssignment(msrest.serialization.Model):
-    """Registration assignment.
+    """The registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of a registration assignment.
+    :param properties: The properties of a registration assignment.
     :type properties: ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
     :ivar id: The fully qualified path of the registration assignment.
     :vartype id: str
-    :ivar type: Type of the resource.
+    :ivar type: The type of the Azure resource (Microsoft.ManagedServices/registrationAssignments).
     :vartype type: str
-    :ivar name: Name of the registration assignment.
+    :ivar name: The name of the registration assignment.
     :vartype name: str
     """
 
@@ -516,13 +552,13 @@ class RegistrationAssignment(msrest.serialization.Model):
 
 
 class RegistrationAssignmentList(msrest.serialization.Model):
-    """List of registration assignments.
+    """The list of registration assignments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of registration assignments.
+    :ivar value: The list of registration assignments.
     :vartype value: list[~azure.mgmt.managedservices.models.RegistrationAssignment]
-    :ivar next_link: Link to next page of registration assignments.
+    :ivar next_link: The link to the next page of registration assignments.
     :vartype next_link: str
     """
 
@@ -546,20 +582,21 @@ class RegistrationAssignmentList(msrest.serialization.Model):
 
 
 class RegistrationAssignmentProperties(msrest.serialization.Model):
-    """Properties of a registration assignment.
+    """The properties of the registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param registration_definition_id: Required. Fully qualified path of the registration
+    :param registration_definition_id: Required. The fully qualified path of the registration
      definition.
     :type registration_definition_id: str
-    :ivar provisioning_state: Current state of the registration assignment. Possible values
-     include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
-     "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
+    :ivar provisioning_state: The current provisioning state of the registration assignment.
+     Possible values include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created",
+     "Deleting", "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
-    :ivar registration_definition: Registration definition inside registration assignment.
+    :ivar registration_definition: The registration definition associated with the registration
+     assignment.
     :vartype registration_definition:
      ~azure.mgmt.managedservices.models.RegistrationAssignmentPropertiesRegistrationDefinition
     """
@@ -589,20 +626,21 @@ class RegistrationAssignmentProperties(msrest.serialization.Model):
 
 
 class RegistrationAssignmentPropertiesRegistrationDefinition(msrest.serialization.Model):
-    """Registration definition inside registration assignment.
+    """The registration definition associated with the registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of registration definition inside registration assignment.
+    :param properties: The properties of the registration definition associated with the
+     registration assignment.
     :type properties:
      ~azure.mgmt.managedservices.models.RegistrationAssignmentPropertiesRegistrationDefinitionProperties
-    :param plan: Plan details for the managed services.
+    :param plan: The details for the Managed Services offer’s plan in Azure Marketplace.
     :type plan: ~azure.mgmt.managedservices.models.Plan
-    :ivar id: Fully qualified path of the registration definition.
+    :ivar id: The fully qualified path of the registration definition.
     :vartype id: str
-    :ivar type: Type of the resource (Microsoft.ManagedServices/registrationDefinitions).
+    :ivar type: The type of the Azure resource (Microsoft.ManagedServices/registrationDefinitions).
     :vartype type: str
-    :ivar name: Name of the registration definition.
+    :ivar name: The name of the registration definition.
     :vartype name: str
     """
 
@@ -636,30 +674,31 @@ class RegistrationAssignmentPropertiesRegistrationDefinition(msrest.serializatio
 
 
 class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(msrest.serialization.Model):
-    """Properties of registration definition inside registration assignment.
+    """The properties of the registration definition associated with the registration assignment.
 
-    :param description: Description of the registration definition.
+    :param description: The description of the registration definition.
     :type description: str
-    :param authorizations: Authorization tuple containing principal id of the user/security group
-     or service principal and id of the build-in role.
+    :param authorizations: The collection of authorization objects describing the access Azure
+     Active Directory principals in the managedBy tenant will receive on the delegated resource in
+     the managed tenant.
     :type authorizations: list[~azure.mgmt.managedservices.models.Authorization]
-    :param eligible_authorizations: Eligible PIM authorization tuple containing principal id of the
-     user/security group or service principal, id of the built-in role, and just-in-time access
-     policy setting.
+    :param eligible_authorizations: The collection of eligible authorization objects describing the
+     just-in-time access Azure Active Directory principals in the managedBy tenant will receive on
+     the delegated resource in the managed tenant.
     :type eligible_authorizations: list[~azure.mgmt.managedservices.models.EligibleAuthorization]
-    :param registration_definition_name: Name of the registration definition.
+    :param registration_definition_name: The name of the registration definition.
     :type registration_definition_name: str
-    :param provisioning_state: Current state of the registration definition. Possible values
-     include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
-     "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
+    :param provisioning_state: The current provisioning state of the registration definition.
+     Possible values include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created",
+     "Deleting", "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
     :type provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
-    :param managee_tenant_id: Id of the home tenant.
+    :param managee_tenant_id: The identifier of the managed tenant.
     :type managee_tenant_id: str
-    :param managee_tenant_name: Name of the home tenant.
+    :param managee_tenant_name: The name of the managed tenant.
     :type managee_tenant_name: str
-    :param managed_by_tenant_id: Id of the managedBy tenant.
+    :param managed_by_tenant_id: The identifier of the managedBy tenant.
     :type managed_by_tenant_id: str
-    :param managed_by_tenant_name: Name of the managedBy tenant.
+    :param managed_by_tenant_name: The name of the managedBy tenant.
     :type managed_by_tenant_name: str
     """
 
@@ -702,19 +741,19 @@ class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(msrest.se
 
 
 class RegistrationDefinition(msrest.serialization.Model):
-    """Registration definition.
+    """The registration definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of a registration definition.
+    :param properties: The properties of a registration definition.
     :type properties: ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
-    :param plan: Plan details for the managed services.
+    :param plan: The details for the Managed Services offer’s plan in Azure Marketplace.
     :type plan: ~azure.mgmt.managedservices.models.Plan
-    :ivar id: Fully qualified path of the registration definition.
+    :ivar id: The fully qualified path of the registration definition.
     :vartype id: str
-    :ivar type: Type of the resource.
+    :ivar type: The type of the Azure resource (Microsoft.ManagedServices/registrationDefinitions).
     :vartype type: str
-    :ivar name: Name of the registration definition.
+    :ivar name: The name of the registration definition.
     :vartype name: str
     """
 
@@ -748,13 +787,13 @@ class RegistrationDefinition(msrest.serialization.Model):
 
 
 class RegistrationDefinitionList(msrest.serialization.Model):
-    """List of registration definitions.
+    """The list of registration definitions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of registration definitions.
+    :ivar value: The list of registration definitions.
     :vartype value: list[~azure.mgmt.managedservices.models.RegistrationDefinition]
-    :ivar next_link: Link to next page of registration definitions.
+    :ivar next_link: The link to the next page of registration definitions.
     :vartype next_link: str
     """
 
@@ -778,30 +817,31 @@ class RegistrationDefinitionList(msrest.serialization.Model):
 
 
 class RegistrationDefinitionProperties(msrest.serialization.Model):
-    """Properties of a registration definition.
+    """The properties of a registration definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param description: Description of the registration definition.
+    :param description: The description of the registration definition.
     :type description: str
-    :param authorizations: Required. Authorization tuple containing principal id of the
-     user/security group or service principal and id of the build-in role.
+    :param authorizations: Required. The collection of authorization objects describing the access
+     Azure Active Directory principals in the managedBy tenant will receive on the delegated
+     resource in the managed tenant.
     :type authorizations: list[~azure.mgmt.managedservices.models.Authorization]
-    :param eligible_authorizations: Eligible PIM authorization tuple containing principal id of the
-     user/security group or service principal, id of the built-in role, and just-in-time access
-     policy setting.
+    :param eligible_authorizations: The collection of eligible authorization objects describing the
+     just-in-time access Azure Active Directory principals in the managedBy tenant will receive on
+     the delegated resource in the managed tenant.
     :type eligible_authorizations: list[~azure.mgmt.managedservices.models.EligibleAuthorization]
-    :param registration_definition_name: Name of the registration definition.
+    :param registration_definition_name: The name of the registration definition.
     :type registration_definition_name: str
-    :param managed_by_tenant_id: Required. Id of the managedBy tenant.
+    :param managed_by_tenant_id: Required. The identifier of the managedBy tenant.
     :type managed_by_tenant_id: str
-    :ivar provisioning_state: Current state of the registration definition. Possible values
-     include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
-     "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
+    :ivar provisioning_state: The current provisioning state of the registration definition.
+     Possible values include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created",
+     "Deleting", "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
-    :ivar managed_by_tenant_name: Name of the managedBy tenant.
+    :ivar managed_by_tenant_name: The name of the managedBy tenant.
     :vartype managed_by_tenant_name: str
     """
 
