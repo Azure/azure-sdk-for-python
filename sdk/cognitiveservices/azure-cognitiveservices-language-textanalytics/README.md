@@ -2,7 +2,7 @@
 
 **NOTE:** If you are looking for the new, preview version of Azure Text
 Analytics, please see
-[azure-ai-textanalytics](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics).
+[azure-ai-textanalytics](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics).
 
 This is the Microsoft Azure Cognitive Services Text Analytics Client
 Library.

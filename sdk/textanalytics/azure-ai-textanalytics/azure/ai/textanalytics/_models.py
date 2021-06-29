@@ -97,7 +97,7 @@ class EntityConditionality(str, Enum):
     CONDITIONAL = "conditional"
 
 
-class HealthcareEntityRelationType(str, Enum):
+class HealthcareEntityRelation(str, Enum):
     """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
     """
 
@@ -124,7 +124,7 @@ class HealthcareEntityRelationType(str, Enum):
     VALUE_OF_EXAMINATION = "ValueOfExamination"
 
 
-class PiiEntityCategoryType(str, Enum):
+class PiiEntityCategory(str, Enum):
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -333,30 +333,10 @@ class HealthcareEntityCategory(str, Enum):
     TREATMENT_NAME = "TreatmentName"
 
 
-class PiiEntityDomainType(str, Enum):
+class PiiEntityDomain(str, Enum):
     """The different domains of PII entities that users can filter by"""
     PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/tanerpii for more information.
 
-class HealthcareEntityRelationRoleType(str, Enum):
-    """Type of roles entities can have in `entity_relations`. There may be roles not covered in this enum"""
-    ABBREVIATED_TERM = "AbbreviatedTerm"
-    FULL_TERM = "FullTerm"
-    DIRECTION = "Direction"
-    BODY_STRUCTURE = "BodyStructure"
-    CONDITION = "Condition"
-    EXAMINATION = "Examination"
-    TREATMENT = "Treatment"
-    DOSAGE = "Dosage"
-    MEDICATION = "Medication"
-    FORM = "Form"
-    FREQUENCY = "Frequency"
-    QUALIFIER = "Qualifier"
-    RELATION = "Relation"
-    ROUTE = "Route"
-    TIME = "Time"
-    EVENT = "Event"
-    UNIT = "Unit"
-    VALUE = "Value"
 
 class DetectedLanguage(DictMixin):
     """DetectedLanguage contains the predicted language found in text,
@@ -538,7 +518,7 @@ class HealthcareRelation(DictMixin):
 
     :ivar relation_type: The type of relation, i.e. the relationship between "100mg" and
         "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
-    :vartype relation_type: str or ~azure.ai.textanalytics.HealthcareEntityRelationType
+    :vartype relation_type: str or ~azure.ai.textanalytics.HealthcareEntityRelation
     :ivar roles: The roles present in this relation. I.e., in the document
         "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
     :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
@@ -575,7 +555,7 @@ class HealthcareRelationRole(DictMixin):
     :ivar name: The role of the entity in the relationship. I.e., in the relation
         "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
         "Dosage".
-    :vartype name: str or ~azure.ai.textanalytics.HealthcareEntityRelationRoleType
+    :vartype name: str
     :ivar entity: The entity that is present in the relationship. For example, in
         "The subject took 100 mg of ibuprofen", this property holds the dosage entity
         of "100 mg".
@@ -1769,8 +1749,8 @@ class RecognizePiiEntitiesAction(DictMixin):
     :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
-        `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
+        `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+    :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
@@ -1789,8 +1769,8 @@ class RecognizePiiEntitiesAction(DictMixin):
     :ivar categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
-        `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
+        `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+    :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information

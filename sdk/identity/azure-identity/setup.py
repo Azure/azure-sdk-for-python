@@ -50,7 +50,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",

@@ -38,13 +38,13 @@ test:
     - azure.storage.filedatalake
 
 about:
-  home: "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage"
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage"
   license: MIT
   license_family: MIT
   license_file:
   summary: Microsoft Azure Storage Client Library for Python{{ environ.get('STORAGE_SUMMARY', '') }}
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:

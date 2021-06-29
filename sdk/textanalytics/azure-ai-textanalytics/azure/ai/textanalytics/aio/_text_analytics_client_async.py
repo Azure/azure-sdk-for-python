@@ -91,14 +91,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :start-after: [START create_ta_client_with_key_async]
             :end-before: [END create_ta_client_with_key_async]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the TextAnalyticsClient with endpoint and API key.
 
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_ta_client_with_aad_async]
             :end-before: [END create_ta_client_with_aad_async]
             :language: python
-            :dedent: 8
+            :dedent: 4
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
@@ -172,7 +172,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START detect_language_async]
                 :end-before: [END detect_language_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
@@ -252,7 +252,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START recognize_entities_async]
                 :end-before: [END recognize_entities_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -320,12 +320,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
-        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
+        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomain
         :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
-            `[PiiEntityCategoryType.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategoryType]
+            `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
+        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
@@ -350,7 +350,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START recognize_pii_entities]
                 :end-before: [END recognize_pii_entities]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -450,7 +450,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START recognize_linked_entities_async]
                 :end-before: [END recognize_linked_entities_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Recognize linked entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -537,7 +537,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START extract_key_phrases_async]
                 :end-before: [END extract_key_phrases_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Extract the key phrases in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -625,7 +625,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START analyze_sentiment_async]
                 :end-before: [END analyze_sentiment_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Analyze sentiment in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -682,7 +682,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
-    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[AsyncItemPaged[AnalyzeHealthcareEntitiesResult]]:
+    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -722,10 +722,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :return: An instance of an AsyncAnalyzeHealthcareEntitiesLROPoller. Call `result()` on the poller
-            object to return a pageable of :class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`.
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.aio.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.AsyncItemPaged[
-            ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult]]
+            Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -734,7 +736,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START analyze_healthcare_entities_async]
                 :end-before: [END analyze_healthcare_entities_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Analyze healthcare entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
@@ -802,7 +804,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         actions: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]], # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult]]]]:  # pylint: disable=line-too-long
+    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]:  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -848,7 +850,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[
             RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult
+            ExtractKeyPhrasesResult or AnalyzeSentimentResult or DocumentError
             ]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
@@ -858,7 +860,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :start-after: [START analyze_async]
                 :end-before: [END analyze_async]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Start a long-running operation to perform a variety of text analysis actions over
                     a batch of documents.
         """
