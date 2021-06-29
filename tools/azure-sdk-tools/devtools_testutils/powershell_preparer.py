@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
 import os
 
 from . import AzureMgmtPreparer
-from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 from dotenv import load_dotenv, find_dotenv
+
 
 class PowerShellPreparer(AzureMgmtPreparer):
     def __init__(
