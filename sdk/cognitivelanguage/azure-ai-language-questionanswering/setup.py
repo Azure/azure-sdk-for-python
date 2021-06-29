@@ -67,10 +67,10 @@ setup(
     ]),
     install_requires=[
         'azure-core<2.0.0,>=1.16.0',
-        "msrest>=0.6.19"
+        "msrest>=0.5.0"
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-ai-nspkg<2.0.0,>=1.0.0'],
+        ":python_version<'3.0'": ['futures', 'azure-ai-nspkg'],
         ":python_version<'3.5'": ["typing"]
     },
     project_urls={
