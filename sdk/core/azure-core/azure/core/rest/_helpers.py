@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 import codecs
+import cgi
 from enum import Enum
 from json import dumps
 import collections
@@ -49,6 +50,11 @@ try:
     from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
+try:
+    import cchardet as chardet
+except ImportError:  # pragma: no cover
+    import chardet  # type: ignore
+from ..exceptions import ResponseNotReadError
 
 ################################### TYPES SECTION #########################
 
@@ -277,3 +283,24 @@ def from_pipeline_transport_request_helper(request_class, pipeline_transport_req
         files=pipeline_transport_request.files,
         data=pipeline_transport_request.data
     )
+
+def get_charset_encoding(response):
+    content_type = response.headers.get("Content-Type")
+
+    if not content_type:
+        return None
+    _, params = cgi.parse_header(content_type)
+    encoding = params.get('charset') # -> utf-8
+    if encoding is None:
+        if content_type in ("application/json", "application/rdap+json"):
+            # RFC 7159 states that the default encoding is UTF-8.
+            # RFC 7483 defines application/rdap+json
+            encoding = "utf-8"
+        else:
+            try:
+                encoding = chardet.detect(response.content)["encoding"]
+            except ResponseNotReadError:
+                pass
+    if encoding is None or not lookup_encoding(encoding):
+        return None
+    return encoding

@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import copy
-import cgi
 import collections
 import collections.abc
 from json import loads
@@ -39,6 +38,7 @@ from typing import (
     Union,
 )
 
+
 from azure.core.exceptions import HttpResponseError
 
 from .._utils import _case_insensitive_dict
@@ -48,7 +48,6 @@ from ._helpers import (
     FilesType,
     HeadersType,
     cast,
-    lookup_encoding,
     parse_lines_from_text,
     set_json_body,
     set_multipart_body,
@@ -56,6 +55,7 @@ from ._helpers import (
     format_parameters,
     to_pipeline_transport_request_helper,
     from_pipeline_transport_request_helper,
+    get_charset_encoding
 )
 from ._helpers_py3 import set_content_body
 from ..exceptions import ResponseNotReadError
@@ -242,17 +242,6 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         """Returns the URL that resulted in this response"""
         return self.request.url
 
-    def _get_charset_encoding(self) -> Optional[str]:
-        content_type = self.headers.get("Content-Type")
-
-        if not content_type:
-            return None
-        _, params = cgi.parse_header(content_type)
-        encoding = params.get('charset') # -> utf-8
-        if encoding is None or not lookup_encoding(encoding):
-            return None
-        return encoding
-
     @property
     def encoding(self) -> Optional[str]:
         """Returns the response encoding. By default, is specified
@@ -261,7 +250,7 @@ class _HttpResponseBase:  # pylint: disable=too-many-instance-attributes
         try:
             return self._encoding
         except AttributeError:
-            return self._get_charset_encoding()
+            return get_charset_encoding(self)
 
     @encoding.setter
     def encoding(self, value: str) -> None:

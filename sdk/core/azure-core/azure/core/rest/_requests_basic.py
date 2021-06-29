@@ -30,7 +30,7 @@ from ._rest import _HttpResponseBase, HttpResponse
 from ..pipeline.transport._requests_basic import StreamDownloadGenerator
 
 if TYPE_CHECKING:
-    from typing import Iterator
+    from typing import Iterator, Optional
 
 def _has_content(response):
     try:
@@ -61,40 +61,29 @@ class _RestRequestsTransportResponseBase(_HttpResponseBase):
             # requests throws a RuntimeError if the content for a response is already consumed
             raise ResponseNotReadError(self)
 
-    def _get_content(self):
-        """Return the internal response's content"""
-        if not self._internal_response._content_consumed:  # pylint: disable=protected-access
-            # if we just call .content, requests will read in the content.
-            # we want to read it in our own way
-            return None
-        try:
-            return self._internal_response.content
-        except RuntimeError:
-            # requests throws a RuntimeError if the content for a response is already consumed
-            return None
-
-    def _set_content(self, val):
-        """Set the internal response's content"""
-        self._internal_response._content = val  # pylint: disable=protected-access
-
-    @_HttpResponseBase.encoding.setter  # type: ignore
-    def encoding(self, value):
-        # type: (str) -> None
-        # ignoring setter bc of known mypy issue https://github.com/python/mypy/issues/1465
-        self._encoding = value
-        encoding = value
-        if not encoding:
+    @property
+    def encoding(self):
+        # type: () -> Optional[str]
+        retval = super(_RestRequestsTransportResponseBase, self).encoding
+        if not retval:
             # There is a few situation where "requests" magic doesn't fit us:
             # - https://github.com/psf/requests/issues/654
             # - https://github.com/psf/requests/issues/1737
             # - https://github.com/psf/requests/issues/2086
             from codecs import BOM_UTF8
             if self._internal_response.content[:3] == BOM_UTF8:
-                encoding = "utf-8-sig"
-        if encoding:
-            if encoding == "utf-8":
-                encoding = "utf-8-sig"
-        self._internal_response.encoding = encoding
+                retval = "utf-8-sig"
+        if retval:
+            if retval == "utf-8":
+                retval = "utf-8-sig"
+        return retval
+
+    @encoding.setter  # type: ignore
+    def encoding(self, value):
+        # type: (str) -> None
+        # ignoring setter bc of known mypy issue https://github.com/python/mypy/issues/1465
+        self._encoding = value
+        self._internal_response.encoding = value
 
     @property
     def text(self):
