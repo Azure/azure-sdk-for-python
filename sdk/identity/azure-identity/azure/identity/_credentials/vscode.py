@@ -120,6 +120,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
         setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
         supports only Azure Active Directory work or school accounts.
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
+        user's home tenant or the tenant specified by **tenant_id**.
     """
 
     def get_token(self, *scopes, **kwargs):
@@ -140,7 +143,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     def _acquire_token_silently(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes)
+        return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
