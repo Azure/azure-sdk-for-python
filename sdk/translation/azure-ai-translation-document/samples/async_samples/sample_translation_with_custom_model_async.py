@@ -58,20 +58,19 @@ async def sample_translation_with_custom_model_async():
             )
 
     async with client:
-        job = await client.create_translation_job(inputs=[inputs])  # type: JobStatusResult
+        poller = await client.begin_translation(inputs=[inputs])
+        result = await poller.result()
 
-        job_result = await client.wait_until_done(job.id)  # type: JobStatusResult
-
-        print("Job status: {}".format(job_result.status))
-        print("Job created on: {}".format(job_result.created_on))
-        print("Job last updated on: {}".format(job_result.last_updated_on))
-        print("Total number of translations on documents: {}".format(job_result.documents_total_count))
+        print("Job status: {}".format(result.status))
+        print("Job created on: {}".format(result.created_on))
+        print("Job last updated on: {}".format(result.last_updated_on))
+        print("Total number of translations on documents: {}".format(result.documents_total_count))
 
         print("\nOf total documents...")
-        print("{} failed".format(job_result.documents_failed_count))
-        print("{} succeeded".format(job_result.documents_succeeded_count))
+        print("{} failed".format(result.documents_failed_count))
+        print("{} succeeded".format(result.documents_succeeded_count))
 
-        doc_results = client.list_all_document_statuses(job_result.id)  # type: AsyncItemPaged[DocumentStatusResult]
+        doc_results = client.list_all_document_statuses(result.id)
         async for document in doc_results:
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
