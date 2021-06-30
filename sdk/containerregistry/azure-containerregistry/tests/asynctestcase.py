@@ -59,6 +59,7 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
         credential_scopes = get_authorization_scope(authority)
         return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=credential_scopes, **kwargs)
 
+from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD
 
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:

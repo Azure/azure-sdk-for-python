@@ -23,7 +23,7 @@ import asyncio
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.identity import AzureAuthorityHostsa
+from azure.identity import AzureAuthorityHosts
 
 class DeleteOperations(object):
     def __init__(self):
