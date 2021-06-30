@@ -308,7 +308,6 @@ def import_image(authority, repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
-    return
     if not is_live():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
