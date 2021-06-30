@@ -67,10 +67,16 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name(container_name)
+        self.source_container_name = self.get_resource_name('utcontainersource1')
+
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except ResourceExistsError:
+            except:
+                pass
+            try:
+                await self.bsc.create_container(self.source_container_name)
+            except:
                 pass
 
     def _teardown(self, FILE_PATH):
@@ -107,6 +113,11 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         await blob.upload_blob(data, tags=tags, **kwargs)
         return blob
 
+    async def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX+"1"))
+        await blob_client.upload_blob(data, overwrite=True)
+        return blob_client
+
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         stream = await blob.download_blob()
@@ -124,6 +135,26 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for block blobs --------------------------------------------
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_url_with_oauth(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(data=source_blob_data)
+        destination_blob_client = await self._create_blob()
+        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        token = "Bearer {}".format(access_token.token)
+
+        # Assert this operation fails without a credential
+        with self.assertRaises(HttpResponseError):
+            await destination_blob_client.upload_blob_from_url(source_blob_client.url)
+        # Assert it passes after passing an oauth credential
+        await destination_blob_client.upload_blob_from_url(source_blob_client.url, source_authorization=token, overwrite=True)
+        destination_blob = await destination_blob_client.download_blob()
+        destination_blob_data = await destination_blob.readall()
+        self.assertEqual(source_blob_data, destination_blob_data)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
