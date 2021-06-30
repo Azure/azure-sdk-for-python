@@ -2,7 +2,7 @@
 
 Azure Data Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
 Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
-The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts. This document covers [`azure-data-tables`][Tables_pypi]. If you're using [`azure-cosmosdb-tables`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table), we recommend that you upgrade your code. See the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/f170e919efdb0169efc85d7957e4d6b81a0f2a26/sdk/tables/azure-data-tables/migration_guide.md) for more details.
+The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts. This document covers [`azure-data-tables`][Tables_pypi]. If you're using [`azure-cosmosdb-tables`](https://github.com/Azure/azure-cosmos-table-python/tree/master/azure-cosmosdb-table), we recommend that you upgrade your code. See the [migration guide][migration_guide] for more details.
 
 [Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
 
@@ -335,6 +335,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [Tables_ref_docs]:https://docs.microsoft.com/python/api/overview/azure/data-tables-readme-pre?view=azure-python-preview
 [Tables_product_doc]:https://docs.microsoft.com/azure/cosmos-db/table-introduction
 [Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples
+[migration_guide]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/migration_guide.md
 
 [azure_subscription]:https://azure.microsoft.com/free/
 [azure_storage_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
