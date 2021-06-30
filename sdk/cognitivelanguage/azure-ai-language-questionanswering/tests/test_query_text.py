@@ -97,3 +97,30 @@ class QnATests(QuestionAnsweringTest):
             assert answer.answer_span.confidence_score
             assert answer.answer_span.offset is not None
             assert answer.answer_span.length
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_text_with_dictparams(self, qna_account, qna_key):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+        params = {
+            "question": "How long it takes to charge surface?",
+            "records": [
+                {
+                    "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                            "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                    "id": "1"
+                },
+                {
+                    "text": "You can use the USB port on your Surface Pro 4 power supply to charge other devices, like a phone, while your Surface charges. "+
+                            "The USB port on the power supply is only for charging, not for data transfer. If you want to use a USB device, plug it into the USB port on your Surface.",
+                    "id": "2"
+                }
+            ],
+            "language": "en"
+        }
+
+        with client:
+            output = client.query_text(params)
+            assert len(output.answers) == 3
+            confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
+            assert len(confident_answers) == 2
+            assert confident_answers[0].answer_span.text == "two to four hours"

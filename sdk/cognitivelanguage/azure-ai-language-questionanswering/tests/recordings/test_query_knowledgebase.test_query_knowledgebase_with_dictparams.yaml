@@ -1,0 +1,64 @@
+interactions:
+- request:
+    body: '{"question": "How long should my Surface battery last?", "top": 3, "user_id":
+      "sd53lsY=", "confidence_score_threshold": 0.2, "answer_span_request": {"enable":
+      true, "confidence_score_threshold": 0.2, "top_answers_with_span": 1}, "include_unstructured_sources":
+      true}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '266'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=test-project&deploymentName=test&api-version=2021-05-01-preview
+  response:
+    body:
+      string: "{\n  \"answers\": [\n    {\n      \"questions\": [\n        \"Make
+        your battery last\"\n      ],\n      \"answer\": \"**Make your battery last**\\n\\nFor
+        info on how to care for your battery and power supply, conserve power, and
+        make your Surface battery last longer, see [Surface battery and power](http://www.microsoft.com/surface/support/hardware-and-drivers/battery-and-power)
+        on Surface.com.\",\n      \"confidenceScore\": 0.9292,\n      \"id\": 27,\n
+        \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
+        {\n        \"explicitlytaggedheading\": \"make your battery last\"\n      },\n
+        \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
+        []\n      }\n    },\n    {\n      \"questions\": [\n        \"Check the battery
+        level\"\n      ],\n      \"answer\": \"**Check the battery level**\\n\\nYou
+        can check the battery level from the lock screen or the desktop:\",\n      \"confidenceScore\":
+        0.3583,\n      \"id\": 24,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        \     \"metadata\": {\n        \"explicitlytaggedheading\": \"check the battery
+        level\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      }\n    },\n    {\n      \"questions\": [\n
+        \       \"Desktop taskbar.\"\n      ],\n      \"answer\": \"**Desktop taskbar.**\\n\\nBattery
+        status appears at the right side of the taskbar. Select the battery icon for
+        info about the charging and battery status, including the percent remaining.
+        \u272A\",\n      \"confidenceScore\": 0.2229,\n      \"id\": 26,\n      \"source\":
+        \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\": {},\n      \"dialog\":
+        {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
+        \ ]\n}"
+    headers:
+      apim-request-id:
+      - ac96b8f4-f23b-46a4-9e4c-557ed2fb2cc0
+      content-length:
+      - '1609'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 30 Jun 2021 15:14:10 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '1492'
+    status:
+      code: 200
+      message: OK
+version: 1
