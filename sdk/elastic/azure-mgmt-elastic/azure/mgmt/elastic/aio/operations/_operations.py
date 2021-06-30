@@ -43,7 +43,7 @@ class Operations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OperationListResult"]:
         """List all operations provided by Microsoft.Elastic.
 

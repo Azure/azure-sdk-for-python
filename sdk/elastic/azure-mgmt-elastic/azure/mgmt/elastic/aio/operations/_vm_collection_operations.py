@@ -45,7 +45,7 @@ class VMCollectionOperations:
         resource_group_name: str,
         monitor_name: str,
         body: Optional["_models.VMCollectionUpdate"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update the vm details that will be monitored by the Elastic monitor resource.
 

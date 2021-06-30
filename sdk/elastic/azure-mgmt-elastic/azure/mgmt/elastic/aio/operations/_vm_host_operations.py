@@ -45,7 +45,7 @@ class VMHostOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VMHostListResponse"]:
         """List the vm resources currently being monitored by the Elastic monitor resource.
 

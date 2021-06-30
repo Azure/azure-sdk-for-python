@@ -44,7 +44,7 @@ class VMIngestionOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VMIngestionDetailsResponse":
         """List the vm ingestion details that will be monitored by the Elastic monitor resource.
 

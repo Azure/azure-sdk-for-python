@@ -44,7 +44,7 @@ class DeploymentInfoOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentInfoResponse":
         """Fetch information regarding Elastic cloud deployment corresponding to the Elastic monitor resource.
 

@@ -45,7 +45,7 @@ class MonitoredResourcesOperations:
         self,
         resource_group_name: str,
         monitor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MonitoredResourceListResponse"]:
         """List the resources currently being monitored by the Elastic monitor resource.
 
