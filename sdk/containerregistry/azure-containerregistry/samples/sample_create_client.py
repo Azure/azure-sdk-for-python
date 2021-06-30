@@ -22,10 +22,29 @@ USAGE:
 from dotenv import find_dotenv, load_dotenv
 import os
 
+from azure.identity import AzureAuthorityHosts
+
 
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+
+    def get_authority(self, endpoint):
+        if ".azurecr.io" in endpoint:
+            return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
+        if ".azurecr.cn" in endpoint:
+            return AzureAuthorityHosts.AZURE_CHINA
+        if ".azurecr.us" in endpoint:
+            return AzureAuthorityHosts.AZURE_GOVERNMENT
+        raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
+
+    def get_credential_scopes(self, authority):
+        if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+            return "https://management.core.windows.net/.default"
+        if authority == AzureAuthorityHosts.AZURE_CHINA:
+            return "https://management.chinacloudapi.cn/.default"
+        if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
+            return "https://management.usgovcloudapi.net/.default"
 
     def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
@@ -34,8 +53,11 @@ class CreateClients(object):
         from azure.identity import DefaultAzureCredential
 
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        authority = self.get_authority(account_url)
+        credential = DefaultAzureCredential(authority=authority)
+        credential_scopes = self.get_credential_scopes(authority)
 
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)
         # [END create_registry_client]
 
     def basic_sample(self):
@@ -44,9 +66,11 @@ class CreateClients(object):
         from azure.identity import DefaultAzureCredential
 
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        authority = self.get_authority(account_url)
+        credential = DefaultAzureCredential(authority=authority)
+        credential_scopes = self.get_credential_scopes(authority)
 
-        # Instantiate the client
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+        client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)
         with client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
