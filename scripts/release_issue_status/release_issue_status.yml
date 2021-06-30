@@ -13,7 +13,7 @@ jobs:
   displayName: ReleaseIssueStatus Python 3.8
   timeoutInMinutes: 30
   strategy:
-    maxParallel: 1
+    maxParallel: 3
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
@@ -42,5 +42,5 @@ jobs:
         export TOKEN=$(USR_TOKEN)
 
         # run
-        cd azure-sdk-for-python/scripts/release_issue_status
+        cd azure-sdk-for-python
         python $script_path/main.py

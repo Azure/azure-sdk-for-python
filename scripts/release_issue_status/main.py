@@ -131,7 +131,7 @@ def main():
         if item.package != _NULL and duplicated_issue.get((item.language, item.package)) > 1:
             item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
 
-    with open('release_issue_status.csv', 'w') as file_out:
+    with open('scripts/release_issue_status/release_issue_status.csv', 'w') as file_out:
         file_out.write('language,issue,author,package,created date,delay from created date,latest update time,'
                        'delay from latest update,status,bot advice\n')
         file_out.writelines([item.output() for item in sorted(issue_status, key=_key_select)])
