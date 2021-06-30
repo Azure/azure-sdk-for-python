@@ -2,7 +2,7 @@
 
 ## 1.16.0 (2021-07-01)
 
-### New Features
+### Features Added
 
 - Add new ***provisional*** methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
 requests and sends them through our pipelines.
@@ -10,7 +10,7 @@ requests and sends them through our pipelines.
 - Add new ***provisional*** errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
 are thrown if you mishandle streamed responses from the provisional `azure.core.rest` module
 
-### Bug Fixes
+### Fixed
 
 - Improved error message in the `from_dict` method of `CloudEvent` when a wrong schema is sent.
 
