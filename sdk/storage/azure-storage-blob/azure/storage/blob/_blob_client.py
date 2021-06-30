@@ -19,7 +19,6 @@ except ImportError:
 
 import six
 from azure.core.pipeline import Pipeline
-from azure.core.credentials import AccessToken
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
