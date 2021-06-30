@@ -13,12 +13,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist/_tags/does_not_exist
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "not_real_repo", "Action": "delete"}]}]}'
+        "repository", "Name": "does_not_exist", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -28,11 +28,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '209'
+      - '210'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:35 GMT
+      - Wed, 19 May 2021 21:22:12 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:37 GMT
+      - Wed, 19 May 2021 21:22:14 GMT
       server:
       - openresty
       strict-transport-security:
@@ -81,12 +81,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.45'
+      - '166.65'
     status:
       code: 200
       message: OK
 - request:
-    body: service=fake_url.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED&grant_type=refresh_token
+    body: service=fake_url.azurecr.io&scope=repository%3Adoes_not_exist%3Adelete&refresh_token=REDACTED&grant_type=refresh_token
     headers:
       Accept:
       - application/json
@@ -95,7 +95,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1136'
+      - '1137'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -111,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:37 GMT
+      - Wed, 19 May 2021 21:22:14 GMT
       server:
       - openresty
       strict-transport-security:
@@ -119,7 +119,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.3'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -137,11 +137,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist/_tags/does_not_exist
   response:
     body:
-      string: '{"errors": [{"code": "NAME_UNKNOWN", "message": "repository name not
-        known to registry", "detail": {"name": "not_real_repo"}}]}'
+      string: '{"errors": [{"code": "TAG_UNKNOWN", "message": "the specified tag does
+        not exist"}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -151,11 +151,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '121'
+      - '81'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 19 May 2021 21:21:38 GMT
+      - Wed, 19 May 2021 21:22:14 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
