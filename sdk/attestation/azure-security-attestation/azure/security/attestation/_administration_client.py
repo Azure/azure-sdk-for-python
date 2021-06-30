@@ -140,7 +140,7 @@ class AttestationAdministrationClient(object):
 
         :rtype: Tuple[str, ~azure.security.attestation.AttestationToken]
 
-        :raises azure.security.attestation.AttestationTokenValidationException: Raised
+        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised
             when an attestation token is invalid.
 
         .. note::
