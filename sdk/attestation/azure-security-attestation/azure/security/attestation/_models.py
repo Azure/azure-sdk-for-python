@@ -66,7 +66,7 @@ class AttestationSigner(object):
     def _from_generated(cls, generated):
         # type: (JSONWebKey) -> AttestationSigner
         if not generated:
-            return cls()
+            return None
         return cls(generated.x5_c, generated.kid)
 
 
@@ -90,7 +90,7 @@ class AttestationPolicyCertificateResult(object):
     def _from_generated(cls, generated):
         # type: (GeneratedPolicyCertificatesModificationResult) -> AttestationPolicyCertificateResult
         if not generated:
-            return cls(None, None)
+            return None
         return cls(generated.certificate_thumbprint, generated.certificate_resolution)
 
 
@@ -125,13 +125,13 @@ class AttestationPolicyResult(object):
     def _from_generated(cls, generated):
         # type: (GeneratedPolicyResult, str) -> AttestationPolicyResult
         # If we have a generated policy result or policy text, return that.
-        if generated:
-            return cls(
-                generated.policy_resolution,
-                generated.policy_signer,
-                generated.policy_token_hash,
-            )
-        return cls(None, None, None)
+        if not generated:
+            return None
+        return AttestationPolicyResult(
+            generated.policy_resolution,
+            generated.policy_signer,
+            generated.policy_token_hash,
+        )
 
 
 class AttestationResult(object):
@@ -212,6 +212,8 @@ class AttestationResult(object):
     @classmethod
     def _from_generated(cls, generated):
         # type: (GeneratedAttestationResult) -> AttestationResult
+        if not generated:
+            return None
         return AttestationResult(
             issuer=generated.iss,
             unique_identifier=generated.jti,
@@ -221,9 +223,7 @@ class AttestationResult(object):
             inittime_claims=generated.inittime_claims,
             policy_claims=generated.policy_claims,
             verifier_type=generated.verifier_type,
-            policy_signer=AttestationSigner._from_generated(generated.policy_signer)
-            if generated.policy_signer
-            else None,
+            policy_signer=AttestationSigner._from_generated(generated.policy_signer),
             policy_hash=generated.policy_hash,
             is_debuggable=generated.is_debuggable,
             product_id=generated.product_id,
@@ -347,9 +347,7 @@ class AttestationResult(object):
 
         :rtype: azure.security.attestation.AttestationSigner or None
         """
-        if self._policy_signer:
-            return AttestationSigner._from_generated(self._policy_signer)
-        return None
+        return AttestationSigner._from_generated(self._policy_signer)
 
     @property
     def policy_hash(self):
@@ -461,8 +459,8 @@ class StoredAttestationPolicy(object):
     @classmethod
     def _from_generated(cls, generated):
         # type: (GeneratedStoredAttestationPolicy) -> StoredAttestationPolicy
-        if generated is None:
-            return StoredAttestationPolicy("")
+        if not generated:
+            return None
         return StoredAttestationPolicy(generated.attestation_policy)
 
 

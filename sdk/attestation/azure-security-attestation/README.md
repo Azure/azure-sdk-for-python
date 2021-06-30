@@ -10,7 +10,7 @@ Azure Attestation receives evidence from compute entities, turns them into a set
 
 This package has been tested with Python 2.7, 3.6 to 3.9.
 
-For a more complete view of Azure libraries, see the [azure sdk python release page](https://aka.ms/azsdk/python/all).
+For a more complete view of Azure libraries, see the [Azure SDK for Python release page](https://aka.ms/azsdk/python/all).
 
 > NOTE: This is a preview SDK for the Microsoft Azure Attestation service. It provides all the essential functionality to access the Azure Attestation service, it should be considered 'as-is" and is subject to changes in the future which may break compatibility with previous versions.
 
