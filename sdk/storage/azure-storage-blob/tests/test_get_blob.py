@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import uuid
 import pytest
+import base64
 from os import path, remove, sys, urandom
 
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
