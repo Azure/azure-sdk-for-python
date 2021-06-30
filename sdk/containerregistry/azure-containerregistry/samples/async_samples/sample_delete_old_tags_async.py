@@ -41,11 +41,11 @@ class DeleteOperations(object):
 
     def get_credential_scopes(self, authority):
         if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-            return "https://management.core.windows.net/.default"
+            return ["https://management.core.windows.net/.default"]
         if authority == AzureAuthorityHosts.AZURE_CHINA:
-            return "https://management.chinacloudapi.cn/.default"
+            return ["https://management.chinacloudapi.cn/.default"]
         if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-            return "https://management.usgovcloudapi.net/.default"
+            return ["https://management.usgovcloudapi.net/.default"]
 
     async def delete_old_tags(self):
         from azure.containerregistry import TagOrder
