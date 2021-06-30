@@ -5,10 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
 import uuid
-
 import pytest
+from os import path, remove, sys, urandom
 
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
