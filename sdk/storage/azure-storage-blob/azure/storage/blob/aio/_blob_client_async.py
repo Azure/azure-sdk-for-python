@@ -1385,7 +1385,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def stage_block_from_url(
-            self, block_id,  # type: str
+            self, block_id,  # type: Union[str, int]
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
