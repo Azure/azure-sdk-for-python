@@ -277,7 +277,6 @@ class AttestationClient(object):
 
         .. admonition:: Example: Simple OpenEnclave attestation with draft attestation policy.
 
-
             .. literalinclude:: ../samples/sample_attest_enclave.py
                 :start-after: [START attest_open_enclave_shared_draft]
                 :end-before: [END attest_open_enclave_shared_draft]

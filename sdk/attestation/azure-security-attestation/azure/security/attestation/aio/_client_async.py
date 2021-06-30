@@ -41,8 +41,7 @@ class AttestationClient(object):
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
         an exception.
-    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-        ~azure.security.attestation.AttestationSigner], None]
+    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -139,8 +138,7 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -148,7 +146,6 @@ class AttestationClient(object):
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
-
 
         :return: :class:`AttestationResult` containing the claims in the returned attestation token.
         :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
@@ -252,8 +249,7 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -275,7 +271,6 @@ class AttestationClient(object):
                 :caption: Attesting an open_enclave report for an SGX enclave.
 
         .. admonition:: Example: Simple OpenEnclave attestation with draft attestation policy.
-
 
             .. literalinclude:: ../samples/sample_attest_enclave_async.py
                 :start-after: [START attest_open_enclave_shared_draft]

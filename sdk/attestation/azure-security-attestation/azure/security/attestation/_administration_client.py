@@ -55,8 +55,7 @@ class AttestationAdministrationClient(object):
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
         an exception.
-    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-        ~azure.security.attestation.AttestationSigner], None]
+    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -125,8 +124,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None]
+        :paramtype validation_callback: Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -148,7 +146,6 @@ class AttestationAdministrationClient(object):
             <https://docs.microsoft.com/azure/attestation/author-sign-policy>`_
 
         .. admonition:: Example: Retrieving the current policy on an attestation instance.
-
 
             .. literalinclude:: ../samples/sample_get_set_policy.py
                 :start-after: [BEGIN get_policy]
@@ -204,8 +201,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -310,8 +306,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -403,8 +398,7 @@ class AttestationAdministrationClient(object):
             perform custom validation of the token. If the token is invalid,
             the `validation_callback` function should throw an exception to cause
             the API call to fail.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the
             token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time
@@ -470,8 +464,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -484,8 +477,7 @@ class AttestationAdministrationClient(object):
             of the add request and the token sent from the service which
             contained the response.
 
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult,
-            ~azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes
@@ -587,8 +579,7 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
-            ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -597,8 +588,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Result describing the outcome of the certificate removal.
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult,
-            ~azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificateResult` response to the
         :meth:`remove_policy_management_certificate` API contains two attributes
