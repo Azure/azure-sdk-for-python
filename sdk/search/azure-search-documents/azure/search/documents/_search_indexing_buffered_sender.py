@@ -10,7 +10,7 @@ import threading
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ServiceResponseTimeoutError
-from ._utils import is_retryable_status_code
+from ._utils import is_retryable_status_code, get_authentication_policy
 from .indexes import SearchIndexClient as SearchServiceClient
 from ._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from ._generated import SearchClient as SearchIndexClient
