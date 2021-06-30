@@ -46,7 +46,7 @@ class ProtectionContainerRefreshOperationResultsOperations:
         resource_group_name: str,
         fabric_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Provides the result of the refresh operation triggered by the BeginRefresh operation.
 
@@ -70,7 +70,7 @@ class ProtectionContainerRefreshOperationResultsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

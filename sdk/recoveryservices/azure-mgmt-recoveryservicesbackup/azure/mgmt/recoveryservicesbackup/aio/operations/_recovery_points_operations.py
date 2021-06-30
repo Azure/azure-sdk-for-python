@@ -49,7 +49,7 @@ class RecoveryPointsOperations:
         container_name: str,
         protected_item_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecoveryPointResourceList"]:
         """Lists the backup copies for the backed up item.
 
@@ -76,7 +76,7 @@ class RecoveryPointsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -141,7 +141,7 @@ class RecoveryPointsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecoveryPointResource":
         """Provides the information of the backed up data identified using RecoveryPointID. This is an
         asynchronous operation.
@@ -170,7 +170,7 @@ class RecoveryPointsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -219,7 +219,7 @@ class RecoveryPointsOperations:
         protected_item_name: str,
         recovery_point_id: str,
         parameters: "_models.AADPropertiesResource",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.CrrAccessTokenResource"]:
         """Returns the Access token for communication between BMS and Protection service.
 

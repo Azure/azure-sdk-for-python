@@ -44,7 +44,7 @@ class BackupResourceEncryptionConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.BackupResourceEncryptionConfigResource":
         """Fetches Vault Encryption config.
 
@@ -63,7 +63,7 @@ class BackupResourceEncryptionConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL
@@ -105,7 +105,7 @@ class BackupResourceEncryptionConfigsOperations:
         vault_name: str,
         resource_group_name: str,
         parameters: "_models.BackupResourceEncryptionConfigResource",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Updates Vault encryption config.
 
@@ -126,7 +126,7 @@ class BackupResourceEncryptionConfigsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

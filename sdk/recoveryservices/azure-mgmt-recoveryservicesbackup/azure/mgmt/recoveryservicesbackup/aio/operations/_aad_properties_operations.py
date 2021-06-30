@@ -44,7 +44,7 @@ class AadPropertiesOperations:
         self,
         azure_region: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AADPropertiesResource":
         """Fetches the AAD properties from target region BCM stamp.
 

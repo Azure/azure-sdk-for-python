@@ -65,7 +65,7 @@ class InsertDeleteEntity(object):
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        table_client = TableClient(endpoint=self.endpoint, credential=credential, table_name=self.table_name)
+        table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
 
         # [START delete_entity]
         async with table_client:

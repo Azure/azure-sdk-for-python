@@ -11,6 +11,12 @@ parameters:
 - name: TestPipeline
   type: boolean
   default: false
+- name: BeforeTestSteps
+  type: object
+  default: []
+- name: AfterTestSteps
+  type: object
+  default: []
 - name: BeforePublishSteps
   type: object
   default: []
@@ -60,6 +66,9 @@ parameters:
 - name: VerifyAutorest
   type: boolean
   default: false
+- name: ValidateFormatting
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
@@ -74,6 +83,8 @@ stages:
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         BuildTargetingString: $(BuildTargetingStringValue)
@@ -90,6 +101,7 @@ stages:
         MatrixFilters: ${{ parameters.MatrixFilters }}
         MatrixReplace: ${{ parameters.MatrixReplace }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

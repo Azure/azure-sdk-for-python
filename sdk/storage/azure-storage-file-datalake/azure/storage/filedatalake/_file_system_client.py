@@ -895,7 +895,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :keyword str path_prefix:
             Filters the results to return only paths under the specified path.
-        :keyword int max_results:
+        :keyword int results_per_page:
             An optional value that specifies the maximum number of items to return per page.
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
@@ -905,8 +905,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
         path_prefix = kwargs.pop('path_prefix', None)
-        results_per_page = kwargs.pop('max_results', None)
         timeout = kwargs.pop('timeout', None)
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
             showonly=ListBlobsIncludeItem.deleted,

@@ -126,6 +126,7 @@ jobs:
         parameters:
           BuildTargetingString: $(BuildTargetingStringValue)
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          CloudName: ${{ parameters.CloudConfig.Cloud }}
           CoverageArg: $(CoverageArg)
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback

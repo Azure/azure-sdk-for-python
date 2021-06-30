@@ -1148,12 +1148,18 @@ class AcsRecordingChunkInfoProperties(msrest.serialization.Model):
     :type index: long
     :param end_reason: The reason for ending the recording chunk.
     :type end_reason: str
+    :param metadata_location: The location of the metadata for this chunk.
+    :type metadata_location: str
+    :param content_location: The location of the content for this chunk.
+    :type content_location: str
     """
 
     _attribute_map = {
         'document_id': {'key': 'documentId', 'type': 'str'},
         'index': {'key': 'index', 'type': 'long'},
         'end_reason': {'key': 'endReason', 'type': 'str'},
+        'metadata_location': {'key': 'metadataLocation', 'type': 'str'},
+        'content_location': {'key': 'contentLocation', 'type': 'str'},
     }
 
     def __init__(
@@ -1162,12 +1168,16 @@ class AcsRecordingChunkInfoProperties(msrest.serialization.Model):
         document_id: Optional[str] = None,
         index: Optional[int] = None,
         end_reason: Optional[str] = None,
+        metadata_location: Optional[str] = None,
+        content_location: Optional[str] = None,
         **kwargs
     ):
         super(AcsRecordingChunkInfoProperties, self).__init__(**kwargs)
         self.document_id = document_id
         self.index = index
         self.end_reason = end_reason
+        self.metadata_location = metadata_location
+        self.content_location = content_location
 
 
 class AcsRecordingFileStatusUpdatedEventData(msrest.serialization.Model):
@@ -5988,7 +5998,7 @@ class ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData(msrest
 
 
 class ServiceBusDeadletterMessagesAvailableWithNoListenersEventData(msrest.serialization.Model):
-    """Schema of the Data property of an EventGridEvent for a Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListenersEvent event.
+    """Schema of the Data property of an EventGridEvent for a Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners event.
 
     :param namespace_name: The namespace name of the Microsoft.ServiceBus resource.
     :type namespace_name: str
@@ -6335,6 +6345,58 @@ class StorageBlobDeletedEventData(msrest.serialization.Model):
         self.sequencer = sequencer
         self.identity = identity
         self.storage_diagnostics = storage_diagnostics
+
+
+class StorageBlobInventoryPolicyCompletedEventData(msrest.serialization.Model):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Storage.BlobInventoryPolicyCompleted event.
+
+    :param schedule_date_time: The time at which inventory policy was scheduled.
+    :type schedule_date_time: ~datetime.datetime
+    :param account_name: The account name for which inventory policy is registered.
+    :type account_name: str
+    :param rule_name: The rule name for inventory policy.
+    :type rule_name: str
+    :param policy_run_status: The status of inventory run, it can be
+     Succeeded/PartiallySucceeded/Failed.
+    :type policy_run_status: str
+    :param policy_run_status_message: The status message for inventory run.
+    :type policy_run_status_message: str
+    :param policy_run_id: The policy run id for inventory run.
+    :type policy_run_id: str
+    :param manifest_blob_url: The blob URL for manifest file for inventory run.
+    :type manifest_blob_url: str
+    """
+
+    _attribute_map = {
+        'schedule_date_time': {'key': 'scheduleDateTime', 'type': 'iso-8601'},
+        'account_name': {'key': 'accountName', 'type': 'str'},
+        'rule_name': {'key': 'ruleName', 'type': 'str'},
+        'policy_run_status': {'key': 'policyRunStatus', 'type': 'str'},
+        'policy_run_status_message': {'key': 'policyRunStatusMessage', 'type': 'str'},
+        'policy_run_id': {'key': 'policyRunId', 'type': 'str'},
+        'manifest_blob_url': {'key': 'manifestBlobUrl', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule_date_time: Optional[datetime.datetime] = None,
+        account_name: Optional[str] = None,
+        rule_name: Optional[str] = None,
+        policy_run_status: Optional[str] = None,
+        policy_run_status_message: Optional[str] = None,
+        policy_run_id: Optional[str] = None,
+        manifest_blob_url: Optional[str] = None,
+        **kwargs
+    ):
+        super(StorageBlobInventoryPolicyCompletedEventData, self).__init__(**kwargs)
+        self.schedule_date_time = schedule_date_time
+        self.account_name = account_name
+        self.rule_name = rule_name
+        self.policy_run_status = policy_run_status
+        self.policy_run_status_message = policy_run_status_message
+        self.policy_run_id = policy_run_id
+        self.manifest_blob_url = manifest_blob_url
 
 
 class StorageBlobRenamedEventData(msrest.serialization.Model):

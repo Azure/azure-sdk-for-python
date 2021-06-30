@@ -56,12 +56,12 @@ def get_field_value(
         return [
             FormField._from_generated(field, value, read_result)
             for value in value.value_array
-        ]
+        ] if value.value_array else []
     if value.type == "object":
         return {
             key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
-        }
+        } if value.value_object else {}
     if value.type == "selectionMark":
         return value.value_selection_mark
     if value.type == "countryRegion":

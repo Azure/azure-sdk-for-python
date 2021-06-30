@@ -50,7 +50,7 @@ def set_next_host_location(settings, request):
 class StorageHeadersPolicy(HeadersPolicy):
 
     def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+        # type: (PipelineRequest) -> None
         super(StorageHeadersPolicy, self).on_request(request)
 
         # Add required date headers
@@ -236,6 +236,6 @@ class CosmosPatchTransformPolicy(SansIOHTTPPolicy):
     """Policy to transform PATCH requests into POST requests with the "X-HTTP-Method":"MERGE" header set."""
 
     def on_request(self, request):
-        # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+        # type: (PipelineRequest) -> None
         if request.http_request.method == "PATCH":
             _transform_patch_to_cosmos_post(request.http_request)

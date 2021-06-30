@@ -1,6 +1,29 @@
 # Release History
 
-## 7.3.0 (Unreleased)
+## 7.3.1 (Unreleased)
+
+### Fixed
+
+- Fixed a bug that when setting `ServiceBusMessage.partition_key`, input value should be not validated against `session_id` of None (PR #19233, thanks @bishnu-shb).
+- Fixed a bug that setting `ServiceBusMessage.time_to_live` causes OverflowError error on Ubuntu 20.04.
+- Fixed a bug that `AmqpAnnotatedProperties.creation_time` and `AmqpAnnotatedProperties.absolute_expiry_time` should be calculated in the unit of milliseconds instead of seconds.
+- Updated uAMQP dependency to 1.4.1.
+  - Fixed a bug that attributes creation_time, absolute_expiry_time and group_sequence on MessageProperties should be compatible with integer types on Python 2.7.
+
+## 7.3.0 (2021-06-08)
+
+**New Features**
+
+- Support for sending AMQP annotated message which allows full access to the AMQP message fields is now GA.
+  - Introduced new namespace `azure.servicebus.amqp`.
+  - Introduced new classes `azure.servicebus.amqp.AmqpMessageHeader` and `azure.servicebus.amqp.AmqpMessageProperties` for accessing amqp header and properties.
+
+**Breaking Changes from 7.2.0b1**
+  - Renamed and moved `azure.servicebus.AMQPAnnotatedMessage` to `azure.servicebus.amqp.AmqpAnnotatedMessage`.
+  - Renamed and moved `azure.servicebus.AMQPMessageBodyType` to `azure.servicebus.amqp.AmqpMessageBodyType`.
+  - `AmqpAnnotatedMessage.header` returns `azure.servicebus.amqp.AmqpMessageHeader` instead of `uamqp.message.MessageHeader`.
+  - `AmqpAnnotatedMessage.properties` returns `azure.servicebus.amqp.AmqpMessageProperties` instead of `uamqp.message.MessageProperties`.
+  - `raw_amqp_message` on `ServiceBusMessage` and `ServiceBusReceivedMessage` is now a read-only property instead of an instance variable.
 
 **Bug Fixes**
 
@@ -54,7 +77,7 @@ This version and all future versions will require Python 2.7 or Python 3.6+, Pyt
 * Updated uAMQP dependency to 1.3.0.
   - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
   - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
- 
+
 ## 7.1.0 (2021-03-09)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
@@ -85,7 +108,7 @@ This version will be the last version to officially support Python 3.5, future v
 
 ## 7.0.0 (2020-11-23)
 
-> **Note:** This is the GA release of the `azure-servicebus` package, rolling out the official API surface area constructed over the prior preview releases.  Users migrating from `v0.50` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/migration_guide.md).
+> **Note:** This is the GA release of the `azure-servicebus` package, rolling out the official API surface area constructed over the prior preview releases.  Users migrating from `v0.50` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/migration_guide.md).
 
 **New Features**
 
@@ -349,7 +372,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 
 * Added new configuration parameters when creating `ServiceBusClient`.
     * `credential`: The credential object used for authentication which implements `TokenCredential` interface of getting tokens.
-    * `http_proxy`: A dictionary populated with proxy settings.  
+    * `http_proxy`: A dictionary populated with proxy settings.
     * For detailed information about configuration parameters, please see docstring in `ServiceBusClient` and/or the reference documentation for more information.
 * Added support for authentication using Azure Identity credentials.
 * Added support for retry policy.

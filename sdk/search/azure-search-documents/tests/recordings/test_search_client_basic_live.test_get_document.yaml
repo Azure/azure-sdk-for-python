@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:54 GMT
       elapsed-time:
-      - '46'
+      - '180'
       expires:
       - '-1'
       odata-version:
@@ -43,7 +43,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 7127d6e4-b98a-11eb-a7aa-a0481ca055a9
+      - e3312f54-afc2-11eb-a7fd-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -61,9 +61,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:54 GMT
       elapsed-time:
-      - '6'
+      - '5'
       expires:
       - '-1'
       odata-version:
@@ -89,7 +89,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 717a67a1-b98a-11eb-88ae-a0481ca055a9
+      - e38be988-afc2-11eb-bda8-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -107,9 +107,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
@@ -122,9 +122,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:54 GMT
       elapsed-time:
-      - '7'
+      - '3'
       expires:
       - '-1'
       odata-version:
@@ -134,7 +134,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 718d7de2-b98a-11eb-9d96-a0481ca055a9
+      - e3a10467-afc2-11eb-a5d1-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -152,9 +152,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -167,9 +167,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:54 GMT
       elapsed-time:
-      - '7'
+      - '4'
       expires:
       - '-1'
       odata-version:
@@ -179,7 +179,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 719f3c49-b98a-11eb-a5fa-a0481ca055a9
+      - e3b4e0b0-afc2-11eb-b576-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -197,9 +197,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
@@ -212,9 +212,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:54 GMT
       elapsed-time:
-      - '8'
+      - '5'
       expires:
       - '-1'
       odata-version:
@@ -224,7 +224,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 71ad91cf-b98a-11eb-bfce-a0481ca055a9
+      - e3cb60b7-afc2-11eb-8866-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -242,9 +242,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
@@ -257,9 +257,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:55 GMT
       elapsed-time:
-      - '8'
+      - '4'
       expires:
       - '-1'
       odata-version:
@@ -269,7 +269,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 71c096b3-b98a-11eb-8eeb-a0481ca055a9
+      - e3e1faf3-afc2-11eb-a7fa-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -287,9 +287,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
@@ -303,7 +303,7 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:55 GMT
       elapsed-time:
       - '4'
       expires:
@@ -315,7 +315,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 71d48399-b98a-11eb-8260-a0481ca055a9
+      - e3f8f906-afc2-11eb-89e8-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -333,9 +333,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
@@ -351,9 +351,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:55 GMT
       elapsed-time:
-      - '6'
+      - '4'
       expires:
       - '-1'
       odata-version:
@@ -363,7 +363,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 71e6be47-b98a-11eb-80f4-a0481ca055a9
+      - e40ed40b-afc2-11eb-9d88-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -381,9 +381,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
@@ -413,9 +413,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:02 GMT
+      - Sat, 08 May 2021 06:01:55 GMT
       elapsed-time:
-      - '13'
+      - '8'
       expires:
       - '-1'
       odata-version:
@@ -425,7 +425,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 71f981b2-b98a-11eb-ac4c-a0481ca055a9
+      - e4220c84-afc2-11eb-885b-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -443,9 +443,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
+    uri: https://searchcca2132f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save
@@ -471,9 +471,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 20 May 2021 16:43:04 GMT
+      - Sat, 08 May 2021 06:01:55 GMT
       elapsed-time:
-      - '7'
+      - '6'
       expires:
       - '-1'
       odata-version:
@@ -483,7 +483,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 7207fd6e-b98a-11eb-a17b-a0481ca055a9
+      - e4387f72-afc2-11eb-9769-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

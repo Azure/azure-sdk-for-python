@@ -8,9 +8,9 @@
 FILE: sample_translation_with_azure_blob.py
 
 DESCRIPTION:
-    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to create a translation
-    job. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
-    containers. Once the job is completed, use the storage library to download your documents locally.
+    This sample demonstrates how to use Azure Blob Storage to set up the necessary resources to translate
+    documents. Run the sample to create containers, upload documents, and generate SAS tokens for the source/target
+    containers. Once the operation is completed, use the storage library to download your documents locally.
 
 PREREQUISITE:
     This sample requires you install azure-storage-blob client library:
@@ -37,11 +37,7 @@ import os
 import datetime
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.ai.translation.document import (
-    DocumentTranslationClient,
-    DocumentTranslationInput,
-    TranslationTarget
-)
+from azure.ai.translation.document import DocumentTranslationClient
 from azure.storage.blob import BlobServiceClient, BlobClient, generate_container_sas
 
 
@@ -91,35 +87,21 @@ class SampleTranslationWithAzureBlob(object):
         source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
         target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
 
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="fr"
-                    )
-                ]
-            )
-        ]
+        poller = translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
+        print("Created translation operation with ID: {}".format(poller.id))
+        print("Waiting until translation completes...")
 
-        job = translation_client.create_translation_job(translation_inputs)
-        print("Created translation job with ID: {}".format(job.id))
-        print("Waiting until job completes...")
-
-        job_result = translation_client.wait_until_done(job.id)
-        print("Job status: {}".format(job_result.status))
-
-        doc_results = translation_client.list_all_document_statuses(job_result.id)
+        result = poller.result()
+        print("Status: {}".format(poller.status()))
 
         print("\nDocument results:")
-        for document in doc_results:
+        for document in result:
             print("Document ID: {}".format(document.id))
             print("Document status: {}".format(document.status))
             if document.status == "Succeeded":
                 print("Source document location: {}".format(document.source_document_url))
                 print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translate_to))
+                print("Translated to language: {}\n".format(document.translated_to))
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
                 with open("translated_"+self.document_name, "wb") as my_blob:

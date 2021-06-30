@@ -14,8 +14,8 @@ from azure.storage.blob._shared.uploads import SubStream
 from threading import Lock
 from io import (BytesIO, SEEK_SET)
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
-
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 # ------------------------------------------------------------------------------
 
 
