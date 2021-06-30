@@ -135,7 +135,6 @@ pyjwt>=1.7.1
 #override azure-data-tables azure-core<2.0.0,>=1.14.0
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-identity azure-core<2.0.0,>=1.11.0
-#override azure-identity cryptography>=3.1
 #override azure-keyvault-administration msrest>=0.6.21
 #override azure-keyvault-administration azure-core<2.0.0,>=1.11.0
 #override azure-keyvault-certificates msrest>=0.6.21
