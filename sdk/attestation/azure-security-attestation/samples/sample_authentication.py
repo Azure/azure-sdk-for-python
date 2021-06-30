@@ -81,7 +81,7 @@ class AttestationClientCreateSamples(object):
         from azure.security.attestation import AttestationClient
 
         # And now create an AttestationClient.
-        with AttestationClient(DefaultAzureCredential(), self.aad_url) as client:
+        with AttestationClient(self.aad_url, DefaultAzureCredential()) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
             openid_metadata = client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
@@ -107,7 +107,7 @@ class AttestationClientCreateSamples(object):
             + ".attest.azure.net"
         )
 
-        with AttestationClient(DefaultAzureCredential(), shared_url) as client:
+        with AttestationClient(shared_url, DefaultAzureCredential()) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
             openid_metadata = client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])

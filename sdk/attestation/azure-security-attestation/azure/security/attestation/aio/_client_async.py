@@ -61,7 +61,10 @@ class AttestationClient(object):
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
     ) -> None:
         if not credential:
             raise ValueError("Missing credential.")

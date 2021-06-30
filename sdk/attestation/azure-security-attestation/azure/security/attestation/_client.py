@@ -63,8 +63,8 @@ class AttestationClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
         endpoint,  # type: str
+        credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
         # type: (TokenCredential, str, Any) -> None

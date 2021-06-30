@@ -86,7 +86,7 @@ class AttestationClientCreateSamples(object):
         from azure.security.attestation.aio import AttestationClient
 
         async with DefaultAzureCredential() as credentials, AttestationClient(
-            credentials, endpoint=self.aad_url
+            self.aad_url, credentials
         ) as client:
             print("Retrieve OpenID metadata from: ", self.aad_url)
             openid_metadata = await client.get_open_id_metadata()
@@ -118,7 +118,7 @@ class AttestationClientCreateSamples(object):
         )
 
         async with DefaultAzureCredential() as credentials, AttestationClient(
-            credentials, self.aad_url
+            self.aad_url, credentials
         ) as client:
             print("Retrieve OpenID metadata from: ", shared_url)
             openid_metadata = await client.get_open_id_metadata()

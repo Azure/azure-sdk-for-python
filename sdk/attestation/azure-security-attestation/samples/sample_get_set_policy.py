@@ -90,7 +90,7 @@ class AttestationClientPolicySamples(object):
 
         # [BEGIN get_policy]
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")
+            os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
         ) as admin_client:
             policy, _ = admin_client.get_policy(AttestationType.SGX_ENCLAVE)
             print("Current instance SGX Policy is: ", policy)
@@ -106,7 +106,7 @@ class AttestationClientPolicySamples(object):
         print("Set an unsecured Policy on an AAD mode attestation instance.")
         # [BEGIN set_policy_unsecured]
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")
+            os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
         ) as admin_client:
             new_policy = """
 version= 1.0;
@@ -144,7 +144,7 @@ issuancerules {
         # [BEGIN reset_aad_policy]
         print("Reset an unsecured Policy on an AAD mode attestation instance.")
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")
+            os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
         ) as admin_client:
             set_result, _ = admin_client.reset_policy(AttestationType.OPEN_ENCLAVE)
             print("Policy reset result: ", set_result.policy_resolution)
@@ -163,8 +163,8 @@ issuancerules {
         # Create an administrative client, specifying a default key and certificate.
         # The key and certificate will be used for subsequent policy operations.
         with AttestationAdministrationClient(
-            DefaultAzureCredential(),
             os.environ.get("ATTESTATION_AAD_URL"),
+            DefaultAzureCredential(),
             signing_key=rsa_key,
             signing_certificate=cert,
         ) as admin_client:
@@ -183,7 +183,7 @@ issuancerules {
         print("Set Secured Policy on an AAD mode attestation instance.")
         # [START set_secured_policy]
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")
+             os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
         ) as admin_client:
             # Create an RSA Key and wrap an X.509 certificate around
             # the public key for that certificate.
@@ -218,7 +218,7 @@ issuancerules {
         write_banner("set_policy_aad_secured")
         print("Set Secured Policy on an AAD mode attestation instance.")
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), os.environ.get("ATTESTATION_AAD_URL")
+            os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
         ) as admin_client:
             # Create an RSA Key and wrap an X.509 certificate around
             # the public key for that certificate.
@@ -276,7 +276,7 @@ issuancerules {};
         print("Set Secured Policy on an Isolated mode attestation instance.")
         # < Load the PEM encoded isolated signing certificate and  key >
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), os.environ.get("ATTESTATION_ISOLATED_URL")
+            os.environ.get("ATTESTATION_ISOLATED_URL"), DefaultAzureCredential()
         ) as admin_client:
             set_result, _ = admin_client.reset_policy(
                 AttestationType.SGX_ENCLAVE,
@@ -296,7 +296,7 @@ issuancerules {};
         )
         endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), endpoint
+            endpoint, DefaultAzureCredential()
         ) as admin_client:
             get_result, _ = admin_client.get_policy(
                 AttestationType.SGX_ENCLAVE, validate_issuer=True, issuer=endpoint
@@ -318,8 +318,8 @@ issuancerules {};
         print("Set Secured Policy on an AAD mode attestation instance.")
         endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
         with AttestationAdministrationClient(
-            DefaultAzureCredential(),
             endpoint,
+            DefaultAzureCredential(),
             signing_key=self.isolated_key,
             signing_certificate=self.isolated_certificate,
         ) as admin_client:
@@ -354,7 +354,7 @@ issuancerules {};
 
         endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), endpoint
+            endpoint, DefaultAzureCredential()
         ) as admin_client:
             certificates, _ = admin_client.get_policy_management_certificates(
                 validation_slack=1.0
@@ -386,7 +386,7 @@ issuancerules {};
         print("Get and set the policy management certificates for a isolated instance.")
         endpoint = os.environ.get("ATTESTATION_ISOLATED_URL")
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), endpoint
+            endpoint, DefaultAzureCredential()
         ) as admin_client:
             # [BEGIN add_policy_management_certificate]
             new_key = create_rsa_key()
@@ -436,7 +436,7 @@ issuancerules {};
 
         # [BEGIN remove_policy_management_certificate]
         with AttestationAdministrationClient(
-            DefaultAzureCredential(), endpoint
+            endpoint, DefaultAzureCredential()
         ) as admin_client:
             # Now remove the certificate we just added.
             print("Remove the newly added certificate.")
@@ -457,7 +457,7 @@ issuancerules {};
         oe_report = base64.urlsafe_b64decode(sample_open_enclave_report)
         runtime_data = base64.urlsafe_b64decode(sample_runtime_data)
         print("Attest open enclave using ", client_uri)
-        with AttestationClient(DefaultAzureCredential(), client_uri) as attest_client:
+        with AttestationClient(client_uri, DefaultAzureCredential()) as attest_client:
             attest_client.attest_open_enclave(oe_report, runtime_data=runtime_data)
             print("Successfully attested enclave.")
 

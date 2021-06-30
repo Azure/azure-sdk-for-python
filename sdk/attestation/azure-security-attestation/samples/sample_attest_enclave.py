@@ -89,7 +89,7 @@ class AttestationClientAttestationSamples(object):
         # [START attest_sgx_enclave_shared]
         print("\nAttest SGX enclave using {}".format(self.shared_url))
         with AttestationClient(
-            DefaultAzureCredential(), self.shared_url
+            self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             response, _ = attest_client.attest_sgx_enclave(
                 quote, runtime_data=runtime_data
@@ -109,7 +109,7 @@ class AttestationClientAttestationSamples(object):
         # [START attest_open_enclave_shared]
         print("Attest Open enclave using ", self.shared_url)
         with AttestationClient(
-            DefaultAzureCredential(), self.shared_url
+            self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             response, _ = attest_client.attest_open_enclave(
                 oe_report, runtime_json=runtime_data
@@ -129,7 +129,7 @@ class AttestationClientAttestationSamples(object):
         # [START attest_open_enclave_shared_json]
         print("Attest Open enclave using ", self.shared_url)
         with AttestationClient(
-            DefaultAzureCredential(), self.shared_url
+            self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             response, _ = attest_client.attest_open_enclave(
                 oe_report, runtime_json=runtime_data
@@ -169,7 +169,7 @@ class AttestationClientAttestationSamples(object):
         print("Attest Open enclave using ", self.shared_url)
         print("Using draft policy:", draft_policy)
         with AttestationClient(
-            DefaultAzureCredential(), self.shared_url
+             self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             response, token = attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, draft_policy=draft_policy
@@ -206,7 +206,7 @@ issuancerules {
         print("Attest Open enclave using ", self.shared_url)
         print("Using draft policy which will fail.:", draft_policy)
         with AttestationClient(
-            DefaultAzureCredential(), self.shared_url
+            self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             try:
                 attest_client.attest_open_enclave(
@@ -271,8 +271,8 @@ issuancerules {
             return True
 
         with AttestationClient(
-            DefaultAzureCredential(),
             self.shared_url,
+            DefaultAzureCredential(),
             validation_callback=validate_token,
         ) as attest_client:
             response, token = attest_client.attest_open_enclave(
@@ -285,7 +285,7 @@ issuancerules {
         # Repeat the same operation, this time specifying the callback options
         # on the attest_open_enclave call.
         with AttestationClient(
-            DefaultAzureCredential(), self.shared_url
+            self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             response, token = attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, validation_callback=validate_token
