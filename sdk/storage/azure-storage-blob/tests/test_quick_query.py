@@ -951,12 +951,8 @@ class StorageQuickQueryTest(StorageTestCase):
         parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
-        errors = []
 
-        def on_error(error):
-            errors.append(error)
-
-        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
+        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.ParquetDialect)
         real_data = reader.readall()
 
         self.assertEqual(real_data, expected_data)
@@ -975,13 +971,9 @@ class StorageQuickQueryTest(StorageTestCase):
         parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
-        errors = []
-
-        def on_error(error):
-            errors.append(error)
 
         with self.assertRaises(ValueError):
             blob_client.query_blob(
-                expression, blob_format="ParquetDialect", output_format="ParquetDialect", on_error=on_error)
+                expression, blob_format="ParquetDialect", output_format="ParquetDialect")
 
 # ------------------------------------------------------------------------------

@@ -872,10 +872,7 @@ class StorageQuickQueryTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
-        errors = []
 
-        def on_error(error):
-            errors.append(error)
         expression = "select * from blobstorage where id < 1;"
         expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
 
@@ -883,7 +880,7 @@ class StorageQuickQueryTest(StorageTestCase):
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 
-        reader = file_client.query_file(expression, file_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
+        reader = file_client.query_file(expression, file_format=QuickQueryDialect.ParquetDialect)
         real_data = reader.readall()
 
         self.assertEqual(real_data, expected_data)
@@ -894,10 +891,6 @@ class StorageQuickQueryTest(StorageTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
-        errors = []
-
-        def on_error(error):
-            errors.append(error)
 
         expression = "SELECT * from BlobStorage"
         parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
@@ -907,6 +900,6 @@ class StorageQuickQueryTest(StorageTestCase):
         with self.assertRaises(ValueError):
             file_client.query_file(
                 expression, file_format=QuickQueryDialect.ParquetDialect,
-                output_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
+                output_format=QuickQueryDialect.ParquetDialect)
 
 # ------------------------------------------------------------------------------
