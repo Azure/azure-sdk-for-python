@@ -28,9 +28,15 @@ import pytest
 import signal
 import os
 import subprocess
-import sys
 import random
 from six.moves import urllib
+from rest_client import TestRestClient
+import sys
+
+# Ignore collection of async tests for Python 2
+collect_ignore = []
+if sys.version_info < (3, 5):
+    collect_ignore.append("async_tests")
 
 def is_port_available(port_num):
     req = urllib.request.Request("http://localhost:{}/health".format(port_num))
@@ -81,8 +87,6 @@ def testserver():
     yield
     terminate_testserver(server)
 
-
-# Ignore collection of async tests for Python 2
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
+@pytest.fixture
+def client(port):
+    return TestRestClient(port)

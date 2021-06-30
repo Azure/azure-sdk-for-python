@@ -3,14 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=too-many-lines
+
 import copy
-from typing import (
-    Union,
-    Any,
-    List,
-    Dict,
-    TYPE_CHECKING
-)
+from typing import Union, Any, List, Dict, TYPE_CHECKING
 from functools import partial
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -18,7 +14,11 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._base_client import TextAnalyticsApiVersion
-from .._request_handlers import _validate_input, _determine_action_type, _check_string_index_type_arg
+from .._request_handlers import (
+    _validate_input,
+    _determine_action_type,
+    _check_string_index_type_arg,
+)
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -106,23 +106,23 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         endpoint: str,
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         super(TextAnalyticsClient, self).__init__(
-            endpoint=endpoint,
-            credential=credential,
-            **kwargs
+            endpoint=endpoint, credential=credential, **kwargs
         )
         self._api_version = kwargs.get("api_version")
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
-        self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._string_code_unit = (
+            None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        )
 
     @distributed_trace_async
     async def detect_language(  # type: ignore
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detect language for a batch of documents.
 
@@ -176,20 +176,24 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
-        country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
+        country_hint = (
+            country_hint_arg
+            if country_hint_arg is not None
+            else self._default_country_hint
+        )
         docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
         try:
             return await self._client.languages(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", language_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -198,7 +202,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_entities(  # type: ignore
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Recognize entities for a batch of documents.
 
@@ -262,12 +266,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_code_unit,
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -278,7 +282,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", entities_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -287,7 +291,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_pii_entities(  # type: ignore
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
 
@@ -364,13 +368,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_code_unit,
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
 
         try:
             return await self._client.entities_recognition_pii(
@@ -380,10 +384,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 domain=domain_filter,
                 pii_categories=categories_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
-                **kwargs
+                **kwargs,
             )
         except ValueError as error:
-            if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
+            if (
+                "API version v3.0 does not have operation 'entities_recognition_pii'"
+                in str(error)
+            ):
                 raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
                 )
@@ -395,7 +402,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def recognize_linked_entities(  # type: ignore
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
@@ -460,12 +467,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_code_unit,
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
@@ -476,7 +483,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", linked_entities_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -485,7 +492,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def extract_key_phrases(  # type: ignore
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract key phrases from a batch of documents.
 
@@ -547,14 +554,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
         try:
             return await self._client.key_phrases(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", key_phrases_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -563,7 +570,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def analyze_sentiment(  # type: ignore
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
 
@@ -636,18 +643,21 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
-            kwargs['logging_opt_out'] = disable_service_logs
+            kwargs["logging_opt_out"] = disable_service_logs
 
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
-            string_index_type_default=self._string_code_unit
+            string_index_type_default=self._string_code_unit,
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
 
         if show_opinion_mining is not None:
-            if self._api_version == TextAnalyticsApiVersion.V3_0 and show_opinion_mining:
+            if (
+                self._api_version == TextAnalyticsApiVersion.V3_0
+                and show_opinion_mining
+            ):
                 raise ValueError(
                     "'show_opinion_mining' is only available for API version v3.1 and up"
                 )
@@ -659,22 +669,24 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._client.models(api_version="v3.1").HealthcareJobState.deserialize(
-            raw_response
-        )
+    def _healthcare_result_callback(
+        self, doc_id_order, raw_response, _, headers, show_stats=False
+    ):
+        healthcare_result = self._client.models(
+            api_version="v3.1"
+        ).HealthcareJobState.deserialize(raw_response)
         return healthcare_paged_result(
             doc_id_order,
             self._client.health_status,
             raw_response,
             healthcare_result,
             headers,
-            show_stats=show_stats
+            show_stats=show_stats,
         )
 
     @distributed_trace_async
@@ -682,7 +694,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
-    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]:
+    ) -> AsyncAnalyzeHealthcareEntitiesLROPoller[
+        AsyncItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]
+    ]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -750,12 +764,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
-            "cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)
+            "cls",
+            partial(
+                self._healthcare_result_callback, doc_id_order, show_stats=show_stats
+            ),
         )
         polling_kwargs = kwargs
         operation_kwargs = copy.copy(kwargs)
         if disable_service_logs is not None:
-            operation_kwargs['logging_opt_out'] = disable_service_logs
+            operation_kwargs["logging_opt_out"] = disable_service_logs
 
         try:
             return await self._client.begin_health(
@@ -769,9 +786,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
-                    **polling_kwargs),
+                    **polling_kwargs,
+                ),
                 continuation_token=continuation_token,
-                **operation_kwargs
+                **operation_kwargs,
             )
 
         except ValueError as error:
@@ -784,10 +802,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._client.models(api_version="v3.1").AnalyzeJobState.deserialize(
-            raw_response
-        )
+    def _analyze_result_callback(
+        self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
+    ):
+        analyze_result = self._client.models(
+            api_version="v3.1"
+        ).AnalyzeJobState.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
             task_order,
@@ -795,16 +815,37 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raw_response,
             analyze_result,
             headers,
-            show_stats=show_stats
+            show_stats=show_stats,
         )
 
     @distributed_trace_async
     async def begin_analyze_actions(  # type: ignore
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        actions: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]], # pylint: disable=line-too-long
-        **kwargs: Any
-    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]:  # pylint: disable=line-too-long
+        actions: List[
+            Union[
+                RecognizeEntitiesAction,
+                RecognizeLinkedEntitiesAction,
+                RecognizePiiEntitiesAction,
+                ExtractKeyPhrasesAction,
+                AnalyzeSentimentAction,
+            ]
+        ],  # pylint: disable=line-too-long
+        **kwargs: Any,
+    ) -> AsyncAnalyzeActionsLROPoller[
+        AsyncItemPaged[
+            List[
+                Union[
+                    RecognizeEntitiesResult,
+                    RecognizeLinkedEntitiesResult,
+                    RecognizePiiEntitiesResult,
+                    ExtractKeyPhrasesResult,
+                    AnalyzeSentimentResult,
+                    DocumentError,
+                ]
+            ]
+        ]
+    ]:  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -877,51 +918,80 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
         task_order = [_determine_action_type(action) for action in actions]
+        if len(task_order) != len(set(task_order)):
+            raise ValueError("Multiple of the same action is not currently supported.")
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version="v3.1").JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES]
+                    t.to_generated()
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.RECOGNIZE_ENTITIES
+                    ]
                 ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
+                    t.to_generated()
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+                    ]
                 ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.EXTRACT_KEY_PHRASES]
+                    t.to_generated()
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.EXTRACT_KEY_PHRASES
+                    ]
                 ],
                 entity_linking_tasks=[
-                    t.to_generated() for t in
-                    [
-                        a for a in actions if \
-                        _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+                    t.to_generated()
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                     ]
                 ],
                 sentiment_analysis_tasks=[
-                    t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == _AnalyzeActionsType.ANALYZE_SENTIMENT]
-                ]
+                    t.to_generated()
+                    for t in [
+                        a
+                        for a in actions
+                        if _determine_action_type(a)
+                        == _AnalyzeActionsType.ANALYZE_SENTIMENT
+                    ]
+                ],
             )
-            analyze_body = self._client.models(api_version='v3.1').AnalyzeBatchInput(
-                display_name=display_name,
-                tasks=analyze_tasks,
-                analysis_input=docs
+            analyze_body = self._client.models(api_version="v3.1").AnalyzeBatchInput(
+                display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return await self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", partial(
-                    self._analyze_result_callback, doc_id_order, task_order, show_stats=show_stats
-                )),
+                cls=kwargs.pop(
+                    "cls",
+                    partial(
+                        self._analyze_result_callback,
+                        doc_id_order,
+                        task_order,
+                        show_stats=show_stats,
+                    ),
+                ),
                 polling=AsyncAnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
-                    **kwargs),
+                    **kwargs,
+                ),
                 continuation_token=continuation_token,
-                **kwargs
+                **kwargs,
             )
 
         except ValueError as error:

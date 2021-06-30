@@ -61,7 +61,7 @@ setup(
         'opencensus>=0.6.0',
         'opencensus-ext-azure>=0.3.1',
         'opencensus-ext-threading',
-        'azure-core<2.0.0,>=1.0.0',
+        'azure-core<2.0.0,>=1.13.0',
     ],
     extras_require={
         ":python_version<'3.5'": ['typing'],

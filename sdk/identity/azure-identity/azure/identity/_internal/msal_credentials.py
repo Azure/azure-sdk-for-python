@@ -3,12 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import os
 
 import msal
 
 from .msal_client import MsalClient
+from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, validate_tenant_id
-from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
+from .._persistent_cache import _load_persistent_cache
 
 try:
     ABC = abc.ABC
@@ -22,7 +24,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Mapping, Optional, Type, Union
+    from typing import Any, Optional, Type, Union
 
 
 class MsalCredential(ABC):
@@ -32,6 +34,9 @@ class MsalCredential(ABC):
         # type: (str, Optional[Union[str, dict]], **Any) -> None
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
+        self._regional_authority = kwargs.pop(
+            "regional_authority", os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
+        )
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         validate_tenant_id(self._tenant_id)
 
@@ -63,6 +68,7 @@ class MsalCredential(ABC):
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority="{}/{}".format(self._authority, self._tenant_id),
+            azure_region=self._regional_authority,
             token_cache=self._cache,
             http_client=self._client,
             **kwargs

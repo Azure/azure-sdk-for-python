@@ -708,3 +708,57 @@ class TestAnalyze(TextAnalyticsTest):
         assert action_results[1][0].entities[0].text == "111000025"
         assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
         assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_partial_success_for_actions(self, client):
+        docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        response = client.begin_analyze_actions(
+                docs,
+                actions=[
+                    AnalyzeSentimentAction(),
+                    RecognizePiiEntitiesAction(),
+                ],
+                polling_interval=self._interval(),
+            ).result()
+
+        action_results = list(response)
+        assert len(action_results) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+        ]
+
+        assert len(action_results[0]) == len(action_order)
+        assert len(action_results[1]) == len(action_order)
+
+        # first doc
+        assert isinstance(action_results[0][0], AnalyzeSentimentResult)
+        assert action_results[0][0].id == "1"
+        assert action_results[0][1].is_error
+        assert action_results[0][1].id == "1"
+
+        # second doc
+        assert isinstance(action_results[1][0], AnalyzeSentimentResult)
+        assert action_results[1][0].id == "2"
+        assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
+        assert action_results[1][1].id == "2"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_multiple_of_same_action_fail(self, client):
+        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        with pytest.raises(ValueError) as e:
+            client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizePiiEntitiesAction(domain_filter="phi"),
+                    RecognizePiiEntitiesAction(),
+                ],
+                polling_interval=self._interval(),
+            ).result()
+        assert "Multiple of the same action is not currently supported." in str(e.value)
