@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
@@ -56,9 +56,9 @@ def complicated_json():
     assert request.json['SpacesAfterUnicode'] == 'Text   '
     assert request.json['SpacesBeforeAndAfterByte'] == '   Text   '
     assert request.json['SpacesBeforeAndAfterUnicode'] == '   Text   '
-    assert request.json['啊齄丂狛'] == 'ꀕ'
+    assert request.json[u'啊齄丂狛'] == u'ꀕ'
     assert request.json['RowKey'] == 'test2'
-    assert request.json['啊齄丂狛狜'] == 'hello'
+    assert request.json[u'啊齄丂狛狜'] == 'hello'
     assert request.json["singlequote"] == "a''''b"
     assert request.json["doublequote"] == 'a""""b'
     assert request.json["None"] == None

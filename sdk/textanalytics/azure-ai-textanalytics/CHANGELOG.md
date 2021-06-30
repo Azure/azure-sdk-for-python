@@ -15,6 +15,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 ### Breaking Changes
 
 - Changed: the response structure of `being_analyze_actions`. Now, we return a list of results, where each result is a list of the action results for the document, in the order the documents and actions were passed.
+- Changed: `begin_analyze_actions` now accepts a single action per type. A `ValueError` is raised if duplicate actions are passed.
 - Removed: `AnalyzeActionsType`
 - Removed: `AnalyzeActionsResult`
 - Removed: `AnalyzeActionsError`

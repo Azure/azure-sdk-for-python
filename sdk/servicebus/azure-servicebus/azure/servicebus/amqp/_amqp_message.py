@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from typing import Optional, Any, cast, Mapping
 
-from msrest.serialization import UTC
+from msrest.serialization import TZ_UTC
 import uamqp
 
 from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
@@ -229,7 +229,7 @@ class AmqpAnnotatedMessage(object):
             message_header.priority = self.header.priority
             if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
-                creation_time_from_ttl = int(time.mktime(datetime.now(UTC()).timetuple()))
+                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
                 absolute_expiry_time_from_ttl = int(min(
                     MAX_ABSOLUTE_EXPIRY_TIME,
                     creation_time_from_ttl + self.header.time_to_live

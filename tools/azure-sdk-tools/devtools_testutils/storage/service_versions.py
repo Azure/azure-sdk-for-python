@@ -25,12 +25,12 @@ service_version_map = {
     "V2020_06_12": ServiceVersion.V2020_06_12,
     "V2020_08_04": ServiceVersion.V2020_08_04,
     "LATEST": ServiceVersion.V2020_08_04,
-    "LATEST_PLUS_1": ServiceVersion.V2020_06_12
+    "LATEST_PLUS_1": ServiceVersion.V2020_06_12,
 }
 
 
 def is_version_before(test_version):
-    """ Return True if the current version is after a given one or if the
+    """Return True if the current version is after a given one or if the
     service version is not set.
     """
     current_version = service_version_map.get(os.environ.get("AZURE_LIVE_TEST_SERVICE_VERSION"))

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, ResponseCallback
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -16,10 +16,7 @@ from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
 from azure.data.tables import TableServiceClient
 
-from _shared.testcase import (
-    TableTestCase,
-    ResponseCallback,
-)
+from _shared.testcase import TableTestCase
 
 from preparers import tables_decorator
 
