@@ -41,6 +41,19 @@ jobs:
         # import env variable
         export TOKEN=$(USR_TOKEN)
 
-        # run
+        # checkout the target branch
         cd azure-sdk-for-python
+        git checkout storage-for-release-issue-status
+
+        echo '0000000'
+        echo | git status
+        echo '1111111111'
+        echo | ls
+
+        # run
         python $script_path/main.py
+
+        # commit and push
+        git add .
+        git commit "update release_issue_status"
+        git push -f origin HEAD
