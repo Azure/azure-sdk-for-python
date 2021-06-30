@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import os
+import pytest
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -221,14 +222,14 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
         query_params = {
             "question": "How long should my Surface battery last?",
             "top": 3,
-            "user_id": "sd53lsY=",
-            "confidence_score_threshold": 0.2,
-            "answer_span_request": {
+            "userId": "sd53lsY=",
+            "confidenceScoreThreshold": 0.2,
+            "answerSpanRequest": {
                 "enable": True,
-                "confidence_score_threshold": 0.2,
-                "top_answers_with_span": 1
+                "confidenceScoreThreshold": 0.2,
+                "topAnswersWithSpan": 1
             },
-            "include_unstructured_sources": True
+            "includeUnstructuredSources": True
         }
 
         async with client:
@@ -296,18 +297,30 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
             assert len(confident_answers) == 1
             assert confident_answers[0].answer_span.text == "two to four hours"
 
-
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_only_id(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         async with client:
-            query_params = KnowledgebaseQueryParameters(
-                qna_id=19
-            )
+            query_params = {"qnaId": 19}
+
             output = await client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
                 knowledgebase_query_parameters=query_params
             )
-
+            
             assert len(output.answers) == 1
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    async def test_query_knowledgebase_bad_request(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+        async with client:
+            query_params = {"qna_id": 19}
+
+            with pytest.raises(HttpResponseError):
+                await client.query_knowledgebase(
+                    project_name=qna_project,
+                    deployment_name='test',
+                    knowledgebase_query_parameters=query_params
+                )
+

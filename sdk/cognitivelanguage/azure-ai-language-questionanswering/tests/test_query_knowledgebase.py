@@ -221,14 +221,14 @@ class QnAKnowledgebaseTests(QuestionAnsweringTest):
         query_params = {
             "question": "How long should my Surface battery last?",
             "top": 3,
-            "user_id": "sd53lsY=",
-            "confidence_score_threshold": 0.2,
-            "answer_span_request": {
+            "userId": "sd53lsY=",
+            "confidenceScoreThreshold": 0.2,
+            "answerSpanRequest": {
                 "enable": True,
-                "confidence_score_threshold": 0.2,
-                "top_answers_with_span": 1
+                "confidenceScoreThreshold": 0.2,
+                "topAnswersWithSpan": 1
             },
-            "include_unstructured_sources": True
+            "includeUnstructuredSources": True
         }
 
         with client:

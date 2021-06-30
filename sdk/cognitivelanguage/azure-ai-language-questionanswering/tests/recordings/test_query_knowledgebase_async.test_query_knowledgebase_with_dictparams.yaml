@@ -1,14 +1,14 @@
 interactions:
 - request:
-    body: '{"question": "How long should my Surface battery last?", "top": 3, "user_id":
-      "sd53lsY=", "confidence_score_threshold": 0.2, "answer_span_request": {"enable":
-      true, "confidence_score_threshold": 0.2, "top_answers_with_span": 1}, "include_unstructured_sources":
+    body: '{"question": "How long should my Surface battery last?", "top": 3, "userId":
+      "sd53lsY=", "confidenceScoreThreshold": 0.2, "answerSpanRequest": {"enable":
+      true, "confidenceScoreThreshold": 0.2, "topAnswersWithSpan": 1}, "includeUnstructuredSources":
       true}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '266'
+      - '254'
       Content-Type:
       - application/json
       User-Agent:
@@ -40,13 +40,13 @@ interactions:
         {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
         \ ]\n}"
     headers:
-      apim-request-id: 238936f6-d98f-4c66-8df8-0b656326cb03
+      apim-request-id: d3136678-d454-41f9-b064-ebf1b207e82b
       content-length: '1609'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Jun 2021 15:14:10 GMT
+      date: Wed, 30 Jun 2021 15:36:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '1117'
+      x-envoy-upstream-service-time: '949'
     status:
       code: 200
       message: OK
