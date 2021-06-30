@@ -267,7 +267,7 @@ party will then Encrypt its "key" data using the asymmetric key and
 transmits it back to the enclave.
 
 ```python
-encryptedData = send_token_to_relying_party(attestationResult.Token)
+encrypted_data = send_token_to_relying_party(attestationResult.Token)
 ```
 
 Now the encrypted data can be passed into the enclave which can decrypt that data.
