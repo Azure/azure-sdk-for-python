@@ -206,7 +206,6 @@ class ContainerRegistryTestClass(AzureTestCase):
             digest.split(":")[-1]
         )
 
-
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
 
@@ -227,13 +226,13 @@ def get_authority(endpoint):
 def get_authorization_scope(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public auth scope")
-        return "https://management.core.windows.net/.default"
+        return ["https://management.core.windows.net/.default"]
     if authority == AzureAuthorityHosts.AZURE_CHINA:
         logger.warning("China scope")
-        return "https://management.chinacloudapi.cn/.default"
+        return ["https://management.chinacloudapi.cn/.default"]
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
-        return "https://management.usgovcloudapi.net/.default"
+        return ["https://management.usgovcloudapi.net/.default"]
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:

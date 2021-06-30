@@ -28,7 +28,7 @@ class AnonymousACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.credential_scopes = kwargs.pop("credential_scopes", "https://management.core.windows.net/.default")
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
             credential=None,
             url=endpoint,
