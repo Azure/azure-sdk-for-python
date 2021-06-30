@@ -159,8 +159,15 @@ class ContainerRegistryTestClass(AzureTestCase):
         authority = get_authority(endpoint)
         import_image(authority, repository, tags)
 
-    def get_credential(self, **kwargs):
+    def get_credential(self, authority=None, **kwargs):
         if self.is_live:
+            if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+                return ClientSecretCredential(
+                    tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+                    client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+                    client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+                    authority=authority
+                )
             return DefaultAzureCredential(**kwargs)
         return FakeTokenCredential()
 
@@ -169,7 +176,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         authorization_scope = get_authorization_scope(authority)
         credential = self.get_credential(authority=authority)
         logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, authorization_scope))
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, authorization_scope=authorization_scope, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, authentication_scope=authorization_scope, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
@@ -293,6 +300,7 @@ def import_image(authority, repository, tags):
 
 @pytest.fixture(scope="session")
 def load_registry():
+    return
     if not is_live():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
