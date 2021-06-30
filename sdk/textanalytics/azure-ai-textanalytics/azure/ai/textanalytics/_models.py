@@ -442,9 +442,6 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
-
-    .. versionadded:: v3.1
-        The *redacted_text* property.
     """
 
     def __init__(self, **kwargs):
@@ -1893,11 +1890,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+    :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
+        input text on the service side for troubleshooting. If set to False, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
+        the Text Analytics natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
@@ -1913,11 +1909,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+    :ivar bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
+        input text on the service side for troubleshooting. If set to False, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
+        the Text Analytics natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.

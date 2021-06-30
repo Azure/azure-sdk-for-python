@@ -343,7 +343,7 @@ and [supported types][linked_entities_categories].
 ### Recognize PII entities
 
 [recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview and up.
+Social Security Numbers, bank account information, credit card numbers, and more.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -375,6 +375,8 @@ for idx, doc in enumerate(result):
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
 
 Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
+
+Note: The Recognize PII Entities service is available only in the v3.1 API version.
 
 ### Extract key phrases
 
@@ -598,7 +600,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<name>.cognitiveservices.azure.com/"
+endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level

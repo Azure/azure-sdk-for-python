@@ -343,11 +343,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
-        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+        :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
+            input text on the service side for troubleshooting. If set to False, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
-            disables input logging and may limit our ability to remediate issues that occur. Please see
+            the Text Analytics natural language processing functions. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
@@ -555,11 +554,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, Text Analytics logs your
+        :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
+            input text on the service side for troubleshooting. If set to False, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the Text Analytics natural language processing functions. Setting this parameter to true,
-            disables input logging and may limit our ability to remediate issues that occur. Please see
+            the Text Analytics natural language processing functions. Please see
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
@@ -868,9 +866,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :param actions: A heterogeneous list of actions to perform on the inputted documents.
+        :param actions: A heterogeneous list of actions to perform on the input documents.
             Each action object encapsulates the parameters used for the particular action type.
-            The outputted action results will be in the same order you inputted your actions.
+            The action results will be in the same order of the input actions.
             Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
