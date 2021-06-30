@@ -130,7 +130,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -165,6 +165,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* keyword argument.
 
         .. admonition:: Example:
 
@@ -206,7 +209,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         organizations, date/time, quantities, percentages, currencies, and more.
         For the list of supported entity types, check: https://aka.ms/taner
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -229,8 +232,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -245,6 +249,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* and *string_index_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -295,7 +302,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         "Bank Account", etc) in the document.  For the list of supported entity types,
         check https://aka.ms/tanerpii
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -327,8 +334,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
         :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -343,6 +351,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *recognize_pii_entities* client method.
 
         .. admonition:: Example:
 
@@ -404,7 +415,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         Roman god of war). Recognized entities are associated with URLs to a well-known
         knowledge base, like Wikipedia.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -427,8 +438,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -443,6 +455,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* and *string_index_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -494,7 +509,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         were wonderful staff", the API returns the main talking points: "food"
         and "wonderful staff"
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -530,6 +545,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* keyword argument.
 
         .. admonition:: Example:
 
@@ -571,7 +589,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         each sentiment class (Positive, Negative, and Neutral) for the document
         and each sentence within it.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -600,8 +618,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
-            For additional information see https://aka.ms/text-analytics-offsets
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
             input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -610,14 +629,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        .. versionadded:: v3.1
-            The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *show_opinion_mining*, *disable_service_logs*, and *string_index_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -702,9 +722,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-            Currently not working on the service side at time of release, as service will
-            only use the latest model. Service is aware, and once it's been fixed on the service
-            side, the SDK should work automatically.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -729,6 +746,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.ai.textanalytics.aio.AsyncAnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.AsyncItemPaged[
             Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. versionadded:: v3.1
+            The *begin_analyze_healthcare_entities* client method.
 
         .. admonition:: Example:
 
@@ -834,8 +854,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             supported languages in Text Analytics API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 30 seconds.
-        :return: An instance of an LROPoller. Call `result()` on the poller
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
             if you have documents input ["Hello", "world"], and actions
@@ -847,11 +867,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Then, you will get the :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
-            ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            list[
-            RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult or DocumentError
-            ]]]
+            ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:

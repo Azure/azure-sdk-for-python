@@ -132,7 +132,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -167,6 +167,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.DetectLanguageResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* keyword argument.
 
         .. admonition:: Example:
 
@@ -209,7 +212,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         organizations, date/time, quantities, percentages, currencies, and more.
         For the list of supported entity types, check: https://aka.ms/taner
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -249,6 +252,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.RecognizeEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* and *string_index_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -299,7 +305,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         "Bank Account", etc) in the document.  For the list of supported entity types,
         check https://aka.ms/tanerpii
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -348,6 +354,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *recognize_pii_entities* client method.
 
         .. admonition:: Example:
 
@@ -410,7 +419,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         Roman god of war). Recognized entities are associated with URLs to a well-known
         knowledge base, like Wikipedia.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -450,6 +459,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* and *string_index_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -526,9 +538,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-            Currently not working on the service side at time of release, as service will
-            only use the latest model. Service is aware, and once it's been fixed on the service
-            side, the SDK should work automatically.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -554,6 +563,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.AnalyzeHealthcareEntitiesLROPoller[~azure.core.paging.ItemPaged[
             Union[~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult, ~azure.ai.textanalytics.DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. versionadded:: v3.1
+            The *begin_analyze_healthcare_entities* client method.
 
         .. admonition:: Example:
 
@@ -626,7 +638,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         were wonderful staff", the API returns the main talking points: "food"
         and "wonderful staff"
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -662,6 +674,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *disable_service_logs* keyword argument.
 
         .. admonition:: Example:
 
@@ -705,7 +720,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         each sentiment class (Positive, Negative, and Neutral) for the document
         and each sentence within it.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
+        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
         for document length limits, maximum batch size, and supported text encoding.
 
         :param documents: The set of documents to process as part of this batch.
@@ -745,15 +760,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
-        .. versionadded:: v3.1
-            The *show_opinion_mining* parameter.
-            The *string_index_type* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
         :rtype: list[~azure.ai.textanalytics.AnalyzeSentimentResult,
             ~azure.ai.textanalytics.DocumentError]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
+
+        .. versionadded:: v3.1
+            The *show_opinion_mining*, *disable_service_logs*, and *string_index_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -850,7 +865,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             supported languages in Text Analytics API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 30 seconds.
+            if no Retry-After header is present. Defaults to 5 seconds.
         :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the poller
             object to return a pageable heterogeneous list of lists. This list of lists is first ordered
             by the documents you input, then ordered by the actions you input. For example,
@@ -864,11 +879,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
-            list[
-            RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
-            ExtractKeyPhrasesResult or AnalyzeSentimentResult or DocumentError
-            ]]]
+            list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. versionadded:: v3.1
+            The *begin_analyze_actions* client method.
 
         .. admonition:: Example:
 

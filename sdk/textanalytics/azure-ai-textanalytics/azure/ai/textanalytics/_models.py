@@ -98,7 +98,7 @@ class EntityConditionality(str, Enum):
 
 
 class HealthcareEntityRelation(str, Enum):
-    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
+    """Type of relation. Examples include: 'DosageOfMedication' or 'FrequencyOfMedication', etc.
     """
 
     ABBREVIATION = "Abbreviation"
@@ -125,6 +125,8 @@ class HealthcareEntityRelation(str, Enum):
 
 
 class PiiEntityCategory(str, Enum):
+    """Categories of Personally Identifiable Information (PII).
+    """
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -415,7 +417,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
     :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out. Only returned for API versions v3.1 and up.
+        redacted out.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -425,8 +427,9 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
+
     .. versionadded:: v3.1
-        The *redacted_text* parameter.
+        The *redacted_text* property.
     """
 
     def __init__(self, **kwargs):
@@ -518,7 +521,8 @@ class HealthcareRelation(DictMixin):
 
     :ivar relation_type: The type of relation, i.e. the relationship between "100mg" and
         "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
-    :vartype relation_type: str or ~azure.ai.textanalytics.HealthcareEntityRelation
+        Possible values found in :class:`~azure.ai.textanalytics.HealthcareEntityRelation`
+    :vartype relation_type: str
     :ivar roles: The roles present in this relation. I.e., in the document
         "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
     :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
@@ -631,16 +635,16 @@ class CategorizedEntity(DictMixin):
     :vartype subcategory: str
     :ivar int length: The entity text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1 and up.
+        by default.
     :ivar int offset: The entity text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1 and up.
+        set in the original request, which is UnicodeCodePoints by default.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
+
     .. versionadded:: v3.1
-        The *offset* property.
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -1182,7 +1186,7 @@ class LinkedEntity(DictMixin):
     :vartype data_source: str
     :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
         Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
-        Only available for API version v3.1 and up.
+
     .. versionadded:: v3.1
         The *bing_entity_search_api_id* property.
     """
@@ -1234,14 +1238,13 @@ class LinkedEntityMatch(DictMixin):
     :ivar text: Entity text as appears in the request.
     :ivar int length: The linked entity match text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1 and up.
     :ivar int offset: The linked entity match text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1 and up.
     :vartype text: str
+
     .. versionadded:: v3.1
-        The *offset* property.
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -1356,11 +1359,10 @@ class SentenceSentiment(DictMixin):
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int length: The sentence text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1 and up.
+        by default.
     :ivar int offset: The sentence text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1 and up.
+        set in the original request, which is UnicodeCodePoints by default.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in the sentence "The food is good, but the service is bad", we would
         mine the two opinions "food is good" and "service is bad". Only returned
@@ -1368,8 +1370,9 @@ class SentenceSentiment(DictMixin):
         api version is v3.1 and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
+
     .. versionadded:: v3.1
-        The *offset* and *mined_opinions* properties.
+        The *offset*, *length*, and *mined_opinions* properties.
     """
 
     def __init__(self, **kwargs):
