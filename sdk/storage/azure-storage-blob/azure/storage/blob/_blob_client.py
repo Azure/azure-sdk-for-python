@@ -426,11 +426,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         tier = kwargs.pop('standard_blob_tier', None)
         overwrite = kwargs.pop('overwrite', False)
         content_settings = kwargs.pop('content_settings', None)
-        source_bearer_token = kwargs.pop('source_bearer_token', None)
-        if isinstance(source_bearer_token, AccessToken):
-            source_bearer_token = source_bearer_token.token
-        if source_bearer_token:
-            source_bearer_token = "Bearer {}".format(source_bearer_token)
+        source_authorization = kwargs.pop('source_authorization', None)
         if content_settings:
             kwargs['blob_http_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
@@ -449,7 +445,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'copy_source_authorization': source_bearer_token,
+            'copy_source_authorization': source_authorization,
             'content_length': 0,
             'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
             'source_content_md5': kwargs.pop('source_content_md5', None),
@@ -558,8 +554,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :keyword ~azure.core.AccessToken or str source_bearer_token:
-            Authenticate as a service principal using a client secret to access a source blob.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -1749,16 +1746,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
         requires_sync = kwargs.pop('requires_sync', None)
-        source_bearer_token = kwargs.pop('source_bearer_token', None)
-        if isinstance(source_bearer_token, AccessToken):
-            source_bearer_token = source_bearer_token.token
-        if requires_sync is not None:
+        source_authorization = kwargs.pop('source_authorization', None)
+        if requires_sync is True:
             headers['x-ms-requires-sync'] = str(requires_sync)
-        if source_bearer_token:
-            headers['x-ms-copy-source-authorization'] = "Bearer {}".format(source_bearer_token)
+            if source_authorization:
+                headers['x-ms-copy-source-authorization'] = source_authorization
         else:
-            if source_bearer_token:
-                raise ValueError("Source tokens are only applicable for synchronous copy operations.")
+            if source_authorization:
+                raise ValueError("Source authorization tokens are only applicable for synchronous copy operations.")
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
@@ -1915,9 +1910,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
-        :keyword ~azure.core.AccessToken or str source_bearer_token:
-            Authenticate as a service principal using a client secret to access a source blob. This feature is only
-            supported when the `requires_sync` flag is set to True.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, str or ~datetime.datetime]
 
@@ -2212,11 +2207,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        source_bearer_token = kwargs.pop('source_bearer_token', None)
-        if isinstance(source_bearer_token, AccessToken):
-            source_bearer_token = source_bearer_token.token
-        if source_bearer_token:
-            source_bearer_token = "Bearer {}".format(source_bearer_token)
+        source_authorization = kwargs.pop('source_authorization', None)
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
         if source_length is not None:
@@ -2236,7 +2227,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         options = {
-            'copy_source_authorization': source_bearer_token,
+            'copy_source_authorization': source_authorization,
             'block_id': block_id,
             'content_length': 0,
             'source_url': source_url,
@@ -2294,8 +2285,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword ~azure.core.AccessToken or str source_bearer_token:
-            Authenticate as a service principal using a client secret to access a source blob.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         :returns: Blob property dict.
         :rtype: dict[str, Any]
         """
@@ -3161,11 +3153,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        source_bearer_token = kwargs.pop('source_bearer_token', None)
-        if isinstance(source_bearer_token, AccessToken):
-            source_bearer_token = source_bearer_token.token
-        if source_bearer_token:
-            source_bearer_token = "Bearer {}".format(source_bearer_token)
+        source_authorization = kwargs.pop('source_authorization', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
@@ -3180,7 +3168,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'copy_source_authorization': source_bearer_token,
+            'copy_source_authorization': source_authorization,
             'source_url': source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -3295,8 +3283,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword ~azure.core.AccessToken or str source_bearer_token:
-            Authenticate as a service principal using a client secret to access a source blob.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._upload_pages_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -3589,11 +3578,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 max_size=maxsize_condition,
                 append_position=appendpos_condition
             )
-        source_bearer_token = kwargs.pop('source_bearer_token', None)
-        if isinstance(source_bearer_token, AccessToken):
-            source_bearer_token = source_bearer_token.token
-        if source_bearer_token:
-            source_bearer_token = "Bearer {}".format(source_bearer_token)
+        source_authorization = kwargs.pop('source_authorization', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
@@ -3607,7 +3592,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'copy_source_authorization': source_bearer_token,
+            'copy_source_authorization': source_authorization,
             'source_url': copy_source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -3714,8 +3699,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword ~azure.core.AccessToken or str source_bearer_token:
-            Authenticate as a service principal using a client secret to access a source blob.
+        :keyword str source_authorization:
+            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
+            the prefix of the source_authorization string.
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),

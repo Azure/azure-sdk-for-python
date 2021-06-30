@@ -13,68 +13,31 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:36 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer31d4155c?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:79836f9e-301e-0017-4830-6d36ed000000\nTime:2021-06-29T21:51:44.8562720Z</Message></Error>"
     headers:
-      date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
-      etag:
-      - '"0x8D92655F7F1184B"'
-      last-modified:
-      - Thu, 03 Jun 2021 06:08:12 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-ms-version:
-      - '2020-10-02'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
+      content-length:
+      - '230'
+      content-type:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Thu, 03 Jun 2021 06:08:13 GMT
-      x-ms-version:
-      - '2020-10-02'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainersource31d4155c?restype=container
-  response:
-    body:
-      string: ''
-    headers:
       date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
-      etag:
-      - '"0x8D92655F80957BB"'
-      last-modified:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:44 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
       - '2020-10-02'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
     body: null
     headers:
@@ -93,7 +56,7 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:13 GMT
+      - Tue, 29 Jun 2021 21:51:46 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -103,11 +66,11 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:45 GMT
       etag:
-      - '"0x8D92655F822572E"'
+      - '"0x8D93B48170A3596"'
       last-modified:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:45 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -135,7 +98,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:13 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -149,11 +112,11 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:45 GMT
       etag:
-      - '"0x8D92655F83A9689"'
+      - '"0x8D93B48173D4C24"'
       last-modified:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:46 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -187,7 +150,7 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:13 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -197,11 +160,11 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:46 GMT
       etag:
-      - '"0x8D92655F852D5E6"'
+      - '"0x8D93B4817A0E193"'
       last-modified:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:46 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -229,7 +192,7 @@ interactions:
       x-ms-copy-source:
       - https://seanstageoauth.blob.core.windows.net/utcontainersource31d4155c/blob31d4155c
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:13 GMT
+      - Tue, 29 Jun 2021 21:51:48 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -243,14 +206,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>CannotVerifyCopySource</Code><Message>Could
-        not verify the copy source within the specified time.\nRequestId:16db6f1e-e01e-001d-4f3e-5804c8000000\nTime:2021-06-03T06:08:13.2299248Z</Message></Error>"
+        not verify the copy source within the specified time.\nRequestId:79836ffb-301e-0017-1530-6d36ed000000\nTime:2021-06-29T21:51:47.2699148Z</Message></Error>"
     headers:
       content-length:
       - '251'
       content-type:
       - application/xml
       date:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:46 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -277,9 +240,9 @@ interactions:
       x-ms-copy-source:
       - https://seanstageoauth.blob.core.windows.net/utcontainersource31d4155c/blob31d4155c
       x-ms-copy-source-authorization:
-      - Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTYyMjcwMDE5NCwibmJmIjoxNjIyNzAwMTk0LCJleHAiOjE2MjI3ODY4OTQsImFpbyI6IkUyWmdZSml4eVhVSzgzb1YzcXZmenhXc2R2ekpEd0E9IiwiYXBwaWQiOiI2ODM5MGExOS1hNjQzLTQ1OGItYjcyNi00MDhhYmY2N2I0ZmMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiYzRmNDgyODktYmI4NC00MDg2LWIyNTAtNmY5NGE4ZjY0Y2VlIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlJ4a0tPV2hEcG90RnR5WkFpcjludFB3YUFBQS4iLCJzdWIiOiJjNGY0ODI4OS1iYjg0LTQwODYtYjI1MC02Zjk0YThmNjRjZWUiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJ2MHBISjIzSWdVQ0x3T3dyQURJVEFBIiwidmVyIjoiMS4wIn0.c_7XFu9bXRH1yhgIu7CwJZGS_1fZSrxXJvw0RWotswR4BvOawQR7mu3-NkrsidAN2222P2_I62BfAvebRPQIqqVI04ay85iih6WtODq2Am_fEF_041UXChtvvaVb09UtrwSI_U5OeNRw_zLoyjr5mAWPatm5OblSIDHEs2AtL11uqAymIkdHCPAqUQBTcOR7hA3QIxackzvQB9uU2edSbor1Lj1s3Hpg6O7UWJU1iPJU57rtgp5nuwI0oIUhRX15EC8mFwQidITvxkUu5rx7Y3TyWW1iM5eMwXDxxoHaTlZ0r_e52N89iLRvSgTbVnrWYigiqKQXf0qE1g2E5fOmTQ
+      - Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTYyNTAwMzIwNSwibmJmIjoxNjI1MDAzMjA1LCJleHAiOjE2MjUwODk5MDUsImFpbyI6IkUyWmdZSGhsekNHOVc2dFFxbnJaMHhkL2IzKzlEUUE9IiwiYXBwaWQiOiI2ODM5MGExOS1hNjQzLTQ1OGItYjcyNi00MDhhYmY2N2I0ZmMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiYzRmNDgyODktYmI4NC00MDg2LWIyNTAtNmY5NGE4ZjY0Y2VlIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlJ4a0tPV2hEcG90RnR5WkFpcjludFB3YUFBQS4iLCJzdWIiOiJjNGY0ODI4OS1iYjg0LTQwODYtYjI1MC02Zjk0YThmNjRjZWUiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJtcGNjRlFMYjJVaVQ2RjRLZHQwaUFRIiwidmVyIjoiMS4wIn0.XcIuHlUzpByHigsXNtPgslQUQlFyWQyScBW9UXNz3aPX0SQ6lQ8YL9FLm0oIQsBsLwxB9NhjZT5Z0Gt0bYciL2wdreaflfMcpakQNeype-8dNxX01fsziV5Yewo5swQVbnfYyetgD022DWas_x7ccYPOy3tWeKxjSmZ_GNV16CiPp6peE5fWoQa3chxe5cIzVStd3EHOSV51mcAQ2PCqXcWD83Eci3TERAcRt4oglKrnVnhszSSqp5xGG2paPn8FsZMNoIBOAlo8wvENwnWwpEboAMMj_0cx4K4cX150WYLsKLLdpOaBxB2cuFTR2Bn7QsmrzuonNpENMJuWZc_pYQ
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:15 GMT
+      - Tue, 29 Jun 2021 21:51:48 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -297,11 +260,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 03 Jun 2021 06:08:14 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       etag:
-      - '"0x8D92655F9409541"'
+      - '"0x8D93B4817FEAB77"'
       last-modified:
-      - Thu, 03 Jun 2021 06:08:14 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
@@ -327,7 +290,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:15 GMT
+      - Tue, 29 Jun 2021 21:51:48 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -347,11 +310,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 03 Jun 2021 06:08:14 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       etag:
-      - '"0x8D92655F9409541"'
+      - '"0x8D93B4817FEAB77"'
       last-modified:
-      - Thu, 03 Jun 2021 06:08:14 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
@@ -359,7 +322,7 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-creation-time:
-      - Thu, 03 Jun 2021 06:08:12 GMT
+      - Tue, 29 Jun 2021 21:51:46 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -383,7 +346,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 03 Jun 2021 06:08:15 GMT
+      - Tue, 29 Jun 2021 21:51:48 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -395,11 +358,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 03 Jun 2021 06:08:14 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       etag:
-      - '"0x8D92655F9409541"'
+      - '"0x8D93B4817FEAB77"'
       last-modified:
-      - Thu, 03 Jun 2021 06:08:14 GMT
+      - Tue, 29 Jun 2021 21:51:47 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

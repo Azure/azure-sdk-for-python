@@ -483,7 +483,7 @@ class StoragePageBlobTest(StorageTestCase):
         bsc = BlobServiceClient(account_url, credential=storage_account_key,
                                 connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
-        access_token = self.generate_oauth_token()
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
@@ -494,8 +494,7 @@ class StoragePageBlobTest(StorageTestCase):
                 source_blob_client.url, offset=0, length=8 * 1024, source_offset=0)
         # Assert it works with oauth token
         destination_blob_client.upload_pages_from_url(
-            source_blob_client.url, offset=0, length=8 * 1024, source_offset=0,
-            source_bearer_token=access_token.get_token("https://storage.azure.com/.default"))
+            source_blob_client.url, offset=0, length=8 * 1024, source_offset=0, source_authorization=token)
         destination_blob_data = destination_blob_client.download_blob().readall()
         self.assertEqual(source_blob_data, destination_blob_data)
 

@@ -235,14 +235,13 @@ class StorageAppendBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         destination_blob_client = self._create_blob(bsc)
-        access_token = self.generate_oauth_token()
+        token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
 
         # Assert this operation fails without a credential
         with self.assertRaises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url)
         # Assert it passes after passing an oauth credential
-        destination_blob_client.append_block_from_url(
-            source_blob_client.url, source_bearer_token=access_token.get_token("https://storage.azure.com/.default"))
+        destination_blob_client.append_block_from_url(source_blob_client.url, source_authorization=token)
         destination_blob_data = destination_blob_client.download_blob().readall()
         self.assertEqual(source_blob_data, destination_blob_data)
 
