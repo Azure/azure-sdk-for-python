@@ -21,7 +21,6 @@ except ImportError:
 
 import six
 from azure.core.exceptions import HttpResponseError
-from azure.core.credentials import AccessToken
 from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
 from azure.core.tracing.decorator import distributed_trace
 

@@ -1747,6 +1747,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
         requires_sync = kwargs.pop('requires_sync', None)
         source_authorization = kwargs.pop('source_authorization', None)
+        if source_authorization and incremental_copy:
+            raise ValueError("Source authorization tokens are not applicable for incremental copying.")
         if requires_sync is True:
             headers['x-ms-requires-sync'] = str(requires_sync)
             if source_authorization:
@@ -1912,7 +1914,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Enforces that the service will not return a response until the copy is complete.
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
-            the prefix of the source_authorization string.
+            the prefix of the source_authorization string. This option is only available when `incremental_copy` is
+            set to False and `requires_sync` is set to True.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, str or ~datetime.datetime]
 
