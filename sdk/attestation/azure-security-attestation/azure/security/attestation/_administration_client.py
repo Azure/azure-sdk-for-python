@@ -4,17 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Any, Optional, TYPE_CHECKING, Tuple, Union
+from typing import Dict, List, Any, TYPE_CHECKING, Tuple, Union
+import base64
+from threading import Lock
 
-from azure.core import PipelineClient
 from cryptography.hazmat.primitives import serialization
-from six import python_2_unicode_compatible
+from cryptography.x509 import load_pem_x509_certificate
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
-    from azure.core.credentials import TokenCredential
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureAttestationRestClient
 from ._generated.models import (
@@ -32,13 +29,12 @@ from ._models import (
     AttestationToken,
     AttestationPolicyResult,
     AttestationPolicyCertificateResult,
-    AttestationTokenValidationException,
 )
-import base64
-from azure.core.tracing.decorator import distributed_trace
-from threading import Lock, Thread
 from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
-from cryptography.x509 import load_pem_x509_certificate
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class AttestationAdministrationClient(object):
@@ -59,7 +55,8 @@ class AttestationAdministrationClient(object):
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
         an exception.
-    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
+    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+        ~azure.security.attestation.AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -128,7 +125,8 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
+        :paramtype validation_callback: Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -142,10 +140,12 @@ class AttestationAdministrationClient(object):
 
         :rtype: Tuple[str, ~azure.security.attestation.AttestationToken]
 
-        :raises azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :raises azure.security.attestation.AttestationTokenValidationException: Raised
+            when an attestation token is invalid.
 
         .. note::
-            The Azure Attestation Policy language is defined `here <https://docs.microsoft.com/azure/attestation/author-sign-policy>`_
+            The Azure Attestation Policy language is defined `here
+            <https://docs.microsoft.com/azure/attestation/author-sign-policy>`_
 
         .. admonition:: Example: Retrieving the current policy on an attestation instance.
 
@@ -165,24 +165,24 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable = protected-access
 
         policyResult = self._client.policy.get(attestation_type, **kwargs)
         token = AttestationToken(
             token=policyResult.token, body_type=GeneratedPolicyResult
         )
-        token_body = token._get_body()
+        token_body = token._get_body() #pylint: disable = protected-access
         stored_policy = AttestationToken(
             token=token_body.policy, body_type=GeneratedStoredAttestationPolicy
         )
 
-        policy_body = stored_policy._get_body()
+        policy_body = stored_policy._get_body()  #pylint: disable = protected-access
         actual_policy = (
             policy_body.attestation_policy if policy_body else "".encode("ascii")
         )  # type: bytes
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
 
         return actual_policy.decode("utf-8"), token
 
@@ -204,7 +204,8 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None][
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -217,7 +218,8 @@ class AttestationAdministrationClient(object):
 
         :rtype: Tuple[~azure.security.attestation.AttestationPolicyResult, ~azure.security.attestation.AttestationToken]
 
-        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised
+            when an attestation token is invalid.
 
         .. admonition:: Example: Setting the attestation policy on an AAD mode
             attestation instance (no signing key required).
@@ -276,7 +278,7 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
 
         policyResult = self._client.policy.set(
             attestation_type=attestation_type,
@@ -288,9 +290,9 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
 
-        return AttestationPolicyResult._from_generated(token._get_body()), token
+        return AttestationPolicyResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
 
     @distributed_trace
     def reset_policy(self, attestation_type, **kwargs):
@@ -308,7 +310,8 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None][
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -317,11 +320,13 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :return: A policy set result reflecting the outcome of the policy removal and the token which contained the result.
+        :return: A policy set result reflecting the outcome of the policy removal and
+            the token which contained the result.
 
         :rtype: Tuple[~azure.security.attestation.AttestationPolicyResult, ~azure.security.attestation.AttestationToken]
 
-        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised when an attestation token is invalid.
+        :raises ~azure.security.attestation.AttestationTokenValidationException: Raised
+            when an attestation token is invalid.
 
         .. note::
             If the attestation instance is in *Isolated* mode, then the
@@ -368,7 +373,7 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
 
         policyResult = self._client.policy.reset(
             attestation_type=attestation_type,
@@ -380,9 +385,9 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
 
-        return AttestationPolicyResult._from_generated(token._get_body()), token
+        return AttestationPolicyResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
@@ -398,7 +403,8 @@ class AttestationAdministrationClient(object):
             perform custom validation of the token. If the token is invalid,
             the `validation_callback` function should throw an exception to cause
             the API call to fail.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None][
         :keyword bool validate_signature: if True, validate the signature of the
             token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time
@@ -431,7 +437,7 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
 
         cert_response = self._client.policy_certificates.get(**kwargs)
         token = AttestationToken(
@@ -439,10 +445,10 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
         certificates = []
 
-        cert_list = token._get_body()
+        cert_list = token._get_body()  #pylint: disable = protected-access
 
         for key in cert_list.policy_certificates.keys:
             key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
@@ -464,7 +470,8 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None][
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -477,7 +484,8 @@ class AttestationAdministrationClient(object):
             of the add request and the token sent from the service which
             contained the response.
 
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult,
+            ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes
@@ -547,7 +555,7 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
 
         cert_response = self._client.policy_certificates.add(
             cert_add_token.to_jwt_string(), **kwargs
@@ -558,9 +566,9 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()),
+            AttestationPolicyCertificateResult._from_generated(token._get_body()),  #pylint: disable = protected-access
             token,
         )
 
@@ -579,7 +587,8 @@ class AttestationAdministrationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None][
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None][
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -588,7 +597,8 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Result describing the outcome of the certificate removal.
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult,
+            ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificateResult` response to the
         :meth:`remove_policy_management_certificate` API contains two attributes
@@ -657,7 +667,7 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable = protected-access
 
         cert_response = self._client.policy_certificates.remove(
             cert_add_token.to_jwt_string(), **kwargs
@@ -668,9 +678,9 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options) #pylint: disable = protected-access
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()),
+            AttestationPolicyCertificateResult._from_generated(token._get_body()), #pylint: disable = protected-access
             token,
         )
 
@@ -685,7 +695,7 @@ class AttestationAdministrationClient(object):
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(key)
+                        AttestationSigner._from_generated(key) #pylint: disable = protected-access
                     )
             signers = self._signing_certificates
         return signers

@@ -5,16 +5,10 @@
 # --------------------------------------------------------------------------
 
 import json
-from typing import Dict, List, Any, Optional, TYPE_CHECKING, Tuple, Union
+from typing import Dict, List, Any, TYPE_CHECKING, Tuple
+from threading import Lock
 
-from azure.core import PipelineClient
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureAttestationRestClient
 from ._generated.models import (
@@ -27,11 +21,12 @@ from ._generated.models import (
 )
 from ._configuration import AttestationClientConfiguration
 from ._models import AttestationSigner, AttestationToken, AttestationResult
-from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
-from json import JSONDecoder
+from ._common import merge_validation_args
 
-from azure.core.tracing.decorator import distributed_trace
-from threading import Lock
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class AttestationClient(object):
@@ -86,7 +81,9 @@ class AttestationClient(object):
         # type: (Dict[str, Any]) -> Dict[str, Any]
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
-        The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
+        The metadata configuration document is defined in the `OpenID Connect
+        Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>`
+        specification.
 
         The attestation service currently returns the following fields:
         * issuer
@@ -107,14 +104,15 @@ class AttestationClient(object):
 
         :rtype: List[~azure.security.attestation.AttestationSigner]
 
-        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
+        For additional request configuration options, please see `Python Request
+        Options <https://aka.ms/azsdk/python/options>`_.
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
         signers = []
         for key in signing_certificates.keys:
             # Convert the returned certificate chain into an array of X.509 Certificates.
-            signers.append(AttestationSigner._from_generated(key))
+            signers.append(AttestationSigner._from_generated(key))  #pylint: disable = protected-access
         return signers
 
     @distributed_trace
@@ -158,7 +156,8 @@ class AttestationClient(object):
         :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. note::
-            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
+            Note that if the `draft_policy` parameter is provided, the resulting
+            attestation token will be an unsecured attestation token.
 
         .. admonition:: Example:
 
@@ -169,7 +168,8 @@ class AttestationClient(object):
                 :dedent: 8
                 :caption: Attesting an SGX Enclave
 
-        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
+        For additional request configuration options, please see `Python Request
+        Options <https://aka.ms/azsdk/python/options>`_.
 
         """
 
@@ -215,7 +215,7 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
 
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken(
@@ -223,9 +223,9 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
 
-        return AttestationResult._from_generated(token._get_body()), token
+        return AttestationResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
 
     @distributed_trace
     def attest_open_enclave(
@@ -287,9 +287,11 @@ class AttestationClient(object):
 
 
         .. note::
-            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
+            Note that if the `draft_policy` parameter is provided, the resulting
+            attestation token will be an unsecured attestation token.
 
-        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
+        For additional request configuration options, please see `Python Request
+        Options <https://aka.ms/azsdk/python/options>`_.
 
         """
 
@@ -337,7 +339,7 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
 
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken(
@@ -345,15 +347,17 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token._get_body()), token
+            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+        return AttestationResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
 
     @distributed_trace
     def attest_tpm(self, content, **kwargs):
         # type: (str, **Any) -> str
         """Attest a TPM based enclave.
 
-        See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
+        See the `TPM Attestation Protocol Reference
+        <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_
+        for more information.
 
         :param str content: Data to send to the TPM attestation service.
         :returns: A structure containing the response from the TPM attestation.
@@ -376,7 +380,7 @@ class AttestationClient(object):
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(key)
+                        AttestationSigner._from_generated(key) #pylint: disable = protected-access
                     )
             signers = self._signing_certificates
         return signers

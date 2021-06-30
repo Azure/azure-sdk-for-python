@@ -5,17 +5,25 @@
 # --------------------------------------------------------------------------
 
 import base64
-import json
-from cryptography.hazmat.primitives import serialization
+from typing import Any, Dict, List, Type, TypeVar, Union
+from json import JSONDecoder, JSONEncoder
+from datetime import datetime
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.x509 import Certificate, load_pem_x509_certificate
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
+from six import string_types, raise_from
+
 from ._common import (
     base64url_decode,
     base64url_encode,
     pem_from_base64,
     validate_signing_keys,
-    merge_validation_args,
 )
 from ._generated.models import (
     PolicyResult as GeneratedPolicyResult,
@@ -24,19 +32,8 @@ from ._generated.models import (
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
     JSONWebKey,
     CertificateModification,
-    AttestationType,
     PolicyModification,
 )
-from typing import Any, Callable, Dict, List, Type, TypeVar, Union
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
-from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from cryptography.x509 import Certificate, load_pem_x509_certificate
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
-from json import JSONDecoder, JSONEncoder
-from datetime import datetime
-from six import string_types
 
 T = TypeVar("T")
 
@@ -55,8 +52,8 @@ class AttestationSigner(object):
 
     """
 
-    def __init__(self, certificates, key_id, **kwargs):
-        # type: (list[str], str, Any) -> None
+    def __init__(self, certificates, key_id):
+        # type: (list[str], str) -> None
         self.certificates = [
             pem_from_base64(cert, "CERTIFICATE") for cert in certificates
         ]
@@ -134,51 +131,45 @@ class AttestationPolicyResult(object):
         )
 
 
-class AttestationResult(object):
+class AttestationResult(object): #pylint: disable=too-many-instance-attributes
     """An AttestationResult represents the claims returned from the attestation
     service as a result of a call to
     :meth:`azure.security.attestation.AttestationClient.attest_sgx`, or :meth:`AttestationClient.attest_open_enclave`.
+
+    :keyword str issuer: Entity which issued the attestation token.
+    :keyword unique_identifier: Unique identifier for the token.
+    :paramtype unique_identifier: str or None
+    :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
+    :paramtype nonce: str or None
+    :keyword str version: Version of the token. Must be "1.0"
+    :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
+    :paramtype runtime_claims: dict
+    :keyword inittime_claims: Inittime claims passed in from the caller of the attest API.
+    :paramtype inittime_claims: dict
+    :keyword enclave_held_data: Runtime data passed in from the caller of the attest API.
+    :paramtype enclave_held_data: bytes or None
+    :keyword policy_claims: Attestation claims issued by policies.
+    :paramtype policy_claims: dict or None
+    :keyword str verifier_type: Verifier which generated this token.
+    :keyword policy_signer: If the policy which processed the request is signed,
+        this will be the certificate which signed the policy.
+    :paramtype policy_signer: azure.security.attestation.AttestationSigner or None
+    :keyword str policy_hash: The hash of the policy which processed the attestation
+        evidence.
+    :keyword bool is_debuggable: True if a debugger can be attached to the SGX enclave
+        being attested.
+    :keyword int product_id: Product ID for the SGX enclave being attested.
+    :keyword str mr_enclave: MRENCLAVE value for the SGX enclave being attested.
+    :keyword str mr_signer: MRSIGNER value for the SGX enclave being attested.
+    :keyword int svn: Security version number for the SGX enclave being attested.
+    :keyword sgx_collateral: Collateral which identifies the collateral used to
+        create the token.
+    :paramtype sgx_collateral: dict
 
     """
 
     def __init__(self, **kwargs):
         # type: (Dict[str,Any]) -> None
-        """
-        :keyword issuer: Entity which issued the attestation token.
-        :paramtype issuer: str
-        :keyword unique_identifier: Unique identifier for the token.
-        :paramtype unique_identifier: str or None
-        :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
-        :paramtype nonce: str or None
-        :keyword version: Version of the token. Must be "1.0"
-        :paramtype version: str
-        :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
-        :paramtype runtime_claims: dict
-        :keyword inittime_claims: Inittime claims passed in from the caller of the attest API.
-        :paramtype inittime_claims: dict
-        :keyword enclave_held_data: Runtime data passed in from the caller of the attest API.
-        :paramtype enclave_held_data: bytes or None
-        :keyword policy_claims: Attestation claims issued by policies.
-        :paramtype policy_claims: dict or None
-        :keyword verifier_type: Verifier which generated this token.
-        :paramtype verifier_type: str
-        :keyword policy_signer: If the policy which processed the request is signed,
-            this will be the certificate which signed the policy.
-        :paramtype policy_signer: azure.security.attestation.AttestationSigner or None
-        :keyword str policy_hash: The hash of the policy which processed the attestation
-            evidence.
-        :keyword bool is_debuggable: True if a debugger can be attached to the SGX enclave
-            being attested.
-        :keyword product_id: Product ID for the SGX enclave being attested.
-        :paramtype product_id: int
-        :keyword str mr_enclave: MRENCLAVE value for the SGX enclave being attested.
-        :keyword str mr_signer: MRSIGNER value for the SGX enclave being attested.
-        :keyword int svn: Security version number for the SGX enclave being attested.
-        :keyword sgx_collateral: Collateral which identifies the collateral used to
-            create the token.
-        :paramtype sgx_collateral: dict
-
-        """
         self._issuer = kwargs.pop("issuer")  # type: Union[str, None]
         self._unique_identifier = kwargs.pop(
             "unique_identifier", None
@@ -223,7 +214,7 @@ class AttestationResult(object):
             inittime_claims=generated.inittime_claims,
             policy_claims=generated.policy_claims,
             verifier_type=generated.verifier_type,
-            policy_signer=AttestationSigner._from_generated(generated.policy_signer),
+            policy_signer=AttestationSigner._from_generated(generated.policy_signer), #pylint: disable=protected-access
             policy_hash=generated.policy_hash,
             is_debuggable=generated.is_debuggable,
             product_id=generated.product_id,
@@ -347,7 +338,7 @@ class AttestationResult(object):
 
         :rtype: azure.security.attestation.AttestationSigner or None
         """
-        return AttestationSigner._from_generated(self._policy_signer)
+        return AttestationSigner._from_generated(self._policy_signer) #pylint: disable=protected-access
 
     @property
     def policy_hash(self):
@@ -474,9 +465,11 @@ class AttestationToken(object):
         used to sign the token.
 
     :keyword str token: If no body or signer is provided, the string representation of the token.
-    :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
+    :keyword Type body_type: The underlying type of the body of the 'token' parameter,
+        used to deserialize the underlying body when parsing the token.
 
-    If the `signing_key` and `signing_certificate` properties are not specified, the token created is unsecured.
+    If the `signing_key` and `signing_certificate` properties are not specified,
+    the token created is unsecured.
 
     """
 
@@ -767,7 +760,8 @@ class AttestationToken(object):
 
         return candidates
 
-    def _get_certificates_from_x5c(self, x5clist):
+    @staticmethod
+    def _get_certificates_from_x5c(x5clist):
         # type: (list[str]) -> list[Certificate]
         return [base64.b64decode(b64cert) for b64cert in x5clist]
 
@@ -798,10 +792,10 @@ class AttestationToken(object):
                         self.signature_bytes, signed_data.encode("utf-8"), SHA256()
                     )
                 return signer
-            except:
-                raise AttestationTokenValidationException(
+            except InvalidSignature as ex:
+                raise_from(AttestationTokenValidationException(
                     "Could not verify signature of attestation token."
-                )
+                ), ex)
         return None
 
     def _validate_static_properties(self, **kwargs):
@@ -848,7 +842,8 @@ class AttestationToken(object):
     def _create_unsecured_jwt(body):
         # type: (Any) -> str
         """Return an unsecured JWT expressing the body."""
-        # Base64Url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for more information.
+        # Base64Url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for
+        # more information.
         return_value = "eyJhbGciOiJub25lIn0."
 
         # Try to serialize the body by asking the body object to serialize itself.
@@ -944,4 +939,4 @@ class AttestationTokenValidationException(ValueError):
 
     def __init__(self, message):
         self.message = message
-        super(AttestationTokenValidationException, self).__init__(self.message)
+        super(AttestationTokenValidationException, self).__init__(self.message) #pylint: disable=super-with-arguments

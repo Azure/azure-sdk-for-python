@@ -4,17 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Any, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, List, Any, TYPE_CHECKING, Tuple
 
-from azure.core import PipelineClient
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core._pipeline_client_async import AsyncPipelineClient
 import json
+from threading import Lock
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
     AttestationResult as GeneratedAttestationResult,
@@ -26,13 +21,12 @@ from .._generated.models import (
 )
 from .._configuration import AttestationClientConfiguration
 from .._models import AttestationSigner, AttestationToken, AttestationResult
-import base64
-from threading import Lock
 from .._common import merge_validation_args
-from .._common import pem_from_base64, validate_signing_keys, merge_validation_args
 
-from azure.core.tracing.decorator_async import distributed_trace_async
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
 
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class AttestationClient(object):
     """An AttestationClient object enables access to the Attestation family of APIs provided
@@ -47,7 +41,8 @@ class AttestationClient(object):
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
         an exception.
-    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
+    :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+        ~azure.security.attestation.AttestationSigner], None]
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
     :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -81,7 +76,9 @@ class AttestationClient(object):
     async def get_open_id_metadata(self, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
-        The metadata configuration document is defined in the `OpenID Connect Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>` specification.
+        The metadata configuration document is defined in the `OpenID Connect
+        Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>`
+        specification.
 
         The attestation service currently returns the following fields:
         * issuer
@@ -100,13 +97,14 @@ class AttestationClient(object):
         :return: A list of :class:`azure.security.attestation.AttestationSigner` objects.
         :rtype: list[~azure.security.attestation.AttestationSigner]
 
-        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
+        For additional request configuration options, please see `Python Request
+        Options <https://aka.ms/azsdk/python/options>`_.
 
         """
         signing_certificates = await self._client.signing_certificates.get(**kwargs)
         signers = []
         for key in signing_certificates.keys:
-            signers.append(AttestationSigner._from_generated(key))
+            signers.append(AttestationSigner._from_generated(key)) #pylint: disable=protected-access
         return signers
 
     @distributed_trace_async
@@ -141,7 +139,8 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -155,7 +154,8 @@ class AttestationClient(object):
         :rtype: Tuple[~azure.security.attestation.AttestationResult, ~azure.security.attestation.AttestationToken]
 
         .. note::
-            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
+            Note that if the `draft_policy` parameter is provided, the resulting
+            attestation token will be an unsecured attestation token.
 
         .. admonition:: Example:
 
@@ -166,7 +166,8 @@ class AttestationClient(object):
                 :dedent: 8
                 :caption: Attesting an SGX Enclave
 
-        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
+        For additional request configuration options, please see `Python Request
+        Options <https://aka.ms/azsdk/python/options>`_.
 
         """
 
@@ -208,7 +209,7 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable=protected-access
 
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken(
@@ -216,8 +217,8 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(await self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token._get_body()), token
+            token._validate_token(await self._get_signers(**kwargs), **options) #pylint: disable=protected-access
+        return AttestationResult._from_generated(token._get_body()), token #pylint: disable=protected-access
 
     @distributed_trace_async
     async def attest_open_enclave(
@@ -251,7 +252,8 @@ class AttestationClient(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken,
+            ~azure.security.attestation.AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -284,9 +286,11 @@ class AttestationClient(object):
 
 
         .. note::
-            Note that if the `draft_policy` parameter is provided, the resulting attestation token will be an unsecured attestation token.
+            Note that if the `draft_policy` parameter is provided, the resulting
+            attestation token will be an unsecured attestation token.
 
-        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
+        For additional request configuration options, please see `Python Request
+        Options <https://aka.ms/azsdk/python/options>`_.
 
         """
 
@@ -329,7 +333,7 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)
+        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable=protected-access
 
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken(
@@ -337,14 +341,16 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(await self._get_signers(**kwargs), **options)
-        return AttestationResult._from_generated(token._get_body()), token
+            token._validate_token(await self._get_signers(**kwargs), **options) #pylint: disable=protected-access
+        return AttestationResult._from_generated(token._get_body()), token #pylint: disable=protected-access
 
     @distributed_trace_async
     async def attest_tpm(self, content: str, **kwargs: Any) -> str:
         """Attest a TPM based enclave.
 
-        See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
+        See the `TPM Attestation Protocol Reference
+        <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_
+        for more information.
 
         :param str content: Data to send to the TPM attestation service.
         :returns: A structure containing the response from the TPM attestation.
@@ -368,7 +374,7 @@ class AttestationClient(object):
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(key)
+                        AttestationSigner._from_generated(key) #pylint: disable=protected-access
                     )
             signers = self._signing_certificates
         return signers

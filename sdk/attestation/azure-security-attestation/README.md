@@ -206,7 +206,7 @@ simplified:
 policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,            
     attestation_policy)
 # Now retrieve the policy which was just set.
-new_policy _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 
 ```
 

@@ -13,11 +13,11 @@ from ._models import (
     AttestationResult,
     AttestationTokenValidationException,
     AttestationPolicyCertificateResult,
-    AttestationType,
     PolicyModification,
     CertificateModification,
     AttestationPolicyToken,
 )
+from ._generated.models import AttestationType
 from ._version import VERSION
 
 __version__ = VERSION

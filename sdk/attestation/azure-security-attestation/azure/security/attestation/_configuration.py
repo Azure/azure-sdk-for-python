@@ -4,12 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import NoReturn, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
-from azure.core.pipeline import policies
-
-from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -41,6 +38,6 @@ class AttestationClientConfiguration(Configuration):
         self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(AttestationClientConfiguration, self).__init__(**kwargs)
+        super(AttestationClientConfiguration, self).__init__(**kwargs) #pylint: disable=super-with-arguments
 
         self._kwargs = kwargs.copy()
