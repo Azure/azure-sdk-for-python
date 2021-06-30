@@ -207,6 +207,10 @@ class ContainerRegistryTestClass(AzureTestCase):
         )
 
 
+    def is_public_endpoint(self, endpoint):
+        return ".azurecr.io" in endpoint
+
+
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
         logger.warning("Public cloud Authority:")
