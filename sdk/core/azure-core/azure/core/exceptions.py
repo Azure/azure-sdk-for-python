@@ -433,3 +433,50 @@ class ODataV4Error(HttpResponseError):
         if self._error_format:
             return str(self._error_format)
         return super(ODataV4Error, self).__str__()
+
+class StreamConsumedError(AzureError):
+    """**Provisional** error thrown if you try to access the stream of a response once consumed.
+
+    This error is marked as **provisional**, meaning it may be changed in a future release. It is
+    thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
+    """
+    def __init__(self, response):
+        message = (
+            "You are attempting to read or stream the content from request {}. "\
+            "You have likely already consumed this stream, so it can not be accessed anymore.".format(
+                response.request
+            )
+        )
+        super(StreamConsumedError, self).__init__(message)
+
+class StreamClosedError(AzureError):
+    """**Provisional** error thrown if you try to access the stream of a response once closed.
+
+    This error is marked as **provisional**, meaning it may be changed in a future release. It is
+    thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
+    """
+    def __init__(self, response):
+        message = (
+            "The content for response from request {} can no longer be read or streamed, since the "\
+            "response has already been closed.".format(response.request)
+        )
+        super(StreamClosedError, self).__init__(message)
+
+class ResponseNotReadError(AzureError):
+    """**Provisional** error thrown if you try to access a response's content without reading first.
+
+    This error is marked as **provisional**, meaning it may be changed in a future release. It is
+    thrown if you try to access an ~azure.core.rest.HttpResponse or
+    ~azure.core.rest.AsyncHttpResponse's content without first reading the response's bytes in first.
+    """
+
+    def __init__(self, response):
+        message = (
+            "You have not read in the bytes for the response from request {}. "\
+            "Call .read() on the response first.".format(
+                response.request
+            )
+        )
+        super(ResponseNotReadError, self).__init__(message)

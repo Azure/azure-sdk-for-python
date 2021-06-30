@@ -5,6 +5,11 @@
 - `InteractiveBrowserCredential` keyword argument `login_hint` enables
   pre-filling the username/email address field on the login page
   ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
+- `CertificateCredential` and `ClientSecretCredential` support regional STS
+  on Azure VMs by either keyword argument `regional_authority` or environment
+  variable `AZURE_REGIONAL_AUTHORITY_NAME`. See `azure.identity.RegionalAuthority`
+  for possible values.
+  ([#19301](https://github.com/Azure/azure-sdk-for-python/issues/19301))
 - `AzureApplicationCredential`, a default credential chain for applications
   deployed to Azure
   ([#19309](https://github.com/Azure/azure-sdk-for-python/issues/19309))
@@ -402,7 +407,7 @@ arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
 for transport but the library does not require it as a dependency because the
 async API is optional. To use async credentials, please install
 [`aiohttp`](https://pypi.org/project/aiohttp/) or see
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)
 for information about customizing the transport.
 - Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
 - All credentials with `tenant_id` and `client_id` positional parameters now accept them in that order
@@ -471,7 +476,7 @@ authenticate silently after you've signed in to Visual Studio 2019, for
 example. `DefaultAzureCredential` includes `SharedTokenCacheCredential` when
 the shared cache is available, and environment variable `AZURE_USERNAME`
 is set. See the
-[README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md#single-sign-on)
+[README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#single-sign-on)
 for more information.
 
 ### Dependency changes:
@@ -508,7 +513,7 @@ https://aka.ms/azure-sdk-preview1-python.
 
 This release supports service principal and managed identity authentication.
 See the
-[documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
 for more details. User authentication will be added in an upcoming preview
 release.
 

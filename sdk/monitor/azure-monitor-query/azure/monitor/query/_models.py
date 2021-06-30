@@ -11,8 +11,7 @@ from typing import Any, Optional, List
 from ._helpers import order_results, construct_iso8601
 from ._generated.models import (
     Column as InternalColumn,
-    LogQueryRequest as InternalLogQueryRequest,
-    ErrorDetails as InternalErrorDetails
+    BatchQueryRequest as InternalLogQueryRequest,
 )
 
 
@@ -69,26 +68,22 @@ class LogsQueryResults(object):
 
     :keyword tables: The list of tables, columns and rows.
     :paramtype tables: list[~azure.monitor.query.LogsQueryResultTable]
-    :keyword errors:
-    :paramtype errors: ~azure.monitor.query.LogsErrorDetails
+    :keyword statistics: Any object.
+    :paramtype statistics: object
+    :keyword render: Any object.
+    :paramtype render: object
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
         self.tables = kwargs.get("tables", None)
-        self.errors = kwargs.get("errors", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.render = kwargs.get("render", None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
-        error = None
         tables = None
-        if generated.errors is not None:
-            error = LogsErrorDetails(
-                code=generated.errors.code,
-                message=generated.errors.message,
-                target=generated.errors.target
-                )
         if generated.tables is not None:
             tables = [
                 LogsQueryResultTable._from_generated( # pylint: disable=protected-access
@@ -97,7 +92,8 @@ class LogsQueryResults(object):
                 ]
         return cls(
             tables=tables,
-            error=error
+            statistics=generated.statistics,
+            render=generated.render
         )
 
 
@@ -155,9 +151,9 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
-    :param str duration: The duration for which to query the data. This can also be accompanied
+    :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
      with either start_time or end_time. If start_time or end_time is not provided, the current time is
-     taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+     taken as the end time.
     :keyword datetime start_time: The start time from which to query the data. This should be accompanied
      with either end_time or duration.
     :keyword datetime end_time: The end time till which to query the data. This should be accompanied
@@ -167,24 +163,47 @@ class LogsQueryRequest(InternalLogQueryRequest):
     :paramtype additional_workspaces: list[str]
     :keyword request_id: The error details.
     :paramtype request_id: str
+    :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
+     and the maximum timeout is 10 minutes.
+    :keyword bool include_statistics: To get information about query statistics.
+    :keyword bool include_render: In the query language, it is possible to specify different render options.
+     By default, the API does not return information regarding the type of visualization to show.
     :keyword headers: Dictionary of :code:`<string>`.
     :paramtype headers: dict[str, str]
     """
 
-    def __init__(self, query, workspace_id, duration=None, **kwargs):
+    def __init__(self, query, workspace_id, duration=None, **kwargs): #pylint: disable=super-init-not-called
         # type: (str, str, Optional[str], Any) -> None
-        super(LogsQueryRequest, self).__init__(**kwargs)
+        include_statistics = kwargs.pop("include_statistics", False)
+        include_render = kwargs.pop("include_render", False)
+        server_timeout = kwargs.pop("server_timeout", None)
+        prefer = ""
+        if server_timeout:
+            prefer += "wait=" + str(server_timeout)
+        if include_statistics:
+            if len(prefer) > 0:
+                prefer += " "
+            prefer += "include-statistics=true"
+        if include_render:
+            if len(prefer) > 0:
+                prefer += " "
+            prefer += "include-render=true"
+
+        headers = kwargs.get("headers", None)
+        try:
+            headers['Prefer'] = prefer
+        except TypeError:
+            headers = {'Prefer': prefer}
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
         timespan = construct_iso8601(start, end, duration)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
         self.id = kwargs.get("request_id", str(uuid.uuid4()))
-        self.headers = kwargs.get("headers", None)
         self.body = {
             "query": query, "timespan": timespan, "workspaces": additional_workspaces
         }
+        self.headers = headers
         self.workspace = workspace_id
-
 
 class LogsQueryResult(object):
     """The LogsQueryResult.
@@ -234,8 +253,7 @@ class LogsBatchResults(object):
         return cls(
             responses=order_results(request_order, [
                 LogsQueryResult._from_generated(rsp) for rsp in generated.responses # pylint: disable=protected-access
-                ]),
-            error=LogsBatchResultError._from_generated(generated.error) # pylint: disable=protected-access
+                ])
         )
 
 
@@ -264,32 +282,6 @@ class LogsBatchResultError(object):
             code=generated.code,
             details=generated.inner_error.details
         )
-
-class LogsErrorDetails(InternalErrorDetails):
-    """ErrorDetails.
-
-    :param code:
-    :type code: str
-    :param message:
-    :type message: str
-    :param target:
-    :type target: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LogsErrorDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
 
 
 class MetricNamespace(object):

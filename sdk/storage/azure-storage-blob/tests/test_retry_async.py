@@ -28,13 +28,9 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from _shared.testcase import (
-    ResponseCallback,
-    RetryCounter,
-    GlobalStorageAccountPreparer
-)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RetryCounter, ResponseCallback
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -161,7 +157,7 @@ class StorageRetryTestAsync(AsyncStorageTestCase):
         try:
             with self.assertRaises(AzureError) as error:
                 await service.create_container(container_name)
-            
+
 
             # Assert
             # 3 retries + 1 original == 4

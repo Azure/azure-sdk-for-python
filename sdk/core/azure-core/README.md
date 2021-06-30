@@ -4,9 +4,9 @@
 Azure core provides shared exceptions and modules for Python SDK client libraries.
 These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/index.html) .
 
-If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
+If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/)
 
 ## Getting started
 
@@ -111,6 +111,21 @@ class TooManyRedirectsError(HttpResponseError):
 *args* are any additional args to be included with exception.
 
 *kwargs* are keyword arguments to include with the exception.
+
+#### **Provisional** StreamConsumedError
+A **provisional** error thrown if you try to access the stream of the **provisional**
+responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
+the response stream has been consumed.
+
+#### **Provisional** StreamClosedError
+A **provisional** error thrown if you try to access the stream of the **provisional**
+responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` once
+the response stream has been closed.
+
+#### **Provisional** ResponseNotReadError
+A **provisional** error thrown if you try to access the `content` of the **provisional**
+responses `azure.core.rest.HttpResponse` or `azure.core.rest.AsyncHttpResponse` before
+reading in the response's bytes first.
 
 ### Configurations
 

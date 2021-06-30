@@ -5,6 +5,7 @@
 """Credentials for Azure SDK clients."""
 
 from ._auth_record import AuthenticationRecord
+from ._enums import RegionalAuthority
 from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
@@ -44,6 +45,7 @@ __all__ = [
     "EnvironmentCredential",
     "InteractiveBrowserCredential",
     "KnownAuthorities",
+    "RegionalAuthority",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "TokenCachePersistenceOptions",
