@@ -38,6 +38,7 @@ if TYPE_CHECKING:
 
 
 class AttestationAdministrationClient(object):
+    # pylint: disable = line-too-long
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
     The :class:`~azure.security.attestation.AttestationAdministrationClient` object implements the policy
@@ -114,6 +115,7 @@ class AttestationAdministrationClient(object):
     @distributed_trace
     def get_policy(self, attestation_type, **kwargs):
         # type: (Union[str, AttestationType], **Any) -> Tuple[str, AttestationToken]
+        # pylint: disable = line-too-long
         """Retrieves the attestation policy for a specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -162,30 +164,35 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         policyResult = self._client.policy.get(attestation_type, **kwargs)
         token = AttestationToken(
             token=policyResult.token, body_type=GeneratedPolicyResult
         )
-        token_body = token._get_body() #pylint: disable = protected-access
+        token_body = token._get_body()  # pylint: disable = protected-access
         stored_policy = AttestationToken(
             token=token_body.policy, body_type=GeneratedStoredAttestationPolicy
         )
 
-        policy_body = stored_policy._get_body()  #pylint: disable = protected-access
+        policy_body = stored_policy._get_body()  # pylint: disable = protected-access
         actual_policy = (
             policy_body.attestation_policy if policy_body else "".encode("ascii")
         )  # type: bytes
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )
 
         return actual_policy.decode("utf-8"), token
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, **kwargs):
         # type: (Union[str, AttestationType], str, **Any) -> Tuple[AttestationPolicyResult, AttestationToken]
+        # pylint: disable = line-too-long
         """Sets the attestation policy for the specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -274,7 +281,9 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         policyResult = self._client.policy.set(
             attestation_type=attestation_type,
@@ -286,13 +295,21 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )  # pylint: disable = protected-access
 
-        return AttestationPolicyResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
+        return (
+            AttestationPolicyResult._from_generated(  # pylint: disable = protected-access
+                token._get_body()  # pylint: disable = protected-access
+            ),
+            token,
+        )
 
     @distributed_trace
     def reset_policy(self, attestation_type, **kwargs):
         # type: (Union[str, AttestationType], **Dict[str, Any]) -> Tuple[AttestationPolicyResult, AttestationToken]
+        # pylint: disable = line-too-long
         """Resets the attestation policy for the specified attestation type to the default value.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
@@ -368,7 +385,9 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         policyResult = self._client.policy.reset(
             attestation_type=attestation_type,
@@ -380,13 +399,21 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )
 
-        return AttestationPolicyResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
+        return (
+            AttestationPolicyResult._from_generated(  # pylint: disable = protected-access
+                token._get_body()  # pylint: disable = protected-access
+            ),
+            token,
+        )  # pylint: disable = protected-access
 
     @distributed_trace
     def get_policy_management_certificates(self, **kwargs):
         # type: (**Any) -> Tuple[List[List[str]], AttestationToken]
+        # pylint: disable = line-too-long
         """Retrieves the set of policy management certificates for the instance.
 
         The list of policy management certificates will only have values if the
@@ -431,7 +458,9 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         cert_response = self._client.policy_certificates.get(**kwargs)
         token = AttestationToken(
@@ -439,10 +468,12 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )
         certificates = []
 
-        cert_list = token._get_body()  #pylint: disable = protected-access
+        cert_list = token._get_body()  # pylint: disable = protected-access
 
         for key in cert_list.policy_certificates.keys:
             key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
@@ -452,6 +483,7 @@ class AttestationAdministrationClient(object):
     @distributed_trace
     def add_policy_management_certificate(self, *args, **kwargs):
         # type: (*str, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
+        # pylint: disable = line-too-long
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
         :param str certificate_to_add: PEM encoded X.509 certificate to add to
@@ -547,7 +579,9 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         cert_response = self._client.policy_certificates.add(
             cert_add_token.to_jwt_string(), **kwargs
@@ -558,15 +592,20 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )  # pylint: disable = protected-access
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()),  #pylint: disable = protected-access
+            AttestationPolicyCertificateResult._from_generated(  # pylint: disable = protected-access
+                token._get_body()  # pylint: disable = protected-access
+            ),
             token,
         )
 
     @distributed_trace
     def remove_policy_management_certificate(self, *args, **kwargs):
         # type: (*str, **Any) -> Tuple[AttestationPolicyCertificateResult, AttestationToken]
+        # pylint: disable = line-too-long
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
         :param str certificate_to_remove: PEM encoded X.509 certificate to remove from
@@ -657,7 +696,9 @@ class AttestationAdministrationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         cert_response = self._client.policy_certificates.remove(
             cert_add_token.to_jwt_string(), **kwargs
@@ -668,9 +709,13 @@ class AttestationAdministrationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options) #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()), #pylint: disable = protected-access
+            AttestationPolicyCertificateResult._from_generated(  # pylint: disable = protected-access
+                token._get_body()  # pylint: disable = protected-access
+            ),
             token,
         )
 
@@ -685,7 +730,9 @@ class AttestationAdministrationClient(object):
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(key) #pylint: disable = protected-access
+                        AttestationSigner._from_generated(
+                            key
+                        )  # pylint: disable = protected-access
                     )
             signers = self._signing_certificates
         return signers

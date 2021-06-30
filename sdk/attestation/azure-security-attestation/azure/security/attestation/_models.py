@@ -131,7 +131,7 @@ class AttestationPolicyResult(object):
         )
 
 
-class AttestationResult(object): #pylint: disable=too-many-instance-attributes
+class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     """An AttestationResult represents the claims returned from the attestation
     service as a result of a call to
     :meth:`azure.security.attestation.AttestationClient.attest_sgx`, or :meth:`AttestationClient.attest_open_enclave`.
@@ -214,7 +214,9 @@ class AttestationResult(object): #pylint: disable=too-many-instance-attributes
             inittime_claims=generated.inittime_claims,
             policy_claims=generated.policy_claims,
             verifier_type=generated.verifier_type,
-            policy_signer=AttestationSigner._from_generated(generated.policy_signer), #pylint: disable=protected-access
+            policy_signer=AttestationSigner._from_generated(  # pylint: disable=protected-access
+                generated.policy_signer
+            ),
             policy_hash=generated.policy_hash,
             is_debuggable=generated.is_debuggable,
             product_id=generated.product_id,
@@ -338,7 +340,9 @@ class AttestationResult(object): #pylint: disable=too-many-instance-attributes
 
         :rtype: azure.security.attestation.AttestationSigner or None
         """
-        return AttestationSigner._from_generated(self._policy_signer) #pylint: disable=protected-access
+        return AttestationSigner._from_generated(  # pylint: disable=protected-access
+            self._policy_signer
+        )
 
     @property
     def policy_hash(self):
@@ -793,9 +797,12 @@ class AttestationToken(object):
                     )
                 return signer
             except InvalidSignature as ex:
-                raise_from(AttestationTokenValidationException(
-                    "Could not verify signature of attestation token."
-                ), ex)
+                raise_from(
+                    AttestationTokenValidationException(
+                        "Could not verify signature of attestation token."
+                    ),
+                    ex,
+                )
         return None
 
     def _validate_static_properties(self, **kwargs):
@@ -939,4 +946,6 @@ class AttestationTokenValidationException(ValueError):
 
     def __init__(self, message):
         self.message = message
-        super(AttestationTokenValidationException, self).__init__(self.message) #pylint: disable=super-with-arguments
+        super(  # pylint: disable=super-with-arguments
+            AttestationTokenValidationException, self
+        ).__init__(self.message)

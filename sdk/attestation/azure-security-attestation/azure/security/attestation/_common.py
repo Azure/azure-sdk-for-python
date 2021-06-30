@@ -21,7 +21,6 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-
 def base64url_encode(unencoded):
     # type: (bytes) -> str
     base64val = base64.urlsafe_b64encode(unencoded)

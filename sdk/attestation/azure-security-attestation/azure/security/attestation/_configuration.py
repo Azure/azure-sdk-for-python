@@ -38,6 +38,8 @@ class AttestationClientConfiguration(Configuration):
         self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(AttestationClientConfiguration, self).__init__(**kwargs) #pylint: disable=super-with-arguments
+        super(  # pylint: disable=super-with-arguments
+            AttestationClientConfiguration, self
+        ).__init__(**kwargs)
 
         self._kwargs = kwargs.copy()

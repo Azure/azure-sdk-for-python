@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-
 from typing import Dict, List, Any, TYPE_CHECKING, Tuple
 
 import json
@@ -28,11 +27,11 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class AttestationClient(object):
+    # pylint: disable=line-too-long
     """An AttestationClient object enables access to the Attestation family of APIs provided
       by the attestation service.
-
-
 
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
@@ -103,7 +102,11 @@ class AttestationClient(object):
         signing_certificates = await self._client.signing_certificates.get(**kwargs)
         signers = []
         for key in signing_certificates.keys:
-            signers.append(AttestationSigner._from_generated(key)) #pylint: disable=protected-access
+            signers.append(
+                AttestationSigner._from_generated(  # pylint: disable=protected-access
+                    key
+                )
+            )
         return signers
 
     @distributed_trace_async
@@ -117,6 +120,7 @@ class AttestationClient(object):
         runtime_data: bytes = None,
         **kwargs: Any
     ) -> Tuple[AttestationResult, AttestationToken]:
+        # pylint: disable=line-too-long
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
@@ -206,7 +210,9 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable=protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable=protected-access
+        )
 
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken(
@@ -214,8 +220,15 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(await self._get_signers(**kwargs), **options) #pylint: disable=protected-access
-        return AttestationResult._from_generated(token._get_body()), token #pylint: disable=protected-access
+            token._validate_token(  # pylint: disable=protected-access
+                await self._get_signers(**kwargs), **options
+            )
+        return (
+            AttestationResult._from_generated(  # pylint: disable=protected-access
+                token._get_body()  # pylint: disable=protected-access
+            ),
+            token,
+        )
 
     @distributed_trace_async
     async def attest_open_enclave(
@@ -228,6 +241,7 @@ class AttestationClient(object):
         runtime_data: bytes = None,
         **kwargs: Any
     ) -> Tuple[AttestationResult, AttestationToken]:
+        # pylint: disable=line-too-long
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -328,7 +342,9 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs) #pylint: disable=protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable=protected-access
+        )
 
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken(
@@ -336,8 +352,15 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(await self._get_signers(**kwargs), **options) #pylint: disable=protected-access
-        return AttestationResult._from_generated(token._get_body()), token #pylint: disable=protected-access
+            token._validate_token(  # pylint: disable=protected-access
+                await self._get_signers(**kwargs), **options
+            )
+        return (
+            AttestationResult._from_generated(  # pylint: disable=protected-access
+                token._get_body()  # pylint: disable=protected-access
+            ),
+            token,
+        )
 
     @distributed_trace_async
     async def attest_tpm(self, content: str, **kwargs: Any) -> str:
@@ -369,7 +392,9 @@ class AttestationClient(object):
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(key) #pylint: disable=protected-access
+                        AttestationSigner._from_generated(  # pylint: disable=protected-access
+                            key
+                        )
                     )
             signers = self._signing_certificates
         return signers

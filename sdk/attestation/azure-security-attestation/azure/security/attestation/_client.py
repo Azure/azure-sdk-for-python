@@ -112,7 +112,11 @@ class AttestationClient(object):
         signers = []
         for key in signing_certificates.keys:
             # Convert the returned certificate chain into an array of X.509 Certificates.
-            signers.append(AttestationSigner._from_generated(key))  #pylint: disable = protected-access
+            signers.append(
+                AttestationSigner._from_generated(  # pylint: disable = protected-access
+                    key
+                )
+            )
         return signers
 
     @distributed_trace
@@ -215,7 +219,9 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken(
@@ -223,9 +229,16 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )
 
-        return AttestationResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
+        return (
+            AttestationResult._from_generated(  # pylint: disable = protected-access
+                token._get_body()  # pylint: disable = protected-access
+            ),
+            token,
+        )
 
     @distributed_trace
     def attest_open_enclave(
@@ -338,7 +351,9 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(self._config._kwargs, kwargs)  #pylint: disable = protected-access
+        options = merge_validation_args(
+            self._config._kwargs, kwargs  # pylint: disable = protected-access
+        )
 
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken(
@@ -346,8 +361,15 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(self._get_signers(**kwargs), **options)  #pylint: disable = protected-access
-        return AttestationResult._from_generated(token._get_body()), token  #pylint: disable = protected-access
+            token._validate_token(  # pylint: disable = protected-access
+                self._get_signers(**kwargs), **options
+            )
+        return (
+            AttestationResult._from_generated(  # pylint: disable = protected-access
+                token._get_body()  # pylint: disable = protected-access
+            ),
+            token,
+        )  # pylint: disable = protected-access
 
     @distributed_trace
     def attest_tpm(self, content, **kwargs):
@@ -379,7 +401,9 @@ class AttestationClient(object):
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(key) #pylint: disable = protected-access
+                        AttestationSigner._from_generated(
+                            key
+                        )  # pylint: disable = protected-access
                     )
             signers = self._signing_certificates
         return signers
