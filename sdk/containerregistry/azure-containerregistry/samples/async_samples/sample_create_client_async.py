@@ -51,11 +51,16 @@ class CreateClients(object):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry.aio import ContainerRegistryClient
-        from azure.identity.aio import DefaultAzureCredential
+        from azure.identity.aio import ClientSecretCredential
 
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         authority = self.get_authority(account_url)
-        credential = DefaultAzureCredential(authority=authority)
+        credential = ClientSecretCredential(
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+            authority=authority
+        )
         credential_scopes = self.get_credential_scopes(authority)
 
         client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)
@@ -64,11 +69,16 @@ class CreateClients(object):
     async def basic_sample(self):
 
         from azure.containerregistry.aio import ContainerRegistryClient
-        from azure.identity.aio import DefaultAzureCredential
+        from azure.identity.aio import ClientSecretCredential
 
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         authority = self.get_authority(account_url)
-        credential = DefaultAzureCredential(authority=authority)
+        credential = ClientSecretCredential(
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+            authority=authority
+        )
         credential_scopes = self.get_credential_scopes(authority)
 
         client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)

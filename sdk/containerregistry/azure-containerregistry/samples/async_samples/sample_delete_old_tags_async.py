@@ -52,12 +52,17 @@ class DeleteOperations(object):
         from azure.containerregistry.aio import (
             ContainerRegistryClient,
         )
-        from azure.identity.aio import DefaultAzureCredential
+        from azure.identity.aio import ClientSecretCredential
 
         # [START list_repository_names]
         account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         authority = self.get_authority(account_url)
-        credential = DefaultAzureCredential(authority=authority)
+        credential = ClientSecretCredential(
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+            authority=authority
+        )
         credential_scopes = self.get_credential_scopes(authority)
 
         client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)
@@ -70,16 +75,17 @@ class DeleteOperations(object):
                 # [START list_tag_properties]
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
-                async for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
-                    tag_count += 1
-                    if tag_count > 3:
-                        await client.delete_tag(repository, tag.name)
+                if repository == "hello-world":
+                    async for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+                        tag_count += 1
+                        if tag_count > 3:
+                            await client.delete_tag(repository, tag.name)
                 # [END list_tag_properties]
 
 
 async def main():
     sample = DeleteOperations()
-    sample.delete_old_tags()
+    await sample.delete_old_tags()
 
 
 if __name__ == "__main__":

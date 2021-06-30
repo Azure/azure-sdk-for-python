@@ -50,27 +50,38 @@ class CreateClients(object):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry import ContainerRegistryClient
-        from azure.identity import DefaultAzureCredential
+        from azure.identity import ClientSecretCredential
 
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        authority = self.get_authority(account_url)
-        credential = DefaultAzureCredential(authority=authority)
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        authority = self.get_authority(endpoint)
+        credential = ClientSecretCredential(
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+            authority=authority
+        )
         credential_scopes = self.get_credential_scopes(authority)
 
-        client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)
+        client = ContainerRegistryClient(endpoint, credential, credential_scopes=credential_scopes)
         # [END create_registry_client]
 
     def basic_sample(self):
 
         from azure.containerregistry import ContainerRegistryClient
-        from azure.identity import DefaultAzureCredential
+        from azure.identity import ClientSecretCredential
 
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        authority = self.get_authority(account_url)
-        credential = DefaultAzureCredential(authority=authority)
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        authority = self.get_authority(endpoint)
+        credential = ClientSecretCredential(
+            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+            authority=authority
+        )
         credential_scopes = self.get_credential_scopes(authority)
 
-        client = ContainerRegistryClient(account_url, credential, credential_scopes=credential_scopes)
+        print(credential_scopes, authority, endpoint)
+        client = ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=credential_scopes)
         with client:
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
