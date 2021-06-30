@@ -220,14 +220,38 @@ def get_authorization_scope(authority):
         logger.warning("US Gov scope")
         return "https://management.usgovcloudapi.net/.default"
 
+def get_base_url(authority):
+    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+        logger.warning("Public auth scope")
+        return AZURE_PUBLIC_CLOUD
+    if authority == AzureAuthorityHosts.AZURE_CHINA:
+        logger.warning("China scope")
+        return AZURE_CHINA_CLOUD
+    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
+        logger.warning("US Gov scope")
+        return AZURE_US_GOV_CLOUD
+
+
+
+from azure.identity import ClientSecretCredential
+from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
     logger.warning("Import image authority: {}".format(authority))
-    mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01", base_url="https://management.azure.us",
+    credential = ClientSecretCredential(
+        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+        authority=authority
     )
-    logger.warning("LOGGING: {} {}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
+    sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    base_url = get_base_url(authority)
+    credential_scopes = [base_url.endpoints.resource_manager + "/.default"]
+    mgmt_client = ContainerRegistryManagementClient(
+        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=credential_scopes
+    )
+    logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
     registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
@@ -247,7 +271,7 @@ def import_image(authority, repository, tags):
 
     # Do the same for anonymous
     mgmt_client = ContainerRegistryManagementClient(
-        DefaultAzureCredential(authority=authority), os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], api_version="2019-05-01"
+        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=credential_scopes
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
