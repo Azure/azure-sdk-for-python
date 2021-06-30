@@ -13,11 +13,12 @@ from ._generated.models import (
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
 
+
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
 
-class DictMixin(object):
 
+class DictMixin(object):
     def __setitem__(self, key, item):
         self.__dict__[key] = item
 
@@ -47,7 +48,7 @@ class DictMixin(object):
         return key in self.__dict__
 
     def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
     def has_key(self, k):
         return k in self.__dict__
@@ -56,13 +57,13 @@ class DictMixin(object):
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        return [k for k in self.__dict__ if not k.startswith('_')]
+        return [k for k in self.__dict__ if not k.startswith("_")]
 
     def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
+        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key, default=None):
         if key in self.__dict__:
@@ -71,16 +72,14 @@ class DictMixin(object):
 
 
 class EntityAssociation(str, Enum):
-    """Describes if the entity is the subject of the text or if it describes someone else.
-    """
+    """Describes if the entity is the subject of the text or if it describes someone else."""
 
     SUBJECT = "subject"
     OTHER = "other"
 
 
 class EntityCertainty(str, Enum):
-    """Describes the entities certainty and polarity.
-    """
+    """Describes the entities certainty and polarity."""
 
     POSITIVE = "positive"
     POSITIVE_POSSIBLE = "positivePossible"
@@ -90,16 +89,14 @@ class EntityCertainty(str, Enum):
 
 
 class EntityConditionality(str, Enum):
-    """Describes any conditionality on the entity.
-    """
+    """Describes any conditionality on the entity."""
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
 
 
 class HealthcareEntityRelation(str, Enum):
-    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
-    """
+    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc."""
 
     ABBREVIATION = "Abbreviation"
     DIRECTION_OF_BODY_STRUCTURE = "DirectionOfBodyStructure"
@@ -139,7 +136,9 @@ class PiiEntityCategory(str, Enum):
     AT_TAX_IDENTIFICATION_NUMBER = "ATTaxIdentificationNumber"
     AT_VALUE_ADDED_TAX_NUMBER = "ATValueAddedTaxNumber"
     AZURE_DOCUMENT_DB_AUTH_KEY = "AzureDocumentDBAuthKey"
-    AZURE_IAAS_DATABASE_CONNECTION_AND_SQL_STRING = "AzureIAASDatabaseConnectionAndSQLString"
+    AZURE_IAAS_DATABASE_CONNECTION_AND_SQL_STRING = (
+        "AzureIAASDatabaseConnectionAndSQLString"
+    )
     AZURE_IO_T_CONNECTION_STRING = "AzureIoTConnectionString"
     AZURE_PUBLISH_SETTING_PASSWORD = "AzurePublishSettingPassword"
     AZURE_REDIS_CACHE_STRING = "AzureRedisCacheString"
@@ -227,7 +226,9 @@ class PiiEntityCategory(str, Enum):
     LV_PERSONAL_CODE = "LVPersonalCode"
     LT_PERSONAL_CODE = "LTPersonalCode"
     LU_NATIONAL_IDENTIFICATION_NUMBER_NATURAL = "LUNationalIdentificationNumberNatural"
-    LU_NATIONAL_IDENTIFICATION_NUMBER_NON_NATURAL = "LUNationalIdentificationNumberNonNatural"
+    LU_NATIONAL_IDENTIFICATION_NUMBER_NON_NATURAL = (
+        "LUNationalIdentificationNumberNonNatural"
+    )
     MY_IDENTITY_CARD_NUMBER = "MYIdentityCardNumber"
     MT_IDENTITY_CARD_NUMBER = "MTIdentityCardNumber"
     MT_TAX_ID_NUMBER = "MTTaxIDNumber"
@@ -255,7 +256,9 @@ class PiiEntityCategory(str, Enum):
     RU_PASSPORT_NUMBER_DOMESTIC = "RUPassportNumberDomestic"
     RU_PASSPORT_NUMBER_INTERNATIONAL = "RUPassportNumberInternational"
     SA_NATIONAL_ID = "SANationalID"
-    SG_NATIONAL_REGISTRATION_IDENTITY_CARD_NUMBER = "SGNationalRegistrationIdentityCardNumber"
+    SG_NATIONAL_REGISTRATION_IDENTITY_CARD_NUMBER = (
+        "SGNationalRegistrationIdentityCardNumber"
+    )
     SK_PERSONAL_NUMBER = "SKPersonalNumber"
     SI_TAX_IDENTIFICATION_NUMBER = "SITaxIdentificationNumber"
     SI_UNIQUE_MASTER_CITIZEN_NUMBER = "SIUniqueMasterCitizenNumber"
@@ -302,8 +305,7 @@ class PiiEntityCategory(str, Enum):
 
 
 class HealthcareEntityCategory(str, Enum):
-    """Healthcare Entity Category.
-    """
+    """Healthcare Entity Category."""
 
     BODY_STRUCTURE = "BodyStructure"
     AGE = "Age"
@@ -335,7 +337,10 @@ class HealthcareEntityCategory(str, Enum):
 
 class PiiEntityDomain(str, Enum):
     """The different domains of PII entities that users can filter by"""
-    PROTECTED_HEALTH_INFORMATION = "phi"  # See https://aka.ms/tanerpii for more information.
+
+    PROTECTED_HEALTH_INFORMATION = (
+        "phi"  # See https://aka.ms/tanerpii for more information.
+    )
 
 
 class DetectedLanguage(DictMixin):
@@ -361,12 +366,15 @@ class DetectedLanguage(DictMixin):
     @classmethod
     def _from_generated(cls, language):
         return cls(
-            name=language.name, iso6391_name=language.iso6391_name, confidence_score=language.confidence_score
+            name=language.name,
+            iso6391_name=language.iso6391_name,
+            confidence_score=language.confidence_score,
         )
 
     def __repr__(self):
-        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={})" \
-            .format(self.name, self.iso6391_name, self.confidence_score)[:1024]
+        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={})".format(
+            self.name, self.iso6391_name, self.confidence_score
+        )[:1024]
 
 
 class RecognizeEntitiesResult(DictMixin):
@@ -399,8 +407,15 @@ class RecognizeEntitiesResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizeEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
+            self.id,
+            repr(self.entities),
+            repr(self.warnings),
+            repr(self.statistics),
+            self.is_error,
+        )[
+            :1024
+        ]
 
 
 class RecognizePiiEntitiesResult(DictMixin):
@@ -438,15 +453,17 @@ class RecognizePiiEntitiesResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizePiiEntitiesResult(id={}, entities={}, redacted_text={}, warnings={}, " \
-            "statistics={}, is_error={})" .format(
+        return (
+            "RecognizePiiEntitiesResult(id={}, entities={}, redacted_text={}, warnings={}, "
+            "statistics={}, is_error={})".format(
                 self.id,
                 repr(self.entities),
                 self.redacted_text,
                 repr(self.warnings),
                 repr(self.statistics),
-                self.is_error
+                self.is_error,
             )[:1024]
+        )
 
 
 class AnalyzeHealthcareEntitiesResult(DictMixin):
@@ -485,30 +502,42 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
-
     @classmethod
     def _from_generated(cls, healthcare_result):
-        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
-        relations = [HealthcareRelation._from_generated(r, entities) for r in healthcare_result.relations]  # pylint: disable=protected-access
+        entities = [
+            HealthcareEntity._from_generated(e) for e in healthcare_result.entities  # pylint: disable=protected-access
+        ]
+        relations = [
+            HealthcareRelation._from_generated(r, entities)  # pylint: disable=protected-access
+            for r in healthcare_result.relations
+        ]
 
         return cls(
             id=healthcare_result.id,
             entities=entities,
             entity_relations=relations,
-            warnings=[TextAnalyticsWarning._from_generated(w) for w in healthcare_result.warnings],  # pylint: disable=protected-access
-            statistics=TextDocumentStatistics._from_generated(healthcare_result.statistics),  # pylint: disable=protected-access
+            warnings=[
+                TextAnalyticsWarning._from_generated(w)  # pylint: disable=protected-access
+                for w in healthcare_result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                healthcare_result.statistics
+            ),
         )
 
     def __repr__(self):
-        return "AnalyzeHealthcareEntitiesResult(id={}, entities={}, entity_relations={}, warnings={}, "\
-        "statistics={}, is_error={})".format(
-            self.id,
-            repr(self.entities),
-            repr(self.entity_relations),
-            repr(self.warnings),
-            repr(self.statistics),
-            self.is_error
-        )[:1024]
+        return (
+            "AnalyzeHealthcareEntitiesResult(id={}, entities={}, entity_relations={}, warnings={}, "
+            "statistics={}, is_error={})".format(
+                self.id,
+                repr(self.entities),
+                repr(self.entity_relations),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[:1024]
+        )
+
 
 class HealthcareRelation(DictMixin):
     """HealthcareRelation is a result object which represents a relation detected in a document.
@@ -531,7 +560,9 @@ class HealthcareRelation(DictMixin):
     @classmethod
     def _from_generated(cls, healthcare_relation_result, entities):
         roles = [
-            HealthcareRelationRole._from_generated(r, entities)  # pylint: disable=protected-access
+            HealthcareRelationRole._from_generated(  # pylint: disable=protected-access
+                r, entities
+            )
             for r in healthcare_relation_result.entities
         ]
         return cls(
@@ -544,6 +575,7 @@ class HealthcareRelation(DictMixin):
             self.relation_type,
             repr(self.roles),
         )[:1024]
+
 
 class HealthcareRelationRole(DictMixin):
     """A model representing a role in a relation.
@@ -569,14 +601,16 @@ class HealthcareRelationRole(DictMixin):
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
         nums = _get_indices(healthcare_role_result.ref)
-        entity_index = nums[1]  # first num parsed from index is document #, second is entity index
+        entity_index = nums[
+            1
+        ]  # first num parsed from index is document #, second is entity index
         return entities[entity_index]
 
     @classmethod
     def _from_generated(cls, healthcare_role_result, entities):
         return cls(
             name=healthcare_role_result.role,
-            entity=HealthcareRelationRole._get_entity(healthcare_role_result, entities)
+            entity=HealthcareRelationRole._get_entity(healthcare_role_result, entities),
         )
 
     def __repr__(self):
@@ -614,9 +648,16 @@ class DetectLanguageResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, "\
-            "is_error={})".format(self.id, repr(self.primary_language), repr(self.warnings),
-            repr(self.statistics), self.is_error)[:1024]
+        return (
+            "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, "
+            "is_error={})".format(
+                self.id,
+                repr(self.primary_language),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[:1024]
+        )
 
 
 class CategorizedEntity(DictMixin):
@@ -644,12 +685,12 @@ class CategorizedEntity(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.category = kwargs.get('category', None)
-        self.subcategory = kwargs.get('subcategory', None)
-        self.length = kwargs.get('length', None)
-        self.offset = kwargs.get('offset', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
+        self.text = kwargs.get("text", None)
+        self.category = kwargs.get("category", None)
+        self.subcategory = kwargs.get("subcategory", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -670,15 +711,17 @@ class CategorizedEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "CategorizedEntity(text={}, category={}, subcategory={}, "\
+        return (
+            "CategorizedEntity(text={}, category={}, subcategory={}, "
             "length={}, offset={}, confidence_score={})".format(
-            self.text,
-            self.category,
-            self.subcategory,
-            self.length,
-            self.offset,
-            self.confidence_score
-        )[:1024]
+                self.text,
+                self.category,
+                self.subcategory,
+                self.length,
+                self.offset,
+                self.confidence_score,
+            )[:1024]
+        )
 
 
 class PiiEntity(DictMixin):
@@ -701,12 +744,12 @@ class PiiEntity(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.category = kwargs.get('category', None)
-        self.subcategory = kwargs.get('subcategory', None)
-        self.length = kwargs.get('length', None)
-        self.offset = kwargs.get('offset', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
+        self.text = kwargs.get("text", None)
+        self.category = kwargs.get("category", None)
+        self.subcategory = kwargs.get("subcategory", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -721,14 +764,14 @@ class PiiEntity(DictMixin):
 
     def __repr__(self):
         return (
-            "PiiEntity(text={}, category={}, subcategory={}, length={}, "\
+            "PiiEntity(text={}, category={}, subcategory={}, length={}, "
             "offset={}, confidence_score={})".format(
                 self.text,
                 self.category,
                 self.subcategory,
                 self.length,
                 self.offset,
-                self.confidence_score
+                self.confidence_score,
             )[:1024]
         )
 
@@ -791,26 +834,32 @@ class HealthcareEntity(DictMixin):
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
             data_sources=[
-                HealthcareEntityDataSource(entity_id=l.id, name=l.data_source) for l in healthcare_entity.links
-            ] if healthcare_entity.links else None
+                HealthcareEntityDataSource(entity_id=l.id, name=l.data_source)
+                for l in healthcare_entity.links
+            ]
+            if healthcare_entity.links
+            else None,
         )
 
     def __hash__(self):
         return hash(repr(self))
 
     def __repr__(self):
-        return "HealthcareEntity(text={}, normalized_text={}, category={}, subcategory={}, assertion={}, length={}, "\
-        "offset={}, confidence_score={}, data_sources={})".format(
-            self.text,
-            self.normalized_text,
-            self.category,
-            self.subcategory,
-            repr(self.assertion),
-            self.length,
-            self.offset,
-            self.confidence_score,
-            repr(self.data_sources),
-        )[:1024]
+        return (
+            "HealthcareEntity(text={}, normalized_text={}, category={}, subcategory={}, assertion={}, length={}, "
+            "offset={}, confidence_score={}, data_sources={})".format(
+                self.text,
+                self.normalized_text,
+                self.category,
+                self.subcategory,
+                repr(self.assertion),
+                self.length,
+                self.offset,
+                self.confidence_score,
+                repr(self.data_sources),
+            )[:1024]
+        )
+
 
 class HealthcareEntityAssertion(DictMixin):
     """Contains various assertions about a `HealthcareEntity`.
@@ -865,7 +914,9 @@ class HealthcareEntityDataSource(DictMixin):
         self.name = kwargs.get("name", None)
 
     def __repr__(self):
-        return "HealthcareEntityDataSource(entity_id={}, name={})".format(self.entity_id, self.name)[:1024]
+        return "HealthcareEntityDataSource(entity_id={}, name={})".format(
+            self.entity_id, self.name
+        )[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -886,9 +937,9 @@ class TextAnalyticsError(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
 
     @classmethod
     def _from_generated(cls, err):
@@ -896,17 +947,15 @@ class TextAnalyticsError(DictMixin):
             return cls(
                 code=err.innererror.code,
                 message=err.innererror.message,
-                target=err.innererror.target
+                target=err.innererror.target,
             )
-        return cls(
-            code=err.code,
-            message=err.message,
-            target=err.target
-        )
+        return cls(code=err.code, message=err.message, target=err.target)
 
     def __repr__(self):
-        return "TextAnalyticsError(code={}, message={}, target={})" \
-            .format(self.code, self.message, self.target)[:1024]
+        return "TextAnalyticsError(code={}, message={}, target={})".format(
+            self.code, self.message, self.target
+        )[:1024]
+
 
 class TextAnalyticsWarning(DictMixin):
     """TextAnalyticsWarning contains the warning code and message that explains why
@@ -920,8 +969,8 @@ class TextAnalyticsWarning(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
 
     @classmethod
     def _from_generated(cls, warning):
@@ -931,8 +980,9 @@ class TextAnalyticsWarning(DictMixin):
         )
 
     def __repr__(self):
-        return "TextAnalyticsWarning(code={}, message={})" \
-            .format(self.code, self.message)[:1024]
+        return "TextAnalyticsWarning(code={}, message={})".format(
+            self.code, self.message
+        )[:1024]
 
 
 class ExtractKeyPhrasesResult(DictMixin):
@@ -966,8 +1016,15 @@ class ExtractKeyPhrasesResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, self.key_phrases, repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, warnings={}, statistics={}, is_error={})".format(
+            self.id,
+            self.key_phrases,
+            repr(self.warnings),
+            repr(self.statistics),
+            self.is_error,
+        )[
+            :1024
+        ]
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
@@ -1000,8 +1057,15 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeLinkedEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizeLinkedEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
+            self.id,
+            repr(self.entities),
+            repr(self.warnings),
+            repr(self.statistics),
+            self.is_error,
+        )[
+            :1024
+        ]
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -1045,10 +1109,18 @@ class AnalyzeSentimentResult(DictMixin):
         self.is_error = False
 
     def __repr__(self):
-        return "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, "\
-                 "sentences={}, is_error={})".format(
-                 self.id, self.sentiment, repr(self.warnings), repr(self.statistics),
-                 repr(self.confidence_scores), repr(self.sentences), self.is_error)[:1024]
+        return (
+            "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, "
+            "sentences={}, is_error={})".format(
+                self.id,
+                self.sentiment,
+                repr(self.warnings),
+                repr(self.statistics),
+                repr(self.confidence_scores),
+                repr(self.sentences),
+                self.is_error,
+            )[:1024]
+        )
 
 
 class TextDocumentStatistics(DictMixin):
@@ -1076,8 +1148,11 @@ class TextDocumentStatistics(DictMixin):
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
-            .format(self.character_count, self.transaction_count)[:1024]
+        return (
+            "TextDocumentStatistics(character_count={}, transaction_count={})".format(
+                self.character_count, self.transaction_count
+            )[:1024]
+        )
 
 
 class DocumentError(DictMixin):
@@ -1102,30 +1177,39 @@ class DocumentError(DictMixin):
     def __getattr__(self, attr):
         result_set = set()
         result_set.update(
-            RecognizeEntitiesResult().keys() + RecognizePiiEntitiesResult().keys()
-            + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
-            + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
+            RecognizeEntitiesResult().keys()
+            + RecognizePiiEntitiesResult().keys()
+            + DetectLanguageResult().keys()
+            + RecognizeLinkedEntitiesResult().keys()
+            + AnalyzeSentimentResult().keys()
+            + ExtractKeyPhrasesResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
             raise AttributeError(
                 "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
-                "Document Id: {}\nError: {} - {}\n".
-                format(attr, self.id, self.error.code, self.error.message)
+                "Document Id: {}\nError: {} - {}\n".format(
+                    attr, self.id, self.error.code, self.error.message
+                )
             )
-        raise AttributeError("'DocumentError' object has no attribute '{}'".format(attr))
+        raise AttributeError(
+            "'DocumentError' object has no attribute '{}'".format(attr)
+        )
 
     @classmethod
     def _from_generated(cls, doc_err):
         return cls(
             id=doc_err.id,
-            error=TextAnalyticsError._from_generated(doc_err.error),  # pylint: disable=protected-access
-            is_error=True
+            error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
+                doc_err.error
+            ),
+            is_error=True,
         )
 
     def __repr__(self):
-        return "DocumentError(id={}, error={}, is_error={})" \
-            .format(self.id, repr(self.error), self.is_error)[:1024]
+        return "DocumentError(id={}, error={}, is_error={})".format(
+            self.id, repr(self.error), self.is_error
+        )[:1024]
 
 
 class DetectLanguageInput(LanguageInput):
@@ -1155,8 +1239,9 @@ class DetectLanguageInput(LanguageInput):
         self.country_hint = kwargs.get("country_hint", None)
 
     def __repr__(self):
-        return "DetectLanguageInput(id={}, text={}, country_hint={})" \
-            .format(self.id, self.text, self.country_hint)[:1024]
+        return "DetectLanguageInput(id={}, text={}, country_hint={})".format(
+            self.id, self.text, self.country_hint
+        )[:1024]
 
 
 class LinkedEntity(DictMixin):
@@ -1198,10 +1283,14 @@ class LinkedEntity(DictMixin):
 
     @classmethod
     def _from_generated(cls, entity):
-        bing_entity_search_api_id = entity.bing_id if hasattr(entity, "bing_id") else None
+        bing_entity_search_api_id = (
+            entity.bing_id if hasattr(entity, "bing_id") else None
+        )
         return cls(
             name=entity.name,
-            matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
+            matches=[
+                LinkedEntityMatch._from_generated(e) for e in entity.matches  # pylint: disable=protected-access
+            ],
             language=entity.language,
             data_source_entity_id=entity.id,
             url=entity.url,
@@ -1210,7 +1299,8 @@ class LinkedEntity(DictMixin):
         )
 
     def __repr__(self):
-        return "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, " \
+        return (
+            "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, "
             "data_source={}, bing_entity_search_api_id={})".format(
                 self.name,
                 repr(self.matches),
@@ -1219,7 +1309,8 @@ class LinkedEntity(DictMixin):
                 self.url,
                 self.data_source,
                 self.bing_entity_search_api_id,
-        )[:1024]
+            )[:1024]
+        )
 
 
 class LinkedEntityMatch(DictMixin):
@@ -1269,7 +1360,9 @@ class LinkedEntityMatch(DictMixin):
     def __repr__(self):
         return "LinkedEntityMatch(confidence_score={}, text={}, length={}, offset={})".format(
             self.confidence_score, self.text, self.length, self.offset
-        )[:1024]
+        )[
+            :1024
+        ]
 
 
 class TextDocumentInput(DictMixin, MultiLanguageInput):
@@ -1297,8 +1390,9 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
         self.language = kwargs.get("language", None)
 
     def __repr__(self):
-        return "TextDocumentInput(id={}, text={}, language={})" \
-            .format(self.id, self.text, self.language)[:1024]
+        return "TextDocumentInput(id={}, text={}, language={})".format(
+            self.id, self.text, self.language
+        )[:1024]
 
 
 class TextDocumentBatchStatistics(DictMixin):
@@ -1336,9 +1430,15 @@ class TextDocumentBatchStatistics(DictMixin):
         )
 
     def __repr__(self):
-        return "TextDocumentBatchStatistics(document_count={}, valid_document_count={}, erroneous_document_count={}, " \
-               "transaction_count={})".format(self.document_count, self.valid_document_count,
-                                              self.erroneous_document_count, self.transaction_count)[:1024]
+        return (
+            "TextDocumentBatchStatistics(document_count={}, valid_document_count={}, erroneous_document_count={}, "
+            "transaction_count={})".format(
+                self.document_count,
+                self.valid_document_count,
+                self.erroneous_document_count,
+                self.transaction_count,
+            )[:1024]
+        )
 
 
 class SentenceSentiment(DictMixin):
@@ -1391,30 +1491,39 @@ class SentenceSentiment(DictMixin):
             length = None
         if hasattr(sentence, "targets"):
             mined_opinions = (
-                [MinedOpinion._from_generated(target, results, sentiment) for target in sentence.targets]  # pylint: disable=protected-access
-                if sentence.targets else []
+                [
+                    MinedOpinion._from_generated(target, results, sentiment)  # pylint: disable=protected-access
+                    for target in sentence.targets
+                ]
+                if sentence.targets
+                else []
             )
         else:
             mined_opinions = None
         return cls(
             text=sentence.text,
             sentiment=sentence.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(  # pylint: disable=protected-access
+                sentence.confidence_scores
+            ),
             length=length,
             offset=offset,
-            mined_opinions=mined_opinions
+            mined_opinions=mined_opinions,
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, "\
+        return (
+            "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, "
             "length={}, offset={}, mined_opinions={})".format(
-            self.text,
-            self.sentiment,
-            repr(self.confidence_scores),
-            self.length,
-            self.offset,
-            repr(self.mined_opinions)
-        )[:1024]
+                self.text,
+                self.sentiment,
+                repr(self.confidence_scores),
+                self.length,
+                self.offset,
+                repr(self.mined_opinions),
+            )[:1024]
+        )
+
 
 class MinedOpinion(DictMixin):
     """A mined opinion object represents an opinion we've extracted from a sentence.
@@ -1432,10 +1541,14 @@ class MinedOpinion(DictMixin):
         self.assessments = kwargs.get("assessments", None)
 
     @staticmethod
-    def _get_assessments(relations, results, sentiment):  # pylint: disable=unused-argument
+    def _get_assessments(
+        relations, results, sentiment
+    ):  # pylint: disable=unused-argument
         if not relations:
             return []
-        assessment_relations = [r.ref for r in relations if r.relation_type == "assessment"]
+        assessment_relations = [
+            r.ref for r in relations if r.relation_type == "assessment"
+        ]
         assessments = []
         for assessment_relation in assessment_relations:
             nums = _get_indices(assessment_relation)
@@ -1449,17 +1562,22 @@ class MinedOpinion(DictMixin):
     @classmethod
     def _from_generated(cls, target, results, sentiment):
         return cls(
-            target=TargetSentiment._from_generated(target),  # pylint: disable=protected-access
+            target=TargetSentiment._from_generated(  # pylint: disable=protected-access
+                target
+            ),
             assessments=[
-                AssessmentSentiment._from_generated(assessment)  # pylint: disable=protected-access
-                for assessment in cls._get_assessments(target.relations, results, sentiment)
+                AssessmentSentiment._from_generated(  # pylint: disable=protected-access
+                    assessment
+                )
+                for assessment in cls._get_assessments(
+                    target.relations, results, sentiment
+                )
             ],
         )
 
     def __repr__(self):
         return "MinedOpinion(target={}, assessments={})".format(
-            repr(self.target),
-            repr(self.assessments)
+            repr(self.target), repr(self.assessments)
         )[:1024]
 
 
@@ -1497,20 +1615,24 @@ class TargetSentiment(DictMixin):
         return cls(
             text=target.text,
             sentiment=target.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(target.confidence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(  # pylint: disable=protected-access
+                target.confidence_scores
+            ),
             length=target.length,
             offset=target.offset,
         )
 
     def __repr__(self):
-        return "TargetSentiment(text={}, sentiment={}, confidence_scores={}, "\
+        return (
+            "TargetSentiment(text={}, sentiment={}, confidence_scores={}, "
             "length={}, offset={})".format(
-            self.text,
-            self.sentiment,
-            repr(self.confidence_scores),
-            self.length,
-            self.offset,
-        )[:1024]
+                self.text,
+                self.sentiment,
+                repr(self.confidence_scores),
+                self.length,
+                self.offset,
+            )[:1024]
+        )
 
 
 class AssessmentSentiment(DictMixin):
@@ -1550,22 +1672,24 @@ class AssessmentSentiment(DictMixin):
         return cls(
             text=assessment.text,
             sentiment=assessment.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(assessment.confidence_scores),  # pylint: disable=protected-access
+            confidence_scores=SentimentConfidenceScores._from_generated(  # pylint: disable=protected-access
+                assessment.confidence_scores
+            ),
             length=assessment.length,
             offset=assessment.offset,
-            is_negated=assessment.is_negated
+            is_negated=assessment.is_negated,
         )
 
     def __repr__(self):
         return (
-            "AssessmentSentiment(text={}, sentiment={}, confidence_scores={}, length={}, offset={}, " \
+            "AssessmentSentiment(text={}, sentiment={}, confidence_scores={}, length={}, offset={}, "
             "is_negated={})".format(
                 self.text,
                 self.sentiment,
                 repr(self.confidence_scores),
                 self.length,
                 self.offset,
-                self.is_negated
+                self.is_negated,
             )[:1024]
         )
 
@@ -1583,31 +1707,37 @@ class SentimentConfidenceScores(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.positive = kwargs.get('positive', 0.0)
-        self.neutral = kwargs.get('neutral', 0.0)
-        self.negative = kwargs.get('negative', 0.0)
+        self.positive = kwargs.get("positive", 0.0)
+        self.neutral = kwargs.get("neutral", 0.0)
+        self.negative = kwargs.get("negative", 0.0)
 
     @classmethod
     def _from_generated(cls, score):
         return cls(
             positive=score.positive,
             neutral=score.neutral if hasattr(score, "neutral") else 0.0,
-            negative=score.negative
+            negative=score.negative,
         )
 
     def __repr__(self):
-        return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
-            .format(self.positive, self.neutral, self.negative)[:1024]
+        return "SentimentConfidenceScores(positive={}, neutral={}, negative={})".format(
+            self.positive, self.neutral, self.negative
+        )[:1024]
 
 
 class _AnalyzeActionsType(str, Enum):
-    """The type of action that was applied to the documents
-    """
+    """The type of action that was applied to the documents"""
+
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
-    RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
+    RECOGNIZE_PII_ENTITIES = (
+        "recognize_pii_entities"  #: PII Entities Recognition action.
+    )
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
-    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities"  #: Linked Entities Recognition action.
+    RECOGNIZE_LINKED_ENTITIES = (
+        "recognize_linked_entities"  #: Linked Entities Recognition action.
+    )
     ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
+
 
 class RecognizeEntitiesAction(DictMixin):
     """RecognizeEntitiesAction encapsulates the parameters for starting a long-running Entities Recognition operation.
@@ -1650,8 +1780,11 @@ class RecognizeEntitiesAction(DictMixin):
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "RecognizeEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})" \
-            .format(self.model_version, self.string_index_type, self.disable_service_logs)[:1024]
+        return "RecognizeEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
+            self.model_version, self.string_index_type, self.disable_service_logs
+        )[
+            :1024
+        ]
 
     def to_generated(self):
         return _v3_1_models.EntitiesTask(
@@ -1710,19 +1843,21 @@ class AnalyzeSentimentAction(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.model_version = kwargs.get('model_version', "latest")
-        self.show_opinion_mining = kwargs.get('show_opinion_mining', False)
-        self.string_index_type = kwargs.get('string_index_type', None)
+        self.model_version = kwargs.get("model_version", "latest")
+        self.show_opinion_mining = kwargs.get("show_opinion_mining", False)
+        self.string_index_type = kwargs.get("string_index_type", None)
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "AnalyzeSentimentAction(model_version={}, show_opinion_mining={}, string_index_type={}, "\
+        return (
+            "AnalyzeSentimentAction(model_version={}, show_opinion_mining={}, string_index_type={}, "
             "disable_service_logs={}".format(
-            self.model_version,
-            self.show_opinion_mining,
-            self.string_index_type,
-            self.disable_service_logs,
-        )[:1024]
+                self.model_version,
+                self.show_opinion_mining,
+                self.string_index_type,
+                self.disable_service_logs,
+            )[:1024]
+        )
 
     def to_generated(self):
         return _v3_1_models.SentimentAnalysisTask(
@@ -1793,14 +1928,16 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, categories_filter={}, "\
-               "string_index_type={}, disable_service_logs={}".format(
-            self.model_version,
-            self.domain_filter,
-            self.categories_filter,
-            self.string_index_type,
-            self.disable_service_logs,
-        )[:1024]
+        return (
+            "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, categories_filter={}, "
+            "string_index_type={}, disable_service_logs={}".format(
+                self.model_version,
+                self.domain_filter,
+                self.categories_filter,
+                self.string_index_type,
+                self.disable_service_logs,
+            )[:1024]
+        )
 
     def to_generated(self):
         return _v3_1_models.PiiTask(
@@ -1809,7 +1946,7 @@ class RecognizePiiEntitiesAction(DictMixin):
                 domain=self.domain_filter,
                 pii_categories=self.categories_filter,
                 string_index_type=self.string_index_type,
-                logging_opt_out=self.disable_service_logs
+                logging_opt_out=self.disable_service_logs,
             )
         )
 
@@ -1847,8 +1984,11 @@ class ExtractKeyPhrasesAction(DictMixin):
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "ExtractKeyPhrasesAction(model_version={}, disable_service_logs={})" \
-            .format(self.model_version, self.disable_service_logs)[:1024]
+        return (
+            "ExtractKeyPhrasesAction(model_version={}, disable_service_logs={})".format(
+                self.model_version, self.disable_service_logs
+            )[:1024]
+        )
 
     def to_generated(self):
         return _v3_1_models.KeyPhrasesTask(
@@ -1901,10 +2041,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
 
     def __repr__(self, **kwargs):
-        return "RecognizeLinkedEntitiesAction(model_version={}, string_index_type={}), " \
+        return (
+            "RecognizeLinkedEntitiesAction(model_version={}, string_index_type={}), "
             "disable_service_logs={}".format(
                 self.model_version, self.string_index_type, self.disable_service_logs
             )[:1024]
+        )
 
     def to_generated(self):
         return _v3_1_models.EntityLinkingTask(
