@@ -3,14 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import ClientSecretCredential, TokenCachePersistenceOptions
+from azure.identity import ClientSecretCredential, RegionalAuthority, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 from six.moves.urllib_parse import urlparse
 
-from helpers import build_aad_response, mock_response, msal_validating_transport, Request, validating_transport
+from helpers import build_aad_response, mock_response, msal_validating_transport, Request
 
 try:
     from unittest.mock import Mock, patch
@@ -43,7 +43,7 @@ def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
     transport = msal_validating_transport(
-        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))]
     )
 
     credential = ClientSecretCredential(
@@ -117,6 +117,38 @@ def test_authority(authority):
     assert kwargs["authority"] == expected_authority
 
 
+def test_regional_authority():
+    """the credential should configure MSAL with a regional authority specified via kwarg or environment variable"""
+
+    mock_confidential_client = Mock(
+        return_value=Mock(acquire_token_silent_with_error=lambda *_, **__: {"access_token": "**", "expires_in": 3600})
+    )
+
+    for region in RegionalAuthority:
+        mock_confidential_client.reset_mock()
+
+        with patch.dict("os.environ", {}, clear=True):
+            credential = ClientSecretCredential("tenant", "client-id", "secret", regional_authority=region)
+        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
+            # must call get_token because the credential constructs the MSAL application lazily
+            credential.get_token("scope")
+
+        assert mock_confidential_client.call_count == 1
+        _, kwargs = mock_confidential_client.call_args
+        assert kwargs["azure_region"] == region
+        mock_confidential_client.reset_mock()
+
+        # region can be configured via environment variable
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
+            credential = ClientSecretCredential("tenant", "client-id", "secret")
+        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
+            credential.get_token("scope")
+
+        assert mock_confidential_client.call_count == 1
+        _, kwargs = mock_confidential_client.call_args
+        assert kwargs["azure_region"] == region
+
+
 def test_token_cache():
     """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
@@ -126,7 +158,7 @@ def test_token_cache():
         assert isinstance(credential._cache, TokenCache)
 
         ClientSecretCredential(
-            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions(),
+            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
         )
         assert mock_msal_extensions.PersistedTokenCache.call_count == 1
 
