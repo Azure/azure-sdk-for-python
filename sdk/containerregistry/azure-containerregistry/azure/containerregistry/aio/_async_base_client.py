@@ -40,7 +40,7 @@ class ContainerRegistryBaseClient(object):
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=credential_scopes, #kwargs.get("credential_scopes", "https://management.core.windows.net/.default"),
+            credential_scopes=credential_scopes,
             **kwargs
         )
 
