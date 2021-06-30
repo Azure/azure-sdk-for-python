@@ -47,20 +47,17 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
         return AsyncFakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        return ContainerRegistryClient(
-            endpoint=endpoint,
-            credential=self.get_credential(),
-            **kwargs,
-        )
-
-    def create_registry_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        authorization_scope = get_authorization_scope(authority)
+        credential_scopes = kwargs.pop("credential_scopes", None)
+        if not credential_scopes:
+            credential_scopes = get_authorization_scope(authority)
         credential = self.get_credential(authority=authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, authentication_scope=authorization_scope, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=credential_scopes, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
+        authority = get_authority(endpoint)
+        credential_scopes = get_authorization_scope(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=credential_scopes, **kwargs)
 
 
 def get_authority(endpoint):

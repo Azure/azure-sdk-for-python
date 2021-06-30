@@ -33,8 +33,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type endpoint: str
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
-        :keyword authentication_scope: URL for credential authentication if different from the default
-        :paramtype authentication_scope: str
+        :keyword credential_scopes: URL for credential authentication if different from the default
+        :paramtype credential_scopes: str
         :returns: None
         :raises: None
 
