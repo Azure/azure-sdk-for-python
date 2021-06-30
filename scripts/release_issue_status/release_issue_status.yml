@@ -29,32 +29,25 @@ jobs:
         git config --global user.name "ReleaseIssueStatus"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
-        mkdir azure-sdk-for-python
-        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
-        echo  ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
+        mkdir file-storage
+        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
 
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
-        output_path=$(pwd)/venv-sdk
         pip install -r $script_path/requirement.txt
 
         # import env variable
         export TOKEN=$(USR_TOKEN)
 
         # checkout the target branch
-        cd azure-sdk-for-python
-        git checkout storage-for-release-issue-status
-
-        echo '0000000'
-        echo | git status
-        echo '1111111111'
-        echo | ls
+        cd file-storage
+        git checkout release-issue-status
 
         # run
         python $script_path/main.py
 
         # commit and push
         git add .
-        git commit "update release_issue_status"
+        git commit -m "update release_issue_status.csv"
         git push -f origin HEAD
