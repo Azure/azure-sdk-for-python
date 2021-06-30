@@ -11,7 +11,7 @@ FILE: sample_recognize_pii_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize personally identifiable information in a batch of documents.
-    The endpoint recognize_pii_entities is only available for API version v3.1-preview and up.
+    The endpoint recognize_pii_entities is only available for API version v3.1 and up.
 
     In this sample, we will be working for a company that handles loan payments. To follow privacy guidelines,
     we need to redact all of our information before we make it public.

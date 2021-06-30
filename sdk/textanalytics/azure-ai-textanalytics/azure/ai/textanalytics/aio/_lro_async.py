@@ -161,14 +161,14 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
 
     async def cancel(  # type: ignore
         self, **kwargs
-    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller[None]":
+    ) -> "AsyncLROPoller[None]":
         """Cancel the operation currently being polled.
 
         :keyword int polling_interval: The polling interval to use to poll the cancellation status.
             The default value is 5 seconds.
-        :return: Returns an instance of an LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: Warning when the operation has already reached a terminal state.
+        :return: Returns an instance of an AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
 
         .. admonition:: Example:
 
