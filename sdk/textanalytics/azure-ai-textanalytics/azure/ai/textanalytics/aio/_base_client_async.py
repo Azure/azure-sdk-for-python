@@ -21,8 +21,10 @@ def _authentication_policy(credential):
             name="Ocp-Apim-Subscription-Key", credential=credential
         )
     elif credential is not None and not hasattr(credential, "get_token"):
-        raise TypeError("Unsupported credential: {}. Use an instance of AzureKeyCredential "
-                        "or a token credential from azure.identity".format(type(credential)))
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
     return authentication_policy
 
 

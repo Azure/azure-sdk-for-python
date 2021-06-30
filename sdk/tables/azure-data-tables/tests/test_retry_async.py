@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, ResponseCallback
 
 
 from azure.core.exceptions import (
@@ -22,9 +21,6 @@ from azure.core.pipeline.transport import(
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import (
-    ResponseCallback,
-)
 
 from async_preparers import tables_decorator_async
 

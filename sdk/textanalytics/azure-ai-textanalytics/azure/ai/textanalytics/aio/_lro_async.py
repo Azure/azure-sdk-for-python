@@ -18,7 +18,6 @@ _SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
-
     def finished(self):
         """Is this polling finished?
         :rtype: bool
@@ -78,15 +77,20 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
                 self._pipeline_response.http_response
             )
 
-class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
+class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
+    TextAnalyticsAsyncLROPollingMethod
+):
     def __init__(self, *args, **kwargs):
         self._text_analytics_client = kwargs.pop("text_analytics_client")
-        super(AsyncAnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(*args, **kwargs)
+        super(AsyncAnalyzeHealthcareEntitiesLROPollingMethod, self).__init__(
+            *args, **kwargs
+        )
 
     @property
     def _current_body(self):
         from .._generated.v3_1.models import JobMetadata
+
         return JobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -115,10 +119,8 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsAsyncLROPollin
 
 
 class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType]):
-
     def polling_method(self) -> AsyncAnalyzeHealthcareEntitiesLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller.
-        """
+        """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
 
     @property
@@ -157,9 +159,8 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         """
         return self.polling_method().id
 
-    async def cancel( # type: ignore
-        self,
-        **kwargs
+    async def cancel(  # type: ignore
+        self, **kwargs
     ) -> "AsyncLROPoller[None]":
         """Cancel the operation currently being polled.
 
@@ -182,21 +183,24 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
         await self.polling_method().update_status()
 
         try:
-            return await getattr(self._polling_method, "_text_analytics_client").begin_cancel_health_job(
+            return await getattr(
+                self._polling_method, "_text_analytics_client"
+            ).begin_cancel_health_job(
                 self.id,
-                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval),
             )
 
         except HttpResponseError as error:
             from .._response_handlers import process_http_response_error
+
             process_http_response_error(error)
 
 
 class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
-
     @property
     def _current_body(self):
         from .._generated.v3_1.models import AnalyzeJobMetadata
+
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
     @property
@@ -221,19 +225,19 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def actions_failed_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']['failed']
+        return self._current_body.additional_properties["tasks"]["failed"]
 
     @property
     def actions_in_progress_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']['inProgress']
+        return self._current_body.additional_properties["tasks"]["inProgress"]
 
     @property
     def actions_succeeded_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']["completed"]
+        return self._current_body.additional_properties["tasks"]["completed"]
 
     @property
     def last_modified_on(self):
@@ -245,7 +249,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
     def total_actions_count(self):
         if not self._current_body:
             return None
-        return self._current_body.additional_properties['tasks']["total"]
+        return self._current_body.additional_properties["tasks"]["total"]
 
     @property
     def id(self):
@@ -255,10 +259,8 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
 
 
 class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
-
     def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
-        """Return the polling method associated to this poller.
-        """
+        """Return the polling method associated to this poller."""
         return self._polling_method  # type: ignore
 
     @property
