@@ -66,7 +66,7 @@ class AttestationSigner(object):
     def _from_generated(cls, generated):
         # type: (JSONWebKey) -> AttestationSigner
         if not generated:
-            return cls
+            return cls()
         return cls(generated.x5_c, generated.kid)
 
 
@@ -90,7 +90,7 @@ class AttestationPolicyCertificateResult(object):
     def _from_generated(cls, generated):
         # type: (GeneratedPolicyCertificatesModificationResult) -> AttestationPolicyCertificateResult
         if not generated:
-            return cls
+            return cls(None, None)
         return cls(generated.certificate_thumbprint, generated.certificate_resolution)
 
 
@@ -116,7 +116,7 @@ class AttestationPolicyResult(object):
     """
 
     def __init__(self, policy_resolution, policy_signer, policy_token_hash):
-        # type: (PolicyModification, JSONWebKey, str, str) -> None
+        # type: (PolicyModification, JSONWebKey, str) -> None
         self.policy_resolution = policy_resolution
         self.policy_signer = AttestationSigner._from_generated(policy_signer)
         self.policy_token_hash = policy_token_hash

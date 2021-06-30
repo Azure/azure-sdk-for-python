@@ -10,7 +10,7 @@ Azure Attestation receives evidence from compute entities, turns them into a set
 
 This package has been tested with Python 2.7, 3.6 to 3.9.
 
-For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
+For a more complete view of Azure libraries, see the [azure sdk python release page](https://aka.ms/azsdk/python/all).
 
 > NOTE: This is a preview SDK for the Microsoft Azure Attestation service. It provides all the essential functionality to access the Azure Attestation service, it should be considered 'as-is" and is subject to changes in the future which may break compatibility with previous versions.
 
@@ -195,7 +195,7 @@ policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
     attestation_policy,
     signing_key=key,
     signing_certificate=signing_certificate)
-new_policy,_ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 assert new_policy == attestation_policy
 ```
 
@@ -206,7 +206,7 @@ simplified:
 policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,            
     attestation_policy)
 # Now retrieve the policy which was just set.
-new_policy,_ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+new_policy _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
 
 ```
 
@@ -263,7 +263,7 @@ will hold the input binary runtime_data.
 The token is now passed to the "relying party". The relying party will
 validate that the token was issued by the Attestation Service. It then
 extracts the asymmetric key from the EnclaveHeldData field. The relying
-party will then Encrypt it's "key" data using the asymmetric key and
+party will then Encrypt its "key" data using the asymmetric key and
 transmits it back to the enclave.
 
 ```python
@@ -279,10 +279,10 @@ Additional information on how to perform attestation token validation can be fou
 Use `get_signing_certificates` to retrieve the certificates which can be used to validate the token returned from the attestation service.
 
 ```python
-    signers = attest_client.get_signing_certificates()
-    for signer in signers:
-        cert = cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
-        print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
+signers = attest_client.get_signing_certificates()
+for signer in signers:
+    cert = cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
+    print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 ```
 
 ## Troubleshooting
@@ -290,15 +290,15 @@ Use `get_signing_certificates` to retrieve the certificates which can be used to
 Most Attestation service operations will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md). The attestation service APIs will throw a `HttpResponseError` on failure with helpful error codes. Many of these errors are recoverable.
 
 ```python
-    try:
-    response, _ = attest_client.attest_sgx_enclave(
-            quote,
-            runtime_data=AttestationData(runtime_data, is_json=False))
-    except HttpResponseError as ex:
-        // Ignore invalid quote errors.
-        if ex.error == "InvalidParameter":
-            pass
-    }
+try:
+response, _ = attest_client.attest_sgx_enclave(
+        quote,
+        runtime_data=AttestationData(runtime_data, is_json=False))
+except HttpResponseError as ex:
+    // Ignore invalid quote errors.
+    if ex.error == "InvalidParameter":
+        pass
+}
 ```
 
 Additional troubleshooting information for the MAA service can be found [here](https://docs.microsoft.com/python/api/overview/azure/attestation?view=azure-python-preview)
