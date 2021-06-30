@@ -18,7 +18,7 @@ _SERIALIZER = Serializer()
 
 
 def build_query_knowledgebase_request(
-    **kwargs,  # type: Any
+    **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Answers the specified question using your knowledgebase.
@@ -117,8 +117,6 @@ def build_query_knowledgebase_request(
     project_name = kwargs.pop("project_name")  # type: str
     json = kwargs.pop("json", None)  # type: Any
     deployment_name = kwargs.pop("deployment_name", None)  # type: Optional[str]
-    project_name = kwargs.pop("project_name")  # type: str
-    deployment_name = kwargs.pop("deployment_name", None)  # type: Optional[str]
 
     api_version = "2021-05-01-preview"
     accept = "application/json"
@@ -143,7 +141,7 @@ def build_query_knowledgebase_request(
 
 
 def build_query_text_request(
-    **kwargs,  # type: Any
+    **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Answers the specified question using the provided text in the body.
