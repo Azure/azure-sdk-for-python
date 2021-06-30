@@ -6,8 +6,6 @@ stages:
       AllocateResourceGroup: false
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
-      MatrixReplace:
-        - TestSamples=.*/true
       DeployArmTemplate: true
       SupportedClouds: 'Public,UsGov,China'
       EnvVars:
