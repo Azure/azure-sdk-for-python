@@ -1,0 +1,46 @@
+# Release status statistics
+
+name: ReleaseIssueStatus
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+
+
+jobs:
+- job: ReleaseIssueStatus
+  displayName: ReleaseIssueStatus Python 3.8
+  timeoutInMinutes: 30
+  strategy:
+    maxParallel: 1
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+        addToPath: true
+        architecture: 'x64'
+    - bash: |
+        script_path=$(pwd)/scripts/release_issue_status
+        cd ..
+        git config --global user.email "ReleaseIssueStatus"
+        git config --global user.name "ReleaseIssueStatus"
+
+        # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
+        mkdir azure-sdk-for-python
+        git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
+
+        # create virtual env
+        python -m venv venv-sdk
+        source venv-sdk/bin/activate
+        output_path=$(pwd)/venv-sdk
+        pip install -r $script_path/requirement.txt
+
+        # import env variable
+        export TOKEN=$(USR_TOKEN)
+
+        # run
+        cd azure-sdk-for-python/scripts/release_issue_status
+        python $script_path/main.py
