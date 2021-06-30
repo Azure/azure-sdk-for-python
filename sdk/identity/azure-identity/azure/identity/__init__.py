@@ -9,8 +9,9 @@ from ._enums import RegionalAuthority
 from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
-    AzureCliCredential,
     AuthorizationCodeCredential,
+    AzureApplicationCredential,
+    AzureCliCredential,
     AzurePowerShellCredential,
     CertificateCredential,
     ChainedTokenCredential,
@@ -31,6 +32,7 @@ __all__ = [
     "AuthenticationRecord",
     "AuthenticationRequiredError",
     "AuthorizationCodeCredential",
+    "AzureApplicationCredential",
     "AzureAuthorityHosts",
     "AzureCliCredential",
     "AzurePowerShellCredential",
