@@ -2,6 +2,9 @@
 
 ## 11.3.0b1 (Unreleased)
 
+**New features**
+
+- Added AAD support
 
 ## 11.2.0 (2021-06-08)
 
