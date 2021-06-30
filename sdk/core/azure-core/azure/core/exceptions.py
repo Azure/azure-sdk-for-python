@@ -50,6 +50,9 @@ __all__ = [
     "TooManyRedirectsError",
     "ODataV4Format",
     "ODataV4Error",
+    "StreamConsumedError",
+    "StreamClosedError",
+    "ResponseNotReadError",
 ]
 
 
