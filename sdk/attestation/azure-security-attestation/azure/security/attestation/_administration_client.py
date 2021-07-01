@@ -196,8 +196,7 @@ class AttestationAdministrationClient(object):
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
             which to set the policy.
         :type attestation_type: Union[str, ~azure.security.attestation.AttestationType]
-        :param attestation_policy: Attestation policy to be set.
-        :type attestation_policy: str
+        :param str attestation_policy: Attestation policy to be set.
         :keyword str signing_key: PEM encoded signing key to be used to sign the policy
             before sending it to the service.
         :keyword str signing_certificate: PEM encoded X.509 certificate to be sent to the
