@@ -287,7 +287,6 @@ issuancerules {
 
             print("Issuer of token is: ", response.issuer)
             print("Expiration time: ", token.expires)
-
         # [END attest_open_enclave_shared_with_options]
 
     async def __aenter__(self):
