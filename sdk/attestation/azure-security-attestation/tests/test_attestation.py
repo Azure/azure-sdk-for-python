@@ -7,21 +7,15 @@
 # --------------------------------------------------------------------------
 
 
-from logging import fatal
-from typing import Any, ByteString
-import unittest
+from typing import Any
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-import functools
+from devtools_testutils import AzureTestCase
 import cryptography
 import cryptography.x509
-from cryptography.hazmat.primitives import serialization
-import base64
 import pytest
 from attestation_preparer import AttestationPreparer
 from preparers import AllInstanceTypes
-from helpers import base64url_decode, base64url_encode, pem_from_base64
+from helpers import base64url_decode
 import json
 
 from azure.security.attestation import (

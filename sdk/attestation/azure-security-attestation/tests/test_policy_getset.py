@@ -16,20 +16,13 @@
 # Coverage %      : 100
 # ----------------------
 
-from logging import fatal
-from typing import ByteString, Any
-import unittest
 from cryptography.hazmat.primitives import hashes
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-import functools
-import cryptography.x509
+from devtools_testutils import AzureTestCase
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-import base64
 import pytest
 from preparers import AllAttestationTypes, AllInstanceTypes
 from attestation_preparer import AttestationPreparer
-from helpers import pem_from_base64, base64url_encode, base64url_decode
+from helpers import pem_from_base64
 
 from azure.security.attestation import (
     AttestationAdministrationClient,
@@ -83,7 +76,7 @@ class PolicyGetSetTests(AzureTestCase):
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response, _ = attest_client.reset_policy(attestation_type)
 
-        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_token_hash is None
         assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
     @pytest.mark.live_test_only
@@ -108,7 +101,7 @@ class PolicyGetSetTests(AzureTestCase):
             signing_certificate=signing_certificate,
         )
 
-        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_token_hash is None
         assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
     @pytest.mark.live_test_only
@@ -213,7 +206,7 @@ class PolicyGetSetTests(AzureTestCase):
             signing_certificate=signing_certificate,
         )
 
-        assert None == policy_set_response.policy_token_hash
+        assert policy_set_response.policy_token_hash is None
         assert policy_set_response.policy_resolution == PolicyModification.REMOVED
 
     def _test_get_policy_management_certificates(self, base_uri, expected_certificate):

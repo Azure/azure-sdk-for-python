@@ -8,12 +8,7 @@
 
 from typing import Any, Dict
 import pytest
-import asyncio
-import functools
-import os
 
-
-from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from devtools_testutils.azure_testcase import _is_autorest_v3
 from devtools_testutils import AzureTestCase
@@ -30,7 +25,7 @@ from attestation_preparer import AttestationPreparer
 from preparers_async import AllInstanceTypes
 import json
 
-from helpers import base64url_decode, base64url_encode, pem_from_base64
+from helpers import base64url_decode
 
 
 _open_enclave_report = (

@@ -7,17 +7,10 @@
 # --------------------------------------------------------------------------
 
 from time import time
-from logging import critical
-from typing import Dict
-import unittest
 import datetime
 from cryptography import x509
-import cryptography
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric.dsa import DSAPublicKey
-from devtools_testutils import AzureTestCase, ResourceGroupPreparer, PowerShellPreparer
-import functools
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.x509 import (
     BasicConstraints,
@@ -26,7 +19,6 @@ from cryptography.x509 import (
     SubjectAlternativeName,
     load_pem_x509_certificate,
 )
-import base64
 import pytest
 from azure.security.attestation import (
     AttestationToken,

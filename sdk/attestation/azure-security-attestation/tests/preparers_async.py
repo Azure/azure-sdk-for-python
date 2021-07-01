@@ -7,10 +7,6 @@
 # --------------------------------------------------------------------------
 
 from typing import Awaitable, List
-import pytest
-import functools
-from devtools_testutils import PowerShellPreparer
-
 from azure.security.attestation import AttestationType
 
 try:

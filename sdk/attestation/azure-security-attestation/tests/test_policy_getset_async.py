@@ -16,17 +16,12 @@
 # Coverage %      : 100
 # ----------------------
 
-from logging import fatal
-import asyncio
-from typing import Any, ByteString
-import unittest
 from cryptography.hazmat.primitives import hashes
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
-from helpers import pem_from_base64, base64url_decode, base64url_encode
+from helpers import pem_from_base64
 from preparers_async import AllAttestationTypes, AllInstanceTypes
 from attestation_preparer import AttestationPreparer
 
@@ -34,7 +29,6 @@ from azure.security.attestation.aio import AttestationAdministrationClient
 from azure.security.attestation import (
     AttestationType,
     AttestationPolicyToken,
-    AttestationToken,
     PolicyModification,
     CertificateModification,
 )
@@ -296,7 +290,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             await admin_client.add_policy_management_certificate()
 
         # And test more than one positional parameter. Should also throw.
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError) as ex:
             await admin_client.add_policy_management_certificate(
                 pem_certificate_to_add, pem_certificate_to_add
             )
