@@ -37,10 +37,6 @@ jobs:
         export FILE=$(ENV_FILE)
         export TOKEN=$(USR_TOKEN)
 
-        echo 00000000
-        echo $CONN_STR
-        echo $FILE
-
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate

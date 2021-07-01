@@ -1,19 +1,17 @@
-from github import Github
-import re
-from datetime import date, datetime
 import time
 import os
-import logging
+import re
+from github import Github
+from datetime import date, datetime
 import subprocess as sp
 from azure.storage.blob import BlobClient
 
-_LOG = logging.getLogger()
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 
 
 def my_print(cmd):
-    _LOG.info('==' + cmd + ' ==\n')
+    print('==' + cmd + ' ==\n')
 
 
 def print_check(cmd):
@@ -110,7 +108,7 @@ def main():
         key = (issue.language, issue.package)
         duplicated_issue[key] = duplicated_issue.get(key, 0) + 1
 
-        print('Have cost {} seconds'.format(int(time.time() - start_time)))
+    my_print('Have cost {} seconds'.format(int(time.time() - start_time)))
 
     # rule1: if status is 'release', need to release asap
     # rule2: if latest comment is from author, need response asap
