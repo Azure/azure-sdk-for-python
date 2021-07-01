@@ -128,7 +128,7 @@ class AttestationPolicyResult(object):
             return None
         return AttestationPolicyResult(
             generated.policy_resolution,
-            AttestationSigner._from_generated(generated.policy_signer),
+            AttestationSigner._from_generated(generated.policy_signer), # pylint: disable=protected-access
             generated.policy_token_hash,
         )
 
@@ -932,7 +932,9 @@ class AttestationPolicyToken(AttestationToken):
 
     def __init__(self, policy, **kwargs):
         # type: (str, Dict[str, Any]) -> None
-        AttestationToken.__init__(self, body=StoredAttestationPolicy(policy), **kwargs)
+        super(  # pylint: disable=super-with-arguments
+            AttestationPolicyToken, self
+        ).__init__(body=StoredAttestationPolicy(policy), **kwargs)
 
 
 class AttestationTokenValidationException(ValueError):
