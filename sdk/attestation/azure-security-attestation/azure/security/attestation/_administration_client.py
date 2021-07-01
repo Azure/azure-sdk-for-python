@@ -616,7 +616,7 @@ class AttestationAdministrationClient(object):
             if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
-        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_signature: If True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
         :keyword float validation_slack: Slack time for validation - tolerance applied
