@@ -135,13 +135,13 @@ class AttestationPolicyResult(object):
 
 class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     """Represents the claims returned from the attestation service as a result
-    of a call to :meth:`azure.security.attestation.AttestationClient.attest_sgx`,
-    or :meth:`AttestationClient.attest_open_enclave`.
+    of a call to :meth:`azure.security.attestation.AttestationClient.attest_sgx_enclave`,
+    or :meth:`azure.security.attestation.AttestationClient.attest_open_enclave`.
 
     :keyword str issuer: Entity which issued the attestation token.
     :keyword unique_identifier: Unique identifier for the token.
     :paramtype unique_identifier: str or None
-    :keyword nonce: Returns the input `nonce` attribute passed to the `attest` API.
+    :keyword nonce: Returns the input `nonce` attribute passed to the `Attest` API.
     :paramtype nonce: str or None
     :keyword str version: Version of the token. Must be "1.0"
     :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
@@ -283,7 +283,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
         """Returns the runtime claims in the token.
 
         This value will match the input `runtime_json` property to the
-        :meth:`azure.security.attestation.AttestationClient.attest_sgx` or
+        :meth:`azure.security.attestation.AttestationClient.attest_sgx_enclave` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
 
         :rtype: dict[str, Any] or None
@@ -301,7 +301,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
         """Returns the inittime claims in the token.
 
         This value will match the input `inittime_json` property to the
-        :meth:`azure.security.attestation.AttestationClient.attest_sgx` or
+        :meth:`azure.security.attestation.AttestationClient.attest_sgx_enclave` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
 
         :rtype: dict[str, Any] or None
@@ -406,12 +406,11 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     def enclave_held_data(self):
         # type: () -> Union[bytes, None]
         """Returns the value of the runtime_data field specified as an input
-        to the :meth:`azure.security.attestation.AttestationClient.attest_sgx` or
+        to the :meth:`azure.security.attestation.AttestationClient.attest_sgx_enclave` or
         :meth:`azure.security.attestation.AttestationClient.attest_open_enclave` API.
 
-        .. note:: The enclave_held_data prperty will only be populated if the
-            `runtime_data` parameter to the `Attest` API is marked as not being
-            JSON.
+        .. note:: The `enclave_held_data` property will only be populated if the
+            `runtime_data` parameter to the `Attest` API is specified.
 
         :rtype: bytes or None
         """
@@ -432,7 +431,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
 class StoredAttestationPolicy(object):
     """Represents an attestation policy in storage.
 
-    When serialized, the `StoredAttestationPolicy` object will Base64Url encode the
+    When serialized, the `StoredAttestationPolicy` object will base64url encode the
     UTF-8 representation of the `policy` value.
 
     """
@@ -466,7 +465,6 @@ class AttestationToken(object):
         token.
     :keyword str signing_certificate: If specified, the PEM encoded certificate
         used to sign the token.
-
     :keyword str token: If no body or signer is provided, the string representation of the token.
     :keyword Type body_type: The underlying type of the body of the 'token' parameter,
         used to deserialize the underlying body when parsing the token.
@@ -498,7 +496,7 @@ class AttestationToken(object):
                     if not isinstance(signing_key, RSAPrivateKey) and not isinstance(
                         signing_key, EllipticCurvePrivateKey
                     ):
-                        raise ValueError("signing_ must be a string or Private Key")
+                        raise ValueError("signing_key must be a string or Private Key")
                     key = signing_key
                     certificate = signing_certificate
             if key:
@@ -848,7 +846,7 @@ class AttestationToken(object):
     def _create_unsecured_jwt(body):
         # type: (Any) -> str
         """Return an unsecured JWT expressing the body."""
-        # Base64Url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for
+        # Base64url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for
         # more information.
         return_value = "eyJhbGciOiJub25lIn0."
 

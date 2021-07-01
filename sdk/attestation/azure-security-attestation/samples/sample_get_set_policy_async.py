@@ -96,7 +96,6 @@ class AttestationClientPolicySamples(object):
         ) as admin_client:
             policy, _ = await admin_client.get_policy(AttestationType.SGX_ENCLAVE)
             print("Current instance SGX Policy is: ", policy)
-
         # [END get_policy]
 
     async def set_policy_aad_unsecured(self):
@@ -264,7 +263,6 @@ issuancerules {};
             print("Expected hash should match returned hash.")
             print("Expected hash: ", expected_hash)
             print("Returned hash: ", set_result.policy_token_hash)
-
             # [END validate_policy_hash]
 
             # Reset the policy now that we're done.

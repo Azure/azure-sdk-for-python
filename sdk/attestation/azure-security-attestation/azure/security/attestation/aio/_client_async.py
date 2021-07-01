@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 class AttestationClient(object):
     # pylint: disable=line-too-long, protected-access
-    """Provides access to the Attestation family of APIs.
+    """Provides access to the Attestation family of APIs for trusted environment attestation.
 
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
@@ -55,7 +55,8 @@ class AttestationClient(object):
         the :py:class:`AttestationClient` class. These values can be
         overridden on individual API calls as needed.
 
-    For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
+    For additional client creation configuration options, please see `Python Request
+    Options <https://aka.ms/azsdk/python/options>`_.
 
     """
 

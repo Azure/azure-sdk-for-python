@@ -85,6 +85,10 @@ class AttestationAdministrationClient(object):
         `issuer` keyword arguments are default values applied to each API call within
         the :py:class:`AttestationAdministrationClient` class. These values can be
         overridden on individual API calls as needed.
+
+    For additional client creation configuration options, please see `Python Request
+    Options <https://aka.ms/azsdk/python/options>`_.
+
     """
 
     def __init__(self, endpoint, credential, **kwargs):

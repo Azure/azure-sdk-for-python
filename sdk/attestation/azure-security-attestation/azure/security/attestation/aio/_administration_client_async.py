@@ -95,7 +95,8 @@ class AttestationAdministrationClient(object):
         the :py:class:`AttestationAdministrationClient` class. These values can be
         overridden on individual API calls as needed.
 
-    For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
+    For additional client creation configuration options, please see `Python Request
+    Options <https://aka.ms/azsdk/python/options>`_.
 
     """
 
@@ -466,7 +467,7 @@ class AttestationAdministrationClient(object):
         :return: Attestation service response
             encapsulating the status of the add request.
 
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestaiton.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificatesResult` response to the
         :meth:`add_policy_management_certificate` API contains two attributes
@@ -584,7 +585,7 @@ class AttestationAdministrationClient(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
         :return: Result describing the outcome of the certificate removal.
-        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestaiton.AttestationToken]
+        :rtype: Tuple[~azure.security.attestation.AttestationPolicyCertificateResult, ~azure.security.attestation.AttestationToken]
 
         The :class:`AttestationPolicyCertificateResult` response to the
         :meth:`remove_policy_management_certificate` API contains two attributes
