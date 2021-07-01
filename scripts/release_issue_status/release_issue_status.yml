@@ -46,8 +46,3 @@ jobs:
 
         # run
         python $script_path/main.py
-
-        # commit and push
-        git add .
-        git commit -m "update release_issue_status.csv"
-        git push -f origin HEAD
