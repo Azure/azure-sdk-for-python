@@ -114,7 +114,6 @@ class AttestationAdministrationClient(object):
     @distributed_trace
     def get_policy(self, attestation_type, **kwargs):
         # type: (Union[str, AttestationType], **Any) -> Tuple[str, AttestationToken]
-        # pylint: disable = line-too-long
         """Retrieves the attestation policy for a specified attestation type.
 
         :param attestation_type: :class:`azure.security.attestation.AttestationType` for
