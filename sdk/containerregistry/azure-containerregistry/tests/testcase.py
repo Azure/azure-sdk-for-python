@@ -173,17 +173,17 @@ class ContainerRegistryTestClass(AzureTestCase):
 
     def create_registry_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        credential_scopes = kwargs.pop("credential_scopes", None)
-        if not credential_scopes:
-            credential_scopes = get_authorization_scope(authority)
+        audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = get_authorization_scope(authority)
         credential = self.get_credential(authority=authority)
-        logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, credential_scopes))
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=credential_scopes, **kwargs)
+        logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, audience))
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        credential_scopes = get_authorization_scope(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=credential_scopes, **kwargs)
+        audience = get_authorization_scope(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
 
     def set_all_properties(self, properties, value):
         properties.can_delete = value
@@ -261,9 +261,9 @@ def import_image(authority, repository, tags):
     )
     sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
     base_url = get_base_url(authority)
-    credential_scopes = [base_url.endpoints.resource_manager + "/.default"]
+    audience = [base_url.endpoints.resource_manager + "/.default"]
     mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=credential_scopes
+        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=audience
     )
     logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
     registry_uri = "registry.hub.docker.com"
@@ -285,7 +285,7 @@ def import_image(authority, repository, tags):
 
     # Do the same for anonymous
     mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=credential_scopes
+        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=audience
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]

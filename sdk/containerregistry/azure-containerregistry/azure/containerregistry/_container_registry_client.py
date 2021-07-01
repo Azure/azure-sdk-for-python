@@ -31,8 +31,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str endpoint: An ACR endpoint
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials.TokenCredential`
-        :keyword credential_scopes: URL for credential authentication if different from the default
-        :paramtype credential_scopes: str
+        :keyword audience: URL for credential authentication if different from the default
+        :paramtype audience: str
         :returns: None
         :raises: None
 

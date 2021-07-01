@@ -48,13 +48,13 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
 
     def create_registry_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        credential_scopes = kwargs.pop("credential_scopes", None)
-        if not credential_scopes:
-            credential_scopes = get_authorization_scope(authority)
+        audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = get_authorization_scope(authority)
         credential = self.get_credential(authority=authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=credential_scopes, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
-        credential_scopes = get_authorization_scope(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=credential_scopes, **kwargs)
+        audience = get_authorization_scope(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=audience, **kwargs)
