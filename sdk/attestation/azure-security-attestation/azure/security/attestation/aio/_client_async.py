@@ -117,7 +117,6 @@ class AttestationClient(object):
         runtime_data: bytes = None,
         **kwargs: Any
     ) -> Tuple[AttestationResult, AttestationToken]:
-        # pylint: disable=line-too-long
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
