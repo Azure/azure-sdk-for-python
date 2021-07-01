@@ -108,11 +108,11 @@ def convert_to_generated_data_feed_type(
         granularity,
         schema,
         ingestion_settings,
-        admin_emails=None,
+        admins=None,
         data_feed_description=None,
         missing_data_point_fill_settings=None,
         rollup_settings=None,
-        viewer_emails=None,
+        viewers=None,
         access_mode=None,
         action_link_template=None
 ):
@@ -135,7 +135,7 @@ def convert_to_generated_data_feed_type(
     :type schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
     :param ingestion_settings: The data feed ingestions settings
     :type ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
-    :param list[str] admin_emails: Data feed administrator emails.
+    :param list[str] admins: Data feed administrators.
     :param str data_feed_description: Data feed description.
     :param missing_data_point_fill_settings: The fill missing point type and value.
     :type missing_data_point_fill_settings:
@@ -143,7 +143,7 @@ def convert_to_generated_data_feed_type(
     :param rollup_settings: The rollup settings.
     :type rollup_settings:
         ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :param list[str] viewer_emails: Data feed viewer emails.
+    :param list[str] viewers: Data feed viewers.
     :param access_mode: Data feed access mode. Possible values include:
         "Private", "Public". Default value: "Private".
     :type access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -197,9 +197,9 @@ def convert_to_generated_data_feed_type(
         if missing_data_point_fill_settings else None,
         fill_missing_point_value=missing_data_point_fill_settings.custom_fill_value
         if missing_data_point_fill_settings else None,
-        viewers=viewer_emails,
+        viewers=viewers,
         view_mode=access_mode,
-        admins=admin_emails,
+        admins=admins,
         action_link_template=action_link_template
     )
 

@@ -10,6 +10,9 @@
   - `AnomalyAlert.created_on` -> `AnomalyAlert.created_time`
   - `AnomalyAlert.modified_on` -> `AnomalyAlert.modified_time`
   - `Anomaly.created_on` -> `Anomaly.created_time`
+  - `admin_emails` has been renamed to `admins` in `NotificationHook`
+  - `admin_emails` has been renamed to `admins` in `DataFeedOptions`
+  - `viewer_emails` has been renamed to `viewers` in `DataFeedOptions`
 
 ## 1.0.0b4 (2021-06-07)
 
