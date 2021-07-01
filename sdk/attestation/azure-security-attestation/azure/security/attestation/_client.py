@@ -8,6 +8,7 @@ import json
 from typing import Dict, List, Any, TYPE_CHECKING, Tuple
 from threading import Lock
 
+from azure.core.exceptions import raise_with_traceback
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import AzureAttestationRestClient
@@ -55,7 +56,6 @@ class AttestationClient(object):
         `issuer` keyword arguments are default values applied to each API call within
         the :py:class:`AttestationClient` class. These values can be
         overridden on individual API calls as needed.
-
 
     For additional client creation configuration options, please see `Python Request
     Options <https://aka.ms/azsdk/python/options>`_.
@@ -175,10 +175,16 @@ class AttestationClient(object):
         # If the input was JSON, make sure that it's valid JSON before sending it
         # to the service.
         if inittime_json:
-            json.loads(inittime_json)
+            try:
+                json.loads(inittime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         if runtime_json:
-            json.loads(runtime_json)
+            try:
+                json.loads(runtime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         runtime = None
         if runtime_data:
@@ -296,10 +302,16 @@ class AttestationClient(object):
         # If the input was JSON, make sure that it's valid JSON before sending it
         # to the service.
         if inittime_json:
-            json.loads(inittime_json)
+            try:
+                json.loads(inittime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         if runtime_json:
-            json.loads(runtime_json)
+            try:
+                json.loads(runtime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         # Now create the RuntimeData object to be sent to the service.
         runtime = None

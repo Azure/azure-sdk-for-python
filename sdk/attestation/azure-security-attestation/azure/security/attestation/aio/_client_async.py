@@ -8,6 +8,7 @@ from typing import Dict, List, Any, TYPE_CHECKING, Tuple
 import json
 from threading import Lock
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import raise_with_traceback
 
 from .._generated.aio import AzureAttestationRestClient
 from .._generated.models import (
@@ -175,10 +176,16 @@ class AttestationClient(object):
         # If the input was JSON, make sure that it's valid JSON before sending it
         # to the service.
         if inittime_json:
-            json.loads(inittime_json)
+            try:
+                json.loads(inittime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         if runtime_json:
-            json.loads(runtime_json)
+            try:
+                json.loads(runtime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         # Now create the RuntimeData object to be sent to the service.
         runtime = None
@@ -230,7 +237,6 @@ class AttestationClient(object):
         runtime_data: bytes = None,
         **kwargs: Any
     ) -> Tuple[AttestationResult, AttestationToken]:
-        # pylint: disable=line-too-long
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
@@ -299,10 +305,16 @@ class AttestationClient(object):
         # If the input was JSON, make sure that it's valid JSON before sending it
         # to the service.
         if inittime_json:
-            json.loads(inittime_json)
+            try:
+                json.loads(inittime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         if runtime_json:
-            json.loads(runtime_json)
+            try:
+                json.loads(runtime_json)
+            except json.JSONDecodeError:
+                raise_with_traceback(ValueError, "Content must be valid JSON.")
 
         # Now create the RuntimeData object to be sent to the service.
         runtime = None
