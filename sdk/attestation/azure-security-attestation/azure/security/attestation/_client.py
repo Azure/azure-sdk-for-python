@@ -67,7 +67,7 @@ class AttestationClient(object):
         credential,  # type: "TokenCredential"
         **kwargs  # type: Any
     ):
-        # type: (TokenCredential, str, Any) -> None
+        # type: (str, TokenCredential, Any) -> None
 
         if not credential:
             raise ValueError("Missing credential.")
