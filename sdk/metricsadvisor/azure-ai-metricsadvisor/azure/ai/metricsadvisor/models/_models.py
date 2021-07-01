@@ -1914,7 +1914,7 @@ class NotificationHook(dict):
                     self.name,
                     self.description,
                     self.external_link,
-                    self.emails,
+                    self.admins,
                     self.hook_type
                 )[:1024]
 
