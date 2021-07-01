@@ -79,6 +79,7 @@ class AttestationClient(object):
         specification.
 
         The attestation service currently returns the following fields:
+
         * issuer
         * jwks_uri
         * claims_supported
