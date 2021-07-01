@@ -5,9 +5,11 @@ import time
 import os
 import logging
 import subprocess as sp
+from azure.storage.blob import BlobClient
 
 _LOG = logging.getLogger()
 _NULL = ' '
+_FILE_OUT = 'release_issue_status.csv'
 
 
 def my_print(cmd):
@@ -132,10 +134,21 @@ def main():
             item.bot_advice = f'Warning:There is duplicated issue for {item.package}. ' + item.bot_advice
 
     # output result
-    with open('release_issue_status.csv', 'w') as file_out:
+    with open(_FILE_OUT, 'w') as file_out:
         file_out.write('language,issue,author,package,created date,delay from created date,latest update time,'
                        'delay from latest update,status,bot advice\n')
         file_out.writelines([item.output() for item in sorted(issue_status, key=_key_select)])
+
+    # commit to github
+    print_check('git add .')
+    print_check('git commit -m \"update excel\"')
+    print_check('git push -f origin HEAD')
+
+    # upload to storage account(it is created in advance)
+    blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
+                                             blob_name=_FILE_OUT)
+    with open(_FILE_OUT, 'rb') as data:
+        blob.upload_blob(data, overwrite=True)
 
 
 if __name__ == '__main__':

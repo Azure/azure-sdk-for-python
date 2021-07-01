@@ -1,2 +1,3 @@
 PyGithub
 datetime
+azure.storage.blob==12.8.1
