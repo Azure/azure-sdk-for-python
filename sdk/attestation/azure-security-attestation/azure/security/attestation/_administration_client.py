@@ -51,7 +51,6 @@ class AttestationAdministrationClient(object):
         operations.
     :keyword str signing_certificate: PEM encoded X.509 certificate to be used for all
         operations.
-
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
