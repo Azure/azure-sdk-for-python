@@ -120,11 +120,8 @@ class AttestationClient(object):
         return signers
 
     @distributed_trace
-    def attest_sgx_enclave(
-        self,
-        quote,  # type: bytes
-        **kwargs  # type: Dict[str, Any]
-    ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
+    def attest_sgx_enclave(self, quote, **kwargs):
+        # type: (bytes, **Any) -> Tuple[AttestationResult, AttestationToken]
         """Attests the validity of an SGX quote.
 
         :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
