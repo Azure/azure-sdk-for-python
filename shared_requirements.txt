@@ -160,6 +160,7 @@ pyjwt>=1.7.1
 #override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.8.0b1
 #override azure-security-attestation msrest>=0.6.0
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
+#override azure-security-attestation msrest>=0.6.21
 #override azure-data-tables msrest>=0.6.19
 opencensus>=0.6.0
 opencensus-ext-threading
