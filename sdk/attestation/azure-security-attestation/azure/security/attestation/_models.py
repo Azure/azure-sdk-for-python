@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 
 import base64
-from json import JSONDecoder, JSONEncoder
 from datetime import datetime
+import json
 from typing import TYPE_CHECKING, TypeVar
 
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -515,10 +515,10 @@ class AttestationToken(object):
         self.body_bytes = base64url_decode(token_parts[1])
         self.signature_bytes = base64url_decode(token_parts[2])
         if len(self.body_bytes) != 0:
-            self._body = JSONDecoder().decode(self.body_bytes.decode("ascii"))
+            self._body = json.loads(self.body_bytes)
         else:
             self._body = None
-        self._header = JSONDecoder().decode(self.header_bytes.decode("ascii"))
+        self._header = json.loads(self.header_bytes)
 
     def __str__(self):
         return self._token
@@ -861,7 +861,7 @@ class AttestationToken(object):
             pass
         json_body = ""
         if body is not None:
-            json_body = JSONEncoder().encode(body)
+            json_body = json.dumps(body)
 
         return_value += base64url_encode(json_body.encode("utf-8"))
         return_value += "."
@@ -891,7 +891,7 @@ class AttestationToken(object):
                 ]
             },
         }
-        json_header = JSONEncoder().encode(header)
+        json_header = json.dumps(header)
         return_value = base64url_encode(json_header.encode("ascii"))
 
         try:
@@ -900,7 +900,7 @@ class AttestationToken(object):
             pass
         json_body = ""
         if body is not None:
-            json_body = JSONEncoder().encode(body)
+            json_body = json.dumps(body)
         return_value += "."
         return_value += base64url_encode(json_body.encode("utf-8"))
 

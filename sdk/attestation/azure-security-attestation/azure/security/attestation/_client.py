@@ -105,11 +105,7 @@ class AttestationClient(object):
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
-        signers = []
-        for key in signing_certificates.keys:
-            # Convert the returned certificate chain into an array of X.509 Certificates.
-            signers.append(AttestationSigner._from_generated(key))
-        return signers
+        return [AttestationSigner._from_generated(key) for key in signing_certificates.keys]
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, **kwargs):

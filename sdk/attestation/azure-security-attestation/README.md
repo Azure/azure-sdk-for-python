@@ -12,20 +12,18 @@ This package has been tested with Python 2.7, 3.6 to 3.9.
 
 For a more complete view of Azure libraries, see the [Azure SDK for Python release page](https://aka.ms/azsdk/python/all).
 
-> NOTE: This is a preview SDK for the Microsoft Azure Attestation service. It provides all the essential functionality to access the Azure Attestation service, it should be considered 'as-is" and is subject to changes in the future which may break compatibility with previous versions.
-
-  [Source code][source_code] | [Package (PyPI)][Attestation_pypi] | [API reference documentation][API_reference] | [Product documentation](https://docs.microsoft.com/azure/attestation/)
+[Source code][source_code] | [Package (PyPI)][Attestation_pypi] | [API reference documentation][API_reference] | [Product documentation](https://docs.microsoft.com/azure/attestation/)
 
 ## Getting started
 
 ### Prerequisites
 
-* An Azure subscription.  To use Azure services, including the Microsoft Azure Attestation service, you'll need a subscription.  If you do not have an existing Azure account, you may sign up for a [free trial][azure_sub] or use your [Visual Studio Subscription](https://visualstudio.microsoft.com/subscriptions/) benefits when you [create an account](https://account.windowsazure.com/Home/Index).
+* An Azure subscription.  To use Azure services, including the Azure Attestation service, you'll need a subscription.  If you do not have an existing Azure account, you may sign up for a [free trial][azure_sub] or use your [Visual Studio Subscription](https://visualstudio.microsoft.com/subscriptions/) benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 * An existing Azure Attestation Instance, or you can use the "shared provider" available in each Azure region. If you need to create an Azure Attestation service instance, you can use the Azure Portal or [Azure CLI][azure_cli].
 
 ### Install the package
 
-Install the Microsoft Azure Attestation client library for Python with [PyPI][Attestation_pypi]:
+Install the Azure Attestation client library for Python with [PyPI][Attestation_pypi]:
 
 ```Powershell
 pip install --pre azure-security-attestation
@@ -33,10 +31,10 @@ pip install --pre azure-security-attestation
 
 ### Authenticate the client
 
-In order to interact with the Microsoft Azure Attestation service, you'll need to create an instance of the [Attestation Client][attestation_client] or [Attestation Administration Client][attestation_admin_client] class. You need an **attestation endpoint**, which you may see as "DNS Name" in the portal,
+In order to interact with the Azure Attestation service, you'll need to create an instance of the [Attestation Client][attestation_client] or [Attestation Administration Client][attestation_admin_client] class. You need an **attestation endpoint**, which you may see as "DNS Name" in the portal,
 and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object.
 
-Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with [Azure identity][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
+Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with the [Azure identity package][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
 or other credential providers provided with the Azure SDK, you should install the Azure.Identity package:
 
 ```Powershell
@@ -99,7 +97,7 @@ There are four major families of functionality provided in this preview SDK:
 The Microsoft Azure Attestation service runs in two separate modes: "Isolated" and "AAD". When the service is running in "Isolated" mode, the customer needs to
 provide additional information beyond their authentication credentials to verify that they are authorized to modify the state of an attestation instance.
 
-Finally, each region in which the Microsoft Azure Attestation service is available supports a "shared" instance, which
+Finally, each region in which the Azure Attestation service is available supports a "shared" instance, which
 can be used to attest SGX enclaves which only need verification against the azure baseline (there are no policies applied to the shared instance). TPM attestation is not available in the shared instance.
 While the shared instance requires AAD authentication, it does not have any RBAC policies - any customer with a valid AAD bearer token can attest using the shared instance.
 
@@ -138,7 +136,7 @@ Each Microsoft Azure Attestation service instance operates in either "AAD" mode 
 
 ### *AttestationType*
 
-The Microsoft Azure Attestation service supports attesting different types of evidence depending on the environment.
+The Azure Attestation service supports attesting different types of evidence depending on the environment.
 Currently, MAA supports the following Trusted Execution environments:
 
 * OpenEnclave - An Intel(tm) Processor running code in an SGX Enclave where the attestation evidence was collected using the OpenEnclave [oe_get_report](https://openenclave.io/apidocs/v0.14/enclave_8h_aefcb89c91a9078d595e255bd7901ac71.html#aefcb89c91a9078d595e255bd7901ac71) or [oe_get_evidence](https://openenclave.io/apidocs/v0.14/attester_8h_a7d197e42468636e95a6ab97b8e74c451.html#a7d197e42468636e95a6ab97b8e74c451) API.
@@ -169,8 +167,8 @@ Creates an instance of the Attestation Client at uri `endpoint`.
 
 ```python
 attest_client = AttestationClient(
-    credential=DefaultAzureCredential(), 
-    endpoint=base_uri)
+    endpoint=base_uri,
+    credential=DefaultAzureCredential())
 ```
 
 ### Get attestation policy
@@ -196,7 +194,7 @@ policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
     signing_key=key,
     signing_certificate=signing_certificate)
 new_policy, _ = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
-assert new_policy == attestation_policy
+# `new_policy` will equal `attestation_policy`.
 ```
 
 If the service instance is running in AAD mode, the call to set_policy can be
@@ -230,7 +228,7 @@ hasher = hashes.Hash(hashes.SHA256())
 hasher.update(expected_policy.serialize().encode('utf-8'))
 expected_hash = hasher.finalize()
 
-assert expected_hash == policy_set_response.policy_token_hash
+# `expected_hash` will exactly match `policy_set_response.policy_token_hash`
 ```
 
 ### Attest SGX Enclave
@@ -281,6 +279,7 @@ Use `get_signing_certificates` to retrieve the certificates which can be used to
 ```python
 signers = attest_client.get_signing_certificates()
 for signer in signers:
+    from cryptography.hazmat.backends import default_backend
     cert = cryptography.x509.load_pem_x509_certificate(signer.certificates[0].encode('ascii'), backend=default_backend())
     print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 ```
@@ -291,11 +290,11 @@ Most Attestation service operations will raise exceptions defined in [Azure Core
 
 ```python
 try:
-response, _ = attest_client.attest_sgx_enclave(
+    response, _ = attest_client.attest_sgx_enclave(
         quote,
         runtime_data=AttestationData(runtime_data, is_json=False))
 except HttpResponseError as ex:
-    // Ignore invalid quote errors.
+    # Ignore invalid quote errors.
     if ex.error == "InvalidParameter":
         pass
 }
