@@ -31,10 +31,10 @@ pip install --pre azure-security-attestation
 
 ### Authenticate the client
 
-In order to interact with the Azure Attestation service, you'll need to create an instance of the [Attestation Client][attestation_client] or [Attestation Administration Client][attestation_admin_client] class. You need an **attestation endpoint**, which you may see as "DNS Name" in the portal,
-and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object.
+In order to interact with the Azure Attestation service, you'll need to create an instance of the [Attestation Client][attestation_client] or [Attestation Administration Client][attestation_admin_client] class. You need an **attestation endpoint**, which you may see as "Attest URI" in the portal,
+and **client credentials (client id, client secret, tenant id)** to instantiate a client object.
 
-Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with the [Azure identity package][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
+[Client secret credential][ClientSecretCredential] authentication is being used in this getting started section but you can find more ways to authenticate with the [Azure identity package][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
 or other credential providers provided with the Azure SDK, you should install the azure-identity package:
 
 ```Powershell
@@ -77,11 +77,11 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 
 * Use the returned credentials above to set  **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET** (password), and **AZURE_TENANT_ID** (tenant) environment variables. The following example shows a way to do this in Powershell:
 
-```Powershell
+    ```Powershell
     $Env:AZURE_CLIENT_ID="generated-app-ID"
     $Env:AZURE_CLIENT_SECRET="random-password"
     $Env:AZURE_TENANT_ID="tenant-ID"
-```
+    ```
 
 For more information about the Azure Identity APIs and how to use them, see [Azure Identity client library](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity)
 
@@ -325,7 +325,8 @@ section of the project.
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/attestation/azure-security-attestation
 [azure_identity]: https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python-preview
-[DefaultAzureCredential]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python-preview
+[DefaultAzureCredential]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
+[ClientSecretCredential]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
 [attestation_policy_result]:https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.policyresult?view=azure-python-preview
 [attestation_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationclient?view=azure-python-preview
 [attestation_admin_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationadministrationclient?view=azure-python-preview
