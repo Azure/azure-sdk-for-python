@@ -483,7 +483,7 @@ class AttestationAdministrationClient(object):
         # pylint: disable = line-too-long
         """Adds a new policy management certificate to the set of policy management certificates for the instance.
 
-        :param str certificate_to_add: PEM encoded X.509 certificate to add to
+        :param str certificate_to_add: Required. PEM encoded X.509 certificate to add to
             the list of attestation policy management certificates.
         :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
