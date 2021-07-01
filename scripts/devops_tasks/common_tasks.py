@@ -43,6 +43,7 @@ OMITTED_CI_PACKAGES = [
     "azure",
     "azure-mgmt",
     "azure-storage",
+    "azure-monitor",
     "azure-mgmt-regionmove"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [

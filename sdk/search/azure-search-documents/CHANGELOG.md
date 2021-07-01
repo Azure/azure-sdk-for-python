@@ -2,6 +2,10 @@
 
 ## 11.3.0b1 (Unreleased)
 
+### Features Added
+
+- Added support for semantic search
+- Added normalizer support
 
 ## 11.2.0 (2021-06-08)
 

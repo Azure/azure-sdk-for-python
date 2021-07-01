@@ -473,7 +473,6 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
-
 class _HttpResponseBase(object):
     """Represent a HTTP response.
 

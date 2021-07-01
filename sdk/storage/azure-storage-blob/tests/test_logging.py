@@ -21,12 +21,9 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
+from devtools_testutils.storage import StorageTestCase
 
-from _shared.testcase import (
-    StorageTestCase,
-    LogCaptured,
-    GlobalStorageAccountPreparer
-)
+from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse

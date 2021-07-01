@@ -11,7 +11,7 @@ from ._lro_async import (
 )
 
 __all__ = [
-    'TextAnalyticsClient',
-    'AsyncAnalyzeHealthcareEntitiesLROPoller',
-    'AsyncAnalyzeActionsLROPoller',
+    "TextAnalyticsClient",
+    "AsyncAnalyzeHealthcareEntitiesLROPoller",
+    "AsyncAnalyzeActionsLROPoller",
 ]

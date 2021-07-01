@@ -78,8 +78,41 @@ def create_changelog_content():
     return add_content
 
 
-def edit_version(add_content):
-    global VERSION_NEW, VERSION_LAST_RELEASE
+def judge_tag():
+    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
+    files = []
+    all_files(path, files)
+    default_api_version = ''  # for multi-api
+    api_version = ''  # for single-api
+    for file in files:
+        if '.py' not in file:
+            continue
+        try:
+            with open(file, 'r') as file_in:
+                list_in = file_in.readlines()
+        except:
+            _LOG.info(f'can not open {file}')
+            continue
+
+        for line in list_in:
+            if line.find('DEFAULT_API_VERSION = ') > -1:
+                default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
+            if default_api_version == '' and line.find('api_version = ') > -1:
+                api_version += line.split('=')[-1].strip('\n')  # collect all single api version
+    if default_api_version != '':
+        my_print(f'find default api version:{default_api_version}')
+        return 'preview' in default_api_version
+    my_print(f'find single api version:{api_version}')
+    return 'preview' in api_version
+
+
+def preview_version_plus(preview_label):
+    num = VERSION_LAST_RELEASE.split(preview_label)
+    num[1] = str(int(num[1]) + 1)
+    return f'{num[0]}{preview_label}{num[1]}'
+
+
+def stable_version_plus(add_content):
     flag = [False, False, False]  # breaking, feature, bugfix
     for line in add_content:
         if line.find('**Breaking changes**') > -1:
@@ -89,36 +122,41 @@ def edit_version(add_content):
             flag[1] = True
         elif line.find('**Bugfixes**') > -1:
             flag[2] = True
-
-    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}/azure/mgmt/{SERVICE_NAME}'
-    file_name = 'version.py' if TRACK == '1' else '_version.py'
-    with open(f'{path}/{file_name}', 'r') as file_in:
-        list_in = file_in.readlines()
-
     num = VERSION_LAST_RELEASE.split('.')
-    if TRACK == '1' and num[0] == '0':
-        VERSION_NEW = f'0.{str(int(num[1]) + 1)}.0'
-    elif VERSION_LAST_RELEASE.find('b') > -1:
-        lastnum = num[2].split('b')
-        lastnum[1] = str(int(lastnum[1]) + 1)
-        VERSION_NEW = f'{num[0]}.{num[1]}.{lastnum[0]}b{lastnum[1]}'
-    elif VERSION_LAST_RELEASE.find('rc') > -1:
-        lastnum = num[2].split('rc')
-        lastnum[1] = str(int(lastnum[1]) + 1)
-        VERSION_NEW = f'{num[0]}.{num[1]}.{lastnum[0]}rc{lastnum[1]}'
-    elif flag[0]:
-        VERSION_NEW = f'{int(num[0]) + 1}.0.0'
+    if flag[0]:
+        return f'{int(num[0]) + 1}.0.0'
     elif flag[1]:
-        VERSION_NEW = f'{num[0]}.{int(num[1]) + 1}.0'
+        return f'{num[0]}.{int(num[1]) + 1}.0'
     elif flag[2]:
-        VERSION_NEW = f'{num[0]}.{num[1]}.{int(num[2]) + 1}'
+        return f'{num[0]}.{num[1]}.{int(num[2]) + 1}'
+    else:
+        return '0.0.0'
 
-    for i in range(0, len(list_in)):
-        if list_in[i].find('VERSION ') > -1:
-            list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
-            break
-    with open(f'{path}/{file_name}', 'w') as file_out:
-        file_out.writelines(list_in)
+
+def edit_version(add_content):
+    global VERSION_NEW
+
+    preview_tag = judge_tag()
+    preview_version = 'rc' in VERSION_LAST_RELEASE or 'b' in VERSION_LAST_RELEASE
+    #                                           |   preview tag                     | stable tag
+    # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
+    # stable  version (1.0.0) (breaking change) | 2.0.0rc1(track1)/2.0.0b1(track2)  |  2.0.0
+    # stable  version (1.0.0) (feature)         | 1.1.0rc1(track1)/1.1.0b1(track2)  |  1.1.0
+    # stable  version (1.0.0) (bugfix)          | 1.0.1rc1(track1)/1.0.1b1(track2)  |  1.0.1
+    preview_label = 'rc' if TRACK == '1' else 'b'
+    if preview_version and preview_tag:
+        VERSION_NEW = preview_version_plus(preview_label)
+    elif preview_version and not preview_tag:
+        VERSION_NEW = VERSION_LAST_RELEASE.split(preview_label)[0]
+    elif not preview_version and preview_tag:
+        VERSION_NEW = stable_version_plus(add_content) + preview_label + '1'
+    else:
+        VERSION_NEW = stable_version_plus(add_content)
+
+    # additional rule for track1: if version is 0.x.x, next version is 0.x+1.0
+    if TRACK == '1' and VERSION_LAST_RELEASE[0] == '0':
+        num = VERSION_LAST_RELEASE.split('.')
+        VERSION_NEW = f'{num[0]}.{int(num[1]) + 1}.0'
 
 
 def edit_changelog(add_content):
@@ -279,26 +317,30 @@ def run_live_test():
         my_print('live test run done, do not find failure !!!')
 
 
-def edit_recursion(path, file):
+# find all the files of one folder, including files in subdirectory
+def all_files(path, files):
     all_folder = os.listdir(path)
     for folder in all_folder:
-        if file == folder:
-            tmp_file = f'{path}/{file}'
-            with open(tmp_file, 'r') as file_in:
+        if os.path.isdir(f'{path}/{folder}'):
+            all_files(f'{path}/{folder}', files)
+        else:
+            files.append(f'{path}/{folder}')
+
+
+def edit_useless_file():
+    target_file = 'version.py'
+    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
+    files = []
+    all_files(path, files)
+    for file in files:
+        if target_file in file:
+            with open(file, 'r') as file_in:
                 list_in = file_in.readlines()
             for i in range(0, len(list_in)):
                 if list_in[i].find('VERSION') > -1:
                     list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
-            with open(tmp_file, 'w') as file_out:
-                file_out.writelines(list_in)
-        elif os.path.isdir(f'{path}/{folder}'):
-            edit_recursion(f'{path}/{folder}', file)
-
-
-def edit_useless_file():
-    file = 'version.py' if TRACK == '1' else '_version.py'
-    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{SERVICE_NAME}'
-    edit_recursion(path, file)
+            with open(file, 'w') as file_output:
+                file_output.writelines(list_in)
 
 
 def commit_test():
@@ -318,7 +360,7 @@ def check_pprint_name():
     for file in os.listdir(path):
         file_path = f'{path}/{file}'
         if os.path.isfile(file_path):
-            with open(file_path, 'r') as file_in:
+            with open(file_path, 'r', encoding="utf-8") as file_in:
                 list_in = file_in.readlines()
             for i in range(0, len(list_in)):
                 list_in[i] = list_in[i].replace('MyService', pprint_name)

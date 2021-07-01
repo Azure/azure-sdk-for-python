@@ -1,12 +1,15 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2021-07-06)
 
-**Breaking Changes**
+### Breaking Changes
 
-- Renamed
+- Changed
   - `DetectionConditionsOperator` -> `DetectionConditionOperator`
   - `cross_conditions_operator` -> `condition_operator`
+  - `AnomalyAlert.created_on` -> `AnomalyAlert.created_time`
+  - `AnomalyAlert.modified_on` -> `AnomalyAlert.modified_time`
+  - `Anomaly.created_on` -> `Anomaly.created_time`
 
 ## 1.0.0b4 (2021-06-07)
 

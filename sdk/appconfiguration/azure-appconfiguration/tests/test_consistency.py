@@ -3,39 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.core.exceptions import (
-    ResourceModifiedError,
-    ResourceNotFoundError,
-    ResourceExistsError,
-    AzureError,
-)
+from devtools_testutils import AzureTestCase
 from azure.appconfiguration import (
-    ResourceReadOnlyError,
-    AzureAppConfigurationClient,
-    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    PERCENTAGE,
-    TARGETING,
-    TIME_WINDOW,
-)
-from azure.identity import DefaultAzureCredential
-
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
+    FILTER_PERCENTAGE,
 )
 from wrapper import app_config_decorator
 
-from uuid import uuid4
+import json
 import pytest
 
 
@@ -53,7 +29,7 @@ class AppConfigurationClientTest(AzureTestCase):
             assert key1.enabled == key2.enabled
             assert len(key1.filters) == len(key2.filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
-            assert key1.secret_uri == key2.secret_uri
+            assert key1.secret_id == key2.secret_id
         else:
             assert key1.value == key2.value
 
@@ -62,10 +38,10 @@ class AppConfigurationClientTest(AzureTestCase):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key,
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -75,7 +51,7 @@ class AppConfigurationClientTest(AzureTestCase):
         )
         set_flag = client.set_configuration_setting(feature_flag)
 
-        set_flag.value = {
+        set_flag.value = json.dumps({
             'conditions': {
                 'client_filters': [
                     {
@@ -96,7 +72,7 @@ class AppConfigurationClientTest(AzureTestCase):
             'description': '',
             'enabled': False,
             'id': key,
-        }
+        })
 
         set_flag = client.set_configuration_setting(set_flag)
         assert isinstance(set_flag, FeatureFlagConfigurationSetting)
@@ -106,46 +82,49 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_feature_flag_invalid_json(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
-        set_flag.value = []
-        received = client.set_configuration_setting(set_flag)
+        with pytest.raises(TypeError):
+            set_flag.value = []
+            received = client.set_configuration_setting(set_flag)
 
-        assert not isinstance(received, FeatureFlagConfigurationSetting)
+        # assert isinstance(received, FeatureFlagConfigurationSetting)
 
     @app_config_decorator
     def test_feature_flag_invalid_json_string(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = "hello world"
         received = client.set_configuration_setting(set_flag)
 
-        assert not isinstance(received, FeatureFlagConfigurationSetting)
+        assert isinstance(received, FeatureFlagConfigurationSetting)
 
     @app_config_decorator
     def test_feature_flag_invalid_json_access_properties(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         set_flag = client.set_configuration_setting(feature_flag)
 
         set_flag.value = "hello world"
-        with pytest.raises(ValueError):
-            a = set_flag.enabled
-        with pytest.raises(ValueError):
-            b = set_flag.filters
+        assert set_flag.enabled == None
+        assert set_flag.filters == None
+        # with pytest.raises(ValueError):
+        #     a = set_flag.enabled
+        # with pytest.raises(ValueError):
+        #     b = set_flag.filters
 
     @app_config_decorator
     def test_feature_flag_set_value(self, client):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key,
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -153,24 +132,24 @@ class AppConfigurationClientTest(AzureTestCase):
                 }
             ]
         )
-        feature_flag.value = {
+        feature_flag.value = json.dumps({
             "conditions": {
                 "client_filters": []
             },
             "enabled": False
-        }
+        })
 
-        assert feature_flag.value["enabled"] == False
+        assert feature_flag.enabled == False
 
     @app_config_decorator
     def test_feature_flag_set_enabled(self, client):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
             key,
-            True,
+            enabled=True,
             filters=[
                 {
-                    "name": PERCENTAGE,
+                    "name": FILTER_PERCENTAGE,
                     "parameters": {
                         "Value": 10,
                         "User": "user1"
@@ -180,10 +159,11 @@ class AppConfigurationClientTest(AzureTestCase):
         )
         feature_flag.enabled = False
 
-        assert feature_flag.value["enabled"] == False
+        temp = json.loads(feature_flag.value)
+        assert temp["enabled"] == False
 
     @app_config_decorator
     def test_feature_flag_prefix(self, client):
         key = self.get_resource_name("key")
-        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        feature_flag = FeatureFlagConfigurationSetting(key, enabled=True)
         assert feature_flag.key.startswith(".appconfig.featureflag/")

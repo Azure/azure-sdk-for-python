@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Mapping, Optional, Union
+from typing import Any, List, Mapping, Optional, Union, TYPE_CHECKING
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -35,6 +35,9 @@ from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
 
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class AsyncTablesBaseClient(AccountHostsMixin):
 
@@ -42,10 +45,10 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         self,
         endpoint: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
         **kwargs: Any
     ) -> None:
-        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),

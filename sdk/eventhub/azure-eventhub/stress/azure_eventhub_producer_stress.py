@@ -31,8 +31,8 @@ def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_me
 
 
 def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
-    batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
     try:
+        batch = producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
         while True:
             event_data = EventData(body=b"D" * args.payload)
             batch.add(event_data)
@@ -41,6 +41,8 @@ def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azur
             producer.send_batch(batch)
         except EventHubError as e:
             return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
+    except EventHubError as e:
+        return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
     return len(batch)
 
 
@@ -57,8 +59,8 @@ def stress_send_list_sync(producer: EventHubProducerClient, args, stress_logger,
 
 
 async def stress_send_async(producer: EventHubProducerClientAsync, args, stress_logger, azure_monitor_metric):
-    batch = await producer.create_batch()
     try:
+        batch = await producer.create_batch(partition_id=args.send_partition_id, partition_key=args.send_partition_key)
         while True:
             event_data = EventData(body=b"D" * args.payload)
             batch.add(event_data)
@@ -67,6 +69,8 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, stress_
             await producer.send_batch(batch)
         except EventHubError as e:
             return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
+    except EventHubError as e:
+        return handle_exception(e, args.ignore_send_failure, stress_logger, azure_monitor_metric)
     return len(batch)
 
 
@@ -275,7 +279,7 @@ class StressTestRunner(object):
                     logger.info("keyboard interrupted")
                     self.stop()
                 except Exception as e:
-                    logger.exception("%r failed:", type(worker), e)
+                    logger.exception("%r failed: %r", type(worker), e)
                     self.stop()
             logger.info("%r has finished testing", test_method)
 
@@ -373,7 +377,7 @@ class StressTestRunner(object):
                     logger.info("keyboard interrupted")
                     self.stop()
                 except Exception as e:
-                    logger.exception("%r failed: ", type(worker), e)
+                    logger.exception("%r failed: %r", type(worker), e)
                     self.stop()
             logger.info("%r has finished testing", test_method)
 

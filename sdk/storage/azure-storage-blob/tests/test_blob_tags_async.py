@@ -10,7 +10,7 @@ from time import sleep
 import pytest
 from devtools_testutils import StorageAccountPreparer
 
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 try:
     from urllib.parse import quote

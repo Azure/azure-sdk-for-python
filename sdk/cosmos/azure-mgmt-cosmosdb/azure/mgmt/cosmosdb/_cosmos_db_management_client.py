@@ -38,8 +38,15 @@ from .operations import TableResourcesOperations
 from .operations import CassandraResourcesOperations
 from .operations import GremlinResourcesOperations
 from .operations import NotebookWorkspacesOperations
-from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import RestorableDatabaseAccountsOperations
+from .operations import RestorableSqlDatabasesOperations
+from .operations import RestorableSqlContainersOperations
+from .operations import RestorableSqlResourcesOperations
+from .operations import RestorableMongodbDatabasesOperations
+from .operations import RestorableMongodbCollectionsOperations
+from .operations import RestorableMongodbResourcesOperations
 from . import models
 
 
@@ -84,10 +91,24 @@ class CosmosDBManagementClient(object):
     :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
     :ivar notebook_workspaces: NotebookWorkspacesOperations operations
     :vartype notebook_workspaces: azure.mgmt.cosmosdb.operations.NotebookWorkspacesOperations
-    :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.cosmosdb.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.cosmosdb.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.cosmosdb.operations.PrivateLinkResourcesOperations
+    :ivar restorable_database_accounts: RestorableDatabaseAccountsOperations operations
+    :vartype restorable_database_accounts: azure.mgmt.cosmosdb.operations.RestorableDatabaseAccountsOperations
+    :ivar restorable_sql_databases: RestorableSqlDatabasesOperations operations
+    :vartype restorable_sql_databases: azure.mgmt.cosmosdb.operations.RestorableSqlDatabasesOperations
+    :ivar restorable_sql_containers: RestorableSqlContainersOperations operations
+    :vartype restorable_sql_containers: azure.mgmt.cosmosdb.operations.RestorableSqlContainersOperations
+    :ivar restorable_sql_resources: RestorableSqlResourcesOperations operations
+    :vartype restorable_sql_resources: azure.mgmt.cosmosdb.operations.RestorableSqlResourcesOperations
+    :ivar restorable_mongodb_databases: RestorableMongodbDatabasesOperations operations
+    :vartype restorable_mongodb_databases: azure.mgmt.cosmosdb.operations.RestorableMongodbDatabasesOperations
+    :ivar restorable_mongodb_collections: RestorableMongodbCollectionsOperations operations
+    :vartype restorable_mongodb_collections: azure.mgmt.cosmosdb.operations.RestorableMongodbCollectionsOperations
+    :ivar restorable_mongodb_resources: RestorableMongodbResourcesOperations operations
+    :vartype restorable_mongodb_resources: azure.mgmt.cosmosdb.operations.RestorableMongodbResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -152,9 +173,23 @@ class CosmosDBManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.notebook_workspaces = NotebookWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+        self.restorable_database_accounts = RestorableDatabaseAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_sql_databases = RestorableSqlDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_sql_containers = RestorableSqlContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_sql_resources = RestorableSqlResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_mongodb_databases = RestorableMongodbDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_mongodb_collections = RestorableMongodbCollectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.restorable_mongodb_resources = RestorableMongodbResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
