@@ -169,7 +169,7 @@ class AttestationClientAttestationSamples(object):
         print("Attest Open enclave using ", self.shared_url)
         print("Using draft policy:", draft_policy)
         with AttestationClient(
-             self.shared_url, DefaultAzureCredential()
+            self.shared_url, DefaultAzureCredential()
         ) as attest_client:
             response, token = attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, draft_policy=draft_policy

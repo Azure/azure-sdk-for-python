@@ -183,7 +183,7 @@ issuancerules {
         print("Set Secured Policy on an AAD mode attestation instance.")
         # [START set_secured_policy]
         with AttestationAdministrationClient(
-             os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
+            os.environ.get("ATTESTATION_AAD_URL"), DefaultAzureCredential()
         ) as admin_client:
             # Create an RSA Key and wrap an X.509 certificate around
             # the public key for that certificate.

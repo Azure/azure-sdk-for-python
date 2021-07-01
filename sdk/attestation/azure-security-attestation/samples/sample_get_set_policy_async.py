@@ -284,7 +284,7 @@ issuancerules {};
         print("Set Secured Policy on an Isolated mode attestation instance.")
         # < Load the PEM encoded isolated signing certificate and  key >
         async with DefaultAzureCredential() as credential, AttestationAdministrationClient(
-             os.environ.get("ATTESTATION_ISOLATED_URL"), credential
+            os.environ.get("ATTESTATION_ISOLATED_URL"), credential
         ) as admin_client:
             set_result, _ = await admin_client.reset_policy(
                 AttestationType.SGX_ENCLAVE,

@@ -29,21 +29,20 @@ if TYPE_CHECKING:
 
 
 class AttestationClient(object):
-    # pylint: disable=line-too-long
-    """An AttestationClient object enables access to the Attestation family of APIs provided
-      by the attestation service.
+    # pylint: disable=line-too-long, protected-access
+    """Provides access to the Attestation family of APIs.
 
     :param credential: Credentials for the caller used to interact with the service.
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :param str endpoint: The attestation instance base URI, for example https://mytenant.attest.azure.net.
-    :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+    :keyword bool validate_token: If True, validate the token, otherwise return the token unvalidated.
     :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
         if the token is invalid, the `validation_callback` function should throw
         an exception.
     :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
-    :keyword bool validate_signature: if True, validate the signature of the token being validated.
+    :keyword bool validate_signature: If True, validate the signature of the token being validated.
     :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
-    :keyword str issuer: Expected issuer, used if validate_issuer is true.
+    :keyword str issuer: Expected issuer, used if `validate_issuer` is true.
     :keyword float validation_slack: Slack time for validation - tolerance applied
         to help account for clock drift between the issuer and the current machine.
     :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
@@ -61,10 +60,7 @@ class AttestationClient(object):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
+        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any
     ) -> None:
         if not credential:
             raise ValueError("Missing credential.")
@@ -105,11 +101,7 @@ class AttestationClient(object):
         signing_certificates = await self._client.signing_certificates.get(**kwargs)
         signers = []
         for key in signing_certificates.keys:
-            signers.append(
-                AttestationSigner._from_generated(  # pylint: disable=protected-access
-                    key
-                )
-            )
+            signers.append(AttestationSigner._from_generated(key))
         return signers
 
     @distributed_trace_async
@@ -131,24 +123,23 @@ class AttestationClient(object):
             enclave was initialized.
         :keyword bytes inittime_json: Data presented at the time that the SGX
             enclave was initialized, JSON encoded.
-        :keyword  bytes runtime_data: Data presented at the time that the open_enclave
+        :keyword bytes runtime_data: Data presented at the time that the open_enclave
             report was created.
-        :keyword  bytes runtime_json: Data presented at the time that the open_enclave
+        :keyword bytes runtime_json: Data presented at the time that the open_enclave
             report was created. JSON Encoded.
-        :keyword draft_policy: "draft" or "experimental" policy to be used with
+        :keyword str draft_policy: "draft" or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API
-        :paramtype draft_policy: str
-        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword bool validate_token: If True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
-        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_signature: If True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
-        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword str issuer: Expected issuer, used if `validate_issuer` is true.
         :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
@@ -213,9 +204,7 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(
-            self._config._kwargs, kwargs  # pylint: disable=protected-access
-        )
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
         result = await self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken(
@@ -223,13 +212,9 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(  # pylint: disable=protected-access
-                await self._get_signers(**kwargs), **options
-            )
+            token._validate_token(await self._get_signers(**kwargs), **options)
         return (
-            AttestationResult._from_generated(  # pylint: disable=protected-access
-                token._get_body()  # pylint: disable=protected-access
-            ),
+            AttestationResult._from_generated(token._get_body()),
             token,
         )
 
@@ -261,15 +246,14 @@ class AttestationClient(object):
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
-
-        :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
+        :keyword bool validate_token: If True, validate the token, otherwise return the token unvalidated.
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
         :paramtype validation_callback: ~typing.Callable[[~azure.security.attestation.AttestationToken, ~azure.security.attestation.AttestationSigner], None]
-        :keyword bool validate_signature: if True, validate the signature of the token being validated.
+        :keyword bool validate_signature: If True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
-        :keyword str issuer: Expected issuer, used if validate_issuer is true.
+        :keyword str issuer: Expected issuer, used if `validate_issuer` is true.
         :keyword float validation_slack: Slack time for validation - tolerance applied
             to help account for clock drift between the issuer and the current machine.
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
@@ -345,9 +329,7 @@ class AttestationClient(object):
         # Note that this must be done before calling into the implementation
         # layer because the implementation layer doesn't like keyword args that
         # it doesn't expect :(.
-        options = merge_validation_args(
-            self._config._kwargs, kwargs  # pylint: disable=protected-access
-        )
+        options = merge_validation_args(self._config._kwargs, kwargs)
 
         result = await self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken(
@@ -355,13 +337,9 @@ class AttestationClient(object):
         )
 
         if options.get("validate_token", True):
-            token._validate_token(  # pylint: disable=protected-access
-                await self._get_signers(**kwargs), **options
-            )
+            token._validate_token(await self._get_signers(**kwargs), **options)
         return (
-            AttestationResult._from_generated(  # pylint: disable=protected-access
-                token._get_body()  # pylint: disable=protected-access
-            ),
+            AttestationResult._from_generated(token._get_body()),
             token,
         )
 
@@ -395,9 +373,7 @@ class AttestationClient(object):
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     self._signing_certificates.append(
-                        AttestationSigner._from_generated(  # pylint: disable=protected-access
-                            key
-                        )
+                        AttestationSigner._from_generated(key)
                     )
             signers = self._signing_certificates
         return signers

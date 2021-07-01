@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 
 import base64
-from typing import Any, Dict, List, Type, TypeVar, Union
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
+from typing import TYPE_CHECKING, TypeVar
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
@@ -34,6 +34,10 @@ from ._generated.models import (
     CertificateModification,
     PolicyModification,
 )
+
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, List, Type, Union
 
 T = TypeVar("T")
 
@@ -72,14 +76,13 @@ class AttestationPolicyCertificateResult(object):
 
     :param str certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
      which was added or removed.
-    :param certificate_resolution: The result of the operation. Possible values include:
+    :param str certificate_resolution: The result of the operation. Possible values include:
      "IsPresent", "IsAbsent".
-    :type certificate_resolution: str or
      ~azure.security.attestation._generated.models.CertificateModification
     """
 
     def __init__(self, certificate_thumbprint, certificate_resolution):
-        # type: (str, CertificateModification, AttestationToken) -> None
+        # type: (str, Union[str, CertificateModification]) -> None
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_resolution = certificate_resolution
 
@@ -92,8 +95,7 @@ class AttestationPolicyCertificateResult(object):
 
 
 class AttestationPolicyResult(object):
-    """AttestationPolicyResult represents the result of a
-    :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy`
+    """The result of a :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy`
     or :meth:`azure.security.attestation.AttestationAdministrationClient.reset_policy`
     API call.
 
@@ -102,11 +104,11 @@ class AttestationPolicyResult(object):
     received the policy object sent from the client without alteration.
 
     :param policy_resolution: The result of the policy set or reset call.
-    :type policy_resolution: azure.security.attestation.PolicyModification
+    :type policy_resolution: ~azure.security.attestation.PolicyModification
     :param policy_signer: If the call to `set_policy` or `reset_policy`
         had a `signing_certificate` parameter, this will be the certificate
         which was specified in this parameter.
-    :type policy_signer: azure.security.attestation.AttestationSigner
+    :type policy_signer: ~azure.security.attestation.AttestationSigner
     :param str policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
 
@@ -132,9 +134,9 @@ class AttestationPolicyResult(object):
 
 
 class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
-    """An AttestationResult represents the claims returned from the attestation
-    service as a result of a call to
-    :meth:`azure.security.attestation.AttestationClient.attest_sgx`, or :meth:`AttestationClient.attest_open_enclave`.
+    """Represents the claims returned from the attestation service as a result
+    of a call to :meth:`azure.security.attestation.AttestationClient.attest_sgx`,
+    or :meth:`AttestationClient.attest_open_enclave`.
 
     :keyword str issuer: Entity which issued the attestation token.
     :keyword unique_identifier: Unique identifier for the token.
@@ -143,9 +145,9 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     :paramtype nonce: str or None
     :keyword str version: Version of the token. Must be "1.0"
     :keyword runtime_claims: Runtime claims passed in from the caller of the attest API.
-    :paramtype runtime_claims: dict
+    :paramtype runtime_claims: dict or None
     :keyword inittime_claims: Inittime claims passed in from the caller of the attest API.
-    :paramtype inittime_claims: dict
+    :paramtype inittime_claims: dict or None
     :keyword enclave_held_data: Runtime data passed in from the caller of the attest API.
     :paramtype enclave_held_data: bytes or None
     :keyword policy_claims: Attestation claims issued by policies.
@@ -153,7 +155,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     :keyword str verifier_type: Verifier which generated this token.
     :keyword policy_signer: If the policy which processed the request is signed,
         this will be the certificate which signed the policy.
-    :paramtype policy_signer: azure.security.attestation.AttestationSigner or None
+    :paramtype policy_signer: ~azure.security.attestation.AttestationSigner or None
     :keyword str policy_hash: The hash of the policy which processed the attestation
         evidence.
     :keyword bool is_debuggable: True if a debugger can be attached to the SGX enclave
@@ -162,14 +164,13 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     :keyword str mr_enclave: MRENCLAVE value for the SGX enclave being attested.
     :keyword str mr_signer: MRSIGNER value for the SGX enclave being attested.
     :keyword int svn: Security version number for the SGX enclave being attested.
-    :keyword sgx_collateral: Collateral which identifies the collateral used to
+    :keyword dict sgx_collateral: Collateral which identifies the collateral used to
         create the token.
-    :paramtype sgx_collateral: dict
 
     """
 
     def __init__(self, **kwargs):
-        # type: (Dict[str,Any]) -> None
+        # type: (**Any) -> None
         self._issuer = kwargs.pop("issuer")  # type: Union[str, None]
         self._unique_identifier = kwargs.pop(
             "unique_identifier", None
@@ -338,7 +339,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
         """Returns the signing certificate which was used to sign the policy
         which was applied when the token was generated.
 
-        :rtype: azure.security.attestation.AttestationSigner or None
+        :rtype: ~azure.security.attestation.AttestationSigner or None
         """
         return AttestationSigner._from_generated(  # pylint: disable=protected-access
             self._policy_signer
@@ -426,8 +427,6 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
         """
 
         return self._sgx_collateral
-
-        # Deprecated fields.
 
 
 class StoredAttestationPolicy(object):
@@ -683,7 +682,7 @@ class AttestationToken(object):
         :keyword validation_callback: Function callback to allow clients to perform custom validation of the token.
             if the token is invalid, the `validation_callback` function should throw
             an exception.
-        :paramtype validation_callback: Callable[[AttestationToken, AttestationSigner], None]
+        :paramtype validation_callback: ~typing.Callable[[AttestationToken, AttestationSigner], None]
         :keyword bool validate_signature: if True, validate the signature of the token being validated.
         :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
         :keyword str issuer: Expected issuer, used if validate_issuer is true.
@@ -692,7 +691,7 @@ class AttestationToken(object):
         :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
         :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
 
-        :raises: azure.security.attestation.AttestationTokenValidationException
+        :raises: ~azure.security.attestation.AttestationTokenValidationException
         """
 
         if not kwargs.get("validate_token", True):

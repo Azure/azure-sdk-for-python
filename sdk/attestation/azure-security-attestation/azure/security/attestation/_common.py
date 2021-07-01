@@ -57,7 +57,6 @@ def validate_signing_keys(signing_key_pem, certificate_pem):
     and verifies that the public key associated with the certificate and the
     signing key are the same key.
 
-    :staticmethod:
     """
 
     # Start by making sure that both signing key and certificate are present.

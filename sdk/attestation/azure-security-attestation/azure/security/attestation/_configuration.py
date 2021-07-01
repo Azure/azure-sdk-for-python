@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials import TokenCredential
+
 
 
 class AttestationClientConfiguration(Configuration):
@@ -34,10 +33,8 @@ class AttestationClientConfiguration(Configuration):
     :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
     """
 
-    def __init__(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
         super(  # pylint: disable=super-with-arguments
             AttestationClientConfiguration, self
         ).__init__(**kwargs)
