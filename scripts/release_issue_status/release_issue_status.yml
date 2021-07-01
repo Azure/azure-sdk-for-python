@@ -35,14 +35,16 @@ jobs:
         # import env variable
         export CONN_STR=$(ENV_CONN_STR)
         export FILE=$(ENV_FILE)
+        export TOKEN=$(USR_TOKEN)
+
+        echo 00000000
+        echo $CONN_STR
+        echo $FILE
 
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
         pip install -r $script_path/requirement.txt
-
-        # import env variable
-        export TOKEN=$(USR_TOKEN)
 
         # checkout the target branch
         cd file-storage
