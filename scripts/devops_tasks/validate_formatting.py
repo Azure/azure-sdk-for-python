@@ -10,7 +10,6 @@ import os
 import logging
 import sys
 import subprocess
-import pdb
 
 logging.getLogger().setLevel(logging.INFO)
 
