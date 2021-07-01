@@ -27,7 +27,7 @@ parameters:
     default: false
   - name: TestTimeoutInMinutes
     type: number
-    default: 0
+    default: 120
   - name: CloudConfig
     type: object
     default: {}
