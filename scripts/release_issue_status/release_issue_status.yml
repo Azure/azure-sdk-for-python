@@ -32,6 +32,10 @@ jobs:
         mkdir file-storage
         git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/file-storage
 
+        # import env variable
+        export CONN_STR=$(ENV_CONN_STR)
+        export FILE=$(ENV_FILE)
+
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
