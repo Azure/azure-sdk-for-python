@@ -387,7 +387,7 @@ class AttestationClient(object):
         return response.data.decode("ascii")
 
     def _get_signers(self, **kwargs):
-        # type: (Any) -> list[AttestationSigner]
+        # type: (**Any) -> list[AttestationSigner]
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:
