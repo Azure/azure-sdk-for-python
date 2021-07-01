@@ -38,7 +38,6 @@ document for the attestation service instance.
 """
 
 
-from datetime import datetime, timedelta
 import os
 from dotenv import find_dotenv, load_dotenv
 import base64
@@ -58,13 +57,9 @@ class AttestationClientCreateSamples(object):
                 os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY")
             )
         shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
-        self.shared_url = (
-            "https://shared"
-            + shared_short_name
-            + "."
-            + shared_short_name
-            + ".attest.azure.net"
-        )
+        self.shared_url = "https://shared{}.{}.attest.azure.net".format(
+            shared_short_name, shared_short_name
+        )  # type: str
 
     def close(self):
         pass
@@ -75,7 +70,6 @@ class AttestationClientCreateSamples(object):
         """
         write_banner("create_attestation_client_aad")
         # [START client_create]
-
         # Create azure-identity class
         from azure.identity import DefaultAzureCredential
         from azure.security.attestation import AttestationClient
@@ -86,7 +80,6 @@ class AttestationClientCreateSamples(object):
             openid_metadata = client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
             print(" Issuer: ", openid_metadata["issuer"])
-
         # [END client_create]
 
     def create_attestation_client_shared(self):
@@ -112,7 +105,6 @@ class AttestationClientCreateSamples(object):
             openid_metadata = client.get_open_id_metadata()
             print(" Certificate URI: ", openid_metadata["jwks_uri"])
             print(" Issuer: ", openid_metadata["issuer"])
-
         # [END shared_client_create]
 
     def __enter__(self):

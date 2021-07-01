@@ -82,6 +82,7 @@ class AttestationClient(object):
         specification.
 
         The attestation service currently returns the following fields:
+
         * issuer
         * jwks_uri
         * claims_supported
@@ -105,7 +106,9 @@ class AttestationClient(object):
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
-        return [AttestationSigner._from_generated(key) for key in signing_certificates.keys]
+        return [
+            AttestationSigner._from_generated(key) for key in signing_certificates.keys
+        ]
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, **kwargs):

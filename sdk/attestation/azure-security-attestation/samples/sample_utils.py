@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_helpers.py
+FILE: sample_utils.py
 DESCRIPTION:
     Helper functions used for the azure attestation samples.
 
@@ -23,7 +23,6 @@ from cryptography.x509 import (
     SubjectAlternativeName,
 )
 from cryptography.hazmat.primitives import hashes, serialization
-import os
 
 
 def write_banner(banner):

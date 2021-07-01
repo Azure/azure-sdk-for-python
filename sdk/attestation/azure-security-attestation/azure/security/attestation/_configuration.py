@@ -12,7 +12,6 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-
 class AttestationClientConfiguration(Configuration):
     """Configuration for AttestationClient.
 

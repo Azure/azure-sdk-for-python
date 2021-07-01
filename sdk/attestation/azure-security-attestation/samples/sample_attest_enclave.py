@@ -24,7 +24,7 @@ DESCRIPTION:
 
 
 Usage:
-    python asample_attest_enclave.py
+    python sample_attest_enclave.py
 
 This sample performs attestation of sample SGX collateral with both the
 `attest_sgx_enclave` and `attest_open_enclave` APIs. It also demonstrates 
@@ -36,15 +36,10 @@ additional token validations as a part of the `attest_sgx_enclave` API call.
 
 """
 
-from logging import fatal
-from typing import Any, ByteString, Dict
 from azure.identity import DefaultAzureCredential
 from cryptography.hazmat.backends import default_backend
-from cryptography import x509
-from cryptography.x509 import NameOID
 import cryptography
 from azure.core.exceptions import HttpResponseError
-from cryptography.hazmat.primitives import serialization
 import base64
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -65,12 +60,8 @@ class AttestationClientAttestationSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
-        self.shared_url = (
-            "https://shared"
-            + shared_short_name
-            + "."
-            + shared_short_name
-            + ".attest.azure.net"
+        self.shared_url = "https://shared{}.{}.attest.azure.net".format(
+            shared_short_name, shared_short_name
         )  # type: str
 
     def close(self):
@@ -137,7 +128,6 @@ class AttestationClientAttestationSamples(object):
 
         print("Issuer of token is: ", response.issuer)
         print("Response JSON value is:", json.dumps(response.runtime_claims))
-
         # [END attest_open_enclave_shared_json]
 
     def attest_open_enclave_with_draft_policy(self):
@@ -232,7 +222,6 @@ issuancerules {
         print("Attest Open enclave using ", self.shared_url)
 
         # [START attest_open_enclave_shared_with_options]
-
         def validate_token(token, signer):
             # type: (AttestationToken, AttestationSigner) -> bool
             """
@@ -293,7 +282,6 @@ issuancerules {
 
             print("Issuer of token is: ", response.issuer)
             print("Expiration time: ", token.expires)
-
         # [END attest_open_enclave_shared_with_options]
 
     def __enter__(self):

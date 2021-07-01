@@ -128,7 +128,9 @@ class AttestationPolicyResult(object):
             return None
         return AttestationPolicyResult(
             generated.policy_resolution,
-            AttestationSigner._from_generated(generated.policy_signer), # pylint: disable=protected-access
+            AttestationSigner._from_generated(  # pylint: disable=protected-access
+                generated.policy_signer
+            ),
             generated.policy_token_hash,
         )
 

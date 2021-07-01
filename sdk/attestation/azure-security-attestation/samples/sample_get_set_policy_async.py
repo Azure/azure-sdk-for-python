@@ -37,10 +37,7 @@ which are used to set attestation policy on isolated mode attestation service in
 
 """
 
-from logging import fatal
-from typing import Any, ByteString, Dict
 import base64
-import json
 import os
 from azure.identity.aio import DefaultAzureCredential
 from cryptography.hazmat.backends import default_backend
@@ -48,7 +45,6 @@ from cryptography.x509 import load_pem_x509_certificate
 from dotenv import find_dotenv, load_dotenv
 import base64
 import asyncio
-import pprint
 
 from azure.security.attestation.aio import (
     AttestationAdministrationClient,
@@ -56,7 +52,6 @@ from azure.security.attestation.aio import (
 )
 from azure.security.attestation import (
     AttestationType,
-    AttestationToken,
     AttestationPolicyToken,
     CertificateModification,
 )
