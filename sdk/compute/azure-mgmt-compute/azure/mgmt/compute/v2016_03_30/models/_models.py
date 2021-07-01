@@ -12,14 +12,13 @@ import msrest.serialization
 class AdditionalUnattendContent(msrest.serialization.Model):
     """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
-     value: "OobeSystem".
-    :vartype pass_name: str
-    :ivar component_name: The component name. Currently, the only allowable value is
-     Microsoft-Windows-Shell-Setup. Default value: "Microsoft-Windows-Shell-Setup".
-    :vartype component_name: str
+    :param pass_name: The pass name. Currently, the only allowable value is OobeSystem. The only
+     acceptable values to pass in are None and "OobeSystem". The default value is None.
+    :type pass_name: str
+    :param component_name: The component name. Currently, the only allowable value is
+     Microsoft-Windows-Shell-Setup. The only acceptable values to pass in are None and
+     "Microsoft-Windows-Shell-Setup". The default value is None.
+    :type component_name: str
     :param setting_name: Specifies the name of the setting to which the content applies. Possible
      values are: FirstLogonCommands and AutoLogon. Possible values include: "AutoLogon",
      "FirstLogonCommands".
@@ -30,11 +29,6 @@ class AdditionalUnattendContent(msrest.serialization.Model):
     :type content: str
     """
 
-    _validation = {
-        'pass_name': {'constant': True},
-        'component_name': {'constant': True},
-    }
-
     _attribute_map = {
         'pass_name': {'key': 'passName', 'type': 'str'},
         'component_name': {'key': 'componentName', 'type': 'str'},
@@ -42,14 +36,13 @@ class AdditionalUnattendContent(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    pass_name = "OobeSystem"
-    component_name = "Microsoft-Windows-Shell-Setup"
-
     def __init__(
         self,
         **kwargs
     ):
         super(AdditionalUnattendContent, self).__init__(**kwargs)
+        self.pass_name = kwargs.get('pass_name', None)
+        self.component_name = kwargs.get('component_name', None)
         self.setting_name = kwargs.get('setting_name', None)
         self.content = kwargs.get('content', None)
 
@@ -1283,7 +1276,7 @@ class Usage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of usage measurement. Default value: "Count".
+    :ivar unit: An enum describing the unit of usage measurement. Has constant value: "Count".
     :vartype unit: str
     :param current_value: Required. The current usage of the resource.
     :type current_value: int
@@ -1912,16 +1905,15 @@ class VirtualMachineIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant id associated with the virtual machine.
     :vartype tenant_id: str
-    :ivar type: The type of identity used for the virtual machine. Currently, the only supported
-     type is 'SystemAssigned', which implicitly creates an identity. Default value:
-     "SystemAssigned".
-    :vartype type: str
+    :param type: The type of identity used for the virtual machine. Currently, the only supported
+     type is 'SystemAssigned', which implicitly creates an identity. The only acceptable values to
+     pass in are None and "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -1930,8 +1922,6 @@ class VirtualMachineIdentity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
         **kwargs
@@ -1939,6 +1929,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
         super(VirtualMachineIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class VirtualMachineImageResource(SubResource):
@@ -2263,16 +2254,15 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant id associated with the virtual machine scale set.
     :vartype tenant_id: str
-    :ivar type: The type of identity used for the virtual machine scale set. Currently, the only
-     supported type is 'SystemAssigned', which implicitly creates an identity. Default value:
-     "SystemAssigned".
-    :vartype type: str
+    :param type: The type of identity used for the virtual machine scale set. Currently, the only
+     supported type is 'SystemAssigned', which implicitly creates an identity. The only acceptable
+     values to pass in are None and "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -2281,8 +2271,6 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
         **kwargs
@@ -2290,6 +2278,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         super(VirtualMachineScaleSetIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
