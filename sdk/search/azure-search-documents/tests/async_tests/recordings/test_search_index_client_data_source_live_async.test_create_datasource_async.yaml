@@ -11,28 +11,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchb0841f28.search.windows.net/datasources?api-version=2020-06-30-Preview
+    uri: https://searchb0841f28.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchb0841f28.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D911EA71C6EFA2\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searchb0841f28.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D93C25F60D572E\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
-      content-length: '391'
+      content-length: '407'
       content-type: application/json; odata.metadata=minimal
-      date: Sat, 08 May 2021 06:28:06 GMT
-      elapsed-time: '63'
-      etag: W/"0x8D911EA71C6EFA2"
+      date: Thu, 01 Jul 2021 00:19:58 GMT
+      elapsed-time: '41'
+      etag: W/"0x8D93C25F60D572E"
       expires: '-1'
-      location: https://searchb0841f28.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
+      location: https://searchb0841f28.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 8ce97e26-afc6-11eb-9bae-a0481ca055a9
+      request-id: 11ca8b0c-da02-11eb-aba6-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searchb0841f28.search.windows.net/datasources?api-version=2020-06-30-Preview
+    url: https://searchb0841f28.search.windows.net/datasources?api-version=2021-04-30-Preview
 version: 1
