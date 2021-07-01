@@ -26,7 +26,7 @@ For a more complete view of Azure libraries, see the [Azure SDK for Python relea
 Install the Azure Attestation client library for Python with [PyPI][Attestation_pypi]:
 
 ```Powershell
-pip install --pre azure-security-attestation
+pip install azure-security-attestation
 ```
 
 ### Authenticate the client
