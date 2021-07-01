@@ -238,9 +238,8 @@ class AttestationClient(object):
         )
 
     @distributed_trace
-    def attest_open_enclave(
-        self, report, **kwargs  # type: Dict[str, Any]
-    ):  # type: (...) -> Tuple[AttestationResult, AttestationToken]
+    def attest_open_enclave(self, report, **kwargs):
+        # type: (bytes, **Any) -> Tuple[AttestationResult, AttestationToken]
         """Attests the validity of an Open Enclave report.
 
         :param bytes report: An open_enclave report generated from an Intel(tm)
