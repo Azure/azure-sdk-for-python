@@ -166,8 +166,7 @@ class AttestationClientAttestationSamples(object):
         print("Attest Open enclave using ", self.shared_url)
         print("Using draft policy:", draft_policy)
         async with DefaultAzureCredential() as credential, AttestationClient(
-            self.shared_url,
-            credential,
+            self.shared_url, credential
         ) as attest_client:
             response, token = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, draft_policy=draft_policy
