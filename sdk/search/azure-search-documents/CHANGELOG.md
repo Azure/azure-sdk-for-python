@@ -1,9 +1,10 @@
 # Release History
 
-## 11.3.0b1 (Unreleased)
+## 11.3.0b1 (2021-07-07)
 
 ### Features Added
 
+- Added AAD support
 - Added support for semantic search
 - Added normalizer support
 
