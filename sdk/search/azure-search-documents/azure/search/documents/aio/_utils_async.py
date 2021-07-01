@@ -8,5 +8,5 @@ from azure.core.pipeline import policies
 from .._utils import CREDENTIAL_SCOPES
 
 def get_async_authentication_policy(credential):
-    authentication_policy = policies.AsyncBearerTokenCredentialPolicy(credential, CREDENTIAL_SCOPES)
+    authentication_policy = policies.AsyncBearerTokenCredentialPolicy(credential, *CREDENTIAL_SCOPES)
     return authentication_policy
