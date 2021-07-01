@@ -229,7 +229,6 @@ issuancerules {
         print("Attest Open enclave using ", self.shared_url)
 
         # [START attest_open_enclave_shared_with_options]
-
         def validate_token(token, signer):
             # type: (AttestationToken, AttestationSigner) -> bool
             """
