@@ -35,7 +35,7 @@ In order to interact with the Azure Attestation service, you'll need to create a
 and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object.
 
 Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with the [Azure identity package][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
-or other credential providers provided with the Azure SDK, you should install the Azure.Identity package:
+or other credential providers provided with the Azure SDK, you should install the azure-identity package:
 
 ```Powershell
 pip install azure-identity
