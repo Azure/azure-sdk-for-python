@@ -115,9 +115,9 @@ class AttestationPolicyResult(object):
     """
 
     def __init__(self, policy_resolution, policy_signer, policy_token_hash):
-        # type: (PolicyModification, JSONWebKey, str) -> None
+        # type: (PolicyModification, AttestationSigner, str) -> None
         self.policy_resolution = policy_resolution
-        self.policy_signer = AttestationSigner._from_generated(policy_signer)
+        self.policy_signer = policy_signer
         self.policy_token_hash = policy_token_hash
 
     @classmethod
@@ -128,7 +128,7 @@ class AttestationPolicyResult(object):
             return None
         return AttestationPolicyResult(
             generated.policy_resolution,
-            generated.policy_signer,
+            AttestationSigner._from_generated(generated.policy_signer),
             generated.policy_token_hash,
         )
 
