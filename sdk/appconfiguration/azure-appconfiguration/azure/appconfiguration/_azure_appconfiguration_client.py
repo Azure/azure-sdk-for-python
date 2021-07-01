@@ -45,12 +45,12 @@ if TYPE_CHECKING:
 
 
 class AzureAppConfigurationClient:
-    """Represents an client that calls restful API of Azure App Configuration service.
+    # pylint:disable=line-too-long
+    """Represents a client that calls restful API of Azure App Configuration service.
 
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the app configuration service
-    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
-        or :class:`~azure.core.credentials.TokenCredential`
+    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials.TokenCredential`
 
     """
 
@@ -223,7 +223,7 @@ class AzureAppConfigurationClient:
 
         :param key: key of the ConfigurationSetting
         :type key: str
-        :param label: label of the ConfigurationSetting
+        :param label: label used to identify the ConfigurationSetting. Default is `None`.
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
@@ -390,7 +390,7 @@ class AzureAppConfigurationClient:
 
         :param key: key used to identify the ConfigurationSetting
         :type key: str
-        :param label: label used to identify the ConfigurationSetting
+        :param label: label used to identify the ConfigurationSetting. Default is `None`.
         :type label: str
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :keyword match_condition: The match condition to use upon the etag
