@@ -605,7 +605,7 @@ class AttestationAdministrationClient(object):
         # pylint: disable = line-too-long
         """Removes a policy management certificate from the set of policy management certificates for the instance.
 
-        :param str certificate_to_remove: PEM encoded X.509 certificate to remove from
+        :param str certificate_to_remove: Required. PEM encoded X.509 certificate to remove from
             the list of attestation policy management certificates.
         :keyword  str signing_key: PEM encoded signing Key representing the key
             associated with one of the *existing* attestation signing certificates.
