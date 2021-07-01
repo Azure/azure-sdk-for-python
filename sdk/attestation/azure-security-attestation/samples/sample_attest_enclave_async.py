@@ -166,8 +166,7 @@ class AttestationClientAttestationSamples(object):
         print("Attest Open enclave using ", self.shared_url)
         print("Using draft policy:", draft_policy)
         async with DefaultAzureCredential() as credential, AttestationClient(
-            self.shared_url,
-            credential,
+            self.shared_url, credential
         ) as attest_client:
             response, token = await attest_client.attest_open_enclave(
                 oe_report, runtime_data=runtime_data, draft_policy=draft_policy
@@ -230,7 +229,6 @@ issuancerules {
         print("Attest Open enclave using ", self.shared_url)
 
         # [START attest_open_enclave_shared_with_options]
-
         def validate_token(token, signer):
             # type: (AttestationToken, AttestationSigner) -> bool
             """
@@ -289,7 +287,6 @@ issuancerules {
 
             print("Issuer of token is: ", response.issuer)
             print("Expiration time: ", token.expires)
-
         # [END attest_open_enclave_shared_with_options]
 
     async def __aenter__(self):
