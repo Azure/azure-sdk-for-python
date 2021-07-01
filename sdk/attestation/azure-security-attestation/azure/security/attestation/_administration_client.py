@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 
 class AttestationAdministrationClient(object):
-    # pylint: disable = line-too-long
+    # pylint: disable = line-too-long, protected-access
     """Provides administrative APIs for managing an instance of the Attestation Service.
 
     The :class:`~azure.security.attestation.AttestationAdministrationClient` object implements the policy
