@@ -11,6 +11,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 
 - Added `catagories_filter` to `RecognizePiiEntitiesAction`
 - Added `HealthcareEntityCategory`
+- Added AAD support for the `begin_analyze_healthcare_entities` methods.
 
 ### Breaking Changes
 
