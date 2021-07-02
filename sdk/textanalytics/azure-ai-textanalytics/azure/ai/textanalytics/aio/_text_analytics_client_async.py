@@ -28,7 +28,7 @@ from .._response_handlers import (
     language_result,
     pii_entities_result,
 )
-from .._response_handlers_async import healthcare_paged_result, analyze_paged_result
+from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
     DetectLanguageInput,
     TextDocumentInput,

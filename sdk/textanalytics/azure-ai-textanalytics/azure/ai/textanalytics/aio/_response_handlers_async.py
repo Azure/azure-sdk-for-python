@@ -9,7 +9,7 @@ import functools
 from urllib.parse import urlparse, parse_qsl
 
 from azure.core.async_paging import AsyncList, AsyncItemPaged
-from ._response_handlers import healthcare_result, get_iter_items
+from .._response_handlers import healthcare_result, get_iter_items
 
 
 async def healthcare_extract_page_data_async(
