@@ -34,13 +34,12 @@ class ContainerRegistryBaseClient(object):
 
     def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
-        audience = kwargs.pop("audience", ["https://management.core.windows.net/.default"])
+        self.audience = kwargs.pop("audience", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=audience,
             **kwargs
         )
 

@@ -49,7 +49,6 @@ class ACRExchangeClient(object):
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=self.audience,
             **kwargs
         )
         self._credential = credential

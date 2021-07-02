@@ -41,7 +41,6 @@ class ContainerRegistryBaseClient(object):
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes=audience,
             **kwargs
         )
 
