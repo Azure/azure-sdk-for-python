@@ -3074,10 +3074,9 @@ class ScriptActionsList(msrest.serialization.Model):
 class SecurityProfile(msrest.serialization.Model):
     """The security profile which contains Ssh public key for the HDInsight cluster.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar directory_type: The directory type. Default value: "ActiveDirectory".
-    :vartype directory_type: str
+    :param directory_type: The directory type. The only acceptable values to pass in are None and
+     "ActiveDirectory". The default value is None.
+    :type directory_type: str
     :param domain: The organization's active directory domain.
     :type domain: str
     :param organizational_unit_dn: The organizational unit within the Active Directory to place the
@@ -3098,10 +3097,6 @@ class SecurityProfile(msrest.serialization.Model):
     :type msi_resource_id: str
     """
 
-    _validation = {
-        'directory_type': {'constant': True},
-    }
-
     _attribute_map = {
         'directory_type': {'key': 'directoryType', 'type': 'str'},
         'domain': {'key': 'domain', 'type': 'str'},
@@ -3114,11 +3109,10 @@ class SecurityProfile(msrest.serialization.Model):
         'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
     }
 
-    directory_type = "ActiveDirectory"
-
     def __init__(
         self,
         *,
+        directory_type: Optional[str] = None,
         domain: Optional[str] = None,
         organizational_unit_dn: Optional[str] = None,
         ldaps_urls: Optional[List[str]] = None,
@@ -3130,6 +3124,7 @@ class SecurityProfile(msrest.serialization.Model):
         **kwargs
     ):
         super(SecurityProfile, self).__init__(**kwargs)
+        self.directory_type = directory_type
         self.domain = domain
         self.organizational_unit_dn = organizational_unit_dn
         self.ldaps_urls = ldaps_urls
