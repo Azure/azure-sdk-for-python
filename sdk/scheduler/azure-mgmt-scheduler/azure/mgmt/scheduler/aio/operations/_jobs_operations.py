@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class JobsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class JobsOperations:
         resource_group_name: str,
         job_collection_name: str,
         job_name: str,
-        **kwargs
-    ) -> "models.JobDefinition":
+        **kwargs: Any
+    ) -> "_models.JobDefinition":
         """Gets a job.
 
         :param resource_group_name: The resource group name.
@@ -61,7 +61,7 @@ class JobsOperations:
         :rtype: ~azure.mgmt.scheduler.models.JobDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,9 +108,9 @@ class JobsOperations:
         resource_group_name: str,
         job_collection_name: str,
         job_name: str,
-        job: "models.JobDefinition",
-        **kwargs
-    ) -> "models.JobDefinition":
+        job: "_models.JobDefinition",
+        **kwargs: Any
+    ) -> "_models.JobDefinition":
         """Provisions a new job or updates an existing job.
 
         :param resource_group_name: The resource group name.
@@ -126,7 +126,7 @@ class JobsOperations:
         :rtype: ~azure.mgmt.scheduler.models.JobDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -182,9 +182,9 @@ class JobsOperations:
         resource_group_name: str,
         job_collection_name: str,
         job_name: str,
-        job: "models.JobDefinition",
-        **kwargs
-    ) -> "models.JobDefinition":
+        job: "_models.JobDefinition",
+        **kwargs: Any
+    ) -> "_models.JobDefinition":
         """Patches an existing job.
 
         :param resource_group_name: The resource group name.
@@ -200,7 +200,7 @@ class JobsOperations:
         :rtype: ~azure.mgmt.scheduler.models.JobDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -252,7 +252,7 @@ class JobsOperations:
         resource_group_name: str,
         job_collection_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a job.
 
@@ -309,7 +309,7 @@ class JobsOperations:
         resource_group_name: str,
         job_collection_name: str,
         job_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Runs a job.
 
@@ -368,8 +368,8 @@ class JobsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.JobListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.JobListResult"]:
         """Lists all jobs under the specified job collection.
 
         :param resource_group_name: The resource group name.
@@ -388,7 +388,7 @@ class JobsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.scheduler.models.JobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -459,8 +459,8 @@ class JobsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> AsyncIterable["models.JobHistoryListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.JobHistoryListResult"]:
         """Lists job history.
 
         :param resource_group_name: The resource group name.
@@ -481,7 +481,7 @@ class JobsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.scheduler.models.JobHistoryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobHistoryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobHistoryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

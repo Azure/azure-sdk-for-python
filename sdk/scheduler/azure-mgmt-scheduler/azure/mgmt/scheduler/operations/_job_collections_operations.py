@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class JobCollectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class JobCollectionsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobCollectionListResult"]
+        # type: (...) -> Iterable["_models.JobCollectionListResult"]
         """Gets all job collections under specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -59,7 +59,7 @@ class JobCollectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.scheduler.models.JobCollectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobCollectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobCollectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -119,7 +119,7 @@ class JobCollectionsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobCollectionListResult"]
+        # type: (...) -> Iterable["_models.JobCollectionListResult"]
         """Gets all job collections under specified resource group.
 
         :param resource_group_name: The resource group name.
@@ -129,7 +129,7 @@ class JobCollectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.scheduler.models.JobCollectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobCollectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobCollectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -191,7 +191,7 @@ class JobCollectionsOperations(object):
         job_collection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobCollectionDefinition"
+        # type: (...) -> "_models.JobCollectionDefinition"
         """Gets a job collection.
 
         :param resource_group_name: The resource group name.
@@ -203,7 +203,7 @@ class JobCollectionsOperations(object):
         :rtype: ~azure.mgmt.scheduler.models.JobCollectionDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobCollectionDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobCollectionDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -248,10 +248,10 @@ class JobCollectionsOperations(object):
         self,
         resource_group_name,  # type: str
         job_collection_name,  # type: str
-        job_collection,  # type: "models.JobCollectionDefinition"
+        job_collection,  # type: "_models.JobCollectionDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobCollectionDefinition"
+        # type: (...) -> "_models.JobCollectionDefinition"
         """Provisions a new job collection or updates an existing job collection.
 
         :param resource_group_name: The resource group name.
@@ -265,7 +265,7 @@ class JobCollectionsOperations(object):
         :rtype: ~azure.mgmt.scheduler.models.JobCollectionDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobCollectionDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobCollectionDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -319,10 +319,10 @@ class JobCollectionsOperations(object):
         self,
         resource_group_name,  # type: str
         job_collection_name,  # type: str
-        job_collection,  # type: "models.JobCollectionDefinition"
+        job_collection,  # type: "_models.JobCollectionDefinition"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobCollectionDefinition"
+        # type: (...) -> "_models.JobCollectionDefinition"
         """Patches an existing job collection.
 
         :param resource_group_name: The resource group name.
@@ -336,7 +336,7 @@ class JobCollectionsOperations(object):
         :rtype: ~azure.mgmt.scheduler.models.JobCollectionDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobCollectionDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobCollectionDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -440,8 +440,8 @@ class JobCollectionsOperations(object):
         :type job_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -470,7 +470,13 @@ class JobCollectionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -542,8 +548,8 @@ class JobCollectionsOperations(object):
         :type job_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -572,7 +578,13 @@ class JobCollectionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -644,8 +656,8 @@ class JobCollectionsOperations(object):
         :type job_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -674,7 +686,13 @@ class JobCollectionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
