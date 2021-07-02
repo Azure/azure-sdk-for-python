@@ -173,7 +173,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._issuer = kwargs.pop("issuer")  # type: Union[str, None]
+        self._issuer = kwargs.pop("issuer")  # type:str
         self._unique_identifier = kwargs.pop(
             "unique_identifier", None
         )  # type: Union[str, None]
@@ -350,7 +350,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
     @property
     def policy_hash(self):
         # type: () -> str
-        """Returns the base64url encoded SHA256 hash of the Base64Url encoded
+        """Returns the base64url encoded SHA256 hash of the base64url encoded
         attestation policy which was applied when generating this token.
 
         :rtype: str

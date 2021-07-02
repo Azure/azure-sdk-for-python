@@ -290,7 +290,7 @@ class AsyncPolicyGetSetTests(AzureTestCase):
             await admin_client.add_policy_management_certificate()
 
         # And test more than one positional parameter. Should also throw.
-        with pytest.raises(TypeError) as ex:
+        with pytest.raises(TypeError):
             await admin_client.add_policy_management_certificate(
                 pem_certificate_to_add, pem_certificate_to_add
             )

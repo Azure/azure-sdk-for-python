@@ -78,7 +78,7 @@ class AttestationClient(object):
         """Retrieves the OpenID metadata configuration document for this attestation instance.
 
         The metadata configuration document is defined in the `OpenID Connect
-        Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>`
+        Discovery <https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse>`_
         specification.
 
         The attestation service currently returns the following fields:
