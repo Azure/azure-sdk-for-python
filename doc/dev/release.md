@@ -1,13 +1,13 @@
 # Release process
 
 ### Disclaimer
-This article assumes you have code on `master` that is ready to publish:
+This article assumes you have code on `main` that is ready to publish:
 - Version is accurate
 - ChangeLog is updated
 - Readme is accurate, etc.
 
 If you don't, and you are working with Management packages, start with this page:
-https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/mgmt_release.md
+https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/mgmt_release.md
 
 
 ## Python Package Index
@@ -16,18 +16,18 @@ Python packages are uploaded to [PyPI](https://pypi.org/). Once you've uploaded 
 
 ### Production - Deploy with Azure Dev Ops
 
-To avoid "accidental" pushes to our target repositories, [approval](https://docs.microsoft.com/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [wiki page](https://aka.ms/python-approval-groups) and click on `Release to PyPI Approvers` to add yourself to the group for PyPI publishing. 
+To avoid "accidental" pushes to our target repositories, [approval](https://docs.microsoft.com/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [wiki page](https://aka.ms/python-approval-groups) and click on `Release to PyPI Approvers` to add yourself to the group for PyPI publishing.
 
-Instead of a single central pipeline, the python SDK has moved to `service directory` associated build pipelines. These are driven by yml templates at the root of each service folder. [Example for storage service folder.](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/ci.yml#L44)
+Instead of a single central pipeline, the python SDK has moved to `service directory` associated build pipelines. These are driven by yml templates at the root of each service folder. [Example for storage service folder.](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/ci.yml#L44)
 
 As an aside, please note that the preview feature `multi-stage pipelines` must be enabled to properly interact with unified pipelines. If you aren't aware, find out how to enable by visiting [this link.](https://docs.microsoft.com/azure/devops/project/navigation/preview-features?view=azure-devops)
 
 #### Releasing Through Unified Pipelines
 
-1. Begin by locating your pipeline on the `internal` project under the `python` folder. Naming convention is `python - <servicedir>`. 
+1. Begin by locating your pipeline on the `internal` project under the `python` folder. Naming convention is `python - <servicedir>`.
     1. To release any package under the folder `sdk/core`, you would queue a build against [python - core](https://dev.azure.com/azure-sdk/internal/_build?definitionId=983&_a=summary) pipeline.
 2. After queuing the build, a last test pass will execute prior to splitting into a release job per defined artifact.
-3. Click `approve` only on packages that you wish to release to pypi. Reject all others. 
+3. Click `approve` only on packages that you wish to release to pypi. Reject all others.
     1. [A partially approved build will look like this](https://dev.azure.com/azure-sdk/internal/_build/results?buildId=176564&view=results)
 
 Validate artifacts prior to clicking `approve` on the release stage for the package you wish to release.

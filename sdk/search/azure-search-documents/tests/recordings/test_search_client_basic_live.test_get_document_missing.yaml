@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search751b1688.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+    uri: https://search751b1688.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30-Preview
   response:
     body:
       string: ''
@@ -21,15 +21,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 20 May 2021 16:43:34 GMT
+      - Sat, 08 May 2021 05:57:29 GMT
       elapsed-time:
-      - '120'
+      - '125'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 841ba75f-b98a-11eb-85a4-a0481ca055a9
+      - 45abac19-afc2-11eb-9316-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

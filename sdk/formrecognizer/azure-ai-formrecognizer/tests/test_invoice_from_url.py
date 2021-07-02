@@ -311,3 +311,18 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_invoice_no_sub_line_items(self, client):
+
+        poller = client.begin_recognize_invoices_from_url(
+            invoice_url=self.invoice_no_sub_line_item,
+        )
+
+        result = poller.result()
+        invoice = result[0]
+        assert invoice.fields["Items"].value[0].value == {}
+        assert invoice.fields["Items"].value[0].value_data.text == "1"
+        assert invoice.fields["Items"].value[1].value == {}
+        assert invoice.fields["Items"].value[1].value_data.text == "1"

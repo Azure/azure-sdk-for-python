@@ -114,11 +114,10 @@ async def sample_update_hook_async(hook):
     hook.description = "updated hook description"
 
     async with client:
-        await client.update_hook(
+        updated = await client.update_hook(
             hook,
             emails_to_alert=["newemail@alertme.com"]
         )
-        updated = await client.get_hook(hook.id)
         print("Updated name: {}".format(updated.name))
         print("Updated description: {}".format(updated.description))
         print("Updated emails: {}".format(updated.emails_to_alert))

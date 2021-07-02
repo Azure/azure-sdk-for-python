@@ -486,27 +486,27 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ReplicationLinksListResult"]:
+    ) -> AsyncIterable["_models.ReplicationLinkListResult"]:
         """Gets a list of replication links on database.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server containing the replication link.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database containing the replication link.
+        :param database_name: The name of the database.
         :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ReplicationLinksListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ReplicationLinksListResult]
+        :return: An iterator like instance of either ReplicationLinkListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ReplicationLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicationLinksListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicationLinkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -536,7 +536,7 @@ class ReplicationLinksOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReplicationLinksListResult', pipeline_response)
+            deserialized = self._deserialize('ReplicationLinkListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -564,7 +564,7 @@ class ReplicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replication_link_name: str,
+        link_id: str,
         **kwargs: Any
     ) -> "_models.ReplicationLink":
         """Gets a replication link.
@@ -572,12 +572,12 @@ class ReplicationLinksOperations:
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server containing the replication link.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database containing the replication link.
+        :param database_name: The name of the database.
         :type database_name: str
-        :param replication_link_name: The name of the replication link.
-        :type replication_link_name: str
+        :param link_id: The name of the replication link.
+        :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ReplicationLink, or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ReplicationLink
@@ -588,7 +588,7 @@ class ReplicationLinksOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -597,7 +597,7 @@ class ReplicationLinksOperations:
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'replicationLinkName': self._serialize.url("replication_link_name", replication_link_name, 'str'),
+            'linkId': self._serialize.url("link_id", link_id, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -624,32 +624,32 @@ class ReplicationLinksOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/replicationLinks/{replicationLinkName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/replicationLinks/{linkId}'}  # type: ignore
 
     def list_by_server(
         self,
         resource_group_name: str,
         server_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ReplicationLinksListResult"]:
+    ) -> AsyncIterable["_models.ReplicationLinkListResult"]:
         """Gets a list of replication links.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server containing the replication link.
+        :param server_name: The name of the server.
         :type server_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ReplicationLinksListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ReplicationLinksListResult]
+        :return: An iterator like instance of either ReplicationLinkListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ReplicationLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicationLinksListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicationLinkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
+        api_version = "2021-02-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -678,7 +678,7 @@ class ReplicationLinksOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReplicationLinksListResult', pipeline_response)
+            deserialized = self._deserialize('ReplicationLinkListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)

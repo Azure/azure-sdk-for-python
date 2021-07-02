@@ -15,33 +15,6 @@ import msrest.serialization
 from ._azure_stack_hci_client_enums import *
 
 
-class AvailableOperations(msrest.serialization.Model):
-    """Available operations of the service.
-
-    :param value: Collection of available operation details.
-    :type value: list[~azure_stack_hci_client.models.OperationDetail]
-    :param next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationDetail]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["OperationDetail"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(AvailableOperations, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class Resource(msrest.serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -77,6 +50,162 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class ArcSetting(ProxyResource):
+    """ArcSetting details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar provisioning_state: Provisioning state of the ArcSetting proxy resource. Possible values
+     include: "Succeeded", "Failed", "Canceled", "Accepted", "Provisioning".
+    :vartype provisioning_state: str or ~azure_stack_hci_client.models.ProvisioningState
+    :ivar arc_instance_resource_group: The resource group that hosts the Arc agents, ie. Hybrid
+     Compute Machine resources.
+    :vartype arc_instance_resource_group: str
+    :ivar aggregate_state: Aggregate state of Arc agent across the nodes in this HCI cluster.
+     Possible values include: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed",
+     "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
+     "PartiallySucceeded", "PartiallyConnected", "InProgress".
+    :vartype aggregate_state: str or ~azure_stack_hci_client.models.ArcSettingAggregateState
+    :ivar per_node_details: State of Arc agent in each of the nodes.
+    :vartype per_node_details: list[~azure_stack_hci_client.models.PerNodeState]
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'arc_instance_resource_group': {'readonly': True},
+        'aggregate_state': {'readonly': True},
+        'per_node_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'arc_instance_resource_group': {'key': 'properties.arcInstanceResourceGroup', 'type': 'str'},
+        'aggregate_state': {'key': 'properties.aggregateState', 'type': 'str'},
+        'per_node_details': {'key': 'properties.perNodeDetails', 'type': '[PerNodeState]'},
+        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
+        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(ArcSetting, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.arc_instance_resource_group = None
+        self.aggregate_state = None
+        self.per_node_details = None
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class ArcSettingList(msrest.serialization.Model):
+    """List of ArcSetting proxy resources for the HCI cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of ArcSetting proxy resources.
+    :vartype value: list[~azure_stack_hci_client.models.ArcSetting]
+    :ivar next_link: Link to the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ArcSetting]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ArcSettingList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class TrackedResource(Resource):
@@ -154,12 +283,14 @@ class Cluster(TrackedResource):
     :vartype status: str or ~azure_stack_hci_client.models.Status
     :ivar cloud_id: Unique, immutable resource id.
     :vartype cloud_id: str
+    :param cloud_management_endpoint: Endpoint configured for management from the Azure portal.
+    :type cloud_management_endpoint: str
     :param aad_client_id: App id of cluster AAD identity.
     :type aad_client_id: str
     :param aad_tenant_id: Tenant id of cluster AAD identity.
     :type aad_tenant_id: str
-    :param reported_properties: Properties reported by cluster agent.
-    :type reported_properties: ~azure_stack_hci_client.models.ClusterReportedProperties
+    :ivar reported_properties: Properties reported by cluster agent.
+    :vartype reported_properties: ~azure_stack_hci_client.models.ClusterReportedProperties
     :ivar trial_days_remaining: Number of days remaining in the trial period.
     :vartype trial_days_remaining: float
     :ivar billing_model: Type of billing applied to the resource.
@@ -194,6 +325,7 @@ class Cluster(TrackedResource):
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'cloud_id': {'readonly': True},
+        'reported_properties': {'readonly': True},
         'trial_days_remaining': {'readonly': True},
         'billing_model': {'readonly': True},
         'registration_timestamp': {'readonly': True},
@@ -210,6 +342,7 @@ class Cluster(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'cloud_id': {'key': 'properties.cloudId', 'type': 'str'},
+        'cloud_management_endpoint': {'key': 'properties.cloudManagementEndpoint', 'type': 'str'},
         'aad_client_id': {'key': 'properties.aadClientId', 'type': 'str'},
         'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
         'reported_properties': {'key': 'properties.reportedProperties', 'type': 'ClusterReportedProperties'},
@@ -231,9 +364,9 @@ class Cluster(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        cloud_management_endpoint: Optional[str] = None,
         aad_client_id: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
-        reported_properties: Optional["ClusterReportedProperties"] = None,
         created_by: Optional[str] = None,
         created_by_type: Optional[Union[str, "CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
@@ -246,9 +379,10 @@ class Cluster(TrackedResource):
         self.provisioning_state = None
         self.status = None
         self.cloud_id = None
+        self.cloud_management_endpoint = cloud_management_endpoint
         self.aad_client_id = aad_client_id
         self.aad_tenant_id = aad_tenant_id
-        self.reported_properties = reported_properties
+        self.reported_properties = None
         self.trial_days_remaining = None
         self.billing_model = None
         self.registration_timestamp = None
@@ -358,6 +492,32 @@ class ClusterNode(msrest.serialization.Model):
         self.memory_in_gi_b = None
 
 
+class ClusterPatch(msrest.serialization.Model):
+    """Cluster details to update.
+
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param cloud_management_endpoint: Endpoint configured for management from the Azure portal.
+    :type cloud_management_endpoint: str
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'cloud_management_endpoint': {'key': 'properties.cloudManagementEndpoint', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        cloud_management_endpoint: Optional[str] = None,
+        **kwargs
+    ):
+        super(ClusterPatch, self).__init__(**kwargs)
+        self.tags = tags
+        self.cloud_management_endpoint = cloud_management_endpoint
+
+
 class ClusterReportedProperties(msrest.serialization.Model):
     """Properties reported by cluster agent.
 
@@ -401,27 +561,6 @@ class ClusterReportedProperties(msrest.serialization.Model):
         self.cluster_version = None
         self.nodes = None
         self.last_updated = None
-
-
-class ClusterUpdate(msrest.serialization.Model):
-    """Cluster details to update.
-
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ClusterUpdate, self).__init__(**kwargs)
-        self.tags = tags
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -520,59 +659,237 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = error
 
 
-class OperationDetail(msrest.serialization.Model):
-    """Operation detail payload.
+class Extension(ProxyResource):
+    """Details of a particular extension in HCI Cluster.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: Display of the operation.
-    :type display: ~azure_stack_hci_client.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: any
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar provisioning_state: Provisioning state of the Extension proxy resource. Possible values
+     include: "Succeeded", "Failed", "Canceled", "Accepted", "Provisioning".
+    :vartype provisioning_state: str or ~azure_stack_hci_client.models.ProvisioningState
+    :ivar aggregate_state: Aggregate state of Arc Extensions across the nodes in this HCI cluster.
+     Possible values include: "NotSpecified", "Error", "Succeeded", "Canceled", "Failed",
+     "Connected", "Disconnected", "Deleted", "Creating", "Updating", "Deleting", "Moving",
+     "PartiallySucceeded", "PartiallyConnected", "InProgress".
+    :vartype aggregate_state: str or ~azure_stack_hci_client.models.ExtensionAggregateState
+    :ivar per_node_extension_details: State of Arc Extension in each of the nodes.
+    :vartype per_node_extension_details: list[~azure_stack_hci_client.models.PerNodeExtensionState]
+    :param force_update_tag: How the extension handler should be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
+    :param publisher: The name of the extension handler publisher.
+    :type publisher: str
+    :param type_properties_extension_parameters_type: Specifies the type of the extension; an
+     example is "CustomScriptExtension".
+    :type type_properties_extension_parameters_type: str
+    :param type_handler_version: Specifies the version of the script handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+     version if one is available at deployment time. Once deployed, however, the extension will not
+     upgrade minor versions unless redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param settings: Json formatted public settings for the extension.
+    :type settings: any
+    :param protected_settings: Protected settings (may contain secrets).
+    :type protected_settings: any
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure_stack_hci_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'aggregate_state': {'readonly': True},
+        'per_node_extension_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'aggregate_state': {'key': 'properties.aggregateState', 'type': 'str'},
+        'per_node_extension_details': {'key': 'properties.perNodeExtensionDetails', 'type': '[PerNodeExtensionState]'},
+        'force_update_tag': {'key': 'properties.extensionParameters.forceUpdateTag', 'type': 'str'},
+        'publisher': {'key': 'properties.extensionParameters.publisher', 'type': 'str'},
+        'type_properties_extension_parameters_type': {'key': 'properties.extensionParameters.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.extensionParameters.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.extensionParameters.autoUpgradeMinorVersion', 'type': 'bool'},
+        'settings': {'key': 'properties.extensionParameters.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.extensionParameters.protectedSettings', 'type': 'object'},
+        'created_by': {'key': 'systemData.createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'systemData.createdByType', 'type': 'str'},
+        'created_at': {'key': 'systemData.createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'systemData.lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'systemData.lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'systemData.lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        force_update_tag: Optional[str] = None,
+        publisher: Optional[str] = None,
+        type_properties_extension_parameters_type: Optional[str] = None,
+        type_handler_version: Optional[str] = None,
+        auto_upgrade_minor_version: Optional[bool] = None,
+        settings: Optional[Any] = None,
+        protected_settings: Optional[Any] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(Extension, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.aggregate_state = None
+        self.per_node_extension_details = None
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type_properties_extension_parameters_type = type_properties_extension_parameters_type
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class ExtensionList(msrest.serialization.Model):
+    """List of Extensions in HCI cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Extensions in HCI cluster.
+    :vartype value: list[~azure_stack_hci_client.models.Extension]
+    :ivar next_link: Link to the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Extension]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ExtensionList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class Operation(msrest.serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :param display: Localized display information for this particular operation.
+    :type display: ~azure_stack_hci_client.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
+     "system", "user,system".
+    :vartype origin: str or ~azure_stack_hci_client.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. Possible values include: "Internal".
+    :vartype action_type: str or ~azure_stack_hci_client.models.ActionType
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
+        'origin': {'readonly': True},
+        'action_type': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        is_data_action: Optional[bool] = None,
         display: Optional["OperationDisplay"] = None,
-        origin: Optional[str] = None,
-        properties: Optional[Any] = None,
         **kwargs
     ):
-        super(OperationDetail, self).__init__(**kwargs)
-        self.name = name
-        self.is_data_action = is_data_action
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.is_data_action = None
         self.display = display
-        self.origin = origin
-        self.properties = properties
+        self.origin = None
+        self.action_type = None
 
 
 class OperationDisplay(msrest.serialization.Model):
-    """Operation display payload.
+    """Localized display information for this particular operation.
 
-    :param provider: Resource provider of the operation.
-    :type provider: str
-    :param resource: Resource of the operation.
-    :type resource: str
-    :param operation: Localized friendly name for the operation.
-    :type operation: str
-    :param description: Localized friendly description for the operation.
-    :type description: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
     """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+        'description': {'readonly': True},
+    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -583,15 +900,114 @@ class OperationDisplay(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
         **kwargs
     ):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
+
+
+class OperationListResult(msrest.serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure_stack_hci_client.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class PerNodeExtensionState(msrest.serialization.Model):
+    """Status of Arc Extension for a particular node in HCI Cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the node in HCI Cluster.
+    :vartype name: str
+    :ivar extension: Fully qualified resource ID for the particular Arc Extension on this node.
+    :vartype extension: str
+    :ivar state: State of Arc Extension in this node. Possible values include: "NotSpecified",
+     "Error", "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving".
+    :vartype state: str or ~azure_stack_hci_client.models.NodeExtensionState
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'extension': {'readonly': True},
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'extension': {'key': 'extension', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PerNodeExtensionState, self).__init__(**kwargs)
+        self.name = None
+        self.extension = None
+        self.state = None
+
+
+class PerNodeState(msrest.serialization.Model):
+    """Status of Arc agent for a particular node in HCI Cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the Node in HCI Cluster.
+    :vartype name: str
+    :ivar arc_instance: Fully qualified resource ID for the Arc agent of this node.
+    :vartype arc_instance: str
+    :ivar state: State of Arc agent in this node. Possible values include: "NotSpecified", "Error",
+     "Succeeded", "Canceled", "Failed", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving".
+    :vartype state: str or ~azure_stack_hci_client.models.NodeArcState
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'arc_instance': {'readonly': True},
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'arc_instance': {'key': 'arcInstance', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PerNodeState, self).__init__(**kwargs)
+        self.name = None
+        self.arc_instance = None
+        self.state = None

@@ -78,7 +78,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
     #optional-configuration>`_.
 
     :param str account_url:

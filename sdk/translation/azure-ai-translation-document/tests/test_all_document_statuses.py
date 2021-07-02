@@ -23,11 +23,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         docs_count = 5
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # list docs statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id)) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         for document in doc_statuses:
@@ -41,11 +41,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         no_of_pages = docs_count // results_per_page
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses_pages = list(client.list_all_document_statuses(job_id=job_id, results_per_page=results_per_page).by_page())
+        doc_statuses_pages = list(client.list_all_document_statuses(translation_id=poller.id, results_per_page=results_per_page).by_page())
         self.assertEqual(len(doc_statuses_pages), no_of_pages)
 
         # iterate by page
@@ -63,11 +63,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         skip = 2
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id=job_id, skip=skip))
+        doc_statuses = list(client.list_all_document_statuses(translation_id=poller.id, skip=skip))
         self.assertEqual(len(doc_statuses), docs_count - skip)
 
         # iterate over docs
@@ -81,20 +81,20 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         docs_count = 10
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
-        # list jobs
+        # list operations
         statuses = ["NotStarted"]
-        doc_statuses = list(client.list_all_document_statuses(job_id, statuses=statuses))
+        doc_statuses = list(client.list_all_document_statuses(poller.id, statuses=statuses))
         assert(len(doc_statuses) == 0)
 
         statuses = ["Succeeded"]
-        doc_statuses = list(client.list_all_document_statuses(job_id, statuses=statuses))
+        doc_statuses = list(client.list_all_document_statuses(poller.id, statuses=statuses))
         assert(len(doc_statuses) == docs_count)
 
         statuses = ["Failed"]
-        doc_statuses = list(client.list_all_document_statuses(job_id, statuses=statuses))
+        doc_statuses = list(client.list_all_document_statuses(poller.id, statuses=statuses))
         assert(len(doc_statuses) == 0)
 
 
@@ -104,17 +104,17 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         docs_count = 5
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # filter ids
-        doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id)) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
         # do the testing
-        doc_statuses = list(client.list_all_document_statuses(job_id, document_ids=ids))
+        doc_statuses = list(client.list_all_document_statuses(poller.id, document_ids=ids))
         self.assertEqual(len(doc_statuses), len(ids))
         for document in doc_statuses:
             self._validate_doc_status(document, target_language, ids=ids)
@@ -126,11 +126,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         docs_count = 5
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["createdDateTimeUtc asc"])) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id, order_by=["createdDateTimeUtc asc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         curr = datetime.min
@@ -145,11 +145,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         docs_count = 5
         target_language = "es"
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["createdDateTimeUtc desc"])) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id, order_by=["createdDateTimeUtc desc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         curr = datetime.max
@@ -168,18 +168,17 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         results_per_page = 2
         statuses = ["Succeeded"]
 
-        # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
+        # submit and validate operation
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
 
         # get ids
-        doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(poller.id)) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
-        # list jobs
         filtered_docs = client.list_all_document_statuses(
-            job_id,
+            poller.id,
             # filters
             document_ids=ids,
             statuses=statuses,

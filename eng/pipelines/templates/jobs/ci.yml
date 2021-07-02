@@ -17,6 +17,12 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: BeforeTestSteps
+    type: object
+    default: []
+  - name: AfterTestSteps
+    type: object
+    default: []
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
@@ -46,6 +52,9 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
+  - name: ValidateFormatting
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -54,8 +63,8 @@ jobs:
     - template: ../variables/globals.yml
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: ../steps/build-artifacts.yml
@@ -82,8 +91,8 @@ jobs:
       - 'Build'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
@@ -106,6 +115,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
@@ -121,6 +131,8 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
@@ -160,8 +172,8 @@ jobs:
       - 'Build'
 
     pool:
-      name: azsdk-pool-mms-ubuntu-1804-general
-      vmImage: MMSUbuntu18.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04
 
     steps:
     - template: ../steps/test_regression.yml

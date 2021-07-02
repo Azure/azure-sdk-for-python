@@ -210,9 +210,10 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
-        """Encrypt bytes using the client's key. Requires the keys/encrypt permission.
+        """Encrypt bytes using the client's key.
 
-        This method encrypts only a single block of data, whose size depends on the key and encryption algorithm.
+        Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
+        the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
@@ -268,9 +269,10 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> DecryptResult
-        """Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
+        """Decrypt a single block of encrypted data using the client's key.
 
-        This method decrypts only a single block of data, whose size depends on the key and encryption algorithm.
+        Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
+        the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
@@ -323,7 +325,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def wrap_key(self, algorithm, key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> WrapResult
-        """Wrap a key with the client's key. Requires the keys/wrapKey permission.
+        """Wrap a key with the client's key.
+
+        Requires the keys/wrapKey permission.
 
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
@@ -364,7 +368,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def unwrap_key(self, algorithm, encrypted_key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> UnwrapResult
-        """Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
+        """Unwrap a key previously wrapped with the client's key.
+
+        Requires the keys/unwrapKey permission.
 
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
@@ -403,7 +409,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
         # type: (SignatureAlgorithm, bytes, **Any) -> SignResult
-        """Create a signature from a digest using the client's key. Requires the keys/sign permission.
+        """Create a signature from a digest using the client's key.
+
+        Requires the keys/sign permission.
 
         :param algorithm: signing algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
@@ -444,7 +452,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def verify(self, algorithm, digest, signature, **kwargs):
         # type: (SignatureAlgorithm, bytes, bytes, **Any) -> VerifyResult
-        """Verify a signature using the client's key. Requires the keys/verify permission.
+        """Verify a signature using the client's key.
+
+        Requires the keys/verify permission.
 
         :param algorithm: verification algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`

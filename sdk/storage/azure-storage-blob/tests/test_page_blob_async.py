@@ -37,7 +37,7 @@ from azure.storage.blob.aio import (
 )
 
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'

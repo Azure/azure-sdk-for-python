@@ -11,13 +11,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '274'
+      - '277'
       Content-Type:
       - application/json
-      Date:
-      - Tue, 13 Apr 2021 18:38:07 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:30:34 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,15 +32,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 18:38:08 GMT
+      - Tue, 22 Jun 2021 20:30:34 GMT
       ms-cv:
-      - NaeHfjm8vEa2kzQRYtt98w.0
+      - g6Xq7ydQ4U64DKXTQdEBeg.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 545ms
+      - 766ms
     status:
       code: 202
       message: Accepted
@@ -56,13 +58,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '274'
+      - '277'
       Content-Type:
       - application/json
-      Date:
-      - Tue, 13 Apr 2021 18:38:08 GMT
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:30:35 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -77,15 +79,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 18:38:08 GMT
+      - Tue, 22 Jun 2021 20:30:35 GMT
       ms-cv:
-      - S/65ens12keVDGV4IohU4g.0
+      - TRCxUKw8AkqOOYjaAqd4DQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 557ms
+      - 513ms
     status:
       code: 202
       message: Accepted

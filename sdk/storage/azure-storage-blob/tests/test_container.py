@@ -14,6 +14,7 @@ import pytest
 import requests
 
 from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     BlobServiceClient,
@@ -26,6 +27,7 @@ from azure.storage.blob import (
     generate_container_sas,
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient, ContentSettings)
+from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -1863,7 +1865,28 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(downloaded_data, data)
 
     @GlobalStorageAccountPreparer()
-    def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(self, resource_group, location, storage_account, storage_account_key):
+    def test_download_blob_modified(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                max_single_get_size=38,
+                                max_chunk_get_size=38)
+        container = self._create_container(bsc, prefix="cont")
+        data = b'hello world python storage test chunks' * 5
+        blob_name = self.get_resource_name("testblob")
+        blob = container.get_blob_client(blob_name)
+        blob.upload_blob(data, overwrite=True)
+        resp = container.download_blob(blob_name, match_condition=MatchConditions.IfPresent)
+        chunks = resp.chunks()
+        i = 0
+        while i < 4:
+            data += next(chunks)
+            i += 1
+        blob.upload_blob(data=data, overwrite=True)
+        with self.assertRaises(ResourceModifiedError):
+            data += next(chunks)
+
+    @GlobalStorageAccountPreparer()
+    def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(
+            self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=666)

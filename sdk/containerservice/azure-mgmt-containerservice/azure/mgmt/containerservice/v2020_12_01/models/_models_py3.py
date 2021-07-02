@@ -3007,8 +3007,8 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
      character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
     :type admin_username: str
     :param admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>` **Max-
-     length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
+     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
+     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
      characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\W_])
      :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
