@@ -3,6 +3,7 @@ parameters:
   TestMarkArgument: ''
   EnvVars: {}
   ServiceDirectory: ''
+  CloudName: ''
   PythonVersion: ''
   OSVmImage: ''
   BeforeTestSteps: []
@@ -84,7 +85,7 @@ steps:
     condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
-      testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
+      testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
   - task: PythonScript@0

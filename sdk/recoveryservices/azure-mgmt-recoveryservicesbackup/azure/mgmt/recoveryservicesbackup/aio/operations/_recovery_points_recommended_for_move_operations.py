@@ -49,7 +49,7 @@ class RecoveryPointsRecommendedForMoveOperations:
         container_name: str,
         protected_item_name: str,
         parameters: "_models.ListRecoveryPointsRecommendedForMoveRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecoveryPointResourceList"]:
         """Lists the recovery points recommended for move to another tier.
 
@@ -76,7 +76,7 @@ class RecoveryPointsRecommendedForMoveOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         content_type = "application/json"
         accept = "application/json"
 

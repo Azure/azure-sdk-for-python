@@ -146,6 +146,7 @@ try:
     from ._models_py3 import StorageAsyncOperationInitiatedEventData
     from ._models_py3 import StorageBlobCreatedEventData
     from ._models_py3 import StorageBlobDeletedEventData
+    from ._models_py3 import StorageBlobInventoryPolicyCompletedEventData
     from ._models_py3 import StorageBlobRenamedEventData
     from ._models_py3 import StorageBlobTierChangedEventData
     from ._models_py3 import StorageDirectoryCreatedEventData
@@ -310,6 +311,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageAsyncOperationInitiatedEventData  # type: ignore
     from ._models import StorageBlobCreatedEventData  # type: ignore
     from ._models import StorageBlobDeletedEventData  # type: ignore
+    from ._models import StorageBlobInventoryPolicyCompletedEventData  # type: ignore
     from ._models import StorageBlobRenamedEventData  # type: ignore
     from ._models import StorageBlobTierChangedEventData  # type: ignore
     from ._models import StorageDirectoryCreatedEventData  # type: ignore
@@ -487,6 +489,7 @@ __all__ = [
     'StorageAsyncOperationInitiatedEventData',
     'StorageBlobCreatedEventData',
     'StorageBlobDeletedEventData',
+    'StorageBlobInventoryPolicyCompletedEventData',
     'StorageBlobRenamedEventData',
     'StorageBlobTierChangedEventData',
     'StorageDirectoryCreatedEventData',

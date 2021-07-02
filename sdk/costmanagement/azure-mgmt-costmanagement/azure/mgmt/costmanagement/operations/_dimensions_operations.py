@@ -88,7 +88,7 @@ class DimensionsOperations(object):
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DimensionsListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.costmanagement.models.DimensionsListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.costmanagement.models.DimensionsListResultor None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DimensionsListResult"]
@@ -96,7 +96,7 @@ class DimensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -143,8 +143,8 @@ class DimensionsOperations(object):
             pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
-            if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+            if response.status_code not in [200, 204]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -197,7 +197,7 @@ class DimensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -246,7 +246,7 @@ class DimensionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

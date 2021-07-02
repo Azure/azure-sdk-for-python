@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.2.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
+    uri: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30-Preview
   response:
     body:
       string: !!binary |
@@ -24,17 +24,17 @@ interactions:
       content-encoding: gzip
       content-length: '216'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:23:06 GMT
-      elapsed-time: '179'
+      date: Sat, 08 May 2021 06:27:51 GMT
+      elapsed-time: '207'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 09f0b04c-b990-11eb-8baa-a0481ca055a9
+      request-id: 83ac1db3-afc6-11eb-82cd-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
+    url: https://searchf7671424.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30-Preview
 version: 1

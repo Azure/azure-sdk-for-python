@@ -28,7 +28,8 @@ from azure.storage.blob import (
     generate_blob_sas)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from devtools_testutils.storage import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'

@@ -10,6 +10,7 @@ import threading
 import os
 import logging
 from collections import defaultdict
+from functools import partial
 
 from azure.identity import ClientSecretCredential
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
@@ -17,6 +18,7 @@ from azure.eventhub import EventHubConsumerClient, TransportType, EventHubShared
 
 from logger import get_logger
 from process_monitor import ProcessMonitor
+from app_insights_metric import AzureMonitorMetric
 
 
 def parse_starting_position(args):
@@ -88,6 +90,8 @@ recv_cnt_map = defaultdict(int)
 recv_cnt_iteration_map = defaultdict(int)
 recv_time_map = dict()
 
+azure_metric_monitor = AzureMonitorMetric("Sync EventHubConsumerClient")
+
 
 class EventHubConsumerClientTest(EventHubConsumerClient):
     def get_partition_ids(self):
@@ -97,7 +101,7 @@ class EventHubConsumerClientTest(EventHubConsumerClient):
             return super(EventHubConsumerClientTest, self).get_partition_ids()
 
 
-def on_event_received(partition_context, event):
+def on_event_received(process_monitor, partition_context, event):
     recv_cnt_map[partition_context.partition_id] += 1 if event else 0
     if recv_cnt_map[partition_context.partition_id] % LOG_PER_COUNT == 0:
         total_time_elapsed = time.perf_counter() - start_time
@@ -112,10 +116,15 @@ def on_event_received(partition_context, event):
                     recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
                     LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None
                     )
+        azure_metric_monitor.record_events_cpu_memory(
+            LOG_PER_COUNT,
+            process_monitor.cpu_usage_percent,
+            process_monitor.memory_usage_percent
+        )
         partition_context.update_checkpoint(event)
 
 
-def on_event_batch_received(partition_context, event_batch):
+def on_event_batch_received(process_monitor, partition_context, event_batch):
     recv_cnt_map[partition_context.partition_id] += len(event_batch)
     recv_cnt_iteration_map[partition_context.partition_id] += len(event_batch)
     if recv_cnt_iteration_map[partition_context.partition_id] > LOG_PER_COUNT:
@@ -131,7 +140,16 @@ def on_event_batch_received(partition_context, event_batch):
                     recv_cnt_iteration_map[partition_context.partition_id] / (partition_current_time - partition_previous_time) if partition_previous_time else None
                     )
         recv_cnt_iteration_map[partition_context.partition_id] = 0
+        azure_metric_monitor.record_events_cpu_memory(
+            LOG_PER_COUNT,
+            process_monitor.cpu_usage_percent,
+            process_monitor.memory_usage_percent
+        )
         partition_context.update_checkpoint()
+
+
+def on_error(partition_context, exception):
+    azure_metric_monitor.record_error(exception, extra="partition: {}".format(partition_context.partition_id))
 
 
 def create_client(args):
@@ -194,23 +212,29 @@ def create_client(args):
 
 
 def run(args):
-    with ProcessMonitor("monitor_{}".format(args.log_filename), "consumer_stress_sync", print_console=args.print_console):
+
+    with ProcessMonitor("monitor_{}".format(args.log_filename), "consumer_stress_sync", print_console=args.print_console) as process_monitor:
         kwargs_dict = {
             "prefetch": args.link_credit,
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
-            "starting_position": starting_position
+            "starting_position": starting_position,
+            "on_error": on_error
         }
         if args.max_batch_size:
             kwargs_dict["max_batch_size"] = args.max_batch_size
         if args.max_wait_time:
             kwargs_dict["max_wait_time"] = args.max_wait_time
+
+        on_event_received_with_process_monitor = partial(on_event_received, process_monitor)
+        on_event_batch_received_with_process_monitor = partial(on_event_batch_received, process_monitor)
+
         if args.parallel_recv_cnt and args.parallel_recv_cnt > 1:
             clients = [create_client(args) for _ in range(args.parallel_recv_cnt)]
             threads = [
                 threading.Thread(
                     target=clients[i].receive_batch if args.max_batch_size else clients[i].receive,
-                    args=(on_event_batch_received if args.max_batch_size else on_event_received,),
+                    args=(on_event_batch_received_with_process_monitor if args.max_batch_size else on_event_received_with_process_monitor,),
                     kwargs=kwargs_dict,
                     daemon=True
                 ) for i in range(args.parallel_recv_cnt)
@@ -219,7 +243,7 @@ def run(args):
             clients = [create_client(args)]
             threads = [threading.Thread(
                 target=clients[0].receive_batch if args.max_batch_size else clients[0].receive,
-                args=(on_event_batch_received if args.max_batch_size else on_event_received,),
+                args=(on_event_batch_received_with_process_monitor if args.max_batch_size else on_event_received_with_process_monitor,),
                 kwargs=kwargs_dict,
                 daemon=True
             )]

@@ -46,6 +46,7 @@ from ._base import (
     _HttpResponseBase
 )
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
+from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
 PipelineType = TypeVar("PipelineType")
 
@@ -70,6 +71,10 @@ def _read_raw_stream(response, chunk_size=1):
             if not chunk:
                 break
             yield chunk
+
+    # following behavior from requests iter_content, we set content consumed to True
+    # https://github.com/psf/requests/blob/master/requests/models.py#L774
+    response._content_consumed = True  # pylint: disable=protected-access
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -127,14 +132,15 @@ class StreamDownloadGenerator(object):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = _get_block_size(response)
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = _get_internal_response(response)
         if decompress:
-            self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+            self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
-            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
+            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
@@ -144,19 +150,20 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
+        internal_response = _get_internal_response(self.response)
         try:
             chunk = next(self.iter_content_func)
             if not chunk:
                 raise StopIteration()
             return chunk
         except StopIteration:
-            self.response.internal_response.close()
+            internal_response.close()
             raise StopIteration()
         except requests.exceptions.StreamConsumedError:
             raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.internal_response.close()
+            internal_response.close()
             raise
     next = __next__  # Python 2 compatibility.
 

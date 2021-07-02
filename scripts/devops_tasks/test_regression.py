@@ -35,7 +35,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 test_tools_req_file = os.path.abspath(os.path.join(root_dir, "eng", "test_tools.txt"))
 
 GIT_REPO_NAME = "azure-sdk-for-python"
-GIT_MASTER_BRANCH = "master"
+GIT_MASTER_BRANCH = "main"
 VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"

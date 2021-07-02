@@ -45,7 +45,7 @@ class JobsOperations:
         vault_name: str,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Triggers export of jobs specified by filters and returns an OperationID to track.
 
@@ -66,7 +66,7 @@ class JobsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-01"
+        api_version = "2021-01-01"
         accept = "application/json"
 
         # Construct URL

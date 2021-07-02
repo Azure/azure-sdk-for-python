@@ -23,7 +23,7 @@ import sys
 import asyncio
 from azure.communication.sms.aio import SmsClient
 from azure.communication.sms._shared.utils import parse_connection_str
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 sys.path.append("..")
 

@@ -1,9 +1,22 @@
 # Release History
 
-## 4.3.0b1 (Unreleased)
+## 4.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 4.3.0 (2021-06-22)
+This is the last version to support Python 3.5. The next version will require Python 2.7 or 3.6+.
 ### Changed
 - Key Vault API version 7.2 is now the default
-- Updated msrest requirement to >=0.6.21
+- Updated minimum `msrest` version to 0.6.21
+- The `issuer_name` parameter for `CertificatePolicy` is now optional
 
 ### Added
 - Added class `KeyVaultCertificateIdentifier` that parses out a full ID returned by Key Vault,
@@ -138,9 +151,9 @@ Version 4.0.0b3 is the first preview of our efforts to create a user-friendly an
  This library is not a direct replacement for `azure-keyvault`. Applications
 using that library would require code changes to use `azure-keyvault-certificates`.
 This package's
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/README.md)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples)
 demonstrate the new API.
 
 ### Breaking changes from `azure-keyvault`:
@@ -150,9 +163,9 @@ demonstrate the new API.
 only)
 - Authentication using `azure-identity` credentials
   - see this package's
-  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/README.md)
+  [documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/README.md)
   , and the
-  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+  [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
   for more information
 
 ### New Features:
@@ -161,5 +174,5 @@ only)
     - the `azure.keyvault.certificates.aio` namespace contains an async equivalent of
     the synchronous client in `azure.keyvault.certificates`
     - Async clients use [aiohttp](https://pypi.org/project/aiohttp/) for transport
-    by default. See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md/#transport)
+    by default. See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md/#transport)
     for more information about using other transports.
