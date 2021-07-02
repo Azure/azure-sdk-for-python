@@ -41,7 +41,7 @@ class PolicyCertificatesOperations:
 
     async def get(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyCertificatesResponse":
         """Retrieves the set of certificates used to express policy for the current tenant.
 
@@ -95,7 +95,7 @@ class PolicyCertificatesOperations:
     async def add(
         self,
         policy_certificate_to_add: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyCertificatesModifyResponse":
         """Adds a new attestation policy certificate to the set of policy management certificates.
 
@@ -157,7 +157,7 @@ class PolicyCertificatesOperations:
     async def remove(
         self,
         policy_certificate_to_remove: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyCertificatesModifyResponse":
         """Removes the specified policy management certificate. Note that the final policy management certificate cannot be removed.
 
