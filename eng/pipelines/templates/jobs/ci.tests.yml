@@ -19,7 +19,7 @@ parameters:
     default: 'azure-*'
   - name: TestTimeoutInMinutes
     type: number
-    default: 120
+    default: 60
   - name: ToxEnvParallel
     type: string
     default: '--tenvparallel'
