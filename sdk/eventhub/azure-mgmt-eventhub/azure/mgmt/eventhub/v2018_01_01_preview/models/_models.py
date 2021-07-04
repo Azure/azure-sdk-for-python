@@ -566,7 +566,7 @@ class ClusterSku(msrest.serialization.Model):
 
     _validation = {
         'name': {'required': True},
-        'capacity': {'maximum': 32, 'minimum': 1},
+        'capacity': {'minimum': 1},
     }
 
     _attribute_map = {
@@ -735,6 +735,8 @@ class EHNamespace(TrackedResource):
     :type identity: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Identity
     :ivar provisioning_state: Provisioning state of the Namespace.
     :vartype provisioning_state: str
+    :ivar status: Status of the Namespace.
+    :vartype status: str
     :ivar created_at: The time the Namespace was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The time the Namespace was updated.
@@ -765,6 +767,7 @@ class EHNamespace(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
@@ -781,6 +784,7 @@ class EHNamespace(TrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
@@ -801,6 +805,7 @@ class EHNamespace(TrackedResource):
         self.sku = kwargs.get('sku', None)
         self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
+        self.status = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
@@ -878,26 +883,19 @@ class EHNamespaceListResult(msrest.serialization.Model):
 class Encryption(msrest.serialization.Model):
     """Properties to configure Encryption.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param key_vault_properties: Properties of KeyVault.
     :type key_vault_properties:
      list[~azure.mgmt.eventhub.v2018_01_01_preview.models.KeyVaultProperties]
-    :ivar key_source: Enumerates the possible value of keySource for Encryption. Default value:
+    :param key_source: Enumerates the possible value of keySource for Encryption. The only
+     acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
      "Microsoft.KeyVault".
-    :vartype key_source: str
+    :type key_source: str
     """
-
-    _validation = {
-        'key_source': {'constant': True},
-    }
 
     _attribute_map = {
         'key_vault_properties': {'key': 'keyVaultProperties', 'type': '[KeyVaultProperties]'},
         'key_source': {'key': 'keySource', 'type': 'str'},
     }
-
-    key_source = "Microsoft.KeyVault"
 
     def __init__(
         self,
@@ -905,6 +903,7 @@ class Encryption(msrest.serialization.Model):
     ):
         super(Encryption, self).__init__(**kwargs)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
+        self.key_source = kwargs.get('key_source', "Microsoft.KeyVault")
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -1026,28 +1025,21 @@ class EventHubListResult(msrest.serialization.Model):
 class Identity(msrest.serialization.Model):
     """Properties to configure Identity for Bring your Own Keys.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param principal_id: ObjectId from the KeyVault.
     :type principal_id: str
     :param tenant_id: TenantId from the KeyVault.
     :type tenant_id: str
-    :ivar type: Enumerates the possible value Identity type, which currently supports only
-     'SystemAssigned'. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: Enumerates the possible value Identity type, which currently supports only
+     'SystemAssigned'. The only acceptable values to pass in are None and "SystemAssigned". The
+     default value is "SystemAssigned".
+    :type type: str
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
-
-    type = "SystemAssigned"
 
     def __init__(
         self,
@@ -1056,6 +1048,7 @@ class Identity(msrest.serialization.Model):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = kwargs.get('principal_id', None)
         self.tenant_id = kwargs.get('tenant_id', None)
+        self.type = kwargs.get('type', "SystemAssigned")
 
 
 class IpFilterRule(Resource):
@@ -1646,7 +1639,7 @@ class Sku(msrest.serialization.Model):
 
     _validation = {
         'name': {'required': True},
-        'capacity': {'maximum': 20, 'minimum': 0},
+        'capacity': {'minimum': 0},
     }
 
     _attribute_map = {
