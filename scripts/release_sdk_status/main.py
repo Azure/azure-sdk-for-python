@@ -134,7 +134,7 @@ class PyPIClient:
             if self.whether_track2 is not None:
                 whether_track2 = int(self.whether_track2.split('.')[0])
                 if cli_version >= whether_track2 and self.track_config == 'both':
-                    self.bot_warning += 'The cli using track2 now but readme.python still have track1‘s config.'
+                    self.bot_warning += 'The cli using track2 now but readme.python still have track1 config.'
         if self.whether_track2 and self.track_config == 'track1':
             self.bot_warning += 'Need to add track2 config.'
 
