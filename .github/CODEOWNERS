@@ -39,6 +39,7 @@
 
 # PRLabel: %Communication
 /sdk/communication/                                                  @turalf @ankitarorabit @memontic-ms @Azure/azure-sdk-communication-code-reviewers
+/sdk/communication/azure-communication-identity/                     @petrsvihlik @martinbarnas-ms
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
