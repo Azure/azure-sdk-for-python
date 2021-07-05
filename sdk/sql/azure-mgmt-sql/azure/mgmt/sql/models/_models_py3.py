@@ -450,7 +450,7 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
-    :ivar type: Required.  Default value: "Microsoft.Sql/servers".
+    :ivar type:  Has constant value: "Microsoft.Sql/servers".
     :vartype type: str
     """
 
