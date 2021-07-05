@@ -43,7 +43,7 @@ class SkusOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceSkusResult"]:
         """Get the list of StorageCache.Cache SKUs available to this subscription.
 

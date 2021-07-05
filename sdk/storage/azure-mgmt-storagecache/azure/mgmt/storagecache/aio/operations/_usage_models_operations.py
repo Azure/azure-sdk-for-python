@@ -43,7 +43,7 @@ class UsageModelsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UsageModelsResult"]:
         """Get the list of Cache Usage Models available to this subscription.
 

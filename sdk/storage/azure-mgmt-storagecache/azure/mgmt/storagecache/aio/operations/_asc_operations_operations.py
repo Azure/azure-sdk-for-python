@@ -44,7 +44,7 @@ class AscOperationsOperations:
         self,
         location: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AscOperation":
         """Gets the status of an asynchronous operation for the Azure HPC Cache.
 

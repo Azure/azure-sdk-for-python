@@ -136,7 +136,7 @@ class AscOperation(msrest.serialization.Model):
     :param error: The error detail of the operation if any.
     :type error: ~storage_cache_management_client.models.ErrorResponse
     :param output: Additional operation-specific output.
-    :type output: dict[str, str]
+    :type output: dict[str, any]
     """
 
     _attribute_map = {
@@ -146,7 +146,7 @@ class AscOperation(msrest.serialization.Model):
         'end_time': {'key': 'endTime', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'output': {'key': 'properties.output', 'type': '{str}'},
+        'output': {'key': 'properties.output', 'type': '{object}'},
     }
 
     def __init__(
@@ -536,7 +536,7 @@ class CacheNetworkSettings(msrest.serialization.Model):
         self.utility_addresses = None
         self.dns_servers = kwargs.get('dns_servers', None)
         self.dns_search_domain = kwargs.get('dns_search_domain', None)
-        self.ntp_server = kwargs.get('ntp_server', None)
+        self.ntp_server = kwargs.get('ntp_server', "time.windows.com")
 
 
 class CacheSecuritySettings(msrest.serialization.Model):
@@ -1017,7 +1017,7 @@ class NamespaceJunction(msrest.serialization.Model):
         self.namespace_path = kwargs.get('namespace_path', None)
         self.target_path = kwargs.get('target_path', None)
         self.nfs_export = kwargs.get('nfs_export', None)
-        self.nfs_access_policy = kwargs.get('nfs_access_policy', None)
+        self.nfs_access_policy = kwargs.get('nfs_access_policy', "default")
 
 
 class Nfs3Target(msrest.serialization.Model):

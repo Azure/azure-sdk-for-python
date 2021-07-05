@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -157,7 +157,7 @@ class AscOperation(msrest.serialization.Model):
     :param error: The error detail of the operation if any.
     :type error: ~storage_cache_management_client.models.ErrorResponse
     :param output: Additional operation-specific output.
-    :type output: dict[str, str]
+    :type output: dict[str, any]
     """
 
     _attribute_map = {
@@ -167,7 +167,7 @@ class AscOperation(msrest.serialization.Model):
         'end_time': {'key': 'endTime', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'output': {'key': 'properties.output', 'type': '{str}'},
+        'output': {'key': 'properties.output', 'type': '{object}'},
     }
 
     def __init__(
@@ -179,7 +179,7 @@ class AscOperation(msrest.serialization.Model):
         end_time: Optional[str] = None,
         status: Optional[str] = None,
         error: Optional["ErrorResponse"] = None,
-        output: Optional[Dict[str, str]] = None,
+        output: Optional[Dict[str, Any]] = None,
         **kwargs
     ):
         super(AscOperation, self).__init__(**kwargs)
@@ -598,7 +598,7 @@ class CacheNetworkSettings(msrest.serialization.Model):
         mtu: Optional[int] = 1500,
         dns_servers: Optional[List[str]] = None,
         dns_search_domain: Optional[str] = None,
-        ntp_server: Optional[str] = None,
+        ntp_server: Optional[str] = "time.windows.com",
         **kwargs
     ):
         super(CacheNetworkSettings, self).__init__(**kwargs)
@@ -1136,7 +1136,7 @@ class NamespaceJunction(msrest.serialization.Model):
         namespace_path: Optional[str] = None,
         target_path: Optional[str] = None,
         nfs_export: Optional[str] = None,
-        nfs_access_policy: Optional[str] = None,
+        nfs_access_policy: Optional[str] = "default",
         **kwargs
     ):
         super(NamespaceJunction, self).__init__(**kwargs)
