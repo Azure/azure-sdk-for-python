@@ -4,6 +4,7 @@ import os
 from lxml import etree
 import lxml.html
 import subprocess as sp
+from azure.storage.blob import BlobClient
 
 
 def my_print(cmd):
@@ -263,7 +264,7 @@ def commit_to_github():
 def upload_to_azure(out_file):
     # upload to storage account(it is created in advance)
     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-                                             blob_name=_FILE_OUT)
+                                             blob_name=out_file)
     with open(out_file, 'rb') as data:
         blob.upload_blob(data, overwrite=True)
 
