@@ -140,7 +140,7 @@ class PyPIClient:
 
 def sdk_info_from_pypi(sdk_info, cli_dependency):
     all_sdk_status = []
-    for package in sdk_info[1:]:
+    for package in sdk_info:
         if ',' in package:
             package = package.split(',')
             sdk_name = package[0].strip()
