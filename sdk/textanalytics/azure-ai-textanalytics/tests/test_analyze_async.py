@@ -14,10 +14,8 @@ import json
 import time
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
-from multidict import CIMultiDict, CIMultiDictProxy
-from testcase import GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from asynctestcase import AsyncTextAnalyticsTest
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -34,22 +32,11 @@ from azure.ai.textanalytics import (
     RecognizeLinkedEntitiesResult,
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
+    PiiEntityCategory
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
-
-
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
 
 
 class TestAnalyzeAsync(AsyncTextAnalyticsTest):
@@ -57,13 +44,13 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             response = await client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_dict_key_phrase_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
@@ -91,7 +78,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert "Microsoft" in document_result.key_phrases
                     assert document_result.id is not None
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_dict_sentiment_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
@@ -135,7 +122,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 assert document_result.sentences[0].text == "The restaurant had really good food."
                 assert document_result.sentences[1].text == "I recommend you try it."
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_sentiment_analysis_task_with_opinion_mining(self, client):
         documents = [
@@ -213,7 +200,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertEqual('food', food_target.text)
                     self.assertEqual('negative', food_target.sentiment)
                     self.assertEqual(0.0, food_target.confidence_scores.neutral)
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_text_document_input_entities_task(self, client):
         docs = [
@@ -251,7 +238,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(entity.offset)
                     self.assertIsNotNone(entity.confidence_score)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_string_pii_entities_task(self, client):
 
@@ -288,7 +275,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert entity.offset is not None
                     assert entity.confidence_score is not None
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_bad_request_on_empty_document(self, client):
         docs = [u""]
@@ -301,9 +288,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "",
+        "textanalytics_test_api_key": "",
     })
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -320,9 +307,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "text_analytics_account_key": "xxxxxxxxxxxx"
+        "textanalytics_test_api_key": "xxxxxxxxxxxx"
     })
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -339,7 +326,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_out_of_order_ids_multiple_tasks(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -380,19 +367,9 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertEqual(self.document_result_to_action_type(document_result), action_order[action_idx])
 
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version_multiple_tasks(self, client):
-
-        def callback(resp):
-            if not resp.raw_response:
-                # this is the initial post call
-                request_body = json.loads(resp.http_request.body)
-                assert len(request_body["tasks"]) == 5
-                for task in request_body["tasks"].values():
-                    assert len(task) == 1
-                    assert task[0]['parameters']['model-version'] == 'latest'
-                    assert not task[0]['parameters']['loggingOptOut']
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -452,7 +429,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_poller_metadata(self, client):
         docs = [{"id": "56", "text": ":)"}]
@@ -481,7 +458,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     ### TODO: Commenting out language tests. Right now analyze only supports language 'en', so no point to these tests yet
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
     # async def test_whole_batch_language_hint(self, client):
     #     def callback(resp):
@@ -514,7 +491,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #                 self.assertFalse(doc.is_error)
 
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer(client_kwargs={
     #     "default_language": "en"
     # })
@@ -550,7 +527,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #             for doc in action_result.document_results:
     #                 assert not doc.is_error
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
     # async def test_invalid_language_hint_method(self, client):
     #     async with client:
@@ -569,7 +546,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #             for doc in action_result.document_results:
     #                 assert doc.is_error
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -589,7 +566,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -608,7 +585,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
@@ -627,7 +604,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 )).result()
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
@@ -635,7 +612,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 await client.begin_analyze_actions(None, None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
@@ -652,7 +629,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             )).result()
             assert res == "cls result"
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
@@ -698,7 +675,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         for document_results in action_type_to_document_results.values():
             assert len(document_results) == len(docs)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
@@ -718,7 +695,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 )).result()
         assert excinfo.value.status_code == 400
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_disable_service_logs(self, client):
         actions = [
@@ -737,3 +714,91 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             actions=actions,
             polling_interval=self._interval(),
         )).result()
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_pii_action_categories_filter(self, client):
+
+        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
+                {"id": "2",
+                 "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
+                {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
+
+        actions = [
+            RecognizePiiEntitiesAction(
+                categories_filter=[
+                    PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER,
+                    PiiEntityCategory.ABA_ROUTING_NUMBER
+                ]
+            ),
+        ]
+        async with client:
+            result = await (await client.begin_analyze_actions(documents=docs, actions=actions, polling_interval=self._interval())).result()
+            action_results = []
+            async for p in result:
+                action_results.append(p)
+
+        assert len(action_results) == 3
+
+        assert action_results[0][0].entities[0].text == "859-98-0987"
+        assert action_results[0][0].entities[0].category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER
+        assert action_results[1][0].entities[0].text == "111000025"
+        assert action_results[1][0].entities[0].category == PiiEntityCategory.ABA_ROUTING_NUMBER
+        assert action_results[2][0].entities == []  # No Brazilian CPF since not in categories_filter
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_partial_success_for_actions(self, client):
+        docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                    docs,
+                    actions=[
+                        AnalyzeSentimentAction(),
+                        RecognizePiiEntitiesAction(),
+                    ],
+                    polling_interval=self._interval(),
+                )).result()
+
+            action_results = []
+            async for p in response:
+                action_results.append(p)
+        assert len(action_results) == len(docs)
+        action_order = [
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+        ]
+
+        assert len(action_results[0]) == len(action_order)
+        assert len(action_results[1]) == len(action_order)
+
+        # first doc
+        assert isinstance(action_results[0][0], AnalyzeSentimentResult)
+        assert action_results[0][0].id == "1"
+        assert action_results[0][1].is_error
+        assert action_results[0][1].id == "1"
+
+        # second doc
+        assert isinstance(action_results[1][0], AnalyzeSentimentResult)
+        assert action_results[1][0].id == "2"
+        assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
+        assert action_results[1][1].id == "2"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_multiple_of_same_action_fail(self, client):
+        docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
+
+        with pytest.raises(ValueError) as e:
+            await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizePiiEntitiesAction(domain_filter="phi"),
+                    RecognizePiiEntitiesAction(),
+                ],
+                polling_interval=self._interval(),
+            )
+        assert "Multiple of the same action is not currently supported." in str(e.value)

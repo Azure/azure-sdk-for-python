@@ -7,7 +7,7 @@
 
 # pylint: disable=anomalous-backslash-in-string
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
@@ -17,6 +17,7 @@ from ._models import MetricsResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
 
 if TYPE_CHECKING:
+    from datetime import timedelta
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
 
@@ -53,7 +54,7 @@ class MetricsQueryClient(object):
         self._definitions_op = self._client.metric_definitions
 
     def query(self, resource_uri, metric_names, duration=None, **kwargs):
-        # type: (str, list, str, Any) -> MetricsResult
+        # type: (str, list, Optional[timedelta], Any) -> MetricsResult
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -62,18 +63,18 @@ class MetricsQueryClient(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metric_names: The names of the metrics to retrieve.
-        :type metric_names: list
-        :param str duration: The duration for which to query the data. This can also be accompanied
+        :type metric_names: list[str]
+        :param ~datetime.timedelta duration: The duration for which to query the data. This can also be accompanied
          with either start_time or end_time. If start_time or end_time is not provided, the current time is
-         taken as the end time. This should be provided in a ISO8601 string format like 'PT1H', 'P1Y2M10DT2H30M'.
+         taken as the end time.
         :keyword datetime start_time: The start time from which to query the data. This should be accompanied
          with either end_time or duration.
         :keyword datetime end_time: The end time till which to query the data. This should be accompanied
          with either start_time or duration.
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve.
-        :paramtype aggregation: str
+        :keyword aggregation: The list of aggregation types to retrieve.
+        :paramtype aggregation: list[str]
         :keyword top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
@@ -112,6 +113,9 @@ class MetricsQueryClient(object):
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
+        aggregation = kwargs.pop("aggregation", None)
+        if aggregation:
+            kwargs.setdefault("aggregation", ",".join(aggregation))
         timespan = construct_iso8601(start, end, duration)
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)

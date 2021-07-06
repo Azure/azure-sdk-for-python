@@ -142,8 +142,8 @@ class KeyVaultRoleDefinition(object):
         )
 
 
-class KeyVaultBackupOperation(object):
-    """A Key Vault full backup operation
+class KeyVaultBackupResult(object):
+    """A Key Vault full backup operation result
 
     :ivar str folder_url: URL of the Azure Blob Storage container containing the backup
     """

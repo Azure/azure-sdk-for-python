@@ -28,7 +28,7 @@ parameters:
   default: azure-*
 - name: TestTimeoutInMinutes
   type: number
-  default: 0
+  default: 60
 - name: ToxEnvParallel
   type: string
   default: --tenvparallel
@@ -66,6 +66,9 @@ parameters:
 - name: VerifyAutorest
   type: boolean
   default: false
+- name: ValidateFormatting
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
@@ -98,6 +101,7 @@ stages:
         MatrixFilters: ${{ parameters.MatrixFilters }}
         MatrixReplace: ${{ parameters.MatrixReplace }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

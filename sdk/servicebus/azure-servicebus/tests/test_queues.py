@@ -129,8 +129,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message.content_type = 'application/text'
                 message.correlation_id = 'cid'
                 message.message_id = str(i)
-                with pytest.raises(ValueError):
-                    message.partition_key = 'pk'
+                message.partition_key = 'pk'
                 message.to = 'to'
                 message.reply_to = 'reply_to'
                 sender.send_messages(message)
@@ -216,8 +215,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = []
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
-                    with pytest.raises(ValueError):
-                        message.partition_key = 'pkey'
+                    message.partition_key = 'pkey'
                     message.time_to_live = timedelta(seconds=60)
                     message.scheduled_enqueue_time_utc = utc_now() + timedelta(seconds=60)
                     message.partition_key = None

@@ -94,6 +94,7 @@ from .._generated.models import (
     ServicePrincipalInKVParamPatch as _ServicePrincipalInKVParamPatch,
     ServicePrincipalInKVCredential as _ServicePrincipalInKVCredential,
     ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
+    DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
 )
 
 if TYPE_CHECKING:
@@ -182,7 +183,7 @@ class MetricAnomalyAlertConfigurationsOperator(str, Enum):
     XOR = "XOR"
 
 
-class DetectionConditionsOperator(str, Enum):
+class DetectionConditionOperator(str, Enum):
 
     AND = "AND"
     OR = "OR"
@@ -253,7 +254,7 @@ class DataFeedMissingDataPointFillSettings(object):
     :keyword fill_type: The type of fill missing point for anomaly detection. Possible
         values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
         "SmartFilling".
-    :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
+    :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
     :keyword float custom_fill_value: The value of fill missing point for anomaly detection
         if "CustomValue" fill type is specified.
     """
@@ -343,7 +344,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-    :ivar list[str] admin_emails: Data feed administrator emails.
+    :ivar list[str] admins: Data feed administrators.
     :ivar str data_feed_description: Data feed description.
     :ivar missing_data_point_fill_settings: The fill missing point type and value.
     :vartype missing_data_point_fill_settings:
@@ -351,7 +352,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar rollup_settings: The rollup settings.
     :vartype rollup_settings:
         ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :ivar list[str] viewer_emails: Data feed viewer emails.
+    :ivar list[str] viewers: Data feed viewers.
     :ivar access_mode: Data feed access mode. Possible values include:
         "Private", "Public". Default value: "Private".
     :vartype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -376,19 +377,19 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         self.is_admin = kwargs.get('is_admin', None)
         self.metric_ids = kwargs.get('metric_ids', None)
         self.status = kwargs.get('status', None)
-        self.admin_emails = kwargs.get('admin_emails', None)
+        self.admins = kwargs.get('admins', None)
         self.data_feed_description = kwargs.get('data_feed_description', None)
         self.missing_data_point_fill_settings = kwargs.get('missing_data_point_fill_settings', None)
         self.rollup_settings = kwargs.get('rollup_settings', None)
-        self.viewer_emails = kwargs.get('viewer_emails', None)
+        self.viewers = kwargs.get('viewers', None)
         self.access_mode = kwargs.get('access_mode', "Private")
         self.action_link_template = kwargs.get('action_link_template', None)
 
     def __repr__(self):
         return "DataFeed(created_time={}, granularity={}, id={}, ingestion_settings={}, is_admin={}, " \
-                "metric_ids={}, name={}, schema={}, source={}, status={}, admin_emails={}, " \
+                "metric_ids={}, name={}, schema={}, source={}, status={}, admins={}, " \
                "data_feed_description={}, missing_data_point_fill_settings={}, " \
-               "rollup_settings={}, viewer_emails={}, access_mode={}, action_link_template={})".format(
+               "rollup_settings={}, viewers={}, access_mode={}, action_link_template={})".format(
             self.created_time,
             repr(self.granularity),
             self.id,
@@ -399,11 +400,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             repr(self.schema),
             repr(self.source),
             self.status,
-            self.admin_emails,
+            self.admins,
             self.data_feed_description,
             repr(self.missing_data_point_fill_settings),
             repr(self.rollup_settings),
-            self.viewer_emails,
+            self.viewers,
             self.access_mode,
             self.action_link_template
         )[:1024]
@@ -424,7 +425,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             is_admin=data_feed.is_admin,
             metric_ids={metric.metric_name: metric.metric_id for metric in data_feed.metrics},
             name=data_feed.data_feed_name,
-            admin_emails=data_feed.admins,
+            admins=data_feed.admins,
             data_feed_description=data_feed.data_feed_description,
             missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                 fill_type=data_feed.fill_missing_point_type,
@@ -436,7 +437,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                 auto_rollup_group_by_column_names=data_feed.roll_up_columns,
                 rollup_method=data_feed.roll_up_method
             ),
-            viewer_emails=data_feed.viewers,
+            viewers=data_feed.viewers,
             access_mode=data_feed.view_mode,
             action_link_template=data_feed.action_link_template,
             schema=DataFeedSchema(
@@ -494,11 +495,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             or self.missing_data_point_fill_settings.custom_fill_value
             if self.missing_data_point_fill_settings else None,
             viewers=kwargs.pop("viewers", None)
-            or self.viewer_emails,
+            or self.viewers,
             view_mode=kwargs.pop("viewMode", None)
             or self.access_mode,
             admins=kwargs.pop("admins", None)
-            or self.admin_emails,
+            or self.admins,
             status=kwargs.pop("status", None) or self.status,
             action_link_template=kwargs.pop("actionLinkTemplate", None)
             or self.action_link_template,
@@ -777,7 +778,7 @@ class AnomalyAlertConfiguration(object):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-    :keyword list[str] dimensions_to_split_alerts: dimensions used to split alert.
+    :keyword list[str] dimensions_to_split_alert: dimensions used to split alert.
 
     """
     def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
@@ -788,18 +789,18 @@ class AnomalyAlertConfiguration(object):
         self.id = kwargs.get('id', None)
         self.description = kwargs.get('description', None)
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
-        self.dimensions_to_split_alerts = kwargs.get('dimensions_to_split_alerts', None)
+        self.dimensions_to_split_alert = kwargs.get('dimensions_to_split_alert', None)
 
     def __repr__(self):
         return "AnomalyAlertConfiguration(id={}, name={}, description={}, cross_metrics_operator={}, hook_ids={}, " \
-               "metric_alert_configurations={}, dimensions_to_split_alerts={})".format(
+               "metric_alert_configurations={}, dimensions_to_split_alert={})".format(
             self.id,
             self.name,
             self.description,
             self.cross_metrics_operator,
             self.hook_ids,
             repr(self.metric_alert_configurations),
-            self.dimensions_to_split_alerts
+            self.dimensions_to_split_alert
         )[:1024]
 
     @classmethod
@@ -814,7 +815,7 @@ class AnomalyAlertConfiguration(object):
                 MetricAlertConfiguration._from_generated(c)
                 for c in config.metric_alerting_configurations
             ],
-            dimensions_to_split_alerts=config.split_alert_by_dimensions
+            dimensions_to_split_alert=config.split_alert_by_dimensions
         )
 
     def _to_generated(self):
@@ -826,7 +827,7 @@ class AnomalyAlertConfiguration(object):
             hook_ids=self.hook_ids,
             cross_metrics_operator=self.cross_metrics_operator,
             description=self.description,
-            split_alert_by_dimensions=self.dimensions_to_split_alerts
+            split_alert_by_dimensions=self.dimensions_to_split_alert
         )
 
     def _to_generated_patch(
@@ -845,7 +846,7 @@ class AnomalyAlertConfiguration(object):
             hook_ids=hook_ids or self.hook_ids,
             cross_metrics_operator=cross_metrics_operator or self.cross_metrics_operator,
             description=description or self.description,
-            split_alert_by_dimensions=self.dimensions_to_split_alerts
+            split_alert_by_dimensions=self.dimensions_to_split_alert
         )
 
 
@@ -1891,7 +1892,7 @@ class NotificationHook(dict):
     :param str name: Hook unique name.
     :ivar str description: Hook description.
     :ivar str external_link: Hook external link.
-    :ivar list[str] admin_emails: Hook administrator emails.
+    :ivar list[str] admins: Hook administrators.
     :ivar str hook_type: Constant filled by server. Possible values include:
         "Webhook", "Email".
     :ivar str id: Hook unique id.
@@ -1903,17 +1904,17 @@ class NotificationHook(dict):
         self.name = name
         self.description = kwargs.get('description', None)
         self.external_link = kwargs.get('external_link', None)
-        self.admin_emails = kwargs.get('admin_emails', None)
+        self.admins = kwargs.get('admins', None)
         self.hook_type = None
 
     def __repr__(self):
-        return "NotificationHook(id={}, name={}, description={}, external_link={}, admin_emails={}, " \
+        return "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, " \
                "hook_type={})".format(
                     self.id,
                     self.name,
                     self.description,
                     self.external_link,
-                    self.admin_emails,
+                    self.admins,
                     self.hook_type
                 )[:1024]
 
@@ -1925,7 +1926,7 @@ class EmailNotificationHook(NotificationHook):
     :param list[str] emails_to_alert: Required. Email TO: list.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
-    :ivar list[str] admin_emails: Hook administrator emails.
+    :ivar list[str] admins: Hook administrators.
     :ivar str hook_type: Constant filled by server - "Email".
     :ivar str id: Hook unique id.
     """
@@ -1943,7 +1944,7 @@ class EmailNotificationHook(NotificationHook):
                     self.name,
                     self.description,
                     self.external_link,
-                    self.admin_emails,
+                    self.admins,
                     self.hook_type,
                     self.emails_to_alert
                 )[:1024]
@@ -1955,7 +1956,7 @@ class EmailNotificationHook(NotificationHook):
             name=hook.hook_name,
             description=hook.description,
             external_link=hook.external_link,
-            admin_emails=hook.admins,
+            admins=hook.admins,
             id=hook.hook_id
         )
 
@@ -1964,7 +1965,7 @@ class EmailNotificationHook(NotificationHook):
             hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_EmailHookParameterPatch(
                 to_list=self.emails_to_alert
             )
@@ -1975,7 +1976,7 @@ class EmailNotificationHook(NotificationHook):
             hook_name=name or self.name,
             description=description or self.description,
             external_link=external_link or self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_EmailHookParameterPatch(
                 to_list=emails_to_alert or self.emails_to_alert
             )
@@ -1994,7 +1995,7 @@ class WebNotificationHook(NotificationHook):
     :keyword str certificate_password: client certificate password.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
-    :ivar list[str] admin_emails: Hook administrator emails.
+    :ivar list[str] admins: Hook administrators.
     :ivar str hook_type: Constant filled by server - "Webhook".
     :ivar str id: Hook unique id.
     """
@@ -2010,13 +2011,13 @@ class WebNotificationHook(NotificationHook):
         self.certificate_password = kwargs.get('certificate_password', None)
 
     def __repr__(self):
-        return "WebNotificationHook(id={}, name={}, description={}, external_link={}, admin_emails={}, hook_type={}, " \
+        return "WebNotificationHook(id={}, name={}, description={}, external_link={}, admins={}, hook_type={}, " \
                "endpoint={}, username={}, password={}, certificate_key={}, certificate_password={})".format(
                     self.id,
                     self.name,
                     self.description,
                     self.external_link,
-                    self.admin_emails,
+                    self.admins,
                     self.hook_type,
                     self.endpoint,
                     self.username,
@@ -2036,7 +2037,7 @@ class WebNotificationHook(NotificationHook):
             name=hook.hook_name,
             description=hook.description,
             external_link=hook.external_link,
-            admin_emails=hook.admins,
+            admins=hook.admins,
             id=hook.hook_id
         )
 
@@ -2045,7 +2046,7 @@ class WebNotificationHook(NotificationHook):
             hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_WebhookHookParameterPatch(
                 endpoint=self.endpoint,
                 username=self.username,
@@ -2069,7 +2070,7 @@ class WebNotificationHook(NotificationHook):
             hook_name=name or self.name,
             description=description or self.description,
             external_link=external_link or self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_WebhookHookParameterPatch(
                 endpoint=endpoint or self.endpoint,
                 username=username or self.username,
@@ -2087,7 +2088,7 @@ class MetricDetectionCondition(object):
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :paramtype condition_operator: str or
-     ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+     ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2383,7 +2384,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
     :paramtype condition_operator: str or
-        ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+        ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2439,7 +2440,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
         should be specified when combining multiple detection conditions. Possible values include:
         "AND", "OR".
     :paramtype condition_operator: str or
-        ~azure.ai.metricsadvisor.models.DetectionConditionsOperator
+        ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :keyword smart_detection_condition:
     :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :keyword hard_threshold_condition:
@@ -2700,24 +2701,24 @@ class AnomalyAlert(object):
     :vartype id: str
     :ivar timestamp: anomaly time.
     :vartype timestamp: ~datetime.datetime
-    :ivar created_on: created time.
-    :vartype created_on: ~datetime.datetime
-    :ivar modified_on: modified time.
-    :vartype modified_on: ~datetime.datetime
+    :ivar created_time: created time.
+    :vartype created_time: ~datetime.datetime
+    :ivar modified_time: modified time.
+    :vartype modified_time: ~datetime.datetime
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get('id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_on', None)
-        self.modified_on = kwargs.get('modified_on', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.modified_time = kwargs.get('modified_time', None)
 
     def __repr__(self):
-        return "AnomalyAlert(id={}, timestamp={}, created_on={}, modified_on={})".format(
+        return "AnomalyAlert(id={}, timestamp={}, created_time={}, modified_time={})".format(
                     self.id,
                     self.timestamp,
-                    self.created_on,
-                    self.modified_on
+                    self.created_time,
+                    self.modified_time
                 )[:1024]
 
     @classmethod
@@ -2725,8 +2726,8 @@ class AnomalyAlert(object):
         return cls(
             id=alert.alert_id,
             timestamp=alert.timestamp,
-            created_on=alert.created_time,
-            modified_on=alert.modified_time
+            created_time=alert.created_time,
+            modified_time=alert.modified_time
         )
 
 
@@ -2777,7 +2778,7 @@ class DataPointAnomaly(msrest.serialization.Model):
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'detection_configuration_id': {'key': 'detectionConfigurationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
         'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
         'dimension': {'key': 'dimension', 'type': '{str}'},
         'severity': {'key': 'severity', 'type': 'str'},
@@ -2792,19 +2793,19 @@ class DataPointAnomaly(msrest.serialization.Model):
         self.metric_id = kwargs.get('metric_id', None)
         self.detection_configuration_id = kwargs.get('detection_configuration_id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_on', None)
+        self.created_time = kwargs.get('created_time', None)
         self.modified_time = kwargs.get('modified_time', None)
         self.dimension = kwargs.get('dimension', None)
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
 
     def __repr__(self):
-        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_on={}, " \
+        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_time={}, " \
                "modified_time={}, dimension={}, severity={}, status={})".format(
                     self.metric_id,
                     self.detection_configuration_id,
                     self.timestamp,
-                    self.created_on,
+                    self.created_time,
                     self.modified_time,
                     self.dimension,
                     self.severity,
@@ -2826,7 +2827,7 @@ class DataPointAnomaly(msrest.serialization.Model):
             metric_id=anomaly_result.metric_id,
             detection_configuration_id=anomaly_result.anomaly_detection_configuration_id,
             timestamp=anomaly_result.timestamp,
-            created_on=anomaly_result.created_time,
+            created_time=anomaly_result.created_time,
             modified_time=anomaly_result.modified_time,
             dimension=anomaly_result.dimension,
             severity=severity,
@@ -3840,4 +3841,41 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
             data_source_credential_name=self.name,
             data_source_credential_description=self.description,
             parameters=param_patch,
+        )
+
+class DetectionAnomalyFilterCondition(msrest.serialization.Model):
+    """DetectionAnomalyFilterCondition.
+
+    :param series_group_key: dimension filter.
+    :type series_group_key: dict[str, str]
+    :param severity_filter:
+    :type severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
+    """
+
+    _attribute_map = {
+        'series_group_key': {'key': 'seriesGroupKey', 'type': '{str}'},
+        'severity_filter': {'key': 'severityFilter', 'type': 'SeverityFilterCondition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
+        self.series_group_key = kwargs.get('series_group_key', None)
+        self.severity_filter = kwargs.get('severity_filter', None)
+
+    @classmethod
+    def _from_generated(cls, source):
+        series_group_key = source.dimension_filter.dimension if source.dimension_filter else None
+        return cls(
+            series_group_key=series_group_key,
+            severity_filter=source.severity_filter.key_vault_endpoint
+        )
+
+    def _to_generated(self):
+        dimension_filter = _DimensionGroupIdentity(dimension=self.series_group_key)
+        return _DetectionAnomalyFilterCondition(
+            dimension_filter=dimension_filter,
+            severity_filter=self.severity_filter
         )

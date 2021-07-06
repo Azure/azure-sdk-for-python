@@ -152,7 +152,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/purview/azure-purview-scanning/azure/purview/scanning
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-scanning/azure/purview/scanning
 [scanning_pypi]: https://aka.ms/azsdk/python/purviewscanning/pypi
 [scanning_ref_docs]: https://aka.ms/azsdk/python/purviewscanning/ref-docs
 [scanning_product_documentation]: https://azure.microsoft.com/services/purview/
@@ -160,9 +160,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal
 [pip]: https://pypi.org/project/pip/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/create-catalog-portal#add-a-security-principal-to-a-data-plane-role
 [python_logging]: https://docs.python.org/3.5/library/logging.html

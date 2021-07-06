@@ -1,14 +1,13 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
-
-### Features Added
+## 1.0.0b2 (2021-07-06)
 
 ### Breaking Changes
 
-### Key Bugs Fixed
-
-### Fixed
+- `workspaces`, `workspace_ids`, `qualified_names` and `azure_resource_ids` are now merged into a single `additional_workspaces` list in the query API.
+- The `LogQueryRequest` object now takes in a `workspace_id` and `additional_workspaces` instead of `workspace`.
+- `aggregation` param is now a list instead of a string in the `query` method.
+- `duration` must now be provided as a timedelta instead of a string.
 
 
 ## 1.0.0b1 (2021-06-10)

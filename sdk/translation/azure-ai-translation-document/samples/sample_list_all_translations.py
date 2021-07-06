@@ -33,7 +33,7 @@ def sample_list_all_translations():
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-    operations = client.list_all_translation_statuses()  # type: ItemPaged[TranslationStatusResult]
+    operations = client.list_all_translation_statuses()  # type: ItemPaged[TranslationStatus]
 
     for operation in operations:
         print("ID: {}".format(operation.id))

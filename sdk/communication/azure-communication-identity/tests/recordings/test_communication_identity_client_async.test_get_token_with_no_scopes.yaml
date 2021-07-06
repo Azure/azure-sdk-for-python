@@ -8,10 +8,10 @@ interactions:
       - '2'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:04:05 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:58 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -20,18 +20,20 @@ interactions:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Apr 2021 01:04:04 GMT
-      ms-cv: +Ld0uuJrsEy+Fmi0FwHE8A.0
+      date: Tue, 22 Jun 2021 18:58:58 GMT
+      ms-cv: PI32xduU1kufD7wpUg8OzQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 12ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 32ms
     status:
       code: 201
       message: Created
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{}'
     headers:
@@ -41,10 +43,10 @@ interactions:
       - '2'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:04:05 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -55,14 +57,15 @@ interactions:
         field is required.", "target": "Scopes"}}'
     headers:
       content-type: application/json
-      date: Wed, 21 Apr 2021 01:04:04 GMT
-      ms-cv: o4QM5R8B1EaTu9t9KLIA2g.0
+      date: Tue, 22 Jun 2021 18:58:58 GMT
+      ms-cv: IivNGo5Jgk+G+i/KIsh3KQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 19ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 38ms
     status:
       code: 400
       message: Bad Request
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 version: 1

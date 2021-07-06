@@ -1,5 +1,25 @@
 # Release History
 
+## 5.6.0 (2021-07-07)
+
+### Features Added
+
+- Added support for sending AMQP annotated message which allows full access to the AMQP message fields.
+  - Introduced new namespace `azure.eventhub.amqp`.
+  - Added new enum class `azure.eventhub.amqp.AmqpMessageBodyType` to represent the body type of the message which includes:
+    - `DATA`: The body of message consists of one or more data sections and each section contains opaque binary data.
+    - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
+    - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
+  - Introduced new class `azure.eventhub.amqp.AmqpAnnotatedMessage` for accessing low-level amqp message sections which can be instantiated for sending.
+  - Introduced new classes `azure.eventhub.amqp.AmqpMessageHeader` and `azure.eventhub.amqp.AmqpMessageProperties` for accessing amqp header and properties.
+  - Added new property `body_type` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpMessageBodyType`.
+  - Added new read-only property `raw_amqp_message` on `azure.eventhub.EventData` which returns `azure.eventhub.amqp.AmqpAnnotatedMessage`.
+
+### Fixed
+
+- Updated uAMQP dependency to 1.4.1.
+  - Fixed a bug that attributes creation_time, absolute_expiry_time and group_sequence on MessageProperties should be compatible with integer types on Python 2.7.
+
 ## 5.5.0 (2021-05-13)
 
 **New Features**
@@ -54,7 +74,7 @@ This version and all future versions will require Python 2.7 or Python 3.6+, Pyt
     about the state of publishing for a partition.
   - Introduced a new property `published_sequence_number` on `EventData` to get the publishing sequence number assigned
     to the event at the time it was successfully published.
-  - Introduced a new property `starting_published_sequence_number` on `EventDataBatch` to get the publishing sequence 
+  - Introduced a new property `starting_published_sequence_number` on `EventDataBatch` to get the publishing sequence
     number assigned to the first event in the batch at the time the batch was successfully published.
   - Introduced a new class `azure.eventhub.PartitionPublishingConfiguration` which is a set of configurations that can be
     specified to influence the behavior when publishing directly to an Event Hub partition.
@@ -109,12 +129,12 @@ the identity of the connection endpoint.
 **New Features**
 
 - `EventHubConsumerClient` constructor accepts two new parameters for the load balancer.
-    - `load_balancing_strategy`, which can be "greedy" or "balanced". 
+    - `load_balancing_strategy`, which can be "greedy" or "balanced".
      With greedy strategy, one execution of load balancing will claim as many partitions as required to balance the load
      whereas with balanced strategy one execution of load balancing will claim at most 1 partition.
     - `partition_ownership_expiration_interval`, which allows you to customize the partition ownership expiration for load balancing.
      A consumer client may lose its owned partitions more often with a smaller expiration interval. But a larger interval
-     may result in idle partitions not being claimed for longer time. 
+     may result in idle partitions not being claimed for longer time.
 - Added enum class `azure.eventhub.LoadBalancingStrategy` for `load_balancing_strategy`.
 
 ## 5.1.0 (2020-05-04)
@@ -136,7 +156,7 @@ the identity of the connection endpoint.
 **New Features**
 
 - Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
-- `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
+- `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`.
 `on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
 - Param event of `PartitionContext.update_checkpoint` is now optional. The last received event is used when param event is not passed in.
 - `EventData.system_properties` has added missing properties when consuming messages from IotHub. #10408
@@ -147,7 +167,7 @@ the identity of the connection endpoint.
 
 - Fixed a bug that swallowed errors when receiving events with `azure.eventhub.EventHubConsumerClient`  #9660
 - Fixed a bug that caused `get_eventhub_properties`, `get_partition_ids`, and `get_partition_properties` to raise
-an error on Azure Stack #9920 
+an error on Azure Stack #9920
 
 ## 5.0.0 (2020-01-13)
 
@@ -270,7 +290,7 @@ after which the underlying connection will close if there is no further activity
 - Added `BlobPartitionManager` which implements `PartitionManager`.
     - Azure Blob Storage is applied for storing data used by `EventProcessor`.
     - Packaged separately as a plug-in to `EventProcessor`.
-    - For details, please refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio).
+    - For details, please refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio).
 - Added property `system_properties` on `EventData`.
 
 **Breaking changes**
