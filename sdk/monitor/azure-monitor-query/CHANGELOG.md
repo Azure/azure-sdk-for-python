@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
-
-### Features Added
+## 1.0.0b2 (2021-07-06)
 
 ### Breaking Changes
 
@@ -10,10 +8,6 @@
 - The `LogQueryRequest` object now takes in a `workspace_id` and `additional_workspaces` instead of `workspace`.
 - `aggregation` param is now a list instead of a string in the `query` method.
 - `duration` must now be provided as a timedelta instead of a string.
-
-### Key Bugs Fixed
-
-### Fixed
 
 
 ## 1.0.0b1 (2021-06-10)
