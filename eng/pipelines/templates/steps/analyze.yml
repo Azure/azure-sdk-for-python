@@ -102,7 +102,6 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
-      ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - template: run_black.yml
     parameters:
