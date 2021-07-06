@@ -34,8 +34,8 @@ class AzurePowerShellCredential(AsyncContextManager):
         will acquire tokens only from the tenant of Azure PowerShell's active subscription.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
-        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
+    def __init__(self, *, allow_multitenant_authentication=False) -> None:
+        self._allow_multitenant = allow_multitenant_authentication
 
     @log_get_token_async
     async def get_token(
