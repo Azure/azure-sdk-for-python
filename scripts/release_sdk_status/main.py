@@ -95,6 +95,17 @@ class PyPIClient:
         return
 
     def version_handler(self, version_list):
+        # Scenario 1
+        # rule 1: this package have track2 version
+        # rule 2: check whether CLI is using this package
+        # rule 3: by comparing the versions of CLI and package, we can judge whether cli is using track1 or 2
+        # rule 4: judge whether track1 is exist
+        # rule 5: whether track1 is GA
+        # rule 6: whether track2 is GA
+        # Scenario 2
+        # rule 7: this package doesn't have track2 version
+        # rule 8: check whether CLI is using this package
+        # rule 9: whether track1 is GA
         ga_re = re.compile(r'[A-Za-z]')
         version_index = 0
         versions = list(reversed(version_list))
