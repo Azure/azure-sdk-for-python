@@ -1,5 +1,15 @@
 # Release History
 
+## 1.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.2.0 (2021-07-06)
 ### Features Added
 * Adds `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting` models
