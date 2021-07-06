@@ -21,6 +21,11 @@ from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import wrap_exceptions
 
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
     from typing import Any, Optional
@@ -79,7 +84,7 @@ def _build_auth_record(response):
         six.raise_from(auth_error, ex)
 
 
-class InteractiveCredential(MsalCredential):
+class InteractiveCredential(MsalCredential, ABC):
     def __init__(self, **kwargs):
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
@@ -146,7 +151,10 @@ class InteractiveCredential(MsalCredential):
             self._auth_record = _build_auth_record(result)
         except Exception as ex:  # pylint:disable=broad-except
             _LOGGER.warning(
-                "%s.get_token failed: %s", self.__class__.__name__, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                "%s.get_token failed: %s",
+                self.__class__.__name__,
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
 

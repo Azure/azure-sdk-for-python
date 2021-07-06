@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import abc
 import os
 
 import msal
@@ -11,11 +10,6 @@ from .msal_client import MsalClient
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._persistent_cache import _load_persistent_cache
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 try:
     from typing import TYPE_CHECKING
@@ -27,7 +21,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union
 
 
-class MsalCredential(ABC):
+class MsalCredential(object):
     """Base class for credentials wrapping MSAL applications"""
 
     def __init__(self, client_id, client_credential=None, **kwargs):
