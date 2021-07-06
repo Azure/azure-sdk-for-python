@@ -133,8 +133,8 @@ class ServiceUnitsOperations(object):
         :type service_unit_info: ~azure.mgmt.deploymentmanager.models.ServiceUnitResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ServiceUnitResource or the result of cls(response)
@@ -334,9 +334,6 @@ class ServiceUnitsOperations(object):
         resource_group_name,  # type: str
         service_topology_name,  # type: str
         service_name,  # type: str
-        resource_group_name1,  # type: str
-        service_topology_name1,  # type: str
-        service_name1,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> List["_models.ServiceUnitResource"]
@@ -350,12 +347,6 @@ class ServiceUnitsOperations(object):
         :type service_topology_name: str
         :param service_name: The name of the service resource.
         :type service_name: str
-        :param resource_group_name1: The name of the resource group. The name is case insensitive.
-        :type resource_group_name1: str
-        :param service_topology_name1: The name of the service topology .
-        :type service_topology_name1: str
-        :param service_name1: The name of the service resource.
-        :type service_name1: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of ServiceUnitResource, or the result of cls(response)
         :rtype: list[~azure.mgmt.deploymentmanager.models.ServiceUnitResource]
@@ -367,7 +358,6 @@ class ServiceUnitsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01-preview"
-        api_version = "2019-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -377,16 +367,11 @@ class ServiceUnitsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'serviceTopologyName': self._serialize.url("service_topology_name", service_topology_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name1", resource_group_name1, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'serviceTopologyName': self._serialize.url("service_topology_name1", service_topology_name1, 'str'),
-            'serviceName': self._serialize.url("service_name1", service_name1, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._maria_db_management_client import MariaDBManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['MariaDBManagementClient']
 
 try:

@@ -3,22 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import functools
 
 from azure.keyvault.keys import KeyType
-from azure.keyvault.keys.aio import KeyClient
-from azure.keyvault.keys._shared import HttpChallengeCache
-from devtools_testutils import PowerShellPreparer
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
+from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+all_api_versions = get_decorator(is_async=True, vault_only=True)
+hsm_only = get_decorator(hsm_only=True, is_async=True)
 
 
 def print(*args):
@@ -44,19 +38,10 @@ async def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeyVaultTestCase):
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(TestExamplesKeyVault, self).tearDown()
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient, is_async=True)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    @KeyVaultPreparer()
-    async def test_example_key_crud_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
+    @all_api_versions()
+    @client_setup
+    async def test_example_key_crud_operations(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]
@@ -139,10 +124,22 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.recovery_id)
         # [END delete_key]
 
-    @KeyVaultPreparer()
-    async def test_example_key_list_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @hsm_only()
+    @client_setup
+    async def test_example_create_oct_key(self, key_client, **kwargs):
+        key_name = self.get_resource_name("key")
 
+        # [START create_oct_key]
+        key = await key_client.create_oct_key(key_name, size=256, hardware_protected=True)
+
+        print(key.id)
+        print(key.name)
+        print(key.key_type)
+        # [END create_oct_key]
+
+    @all_api_versions()
+    @client_setup
+    async def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
             await key_client.create_ec_key(key_name)
@@ -185,9 +182,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @KeyVaultPreparer()
-    async def test_example_keys_backup_restore(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @all_api_versions()
+    @client_setup
+    async def test_example_keys_backup_restore(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         await key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -212,9 +209,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @KeyVaultPreparer()
-    async def test_example_keys_recover(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @all_api_versions()
+    @client_setup
+    async def test_example_keys_recover(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         created_key = await key_client.create_key(key_name, "RSA")
 

@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
@@ -60,22 +60,21 @@ interactions:
         tub"]}]}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '2378'
       content-type: application/json; odata.metadata=none
-      date: Thu, 25 Mar 2021 20:26:32 GMT
-      elapsed-time: '133'
+      date: Wed, 30 Jun 2021 23:23:13 GMT
+      elapsed-time: '138'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 632e684d-8da8-11eb-9415-a0481ca055a9
+      request-id: 242f7000-d9fa-11eb-9c58-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    url: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
 - request:
     body: '{"count": true, "search": "hotel"}'
     headers:
@@ -86,9 +85,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    uri: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"@odata.count":7,"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
@@ -137,20 +136,19 @@ interactions:
         tub"]}]}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '2387'
       content-type: application/json; odata.metadata=none
-      date: Thu, 25 Mar 2021 20:26:32 GMT
-      elapsed-time: '8'
+      date: Wed, 30 Jun 2021 23:23:13 GMT
+      elapsed-time: '7'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 635ca0f0-8da8-11eb-b053-a0481ca055a9
+      request-id: 24626141-d9fa-11eb-bfc5-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
+    url: https://searchd5601832.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2021-04-30-Preview
 version: 1

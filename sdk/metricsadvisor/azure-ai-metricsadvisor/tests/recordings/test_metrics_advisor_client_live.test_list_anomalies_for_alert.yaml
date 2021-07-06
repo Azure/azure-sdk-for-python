@@ -9,30 +9,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/alert_id/anomalies
   response:
     body:
-      string: '{"value":[{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Delhi","category":"Shoes
-        Handbags & Sunglasses"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active"}}],"@nextLink":null}'
+      string: '{"value":[{"dataFeedId":"9860df01-e740-40ec-94a2-6351813552ba","metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Delhi","category":"Shoes
+        Handbags & Sunglasses"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active","value":5079001.4,"expectedValue":5142673.035323909}},{"dataFeedId":"9860df01-e740-40ec-94a2-6351813552ba","metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"Medium","anomalyStatus":"Active","value":3724747.4,"expectedValue":3579278.2792707016}}]}'
     headers:
       apim-request-id:
-      - 8d06d0e2-bc8c-4e97-9be4-94b0d551709f
+      - ac02a663-88b5-4e93-8f78-4ebb91037aa7
       content-length:
-      - '763'
+      - '955'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 22 Jan 2021 01:02:03 GMT
+      - Fri, 11 Jun 2021 23:45:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '89'
+      - '159'
       x-request-id:
-      - 8d06d0e2-bc8c-4e97-9be4-94b0d551709f
+      - ac02a663-88b5-4e93-8f78-4ebb91037aa7
     status:
       code: 200
       message: OK

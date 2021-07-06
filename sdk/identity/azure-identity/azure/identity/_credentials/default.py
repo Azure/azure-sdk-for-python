@@ -7,6 +7,7 @@ import os
 
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
+from .azure_powershell import AzurePowerShellCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -42,6 +43,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
     4. The user currently signed in to Visual Studio Code.
     5. The identity currently logged in to the Azure CLI.
+    6. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
@@ -53,6 +55,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
+    :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
@@ -69,12 +72,24 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
-        :class:`~azure.identity.VisualStudioCodeCredential`.
+        :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
+        settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
+        Directory work or school accounts.
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         authority = kwargs.pop("authority", None)
+
+        vscode_tenant_id = kwargs.pop(
+            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
+        vscode_args = {}
+        if authority:
+            vscode_args["authority"] = authority
+        if vscode_tenant_id:
+            vscode_args["tenant_id"] = vscode_tenant_id
+
         authority = normalize_authority(authority) if authority else get_default_authority()
 
         interactive_browser_tenant_id = kwargs.pop(
@@ -90,16 +105,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
-        vscode_tenant_id = kwargs.pop(
-            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-        )
-
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
+        exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials = []  # type: List[TokenCredential]
         if not exclude_environment_credential:
@@ -116,9 +128,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
+            credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
+        if not exclude_powershell_credential:
+            credentials.append(AzurePowerShellCredential())
         if not exclude_interactive_browser_credential:
             credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id))
 

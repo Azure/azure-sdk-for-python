@@ -383,7 +383,7 @@ class _Response(object):
         return self.headers
 
     def read(self, _length):
-        '''Returns resonse body. '''
+        '''Returns response body. '''
         return self.respbody[:_length]
 
 

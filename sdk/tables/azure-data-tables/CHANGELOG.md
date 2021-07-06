@@ -1,7 +1,63 @@
 # Release History
 
-## 12.0.0b7 (Unreleased)
-* Fixed issue with Cosmos merge operations
+## 12.1.0 (2021-07-06)
+
+### Features Added
+* Storage Accounts only: `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
+
+## 12.0.0 (2021-06-08)
+**Breaking**
+* EdmType.Binary data in entities will now be deserialized as `bytes` in Python 3 and `str` in Python 2, rather than an `EdmProperty` instance. Likewise on serialization, `bytes` in Python 3 and `str` in Python 2 will be interpreted as binary (this is unchanged for Python 3, but breaking for Python 2, where `str` was previously serialized as EdmType.String)
+* `TableClient.create_table` now returns an instance of `TableItem`.
+* All optional parameters for model constructors are now keyword-only.
+* Storage service configuration models have now been prefixed with `Table`, including
+  `TableAccessPolicy`, `TableMetrics`, `TableRetentionPolicy`, `TableCorsRule`
+* All parameters for `TableServiceClient.set_service_properties` are now keyword-only.
+* The `credential` parameter for all Clients is now keyword-only.
+* The method `TableClient.get_access_policy` will now return `None` where previously it returned an "empty" access policy object.
+* Timestamp properties on `TableAccessPolicy` instances returned from `TableClient.get_access_policy` will now be deserialized to `datetime` instances.
+
+**Fixes**
+* Fixed support for Cosmos emulator endpoint, via URL/credential or connection string.
+* Fixed table name from URL parsing in `TableClient.from_table_url` classmethod.
+* The `account_name` attribute on clients will now be pulled from an `AzureNamedKeyCredential` if used.
+* Any additional odata metadata is returned in entitys metadata.
+* The timestamp in entity metadata is now deserialized to a timestamp.
+* If the `prefer` header is added in the `create_entity` operation, the echo will be returned.
+* Errors raised on a 412 if-not-match error will now be a specific `azure.core.exceptions.ResourceModifiedError`.
+* `EdmType.DOUBLE` values are now explicitly typed in the request payload.
+* Fixed de/serialization of list attributes on `TableCorsRule`.
+
+## 12.0.0b7 (2021-05-11)
+**Breaking**
+* The `account_url` parameter in the client constructors has been renamed to `endpoint`.
+* The `TableEntity` object now acts exclusively like a dictionary, and no longer supports key access via attributes.
+* Metadata of an entity is now accessed via `TableEntity.metadata` attribute rather than a method.
+* Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
+* Renamed `filter` parameter in query APIs to `query_filter`.
+* The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
+* The `TableItem.table_name` has been renamed to `TableItem.name`.
+* Removed the `TableClient.create_batch` method along with the `TableBatchOperations` object. The transactional batching is now supported via a simple Python list of tuples.
+* `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
+* Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
+* Removed Batching context-manager behavior
+* `EntityProperty` is now a NampedTuple, and can be represented by a tuple of `(entity, EdmType)`.
+* Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
+* `BatchErrorException` has been renamed to `TableTransactionError`.
+* The `location_mode` is no longer a public attribute on the Clients.
+* The only supported credentials are `AzureNamedKeyCredential`, `AzureSasCredential`, or authentication by connection string
+* Removed `date` and `api_version` from the `TableItem` class.
+
+**Fixes**
+* Fixed issue with Cosmos merge operations.
+* Removed legacy Storage policies from pipeline.
+* Removed unused legacy client-side encryption attributes from client classes.
+* Fixed sharing of pipeline between service/table clients.
+* Added support for Azurite storage emulator
+* Throws a `RequestTooLargeError` on transaction requests that return a 413 error code
+* Added support for Int64 and Binary types in query filters
+* Added support for `select` keyword parameter to `TableClient.get_entity()`.
+* On `update_entity` and `delete_entity` if no `etag` is supplied via kwargs, the `etag` in the entity will be used if it is in the entity.
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.

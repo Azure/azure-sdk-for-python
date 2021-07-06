@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class CapabilitiesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -43,9 +43,9 @@ class CapabilitiesOperations:
     async def list_by_location(
         self,
         location_name: str,
-        include: Optional[Union[str, "models.CapabilityGroup"]] = None,
-        **kwargs
-    ) -> "models.LocationCapabilities":
+        include: Optional[Union[str, "_models.CapabilityGroup"]] = None,
+        **kwargs: Any
+    ) -> "_models.LocationCapabilities":
         """Gets the subscription capabilities available for the specified location.
 
         :param location_name: The location name whose capabilities are retrieved.
@@ -57,12 +57,12 @@ class CapabilitiesOperations:
         :rtype: ~azure.mgmt.sql.models.LocationCapabilities
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LocationCapabilities"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LocationCapabilities"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL

@@ -31,7 +31,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 self.assertIsNotNone(email_hook.id)
                 self.assertIsNotNone(email_hook.name)
-                self.assertIsNotNone(email_hook.admin_emails)
+                self.assertIsNotNone(email_hook.admins)
                 self.assertEqual(email_hook.emails_to_alert, ["yournamehere@microsoft.com"])
                 self.assertEqual(email_hook.description, "my email hook")
                 self.assertEqual(email_hook.external_link, "external link")
@@ -57,7 +57,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 self.assertIsNotNone(web_hook.id)
                 self.assertIsNotNone(web_hook.name)
-                self.assertIsNotNone(web_hook.admin_emails)
+                self.assertIsNotNone(web_hook.admins)
                 self.assertEqual(web_hook.endpoint, "https://httpbin.org/post")
                 self.assertEqual(web_hook.description, "my web hook")
                 self.assertEqual(web_hook.external_link, "external link")
@@ -190,7 +190,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
-                self.assertEqual(updated.password, "password")
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -216,7 +215,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
-                self.assertEqual(updated.password, "password")
 
             finally:
                 await self.admin_client.delete_hook(hook.id)
@@ -247,7 +245,6 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
-                self.assertEqual(updated.password, "password")
 
             finally:
                 await self.admin_client.delete_hook(hook.id)

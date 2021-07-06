@@ -1,5 +1,14 @@
 # Release History
 
+## 0.8.0 (Unreleased)
+
+
+## 0.7.0 (2021-05-11)
+
+### Bug fixes
+
+- Enable poller when starting a long running operation    #18184
+
 ## 0.6.0 (2021-04-06)
 
 ### New Features

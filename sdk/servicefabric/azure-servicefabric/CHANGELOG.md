@@ -1,5 +1,45 @@
 # Release History
 
+## 8.0.0.0 (2021-05-03)
+
+**Features**
+
+  - Model ApplicationUpgradeDescription has a new parameter managed_application_identity
+  - Model StatelessServiceUpdateDescription has a new parameter instance_lifecycle_description
+  - Model StatelessServiceUpdateDescription has a new parameter tags_for_running
+  - Model StatelessServiceUpdateDescription has a new parameter service_dns_name
+  - Model StatelessServiceUpdateDescription has a new parameter tags_for_placement
+  - Model StatelessServiceUpdateDescription has a new parameter instance_restart_wait_duration_seconds
+  - Model ServiceDescription has a new parameter tags_required_to_place
+  - Model ServiceDescription has a new parameter tags_required_to_run
+  - Model ServiceUpdateDescription has a new parameter tags_for_placement
+  - Model ServiceUpdateDescription has a new parameter tags_for_running
+  - Model ServiceUpdateDescription has a new parameter service_dns_name
+  - Model StatefulServiceDescription has a new parameter replica_lifecycle_description
+  - Model StatefulServiceDescription has a new parameter tags_required_to_place
+  - Model StatefulServiceDescription has a new parameter tags_required_to_run
+  - Model StatelessServiceDescription has a new parameter instance_lifecycle_description
+  - Model StatelessServiceDescription has a new parameter instance_restart_wait_duration_seconds
+  - Model StatelessServiceDescription has a new parameter tags_required_to_place
+  - Model StatelessServiceDescription has a new parameter tags_required_to_run
+  - Model ClusterHealthPolicy has a new parameter node_type_health_policy_map
+  - Model NodeInfo has a new parameter node_tags
+  - Model StatefulServiceUpdateDescription has a new parameter replica_lifecycle_description
+  - Model StatefulServiceUpdateDescription has a new parameter tags_for_placement
+  - Model StatefulServiceUpdateDescription has a new parameter tags_for_running
+  - Model StatefulServiceUpdateDescription has a new parameter service_dns_name
+  - Model ApplicationInfo has a new parameter managed_application_identity
+  - Added operation ServiceFabricClientAPIsOperationsMixin.add_node_tags
+  - Added operation ServiceFabricClientAPIsOperationsMixin.move_instance
+  - Added operation ServiceFabricClientAPIsOperationsMixin.remove_node_tags
+  - Added operation ServiceFabricClientAPIsOperationsMixin.get_loaded_partition_info_list
+
+**Breaking changes**
+
+  - Operation ServiceFabricClientAPIsOperationsMixin.create_backup_policy has a new signature
+  - Operation ServiceFabricClientAPIsOperationsMixin.update_backup_policy has a new signature
+  - Model AverageServiceLoadScalingTrigger has a new required parameter use_only_primary_load
+
 ## 7.2.0.46 (2020-10-29)
 
 **Features**

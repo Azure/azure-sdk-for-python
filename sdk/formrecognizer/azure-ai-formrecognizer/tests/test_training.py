@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
-from azure.ai.formrecognizer import FormTrainingClient
+from azure.ai.formrecognizer import FormTrainingClient, _models
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -38,7 +38,6 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     def test_training_encoded_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = client.begin_training(
@@ -119,6 +118,12 @@ class TestTraining(FormRecognizerTest):
         raw_model = raw_response[0]
         custom_model = raw_response[1]
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
+
+        custom_model_dict = custom_model.to_dict()
+        
+        custom_model_from_dict = _models.CustomFormModel.from_dict(custom_model_dict)
+        self.assertEqual(custom_model_from_dict.model_name, custom_model.model_name)
+        self.assertModelTransformCorrect(custom_model_from_dict, raw_model, unlabeled=True)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -264,4 +269,4 @@ class TestTraining(FormRecognizerTest):
         with pytest.raises(ValueError) as excinfo:
             poller = client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
             result = poller.result()
-        assert "'model_name' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)
+        assert "'model_name' is only available for API version V2_1 and up" in str(excinfo.value)

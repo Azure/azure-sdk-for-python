@@ -26,6 +26,14 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AlignMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """An optional field, indicates how we align different variables into the same time-range which is
+    required by the model.{Inner, Outer}
+    """
+
+    INNER = "Inner"
+    OUTER = "Outer"
+
 class AnomalyDetectorErrorCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The error code.
     """
@@ -40,9 +48,40 @@ class AnomalyDetectorErrorCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     REQUIRED_GRANULARITY = "RequiredGranularity"
     REQUIRED_SERIES = "RequiredSeries"
 
+class DetectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Multivariate anomaly detection status
+    """
+
+    CREATED = "CREATED"
+    RUNNING = "RUNNING"
+    READY = "READY"
+    FAILED = "FAILED"
+
+class FillNAMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """An optional field, indicates how missed values will be filled with. Can not be set to NotFill,
+    when alignMode is Outer.{Previous, Subsequent, Linear, Zero, Fix, NotFill}
+    """
+
+    PREVIOUS = "Previous"
+    SUBSEQUENT = "Subsequent"
+    LINEAR = "Linear"
+    ZERO = "Zero"
+    PAD = "Pad"
+    NOT_FILL = "NotFill"
+
+class ModelStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Model training status.
+    """
+
+    CREATED = "CREATED"
+    RUNNING = "RUNNING"
+    READY = "READY"
+    FAILED = "FAILED"
+
 class TimeGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Can only be one of yearly, monthly, weekly, daily, hourly, minutely or secondly. Granularity is
-    used for verify whether input series is valid.
+    """Optional argument, can be one of yearly, monthly, weekly, daily, hourly, minutely, secondly,
+    microsecond or none. If granularity is not present, it will be none by default. If granularity
+    is none, the timestamp property in time series point can be absent.
     """
 
     YEARLY = "yearly"
@@ -52,3 +91,5 @@ class TimeGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HOURLY = "hourly"
     PER_MINUTE = "minutely"
     PER_SECOND = "secondly"
+    MICROSECOND = "microsecond"
+    NONE = "none"

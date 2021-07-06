@@ -67,6 +67,12 @@ try:
     from ._models_py3 import ProductsListResult
     from ._models_py3 import RebillDetails
     from ._models_py3 import Reseller
+    from ._models_py3 import Reservation
+    from ._models_py3 import ReservationPropertyUtilization
+    from ._models_py3 import ReservationSkuProperty
+    from ._models_py3 import ReservationSummary
+    from ._models_py3 import ReservationUtilizationAggregates
+    from ._models_py3 import ReservationsListResult
     from ._models_py3 import Resource
     from ._models_py3 import Transaction
     from ._models_py3 import TransactionListResult
@@ -138,6 +144,12 @@ except (SyntaxError, ImportError):
     from ._models import ProductsListResult  # type: ignore
     from ._models import RebillDetails  # type: ignore
     from ._models import Reseller  # type: ignore
+    from ._models import Reservation  # type: ignore
+    from ._models import ReservationPropertyUtilization  # type: ignore
+    from ._models import ReservationSkuProperty  # type: ignore
+    from ._models import ReservationSummary  # type: ignore
+    from ._models import ReservationUtilizationAggregates  # type: ignore
+    from ._models import ReservationsListResult  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Transaction  # type: ignore
     from ._models import TransactionListResult  # type: ignore
@@ -247,6 +259,12 @@ __all__ = [
     'ProductsListResult',
     'RebillDetails',
     'Reseller',
+    'Reservation',
+    'ReservationPropertyUtilization',
+    'ReservationSkuProperty',
+    'ReservationSummary',
+    'ReservationUtilizationAggregates',
+    'ReservationsListResult',
     'Resource',
     'Transaction',
     'TransactionListResult',

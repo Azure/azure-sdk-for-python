@@ -1,7 +1,47 @@
 # Release History
 
-## 1.6.0b4 (Unreleased)
+## 1.7.0b2 (Unreleased)
+### Added
+- `InteractiveBrowserCredential` keyword argument `login_hint` enables
+  pre-filling the username/email address field on the login page
+  ([#19225](https://github.com/Azure/azure-sdk-for-python/issues/19225))
+- `CertificateCredential` and `ClientSecretCredential` support regional STS
+  on Azure VMs by either keyword argument `regional_authority` or environment
+  variable `AZURE_REGIONAL_AUTHORITY_NAME`. See `azure.identity.RegionalAuthority`
+  for possible values.
+  ([#19301](https://github.com/Azure/azure-sdk-for-python/issues/19301))
+- `AzureApplicationCredential`, a default credential chain for applications
+  deployed to Azure
+  ([#19309](https://github.com/Azure/azure-sdk-for-python/issues/19309))
 
+### Fixed
+- `azure.identity.aio.ManagedIdentityCredential` is an async context manager
+  that closes its underlying transport session at the end of a `with` block
+
+## 1.7.0b1 (2021-06-08)
+Beginning with this release, this library requires Python 2.7 or 3.6+.
+
+### Added
+- `VisualStudioCodeCredential` gets its default tenant and authority
+  configuration from VS Code user settings
+  ([#14808](https://github.com/Azure/azure-sdk-for-python/issues/14808))
+
+
+## 1.6.0 (2021-05-13)
+This is the last version to support Python 3.5. The next version will require
+Python 2.7 or 3.6+.
+
+### Added
+- `AzurePowerShellCredential` authenticates as the identity logged in to Azure
+  PowerShell. This credential is part of `DefaultAzureCredential` by default
+  but can be disabled by a keyword argument:
+  `DefaultAzureCredential(exclude_powershell_credential=True)`
+  ([#17341](https://github.com/Azure/azure-sdk-for-python/issues/17341))
+
+### Fixed
+- `AzureCliCredential` raises `CredentialUnavailableError` when the CLI times out,
+  and kills timed out subprocesses
+- Reduced retry delay for `ManagedIdentityCredential` on Azure VMs
 
 ## 1.6.0b3 (2021-04-06)
 ### Breaking Changes
@@ -371,7 +411,7 @@ arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
 for transport but the library does not require it as a dependency because the
 async API is optional. To use async credentials, please install
 [`aiohttp`](https://pypi.org/project/aiohttp/) or see
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)
 for information about customizing the transport.
 - Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
 - All credentials with `tenant_id` and `client_id` positional parameters now accept them in that order
@@ -440,7 +480,7 @@ authenticate silently after you've signed in to Visual Studio 2019, for
 example. `DefaultAzureCredential` includes `SharedTokenCacheCredential` when
 the shared cache is available, and environment variable `AZURE_USERNAME`
 is set. See the
-[README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md#single-sign-on)
+[README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#single-sign-on)
 for more information.
 
 ### Dependency changes:
@@ -477,7 +517,7 @@ https://aka.ms/azure-sdk-preview1-python.
 
 This release supports service principal and managed identity authentication.
 See the
-[documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md)
 for more details. User authentication will be added in an upcoming preview
 release.
 

@@ -11,10 +11,8 @@ import functools
 import itertools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
-from multidict import CIMultiDict, CIMultiDictProxy
-from testcase import GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from asynctestcase import AsyncTextAnalyticsTest
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -22,35 +20,25 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
-    HealthcareEntityRelationType,
+    HealthcareEntityRelation,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
 class TestHealth(AsyncTextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             async with client:
                 response = await (await client.begin_analyze_healthcare_entities("hello world", polling_interval=self._interval())).result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_passing_only_string(self, client):
         docs = [
@@ -72,7 +60,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         self.assertTrue(response[2].is_error)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -89,7 +77,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 1001))  # Maximum number of documents per request is 1000
@@ -100,7 +88,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         assert excinfo.value.status_code == 400
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_payload_too_large(self, client):
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
@@ -124,7 +112,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         assert excinfo.value.status_code == 413
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -140,11 +128,16 @@ class TestHealth(AsyncTextAnalyticsTest):
                 response.append(r)
 
         expected_order = ["56", "0", "22", "19", "1"]
-        actual_order = [x.id for x in response]
+        num_error = 0
         for idx, resp in enumerate(response):
-            self.assertEqual(resp.id, expected_order[idx])
+            assert resp.id == expected_order[idx]
+            if resp.is_error:
+                num_error += 1
+                continue
+            assert not resp.statistics
+        assert num_error == 1
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -153,26 +146,36 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
+        def callback(resp):
+            assert resp.raw_response
+            stats = resp.raw_response['results']['statistics']
+            assert stats['documentsCount'] == 5
+            assert stats['validDocumentsCount'] == 4
+            assert stats['erroneousDocumentsCount'] == 1
+            assert stats['transactionsCount'] == 4
+
         async with client:
             response = await (await client.begin_analyze_healthcare_entities(
                 docs,
                 show_stats=True,
                 model_version="2021-01-11",
-                polling_interval=self._interval()
+                polling_interval=self._interval(),
+                raw_response_hook=callback,
             )).result()
 
-        self.assertIsNotNone(response)
-        assert response.model_version    # commenting out bc of service error, always uses latest https://github.com/Azure/azure-sdk-for-python/issues/17160
-        self.assertEqual(response.statistics.documents_count, 5)
-        self.assertEqual(response.statistics.transactions_count, 4)
-        self.assertEqual(response.statistics.valid_documents_count, 4)
-        self.assertEqual(response.statistics.erroneous_documents_count, 1)
+        assert response
+        assert not hasattr(response, "statistics")
 
+        num_error = 0
         async for doc in response:
-            if not doc.is_error:
-                self.assertIsNotNone(doc.statistics)
+            if doc.is_error:
+                num_error += 1
+                continue
+            assert doc.statistics.character_count
+            assert doc.statistics.transaction_count
+        assert num_error == 1
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_whole_batch_language_hint_and_dict_input(self, client):
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -189,7 +192,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_invalid_language_hint_method(self, client):
         docs = ["This should fail because we're passing in an invalid language hint"]
@@ -202,7 +205,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_invalid_language_hint_docs(self, client):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
@@ -215,7 +218,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_user_agent(self, client):  # TODO: verify
         def callback(resp):
@@ -235,7 +238,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -250,7 +253,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_document_errors(self, client):
         text = ""
@@ -273,7 +276,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
@@ -286,7 +289,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
@@ -302,7 +305,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     """Commenting out multi page tests until service returns multiple pages"""
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
     # async def test_multiple_pages_of_results_returned_successfully(self, client):
     #     single_doc = "hello world"
@@ -324,7 +327,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     #     for (idx, doc) in enumerate(response):
     #         self.assertEqual(docs[idx]["id"], doc.id)
 
-    # @GlobalTextAnalyticsAccountPreparer()
+    # @TextAnalyticsPreparer()
     # @TextAnalyticsClientPreparer()
     # async def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
     #     single_doc = "hello world"
@@ -353,7 +356,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     #                 self.assertFalse(doc.is_error)
     #                 self.assertIsNotNone(doc.statistics)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_cancellation(self, client):
         single_doc = "hello world"
@@ -364,13 +367,13 @@ class TestHealth(AsyncTextAnalyticsTest):
 
             try:
                 cancellation_poller = await poller.cancel()
-                cancellation_poller.wait()
+                await cancellation_poller.wait()
 
             except HttpResponseError:
                 pass # expected if the operation was already in a terminal state.
 
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
         poller = await client.begin_analyze_healthcare_entities(documents=["Hello world"], polling_interval=self._interval())
@@ -378,7 +381,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(actual_string_index_type, "UnicodeCodePoint")
         await poller.result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_explicit_set_string_index_type(self, client):
         poller = await client.begin_analyze_healthcare_entities(
@@ -390,7 +393,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(actual_string_index_type, "TextElements_v8")
         await poller.result()
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_relations(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
@@ -409,7 +412,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert len(result.entity_relations) == 1
 
         relation = result.entity_relations[0]
-        assert relation.relation_type == HealthcareEntityRelationType.ABBREVIATION
+        assert relation.relation_type == HealthcareEntityRelation.ABBREVIATION
         assert len(relation.roles) == 2
 
         parkinsons_entity = list(filter(lambda x: x.text == "Parkinsons Disease", result.entities))[0]
@@ -422,7 +425,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 assert role.name == "AbbreviatedTerm"
                 self.assert_healthcare_entities_equal(role.entity, parkinsons_abbreviation_entity)
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_normalized_text(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
@@ -441,7 +444,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         histologically_entity = list(filter(lambda x: x.text == "histologically", result[0].entities))[0]
         assert histologically_entity.normalized_text == "Histology Procedure"
 
-    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     async def test_healthcare_assertion(self, client):
         response = await (await client.begin_analyze_healthcare_entities(
@@ -457,3 +460,18 @@ class TestHealth(AsyncTextAnalyticsTest):
         # have an issue to update https://github.com/Azure/azure-sdk-for-python/issues/17088
         meningitis_entity = next(e for e in result[0].entities if e.text == "Meningitis")
         assert meningitis_entity.assertion.certainty == "negativePossible"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_disable_service_logs(self, client):
+        def callback(resp):
+            # this is called for both the initial post
+            # and the gets. Only care about the initial post
+            if resp.http_request.method == "POST":
+                assert resp.http_request.query['loggingOptOut']
+        await (await client.begin_analyze_healthcare_entities(
+            documents=["Test for logging disable"],
+            polling_interval=self._interval(),
+            disable_service_logs=True,
+            raw_response_hook=callback,
+        )).result()

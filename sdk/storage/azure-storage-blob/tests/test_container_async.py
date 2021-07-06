@@ -15,7 +15,8 @@ from dateutil.tz import tzutc
 import requests
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -36,7 +37,7 @@ from azure.storage.blob import (
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
 from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -197,6 +198,26 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             await bsc._rename_container(name="badcontainer", new_name="container")
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
+
+    @GlobalStorageAccountPreparer()
+    async def test_download_blob_modified(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                max_single_get_size=38,
+                                max_chunk_get_size=38)
+        container = await self._create_container(bsc, prefix="cont1")
+        data = b'hello world python storage test chunks' * 5
+        blob_name = self.get_resource_name("testblob")
+        blob = container.get_blob_client(blob_name)
+        await blob.upload_blob(data, overwrite=True)
+        resp = await container.download_blob(blob_name, match_condition=MatchConditions.IfPresent)
+        chunks = resp.chunks()
+        i = 0
+        while i < 4:
+            data += await chunks.__anext__()
+            i += 1
+        await blob.upload_blob(data=data, overwrite=True)
+        with self.assertRaises(ResourceModifiedError):
+            data += await chunks.__anext__()
 
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @GlobalStorageAccountPreparer()
@@ -1813,7 +1834,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
         container = await self._create_container(bsc)
         data = b'hello world'
-        blob_name =  self.get_resource_name("blob")
+        blob_name = self.get_resource_name("blob")
 
         blob = container.get_blob_client(blob_name)
         await blob.upload_blob(data)
@@ -1822,4 +1843,83 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         downloaded = await container.download_blob(blob_name)
         raw = await downloaded.readall()
         assert raw == data
+
+    @GlobalStorageAccountPreparer()
+    async def test_download_blob_in_chunks_where_maxsinglegetsize_is_multiple_of_chunksize(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                transport=AiohttpTestTransport(),
+                                max_single_get_size=1024,
+                                max_chunk_get_size=512)
+        container = await self._create_container(bsc)
+        data = b'hello world python storage test chunks' * 1024
+        blob_name = self.get_resource_name("testiteratechunks")
+
+        await container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
+
+        # Act
+        downloader = await container.download_blob(blob_name)
+        downloaded_data = b''
+        chunk_size_list = list()
+        async for chunk in downloader.chunks():
+            chunk_size_list.append(len(chunk))
+            downloaded_data += chunk
+
+        # the last chunk is not guaranteed to be 666
+        for i in range(0, len(chunk_size_list) - 1):
+            self.assertEqual(chunk_size_list[i], 512)
+
+        self.assertEqual(downloaded_data, data)
+
+    @GlobalStorageAccountPreparer()
+    async def test_download_blob_in_chunks_where_maxsinglegetsize_not_multiple_of_chunksize(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                transport=AiohttpTestTransport(),
+                                max_single_get_size=1024,
+                                max_chunk_get_size=666)
+        container = await self._create_container(bsc)
+        data = b'hello world python storage test chunks' * 1024
+        blob_name = self.get_resource_name("testiteratechunks")
+
+        await container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
+
+        # Act
+        downloader= await container.download_blob(blob_name)
+        downloaded_data = b''
+        chunk_size_list = list()
+        async for chunk in downloader.chunks():
+            chunk_size_list.append(len(chunk))
+            downloaded_data += chunk
+
+        # the last chunk is not guaranteed to be 666
+        for i in range(0, len(chunk_size_list) - 1):
+            self.assertEqual(chunk_size_list[i], 666)
+
+        self.assertEqual(downloaded_data, data)
+
+    @GlobalStorageAccountPreparer()
+    async def test_download_blob_in_chunks_where_maxsinglegetsize_smallert_than_chunksize(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                transport=AiohttpTestTransport(),
+                                max_single_get_size=215,
+                                max_chunk_get_size=512)
+        container = await self._create_container(bsc)
+        data = b'hello world python storage test chunks' * 1024
+        blob_name = self.get_resource_name("testiteratechunks")
+
+        blob_client = container.get_blob_client(blob_name)
+        await blob_client.upload_blob(data, overwrite=True)
+
+        downloader = await container.download_blob(blob_name)
+        downloaded_data = b''
+        chunk_size_list = list()
+        async for chunk in downloader.chunks():
+            chunk_size_list.append(len(chunk))
+            downloaded_data += chunk
+
+        # the last chunk is not guaranteed to be 666
+        for i in range(0, len(chunk_size_list) - 1):
+            self.assertEqual(chunk_size_list[i], 512)
+
+        self.assertEqual(downloaded_data, data)
+
 #------------------------------------------------------------------------------

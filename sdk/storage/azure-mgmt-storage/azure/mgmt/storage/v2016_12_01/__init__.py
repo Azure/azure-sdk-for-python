@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._storage_management import StorageManagement
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['StorageManagement']
 
 try:

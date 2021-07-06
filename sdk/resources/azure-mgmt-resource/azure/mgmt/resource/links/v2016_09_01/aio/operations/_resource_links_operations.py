@@ -44,13 +44,13 @@ class ResourceLinksOperations:
     async def delete(
         self,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a resource link with the specified ID.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
-         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-
-         namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
+         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}.
+         For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -96,13 +96,13 @@ class ResourceLinksOperations:
         self,
         link_id: str,
         parameters: "_models.ResourceLink",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceLink":
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
-         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-
-         namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
+         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}.
+         For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
         :param parameters: Parameters for creating or updating a resource link.
@@ -163,7 +163,7 @@ class ResourceLinksOperations:
     async def get(
         self,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceLink":
         """Gets a resource link with the specified ID.
 
@@ -217,7 +217,7 @@ class ResourceLinksOperations:
     def list_at_subscription(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceLinkResult"]:
         """Gets all the linked resources for the subscription.
 
@@ -290,7 +290,7 @@ class ResourceLinksOperations:
         self,
         scope: str,
         filter: Optional[str] = "atScope()",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceLinkResult"]:
         """Gets a list of resource links at and below the specified source scope.
 

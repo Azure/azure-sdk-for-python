@@ -30,8 +30,10 @@ class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
-    DEFAULT = "Default"  #: The policy effect is enforced during resource creation or update.
-    DO_NOT_ENFORCE = "DoNotEnforce"  #: The policy effect is not enforced during resource creation or update.
+    #: The policy effect is enforced during resource creation or update.
+    DEFAULT = "Default"
+    #: The policy effect is not enforced during resource creation or update.
+    DO_NOT_ENFORCE = "DoNotEnforce"
 
 class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the parameter.
@@ -59,5 +61,8 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     resource.
     """
 
-    SYSTEM_ASSIGNED = "SystemAssigned"  #: Indicates that a system assigned identity is associated with the resource.
-    NONE = "None"  #: Indicates that no identity is associated with the resource or that the existing identity should be removed.
+    #: Indicates that a system assigned identity is associated with the resource.
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    #: Indicates that no identity is associated with the resource or that the existing identity should
+    #: be removed.
+    NONE = "None"

@@ -7,11 +7,11 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '274'
+      - '277'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-sms/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-sms/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://sanitized.communication.azure.com/sms?api-version=2021-03-07
   response:
@@ -21,11 +21,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-08-20-preview, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 18:38:13 GMT
-      ms-cv: KUAqE6zPEkWUxs7nDfgQRQ.0
+      date: Tue, 22 Jun 2021 20:30:38 GMT
+      ms-cv: ekwtXvPV2keeZdu6kzKFfw.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 423ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 677ms
     status:
       code: 202
       message: Accepted

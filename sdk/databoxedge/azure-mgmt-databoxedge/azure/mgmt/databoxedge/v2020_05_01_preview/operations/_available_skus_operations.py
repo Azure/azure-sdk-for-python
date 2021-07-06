@@ -30,7 +30,7 @@ class AvailableSkusOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databoxedge.models
+    :type models: ~azure.mgmt.databoxedge.v2020_05_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -56,7 +56,7 @@ class AvailableSkusOperations(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataBoxEdgeSkuList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.models.DataBoxEdgeSkuList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.v2020_05_01_preview.models.DataBoxEdgeSkuList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeSkuList"]

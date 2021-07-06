@@ -464,27 +464,27 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 0f6e2f2c-e2c9-4045-8281-c8ec0f413313
+      - e93ec20e-01f9-4a44-90ff-6503ab378763
       content-length:
       - '0'
       date:
-      - Fri, 19 Mar 2021 21:35:32 GMT
+      - Tue, 11 May 2021 02:27:26 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/0f6e2f2c-e2c9-4045-8281-c8ec0f413313
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/e93ec20e-01f9-4a44-90ff-6503ab378763
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '153'
+      - '69'
     status:
       code: 202
       message: Accepted
@@ -498,66 +498,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/0f6e2f2c-e2c9-4045-8281-c8ec0f413313
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyzeResults/e93ec20e-01f9-4a44-90ff-6503ab378763
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2021-03-19T21:35:31Z", "lastUpdatedDateTime":
-        "2021-03-19T21:35:32Z"}'
-    headers:
-      apim-request-id:
-      - 8c600c5d-976c-4e41-a793-1e4c52fb261c
-      content-length:
-      - '106'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 19 Mar 2021 21:35:36 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '69'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/0f6e2f2c-e2c9-4045-8281-c8ec0f413313
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T21:35:31Z",
-        "lastUpdatedDateTime": "2021-03-19T21:35:37Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-11T02:27:26Z",
+        "lastUpdatedDateTime": "2021-05-11T02:27:30Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
-        "unit": "inch"}], "pageResults": [{"page": 1}], "documentResults": [{"docType":
-        "prebuilt:invoice", "pageRange": [1, 1], "fields": {}}]}}'
+        "unit": "inch"}], "pageResults": [{"page": 1, "tables": []}], "documentResults":
+        [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields": {}}]}}'
     headers:
       apim-request-id:
-      - befbeb36-0d72-4af6-9e96-b3dfb7beddf5
+      - 6eda4e1f-7196-4524-9eee-8f1a1a5e78d6
       content-length:
-      - '327'
+      - '339'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 21:35:42 GMT
+      - Tue, 11 May 2021 02:27:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '63'
+      - '18'
     status:
       code: 200
       message: OK

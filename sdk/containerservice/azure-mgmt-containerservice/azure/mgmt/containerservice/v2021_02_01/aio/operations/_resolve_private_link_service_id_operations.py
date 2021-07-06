@@ -45,7 +45,7 @@ class ResolvePrivateLinkServiceIdOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.PrivateLinkResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Gets the private link service ID for the specified managed cluster.
 

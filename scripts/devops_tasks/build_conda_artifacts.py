@@ -25,12 +25,15 @@ import sys
 import os
 import shutil
 import re
+import yaml
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
 from subprocess import check_call
 from distutils.dir_util import copy_tree
 
-VERSION_REGEX = re.compile(r"\{\%\s*set\s*version\s*=\s*\"(.*)\"\s*\%\}")
+VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
+
+SUMMARY_TEMPLATE = " - Generated from {}."
 
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
@@ -56,7 +59,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/{service}/',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service}/',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
@@ -143,8 +146,8 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 shutil.copytree(src, dest)
 
 
-def get_version_from_meta(meta_yaml_location):
-    with open(os.path.abspath((meta_yaml_location)), "r") as f:
+def get_version_from_config(environment_config):
+    with open(os.path.abspath((environment_config)), "r") as f:
         lines = f.readlines()
     for line in lines:
         result = VERSION_REGEX.match(line)
@@ -165,7 +168,9 @@ def get_manifest_includes(common_root):
     return breadcrumbs
 
 
-def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml):
+def create_setup_files(
+    build_directory, common_root, artifact_name, service, meta_yaml, environment_config
+):
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
     manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
@@ -173,7 +178,7 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
 
     setup_template = CONDA_PKG_SETUP_TEMPLATE.format(
         conda_package_name=artifact_name,
-        version=get_version_from_meta(meta_yaml),
+        version=get_version_from_config(environment_config),
         service=service,
         package_excludes="'azure', 'tests', '{}'".format(common_root.replace("/", ".")),
     )
@@ -182,7 +187,9 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
         f.write(setup_template)
 
     manifest_template = MANIFEST_TEMPLATE.format(
-        namespace_includes="\n".join(["include " + ns for ns in get_manifest_includes(common_root)])
+        namespace_includes="\n".join(
+            ["include " + ns for ns in get_manifest_includes(common_root)]
+        )
     )
 
     with open(manifest_location, "w") as f:
@@ -193,7 +200,13 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
 
 
 def create_combined_sdist(
-    output_directory, build_directory, artifact_name, common_root, service, meta_yaml
+    output_directory,
+    build_directory,
+    artifact_name,
+    common_root,
+    service,
+    meta_yaml,
+    environment_config,
 ):
     singular_dependency = (
         len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
@@ -202,7 +215,12 @@ def create_combined_sdist(
     if not singular_dependency:
         create_sdist_skeleton(build_directory, artifact_name, common_root)
         create_setup_files(
-            build_directory, common_root, artifact_name, service, meta_yaml
+            build_directory,
+            common_root,
+            artifact_name,
+            service,
+            meta_yaml,
+            environment_config,
         )
 
     sdist_location = os.path.join(build_directory, artifact_name)
@@ -220,6 +238,28 @@ def create_combined_sdist(
         )
     )
     return output_location
+
+
+def get_summary(ci_yml, artifact_name):
+    pkg_list = []
+    with open(ci_yml, "r") as f:
+        data = f.read()
+
+    config = yaml.safe_load(data)
+
+    conda_artifact = [
+        conda_artifact
+        for conda_artifact in config["extends"]["parameters"]["CondaArtifacts"]
+        if conda_artifact["name"] == artifact_name
+    ]
+
+    if conda_artifact:
+        dependencies = conda_artifact[0]["checkout"]
+
+    for dep in dependencies:
+        pkg_list.append("{}=={}".format(dep["package"], dep["version"]))
+
+    return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
 if __name__ == "__main__":
@@ -276,11 +316,19 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-o",
-        "--output_var",
-        dest="output_var",
-        help="The name of the environment variable that will be set in azure devops. The contents will be the final location of the output artifact. Local users will need to grab this value and set their env manually.",
-        required=False,
+        "-e",
+        "--environment_config",
+        dest="environment_config",
+        help="The location of the yml config file used to create the conda environments. This file has necessary common configuration information within.",
+        required=True,
+    )
+
+    parser.add_argument(
+        "-c",
+        "--ci_yml",
+        dest="ci_yml",
+        help="The location of the ci.yml that is used to define our conda artifacts. Used when to easily grab summary information.",
+        required=True,
     )
 
     args = parser.parse_args()
@@ -291,11 +339,21 @@ if __name__ == "__main__":
         args.common_root,
         args.service,
         args.meta_yml,
+        args.environment_config,
     )
 
-    if args.output_var:
+    summary = get_summary(args.ci_yml, args.artifact_name)
+
+    if output_source_location:
         print(
             "##vso[task.setvariable variable={}]{}".format(
-                args.output_var, output_source_location
+                args.service.upper() + "_SOURCE_DISTRIBUTION", output_source_location
+            )
+        )
+
+    if summary:
+        print(
+            "##vso[task.setvariable variable={}]{}".format(
+                args.service.upper() + "_SUMMARY", summary
             )
         )

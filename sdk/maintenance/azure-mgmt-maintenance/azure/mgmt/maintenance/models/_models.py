@@ -21,18 +21,23 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of the resource.
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -43,6 +48,7 @@ class Resource(msrest.serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class ApplyUpdate(Resource):
@@ -56,6 +62,9 @@ class ApplyUpdate(Resource):
     :vartype name: str
     :ivar type: Type of the resource.
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :param status: The status. Possible values include: "Pending", "InProgress", "Completed",
      "RetryNow", "RetryLater".
     :type status: str or ~azure.mgmt.maintenance.models.UpdateStatus
@@ -69,12 +78,14 @@ class ApplyUpdate(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
         'last_update_time': {'key': 'properties.lastUpdateTime', 'type': 'iso-8601'},
@@ -101,6 +112,9 @@ class ConfigurationAssignment(Resource):
     :vartype name: str
     :ivar type: Type of the resource.
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :param location: Location of the resource.
     :type location: str
     :param maintenance_configuration_id: The maintenance configuration Id.
@@ -113,12 +127,14 @@ class ConfigurationAssignment(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
@@ -156,6 +172,25 @@ class ErrorDetails(msrest.serialization.Model):
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+
+
+class ListApplyUpdate(msrest.serialization.Model):
+    """Response for ApplyUpdate list.
+
+    :param value: The list of apply updates.
+    :type value: list[~azure.mgmt.maintenance.models.ApplyUpdate]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ApplyUpdate]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ListApplyUpdate, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class ListConfigurationAssignmentsResult(msrest.serialization.Model):
@@ -226,6 +261,9 @@ class MaintenanceConfiguration(Resource):
     :vartype name: str
     :ivar type: Type of the resource.
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :param location: Gets or sets location of the resource.
     :type location: str
     :param tags: A set of tags. Gets or sets tags of the resource.
@@ -235,11 +273,10 @@ class MaintenanceConfiguration(Resource):
     :param extension_properties: Gets or sets extensionProperties of the maintenanceConfiguration.
     :type extension_properties: dict[str, str]
     :param maintenance_scope: Gets or sets maintenanceScope of the configuration. Possible values
-     include: "All", "Host", "Resource", "InResource", "OSImage", "Extension", "InGuestPatch",
-     "SQLDB", "SQLManagedInstance".
+     include: "Host", "OSImage", "Extension", "InGuestPatch", "SQLDB", "SQLManagedInstance".
     :type maintenance_scope: str or ~azure.mgmt.maintenance.models.MaintenanceScope
-    :param visibility: Gets or sets the visibility of the configuration. Possible values include:
-     "Custom", "Public".
+    :param visibility: Gets or sets the visibility of the configuration. The default value is
+     'Custom'. Possible values include: "Custom", "Public".
     :type visibility: str or ~azure.mgmt.maintenance.models.Visibility
     :param start_date_time: Effective start date of the maintenance window in YYYY-MM-DD hh:mm
      format. The start date can be set to either the current date or future date. The window will be
@@ -275,12 +312,14 @@ class MaintenanceConfiguration(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'namespace': {'key': 'properties.namespace', 'type': 'str'},
@@ -341,14 +380,17 @@ class Operation(msrest.serialization.Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Properties of the operation.
-    :type properties: object
+    :type properties: str
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'properties': {'key': 'properties', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
     def __init__(
@@ -360,6 +402,7 @@ class Operation(msrest.serialization.Model):
         self.display = kwargs.get('display', None)
         self.origin = kwargs.get('origin', None)
         self.properties = kwargs.get('properties', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
 
 
 class OperationInfo(msrest.serialization.Model):
@@ -412,11 +455,52 @@ class OperationsListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.maintenance.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.maintenance.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class Update(msrest.serialization.Model):
     """Maintenance update on a resource.
 
-    :param maintenance_scope: The impact area. Possible values include: "All", "Host", "Resource",
-     "InResource", "OSImage", "Extension", "InGuestPatch", "SQLDB", "SQLManagedInstance".
+    :param maintenance_scope: The impact area. Possible values include: "Host", "OSImage",
+     "Extension", "InGuestPatch", "SQLDB", "SQLManagedInstance".
     :type maintenance_scope: str or ~azure.mgmt.maintenance.models.MaintenanceScope
     :param impact_type: The impact type. Possible values include: "None", "Freeze", "Restart",
      "Redeploy".

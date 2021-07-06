@@ -26,12 +26,14 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class NameAvailability(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not the name is available.
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
     """
 
-    TRUE = "true"
-    FALSE = "false"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class NameUnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """reason of name unavailable.
@@ -41,8 +43,20 @@ class NameUnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     ALREADY_EXISTS = "AlreadyExists"
 
 class Serial(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
-    """serial of key to be regenerated
+    """Serial of key to be regenerated
     """
 
-    PRIMARY = 1  #: The Primary Key.
-    SECONDARY = 2  #: The Secondary Key.
+    #: The Primary Key.
+    PRIMARY = 1
+    #: The Secondary Key.
+    SECONDARY = 2
+
+class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This field is required to be implemented by the Resource Provider if the service has more than
+    one tier, but is not required on a PUT.
+    """
+
+    FREE = "Free"
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"

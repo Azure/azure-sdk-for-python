@@ -15,7 +15,7 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential, AzureSasCredential
+    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
     from typing import (  # pylint: disable=ungrouped-imports
         Any,
         Union,
@@ -59,10 +59,11 @@ class EventHubConsumerClient(ClientBase):
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
+     or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-    :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+    :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
      by a while-loop calling internal receive method in each iteration. In the `receive` case,
@@ -129,7 +130,7 @@ class EventHubConsumerClient(ClientBase):
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
         consumer_group,  # type: str
-        credential,  # type: Union[AzureSasCredential, TokenCredential]
+        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -209,7 +210,7 @@ class EventHubConsumerClient(ClientBase):
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+        :keyword str user_agent: If specified, this will be added in front of the user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
          by a while-loop calling internal receive method in each iteration. In the `receive` case,

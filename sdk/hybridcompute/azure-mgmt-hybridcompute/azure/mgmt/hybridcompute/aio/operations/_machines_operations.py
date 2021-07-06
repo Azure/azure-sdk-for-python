@@ -44,15 +44,15 @@ class MachinesOperations:
     async def delete(
         self,
         resource_group_name: str,
-        name: str,
+        machine_name: str,
         **kwargs
     ) -> None:
         """The operation to remove a hybrid machine identity in Azure.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the hybrid machine.
-        :type name: str
+        :param machine_name: The name of the hybrid machine.
+        :type machine_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -63,15 +63,15 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -89,27 +89,27 @@ class MachinesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
-        name: str,
+        machine_name: str,
         expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
         **kwargs
     ) -> "_models.Machine":
         """Retrieves information about the model view or the instance view of a hybrid machine.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the hybrid machine.
-        :type name: str
+        :param machine_name: The name of the hybrid machine.
+        :type machine_name: str
         :param expand: The expand expression to apply on the operation.
         :type expand: str or ~azure.mgmt.hybridcompute.models.InstanceViewTypes
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -122,15 +122,15 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -150,7 +150,7 @@ class MachinesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Machine', pipeline_response)
@@ -159,16 +159,17 @@ class MachinesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}'}  # type: ignore
 
     def list_by_resource_group(
         self,
         resource_group_name: str,
         **kwargs
     ) -> AsyncIterable["_models.MachineListResult"]:
-        """Lists all the hybrid machines in the specified resource group.
+        """Lists all the hybrid machines in the specified resource group. Use the nextLink property in the
+        response to get the next page of hybrid machines.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MachineListResult or the result of cls(response)
@@ -180,7 +181,7 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -192,8 +193,8 @@ class MachinesOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -221,7 +222,7 @@ class MachinesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -236,7 +237,8 @@ class MachinesOperations:
         self,
         **kwargs
     ) -> AsyncIterable["_models.MachineListResult"]:
-        """Lists all the hybrid machines in the specified subscription.
+        """Lists all the hybrid machines in the specified subscription. Use the nextLink property in the
+        response to get the next page of hybrid machines.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MachineListResult or the result of cls(response)
@@ -248,7 +250,7 @@ class MachinesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -260,7 +262,7 @@ class MachinesOperations:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -288,7 +290,7 @@ class MachinesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

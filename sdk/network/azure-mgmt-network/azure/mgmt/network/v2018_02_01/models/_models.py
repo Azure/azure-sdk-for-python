@@ -6759,8 +6759,8 @@ class PacketCaptureStorageLocation(msrest.serialization.Model):
     :param storage_id: The ID of the storage account to save the packet capture session. Required
      if no local file path is provided.
     :type storage_id: str
-    :param storage_path: The URI of the storage path to save the packet capture. Must be a well-
-     formed URI describing the location to save the packet capture.
+    :param storage_path: The URI of the storage path to save the packet capture. Must be a
+     well-formed URI describing the location to save the packet capture.
     :type storage_path: str
     :param file_path: A valid local path on the targeting VM. Must include the name of the capture
      file (*.cap). For linux virtual machine it must start with /var/captures. Required if no
@@ -9162,8 +9162,8 @@ class VirtualNetworkPeering(SubResource):
     :type use_remote_gateways: bool
     :param remote_virtual_network: The reference of the remote virtual network. The remote virtual
      network can be in the same or different region (preview). See here to register for the preview
-     and learn more (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-
-     peering).
+     and learn more
+     (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-peering).
     :type remote_virtual_network: ~azure.mgmt.network.v2018_02_01.models.SubResource
     :param remote_address_space: The reference of the remote virtual network address space.
     :type remote_address_space: ~azure.mgmt.network.v2018_02_01.models.AddressSpace

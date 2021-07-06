@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._anomaly_detector_client_async import AnomalyDetectorClient
+from ._anomaly_detector_client import AnomalyDetectorClient
 __all__ = ['AnomalyDetectorClient']

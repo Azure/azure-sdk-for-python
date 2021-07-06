@@ -51,15 +51,16 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/table/azure-table',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -78,7 +79,7 @@ setup(
         'azure.data',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.10.0",
+        "azure-core<2.0.0,>=1.14.0",
         "msrest>=0.6.19"
     ],
     extras_require={

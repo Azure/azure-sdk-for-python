@@ -4,7 +4,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -12,11 +11,11 @@ trigger:
   paths:
     include:
     - sdk/communication/
+    - sdk/core/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -25,14 +24,13 @@ pr:
   paths:
     include:
     - sdk/communication/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: communication
     Artifacts:
-    - name: azure-communication-nspkg
-      safeName: azurecommunicationnspkg
     - name: azure-communication-identity
       safeName: azurecommunicationidentity
     - name: azure-communication-chat

@@ -62,30 +62,24 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(CognitiveServicesManagementClient)
             group = self._get_resource_group(**kwargs)
-            cogsci_account = self.client.accounts.create(
+            cogsci_account = self.client.accounts.begin_create(
                 group.name,
                 name,
                 account={
                     "sku": {"name": self.sku},
                     "location": self.location,
                     "kind": self.kind,
-                    "properties": {
-                        "custom_sub_domain_name": self.custom_subdomain_name
-                    },
+                    "properties": {"custom_sub_domain_name": self.custom_subdomain_name},
                 },
-            )
-            time.sleep(
-                10
-            )  # it takes a few seconds to create a cognitive services account
+            ).result()
+            time.sleep(10)  # it takes a few seconds to create a cognitive services account
             self.resource = cogsci_account
             self.cogsci_key = self.client.accounts.list_keys(group.name, name).key1
             # FIXME: LuisAuthoringClient and LuisRuntimeClient need authoring key from ARM API (coming soon-ish)
         else:
             if self.custom_subdomain_name:
                 self.resource = FakeCognitiveServicesAccount(
-                    "https://{}.cognitiveservices.azure.com".format(
-                        self.custom_subdomain_name
-                    )
+                    "https://{}.cognitiveservices.azure.com".format(self.custom_subdomain_name)
                 )
                 self.cogsci_key = "ZmFrZV9hY29jdW50X2tleQ=="
             else:
@@ -98,16 +92,12 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             try:
                 return {
                     self.parameter_name: self.resource.properties.endpoint,
-                    "{}_key".format(self.parameter_name): CognitiveServicesCredentials(
-                        self.cogsci_key
-                    ),
+                    "{}_key".format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
                 }
             except AttributeError:
                 return {
                     self.parameter_name: self.resource.endpoint,
-                    "{}_key".format(self.parameter_name): CognitiveServicesCredentials(
-                        self.cogsci_key
-                    ),
+                    "{}_key".format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
                 }
         else:
             try:
@@ -124,7 +114,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.accounts.delete(group.name, name)
+            self.client.accounts.begin_delete(group.name, name).wait()
 
     def _get_resource_group(self, **kwargs):
         try:

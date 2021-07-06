@@ -11,6 +11,7 @@ from ._application_type_versions_operations import ApplicationTypeVersionsOperat
 from ._applications_operations import ApplicationsOperations
 from ._services_operations import ServicesOperations
 from ._managed_clusters_operations import ManagedClustersOperations
+from ._managed_cluster_version_operations import ManagedClusterVersionOperations
 from ._operations import Operations
 from ._node_types_operations import NodeTypesOperations
 
@@ -20,6 +21,7 @@ __all__ = [
     'ApplicationsOperations',
     'ServicesOperations',
     'ManagedClustersOperations',
+    'ManagedClusterVersionOperations',
     'Operations',
     'NodeTypesOperations',
 ]

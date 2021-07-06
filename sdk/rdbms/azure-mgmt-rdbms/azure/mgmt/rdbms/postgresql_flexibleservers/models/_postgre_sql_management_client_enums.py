@@ -35,19 +35,44 @@ class ConfigurationDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     INTEGER = "Integer"
     ENUMERATION = "Enumeration"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The mode to create a new PostgreSQL server.
     """
 
     DEFAULT = "Default"
+    CREATE = "Create"
+    UPDATE = "Update"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
 
-class HAEnabledEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """stand by count value can be either enabled or disabled
+class CreateModeForUpdate(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The mode to update a new PostgreSQL server.
+    """
+
+    DEFAULT = "Default"
+    UPDATE = "Update"
+
+class GeoRedundantBackupEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """A value indicating whether Geo-Redundant backup is enabled on the server.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class HighAvailabilityMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The HA mode for the server.
+    """
+
+    DISABLED = "Disabled"
+    ZONE_REDUNDANT = "ZoneRedundant"
 
 class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation.
@@ -91,6 +116,7 @@ class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The version of a server.
     """
 
+    THIRTEEN = "13"
     TWELVE = "12"
     ELEVEN = "11"
 

@@ -18,12 +18,12 @@ class TestMultiapi(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_default_api_version_form_recognizer_client(self, client):
-        assert "v2.1-preview.3" in client._client._client._base_url
+        assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     def test_default_api_version_form_training_client(self, client):
-        assert "v2.1-preview.3" in client._client._client._base_url
+        assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
@@ -36,14 +36,14 @@ class TestMultiapi(FormRecognizerTest):
         assert "v2.0" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1_PREVIEW})
-    def test_v2_1_preview_3_form_recognizer_client(self, client):
-        assert "v2.1-preview.3" in client._client._client._base_url
+    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1})
+    def test_v2_1_form_recognizer_client(self, client):
+        assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1_PREVIEW})
-    def test_v2_1_preview_3_form_training_client(self, client):
-        assert "v2.1-preview.3" in client._client._client._base_url
+    @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1})
+    def test_v2_1_form_training_client(self, client):
+        assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})

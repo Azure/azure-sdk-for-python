@@ -31,7 +31,7 @@ else:
     from cStringIO import StringIO as BytesIO
 
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'
@@ -199,9 +199,12 @@ class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
         # Act
         try:
             with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, max_concurrency=2)
+                await blob.upload_blob(stream, max_concurrency=2, overwrite=True)
+
+            block_list = await blob.get_block_list()
 
             # Assert
+            self.assertIsNot(len(block_list), 0)
             await self.assertBlobEqual(self.container_name, blob_name, data)
         finally:
             self._teardown(FILE_PATH)

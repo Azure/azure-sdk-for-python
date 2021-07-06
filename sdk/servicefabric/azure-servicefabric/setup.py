@@ -70,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -79,7 +80,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         'azure-common~=1.1',
     ],
     extras_require={

@@ -21,7 +21,6 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClie
 class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     def test_custom_forms_encoded_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         try:
@@ -69,7 +68,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
+    @pytest.mark.skip("Error code mismatch: canary returns 2001, canadacentral returns 2003")
     def test_custom_form_bad_url(self, client, formrecognizer_storage_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -448,3 +447,75 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        training_poller = client.begin_training(formrecognizer_table_variable_rows_container_sas_url, use_training_labels=True)
+        model = training_poller.result()
+
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
+            form = prepare_form_result(analyze_result, model.model_id)
+            responses.append(analyze_result)
+            responses.append(form)
+
+        poller = fr_client.begin_recognize_custom_forms_from_url(
+            model.model_id,
+            self.label_table_variable_row_url_pdf,
+            cls=callback
+        )
+        form = poller.result()
+        actual = responses[0]
+        recognized_form = responses[1]
+        read_results = actual.analyze_result.read_results
+        document_results = actual.analyze_result.document_results
+
+        for form, actual in zip(recognized_form, document_results):
+            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
+            self.assertEqual(form.form_type, "custom:"+model.model_id)
+            self.assertIsNotNone(form.form_type_confidence)
+            self.assertEqual(form.model_id, model.model_id)
+            self.assertEqual(type(form.fields["table"].value), list)
+            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        training_poller = client.begin_training(formrecognizer_table_fixed_rows_container_sas_url, use_training_labels=True)
+        model = training_poller.result()
+
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
+            form = prepare_form_result(analyze_result, model.model_id)
+            responses.append(analyze_result)
+            responses.append(form)
+
+        poller = fr_client.begin_recognize_custom_forms_from_url(
+            model.model_id,
+            self.label_table_fixed_row_url_pdf,
+            cls=callback
+        )
+        form = poller.result()
+        actual = responses[0]
+        recognized_form = responses[1]
+        read_results = actual.analyze_result.read_results
+        document_results = actual.analyze_result.document_results
+
+        for form, actual in zip(recognized_form, document_results):
+            self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
+            self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
+            self.assertEqual(form.form_type, "custom:"+model.model_id)
+            self.assertIsNotNone(form.form_type_confidence)
+            self.assertEqual(form.model_id, model.model_id)
+            self.assertEqual(type(form.fields["table"].value), dict)
+            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)

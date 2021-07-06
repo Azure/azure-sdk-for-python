@@ -48,7 +48,6 @@ class BlobOperations:
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
         range_get_content_crc64: Optional[bool] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
@@ -81,10 +80,6 @@ class BlobOperations:
          service returns the CRC64 hash for the range, as long as the range is less than or equal to 4
          MB in size.
         :type range_get_content_crc64: bool
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -108,6 +103,7 @@ class BlobOperations:
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _if_modified_since = None
         _if_unmodified_since = None
         _if_match = None
@@ -116,6 +112,7 @@ class BlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -156,8 +153,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
         if _if_unmodified_since is not None:
@@ -179,7 +176,7 @@ class BlobOperations:
 
         if response.status_code not in [200, 206]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -223,6 +220,9 @@ class BlobOperations:
             response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
             response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
             response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
+            response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
+            response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
+            response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
             deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 206:
@@ -266,6 +266,9 @@ class BlobOperations:
             response_headers['x-ms-tag-count']=self._deserialize('long', response.headers.get('x-ms-tag-count'))
             response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
             response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
+            response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
+            response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
+            response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
             deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
@@ -279,7 +282,6 @@ class BlobOperations:
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
@@ -302,10 +304,6 @@ class BlobOperations:
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -329,6 +327,7 @@ class BlobOperations:
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _if_modified_since = None
         _if_unmodified_since = None
         _if_match = None
@@ -337,6 +336,7 @@ class BlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -371,8 +371,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
         if _if_unmodified_since is not None:
@@ -394,7 +394,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -444,6 +444,9 @@ class BlobOperations:
         response_headers['x-ms-blob-sealed']=self._deserialize('bool', response.headers.get('x-ms-blob-sealed'))
         response_headers['x-ms-rehydrate-priority']=self._deserialize('str', response.headers.get('x-ms-rehydrate-priority'))
         response_headers['x-ms-last-access-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time'))
+        response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
+        response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
+        response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -574,7 +577,7 @@ class BlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -697,7 +700,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataLakeStorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataLakeStorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -804,7 +807,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataLakeStorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataLakeStorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -995,7 +998,7 @@ class BlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DataLakeStorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.DataLakeStorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1066,7 +1069,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1143,7 +1146,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1274,7 +1277,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1291,11 +1294,241 @@ class BlobOperations:
 
     set_http_headers.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
+    async def set_immutability_policy(
+        self,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
+        """The Set Immutability Policy operation sets the immutability policy on the blob.
+
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire.
+        :type immutability_policy_expiry: ~datetime.datetime
+        :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+        :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param modified_access_conditions: Parameter group.
+        :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        
+        _if_unmodified_since = None
+        if modified_access_conditions is not None:
+            _if_unmodified_since = modified_access_conditions.if_unmodified_since
+        comp = "immutabilityPolicies"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.set_immutability_policy.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        if _if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", _if_unmodified_since, 'rfc-1123')
+        if immutability_policy_expiry is not None:
+            header_parameters['x-ms-immutability-policy-until-date'] = self._serialize.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        if immutability_policy_mode is not None:
+            header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-immutability-policy-until-date']=self._deserialize('rfc-1123', response.headers.get('x-ms-immutability-policy-until-date'))
+        response_headers['x-ms-immutability-policy-mode']=self._deserialize('str', response.headers.get('x-ms-immutability-policy-mode'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    set_immutability_policy.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+
+    async def delete_immutability_policy(
+        self,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
+
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        comp = "immutabilityPolicies"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.delete_immutability_policy.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    delete_immutability_policy.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+
+    async def set_legal_hold(
+        self,
+        legal_hold: bool,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """The Set Legal Hold operation sets a legal hold on the blob.
+
+        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :type legal_hold: bool
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        comp = "legalhold"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.set_legal_hold.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-legal-hold'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    set_legal_hold.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
@@ -1318,10 +1551,6 @@ class BlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -1347,6 +1576,7 @@ class BlobOperations:
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1356,6 +1586,7 @@ class BlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -1392,8 +1623,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_modified_since is not None:
@@ -1417,7 +1648,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1533,7 +1764,7 @@ class BlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1636,7 +1867,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1738,7 +1969,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1847,7 +2078,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1957,7 +2188,7 @@ class BlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1978,7 +2209,6 @@ class BlobOperations:
         self,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
@@ -2000,10 +2230,6 @@ class BlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -2028,6 +2254,7 @@ class BlobOperations:
         
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2038,6 +2265,7 @@ class BlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -2072,8 +2300,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_modified_since is not None:
@@ -2099,7 +2327,7 @@ class BlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2128,6 +2356,9 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         seal_blob: Optional[bool] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        legal_hold: Optional[bool] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -2165,6 +2396,13 @@ class BlobOperations:
         :param seal_blob: Overrides the sealed state of the destination blob.  Service version
          2019-12-12 and newer.
         :type seal_blob: bool
+        :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire.
+        :type immutability_policy_expiry: ~datetime.datetime
+        :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+        :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :type legal_hold: bool
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
         :param modified_access_conditions: Parameter group.
@@ -2259,6 +2497,12 @@ class BlobOperations:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         if seal_blob is not None:
             header_parameters['x-ms-seal-blob'] = self._serialize.header("seal_blob", seal_blob, 'bool')
+        if immutability_policy_expiry is not None:
+            header_parameters['x-ms-immutability-policy-until-date'] = self._serialize.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        if immutability_policy_mode is not None:
+            header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        if legal_hold is not None:
+            header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -2267,7 +2511,7 @@ class BlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2295,6 +2539,9 @@ class BlobOperations:
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytearray] = None,
         blob_tags_string: Optional[str] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        legal_hold: Optional[bool] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -2330,6 +2577,13 @@ class BlobOperations:
         :type source_content_md5: bytearray
         :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
         :type blob_tags_string: str
+        :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire.
+        :type immutability_policy_expiry: ~datetime.datetime
+        :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+        :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :type legal_hold: bool
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.blob.models.SourceModifiedAccessConditions
         :param modified_access_conditions: Parameter group.
@@ -2420,6 +2674,12 @@ class BlobOperations:
             header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
+        if immutability_policy_expiry is not None:
+            header_parameters['x-ms-immutability-policy-until-date'] = self._serialize.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        if immutability_policy_mode is not None:
+            header_parameters['x-ms-immutability-policy-mode'] = self._serialize.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        if legal_hold is not None:
+            header_parameters['x-ms-legal-hold'] = self._serialize.header("legal_hold", legal_hold, 'bool')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -2428,7 +2688,7 @@ class BlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2520,7 +2780,7 @@ class BlobOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2634,7 +2894,7 @@ class BlobOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2696,7 +2956,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2716,7 +2976,6 @@ class BlobOperations:
         self,
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         query_request: Optional["_models.QueryRequest"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -2737,10 +2996,6 @@ class BlobOperations:
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -2766,6 +3021,7 @@ class BlobOperations:
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _if_modified_since = None
         _if_unmodified_since = None
         _if_match = None
@@ -2774,6 +3030,7 @@ class BlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
         if modified_access_conditions is not None:
@@ -2809,8 +3066,8 @@ class BlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", _if_modified_since, 'rfc-1123')
         if _if_unmodified_since is not None:
@@ -2839,7 +3096,7 @@ class BlobOperations:
 
         if response.status_code not in [200, 206]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3006,7 +3263,7 @@ class BlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3122,7 +3379,7 @@ class BlobOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

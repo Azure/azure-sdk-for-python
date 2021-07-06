@@ -46,7 +46,7 @@ class SharedGalleryImagesOperations:
         location: str,
         gallery_unique_name: str,
         shared_to: Optional[Union[str, "_models.SharedToValues"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SharedGalleryImageList"]:
         """List shared gallery images by subscription id or tenant id.
 
@@ -126,7 +126,7 @@ class SharedGalleryImagesOperations:
         location: str,
         gallery_unique_name: str,
         gallery_image_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SharedGalleryImage":
         """Get a shared gallery image by subscription id or tenant id.
 

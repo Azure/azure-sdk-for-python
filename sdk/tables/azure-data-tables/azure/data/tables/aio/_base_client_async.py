@@ -4,22 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
-import logging
+from typing import Any, List, Mapping, Optional, Union, TYPE_CHECKING
 from uuid import uuid4
 
-from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -28,44 +16,46 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     ProxyPolicy,
-    AzureSasCredentialPolicy
+    AzureSasCredentialPolicy,
+    RequestIdPolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy,
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
 )
 
+from .._generated.aio import AzureTable
+from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
-from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .._generated.aio._configuration import AzureTableConfiguration
-from .._models import BatchErrorException, BatchTransactionResult
-from .._policies import (
-    CosmosPatchTransformPolicy,
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageHosts,
-    StorageHeadersPolicy,
-    StorageLoggingPolicy,
-)
+from .._constants import STORAGE_OAUTH_SCOPE
+from .._error import RequestTooLargeError, TableTransactionError, _decode_error
+from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
-from ._policies_async import (
-    AsyncStorageResponseHook,
-    AsyncTablesRetryPolicy
-)
+from ._policies_async import AsyncTablesRetryPolicy
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import Pipeline
-    from azure.core.configuration import Configuration
-
-_LOGGER = logging.getLogger(__name__)
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AsyncStorageAccountHostsMixin(object):
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
+class AsyncTablesBaseClient(AccountHostsMixin):
 
-    def __exit__(self, *args):
-        pass
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self,
+        endpoint: str,
+        *,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
+        **kwargs: Any
+    ) -> None:
+        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
+
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -74,7 +64,7 @@ class AsyncStorageAccountHostsMixin(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
@@ -82,63 +72,42 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _configure_credential(self, credential):
         # type: (Any) -> None
-        self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)
+            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
     def _configure_policies(self, **kwargs):
-        # type: (**Any) -> None
-        try:
-            from azure.core.pipeline.transport import AioHttpTransport
-            if not kwargs.get("transport"):
-                kwargs.setdefault("transport", AioHttpTransport(**kwargs))
-        except ImportError:
-            raise ImportError(
-                "Unable to create async transport. Please check aiohttp is installed."
-            )
-
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        self._policies = [
+        return [
+            RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
-            ProxyPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
+            ProxyPolicy(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
+            StorageHosts(**kwargs),
             AsyncTablesRetryPolicy(**kwargs),
-            StorageLoggingPolicy(**kwargs),
-            AsyncStorageResponseHook(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
 
-        if self._cosmos_endpoint:
-            self._policies.insert(0, CosmosPatchTransformPolicy())
-
-    async def _batch_send(
-        self,
-        entities,  # type: List[TableEntity]
-        *reqs: "HttpRequest",
-        **kwargs
-    ):
+    async def _batch_send(self, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)
+        changeset = HttpRequest("POST", None)  # type: ignore
         changeset.set_multipart_mixed(
             *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
         )
@@ -148,6 +117,8 @@ class AsyncStorageAccountHostsMixin(object):
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
                 "MaxDataServiceVersion": "3.0;NetFx",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             },
         )
         request.set_multipart_mixed(
@@ -159,42 +130,31 @@ class AsyncStorageAccountHostsMixin(object):
 
         pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
-
-        if response.status_code == 403:
-            raise ClientAuthenticationError(
-                message="There was an error authenticating with the service",
-                response=response,
-            )
-        if response.status_code == 404:
-            raise ResourceNotFoundError(
-                message="The resource could not be found", response=response
-            )
+        # TODO: Check for proper error model deserialization
+        if response.status_code == 413:
+            raise _decode_error(
+                response,
+                error_message="The transaction request was too large",
+                error_type=RequestTooLargeError)
         if response.status_code != 202:
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
-                response=response,
-                parts=None,
-            )
+            raise _decode_error(response)
 
         parts_iter = response.parts()
         parts = []
         async for p in parts_iter:
             parts.append(p)
-        transaction_result = BatchTransactionResult(reqs, parts, entities)
-        if raise_on_any_failure:
-            if any(p for p in parts if not 200 <= p.status_code < 300):
-
-                if any(p for p in parts if p.status_code == 404):
-                    raise ResourceNotFoundError(
-                        message="The resource could not be found", response=response
-                    )
-
-                raise BatchErrorException(
-                    message="There is a failure in the batch operation.",
-                    response=response,
-                    parts=parts,
-                )
-        return transaction_result
+        error_parts = [p for p in parts if not 200 <= p.status_code < 300]
+        if any(error_parts):
+            if error_parts[0].status_code == 413:
+                raise _decode_error(
+                    response,
+                    error_message="The transaction request was too large",
+                    error_type=RequestTooLargeError)
+            raise _decode_error(
+                response=error_parts[0],
+                error_type=TableTransactionError,
+            )
+        return [extract_batch_part_metadata(p) for p in parts]
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):
@@ -202,7 +162,6 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
-
     def __init__(self, async_transport):
         self._transport = async_transport
 

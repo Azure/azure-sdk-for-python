@@ -9,27 +9,27 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 03 Nov 2020 21:26:20 GMT
+      - Thu, 15 Apr 2021 17:20:06 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 03 Nov 2020 21:26:20 GMT
+      - Thu, 15 Apr 2021 17:20:06 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablestestcosmosname-secondary.table.cosmos.azure.com/?restype=service&comp=stats
+    uri: https://fake_cosmos_account-secondary.table.cosmos.azure.com/?restype=service&comp=stats
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"NotImplemented\",\"message\":{\"lang\"\
         :\"en-us\",\"value\":\"The requested operation is not supported.\\r\\nActivityId:\
-        \ 37615d4d-1e1b-11eb-8938-58961df361d1, documentdb-dotnet-sdk/2.11.0 Host/64-bit\
-        \ MicrosoftWindowsNT/6.2.9200.0\\nRequestID:37615d4d-1e1b-11eb-8938-58961df361d1\\\
+        \ d2a5b23f-9e0e-11eb-bad3-002b67128e4c, documentdb-dotnet-sdk/2.11.0 Host/64-bit\
+        \ MicrosoftWindowsNT/6.2.9200.0\\nRequestID:d2a5b23f-9e0e-11eb-bad3-002b67128e4c\\\
         n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Tue, 03 Nov 2020 21:26:20 GMT
+      - Thu, 15 Apr 2021 17:20:07 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

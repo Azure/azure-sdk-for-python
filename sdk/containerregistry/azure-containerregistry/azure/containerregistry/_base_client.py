@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any, Optional
 
 from azure.core.pipeline.transport import HttpTransport
 
@@ -23,22 +23,24 @@ class ContainerRegistryApiVersion(str, Enum):
 
 
 class ContainerRegistryBaseClient(object):
-    """Base class for ContainerRegistryClient and ContainerRepositoryClient
+    """Base class for ContainerRegistryClient, ContainerRepository, and RegistryArtifact
 
     :param str endpoint: Azure Container Registry endpoint
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`azure.identity.DefaultTokenCredential`
+    :keyword authentication_scope: URL for credential authentication if different from the default
+    :paramtype authentication_scope: str
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
-        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
+        # type: (str, Optional[TokenCredential], Dict[str, Any]) -> None
+        auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=auth_policy,
-            credential_scopes="https://management.core.windows.net/.default",
+            credential_scopes=kwargs.get("credential_scopes", "https://management.core.windows.net/.default"),
             **kwargs
         )
 

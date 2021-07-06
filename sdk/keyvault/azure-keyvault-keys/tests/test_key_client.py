@@ -11,11 +11,18 @@ import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName
-from parameterized import parameterized, param
+from azure.keyvault.keys import JsonWebKey, KeyClient
+from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import client_setup, get_decorator, KeysTestCase
+
+
+all_api_versions = get_decorator()
+hsm_only = get_decorator(hsm_only=True)
+logging_enabled = get_decorator(logging_enable=True)
+logging_disabled = get_decorator(logging_enable=False)
+
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -133,13 +140,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_key_crud_operations(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url)
+    @all_api_versions()
+    @client_setup
+    def test_key_crud_operations(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         # create ec key
@@ -196,13 +199,20 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertIsNotNone(deleted_key)
         self.assertEqual(rsa_key.id, deleted_key.id)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_backup_restore(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
+    @hsm_only()
+    @client_setup
+    def test_rsa_public_exponent(self, client, **kwargs):
+        """The public exponent of a Managed HSM RSA key can be specified during creation"""
+        self.assertIsNotNone(client)
 
-        client = self.create_key_client(endpoint_url)
+        key_name = self.get_resource_name("rsa-key")
+        key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
+        public_exponent = byte2int(key.key.e)
+        assert public_exponent == 17
+
+    @all_api_versions()
+    @client_setup
+    def test_backup_restore(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("keybak")
@@ -225,13 +235,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_key_list(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url)
+    @all_api_versions()
+    @client_setup
+    def test_key_list(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         max_keys = self.list_test_size
@@ -251,13 +257,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_list_versions(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url)
+    @all_api_versions()
+    @client_setup
+    def test_list_versions(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         key_name = self.get_resource_name("testKey")
@@ -280,13 +282,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_list_deleted_keys(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url)
+    @all_api_versions()
+    @client_setup
+    def test_list_deleted_keys(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         expected = {}
@@ -313,13 +311,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_recover(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url)
+    @all_api_versions()
+    @client_setup
+    def test_recover(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         # create keys
@@ -342,13 +336,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_purge(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url)
+    @all_api_versions()
+    @client_setup
+    def test_purge(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
         # create keys
@@ -376,13 +366,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         deleted = [s.name for s in client.list_deleted_keys()]
         self.assertTrue(not any(s in deleted for s in key_names))
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_logging_enabled(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url, logging_enable=True)
+    @logging_enabled()
+    @client_setup
+    def test_logging_enabled(self, client, is_hsm, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -405,13 +391,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_logging_disabled(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        client = self.create_key_client(endpoint_url, logging_enable=False)
+    @logging_disabled()
+    @client_setup
+    def test_logging_disabled(self, client, is_hsm, **kwargs):
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")

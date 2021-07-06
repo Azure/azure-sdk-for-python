@@ -36,16 +36,49 @@ class AdministratorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ACTIVE_DIRECTORY = "ActiveDirectory"
 
+class AdvisorStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the status of availability of this advisor to customers. Possible values are 'GA',
+    'PublicPreview', 'LimitedPublicPreview' and 'PrivatePreview'.
+    """
+
+    GA = "GA"
+    PUBLIC_PREVIEW = "PublicPreview"
+    LIMITED_PUBLIC_PREVIEW = "LimitedPublicPreview"
+    PRIVATE_PREVIEW = "PrivatePreview"
+
+class AggregationFunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    AVG = "avg"
+    MIN = "min"
+    MAX = "max"
+    STDEV = "stdev"
+    SUM = "sum"
+
 class AuthenticationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "Default"
 
-class AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The authentication type.
+class AutoExecuteStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the auto-execute status (whether to let the system execute the recommendations) of this
+    advisor. Possible values are 'Enabled' and 'Disabled'
     """
 
-    SQL = "SQL"
-    AD_PASSWORD = "ADPassword"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    DEFAULT = "Default"
+
+class AutoExecuteStatusInheritedFrom(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the resource from which current value of auto-execute status is inherited. Auto-execute
+    status can be set on (and inherited from) different levels in the resource hierarchy. Possible
+    values are 'Subscription', 'Server', 'ElasticPool', 'Database' and 'Default' (when status is
+    not explicitly set on any level).
+    """
+
+    DEFAULT = "Default"
+    SUBSCRIPTION = "Subscription"
+    SERVER = "Server"
+    ELASTIC_POOL = "ElasticPool"
+    DATABASE = "Database"
 
 class AutomaticTuningDisabledReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Reason description if desired and actual state are different.
@@ -99,8 +132,16 @@ class AutomaticTuningServerReason(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     DISABLED = "Disabled"
     AUTO_CONFIGURED = "AutoConfigured"
 
+class BackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The storage redundancy type of the copied backup
+    """
+
+    GEO = "Geo"
+    LOCAL = "Local"
+    ZONE = "Zone"
+
 class BlobAuditingPolicyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the state of the policy. If state is Enabled, storageEndpoint or
+    """Specifies the state of the audit. If state is Enabled, storageEndpoint or
     isAzureMonitorTargetEnabled are required.
     """
 
@@ -139,9 +180,57 @@ class CheckNameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The column data type.
+    """
+
+    IMAGE = "image"
+    TEXT = "text"
+    UNIQUEIDENTIFIER = "uniqueidentifier"
+    DATE = "date"
+    TIME = "time"
+    DATETIME2 = "datetime2"
+    DATETIMEOFFSET = "datetimeoffset"
+    TINYINT = "tinyint"
+    SMALLINT = "smallint"
+    INT = "int"
+    SMALLDATETIME = "smalldatetime"
+    REAL = "real"
+    MONEY = "money"
+    DATETIME = "datetime"
+    FLOAT = "float"
+    SQL_VARIANT = "sql_variant"
+    NTEXT = "ntext"
+    BIT = "bit"
+    DECIMAL = "decimal"
+    NUMERIC = "numeric"
+    SMALLMONEY = "smallmoney"
+    BIGINT = "bigint"
+    HIERARCHYID = "hierarchyid"
+    GEOMETRY = "geometry"
+    GEOGRAPHY = "geography"
+    VARBINARY = "varbinary"
+    VARCHAR = "varchar"
+    BINARY = "binary"
+    CHAR = "char"
+    TIMESTAMP = "timestamp"
+    NVARCHAR = "nvarchar"
+    NCHAR = "nchar"
+    XML = "xml"
+    SYSNAME = "sysname"
+
 class ConnectionPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "default"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the mode of database creation.
@@ -186,38 +275,13 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESTORE_LONG_TERM_RETENTION_BACKUP = "RestoreLongTermRetentionBackup"
     ONLINE_SECONDARY = "OnlineSecondary"
 
-class DatabaseEdition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The edition for the database being created.
-    
-    The list of SKUs may vary by region and support offer. To determine the SKUs (including the SKU
-    name, tier/edition, family, and capacity) that are available to your subscription in an Azure
-    region, use the ``Capabilities_ListByLocation`` REST API or one of the following commands:
-    
-    .. code-block:: azurecli
-    
-       az sql db list-editions -l <location> -o table
-       `
-    
-    .. code-block:: powershell
-    
-       Get-AzSqlServerServiceObjective -Location <location>
-       `
+class CurrentBackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The storage account type used to store backups for this database.
     """
 
-    WEB = "Web"
-    BUSINESS = "Business"
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    PREMIUM = "Premium"
-    PREMIUM_RS = "PremiumRS"
-    FREE = "Free"
-    STRETCH = "Stretch"
-    DATA_WAREHOUSE = "DataWarehouse"
-    SYSTEM = "System"
-    SYSTEM2 = "System2"
-    GENERAL_PURPOSE = "GeneralPurpose"
-    BUSINESS_CRITICAL = "BusinessCritical"
-    HYPERSCALE = "Hyperscale"
+    GEO = "Geo"
+    LOCAL = "Local"
+    ZONE = "Zone"
 
 class DatabaseLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The license type to apply for this database. ``LicenseIncluded`` if you need a license, or
@@ -228,9 +292,9 @@ class DatabaseLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BASE_PRICE = "BasePrice"
 
 class DatabaseReadScale(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """If enabled, connections that have application intent set to readonly in their connection string
-    may be routed to a readonly secondary replica. This property is only settable for Premium and
-    Business Critical databases.
+    """The state of read-only routing. If enabled, connections that have application intent set to
+    readonly in their connection string may be routed to a readonly secondary replica in the same
+    region.
     """
 
     ENABLED = "Enabled"
@@ -296,6 +360,22 @@ class DataMaskingState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
+class DataWarehouseUserActivityName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CURRENT = "current"
+
+class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Day of maintenance window.
+    """
+
+    SUNDAY = "Sunday"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+
 class DiffBackupIntervalInHours(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     """The differential backup interval in hours. This is how many interval hours between each
     differential backup will be supported. This is only applicable to live databases but not
@@ -305,16 +385,12 @@ class DiffBackupIntervalInHours(with_metaclass(_CaseInsensitiveEnumMeta, int, En
     TWELVE = 12
     TWENTY_FOUR = 24
 
-class ElasticPoolEdition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The edition of the recommended elastic pool. The ElasticPoolEdition enumeration contains all
-    the valid editions.
+class DnsRefreshConfigurationPropertiesStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of the DNS refresh operation.
     """
 
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    PREMIUM = "Premium"
-    GENERAL_PURPOSE = "GeneralPurpose"
-    BUSINESS_CRITICAL = "BusinessCritical"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
 
 class ElasticPoolLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The license type to apply for this elastic pool.
@@ -335,16 +411,12 @@ class EncryptionProtectorName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     CURRENT = "current"
 
-class Enum65(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum77(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ALL = "All"
     ERROR = "Error"
     WARNING = "Warning"
     SUCCESS = "Success"
-
-class ExtensionName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    IMPORT_ENUM = "import"
 
 class FailoverGroupReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Local replication role of the failover group instance.
@@ -369,7 +441,17 @@ class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     Azure Active Directory principal for the resource.
     """
 
+    NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+class ImplementationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the method in which this recommended action can be manually implemented. e.g., TSql,
+    AzurePowerShell.
+    """
+
+    T_SQL = "TSql"
+    AZURE_POWER_SHELL = "AzurePowerShell"
 
 class InstanceFailoverGroupReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Local replication role of the failover group instance.
@@ -385,6 +467,14 @@ class InstancePoolLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     LICENSE_INCLUDED = "LicenseIncluded"
     BASE_PRICE = "BasePrice"
+
+class IsRetryable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets whether the error could be ignored and recommended action could be retried. Possible
+    values are: Yes/No
+    """
+
+    YES = "Yes"
+    NO = "No"
 
 class JobAgentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The state of the job agent.
@@ -453,6 +543,17 @@ class JobTargetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL_SHARD_MAP = "SqlShardMap"
     SQL_SERVER = "SqlServer"
 
+class LedgerDigestUploadsName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CURRENT = "current"
+
+class LedgerDigestUploadsState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the state of ledger digest upload.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class LogSizeUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The units that the limit is expressed in.
     """
@@ -462,12 +563,6 @@ class LogSizeUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TERABYTES = "Terabytes"
     PETABYTES = "Petabytes"
     PERCENT = "Percent"
-
-class LongTermRetentionDatabaseState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    ALL = "All"
-    LIVE = "Live"
-    DELETED = "Deleted"
 
 class LongTermRetentionPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -573,6 +668,20 @@ class MaxSizeUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TERABYTES = "Terabytes"
     PETABYTES = "Petabytes"
 
+class MetricType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CPU = "cpu"
+    IO = "io"
+    LOG_IO = "logIo"
+    DURATION = "duration"
+    DTU = "dtu"
+
+class OperationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Operation Mode.
+    """
+
+    POLYBASE_IMPORT = "PolybaseImport"
+
 class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation.
     """
@@ -603,6 +712,14 @@ class PrimaryAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     MINIMUM = "Minimum"
     MAXIMUM = "Maximum"
     TOTAL = "Total"
+
+class PrincipalType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Principal Type of the sever administrator.
+    """
+
+    USER = "User"
+    GROUP = "Group"
+    APPLICATION = "Application"
 
 class PrivateEndpointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """State of the private endpoint connection.
@@ -639,6 +756,22 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
+class QueryMetricUnitType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The unit of the metric.
+    """
+
+    PERCENTAGE = "percentage"
+    KB = "KB"
+    MICROSECONDS = "microseconds"
+    COUNT = "count"
+
+class QueryTimeGrainType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Interval type (length).
+    """
+
+    PT1_H = "PT1H"
+    P1_D = "P1D"
+
 class ReadOnlyEndpointFailoverPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Failover policy of the read-only endpoint for the failover group.
     """
@@ -654,42 +787,55 @@ class ReadWriteEndpointFailoverPolicy(with_metaclass(_CaseInsensitiveEnumMeta, s
     MANUAL = "Manual"
     AUTOMATIC = "Automatic"
 
-class RecommendedIndexAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The proposed index action. You can create a missing index, drop an unused index, or rebuild an
-    existing index to improve its performance.
-    """
-
-    CREATE = "Create"
-    DROP = "Drop"
-    REBUILD = "Rebuild"
-
-class RecommendedIndexState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current recommendation state.
+class RecommendedActionCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Current state the recommended action is in. Some commonly used states are: Active      ->
+    recommended action is active and no action has been taken yet. Pending     -> recommended
+    action is approved for and is awaiting execution. Executing   -> recommended action is being
+    applied on the user database. Verifying   -> recommended action was applied and is being
+    verified of its usefulness by the system. Success     -> recommended action was applied and
+    improvement found during verification. Pending Revert  -> verification found little or no
+    improvement so recommended action is queued for revert or user has manually reverted. Reverting
+    -> changes made while applying recommended action are being reverted on the user database.
+    Reverted    -> successfully reverted the changes made by recommended action on user database.
+    Ignored     -> user explicitly ignored/discarded the recommended action.
     """
 
     ACTIVE = "Active"
     PENDING = "Pending"
     EXECUTING = "Executing"
     VERIFYING = "Verifying"
-    PENDING_REVERT = "Pending Revert"
+    PENDING_REVERT = "PendingRevert"
+    REVERT_CANCELLED = "RevertCancelled"
     REVERTING = "Reverting"
     REVERTED = "Reverted"
     IGNORED = "Ignored"
     EXPIRED = "Expired"
-    BLOCKED = "Blocked"
+    MONITORING = "Monitoring"
+    RESOLVED = "Resolved"
     SUCCESS = "Success"
+    ERROR = "Error"
 
-class RecommendedIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of index (CLUSTERED, NONCLUSTERED, COLUMNSTORE, CLUSTERED COLUMNSTORE)
+class RecommendedActionInitiatedBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets if approval for applying this recommended action was given by user/system.
     """
 
-    CLUSTERED = "CLUSTERED"
-    NONCLUSTERED = "NONCLUSTERED"
-    COLUMNSTORE = "COLUMNSTORE"
-    CLUSTERED_COLUMNSTORE = "CLUSTERED COLUMNSTORE"
+    USER = "User"
+    SYSTEM = "System"
+
+class RecommendedSensitivityLabelUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ENABLE = "enable"
+    DISABLE = "disable"
+
+class ReplicationLinkType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Link type (GEO, NAMED).
+    """
+
+    GEO = "GEO"
+    NAMED = "NAMED"
 
 class ReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The role of the database in the replication link.
+    """Local replication role.
     """
 
     PRIMARY = "Primary"
@@ -699,7 +845,7 @@ class ReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COPY = "Copy"
 
 class ReplicationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The replication state for the replication link.
+    """Replication state (PENDING, SEEDING, CATCHUP, SUSPENDED).
     """
 
     PENDING = "PENDING"
@@ -711,6 +857,22 @@ class ReplicaType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PRIMARY = "Primary"
     READABLE_SECONDARY = "ReadableSecondary"
+
+class RequestedBackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The storage redundancy type of the copied backup
+    """
+
+    GEO = "Geo"
+    LOCAL = "Local"
+    ZONE = "Zone"
+
+class RestorableDroppedDatabasePropertiesBackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The storage account type used to store backups for this database.
+    """
+
+    GEO = "Geo"
+    LOCAL = "Local"
+    ZONE = "Zone"
 
 class RestoreDetailsName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -731,12 +893,12 @@ class SampleName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WIDE_WORLD_IMPORTERS_STD = "WideWorldImportersStd"
     WIDE_WORLD_IMPORTERS_FULL = "WideWorldImportersFull"
 
-class SecurityAlertPolicyEmailAccountAdmins(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies that the alert is sent to the account administrators.
+class SecondaryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The secondary type of the database if it is a secondary.  Valid values are Geo and Named.
     """
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    GEO = "Geo"
+    NAMED = "Named"
 
 class SecurityAlertPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -747,20 +909,29 @@ class SecurityAlertPolicyNameAutoGenerated(with_metaclass(_CaseInsensitiveEnumMe
     DEFAULT = "Default"
 
 class SecurityAlertPolicyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the state of the policy. If state is Enabled, storageEndpoint and
-    storageAccountAccessKey are required.
+    """Specifies the state of the policy, whether it is enabled or disabled or a policy has not been
+    applied yet on the specific database.
     """
 
     NEW = "New"
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SecurityAlertPolicyUseServerDefault(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies whether to use the default server policy.
+class SecurityAlertsPolicyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the state of the policy, whether it is enabled or disabled or a policy has not been
+    applied yet on the specific database.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class SecurityEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the security event.
+    """
+
+    UNDEFINED = "Undefined"
+    SQL_INJECTION_VULNERABILITY = "SqlInjectionVulnerability"
+    SQL_INJECTION_EXPLOIT = "SqlInjectionExploit"
 
 class SensitivityLabelRank(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -774,6 +945,11 @@ class SensitivityLabelSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 
     CURRENT = "current"
     RECOMMENDED = "recommended"
+
+class SensitivityLabelUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    SET = "set"
+    REMOVE = "remove"
 
 class ServerConnectionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The server connection type.
@@ -790,7 +966,7 @@ class ServerKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_MANAGED = "ServiceManaged"
     AZURE_KEY_VAULT = "AzureKeyVault"
 
-class ServerPublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ServerNetworkAccessFlag(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Whether or not public endpoint access is allowed for this server.  Value is optional but if
     passed in, must be 'Enabled' or 'Disabled'
     """
@@ -798,8 +974,21 @@ class ServerPublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class ServerTrustGroupPropertiesTrustScopesItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    GLOBAL_TRANSACTIONS = "GlobalTransactions"
+    SERVICE_BROKER = "ServiceBroker"
+
+class ServerWorkspaceFeature(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether or not existing server has a workspace created and if it allows connection from
+    workspace
+    """
+
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+
 class ServiceObjectiveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the service objective to assign to the database.
+    """The serviceLevelObjective for SLO usage metric.
     """
 
     SYSTEM = "System"
@@ -872,6 +1061,13 @@ class ShortTermRetentionPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str,
 
     DEFAULT = "default"
 
+class SqlAgentConfigurationPropertiesState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of Sql Agent.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class StorageAccountType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The storage account type used to store backups for this instance. The options are LRS
     (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS (GeoRedundantStorage)
@@ -890,11 +1086,11 @@ class StorageCapabilityStorageAccountType(with_metaclass(_CaseInsensitiveEnumMet
     ZRS = "ZRS"
 
 class StorageKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the storage key to use.
+    """Storage key type.
     """
 
-    STORAGE_ACCESS_KEY = "StorageAccessKey"
     SHARED_ACCESS_KEY = "SharedAccessKey"
+    STORAGE_ACCESS_KEY = "StorageAccessKey"
 
 class SyncAgentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """State of the sync agent.
@@ -968,6 +1164,22 @@ class SyncMemberState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REPROVISION_FAILED = "ReprovisionFailed"
     UN_REPROVISIONED = "UnReprovisioned"
 
+class TableTemporalType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The table temporal type.
+    """
+
+    NON_TEMPORAL_TABLE = "NonTemporalTable"
+    HISTORY_TABLE = "HistoryTable"
+    SYSTEM_VERSIONED_TEMPORAL_TABLE = "SystemVersionedTemporalTable"
+
+class TargetBackupStorageRedundancy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The storage redundancy type of the copied backup
+    """
+
+    GEO = "Geo"
+    LOCAL = "Local"
+    ZONE = "Zone"
+
 class TransparentDataEncryptionActivityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the database.
     """
@@ -978,6 +1190,13 @@ class TransparentDataEncryptionActivityStatus(with_metaclass(_CaseInsensitiveEnu
 class TransparentDataEncryptionName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     CURRENT = "current"
+
+class TransparentDataEncryptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the state of the transparent data encryption.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 class TransparentDataEncryptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the database transparent data encryption.
@@ -1024,6 +1243,7 @@ class VirtualNetworkRuleState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     INITIALIZING = "Initializing"
     IN_PROGRESS = "InProgress"
     READY = "Ready"
+    FAILED = "Failed"
     DELETING = "Deleting"
     UNKNOWN = "Unknown"
 

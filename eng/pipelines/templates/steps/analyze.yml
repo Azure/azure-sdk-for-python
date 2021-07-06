@@ -5,6 +5,8 @@ parameters:
   AdditionalTestArgs: ''
   Artifacts: []
   TestPipeline: false
+  VerifyAutorest: false
+  ValidateFormatting: false
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
@@ -31,11 +33,19 @@ steps:
     # target is based on data available per-package the --always-succeed should
     # be removed so this script can help enforce correct practices
     # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
+
+
+  - pwsh: |
+     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+    displayName: 'Install Necessary Dependencies'
+    condition: succeededOrFailed()
+
   - script: |
       cd eng/versioning
       pip install -r requirements.txt
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
+    condition: succeededOrFailed()
 
   - pwsh: |
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
@@ -56,6 +66,11 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
+
+  - template: ../steps/verify-autorest.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
@@ -87,7 +102,13 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
-      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      ValidateFormatting: ${{ parameters.ValidateFormatting }}
+
+  - template: run_black.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()

@@ -13,8 +13,10 @@ DESCRIPTION:
 USAGE:
     python purchase_phone_number_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
-        access key of your Azure Communication Service    2) AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE - The search id for the phone number you reserved and want to purchase
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and 
+        access key of your Azure Communication Service    
+    2) AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE - The search id for the phone number you 
+        reserved and want to purchase
 """
 
 import os
@@ -22,7 +24,7 @@ from azure.communication.phonenumbers import (
     PhoneNumbersClient
 )
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
 search_id = os.getenv("AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 

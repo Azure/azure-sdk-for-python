@@ -7,6 +7,9 @@ from sys import platform
 import configparser
 from subprocess import Popen
 from typing import cast
+from datetime import datetime, timedelta
+import time
+import logging
 
 from azure.storage.blob import BlobServiceClient
 from azure.servicebus.control_client import ServiceBusService, EventHub
@@ -298,3 +301,13 @@ if __name__ == '__main__':
             Popen(command, shell=(platform != "win32"))
 
         print("#### All the process has been started!")
+
+    duration = int(config["BASIC_CONFIG"]["duration"]) + 600
+
+    now = datetime.now()
+    end = now + timedelta(seconds=duration)
+    while now < end:
+        # The while loop is to prevent container from being stopped
+        now = datetime.now()
+        logging.info("{}: Stress runner is running.".format(now))
+        time.sleep(60)

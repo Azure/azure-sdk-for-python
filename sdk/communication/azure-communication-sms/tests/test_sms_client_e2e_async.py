@@ -14,15 +14,20 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import (
     BodyReplacerProcessor, ResponseReplacerProcessor
 )
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
+from _shared.utils import get_http_logging_policy
+
+SKIP_INT_SMS_TESTS = os.getenv("COMMUNICATION_SKIP_INT_SMS_TEST", "false") == "true"
+INT_SMS_TEST_SKIP_REASON = "SMS does not support in INT. Skip these tests in INT."
 
 class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    def get_token(self, *args):
+    async def get_token(self, *args):
         return self.token
 
+@pytest.mark.skipif(SKIP_INT_SMS_TESTS, reason=INT_SMS_TEST_SKIP_REASON)
 class SMSClientTestAsync(AsyncCommunicationTestCase):
     def __init__(self, method_name):
         super(SMSClientTestAsync, self).__init__(method_name)
@@ -35,7 +40,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             self.recording_processors.extend([
             BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"])])
         else:
-            self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["to", "from", "messageId", "repeatabilityRequestId", "repeatabilityFirstSent"]),
                 ResponseReplacerProcessor(keys=[self._resource_name])])
@@ -43,7 +48,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_single_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -59,7 +67,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_multiple_with_options_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -83,7 +94,11 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        sms_client = SmsClient(endpoint, credential)
+        sms_client = SmsClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -99,7 +114,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_fake_from_phone_number_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(HttpResponseError) as ex:
             async with sms_client:
@@ -115,7 +133,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_fake_to_phone_number_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -134,7 +155,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_unauthorized_from_phone_number_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(HttpResponseError) as ex:
             async with sms_client:
@@ -144,13 +168,17 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                     to=[self.phone_number],
                     message="Hello World via SMS")
         
+        assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_send_sms_unique_message_ids_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values

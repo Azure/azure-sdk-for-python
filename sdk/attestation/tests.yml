@@ -1,16 +1,19 @@
-trigger:
-  none
+trigger: none
 
-jobs:
- - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+ - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
    parameters:
+     AllocateResourceGroup: false
      ServiceDirectory: attestation
      Location: westus
      DeployArmTemplate: true
+     MatrixReplace:
+       - TestSamples=.*/true
+
      EnvVars:
-       ATTESTATION_CLIENT_ID: "$(ATTESTATION_CLIENT_ID)"
-       ATTESTATION_TENANT_ID: "$(ATTESTATION_TENANT_ID)"
-       ATTESTATION_CLIENT_SECRET: "$(ATTESTATION_CLIENT_SECRET)"
+       AZURE_CLIENT_ID: "$(ATTESTATION_CLIENT_ID)"
+       AZURE_TENANT_ID: "$(ATTESTATION_TENANT_ID)"
+       AZURE_CLIENT_SECRET: "$(ATTESTATION_CLIENT_SECRET)"
        ATTESTATION_RESOURCE_MANAGER_URL: "$(ATTESTATION_RESOURCE_MANAGER_URL)"
        ATTESTATION_LOCATION: "$(ATTESTATION_LOCATION)"
        ATTESTATION_STORAGE_ENDPOINT_SUFFIX: "$(ATTESTATION_STORAGE_ENDPOINT_SUFFIX)"

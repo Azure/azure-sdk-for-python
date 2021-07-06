@@ -7,7 +7,8 @@ stages:
       ServiceDirectory: eventhub
       BuildTargetingString: azure-eventhub*
       DeployArmTemplate: true
-      TestSamples: true
+      MatrixReplace:
+        - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:

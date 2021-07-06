@@ -5,3 +5,4 @@ include azure/data/__init__.py
 include LICENSE.txt
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/data/tables/py.typed

@@ -46,7 +46,7 @@ class ResourceGroupsOperations:
     async def check_existence(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether a resource group exists.
 
@@ -69,7 +69,7 @@ class ResourceGroupsOperations:
         # Construct URL
         url = self.check_existence.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -100,7 +100,7 @@ class ResourceGroupsOperations:
         self,
         resource_group_name: str,
         parameters: "_models.ResourceGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceGroup":
         """Creates or updates a resource group.
 
@@ -127,7 +127,7 @@ class ResourceGroupsOperations:
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -167,8 +167,8 @@ class ResourceGroupsOperations:
     async def _delete_initial(
         self,
         resource_group_name: str,
-        force_deletion_resource_types: Optional[str] = None,
-        **kwargs
+        force_deletion_types: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -181,15 +181,15 @@ class ResourceGroupsOperations:
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if force_deletion_resource_types is not None:
-            query_parameters['forceDeletionResourceTypes'] = self._serialize.query("force_deletion_resource_types", force_deletion_resource_types, 'str')
+        if force_deletion_types is not None:
+            query_parameters['forceDeletionTypes'] = self._serialize.query("force_deletion_types", force_deletion_types, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -212,8 +212,8 @@ class ResourceGroupsOperations:
     async def begin_delete(
         self,
         resource_group_name: str,
-        force_deletion_resource_types: Optional[str] = None,
-        **kwargs
+        force_deletion_types: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a resource group.
 
@@ -223,14 +223,14 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group to delete. The name is case
          insensitive.
         :type resource_group_name: str
-        :param force_deletion_resource_types: The resource types you want to force delete. Currently,
-         only the following is supported:
-         forceDeletionResourceTypes=Microsoft.Compute/virtualMachines,Microsoft.Compute/virtualMachineScaleSets.
-        :type force_deletion_resource_types: str
+        :param force_deletion_types: The resource types you want to force delete. Currently, only the
+         following is supported:
+         forceDeletionTypes=Microsoft.Compute/virtualMachines,Microsoft.Compute/virtualMachineScaleSets.
+        :type force_deletion_types: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -247,7 +247,7 @@ class ResourceGroupsOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
-                force_deletion_resource_types=force_deletion_resource_types,
+                force_deletion_types=force_deletion_types,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -260,7 +260,7 @@ class ResourceGroupsOperations:
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
 
@@ -281,7 +281,7 @@ class ResourceGroupsOperations:
     async def get(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceGroup":
         """Gets a resource group.
 
@@ -304,7 +304,7 @@ class ResourceGroupsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -337,7 +337,7 @@ class ResourceGroupsOperations:
         self,
         resource_group_name: str,
         parameters: "_models.ResourceGroupPatchable",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceGroup":
         """Updates a resource group.
 
@@ -367,7 +367,7 @@ class ResourceGroupsOperations:
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -404,7 +404,7 @@ class ResourceGroupsOperations:
         self,
         resource_group_name: str,
         parameters: "_models.ExportTemplateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ResourceGroupExportResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ResourceGroupExportResult"]]
         error_map = {
@@ -457,7 +457,7 @@ class ResourceGroupsOperations:
         self,
         resource_group_name: str,
         parameters: "_models.ExportTemplateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ResourceGroupExportResult"]:
         """Captures the specified resource group as a template.
 
@@ -467,8 +467,8 @@ class ResourceGroupsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2020_06_01.models.ExportTemplateRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ResourceGroupExportResult or the result of cls(response)
@@ -523,7 +523,7 @@ class ResourceGroupsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceGroupListResult"]:
         """Gets all the resource groups for a subscription.
 

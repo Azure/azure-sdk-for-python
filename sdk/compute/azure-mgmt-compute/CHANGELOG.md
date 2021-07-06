@@ -1,5 +1,38 @@
 # Release History
 
+## 21.0.0 (2021-05-25)
+
+**Features**
+
+  - Model NetworkInterfaceReference has a new parameter delete_option
+  - Model DataDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter sku
+  - Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter delete_option
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter delete_option
+  - Model OSDisk has a new parameter delete_option
+  - Model VirtualMachineScaleSetVM has a new parameter user_data
+  - Model VirtualMachineScaleSetUpdateNetworkProfile has a new parameter network_api_version
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter user_data
+  - Model VirtualMachineScaleSetVMProfile has a new parameter user_data
+  - Model LinuxPatchSettings has a new parameter assessment_mode
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter delete_option
+  - Model VirtualMachineUpdate has a new parameter user_data
+  - Model VirtualMachineUpdate has a new parameter scheduled_events_profile
+  - Model NetworkProfile has a new parameter network_api_version
+  - Model NetworkProfile has a new parameter network_interface_configurations
+  - Model VirtualMachine has a new parameter user_data
+  - Model VirtualMachine has a new parameter scheduled_events_profile
+  - Model PatchSettings has a new parameter assessment_mode
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter delete_option
+  - Model VirtualMachineScaleSetNetworkProfile has a new parameter network_api_version
+  - Added operation group RestorePointCollectionsOperations
+  - Added operation group RestorePointsOperations
+
+**Breaking changes**
+
+  - Operation VirtualMachineScaleSetsOperations.get has a new signature
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 20.0.0 (2021-04-06)
 
 **Features**
@@ -199,7 +232,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -207,13 +240,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 12.0.0 (2020-03-23)
 

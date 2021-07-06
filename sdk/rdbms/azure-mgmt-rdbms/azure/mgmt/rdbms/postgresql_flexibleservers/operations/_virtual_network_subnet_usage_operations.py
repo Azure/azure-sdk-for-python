@@ -29,7 +29,7 @@ class VirtualNetworkSubnetUsageOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.rdbms.postgresql_flexibleservers.models
+    :type models: ~postgre_sql_management_client.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -56,10 +56,10 @@ class VirtualNetworkSubnetUsageOperations(object):
         :param location_name: The name of the location.
         :type location_name: str
         :param parameters: The required parameters for creating or updating a server.
-        :type parameters: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageParameter
+        :type parameters: ~postgre_sql_management_client.models.VirtualNetworkSubnetUsageParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkSubnetUsageResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.VirtualNetworkSubnetUsageResult
+        :rtype: ~postgre_sql_management_client.models.VirtualNetworkSubnetUsageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkSubnetUsageResult"]
@@ -67,7 +67,7 @@ class VirtualNetworkSubnetUsageOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

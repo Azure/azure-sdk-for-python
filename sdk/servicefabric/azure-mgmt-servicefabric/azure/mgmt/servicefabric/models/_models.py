@@ -1014,8 +1014,8 @@ class ClientCertificate(msrest.serialization.Model):
     :type thumbprint: str
     :param common_name: Certificate Common name.
     :type common_name: str
-    :param issuer_thumbprint: Issuer thumbprint for the certificate. Its only use CommonName is
-     used.
+    :param issuer_thumbprint: Issuer thumbprint for the certificate. Only used together with
+     CommonName.
     :type issuer_thumbprint: str
     """
 
@@ -1255,8 +1255,8 @@ class Cluster(Resource):
      include: "Updating", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.servicefabric.models.ProvisioningState
     :param reliability_level: The reliability level sets the replica set size of system services.
-     Learn about `ReliabilityLevel <https://docs.microsoft.com/azure/service-fabric/service-fabric-
-     cluster-capacity>`_.
+     Learn about `ReliabilityLevel
+     <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
     
     
      * None - Run the System services with a target replica set count of 1. This should only be
@@ -1552,8 +1552,8 @@ class ClusterUpdateParameters(msrest.serialization.Model):
      list.
     :type node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
     :param reliability_level: The reliability level sets the replica set size of system services.
-     Learn about `ReliabilityLevel <https://docs.microsoft.com/azure/service-fabric/service-fabric-
-     cluster-capacity>`_.
+     Learn about `ReliabilityLevel
+     <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
     
     
      * None - Run the System services with a target replica set count of 1. This should only be
@@ -1983,29 +1983,7 @@ class ManagedCluster(Resource):
     :vartype fqdn: str
     :ivar cluster_id: A service generated unique identifier for the cluster resource.
     :vartype cluster_id: str
-    :ivar cluster_state: The current state of the cluster.
-    
-    
-     * WaitingForNodes - Indicates that the cluster resource is created and the resource provider
-     is waiting for Service Fabric VM extension to boot up and report to it.
-     * Deploying - Indicates that the Service Fabric runtime is being installed on the VMs. Cluster
-     resource will be in this state until the cluster boots up and system services are up.
-     * BaselineUpgrade - Indicates that the cluster is upgrading to establishes the cluster
-     version. This upgrade is automatically initiated when the cluster boots up for the first time.
-     * UpdatingUserConfiguration - Indicates that the cluster is being upgraded with the user
-     provided configuration.
-     * UpdatingUserCertificate - Indicates that the cluster is being upgraded with the user
-     provided certificate.
-     * UpdatingInfrastructure - Indicates that the cluster is being upgraded with the latest
-     Service Fabric runtime version. This happens only when the **upgradeMode** is set to
-     'Automatic'.
-     * EnforcingClusterVersion - Indicates that cluster is on a different version than expected and
-     the cluster is being upgraded to the expected version.
-     * UpgradeServiceUnreachable - Indicates that the system service in the cluster is no longer
-     polling the Resource Provider. Clusters in this state cannot be managed by the Resource
-     Provider.
-     * AutoScale - Indicates that the ReliabilityLevel of the cluster is being adjusted.
-     * Ready - Indicates that the cluster is in a stable state. Possible values include:
+    :ivar cluster_state: The current state of the cluster. Possible values include:
      "WaitingForNodes", "Deploying", "BaselineUpgrade", "UpdatingUserConfiguration",
      "UpdatingUserCertificate", "UpdatingInfrastructure", "EnforcingClusterVersion",
      "UpgradeServiceUnreachable", "AutoScale", "Ready".
@@ -2039,18 +2017,8 @@ class ManagedCluster(Resource):
      Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
      get the list of available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
-    :param cluster_upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime
-     version is available.
-    
-    
-     * Automatic - The cluster will be automatically upgraded to the latest Service Fabric runtime
-     version as soon as it is available.
-     * Manual - The cluster will not be automatically upgraded to the latest Service Fabric runtime
-     version. The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster
-     resource. Possible values include: "Automatic", "Manual".
-    :type cluster_upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
-    :param cluster_upgrade_description: Describes the policy used when upgrading the cluster.
-    :type cluster_upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :param addon_features: client certificates for the cluster.
+    :type addon_features: list[str or ~azure.mgmt.servicefabric.models.ManagedClusterAddOnFeature]
     """
 
     _validation = {
@@ -2089,8 +2057,7 @@ class ManagedCluster(Resource):
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
-        'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
+        'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
     }
 
     def __init__(
@@ -2114,8 +2081,7 @@ class ManagedCluster(Resource):
         self.fabric_settings = kwargs.get('fabric_settings', None)
         self.provisioning_state = None
         self.cluster_code_version = kwargs.get('cluster_code_version', None)
-        self.cluster_upgrade_mode = kwargs.get('cluster_upgrade_mode', None)
-        self.cluster_upgrade_description = kwargs.get('cluster_upgrade_description', None)
+        self.addon_features = kwargs.get('addon_features', None)
 
 
 class ManagedClusterListResult(msrest.serialization.Model):
@@ -2150,7 +2116,7 @@ class ManagedClusterUpdateParameters(msrest.serialization.Model):
     :type client_connection_port: int
     :param http_gateway_connection_port: The port used for http connections to the cluster.
     :type http_gateway_connection_port: int
-    :param load_balancing_rules: Describes a load balancing rule.
+    :param load_balancing_rules: Describes load balancing rules.
     :type load_balancing_rules: list[~azure.mgmt.servicefabric.models.LoadBalancingRule]
     :param clients: client certificates for the cluster.
     :type clients: list[~azure.mgmt.servicefabric.models.ClientCertificate]
@@ -2163,18 +2129,8 @@ class ManagedClusterUpdateParameters(msrest.serialization.Model):
      Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
      get the list of available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
-    :param cluster_upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime
-     version is available.
-    
-    
-     * Automatic - The cluster will be automatically upgraded to the latest Service Fabric runtime
-     version as soon as it is available.
-     * Manual - The cluster will not be automatically upgraded to the latest Service Fabric runtime
-     version. The cluster is upgraded by setting the **clusterCodeVersion** property in the cluster
-     resource. Possible values include: "Automatic", "Manual".
-    :type cluster_upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
-    :param cluster_upgrade_description: Describes the policy used when upgrading the cluster.
-    :type cluster_upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :param addon_features: client certificates for the cluster.
+    :type addon_features: list[str or ~azure.mgmt.servicefabric.models.ManagedClusterAddOnFeature]
     """
 
     _attribute_map = {
@@ -2186,8 +2142,7 @@ class ManagedClusterUpdateParameters(msrest.serialization.Model):
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
-        'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
+        'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
     }
 
     def __init__(
@@ -2203,8 +2158,7 @@ class ManagedClusterUpdateParameters(msrest.serialization.Model):
         self.azure_active_directory = kwargs.get('azure_active_directory', None)
         self.fabric_settings = kwargs.get('fabric_settings', None)
         self.cluster_code_version = kwargs.get('cluster_code_version', None)
-        self.cluster_upgrade_mode = kwargs.get('cluster_upgrade_mode', None)
-        self.cluster_upgrade_description = kwargs.get('cluster_upgrade_description', None)
+        self.addon_features = kwargs.get('addon_features', None)
 
 
 class ManagedClusterVersionDetails(msrest.serialization.Model):
@@ -2640,8 +2594,7 @@ class NodeTypeUpdateParameters(msrest.serialization.Model):
 
     :param tags: A set of tags. Node type update parameters.
     :type tags: dict[str, str]
-    :param vm_instance_count: The number of nodes in the node type. This count should match the
-     capacity property in the corresponding VirtualMachineScaleSet resource.
+    :param vm_instance_count: The number of nodes in the node type.
     :type vm_instance_count: int
     :param placement_properties: The placement tags applied to nodes in the node type, which can be
      used to indicate where certain services (workload) should run.
@@ -3454,8 +3407,7 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Sku Name. Basic will have a minimum of 3 seed nodes and Standard a
-     minimum of 5. Basic only allows 1 node type. Possible values include: "Basic", "Standard".
+    :param name: Required. Sku Name. Possible values include: "Basic", "Standard".
     :type name: str or ~azure.mgmt.servicefabric.models.SkuName
     """
 
@@ -3697,10 +3649,10 @@ class StatelessServiceProperties(ServiceResourceProperties):
     :param instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
      the endpoint advertised by the stateless instance is removed before the delay starts prior to
      closing the instance. This delay enables existing requests to drain gracefully before the
-     instance actually goes down (https://docs.microsoft.com/en-us/azure/service-fabric/service-
-     fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-
-     downtime-preview). It is first interpreted as a string representing an ISO 8601 duration. If
-     that fails, then it is interpreted as a number representing the total number of milliseconds.
+     instance actually goes down
+     (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
+     It is first interpreted as a string representing an ISO 8601 duration. If that fails, then it
+     is interpreted as a number representing the total number of milliseconds.
     :type instance_close_delay_duration: str
     """
 
@@ -3767,10 +3719,10 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
     :param instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
      the endpoint advertised by the stateless instance is removed before the delay starts prior to
      closing the instance. This delay enables existing requests to drain gracefully before the
-     instance actually goes down (https://docs.microsoft.com/en-us/azure/service-fabric/service-
-     fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-
-     downtime-preview). It is first interpreted as a string representing an ISO 8601 duration. If
-     that fails, then it is interpreted as a number representing the total number of milliseconds.
+     instance actually goes down
+     (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
+     It is first interpreted as a string representing an ISO 8601 duration. If that fails, then it
+     is interpreted as a number representing the total number of milliseconds.
     :type instance_close_delay_duration: str
     """
 
@@ -3901,9 +3853,9 @@ class VaultCertificate(msrest.serialization.Model):
      Key Vault as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the
      key vault <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this
      case, your certificate needs to be It is the Base64 encoding of the following JSON Object which
-     is encoded in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`  "data":":code:`<Base64-encoded-
-     certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`  "password":":code:`<pfx-file-
-     password>`":code:`<br>`}.
+     is encoded in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
+     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
+     "password":":code:`<pfx-file-password>`":code:`<br>`}.
     :type certificate_url: str
     :param certificate_store: Required. For Windows VMs, specifies the certificate store on the
      Virtual Machine to which the certificate should be added. The specified certificate store is
@@ -3974,9 +3926,6 @@ class VMSSExtension(msrest.serialization.Model):
 
     :param name: Required. The name of the extension.
     :type name: str
-    :param force_update_tag: If a value is provided and is different from the previous value, the
-     extension handler will be forced to update even if the extension configuration has not changed.
-    :type force_update_tag: str
     :param publisher: Required. The name of the extension handler publisher.
     :type publisher: str
     :param type: Required. Specifies the type of the extension; an example is
@@ -3989,15 +3938,18 @@ class VMSSExtension(msrest.serialization.Model):
      upgrade minor versions unless redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
     :param settings: Json formatted public settings for the extension.
-    :type settings: object
+    :type settings: any
     :param protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: object
-    :ivar provisioning_state: The provisioning state, which only appears in the response.
-    :vartype provisioning_state: str
+    :type protected_settings: any
+    :param force_update_tag: If a value is provided and is different from the previous value, the
+     extension handler will be forced to update even if the extension configuration has not changed.
+    :type force_update_tag: str
     :param provision_after_extensions: Collection of extension names after which this extension
      needs to be provisioned.
     :type provision_after_extensions: list[str]
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -4010,15 +3962,15 @@ class VMSSExtension(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(
@@ -4027,12 +3979,12 @@ class VMSSExtension(msrest.serialization.Model):
     ):
         super(VMSSExtension, self).__init__(**kwargs)
         self.name = kwargs['name']
-        self.force_update_tag = kwargs.get('force_update_tag', None)
         self.publisher = kwargs['publisher']
         self.type = kwargs['type']
         self.type_handler_version = kwargs['type_handler_version']
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
-        self.provisioning_state = None
+        self.force_update_tag = kwargs.get('force_update_tag', None)
         self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
+        self.provisioning_state = None

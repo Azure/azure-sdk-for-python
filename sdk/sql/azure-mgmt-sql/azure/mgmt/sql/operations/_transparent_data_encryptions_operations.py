@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class TransparentDataEncryptionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,11 +49,11 @@ class TransparentDataEncryptionsOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        transparent_data_encryption_name,  # type: Union[str, "models.TransparentDataEncryptionName"]
-        parameters,  # type: "models.TransparentDataEncryption"
+        transparent_data_encryption_name,  # type: Union[str, "_models.TransparentDataEncryptionName"]
+        parameters,  # type: "_models.TransparentDataEncryption"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TransparentDataEncryption"
+        # type: (...) -> "_models.TransparentDataEncryption"
         """Creates or updates a database's transparent data encryption configuration.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -75,7 +75,7 @@ class TransparentDataEncryptionsOperations(object):
         :rtype: ~azure.mgmt.sql.models.TransparentDataEncryption
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TransparentDataEncryption"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransparentDataEncryption"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -132,10 +132,10 @@ class TransparentDataEncryptionsOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         database_name,  # type: str
-        transparent_data_encryption_name,  # type: Union[str, "models.TransparentDataEncryptionName"]
+        transparent_data_encryption_name,  # type: Union[str, "_models.TransparentDataEncryptionName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TransparentDataEncryption"
+        # type: (...) -> "_models.TransparentDataEncryption"
         """Gets a database's transparent data encryption configuration.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -154,7 +154,7 @@ class TransparentDataEncryptionsOperations(object):
         :rtype: ~azure.mgmt.sql.models.TransparentDataEncryption
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TransparentDataEncryption"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TransparentDataEncryption"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python managed_identity_authentication_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - The endpoint of your Azure Communication Service
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string of your Azure Communication Service resource
     2) AZURE_CLIENT_ID - The id of your registered Azure Active Directory application
     3) AZURE_CLIENT_SECRET - A client secret created for your registered AAD aplication
     4) AZURE_TENANT_ID - The tenant in which this application can be found
@@ -21,9 +21,11 @@ USAGE:
 
 import os
 from azure.communication.phonenumbers import PhoneNumbersClient
+from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_ENDPOINT')
+connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+endpoint, _ = parse_connection_str(connection_str)
 phone_numbers_client = PhoneNumbersClient(endpoint, DefaultAzureCredential())
 
 def list_purchased_phone_numbers_using_managed_identity():

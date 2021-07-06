@@ -110,7 +110,7 @@ class BlobSamples(object):
             source_blob_client.upload_blob(data, blob_type="BlockBlob")
 
             destination_blob_client = container_client.get_blob_client("destination_blob")
-
+            # [START download_a_blob_in_chunk]
             # This returns a StorageStreamDownloader.
             stream = source_blob_client.download_blob()
             block_list = []
@@ -121,6 +121,8 @@ class BlobSamples(object):
                 block_id = str(uuid.uuid4())
                 destination_blob_client.stage_block(block_id=block_id, data=chunk)
                 block_list.append(BlobBlock(block_id=block_id))
+
+            # [END download_a_blob_in_chunk]
 
             # Upload the whole chunk to azure storage and make up one blob
             destination_blob_client.commit_block_list(block_list)

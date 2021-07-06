@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,37 +11,38 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:09:15 GMT
+      - Fri, 07 May 2021 17:24:58 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24?restype=container&timeout=5
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:098d9483-201e-0042-6765-43ea74000000\nTime:2021-05-07T17:24:59.0332365Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '230'
+      content-type:
+      - application/xml
       date:
-      - Fri, 25 Oct 2019 18:09:15 GMT
-      etag:
-      - '"0x8D7597672739994"'
-      last-modified:
-      - Fri, 25 Oct 2019 18:09:15 GMT
+      - Fri, 07 May 2021 17:24:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
-      code: 201
-      message: Created
+      code: 409
+      message: The specified container already exists.
 - request:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -49,13 +50,56 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
+      - https://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:24:59 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>OperationTimedOut</Code><Message>Operation
+        could not be completed within the specified time.\nRequestId:098d94c3-201e-0042-1b65-43ea74000000\nTime:2021-05-07T17:25:29.0954770Z</Message></Error>"
+    headers:
+      connection:
+      - close
+      content-length:
+      - '245'
+      content-type:
+      - application/xml
+      date:
+      - Fri, 07 May 2021 17:25:28 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - OperationTimedOut
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 500
+      message: Operation could not be completed within the specified time.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-copy-source:
+      - https://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-date:
+      - Fri, 07 May 2021 17:25:45 GMT
+      x-ms-version:
+      - '2020-06-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
@@ -65,19 +109,19 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Oct 2019 18:09:15 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       etag:
-      - '"0x8D7597672BABFC7"'
+      - '"0x8D9117D2A923BB3"'
       last-modified:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - c1d192f4-9fc2-437b-a08f-3e3d0800a6e8
+      - d912a019-0bad-431d-8295-2db29beabc08
       x-ms-copy-status:
       - pending
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 202
       message: Accepted
@@ -85,7 +129,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -93,15 +137,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-copy-action:
       - abort
       x-ms-date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=c1d192f4-9fc2-437b-a08f-3e3d0800a6e8&comp=copy
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?comp=copy&copyid=d912a019-0bad-431d-8295-2db29beabc08
   response:
     body:
       string: ''
@@ -109,11 +153,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 204
       message: No Content
@@ -121,17 +165,17 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
@@ -145,13 +189,15 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       etag:
-      - '"0x8D7597672C6CFE7"'
+      - '"0x8D9117D2ACFC50A"'
       last-modified:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-inferred:
@@ -159,17 +205,17 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-completion-time:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-copy-id:
-      - c1d192f4-9fc2-437b-a08f-3e3d0800a6e8
+      - d912a019-0bad-431d-8295-2db29beabc08
       x-ms-copy-progress:
       - 0/439274
       x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
+      - https://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status:
       - aborted
       x-ms-creation-time:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -177,7 +223,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 200
       message: OK
@@ -191,19 +237,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:cc210932-f01e-005f-6a5f-8b0351000000\nTime:2019-10-25T18:09:16.3940806Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:689b1184-801e-00bf-7466-436451000000\nTime:2021-05-07T17:25:53.8087976Z</Message></Error>"
     headers:
       content-length:
       - '249'
@@ -212,13 +258,15 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-error-code:
       - InvalidRange
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 416
       message: The range specified is invalid for the current size of the resource.
@@ -232,11 +280,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
@@ -250,27 +298,29 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       etag:
-      - '"0x8D7597672C6CFE7"'
+      - '"0x8D9117D2ACFC50A"'
       last-modified:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-completion-time:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-copy-id:
-      - c1d192f4-9fc2-437b-a08f-3e3d0800a6e8
+      - d912a019-0bad-431d-8295-2db29beabc08
       x-ms-copy-progress:
       - 0/439274
       x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
+      - https://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-copy-status:
       - aborted
       x-ms-creation-time:
-      - Fri, 25 Oct 2019 18:09:16 GMT
+      - Fri, 07 May 2021 17:25:53 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -278,7 +328,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-02-02'
+      - '2020-06-12'
     status:
       code: 200
       message: OK

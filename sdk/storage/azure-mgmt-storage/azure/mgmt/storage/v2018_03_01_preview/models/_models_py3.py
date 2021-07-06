@@ -369,8 +369,8 @@ class Encryption(msrest.serialization.Model):
 
     :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2018_03_01_preview.models.EncryptionServices
-    :param key_source: Required. The encryption keySource (provider). Possible values (case-
-     insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
+    :param key_source: Required. The encryption keySource (provider). Possible values
+     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
      "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2018_03_01_preview.models.KeySource
     :param key_vault_properties: Properties provided by key vault.
@@ -1054,17 +1054,17 @@ class ManagementPoliciesRules(msrest.serialization.Model):
 
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
      in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :type policy: object
+    :type policy: str
     """
 
     _attribute_map = {
-        'policy': {'key': 'policy', 'type': 'object'},
+        'policy': {'key': 'policy', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        policy: Optional[object] = None,
+        policy: Optional[str] = None,
         **kwargs
     ):
         super(ManagementPoliciesRules, self).__init__(**kwargs)
@@ -1076,17 +1076,17 @@ class ManagementPoliciesRulesSetParameter(msrest.serialization.Model):
 
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
      in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :type policy: object
+    :type policy: str
     """
 
     _attribute_map = {
-        'policy': {'key': 'properties.policy', 'type': 'object'},
+        'policy': {'key': 'properties.policy', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        policy: Optional[object] = None,
+        policy: Optional[str] = None,
         **kwargs
     ):
         super(ManagementPoliciesRulesSetParameter, self).__init__(**kwargs)
@@ -2002,7 +2002,7 @@ class StorageAccountManagementPolicies(Resource):
     :vartype type: str
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
      in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :type policy: object
+    :type policy: str
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
     """
@@ -2018,14 +2018,14 @@ class StorageAccountManagementPolicies(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'policy': {'key': 'properties.policy', 'type': 'object'},
+        'policy': {'key': 'properties.policy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         *,
-        policy: Optional[object] = None,
+        policy: Optional[str] = None,
         **kwargs
     ):
         super(StorageAccountManagementPolicies, self).__init__(**kwargs)
@@ -2040,7 +2040,7 @@ class StorageAccountManagementPoliciesRulesProperty(ManagementPoliciesRules):
 
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
      in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :type policy: object
+    :type policy: str
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
     """
@@ -2050,14 +2050,14 @@ class StorageAccountManagementPoliciesRulesProperty(ManagementPoliciesRules):
     }
 
     _attribute_map = {
-        'policy': {'key': 'policy', 'type': 'object'},
+        'policy': {'key': 'policy', 'type': 'str'},
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         *,
-        policy: Optional[object] = None,
+        policy: Optional[str] = None,
         **kwargs
     ):
         super(StorageAccountManagementPoliciesRulesProperty, self).__init__(policy=policy, **kwargs)

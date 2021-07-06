@@ -54,8 +54,8 @@ class ResourceLinksOperations(object):
         """Deletes a resource link with the specified ID.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
-         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-
-         namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
+         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}.
+         For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -107,8 +107,8 @@ class ResourceLinksOperations(object):
         """Creates or updates a resource link between the specified resources.
 
         :param link_id: The fully qualified ID of the resource link. Use the format,
-         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-
-         namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}. For example,
+         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}.
+         For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
         :type link_id: str
         :param parameters: Parameters for creating or updating a resource link.

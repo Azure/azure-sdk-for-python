@@ -1,7 +1,8 @@
 {
   "advancedOptions": {
     "createSdkPullRequests": true,
-    "generationCallMode": "one-for-all-configs"
+    "generationCallMode": "one-for-all-configs",
+    "breakingChangeTracking": true
   },
 
   "initOptions": {

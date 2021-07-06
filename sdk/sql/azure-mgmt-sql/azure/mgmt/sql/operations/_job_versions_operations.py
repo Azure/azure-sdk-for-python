@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class JobVersionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class JobVersionsOperations(object):
         job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobVersionListResult"]
+        # type: (...) -> Iterable["_models.JobVersionListResult"]
         """Gets all versions of a job.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -70,12 +70,12 @@ class JobVersionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobVersionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobVersionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobVersionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -138,7 +138,7 @@ class JobVersionsOperations(object):
         job_version,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Resource"
+        # type: (...) -> "_models.JobVersion"
         """Gets a job version.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -153,16 +153,16 @@ class JobVersionsOperations(object):
         :param job_version: The version of the job to get.
         :type job_version: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Resource, or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.Resource
+        :return: JobVersion, or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.JobVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Resource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobVersion"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -193,7 +193,7 @@ class JobVersionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Resource', pipeline_response)
+        deserialized = self._deserialize('JobVersion', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

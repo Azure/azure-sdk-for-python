@@ -6,17 +6,17 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Dict
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 
 import uamqp
 from uamqp import compat
 from uamqp.message import MessageProperties
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync
 from .._common._configuration import Configuration
-from .._common.utils import create_properties, strip_protocol_from_uri
+from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -81,12 +81,48 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
+class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
+    """The named key credential used for authentication.
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    """
+
+    def __init__(self, azure_named_key_credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self._credential = azure_named_key_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self._credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
+
+
+class ServiceBusAzureSasTokenCredentialAsync(object):
+    """The shared access token credential used for authentication
+    when AzureSasCredential is provided.
+    :param azure_sas_credential: The credential to be used for authentication.
+    :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
+    """
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
+        self._credential = azure_sas_credential
+        self.token_type = TOKEN_TYPE_SASTOKEN
+
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+        """
+        This method is automatically called when token is about to expire.
+        """
+        signature, expiry = parse_sas_credential(self._credential)
+        return AccessToken(signature, expiry)
+
+
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
         entity_name: str,
-        credential: "AsyncTokenCredential",
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -100,7 +136,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             ("/Subscriptions/" + subscription_name) if subscription_name else ""
         )
         self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
-        self._credential = credential
+        if isinstance(credential, AzureSasCredential):
+            self._credential = ServiceBusAzureSasTokenCredentialAsync(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
+        else:
+            self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False

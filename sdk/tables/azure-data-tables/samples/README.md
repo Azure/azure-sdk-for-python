@@ -55,7 +55,7 @@ pip install --pre azure-data-tables
 |------------|------------------|
 |`Equal`|`eq`|
 |`GreaterThan`|`gt`|
-|`GreaterTahnOrEqual`|`ge`|
+|`GreaterThanOrEqual`|`ge`|
 |`LessThan`|`lt`|
 |`LessThanOrEqual`|`le`|
 |`NotEqual`|`ne`|
@@ -71,8 +71,8 @@ parameters = {
     "pk": PartitionKey,
     "rk": RowKey
 }
-filter = "PartitionKey eq @pk and RowKey eq @rk"
-table_client.query_entities(filter=filter, parameter=pk)
+query_filter = "PartitionKey eq @pk and RowKey eq @rk"
+table_client.query_entities(query_filter, parameter=pk)
 ```
 
 #### Filter on Properties
@@ -81,43 +81,43 @@ parameters = {
     "first": first_name,
     "last": last_name
 }
-filter = "FirstName eq @first or LastName eq @last"
-table_client.query_entities(filter=filter, parameter=pk)
+query_filter = "FirstName eq @first or LastName eq @last"
+table_client.query_entities(query_filter, parameter=pk)
 ```
 
 #### Filter with string comparison operators
 ```python
-filter = "LastName ge 'A' and LastName lt 'B'"
-table_client.query_entities(filter=filter)
+query_filter = "LastName ge 'A' and LastName lt 'B'"
+table_client.query_entities(query_filter)
 ```
 
 #### Filter with numeric properties
 ```python
-filter = "Age gt 30"
-table_client.query_entities(filter=filter)
+query_filter = "Age gt 30"
+table_client.query_entities(query_filter)
 ```
 
 ```python
-filter = "AmountDue le 100.25"
-table_client.query_entities(filter=filter)
+query_filter = "AmountDue le 100.25"
+table_client.query_entities(query_filter)
 ```
 
 #### Filter with boolean properties
 ```python
-filter = "IsActive eq true"
-table_client.query_entities(filter=filter)
+query_filter = "IsActive eq true"
+table_client.query_entities(query_filter)
 ```
 
 #### Filter with DateTime properties
 ```python
-filter = "CustomerSince eq datetime'2008-07-10T00:00:00Z'"
-table_client.query_entities(filter=filter)
+query_filter = "CustomerSince eq datetime'2008-07-10T00:00:00Z'"
+table_client.query_entities(query_filter)
 ```
 
 #### Filter with GUID properties
 ```python
-filter = "GuidValue eq guid'a455c695-df98-5678-aaaa-81d3367e5a34'"
-table_client.query_entities(filter=filter)
+query_filter = "GuidValue eq guid'a455c695-df98-5678-aaaa-81d3367e5a34'"
+table_client.query_entities(query_filter)
 ```
 
 
@@ -130,27 +130,27 @@ what you can do with the Azure Data Tables client library.
 <!-- LINKS -->
 [api_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
 
-[sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
+[sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
 
-[create_client]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_client.py
-[create_client_async]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_client_async.py
+[create_client]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_client.py
+[create_client_async]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_client_async.py
 
-[create_delete_table]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py
-[create_delete_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py
+[create_delete_table]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py
+[create_delete_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py
 
-[insert_delete_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
-[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
+[insert_delete_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
+[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
 
-[query_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_table.py
-[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py
+[query_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_table.py
+[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py
 
-[query_tables]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py
-[query_tables_async]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py
+[query_tables]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_tables.py
+[query_tables_async]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py
 
-[update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
-[update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py
+[update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
+[update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py
 
-[sample_batch]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py
-[sample_batch_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py
+[sample_batch]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py
+[sample_batch_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)

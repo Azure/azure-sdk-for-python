@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class JobStepsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class JobStepsOperations(object):
         job_version,  # type: int
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobStepListResult"]
+        # type: (...) -> Iterable["_models.JobStepListResult"]
         """Gets all job steps in the specified job version.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -73,12 +73,12 @@ class JobStepsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobStepListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobStepListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobStepListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -143,7 +143,7 @@ class JobStepsOperations(object):
         step_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobStep"
+        # type: (...) -> "_models.JobStep"
         """Gets the specified version of a job step.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -164,12 +164,12 @@ class JobStepsOperations(object):
         :rtype: ~azure.mgmt.sql.models.JobStep
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobStep"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobStep"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -217,7 +217,7 @@ class JobStepsOperations(object):
         job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobStepListResult"]
+        # type: (...) -> Iterable["_models.JobStepListResult"]
         """Gets all job steps for a job's current version.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -234,12 +234,12 @@ class JobStepsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobStepListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobStepListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobStepListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -302,7 +302,7 @@ class JobStepsOperations(object):
         step_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobStep"
+        # type: (...) -> "_models.JobStep"
         """Gets a job step in a job's current version.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -321,12 +321,12 @@ class JobStepsOperations(object):
         :rtype: ~azure.mgmt.sql.models.JobStep
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobStep"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobStep"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -372,10 +372,10 @@ class JobStepsOperations(object):
         job_agent_name,  # type: str
         job_name,  # type: str
         step_name,  # type: str
-        parameters,  # type: "models.JobStep"
+        parameters,  # type: "_models.JobStep"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.JobStep"
+        # type: (...) -> "_models.JobStep"
         """Creates or updates a job step. This will implicitly create a new job version.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -396,12 +396,12 @@ class JobStepsOperations(object):
         :rtype: ~azure.mgmt.sql.models.JobStep
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobStep"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobStep"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -482,7 +482,7 @@ class JobStepsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore

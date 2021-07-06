@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(ClientCredentialBase):
-    """Authenticates as a service principal using a client ID and client secret.
+    """Authenticates as a service principal using a client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
@@ -24,6 +24,9 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword ~azure.identity.RegionalAuthority regional_authority: a :class:`~azure.identity.RegionalAuthority` to
+        which the credential will authenticate. This argument should be used only by applications deployed to Azure
+        VMs.
     """
 
     def __init__(self, tenant_id, client_id, client_secret, **kwargs):

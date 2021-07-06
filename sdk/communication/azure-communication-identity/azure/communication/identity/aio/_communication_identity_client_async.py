@@ -52,7 +52,7 @@ class CommunicationIdentityClient:
         self._endpoint = endpoint
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
-            authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
+            authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 

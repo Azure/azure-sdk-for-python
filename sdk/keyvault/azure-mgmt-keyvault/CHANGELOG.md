@@ -1,5 +1,34 @@
 # Release History
 
+## 9.0.0 (2021-04-19)
+
+**Features**
+
+  - Model DeletedVaultProperties has a new parameter purge_protection_enabled
+  - Model Operation has a new parameter is_data_action
+  - Model Vault has a new parameter system_data
+  - Model ManagedHsmProperties has a new parameter scheduled_purge_date
+  - Model ManagedHsmProperties has a new parameter public_network_access
+  - Model ManagedHsmProperties has a new parameter network_acls
+  - Model ManagedHsmProperties has a new parameter private_endpoint_connections
+  - Model VaultProperties has a new parameter provisioning_state
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+  - Model ManagedHsmResource has a new parameter system_data
+  - Model ManagedHsm has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter etag
+  - Added operation ManagedHsmsOperations.get_deleted
+  - Added operation ManagedHsmsOperations.list_deleted
+  - Added operation ManagedHsmsOperations.begin_purge_deleted
+  - Added operation PrivateEndpointConnectionsOperations.list_by_resource
+  - Added operation group SecretsOperations
+  - Added operation group MHSMPrivateLinkResourcesOperations
+  - Added operation group KeysOperations
+  - Added operation group MHSMPrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
 ## 8.0.0 (2020-09-29)
 
 **Features**
@@ -40,7 +69,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -48,13 +77,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 2.2.0 (2020-03-20)
 

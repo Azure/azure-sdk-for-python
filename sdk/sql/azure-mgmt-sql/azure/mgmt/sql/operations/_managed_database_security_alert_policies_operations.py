@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,10 +50,10 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
         database_name,  # type: str
-        security_alert_policy_name,  # type: Union[str, "models.SecurityAlertPolicyName"]
+        security_alert_policy_name,  # type: Union[str, "_models.SecurityAlertPolicyName"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedDatabaseSecurityAlertPolicy"
+        # type: (...) -> "_models.ManagedDatabaseSecurityAlertPolicy"
         """Gets a managed database's security alert policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -71,12 +71,12 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedDatabaseSecurityAlertPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedDatabaseSecurityAlertPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -119,11 +119,11 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
         resource_group_name,  # type: str
         managed_instance_name,  # type: str
         database_name,  # type: str
-        security_alert_policy_name,  # type: Union[str, "models.SecurityAlertPolicyName"]
-        parameters,  # type: "models.ManagedDatabaseSecurityAlertPolicy"
+        security_alert_policy_name,  # type: Union[str, "_models.SecurityAlertPolicyName"]
+        parameters,  # type: "_models.ManagedDatabaseSecurityAlertPolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedDatabaseSecurityAlertPolicy"
+        # type: (...) -> "_models.ManagedDatabaseSecurityAlertPolicy"
         """Creates or updates a database's security alert policy.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -143,12 +143,12 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedDatabaseSecurityAlertPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedDatabaseSecurityAlertPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -202,7 +202,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
         database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedDatabaseSecurityAlertPolicyListResult"]
+        # type: (...) -> Iterable["_models.ManagedDatabaseSecurityAlertPolicyListResult"]
         """Gets a list of managed database's security alert policies.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -218,12 +218,12 @@ class ManagedDatabaseSecurityAlertPoliciesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedDatabaseSecurityAlertPolicyListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedDatabaseSecurityAlertPolicyListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

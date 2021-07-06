@@ -66,10 +66,10 @@ class DiffDiskPlacement(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the ephemeral disk placement for operating system disk. This property can be used by
     user in the request to choose the location i.e, cache disk or resource disk space for Ephemeral
     OS disk provisioning. For more information on Ephemeral OS disk size requirements, please refer
-    Ephemeral OS disk size requirements for Windows VM at https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements and Linux VM at
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-
-    requirements
+    Ephemeral OS disk size requirements for Windows VM at
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    and Linux VM at
+    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
     """
 
     CACHE_DISK = "CacheDisk"
@@ -304,8 +304,9 @@ class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
     disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD. StandardSSD_LRS uses
     Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. For more information
-    regarding disks supported for Windows Virtual Machines, refer to https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/disks-types and, for Linux Virtual Machines, refer to
+    regarding disks supported for Windows Virtual Machines, refer to
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for Linux
+    Virtual Machines, refer to
     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
     """
 
@@ -375,10 +376,11 @@ class VirtualMachineScaleSetSkuScaleType(with_metaclass(_CaseInsensitiveEnumMeta
 
 class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
-    see `Sizes for virtual machines <https://docs.microsoft.com/en-us/azure/virtual-
-    machines/sizes>`_. :code:`<br>`:code:`<br>` The available VM sizes depend on region and
-    availability set. For a list of available sizes use these APIs:  :code:`<br>`:code:`<br>` `List
-    all available virtual machine sizes in an availability set
+    see `Sizes for virtual machines
+    <https://docs.microsoft.com/en-us/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
+    available VM sizes depend on region and availability set. For a list of available sizes use
+    these APIs:  :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an
+    availability set
     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
     <https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list>`_

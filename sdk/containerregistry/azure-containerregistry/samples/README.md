@@ -16,7 +16,8 @@ The async versions of the samples require Python 3.6 or later.
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a client|Authorizing a `ContainerRegistryClient` object and `ContainerRepositoryClient` object|
+|[sample_create_client.py][create_client] ([async version][create_client_async]) |Instantiate a client | Authorizing a `ContainerRegistryClient` object and `ContainerRepositoryClient` object |
+|[sample_delete_old_tags.py][delete_old_tags] and [sample_delete_old_tags_async.py][delete_old_tags_async] | Delete tags from a repository |
 
 ### Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package.
@@ -47,3 +48,8 @@ Check out the [API reference documentation][rest_docs] to learn more about what 
 [rest_docs]: https://docs.microsoft.com/rest/api/containerregistry/
 
 [container_registry_docs]: https://docs.microsoft.com/azure/container-registry/container-registry-intro
+
+[create_client]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_create_client.py
+[create_client_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_create_client_async.py
+[delete_old_tags]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_delete_old_tags.py
+[delete_old_tags_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_delete_old_tags_async.py

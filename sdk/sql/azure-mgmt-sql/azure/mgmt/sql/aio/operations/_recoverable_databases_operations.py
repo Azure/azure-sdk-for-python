@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class RecoverableDatabasesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class RecoverableDatabasesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ) -> "models.RecoverableDatabase":
+        **kwargs: Any
+    ) -> "_models.RecoverableDatabase":
         """Gets a recoverable database, which is a resource representing a database's geo backup.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -62,7 +62,7 @@ class RecoverableDatabasesOperations:
         :rtype: ~azure.mgmt.sql.models.RecoverableDatabase
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecoverableDatabase"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoverableDatabase"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,8 +108,8 @@ class RecoverableDatabasesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.RecoverableDatabaseListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.RecoverableDatabaseListResult"]:
         """Gets a list of recoverable databases.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -122,7 +122,7 @@ class RecoverableDatabasesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.RecoverableDatabaseListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecoverableDatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecoverableDatabaseListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

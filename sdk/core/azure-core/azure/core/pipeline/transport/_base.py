@@ -473,7 +473,6 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
-
 class _HttpResponseBase(object):
     """Represent a HTTP response.
 
@@ -580,8 +579,8 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
+    def stream_download(self, pipeline, **kwargs):
+        # type: (PipelineType, **Any) -> Iterator[bytes]
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download

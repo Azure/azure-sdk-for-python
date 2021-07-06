@@ -11,15 +11,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
   response:
     body:
-      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"not_real_repo","Action":"delete"}]}]}
-
-        '
+      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
+        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
+        "repository", "Name": "not_real_repo", "Action": "delete"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -33,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:57:27 GMT
+      - Wed, 19 May 2021 21:21:35 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -42,7 +41,7 @@ interactions:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
       www-authenticate:
-      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:not_real_repo:delete"
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
@@ -62,7 +61,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -74,7 +73,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:57:28 GMT
+      - Wed, 19 May 2021 21:21:37 GMT
       server:
       - openresty
       strict-transport-security:
@@ -82,12 +81,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.55'
+      - '166.45'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED
+    body: service=fake_url.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED&grant_type=refresh_token
     headers:
       Accept:
       - application/json
@@ -96,11 +95,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1074'
+      - '1136'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -112,7 +111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:57:28 GMT
+      - Wed, 19 May 2021 21:21:37 GMT
       server:
       - openresty
       strict-transport-security:
@@ -120,7 +119,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.2'
+      - '166.3'
     status:
       code: 200
       message: OK
@@ -136,7 +135,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
   response:
@@ -156,7 +155,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:57:29 GMT
+      - Wed, 19 May 2021 21:21:38 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

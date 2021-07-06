@@ -48,7 +48,7 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: "_models.Gallery",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Gallery":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Gallery"]
         error_map = {
@@ -108,7 +108,7 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: "_models.Gallery",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Gallery"]:
         """Create or update a Shared Image Gallery.
 
@@ -121,8 +121,8 @@ class GalleriesOperations:
         :type gallery: ~azure.mgmt.compute.v2019_07_01.models.Gallery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Gallery or the result of cls(response)
@@ -180,7 +180,7 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: "_models.GalleryUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Gallery":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Gallery"]
         error_map = {
@@ -233,7 +233,7 @@ class GalleriesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery: "_models.GalleryUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Gallery"]:
         """Update a Shared Image Gallery.
 
@@ -246,8 +246,8 @@ class GalleriesOperations:
         :type gallery: ~azure.mgmt.compute.v2019_07_01.models.GalleryUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Gallery or the result of cls(response)
@@ -304,7 +304,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Gallery":
         """Retrieves information about a Shared Image Gallery.
 
@@ -362,7 +362,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -406,7 +406,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a Shared Image Gallery.
 
@@ -416,8 +416,8 @@ class GalleriesOperations:
         :type gallery_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -469,7 +469,7 @@ class GalleriesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GalleryList"]:
         """List galleries under a resource group.
 
@@ -538,7 +538,7 @@ class GalleriesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GalleryList"]:
         """List galleries under a subscription.
 

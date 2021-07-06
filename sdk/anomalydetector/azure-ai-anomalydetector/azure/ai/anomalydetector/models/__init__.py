@@ -7,35 +7,88 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AlignPolicy
+    from ._models_py3 import AnomalyContributor
     from ._models_py3 import AnomalyDetectorError
+    from ._models_py3 import AnomalyState
+    from ._models_py3 import AnomalyValue
     from ._models_py3 import ChangePointDetectRequest
     from ._models_py3 import ChangePointDetectResponse
     from ._models_py3 import DetectRequest
+    from ._models_py3 import DetectionRequest
+    from ._models_py3 import DetectionResult
+    from ._models_py3 import DetectionResultSummary
+    from ._models_py3 import DiagnosticsInfo
     from ._models_py3 import EntireDetectResponse
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import LastDetectResponse
+    from ._models_py3 import Model
+    from ._models_py3 import ModelInfo
+    from ._models_py3 import ModelList
+    from ._models_py3 import ModelSnapshot
+    from ._models_py3 import ModelState
     from ._models_py3 import TimeSeriesPoint
+    from ._models_py3 import VariableState
 except (SyntaxError, ImportError):
+    from ._models import AlignPolicy  # type: ignore
+    from ._models import AnomalyContributor  # type: ignore
     from ._models import AnomalyDetectorError  # type: ignore
+    from ._models import AnomalyState  # type: ignore
+    from ._models import AnomalyValue  # type: ignore
     from ._models import ChangePointDetectRequest  # type: ignore
     from ._models import ChangePointDetectResponse  # type: ignore
     from ._models import DetectRequest  # type: ignore
+    from ._models import DetectionRequest  # type: ignore
+    from ._models import DetectionResult  # type: ignore
+    from ._models import DetectionResultSummary  # type: ignore
+    from ._models import DiagnosticsInfo  # type: ignore
     from ._models import EntireDetectResponse  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import LastDetectResponse  # type: ignore
+    from ._models import Model  # type: ignore
+    from ._models import ModelInfo  # type: ignore
+    from ._models import ModelList  # type: ignore
+    from ._models import ModelSnapshot  # type: ignore
+    from ._models import ModelState  # type: ignore
     from ._models import TimeSeriesPoint  # type: ignore
+    from ._models import VariableState  # type: ignore
 
 from ._anomaly_detector_client_enums import (
+    AlignMode,
     AnomalyDetectorErrorCodes,
+    DetectionStatus,
+    FillNAMethod,
+    ModelStatus,
     TimeGranularity,
 )
 
 __all__ = [
+    'AlignPolicy',
+    'AnomalyContributor',
     'AnomalyDetectorError',
+    'AnomalyState',
+    'AnomalyValue',
     'ChangePointDetectRequest',
     'ChangePointDetectResponse',
     'DetectRequest',
+    'DetectionRequest',
+    'DetectionResult',
+    'DetectionResultSummary',
+    'DiagnosticsInfo',
     'EntireDetectResponse',
+    'ErrorResponse',
     'LastDetectResponse',
+    'Model',
+    'ModelInfo',
+    'ModelList',
+    'ModelSnapshot',
+    'ModelState',
     'TimeSeriesPoint',
+    'VariableState',
+    'AlignMode',
     'AnomalyDetectorErrorCodes',
+    'DetectionStatus',
+    'FillNAMethod',
+    'ModelStatus',
     'TimeGranularity',
 ]

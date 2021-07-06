@@ -9,27 +9,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?op=summary
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/custom/models?op=summary
   response:
     body:
-      string: '{"summary": {"count": 412, "limit": 5000, "lastUpdatedDateTime": "2021-03-03T23:16:53Z"}}'
+      string: '{"summary": {"count": 286, "limit": 20000, "lastUpdatedDateTime": "2021-05-11T02:40:25Z"}}'
     headers:
       apim-request-id:
-      - 1e9d951c-c526-45d5-9ec6-edd93208b974
+      - a26a1f6b-74d0-4c4e-ba9e-519b30bdcaa2
       content-length:
-      - '83'
+      - '84'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Mar 2021 23:16:53 GMT
+      - Tue, 11 May 2021 02:40:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '41'
+      - '156'
     status:
       code: 200
       message: OK

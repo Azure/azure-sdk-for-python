@@ -24,14 +24,14 @@ stages:
 
             pool:
               name: azsdk-pool-mms-ubuntu-1804-general
-              vmImage: MMSUbuntu18.04
+              vmImage: MMSUbuntu20.04
 
             strategy:
               runOnce:
                 deploy:
                   steps:
                     - checkout: self
-
+                    - template: /eng/common/pipelines/templates/steps/retain-run.yml
                     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
                       parameters:
                         PackageName: "azure-template"
@@ -56,7 +56,7 @@ stages:
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-python
                         WorkingDirectory: $(System.DefaultWorkingDirectory)
-                    
+
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
@@ -66,7 +66,7 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                vmImage: MMSUbuntu20.04
 
               strategy:
                 runOnce:
@@ -150,8 +150,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                name: azsdk-pool-mms-ubuntu-2004-general
+                vmImage: MMSUbuntu20.04
 
               variables:
                 CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview','content_folder':'docs-ref-services/preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest','content_folder':'docs-ref-services/latest'}]}"
@@ -161,7 +161,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
-                      
+
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                         workingDirectory: $(Pipeline.Workspace)
@@ -179,13 +179,11 @@ stages:
                           ReleaseSha: $(Build.SourceVersion)
                           RepoId: Azure/azure-sdk-for-python
                           WorkingDirectory: $(System.DefaultWorkingDirectory)
-                          TargetDocRepo: 'MicrosoftDocs/azure-docs-sdk-python'
                           TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
                           TargetDocRepoName: ${{parameters.TargetDocRepoName}}
                           PRBranchName: onboarding-${{artifact.name}}-$(Build.BuildId)
                           ArtifactName: ${{artifact.name}}
                           Language: 'python'
-                          ServiceDirectory: ${{ parameters.ServiceDirectory }}
                           DocRepoDestinationPath: 'docs-ref-services/'
                           GHReviewersVariable: 'OwningGHUser'
                           CIConfigs: $(CIConfigs)
@@ -199,8 +197,8 @@ stages:
               dependsOn: PublishPackage
 
               pool:
-                name: azsdk-pool-mms-ubuntu-1804-general
-                vmImage: MMSUbuntu18.04
+                name: azsdk-pool-mms-ubuntu-2004-general
+                vmImage: MMSUbuntu20.04
 
               strategy:
                 runOnce:
@@ -228,7 +226,7 @@ stages:
     - stage: SmokeTest_Release_Packages
       displayName: Smoke Test Release Packages
       jobs:
-        - template: /eng/pipelines/templates/jobs/smoke-test.yml
+        - template: /eng/pipelines/templates/jobs/smoke.tests.yml
           parameters:
             Daily: false
             ArtifactName: ${{ parameters.ArtifactName }}
@@ -240,10 +238,10 @@ stages:
     jobs:
     - job: PublishPackages
       displayName: "Publish package to daily feed"
-      condition: and(eq(variables['SetDevVersion'], 'true'), eq(variables['System.TeamProject'], 'internal'))
+      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
         name: azsdk-pool-mms-ubuntu-1804-general
-        vmImage: MMSUbuntu18.04
+        vmImage: MMSUbuntu20.04
       steps:
       - checkout: none
       - download: current

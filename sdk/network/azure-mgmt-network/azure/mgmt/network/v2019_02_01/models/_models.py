@@ -102,58 +102,55 @@ class ApplicationGateway(Resource):
     :vartype operational_state: str or
      ~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayOperationalState
     :param gateway_ip_configurations: Subnets of the application gateway resource. For default
-     limits, see `Application Gateway limits <https://docs.microsoft.com/azure/azure-subscription-
-     service-limits#application-gateway-limits>`_.
+     limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type gateway_ip_configurations:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayIPConfiguration]
     :param authentication_certificates: Authentication certificates of the application gateway
      resource. For default limits, see `Application Gateway limits
-     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-
-     limits>`_.
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type authentication_certificates:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayAuthenticationCertificate]
     :param trusted_root_certificates: Trusted Root certificates of the application gateway
      resource. For default limits, see `Application Gateway limits
-     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-
-     limits>`_.
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type trusted_root_certificates:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayTrustedRootCertificate]
     :param ssl_certificates: SSL certificates of the application gateway resource. For default
-     limits, see `Application Gateway limits <https://docs.microsoft.com/azure/azure-subscription-
-     service-limits#application-gateway-limits>`_.
+     limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type ssl_certificates:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewaySslCertificate]
     :param frontend_ip_configurations: Frontend IP addresses of the application gateway resource.
-     For default limits, see `Application Gateway limits <https://docs.microsoft.com/azure/azure-
-     subscription-service-limits#application-gateway-limits>`_.
+     For default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type frontend_ip_configurations:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayFrontendIPConfiguration]
     :param frontend_ports: Frontend ports of the application gateway resource. For default limits,
-     see `Application Gateway limits <https://docs.microsoft.com/azure/azure-subscription-service-
-     limits#application-gateway-limits>`_.
+     see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type frontend_ports:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayFrontendPort]
     :param probes: Probes of the application gateway resource.
     :type probes: list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayProbe]
     :param backend_address_pools: Backend address pool of the application gateway resource. For
-     default limits, see `Application Gateway limits <https://docs.microsoft.com/azure/azure-
-     subscription-service-limits#application-gateway-limits>`_.
+     default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type backend_address_pools:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayBackendAddressPool]
     :param backend_http_settings_collection: Backend http settings of the application gateway
      resource. For default limits, see `Application Gateway limits
-     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-
-     limits>`_.
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type backend_http_settings_collection:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayBackendHttpSettings]
     :param http_listeners: Http listeners of the application gateway resource. For default limits,
-     see `Application Gateway limits <https://docs.microsoft.com/azure/azure-subscription-service-
-     limits#application-gateway-limits>`_.
+     see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type http_listeners:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayHttpListener]
     :param url_path_maps: URL path map of the application gateway resource. For default limits, see
-     `Application Gateway limits <https://docs.microsoft.com/azure/azure-subscription-service-
-     limits#application-gateway-limits>`_.
+     `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type url_path_maps: list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayUrlPathMap]
     :param request_routing_rules: Request routing rules of the application gateway resource.
     :type request_routing_rules:
@@ -162,8 +159,8 @@ class ApplicationGateway(Resource):
     :type rewrite_rule_sets:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayRewriteRuleSet]
     :param redirect_configurations: Redirect configurations of the application gateway resource.
-     For default limits, see `Application Gateway limits <https://docs.microsoft.com/azure/azure-
-     subscription-service-limits#application-gateway-limits>`_.
+     For default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :type redirect_configurations:
      list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayRedirectConfiguration]
     :param web_application_firewall_configuration: Web application firewall configuration.
@@ -1637,7 +1634,7 @@ class ApplicationGatewayRewriteRuleCondition(msrest.serialization.Model):
     :param pattern: The pattern, either fixed string or regular expression, that evaluates the
      truthfulness of the condition.
     :type pattern: str
-    :param ignore_case: Setting this paramter to truth value with force the pattern to do a case
+    :param ignore_case: Setting this parameter to truth value with force the pattern to do a case
      in-sensitive comparison.
     :type ignore_case: bool
     :param negate: Setting this value as truth will force to check the negation of the condition
@@ -4186,7 +4183,7 @@ class ContainerNetworkInterface(SubResource):
      ~azure.mgmt.network.v2019_02_01.models.ContainerNetworkInterfaceConfiguration
     :param container: Reference to the container to which this container network interface is
      attached.
-    :type container: ~azure.mgmt.network.v2019_02_01.models.SubResource
+    :type container: ~azure.mgmt.network.v2019_02_01.models.Container
     :param ip_configurations: Reference to the ip configuration on this container nic.
     :type ip_configurations:
      list[~azure.mgmt.network.v2019_02_01.models.ContainerNetworkInterfaceIpConfiguration]
@@ -4205,7 +4202,7 @@ class ContainerNetworkInterface(SubResource):
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'container_network_interface_configuration': {'key': 'properties.containerNetworkInterfaceConfiguration', 'type': 'ContainerNetworkInterfaceConfiguration'},
-        'container': {'key': 'properties.container', 'type': 'SubResource'},
+        'container': {'key': 'properties.container', 'type': 'Container'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[ContainerNetworkInterfaceIpConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -10596,8 +10593,8 @@ class PacketCaptureStorageLocation(msrest.serialization.Model):
     :param storage_id: The ID of the storage account to save the packet capture session. Required
      if no local file path is provided.
     :type storage_id: str
-    :param storage_path: The URI of the storage path to save the packet capture. Must be a well-
-     formed URI describing the location to save the packet capture.
+    :param storage_path: The URI of the storage path to save the packet capture. Must be a
+     well-formed URI describing the location to save the packet capture.
     :type storage_path: str
     :param file_path: A valid local path on the targeting VM. Must include the name of the capture
      file (*.cap). For linux virtual machine it must start with /var/captures. Required if no
@@ -13870,8 +13867,8 @@ class VirtualNetworkPeering(SubResource):
     :type use_remote_gateways: bool
     :param remote_virtual_network: The reference of the remote virtual network. The remote virtual
      network can be in the same or different region (preview). See here to register for the preview
-     and learn more (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-
-     peering).
+     and learn more
+     (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-peering).
     :type remote_virtual_network: ~azure.mgmt.network.v2019_02_01.models.SubResource
     :param remote_address_space: The reference of the remote virtual network address space.
     :type remote_address_space: ~azure.mgmt.network.v2019_02_01.models.AddressSpace

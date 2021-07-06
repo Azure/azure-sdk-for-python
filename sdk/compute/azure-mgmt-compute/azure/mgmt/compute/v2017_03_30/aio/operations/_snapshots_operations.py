@@ -48,7 +48,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: "_models.Snapshot",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Snapshot":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         error_map = {
@@ -105,7 +105,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: "_models.Snapshot",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Snapshot"]:
         """Creates or updates a snapshot.
 
@@ -119,8 +119,8 @@ class SnapshotsOperations:
         :type snapshot: ~azure.mgmt.compute.v2017_03_30.models.Snapshot
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of cls(response)
@@ -178,7 +178,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: "_models.SnapshotUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Snapshot":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
         error_map = {
@@ -235,7 +235,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         snapshot: "_models.SnapshotUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Snapshot"]:
         """Updates (patches) a snapshot.
 
@@ -249,8 +249,8 @@ class SnapshotsOperations:
         :type snapshot: ~azure.mgmt.compute.v2017_03_30.models.SnapshotUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Snapshot or the result of cls(response)
@@ -307,7 +307,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Snapshot":
         """Gets information about a snapshot.
 
@@ -367,7 +367,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -416,7 +416,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Deletes a snapshot.
 
@@ -428,8 +428,8 @@ class SnapshotsOperations:
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -484,7 +484,7 @@ class SnapshotsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotList"]:
         """Lists snapshots under a resource group.
 
@@ -553,7 +553,7 @@ class SnapshotsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SnapshotList"]:
         """Lists snapshots under a subscription.
 
@@ -622,7 +622,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         grant_access_data: "_models.GrantAccessData",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.AccessUri"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.AccessUri"]]
         error_map = {
@@ -677,7 +677,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         grant_access_data: "_models.GrantAccessData",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.AccessUri"]:
         """Grants access to a snapshot.
 
@@ -692,8 +692,8 @@ class SnapshotsOperations:
         :type grant_access_data: ~azure.mgmt.compute.v2017_03_30.models.GrantAccessData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AccessUri or the result of cls(response)
@@ -750,7 +750,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -799,7 +799,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Revokes access to a snapshot.
 
@@ -811,8 +811,8 @@ class SnapshotsOperations:
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)

@@ -1,5 +1,46 @@
 # Release History
 
+## 18.0.0 (2021-05-13)
+
+**Features**
+
+  - Model StorageAccountUpdateParameters has a new parameter allow_cross_tenant_replication
+  - Model BlobContainer has a new parameter immutable_storage_with_versioning
+  - Model FileShareItem has a new parameter lease_state
+  - Model FileShareItem has a new parameter lease_duration
+  - Model FileShareItem has a new parameter lease_status
+  - Model FileShareItem has a new parameter signed_identifiers
+  - Model FileShare has a new parameter lease_state
+  - Model FileShare has a new parameter lease_duration
+  - Model FileShare has a new parameter lease_status
+  - Model FileShare has a new parameter signed_identifiers
+  - Model StorageAccountCreateParameters has a new parameter allow_cross_tenant_replication
+  - Model AzureFilesIdentityBasedAuthentication has a new parameter default_share_permission
+  - Model StorageAccount has a new parameter allow_cross_tenant_replication
+  - Model ListContainerItem has a new parameter immutable_storage_with_versioning
+  - Added operation BlobContainersOperations.begin_object_level_worm
+  - Added operation FileSharesOperations.lease
+
+**Breaking changes**
+
+  - Operation FileSharesOperations.delete has a new signature
+  - Model BlobInventoryPolicySchema no longer has parameter destination
+  - Model BlobInventoryPolicyRule has a new required parameter destination
+  - Model BlobInventoryPolicyDefinition has a new signature
+
+## 17.1.0 (2021-04-13)
+
+**Features**
+
+  - Model StorageAccountKey has a new parameter creation_time
+  - Model StorageAccountUpdateParameters has a new parameter sas_policy
+  - Model StorageAccountUpdateParameters has a new parameter key_policy
+  - Model StorageAccountCreateParameters has a new parameter sas_policy
+  - Model StorageAccountCreateParameters has a new parameter key_policy
+  - Model StorageAccount has a new parameter sas_policy
+  - Model StorageAccount has a new parameter key_policy
+  - Model StorageAccount has a new parameter key_creation_time
+
 ## 17.0.0 (2021-02-20)
 
 **Features**
@@ -68,7 +109,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -76,13 +117,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 10.0.0 (2020-05-07)
 

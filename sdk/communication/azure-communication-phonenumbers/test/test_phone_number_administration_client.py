@@ -2,7 +2,10 @@ import os
 import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
 from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
-from _shared.utils import create_token_credential
+from _shared.utils import (
+    create_token_credential, 
+    get_http_logging_policy
+)
 from azure.communication.phonenumbers import (
     PhoneNumberAssignmentType, 
     PhoneNumberCapabilities, 
@@ -16,9 +19,8 @@ from phone_number_helper import PhoneNumberUriReplacer
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS = True
-SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON = "Temporarily skipping test"
-
+SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
+INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 
 class PhoneNumbersClientTest(CommunicationTestCase):
     def setUp(self):
@@ -27,9 +29,12 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             self.phone_number = "sanitized"
             self.country_code = "US"
         else:
-            self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
-        self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
+        self.phone_number_client = PhoneNumbersClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         self.recording_processors.extend([
             BodyReplacerProcessor(
                 keys=["id", "token", "phoneNumber"]
@@ -40,7 +45,11 @@ class PhoneNumbersClientTest(CommunicationTestCase):
     def test_list_purchased_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         phone_numbers = phone_number_client.list_purchased_phone_numbers()
         assert phone_numbers.next()
     
@@ -51,7 +60,11 @@ class PhoneNumbersClientTest(CommunicationTestCase):
     def test_get_purchased_phone_number_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
     
@@ -59,11 +72,15 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
-    @pytest.mark.skipif(SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS, reason=SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON)
+    @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_search_available_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
@@ -77,7 +94,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         )
         assert poller.result()
 
-    @pytest.mark.skipif(SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS, reason=SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON)
+    @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
@@ -92,34 +109,50 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         )
         assert poller.result()
 
+    @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_update_phone_number_capabilities_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
+        current_phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
+        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
         poller = phone_number_client.begin_update_phone_number_capabilities(
             self.phone_number,
-            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-            PhoneNumberCapabilityType.INBOUND,
+            sms_capabilities,
+            calling_capabilities,
             polling = True
         )
-        poller.result()
+        assert poller.result()
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
+    @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_update_phone_number_capabilities(self):
+        current_phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
+        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
             self.phone_number,
-            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-            PhoneNumberCapabilityType.INBOUND,
+            sms_capabilities,
+            calling_capabilities,
             polling = True
         )
-        poller.result()
+        assert poller.result()
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_phone_number_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
@@ -156,3 +189,47 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         purchase_poller.result()
         release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+    
+    def test_get_purchased_phone_number_with_invalid_phone_number(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = "+14255550123"
+
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.get_purchased_phone_number(phone_number)
+        
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None
+    
+    def test_search_available_phone_numbers_with_invalid_country_code(self):
+        capabilities = PhoneNumberCapabilities(
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+        )
+
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.begin_search_available_phone_numbers(
+                "XX",
+                PhoneNumberType.TOLL_FREE,
+                PhoneNumberAssignmentType.APPLICATION,
+                capabilities,
+                polling = True
+            )
+
+    def test_update_phone_number_capabilities_with_invalid_phone_number(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = "+14255550123"
+
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.begin_update_phone_number_capabilities(
+                phone_number,
+                PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                PhoneNumberCapabilityType.INBOUND,
+                polling = True
+            )
+        
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None

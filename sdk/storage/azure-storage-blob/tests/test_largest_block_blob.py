@@ -19,12 +19,17 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
+from azure.storage.blob._shared.uploads import SubStream
+
 TEST_BLOB_PREFIX = 'largestblob'
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 LARGEST_SINGLE_UPLOAD_SIZE = 5000 * 1024 * 1024
+
+LARGE_BLOCK_SIZE = 100 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
 if platform.python_implementation() == 'PyPy':
@@ -205,6 +210,31 @@ class StorageLargestBlockBlobTest(StorageTestCase):
             blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
+        self._teardown(FILE_PATH)
+
+    def test_substream_for_single_thread_upload_large_block(self):
+        FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
+        with open(FILE_PATH, 'wb') as stream:
+            largeStream = LargeStream(LARGE_BLOCK_SIZE, 4 * 1024 * 1024)
+            chunk = largeStream.read()
+            while chunk:
+                stream.write(chunk)
+                chunk = largeStream.read()
+
+        with open(FILE_PATH, 'rb') as stream:
+            substream = SubStream(stream, 0, 2 * 1024 * 1024, None)
+            # this is to mimic stage large block: SubStream.read() is getting called by http client
+            data1 = substream.read(2 * 1024 * 1024)
+            substream.read(2 * 1024 * 1024)
+            substream.read(2 * 1024 * 1024)
+
+            # this is to mimic rewinding request body after connection error
+            substream.seek(0)
+
+            # this is to mimic retry: stage that large block from beginning
+            data2 = substream.read(2 * 1024 * 1024)
+
+            self.assertEqual(data1, data2)
         self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only

@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -12,13 +11,10 @@ trigger:
     include:
     - sdk/tables/
     - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -28,9 +24,6 @@ pr:
     include:
     - sdk/tables/
     - sdk/core/
-    - tools/
-    - eng/
-
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -39,7 +32,4 @@ extends:
     Artifacts:
     - name: azure-data-tables
       safeName: azuredatatables
-    - name: azure-data-nspkg
-      safeName: azuredatanspkg
-      skipVerifyChangeLog: true
 

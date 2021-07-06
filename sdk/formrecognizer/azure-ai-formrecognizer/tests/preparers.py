@@ -25,6 +25,8 @@ FormRecognizerPreparer = functools.partial(
     formrecognizer_multipage_storage_container_sas_url="container_sas_url",
     formrecognizer_multipage_storage_container_sas_url_2="container_sas_url",
     formrecognizer_selection_mark_storage_container_sas_url="container_sas_url",
+    formrecognizer_table_variable_rows_container_sas_url="container_sas_url",
+    formrecognizer_table_fixed_rows_container_sas_url="container_sas_url",
     formrecognizer_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname",
     formrecognizer_region="region"
 )

@@ -17,8 +17,8 @@ from typing import (
 import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
-    import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
+from ._generated._microsoft_azure_metrics_advisor_restapi_open_ap_iv2 \
+    import MicrosoftAzureMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
     AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
@@ -26,7 +26,7 @@ from ._generated.models import (
     AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed,
     AzureDataExplorerDataFeed as _AzureDataExplorerDataFeed,
     AzureTableDataFeed as _AzureTableDataFeed,
-    HttpRequestDataFeed as _HttpRequestDataFeed,
+    AzureLogAnalyticsDataFeed as _AzureLogAnalyticsDataFeed,
     InfluxDBDataFeed as _InfluxDBDataFeed,
     MySqlDataFeed as _MySqlDataFeed,
     PostgreSqlDataFeed as _PostgreSqlDataFeed,
@@ -34,14 +34,14 @@ from ._generated.models import (
     SQLServerDataFeed as _SQLServerDataFeed,
     AzureDataLakeStorageGen2DataFeed as _AzureDataLakeStorageGen2DataFeed,
     AzureDataLakeStorageGen2DataFeedPatch as _AzureDataLakeStorageGen2DataFeedPatch,
-    ElasticsearchDataFeed as _ElasticsearchDataFeed,
-    ElasticsearchDataFeedPatch as _ElasticsearchDataFeedPatch,
+    AzureEventHubsDataFeed as _AzureEventHubsDataFeed,
+    AzureEventHubsDataFeedPatch as _AzureEventHubsDataFeedPatch,
     AzureApplicationInsightsDataFeedPatch as _AzureApplicationInsightsDataFeedPatch,
     AzureBlobDataFeedPatch as _AzureBlobDataFeedPatch,
     AzureCosmosDBDataFeedPatch as _AzureCosmosDBDataFeedPatch,
     AzureDataExplorerDataFeedPatch as _AzureDataExplorerDataFeedPatch,
     AzureTableDataFeedPatch as _AzureTableDataFeedPatch,
-    HttpRequestDataFeedPatch as _HttpRequestDataFeedPatch,
+    AzureLogAnalyticsDataFeedPatch as _AzureLogAnalyticsDataFeedPatch,
     InfluxDBDataFeedPatch as _InfluxDBDataFeedPatch,
     MySqlDataFeedPatch as _MySqlDataFeedPatch,
     PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
@@ -60,6 +60,7 @@ from ._helpers import (
     construct_data_feed_dict,
     convert_datetime,
     get_authentication_policy,
+    convert_to_datasource_credential,
 )
 from .models._models import (
     DataFeed,
@@ -68,19 +69,24 @@ from .models._models import (
     AnomalyAlertConfiguration,
     AnomalyDetectionConfiguration,
     DataFeedIngestionProgress,
-    AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed,
-    AzureTableDataFeed,
-    HttpRequestDataFeed,
-    InfluxDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    SQLServerDataFeed,
-    MongoDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    ElasticsearchDataFeed
+    AzureApplicationInsightsDataFeedSource,
+    AzureBlobDataFeedSource,
+    AzureCosmosDbDataFeedSource,
+    AzureDataExplorerDataFeedSource,
+    AzureTableDataFeedSource,
+    AzureLogAnalyticsDataFeedSource,
+    InfluxDbDataFeedSource,
+    MySqlDataFeedSource,
+    PostgreSqlDataFeedSource,
+    SqlServerDataFeedSource,
+    MongoDbDataFeedSource,
+    AzureDataLakeStorageGen2DataFeedSource,
+    AzureEventHubsDataFeedSource,
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault,
+    DatasourceCredential,
 )
 
 if TYPE_CHECKING:
@@ -98,19 +104,26 @@ if TYPE_CHECKING:
     from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 
 DataFeedSourceUnion = Union[
-    AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed,
-    AzureTableDataFeed,
-    HttpRequestDataFeed,
-    InfluxDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    SQLServerDataFeed,
-    MongoDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    ElasticsearchDataFeed
+    AzureApplicationInsightsDataFeedSource,
+    AzureBlobDataFeedSource,
+    AzureCosmosDbDataFeedSource,
+    AzureDataExplorerDataFeedSource,
+    AzureTableDataFeedSource,
+    AzureLogAnalyticsDataFeedSource,
+    InfluxDbDataFeedSource,
+    MySqlDataFeedSource,
+    PostgreSqlDataFeedSource,
+    SqlServerDataFeedSource,
+    MongoDbDataFeedSource,
+    AzureDataLakeStorageGen2DataFeedSource,
+    AzureEventHubsDataFeedSource,
+]
+
+DatasourceCredentialUnion = Union[
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault,
 ]
 
 DATA_FEED = {
@@ -120,13 +133,13 @@ DATA_FEED = {
     "AzureCosmosDB": _AzureCosmosDBDataFeed,
     "AzureDataExplorer": _AzureDataExplorerDataFeed,
     "AzureTable": _AzureTableDataFeed,
-    "HttpRequest": _HttpRequestDataFeed,
+    "AzureLogAnalytics": _AzureLogAnalyticsDataFeed,
     "InfluxDB": _InfluxDBDataFeed,
     "MySql": _MySqlDataFeed,
     "PostgreSql": _PostgreSqlDataFeed,
     "MongoDB": _MongoDBDataFeed,
     "AzureDataLakeStorageGen2": _AzureDataLakeStorageGen2DataFeed,
-    "Elasticsearch": _ElasticsearchDataFeed
+    "AzureEventHubs": _AzureEventHubsDataFeed
 }
 
 
@@ -137,13 +150,13 @@ DATA_FEED_PATCH = {
     "AzureCosmosDB": _AzureCosmosDBDataFeedPatch,
     "AzureDataExplorer": _AzureDataExplorerDataFeedPatch,
     "AzureTable": _AzureTableDataFeedPatch,
-    "HttpRequest": _HttpRequestDataFeedPatch,
+    "AzureEventHubs": _AzureEventHubsDataFeedPatch,
     "InfluxDB": _InfluxDBDataFeedPatch,
     "MySql": _MySqlDataFeedPatch,
     "PostgreSql": _PostgreSqlDataFeedPatch,
     "MongoDB": _MongoDBDataFeedPatch,
     "AzureDataLakeStorageGen2": _AzureDataLakeStorageGen2DataFeedPatch,
-    "Elasticsearch": _ElasticsearchDataFeedPatch
+    "AzureLogAnalytics": _AzureLogAnalyticsDataFeedPatch
 }
 
 
@@ -269,10 +282,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param str name: Name for the data feed.
         :param source: The source of the data feed
-        :type source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
+        :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
         :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
         :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
             ~azure.ai.metricsadvisor.models.DataFeedGranularity]
@@ -282,8 +295,19 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param ingestion_settings: The data feed ingestions settings. Can be passed as a datetime to use for the
             ingestion begin time or as a DataFeedIngestionSettings object if additional configuration is needed.
         :type ingestion_settings: Union[~datetime.datetime, ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings]
-        :keyword options: Data feed options.
-        :paramtype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+        :keyword list[str] admins: Data feed administrators.
+        :keyword str data_feed_description: Data feed description.
+        :keyword missing_data_point_fill_settings: The fill missing point type and value.
+        :paramtype missing_data_point_fill_settings:
+            ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
+        :keyword rollup_settings: The rollup settings.
+        :paramtype rollup_settings:
+            ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
+        :keyword list[str] viewers: Data feed viewers.
+        :keyword access_mode: Data feed access mode. Possible values include:
+            "Private", "Public". Default value: "Private".
+        :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
+        :keyword str action_link_template: action link for alert.
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -298,7 +322,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create a data feed
         """
 
-        options = kwargs.pop("options", None)
+        admins = kwargs.pop('admins', None)
+        data_feed_description = kwargs.pop('data_feed_description', None)
+        missing_data_point_fill_settings = kwargs.pop('missing_data_point_fill_settings', None)
+        rollup_settings = kwargs.pop('rollup_settings', None)
+        viewers = kwargs.pop('viewers', None)
+        access_mode = kwargs.pop('access_mode', "Private")
+        action_link_template = kwargs.pop('action_link_template', None)
         data_feed_type = DATA_FEED[source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
@@ -307,7 +337,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             granularity=granularity,
             schema=schema,
             ingestion_settings=ingestion_settings,
-            options=options
+            admins=admins,
+            data_feed_description=data_feed_description,
+            missing_data_point_fill_settings=missing_data_point_fill_settings,
+            rollup_settings=rollup_settings,
+            viewers=viewers,
+            access_mode=access_mode,
+            action_link_template=action_link_template
         )
 
         response_headers = self._client.create_data_feed(  # type: ignore
@@ -595,12 +631,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def delete_alert_configuration(self, alert_configuration_id, **kwargs):
-        # type: (str, Any) -> None
+    def delete_alert_configuration(self, *alert_configuration_id, **kwargs):
+        # type: (*str, Any) -> None
         """Delete an anomaly alert configuration by its ID.
 
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
+        :param str alert_configuration_id: anomaly alert configuration unique id.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -614,16 +649,17 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete an anomaly alert configuration by its ID
         """
+        if len(alert_configuration_id) != 1:
+            raise TypeError("Alert configuration requires exactly one id.")
 
-        self._client.delete_anomaly_alerting_configuration(alert_configuration_id, **kwargs)
+        self._client.delete_anomaly_alerting_configuration(alert_configuration_id[0], **kwargs)
 
     @distributed_trace
-    def delete_detection_configuration(self, detection_configuration_id, **kwargs):
-        # type: (str, Any) -> None
+    def delete_detection_configuration(self, *detection_configuration_id, **kwargs):
+        # type: (*str, Any) -> None
         """Delete an anomaly detection configuration by its ID.
 
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
+        :param str detection_configuration_id: anomaly detection configuration unique id.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -637,16 +673,17 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete an anomaly detection configuration by its ID
         """
+        if len(detection_configuration_id) != 1:
+            raise TypeError("Detection configuration requires exactly one id.")
 
-        self._client.delete_anomaly_detection_configuration(detection_configuration_id, **kwargs)
+        self._client.delete_anomaly_detection_configuration(detection_configuration_id[0], **kwargs)
 
     @distributed_trace
-    def delete_data_feed(self, data_feed_id, **kwargs):
-        # type: (str, Any) -> None
+    def delete_data_feed(self, *data_feed_id, **kwargs):
+        # type: (*str, Any) -> None
         """Delete a data feed by its ID.
 
-        :param data_feed_id: The data feed unique id.
-        :type data_feed_id: str
+        :param str data_feed_id: The data feed unique id.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -660,16 +697,17 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete a data feed by its ID
         """
+        if len(data_feed_id) != 1:
+            raise TypeError("Data feed requires exactly one id.")
 
-        self._client.delete_data_feed(data_feed_id, **kwargs)
+        self._client.delete_data_feed(data_feed_id[0], **kwargs)
 
     @distributed_trace
-    def delete_hook(self, hook_id, **kwargs):
-        # type: (str, Any) -> None
+    def delete_hook(self, *hook_id, **kwargs):
+        # type: (*str, Any) -> None
         """Delete a web or email hook by its ID.
 
-        :param hook_id: Hook unique ID.
-        :type hook_id: str
+        :param str hook_id: Hook unique ID.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -683,14 +721,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Delete a hook by its ID
         """
+        if len(hook_id) != 1:
+            raise TypeError("Hook requires exactly one id.")
 
-        self._client.delete_hook(hook_id, **kwargs)
+        self._client.delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace
     def update_data_feed(
             self, data_feed,  # type: Union[str, DataFeed]
             **kwargs  # type: Any
-    ):  # type: (...) -> None
+    ):  # type: (...) -> DataFeed
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -719,12 +759,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword fill_type: The type of fill missing point for anomaly detection. Possible
             values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
             "SmartFilling".
-        :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
+        :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
         :keyword float custom_fill_value: The value of fill missing point for anomaly detection
             if "CustomValue" fill type is specified.
-        :keyword list[str] admin_emails: Data feed administrator emails.
+        :keyword list[str] admins: Data feed administrators.
         :keyword str data_feed_description: Data feed description.
-        :keyword list[str] viewer_emails: Data feed viewer emails.
+        :keyword list[str] viewers: Data feed viewers.
         :keyword access_mode: Data feed access mode. Possible values include:
             "Private", "Public". Default value: "Private".
         :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -732,11 +772,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword status: Data feed status. Possible values include: "Active", "Paused".
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword source: The source of the data feed for update
-        :paramtype source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
-        :rtype: None
+        :paramtype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource,
+            AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource,
+            AzureTableDataFeedSource, AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource,
+            PostgreSqlDataFeedSource, SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -766,8 +806,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
         update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
         update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
-        update_kwargs["admins"] = kwargs.pop("admin_emails", unset)
-        update_kwargs["viewers"] = kwargs.pop("viewer_emails", unset)
+        update_kwargs["admins"] = kwargs.pop("admins", unset)
+        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
         update_kwargs["status"] = kwargs.pop("status", unset)
         update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
         update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
@@ -783,7 +823,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
             data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
 
-        return self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        return DataFeed._from_generated(self._client.update_data_feed(data_feed_id, data_feed_patch, **kwargs))
 
     @distributed_trace
     def update_alert_configuration(
@@ -791,7 +831,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         alert_configuration,  # type: Union[str, AnomalyAlertConfiguration]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> AnomalyAlertConfiguration
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -808,7 +848,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype cross_metrics_operator: str or
             ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword str description: Anomaly alert configuration description.
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -844,10 +884,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 description=update.pop("description", None),
             )
 
-        return self._client.update_anomaly_alerting_configuration(
-            alert_configuration_id,
-            alert_configuration_patch,
-            **kwargs
+        return AnomalyAlertConfiguration._from_generated(
+            self._client.update_anomaly_alerting_configuration(
+                alert_configuration_id,
+                alert_configuration_patch,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -856,7 +898,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         detection_configuration,  # type: Union[str, AnomalyDetectionConfiguration]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> AnomalyDetectionConfiguration
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -877,7 +919,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword series_detection_conditions: detection configuration for specific series.
         :paramtype series_detection_conditions:
             list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
-        :rtype: None
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -913,10 +955,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 series_detection_conditions=update.pop("seriesOverrideConfigurations", None)
             )
 
-        return self._client.update_anomaly_detection_configuration(
-            detection_configuration_id,
-            detection_config_patch,
-            **kwargs
+        return AnomalyDetectionConfiguration._from_generated(
+            self._client.update_anomaly_detection_configuration(
+                detection_configuration_id,
+                detection_config_patch,
+                **kwargs
+            )
         )
 
     @distributed_trace
@@ -925,7 +969,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         hook,  # type: Union[str, EmailNotificationHook, WebNotificationHook]
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the chosen
         updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
@@ -946,7 +990,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
         :keyword str certificate_password: client certificate password. Only should be passed to update
             WebNotificationHook.
-        :rtype: None
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1005,11 +1051,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                     certificate_password=update.pop("certificatePassword", None)
                 )
 
-        return self._client.update_hook(
+        updated_hook = self._client.update_hook(
             hook_id,
             hook_patch,
             **kwargs
         )
+
+        if updated_hook.hook_type == "Email":
+            return EmailNotificationHook._from_generated(updated_hook)
+        return WebNotificationHook._from_generated(updated_hook)
 
     @distributed_trace
     def list_hooks(
@@ -1060,7 +1110,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :keyword str data_feed_name: filter data feed by its name.
         :keyword data_source_type: filter data feed by its source type.
-        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
+        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
         :keyword granularity_type: filter data feed by its granularity.
         :paramtype granularity_type: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
         :keyword status: filter data feed by its status.
@@ -1207,3 +1257,178 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             skip=skip,
             **kwargs
         )
+
+    @distributed_trace
+    def get_datasource_credential(
+        self,
+        credential_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatasourceCredentialUnion
+        """Get a datasource credential
+
+        :param str credential_id: Data source credential entity unique ID.
+        :return: The datasource credential
+        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
+            ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START get_datasource_credential]
+                :end-before: [END get_datasource_credential]
+                :language: python
+                :dedent: 4
+                :caption: Get a datasource credential by its ID
+        """
+
+        datasource_credential = self._client.get_credential(credential_id, **kwargs)
+        return convert_to_datasource_credential(datasource_credential)
+
+    @distributed_trace
+    def create_datasource_credential(
+            self, datasource_credential,    # type: DatasourceCredentialUnion
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> DatasourceCredentialUnion
+        """Create a new datasource credential.
+
+        :param datasource_credential: The datasource credential to create
+        :type datasource_credential: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :return: The created datasource credential
+        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START create_datasource_credential]
+                :end-before: [END create_datasource_credential]
+                :language: python
+                :dedent: 4
+                :caption: Create a datasource credential
+        """
+
+        datasource_credential_request = None
+        if datasource_credential.credential_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            datasource_credential_request = datasource_credential._to_generated()
+
+        response_headers = self._client.create_credential(  # type: ignore
+            datasource_credential_request,  # type: ignore
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
+        )
+        credential_id = response_headers["Location"].split("credentials/")[1]
+        return self.get_datasource_credential(credential_id)
+
+    @distributed_trace
+    def list_datasource_credentials(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged[DatasourceCredential]
+        """List all credential entities.
+
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :return: Pageable containing datasource credential
+        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
+            ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START list_datasource_credentials]
+                :end-before: [END list_datasource_credentials]
+                :language: python
+                :dedent: 4
+                :caption: List all of the datasource credentials under the account
+        """
+        return self._client.list_credentials(  # type: ignore
+            cls=kwargs.pop(
+                "cls",
+                lambda credentials: [convert_to_datasource_credential(credential) for credential in credentials]),
+            **kwargs
+        )
+
+    @distributed_trace
+    def update_datasource_credential(
+        self,
+        datasource_credential,  # type: DatasourceCredential
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatasourceCredential
+        """Update a datasource credential.
+
+        :param datasource_credential: The new datasource credential object
+        :type datasource_credential: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
+            ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
+            ~azure.ai.metricsadvisor.models.DatasourceServicePrincipalInKeyVault]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START update_datasource_credential]
+                :end-before: [END update_datasource_credential]
+                :language: python
+                :dedent: 4
+                :caption: Update an existing datasource credential
+        """
+
+        datasource_credential_request = None
+        if datasource_credential.credential_type in ["AzureSQLConnectionString",
+            "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV"]:
+            datasource_credential_request = datasource_credential._to_generated_patch()
+
+        updated_datasource_credential = self._client.update_credential( # type: ignore
+            datasource_credential.id,
+            datasource_credential_request,  # type: ignore
+            **kwargs
+        )
+
+        return convert_to_datasource_credential(updated_datasource_credential)
+
+    @distributed_trace
+    def delete_datasource_credential(self, *credential_id, **kwargs):
+        # type: (*str, Any) -> None
+        """Delete a datasource credential by its ID.
+
+        :param str credential_id: Datasource credential unique ID.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_datasource_credentials.py
+                :start-after: [START delete_datasource_credential]
+                :end-before: [END delete_datasource_credential]
+                :language: python
+                :dedent: 4
+                :caption: Delete a datasource credential by its ID
+        """
+        if len(credential_id) != 1:
+            raise TypeError("Credential requires exactly one id.")
+
+        self._client.delete_credential(credential_id=credential_id[0], **kwargs)

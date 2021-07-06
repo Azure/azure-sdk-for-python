@@ -63,13 +63,14 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
@@ -94,7 +95,7 @@ setup(
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
-        "msrest>=0.6.18",
+        "msrest>=0.6.21",
         "cryptography>=2.1.4"
     ],
     extras_require={

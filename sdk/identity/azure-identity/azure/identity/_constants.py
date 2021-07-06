@@ -35,6 +35,7 @@ class EnvironmentVariables:
     AZURE_PASSWORD = "AZURE_PASSWORD"
     USERNAME_PASSWORD_VARS = (AZURE_CLIENT_ID, AZURE_USERNAME, AZURE_PASSWORD)
 
+    AZURE_POD_IDENTITY_TOKEN_URL = "AZURE_POD_IDENTITY_TOKEN_URL"
     IDENTITY_ENDPOINT = "IDENTITY_ENDPOINT"
     IDENTITY_HEADER = "IDENTITY_HEADER"
     IDENTITY_SERVER_THUMBPRINT = "IDENTITY_SERVER_THUMBPRINT"
@@ -43,10 +44,4 @@ class EnvironmentVariables:
     MSI_SECRET = "MSI_SECRET"
 
     AZURE_AUTHORITY_HOST = "AZURE_AUTHORITY_HOST"
-
-
-class Endpoints:
-    # https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
-    IMDS = "http://169.254.169.254/metadata/identity/oauth2/token"
-
-    AAD_OAUTH2_V2_FORMAT = "https://" + KnownAuthorities.AZURE_PUBLIC_CLOUD + "/{}/oauth2/v2.0/token"
+    AZURE_REGIONAL_AUTHORITY_NAME = "AZURE_REGIONAL_AUTHORITY_NAME"

@@ -14,27 +14,27 @@ interactions:
       Content-Type:
       - image/png
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=true
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - e0b43d68-e07e-4aa3-9a86-5d40c1631c41
+      - 8ab4ff69-4958-4620-9f83-0745ee58c13c
       content-length:
       - '0'
       date:
-      - Thu, 18 Mar 2021 03:17:41 GMT
+      - Mon, 10 May 2021 23:52:37 GMT
       operation-location:
-      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyzeResults/e0b43d68-e07e-4aa3-9a86-5d40c1631c41
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/8ab4ff69-4958-4620-9f83-0745ee58c13c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1076'
+      - '1095'
     status:
       code: 202
       message: Accepted
@@ -48,13 +48,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyzeResults/e0b43d68-e07e-4aa3-9a86-5d40c1631c41
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/businessCard/analyzeResults/8ab4ff69-4958-4620-9f83-0745ee58c13c
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2021-03-18T03:17:41Z",
-        "lastUpdatedDateTime": "2021-03-18T03:17:45Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2021-05-10T23:52:37Z",
+        "lastUpdatedDateTime": "2021-05-10T23:52:41Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": -16.693, "width": 4032, "height":
         3024, "unit": "pixel", "lines": [{"text": "Dr. Avery Smith", "boundingBox":
         [416, 1155, 1609, 871, 1638, 993, 444, 1268], "words": [{"text": "Dr.", "boundingBox":
@@ -180,19 +180,19 @@ interactions:
         "#/readResults/0/lines/6/words/5"]}]}}}]}}'
     headers:
       apim-request-id:
-      - de697759-0e90-4c28-9b76-8644feb5e903
+      - bb919451-07ad-42f5-8ed8-91c34de133a9
       content-length:
       - '9029'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 18 Mar 2021 03:17:46 GMT
+      - Mon, 10 May 2021 23:52:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '54'
+      - '19'
     status:
       code: 200
       message: OK

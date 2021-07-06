@@ -41,7 +41,8 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'

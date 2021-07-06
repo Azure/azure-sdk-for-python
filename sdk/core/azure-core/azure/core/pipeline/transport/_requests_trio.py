@@ -42,8 +42,9 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
+from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -54,20 +55,29 @@ class TrioStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the *content-encoding* header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        self.block_size = _get_block_size(response)
+        decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+        internal_response = _get_internal_response(response)
+        if decompress:
+            self.iter_content_func = internal_response.iter_content(self.block_size)
+        else:
+            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
-        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
+        internal_response = _get_internal_response(self.response)
         try:
             try:
                 chunk = await trio.to_thread.run_sync(
@@ -83,22 +93,22 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 raise _ResponseStopIteration()
             return chunk
         except _ResponseStopIteration:
-            self.response.internal_response.close()
+            internal_response.close()
             raise StopAsyncIteration()
         except requests.exceptions.StreamConsumedError:
             raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.internal_response.close()
+            internal_response.close()
             raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:  # type: ignore
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
-        return TrioStreamDownloadGenerator(pipeline, self)
+        return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore

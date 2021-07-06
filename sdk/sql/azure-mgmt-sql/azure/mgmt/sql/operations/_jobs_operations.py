@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class JobsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class JobsOperations(object):
         job_agent_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.JobListResult"]
+        # type: (...) -> Iterable["_models.JobListResult"]
         """Gets a list of jobs.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -67,12 +67,12 @@ class JobsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -133,7 +133,7 @@ class JobsOperations(object):
         job_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Job"
+        # type: (...) -> "_models.Job"
         """Gets a job.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -150,12 +150,12 @@ class JobsOperations(object):
         :rtype: ~azure.mgmt.sql.models.Job
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Job"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Job"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -199,10 +199,10 @@ class JobsOperations(object):
         server_name,  # type: str
         job_agent_name,  # type: str
         job_name,  # type: str
-        parameters,  # type: "models.Job"
+        parameters,  # type: "_models.Job"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Job"
+        # type: (...) -> "_models.Job"
         """Creates or updates a job.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -221,12 +221,12 @@ class JobsOperations(object):
         :rtype: ~azure.mgmt.sql.models.Job
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Job"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Job"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -303,7 +303,7 @@ class JobsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore

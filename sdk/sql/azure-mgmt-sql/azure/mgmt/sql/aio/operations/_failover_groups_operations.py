@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class FailoverGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
-    ) -> "models.FailoverGroup":
+        **kwargs: Any
+    ) -> "_models.FailoverGroup":
         """Gets a failover group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -64,12 +64,12 @@ class FailoverGroupsOperations:
         :rtype: ~azure.mgmt.sql.models.FailoverGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FailoverGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FailoverGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -111,15 +111,15 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: "models.FailoverGroup",
-        **kwargs
-    ) -> Optional["models.FailoverGroup"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.FailoverGroup"]]
+        parameters: "_models.FailoverGroup",
+        **kwargs: Any
+    ) -> Optional["_models.FailoverGroup"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -171,9 +171,9 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: "models.FailoverGroup",
-        **kwargs
-    ) -> AsyncLROPoller["models.FailoverGroup"]:
+        parameters: "_models.FailoverGroup",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Creates or updates a failover group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -187,8 +187,8 @@ class FailoverGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.FailoverGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -196,7 +196,7 @@ class FailoverGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FailoverGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FailoverGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -222,7 +222,14 @@ class FailoverGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'failoverGroupName': self._serialize.url("failover_group_name", failover_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -241,14 +248,14 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -285,7 +292,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a failover group.
 
@@ -298,8 +305,8 @@ class FailoverGroupsOperations:
         :type failover_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -329,7 +336,14 @@ class FailoverGroupsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'failoverGroupName': self._serialize.url("failover_group_name", failover_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -348,15 +362,15 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: "models.FailoverGroupUpdate",
-        **kwargs
-    ) -> Optional["models.FailoverGroup"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.FailoverGroup"]]
+        parameters: "_models.FailoverGroupUpdate",
+        **kwargs: Any
+    ) -> Optional["_models.FailoverGroup"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -405,9 +419,9 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: "models.FailoverGroupUpdate",
-        **kwargs
-    ) -> AsyncLROPoller["models.FailoverGroup"]:
+        parameters: "_models.FailoverGroupUpdate",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Updates a failover group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -421,8 +435,8 @@ class FailoverGroupsOperations:
         :type parameters: ~azure.mgmt.sql.models.FailoverGroupUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -430,7 +444,7 @@ class FailoverGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FailoverGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FailoverGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -456,7 +470,14 @@ class FailoverGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'failoverGroupName': self._serialize.url("failover_group_name", failover_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -474,8 +495,8 @@ class FailoverGroupsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.FailoverGroupListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.FailoverGroupListResult"]:
         """Lists the failover groups in a server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -488,12 +509,12 @@ class FailoverGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.FailoverGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FailoverGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FailoverGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -550,14 +571,14 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
-    ) -> Optional["models.FailoverGroup"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.FailoverGroup"]]
+        **kwargs: Any
+    ) -> Optional["_models.FailoverGroup"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -601,8 +622,8 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.FailoverGroup"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Fails over from the current primary server to this server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -614,8 +635,8 @@ class FailoverGroupsOperations:
         :type failover_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -623,7 +644,7 @@ class FailoverGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FailoverGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FailoverGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -648,7 +669,14 @@ class FailoverGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'failoverGroupName': self._serialize.url("failover_group_name", failover_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -667,14 +695,14 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
-    ) -> Optional["models.FailoverGroup"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.FailoverGroup"]]
+        **kwargs: Any
+    ) -> Optional["_models.FailoverGroup"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FailoverGroup"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2015-05-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -718,8 +746,8 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        **kwargs
-    ) -> AsyncLROPoller["models.FailoverGroup"]:
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.FailoverGroup"]:
         """Fails over from the current primary server to this server. This operation might result in data
         loss.
 
@@ -732,8 +760,8 @@ class FailoverGroupsOperations:
         :type failover_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FailoverGroup or the result of cls(response)
@@ -741,7 +769,7 @@ class FailoverGroupsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FailoverGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FailoverGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -766,7 +794,14 @@ class FailoverGroupsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'failoverGroupName': self._serialize.url("failover_group_name", failover_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

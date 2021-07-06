@@ -27,7 +27,7 @@ class PolicyAssignment(msrest.serialization.Model):
     :param scope: The scope for the policy assignment.
     :type scope: str
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: object
+    :type parameters: any
     :param description: This message will be part of response in case of policy violation.
     :type description: str
     """
@@ -105,11 +105,11 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: object
+    :type policy_rule: any
     :param metadata: The policy definition metadata.
-    :type metadata: object
+    :type metadata: any
     :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: object
+    :type parameters: any
     """
 
     _validation = {

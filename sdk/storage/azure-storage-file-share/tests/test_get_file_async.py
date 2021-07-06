@@ -14,7 +14,7 @@ import uuid
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from azure.storage.fileshare import FileProperties
 from azure.storage.fileshare.aio import (
     ShareFileClient,
@@ -307,6 +307,29 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
+    async def test_download_file_modified(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=self.directory_name + '/' + file_name,
+            credential=storage_account_key,
+            max_single_get_size=38,
+            max_chunk_get_size=38)
+        data = b'hello world python storage test chunks' * 5
+        await file_client.upload_file(data)
+        resp = await file_client.download_file()
+        chunks = resp.chunks()
+        i = 0
+        while i < 4:
+            data += await chunks.__anext__()
+            i += 1
+        await file_client.upload_file(data=data)
+        with self.assertRaises(ResourceModifiedError):
+            data += await chunks.__anext__()
+
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_file_to_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -354,10 +377,16 @@ class StorageGetFileTest(AsyncStorageTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
+        chunk_size_list = list()
         with open(FILE_PATH, 'wb') as stream:
             download = await file_client.download_file()
             async for data in download.chunks():
+                chunk_size_list.append(len(data))
                 stream.write(data)
+
+        for i in range(0, len(chunk_size_list) - 1):
+            self.assertEqual(chunk_size_list[i], self.MAX_CHUNK_GET_SIZE)
+
         # Assert
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()

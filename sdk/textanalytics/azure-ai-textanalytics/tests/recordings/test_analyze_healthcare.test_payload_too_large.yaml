@@ -8513,20 +8513,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Request
         Payload sent is too large to be processed. Limit request size to: 524288"}}}'
     headers:
       apim-request-id:
-      - 7ccbb876-ba42-4578-b2c3-27341b5b1ad6
+      - e1f31c5f-e9e8-47ca-891d-ba76e4f4f1ab
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 19:49:48 GMT
+      - Wed, 23 Jun 2021 01:46:01 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -8534,7 +8534,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '22'
+      - '40'
     status:
       code: 413
       message: Payload Too Large

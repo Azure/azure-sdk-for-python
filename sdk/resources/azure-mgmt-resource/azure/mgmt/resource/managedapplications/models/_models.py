@@ -138,9 +138,9 @@ class Application(GenericResource):
     :type application_definition_id: str
     :param parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".
@@ -261,10 +261,10 @@ class ApplicationDefinition(GenericResource):
     :type package_file_uri: str
     :param main_template: The inline main template json which has resources to be provisioned. It
      can be a JObject or well-formed JSON string.
-    :type main_template: object
+    :type main_template: any
     :param create_ui_definition: The createUiDefinition json for the backing template with
      Microsoft.Solutions/applications resource. It can be a JObject or well-formed JSON string.
-    :type create_ui_definition: object
+    :type create_ui_definition: any
     """
 
     _validation = {
@@ -390,9 +390,9 @@ class ApplicationPatchable(GenericResource):
     :type application_definition_id: str
     :param parameters: Name and value pairs that define the managed application parameters. It can
      be a JObject or a well formed JSON string.
-    :type parameters: object
+    :type parameters: any
     :ivar outputs: Name and value pairs that define the managed application outputs.
-    :vartype outputs: object
+    :vartype outputs: any
     :ivar provisioning_state: The managed application provisioning state. Possible values include:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", "Updating".

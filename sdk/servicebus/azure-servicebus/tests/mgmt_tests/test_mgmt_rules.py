@@ -48,8 +48,9 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             "@param": datetime(2020, 7, 5, 11, 12, 13),
         })
 
-        sql_filter = SqlRuleFilter("Priority = @param1", parameters={
+        sql_filter = SqlRuleFilter("Priority = @param1 AND Level = @param2", parameters={
             "@param1": "str1",
+            "@param2": 1
         })
 
         bool_filter = TrueRuleFilter()
@@ -75,8 +76,9 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_2, filter=sql_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
-            assert rule_desc.filter.sql_expression == "Priority = @param1"
+            assert rule_desc.filter.sql_expression == "Priority = @param1 AND Level = @param2"
             assert rule_desc.filter.parameters["@param1"] == "str1"
+            assert rule_desc.filter.parameters["@param2"] == 1
 
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_3, filter=bool_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
@@ -165,10 +167,24 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert rule_desc.filter.correlation_id == 'testcid'
             assert rule_desc.action.sql_expression == "SET Priority = 'low'"
 
+            mgmt_service.update_rule(
+                topic_description.name,
+                subscription_description.name,
+                rule_desc,
+                filter=CorrelationRuleFilter(correlation_id='updatedcid'),
+                action=None
+            )
+
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
+            assert type(rule_desc.filter) == CorrelationRuleFilter
+            assert rule_desc.filter.correlation_id == 'updatedcid'
+            assert rule_desc.action == None
+
         finally:
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -299,10 +315,24 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             assert rule_desc.filter.correlation_id == 'testcid'
             assert rule_desc.action.sql_expression == "SET Priority = 'low'"
 
+            mgmt_service.update_rule(
+                topic_description.name,
+                subscription_description.name,
+                dict(rule_desc),
+                filter=CorrelationRuleFilter(correlation_id='updatedcid'),
+                action=None
+            )
+
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
+            assert type(rule_desc.filter) == CorrelationRuleFilter
+            assert rule_desc.filter.correlation_id == 'updatedcid'
+            assert rule_desc.action == None
+
         finally:
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

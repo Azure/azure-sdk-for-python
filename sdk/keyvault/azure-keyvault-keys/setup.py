@@ -50,15 +50,16 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
+    include_package_data=True,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azurekeyvault@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",

@@ -45,7 +45,7 @@ class StaticSitesOperations:
         self,
         location: str,
         static_sites_workflow_preview_request: "_models.StaticSitesWorkflowPreviewRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSitesWorkflowPreview":
         """Generates a preview workflow file for the static site.
 
@@ -96,7 +96,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSitesWorkflowPreview', pipeline_response)
@@ -109,7 +109,7 @@ class StaticSitesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteCollection"]:
         """Get all Static Sites for a subscription.
 
@@ -165,7 +165,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -179,7 +179,7 @@ class StaticSitesOperations:
     def get_static_sites_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteCollection"]:
         """Gets all static sites in the specified resource group.
 
@@ -238,7 +238,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -253,7 +253,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteARMResource":
         """Gets the details of a static site.
 
@@ -299,7 +299,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteARMResource', pipeline_response)
@@ -315,7 +315,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         static_site_envelope: "_models.StaticSiteARMResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteARMResource":
         """Creates a new static site in an existing resource group, or updates an existing static site.
 
@@ -369,7 +369,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -388,7 +388,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a static site.
 
@@ -434,7 +434,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -447,7 +447,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         static_site_envelope: "_models.StaticSitePatchResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteARMResource":
         """Creates a new static site in an existing resource group, or updates an existing static site.
 
@@ -501,7 +501,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -521,7 +521,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         authprovider: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteUserCollection"]:
         """Gets the list of users of a static site.
 
@@ -586,7 +586,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -603,7 +603,7 @@ class StaticSitesOperations:
         name: str,
         authprovider: str,
         userid: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes the user entry from the static site.
 
@@ -655,7 +655,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -670,7 +670,7 @@ class StaticSitesOperations:
         authprovider: str,
         userid: str,
         static_site_user_envelope: "_models.StaticSiteUserARMResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteUserARMResource":
         """Updates a user entry with the listed roles.
 
@@ -730,7 +730,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteUserARMResource', pipeline_response)
@@ -745,7 +745,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteBuildCollection"]:
         """Gets all static site builds for a particular static site.
 
@@ -807,7 +807,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -823,7 +823,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         pr_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteBuildARMResource":
         """Gets the details of a static site build.
 
@@ -872,7 +872,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteBuildARMResource', pipeline_response)
@@ -888,7 +888,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         pr_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a static site build.
 
@@ -937,7 +937,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -951,7 +951,7 @@ class StaticSitesOperations:
         name: str,
         pr_id: str,
         app_settings: "_models.StringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Creates or updates the function app settings of a static site build.
 
@@ -1007,7 +1007,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1027,7 +1027,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         pr_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteFunctionOverviewCollection"]:
         """Gets the functions of a particular static site build.
 
@@ -1092,7 +1092,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1108,7 +1108,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         pr_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Gets the application settings of a static site.
 
@@ -1157,7 +1157,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1177,7 +1177,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         app_settings: "_models.StringDictionary",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Creates or updates the function app settings of a static site.
 
@@ -1230,7 +1230,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1250,7 +1250,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         static_site_user_roles_invitation_envelope: "_models.StaticSiteUserInvitationRequestResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteUserInvitationResponseResource":
         """Creates an invitation link for a user with the role.
 
@@ -1303,7 +1303,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StaticSiteUserInvitationResponseResource', pipeline_response)
@@ -1318,7 +1318,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteCustomDomainOverviewCollection"]:
         """Gets all static site custom domains for a particular static site.
 
@@ -1380,7 +1380,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1396,7 +1396,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StaticSiteCustomDomainOverviewARMResource":
         """Creates a new static site custom domain in an existing resource group and static site.
 
@@ -1446,7 +1446,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1466,7 +1466,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a custom domain.
 
@@ -1515,7 +1515,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1528,7 +1528,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         domain_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Validates a particular custom domain can be added to a static site.
 
@@ -1577,7 +1577,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1589,7 +1589,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Detaches a static site.
 
@@ -1635,7 +1635,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1647,7 +1647,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StaticSiteFunctionOverviewCollection"]:
         """Gets the functions of a static site.
 
@@ -1709,7 +1709,7 @@ class StaticSitesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.DefaultErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -1724,7 +1724,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Gets the application settings of a static site.
 
@@ -1770,7 +1770,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -1789,7 +1789,7 @@ class StaticSitesOperations:
         self,
         resource_group_name: str,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StringDictionary":
         """Lists the secrets for an existing static site.
 
@@ -1835,7 +1835,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('StringDictionary', pipeline_response)
@@ -1851,7 +1851,7 @@ class StaticSitesOperations:
         resource_group_name: str,
         name: str,
         reset_properties_envelope: "_models.StaticSiteResetPropertiesARMResource",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Resets the api key for an existing static site.
 
@@ -1904,7 +1904,7 @@ class StaticSitesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.DefaultErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

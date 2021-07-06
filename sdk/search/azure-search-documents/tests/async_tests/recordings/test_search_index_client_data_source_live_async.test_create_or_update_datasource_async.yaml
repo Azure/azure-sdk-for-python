@@ -11,60 +11,59 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchfed3234a.search.windows.net/datasources?api-version=2020-06-30-Preview
+    uri: https://searchfed3234a.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D8EFCC9DD16E1F\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D93C1E59B278DD\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
-      content-length: '391'
+      content-length: '407'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:28:56 GMT
-      elapsed-time: '71'
-      etag: W/"0x8D8EFCC9DD16E1F"
+      date: Wed, 30 Jun 2021 23:25:29 GMT
+      elapsed-time: '154'
+      etag: W/"0x8D93C1E59B278DD"
       expires: '-1'
-      location: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
+      location: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: b9a4ed29-8da8-11eb-8238-a0481ca055a9
+      request-id: 75589492-d9fa-11eb-b1d2-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searchfed3234a.search.windows.net/datasources?api-version=2020-06-30-Preview
+    url: https://searchfed3234a.search.windows.net/datasources?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchfed3234a.search.windows.net/datasources?api-version=2020-06-30-Preview
+    uri: https://searchfed3234a.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D8EFCC9DD16E1F\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}]}'
+      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D93C1E59B278DD\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
-      content-length: '375'
+      content-length: '380'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:28:57 GMT
-      elapsed-time: '29'
+      date: Wed, 30 Jun 2021 23:25:29 GMT
+      elapsed-time: '56'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: b9d08a5d-8da8-11eb-a8fe-a0481ca055a9
+      request-id: 758dcb39-d9fa-11eb-9846-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchfed3234a.search.windows.net/datasources?api-version=2020-06-30-Preview
+    url: https://searchfed3234a.search.windows.net/datasources?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
       "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
@@ -79,90 +78,87 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
+    uri: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D8EFCC9DEE9953\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D93C1E59D410C3\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
-      content-length: '375'
-      content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:28:57 GMT
-      elapsed-time: '27'
-      etag: W/"0x8D8EFCC9DEE9953"
-      expires: '-1'
-      odata-version: '4.0'
-      pragma: no-cache
-      preference-applied: odata.include-annotations="*"
-      request-id: b9dc790d-8da8-11eb-b5e0-a0481ca055a9
-      strict-transport-security: max-age=15724800; includeSubDomains
-      vary: Accept-Encoding
-    status:
-      code: 200
-      message: OK
-    url: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata.metadata=minimal
-      User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://searchfed3234a.search.windows.net/datasources?api-version=2020-06-30-Preview
-  response:
-    body:
-      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D8EFCC9DEE9953\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}]}'
-    headers:
-      cache-control: no-cache
-      content-encoding: gzip
       content-length: '381'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:28:57 GMT
-      elapsed-time: '11'
+      date: Wed, 30 Jun 2021 23:25:29 GMT
+      elapsed-time: '41'
+      etag: W/"0x8D93C1E59D410C3"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: b9e8384c-8da8-11eb-9dd8-a0481ca055a9
+      request-id: 75a01088-d9fa-11eb-9c8c-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchfed3234a.search.windows.net/datasources?api-version=2020-06-30-Preview
+    url: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
+    uri: https://searchfed3234a.search.windows.net/datasources?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D8EFCC9DEE9953\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D93C1E59D410C3\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
-      content-length: '375'
+      content-length: '386'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:28:57 GMT
-      elapsed-time: '6'
-      etag: W/"0x8D8EFCC9DEE9953"
+      date: Wed, 30 Jun 2021 23:25:29 GMT
+      elapsed-time: '19'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: b9f1437f-8da8-11eb-b88f-a0481ca055a9
+      request-id: 75ae7cab-d9fa-11eb-952b-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30-Preview
+    url: https://searchfed3234a.search.windows.net/datasources?api-version=2021-04-30-Preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      User-Agent:
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
+  response:
+    body:
+      string: '{"@odata.context":"https://searchfed3234a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D93C1E59D410C3\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null,"identity":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '381'
+      content-type: application/json; odata.metadata=minimal
+      date: Wed, 30 Jun 2021 23:25:29 GMT
+      elapsed-time: '10'
+      etag: W/"0x8D93C1E59D410C3"
+      expires: '-1'
+      odata-version: '4.0'
+      pragma: no-cache
+      preference-applied: odata.include-annotations="*"
+      request-id: 75b98175-d9fa-11eb-bbeb-a0481ca055a9
+      strict-transport-security: max-age=15724800; includeSubDomains
+      vary: Accept-Encoding
+    status:
+      code: 200
+      message: OK
+    url: https://searchfed3234a.search.windows.net/datasources('sample-datasource')?api-version=2021-04-30-Preview
 version: 1

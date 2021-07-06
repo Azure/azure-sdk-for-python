@@ -104,6 +104,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         )
         self.assertEqual(result_get.name, subnet_name)
 
+    @unittest.skip('skip temporarily')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_eventhub(self, resource_group):
 
@@ -303,6 +304,7 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         result = self.mgmt_client.namespaces.begin_delete(resource_group.name, NAMESPACE_NAME)
         result = result.result()
    
+    @unittest.skip('skip temporarily')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_disaster_recovery_configs(self, resource_group):
         RESOURCE_GROUP = resource_group.name

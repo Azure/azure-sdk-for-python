@@ -42,7 +42,7 @@ class CostManagementClientConfiguration(Configuration):
         super(CostManagementClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.api_version = "2020-06-01"
+        self.api_version = "2019-11-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-costmanagement/{}'.format(VERSION))
         self._configure(**kwargs)

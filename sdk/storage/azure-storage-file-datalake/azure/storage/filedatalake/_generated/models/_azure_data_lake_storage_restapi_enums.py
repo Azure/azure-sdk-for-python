@@ -26,6 +26,16 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    COPY = "copy"
+    DELETED = "deleted"
+    METADATA = "metadata"
+    SNAPSHOTS = "snapshots"
+    UNCOMMITTEDBLOBS = "uncommittedblobs"
+    VERSIONS = "versions"
+    TAGS = "tags"
+
 class PathExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NEVER_EXPIRE = "NeverExpire"

@@ -33,6 +33,15 @@ class ACLAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALLOW = "Allow"
     DENY = "Deny"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class FeatureFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """FeatureFlags is the supported features of Azure SignalR service.
     
@@ -43,11 +52,19 @@ class FeatureFlags(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     recommended; "PredefinedOnly": for future use.
     * EnableConnectivityLogs: "true"/"false", to enable/disable the connectivity log category
     respectively.
+    * EnableMessagingLogs: "true"/"false", to enable/disable the connectivity log category
+    respectively.
+    * EnableLiveTrace: Live Trace allows you to know what's happening inside Azure SignalR service,
+    it will give you live traces in real time, it will be helpful when you developing your own
+    Azure SignalR based web application or self-troubleshooting some issues. Please note that live
+    traces are counted as outbound messages that will be charged. Values allowed: "true"/"false",
+    to enable/disable live trace feature.
     """
 
     SERVICE_MODE = "ServiceMode"
     ENABLE_CONNECTIVITY_LOGS = "EnableConnectivityLogs"
     ENABLE_MESSAGING_LOGS = "EnableMessagingLogs"
+    ENABLE_LIVE_TRACE = "EnableLiveTrace"
 
 class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The keyType to regenerate. Must be either 'primary' or 'secondary'(case-insensitive).
@@ -89,12 +106,21 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MOVING = "Moving"
 
 class ServiceKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of the service - e.g. "SignalR", or "RawWebSockets" for
-    "Microsoft.SignalRService/SignalR"
+    """The kind of the service - e.g. "SignalR" for "Microsoft.SignalRService/SignalR"
     """
 
     SIGNAL_R = "SignalR"
     RAW_WEB_SOCKETS = "RawWebSockets"
+
+class SharedPrivateLinkResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of the shared private link resource
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+    TIMEOUT = "Timeout"
 
 class SignalRRequestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Allowed request types. The value can be one or more of: ClientConnection, ServerConnection,
@@ -104,6 +130,7 @@ class SignalRRequestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CLIENT_CONNECTION = "ClientConnection"
     SERVER_CONNECTION = "ServerConnection"
     RESTAPI = "RESTAPI"
+    TRACE = "Trace"
 
 class SignalRSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Optional tier of this particular SKU. 'Standard' or 'Free'.

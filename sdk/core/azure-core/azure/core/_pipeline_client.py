@@ -37,8 +37,10 @@ from .pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     RequestIdPolicy,
+    RetryPolicy,
 )
 from .pipeline.transport import RequestsTransport
+from .pipeline._tools import to_rest_response as _to_rest_response
 
 try:
     from typing import TYPE_CHECKING
@@ -57,10 +59,23 @@ if TYPE_CHECKING:
         Callable,
         Iterator,
         cast,
+        TypeVar
     )  # pylint: disable=unused-import
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
+def _prepare_request(request):
+    # returns the request ready to run through pipelines
+    # and a bool telling whether we ended up converting it
+    rest_request = False
+    try:
+        request_to_run = request._to_pipeline_transport_request()  # pylint: disable=protected-access
+        rest_request = True
+    except AttributeError:
+        request_to_run = request
+    return rest_request, request_to_run
 
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
@@ -111,10 +126,10 @@ class PipelineClient(PipelineClientBase):
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
+        per_call_policies = kwargs.get('per_call_policies', [])
+        per_retry_policies = kwargs.get('per_retry_policies', [])
 
         if policies is None:  # [] is a valid policy list
-            per_call_policies = kwargs.get('per_call_policies', [])
-            per_retry_policies = kwargs.get('per_retry_policies', [])
             policies = [
                 RequestIdPolicy(**kwargs),
                 config.headers_policy,
@@ -123,26 +138,87 @@ class PipelineClient(PipelineClientBase):
                 ContentDecodePolicy(**kwargs)
             ]
             if isinstance(per_call_policies, Iterable):
-                for policy in per_call_policies:
-                    policies.append(policy)
+                policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies = policies + [config.redirect_policy,
-                               config.retry_policy,
-                               config.authentication_policy,
-                               config.custom_hook_policy]
+            policies.extend([config.redirect_policy,
+                             config.retry_policy,
+                             config.authentication_policy,
+                             config.custom_hook_policy])
             if isinstance(per_retry_policies, Iterable):
-                for policy in per_retry_policies:
-                    policies.append(policy)
+                policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies = policies + [config.logging_policy,
-                               DistributedTracingPolicy(**kwargs),
-                               config.http_logging_policy or HttpLoggingPolicy(**kwargs)]
+            policies.extend([config.logging_policy,
+                             DistributedTracingPolicy(**kwargs),
+                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+        else:
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies_list = list(per_call_policies)
+            else:
+                per_call_policies_list = [per_call_policies]
+            per_call_policies_list.extend(policies)
+            policies = per_call_policies_list
+
+            if isinstance(per_retry_policies, Iterable):
+                per_retry_policies_list = list(per_retry_policies)
+            else:
+                per_retry_policies_list = [per_retry_policies]
+            if len(per_retry_policies_list) > 0:
+                index_of_retry = -1
+                for index, policy in enumerate(policies):
+                    if isinstance(policy, RetryPolicy):
+                        index_of_retry = index
+                if index_of_retry == -1:
+                    raise ValueError("Failed to add per_retry_policies; "
+                                     "no RetryPolicy found in the supplied list of policies. ")
+                policies_1 = policies[:index_of_retry+1]
+                policies_2 = policies[index_of_retry+1:]
+                policies_1.extend(per_retry_policies_list)
+                policies_1.extend(policies_2)
+                policies = policies_1
 
         if not transport:
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
+
+
+    def send_request(self, request, **kwargs):
+        # type: (HTTPRequestType, Any) -> HTTPResponseType
+        """**Provisional** method that runs the network request through the client's chained policies.
+
+        This method is marked as **provisional**, meaning it may be changed in a future release.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest('GET', 'http://www.example.com')
+        <HttpRequest [GET], url: 'http://www.example.com'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        # """
+        rest_request, request_to_run = _prepare_request(request)
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = self._pipeline.run(request_to_run, **kwargs)  # pylint: disable=protected-access
+        response = pipeline_response.http_response
+        if rest_request:
+            response = _to_rest_response(response)
+            try:
+                if not kwargs.get("stream", False):
+                    response.read()
+                    response.close()
+            except Exception as exc:
+                response.close()
+                raise exc
+        if return_pipeline_response:
+            pipeline_response.http_response = response
+            pipeline_response.http_request = request
+            return pipeline_response
+        return response

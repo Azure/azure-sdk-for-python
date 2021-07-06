@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from uuid import uuid4
-from datetime import datetime
 from azure.core.tracing.decorator import distributed_trace
 from azure.communication.sms._generated.models import (
     SendMessageRequest,
@@ -15,7 +14,7 @@ from azure.communication.sms._generated.models import (
 from azure.communication.sms._models import SmsSendResult
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from ._version import SDK_MONIKER
 
 class SmsClient(object):
@@ -113,7 +112,7 @@ class SmsClient(object):
                 SmsRecipient(
                     to=p,
                     repeatability_request_id=str(uuid4()),
-                    repeatability_first_sent=datetime.utcnow()
+                    repeatability_first_sent=get_current_utc_time()
                 ) for p in to
             ],
             message=message,

@@ -77,7 +77,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
     retrieved using the :func:`~get_blob_client` function.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
     #optional-configuration>`_.
 
     :param str account_url:
@@ -584,7 +584,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             process_storage_error(error)
 
     @distributed_trace
-    def get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
+    def _get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
         # type: (...) -> BlobServiceClient
         """Get a client to interact with the container's parent service account.
 
@@ -1027,7 +1027,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         # type: (Union[str, BlobProperties], Optional[int], Optional[int], **Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream.
+        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param blob: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
