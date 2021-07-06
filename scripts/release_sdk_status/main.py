@@ -240,7 +240,7 @@ def sdk_info_from_swagger():
 
         TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
         track_config = TRACK_CONFIG.get(track_config, 'Rule error')
-        readme_html = folder.replace(SWAGGER_FOLDER, 'https://github.com/Azure/azure-rest-api-specs')
+        readme_html = folder.replace(SWAGGER_FOLDER, 'https://github.com/Azure/azure-rest-api-specs/tree/master')
         if package_name != '':
             resource_manager.append('{},{},{},{}\n'.format(package_name,
                                                            track_config,
