@@ -45,7 +45,7 @@ interactions:
     uri: https://managedhsmname.managedhsm.azure.net/rng?api-version=7.3-preview
   response:
     body:
-      string: '{"value":"_geiZkYFgZo"}'
+      string: '{"value":"VXq5M29X_A0"}'
     headers:
       cache-control: no-cache
       content-length: '23'
@@ -55,7 +55,7 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: canadacentral
+      x-ms-keyvault-region: westus
       x-ms-server-latency: '1'
     status:
       code: 200
@@ -76,7 +76,7 @@ interactions:
     uri: https://managedhsmname.managedhsm.azure.net/rng?api-version=7.3-preview
   response:
     body:
-      string: '{"value":"4CpVgBBnZ60"}'
+      string: '{"value":"9VlsnYJbEdE"}'
     headers:
       cache-control: no-cache
       content-length: '23'
@@ -86,7 +86,38 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: canadacentral
+      x-ms-keyvault-region: westus
+      x-ms-server-latency: '1'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotesthsm.managedhsm.azure.net/rng?api-version=7.3-preview
+- request:
+    body: '{"count": 8}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '12'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/rng?api-version=7.3-preview
+  response:
+    body:
+      string: '{"value":"eMlp_13vzCc"}'
+    headers:
+      cache-control: no-cache
+      content-length: '23'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus
       x-ms-server-latency: '0'
     status:
       code: 200
@@ -107,7 +138,7 @@ interactions:
     uri: https://managedhsmname.managedhsm.azure.net/rng?api-version=7.3-preview
   response:
     body:
-      string: '{"value":"6ySsf1jP6y8"}'
+      string: '{"value":"v2FZW_ihZHU"}'
     headers:
       cache-control: no-cache
       content-length: '23'
@@ -117,8 +148,8 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: canadacentral
-      x-ms-server-latency: '2'
+      x-ms-keyvault-region: westus
+      x-ms-server-latency: '0'
     status:
       code: 200
       message: OK
@@ -138,7 +169,7 @@ interactions:
     uri: https://managedhsmname.managedhsm.azure.net/rng?api-version=7.3-preview
   response:
     body:
-      string: '{"value":"GbFc-qPXkT0"}'
+      string: '{"value":"LqWwUp2Oji0"}'
     headers:
       cache-control: no-cache
       content-length: '23'
@@ -148,38 +179,7 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: canadacentral
-      x-ms-server-latency: '1'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/rng?api-version=7.3-preview
-- request:
-    body: '{"count": 8}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '12'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/rng?api-version=7.3-preview
-  response:
-    body:
-      string: '{"value":"d08kXQMSF3A"}'
-    headers:
-      cache-control: no-cache
-      content-length: '23'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: canadacentral
+      x-ms-keyvault-region: westus
       x-ms-server-latency: '1'
     status:
       code: 200
