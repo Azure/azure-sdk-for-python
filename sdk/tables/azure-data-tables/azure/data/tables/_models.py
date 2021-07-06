@@ -279,7 +279,8 @@ class TableCorsRule(object):
 
     def __repr__(self):
         # type: () -> str
-        return "TableCorsRules(allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={})".format(
+        return "TableCorsRules(allowed_origins={}, allowed_methods={}, " + \
+            "allowed_headers={}, exposed_headers={}, max_age_in_seconds={})".format(
             self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds
         )[1024:]
 
@@ -656,7 +657,8 @@ class AccountSasPermissions(object):
 
     def __repr__(self):
         # type: () -> str
-        return "AccountSasPermissions(read={}, write={}, delete={}, list={}, add={}, create={}, update={}, process={})".format(
+        return "AccountSasPermissions(read={}, write={}, delete={}, list={}, add={}, " + \
+            "create={}, update={}, process={})".format(
             self.read, self.write, self.delete, self.list, self.add, self.create, self.update, self.process
         )[1024:]
 
