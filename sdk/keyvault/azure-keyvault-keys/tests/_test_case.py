@@ -34,23 +34,22 @@ def client_setup(testcase_func):
     return wrapper
 
 
-def get_decorator(only_hsm=False, only_vault=False, **kwargs):
+def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs):
     """returns a test decorator for test parameterization"""
-    versions = kwargs.pop("api_versions", None) or ApiVersion
     params = [
         param(api_version=p[0], is_hsm=p[1], **kwargs)
-        for p in get_test_parameters(only_hsm, only_vault, api_versions=versions)
+        for p in get_test_parameters(only_hsm, only_vault, api_versions=api_versions)
     ]
     return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
 
 
-def get_test_parameters(only_hsm=False, only_vault=False, **kwargs):
+def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
-    api_versions = kwargs.get("api_versions", ApiVersion)
+    versions = api_versions or ApiVersion
     hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3_PREVIEW}
 
-    for api_version in api_versions:
+    for api_version in versions:
         if not only_vault and api_version in hsm_supported_versions:
             combinations.append([api_version, True])
         if not only_hsm:
