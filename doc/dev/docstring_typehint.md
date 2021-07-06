@@ -39,7 +39,7 @@ A method docstring is annotated by the Python long-string `"""<docstring>"""` ri
         :keyword include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
-        :paramtype include_subfolder: bool
+        :paramtype include_subfolders: bool
         :keyword str model_name: An optional, user-defined name to associate with your model.
         :keyword continuation_token: A continuation token to restart a poller from a saved state.
         :paramtype continuation_token: str

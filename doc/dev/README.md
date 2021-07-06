@@ -1,6 +1,6 @@
 # Developer Documentation
 
-This folder contains documentation for developers of SDK: internal teams at Microsoft, or advanced contributors.
+This folder contains documentation for developers of SDKs: internal teams at Microsoft, or advanced contributors.
 
 Overview of the documents:
 - [Developer Set-Up](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) : How to create a development environment for this repo
