@@ -1,6 +1,7 @@
 import requests
 import re
 import os
+import glob
 from lxml import etree
 import lxml.html
 import subprocess as sp
@@ -204,60 +205,50 @@ def project_html(url):
     return parse_result
 
 
+def read_file(file_name):
+    with open(file_name, 'r', encoding='utf-8') as file_in:
+        content = file_in.readlines()
+    return content
+
+
 def sdk_info_from_swagger():
     sdk_name_re = re.compile(r'azure-mgmt-[a-z]+-*([a-z])+')
     resource_manager = []
-    SDK_URL = "https://github.com/Azure/azure-rest-api-specs/tree/master/specification"
-    sdk_hrefs = project_html(SDK_URL).xpath('//div[@class="js-details-container Details"]/div/div/'
-                                            'div[@class="flex-auto min-width-0 col-md-2 mr-3"]//a/@href')
-    my_print(f'total folder num: {len(sdk_hrefs)}')
+    SWAGGER_FOLDER = os.getenv('SWAGGER_REPO')
+    readme_folders = glob.glob(f'{SWAGGER_FOLDER}/specification/*/resource-manager/readme.md')
+    my_print(f'total readme folders: {len(readme_folders)}')
 
-    # extract all folders which have python config
-    for href in sdk_hrefs:
-        readme_python = None
-        track_config = []
+    for folder in readme_folders:
+        track_config = 0
         package_name = ''
-        if 'resource-manager' not in href:
-            href = href + '/resource-manager'
-        href = 'https://github.com' + href
-        html_text = project_html(href)
-        resource_manager_folders = html_text.xpath('//div[@class="js-details-container Details"]/div/div/'
-                                                   'div[@class="flex-auto min-width-0 col-md-2 mr-3"]//a/text()')
-        for resource_manager_folder in resource_manager_folders:
-            if resource_manager_folder == 'readme.python.md':
-                readme_python = href + '/readme.python.md'
-        readme_text = html_text.xpath('//div[@class="Box-body px-5 pb-5"]/article//text()')
+        folder = folder.replace('readme.md', '')
+        readme_python = 'NA' if 'readme.python.md' not in os.listdir(folder) else f'{folder}/readme.python.md'
+        readme_text = read_file(folder + 'readme.md')
         for line in readme_text:
-            if line == 'azure-sdk-for-python':
-                track_config.append('track1')
-            elif line == 'azure-sdk-for-python-track2':
-                track_config.append('track2')
-            if readme_python is None and sdk_name_re.search(line) is not None and package_name == '':
+            if line.find('azure-sdk-for-python-track2') > -1:
+                track_config += 2
+            elif line.find('azure-sdk-for-python') > -1:
+                track_config += 1
+            if readme_python == 'NA' and sdk_name_re.search(line) is not None and package_name == '':
                 package_name = sdk_name_re.search(line).group()
-        if len(track_config) == 2:
-            track_config = 'both'
-        elif len(track_config) > 2:
-            track_config = 'Rule error'
-        elif len(track_config) == 1:
-            track_config = track_config[0]
-        elif len(track_config) == 0:
-            track_config = 'NA'
-        if readme_python is not None:
-            readme_python_html_text = project_html(readme_python)
-            readme_python_text = readme_python_html_text.xpath('//div[@id="readme"]/article//text()')
+
+        if readme_python != 'NA':
+            readme_python_text = read_file(readme_python)
             for text in readme_python_text:
                 if sdk_name_re.search(text) is not None:
                     package_name = sdk_name_re.search(text).group()
 
-        my_print(f'{href} : {package_name}')
+        TRACK_CONFIG = {0: 'NA', 1: 'track1', 2: 'track2', 3: 'both'}
+        track_config = TRACK_CONFIG.get(track_config, 'Rule error')
+        readme_html = folder.replace(SWAGGER_FOLDER, 'https://github.com/Azure/azure-rest-api-specs')
         if package_name != '':
-            if readme_python is None:
-                readme_python = 'NA'
             resource_manager.append('{},{},{},{}\n'.format(package_name,
                                                            track_config,
                                                            readme_python,
-                                                           str(href)))
-    my_print(f'total backup package kinds: {len(resource_manager)}')
+                                                           readme_html))
+        my_print(f'{folder} : {package_name}')
+
+    my_print(f'total package kinds: {len(resource_manager)}')
     return resource_manager
 
 
