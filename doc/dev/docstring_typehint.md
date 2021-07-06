@@ -140,6 +140,57 @@ The properties of a model should be documented with the `ivar` docstring:
 :vartype <property_name>: <type>
 ```
 
+Models that are used as a positional or keyword argument for methods that make service calls should have docstrings that expand past `ivars`. Below is an example of a model from `azure-ai-translation-document` that has positional and keyword argument parameters documented.
+
+```python
+class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheritance
+    # pylint: disable=C0301
+    """Input for translation. This requires that you have your source document or
+    documents in an Azure Blob Storage container. Provide a SAS URL to the source file or
+    source container containing the documents for translation. The source document(s) are
+    translated and written to the location provided by the TranslationTargets.
+
+    :param str source_url: Required. Location of the folder / container or single file with your
+        documents.
+    :param targets: Required. Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
+    :type targets: list[~azure.ai.translation.document.TranslationTarget]
+    :keyword str source_language_code: Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document.
+    :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+        sub folders for translation.
+    :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+        translation. This is most often use for file extensions.
+    :keyword storage_type: Storage type of the input documents source string. Possible values
+        include: "Folder", "File".
+    :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+    :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
+
+    :ivar str source_url: Required. Location of the folder / container or single file with your
+        documents.
+    :ivar targets: Required. Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
+    :vartype targets: list[~azure.ai.translation.document.TranslationTarget]
+    :ivar str source_language_code: Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document.
+    :ivar str prefix: A case-sensitive prefix string to filter documents in the source path for
+        translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+        sub folders for translation.
+    :ivar str suffix: A case-sensitive suffix string to filter documents in the source path for
+        translation. This is most often use for file extensions.
+    :ivar storage_type: Storage type of the input documents source string. Possible values
+        include: "Folder", "File".
+    :vartype storage_type: str or ~azure.ai.translation.document.StorageInputType
+    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported.
+    """
+```
+
+Positional parameters and keyword arguments are documented in the exact same way as a client method would be, using the `param` and `keyword` descriptors. Although not required, a new line between `param` and `keyword` descriptors helps to separate the docstring into logically separated groups.
+
+
 ## Type Hints
 
 ### Type Hints for Python 2.7 and 3.5+
