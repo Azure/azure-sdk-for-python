@@ -37,7 +37,7 @@ class AzureCliCredential(AsyncContextManager):
         acquire tokens only from the tenant of the Azure CLI's active subscription.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: "Any") -> None:
         self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
 
     @log_get_token_async
