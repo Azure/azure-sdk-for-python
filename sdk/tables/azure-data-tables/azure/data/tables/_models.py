@@ -78,6 +78,12 @@ class TableAccessPolicy(GenAccessPolicy):
         self.expiry = kwargs.get('expiry')
         self.permission = kwargs.get('permission')
 
+    def __repr__(self):
+        # type: () -> str
+        return "TableAccessPolicy(start={}, expiry={}, permission={})".format(
+            self.start, self.expiry, self.permission
+        )[1024:]
+
 
 class TableAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
@@ -113,6 +119,12 @@ class TableAnalyticsLogging(GeneratedLogging):
                 generated.retention_policy
             )
         )
+
+    def __repr__(self):
+        # type: () -> str
+        return "TableAnalyticsLogging(version={}, delete={}, read={}, write={}, retention_policy={})".format(
+            self.version, self.delete, self.read, self.write, self.retention_policy
+        )[1024:]
 
 
 class TableMetrics(GeneratedMetrics):
@@ -153,6 +165,12 @@ class TableMetrics(GeneratedMetrics):
             )
         )
 
+    def __repr__(self):
+        # type: () -> str
+        return "TableMetrics(version={}, enabled={}, include_apis={}, retention_policy={})".format(
+            self.version, self.enabled, self.include_apis, self.retention_policy
+        )[1024:]
+
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
@@ -190,6 +208,9 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             enabled=generated.enabled,
             days=generated.days,
         )
+    def __repr__(self):
+        # type; () -> str
+        return "TableRetentionPolicy(enabled={}, days={})".format(self.enabled, self.days)[1024:]
 
 
 class TableCorsRule(object):
@@ -255,6 +276,12 @@ class TableCorsRule(object):
             exposed_headers=exposedheaders,
             max_age_in_seconds=generated.max_age_in_seconds,
         )
+
+    def __repr__(self):
+        # type: () -> str
+        return "TableCorsRules(allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={})".format(  # pylint: disable=line-too-long
+            self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds  # pylint: disable=line-too-long
+        )[1024:]
 
 
 class TablePropertiesPaged(PageIterator):
@@ -400,6 +427,12 @@ class TableSasPermissions(object):
             + ("d" if self.delete else "")
         )
 
+    def __repr__(self):
+        # type: () -> str
+        return "TableSasPermissions(read={}, add={}, update={}, delete={})".format(
+            self.read, self.add, self.update, self.delete
+        )[1024:]
+
     @classmethod
     def from_string(
         cls,
@@ -481,6 +514,10 @@ class TableItem(object):
         # type: (TableQueryResponse, Any) -> TableItem
         return cls(generated.table_name)  # type: ignore
 
+    def __repr__(self):
+        # type: () -> str
+        return "TableItem(name={})".format(self.name)[1024:]
+
 
 class TablePayloadFormat(object):
     """
@@ -545,8 +582,9 @@ class ResourceTypes(object):
         self.object = kwargs.get('object', False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
 
-    def __str__(self):
-        return self._str
+    def __repr__(self):
+        # type: () -> str
+        return "ResourceTypes(service={}, object={})".format(self.service, self.object)[1024:]
 
     @classmethod
     def from_string(cls, string):
@@ -616,8 +654,11 @@ class AccountSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
-        return self._str
+    def __repr__(self):
+        # type: () -> str
+        return "AccountSasPermissions(read={}, write={}, delete={}, list={}, add={}, create={}, update={}, process={})".format(  # pylint: disable=line-too-long
+            self.read, self.write, self.delete, self.list, self.add, self.create, self.update, self.process
+        )[1024:]
 
     @classmethod
     def from_string(cls, permission, **kwargs):
