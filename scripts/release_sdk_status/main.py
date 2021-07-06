@@ -8,7 +8,7 @@ from azure.storage.blob import BlobClient
 
 
 def my_print(cmd):
-    print('==' + cmd + ' ==\n')
+    print('== ' + cmd + ' ==\n')
 
 
 def print_check(cmd):
@@ -208,6 +208,9 @@ def sdk_info_from_swagger():
     SDK_URL = "https://github.com/Azure/azure-rest-api-specs/tree/master/specification"
     sdk_hrefs = project_html(SDK_URL).xpath('//div[@class="js-details-container Details"]/div/div/'
                                             'div[@class="flex-auto min-width-0 col-md-2 mr-3"]//a/@href')
+    my_print(f'total folder num: {len(sdk_hrefs)}')
+
+    # extract all folders which have python config
     for href in sdk_hrefs:
         readme_python = None
         track_config = []
@@ -272,6 +275,7 @@ def upload_to_azure(out_file):
 def main():
     cli_dependency = get_cli_dependency()
     sdk_info = sdk_info_from_swagger()
+    return
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
 
     OUT_FILE = 'release_sdk_status.csv'
