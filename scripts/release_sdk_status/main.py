@@ -249,6 +249,7 @@ def sdk_info_from_swagger():
                 if sdk_name_re.search(text) is not None:
                     package_name = sdk_name_re.search(text).group()
 
+        my_print(f'{href} : {package_name}')
         if package_name != '':
             if readme_python is None:
                 readme_python = 'NA'
@@ -256,7 +257,7 @@ def sdk_info_from_swagger():
                                                            track_config,
                                                            readme_python,
                                                            str(href)))
-    my_print(f'total package kinds: {len(resource_manager)}')
+    my_print(f'total backup package kinds: {len(resource_manager)}')
     return resource_manager
 
 
