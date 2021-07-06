@@ -43,7 +43,7 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.audience = kwargs.pop("audience", ["https://management.core.windows.net/.default"])
+        self.audience = [a + "/.default" for a in kwargs.pop("audience", ["https://management.core.windows.net"])]
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
