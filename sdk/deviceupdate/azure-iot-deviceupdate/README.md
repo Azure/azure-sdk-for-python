@@ -37,7 +37,7 @@ You can familiarize yourself with different APIs using [Samples](https://github.
 
 ## Troubleshooting
 
-The Device Update for IoT Hub client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+The Device Update for IoT Hub client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
 ## Next steps
 
