@@ -570,7 +570,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_incorrect_credential_scopes(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint, audience="https://microsoft.com")
+        client = self.create_registry_client(containerregistry_endpoint, credential_scopes="https://microsoft.com")
 
         with pytest.raises(ClientAuthenticationError):
             properties = client.get_repository_properties(HELLO_WORLD)

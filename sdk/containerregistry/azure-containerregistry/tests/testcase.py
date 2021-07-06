@@ -178,12 +178,12 @@ class ContainerRegistryTestClass(AzureTestCase):
             audience = get_authorization_scope(authority)
         credential = self.get_credential(authority=authority)
         logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, audience))
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
         audience = get_authorization_scope(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=audience, **kwargs)
 
     def set_all_properties(self, properties, value):
         properties.can_delete = value
