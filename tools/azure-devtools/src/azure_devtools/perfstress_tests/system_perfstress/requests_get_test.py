@@ -9,7 +9,6 @@ from azure_devtools.perfstress_tests import PerfStressTest
 
 
 class RequestsGetTest(PerfStressTest):
-
     async def global_setup(self):
         type(self).session = requests.Session()
 
@@ -18,4 +17,4 @@ class RequestsGetTest(PerfStressTest):
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('-u', '--url', required=True)
+        parser.add_argument("-u", "--url", required=True)

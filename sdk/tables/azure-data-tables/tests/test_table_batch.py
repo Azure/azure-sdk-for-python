@@ -9,17 +9,14 @@
 import pytest
 
 from datetime import datetime, timedelta
-from dateutil.tz import tzutc
 import os
 import sys
-import uuid
 
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
-    ResourceExistsError,
     ResourceNotFoundError,
     ClientAuthenticationError
 )
@@ -35,7 +32,8 @@ from azure.data.tables import (
     generate_table_sas,
     TableSasPermissions,
     RequestTooLargeError,
-    TransactionOperation
+    TransactionOperation,
+    TableErrorCode
 )
 
 from _shared.testcase import TableTestCase
@@ -46,135 +44,6 @@ TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
 class StorageTableBatchTest(AzureTestCase, TableTestCase):
-
-    def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key):
-        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
-        self.table_name = self.get_resource_name('uttable')
-        self.table = self.ts.get_table_client(self.table_name)
-        if self.is_live:
-            try:
-                self.ts.create_table(self.table_name)
-            except ResourceExistsError:
-                pass
-
-        self.test_tables = []
-
-    def _tear_down(self):
-        if self.is_live:
-            try:
-                self.ts.delete_table(self.table_name)
-            except:
-                pass
-
-            for table_name in self.test_tables:
-                try:
-                    self.ts.delete_table(table_name)
-                except:
-                    pass
-
-    #--Helpers-----------------------------------------------------------------
-
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        self.test_tables.append(table_name)
-        return self.ts.get_table_client(table_name)
-
-    def _create_pk_rk(self, pk, rk):
-        try:
-            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
-        except AttributeError:
-            pk = pk if pk is not None else self.get_resource_name('pk')
-            rk = rk if rk is not None else self.get_resource_name('rk')
-        return pk, rk
-
-    def _create_random_entity_dict(self, pk=None, rk=None):
-        """
-        Creates a dictionary-based entity with fixed values, using all
-        of the supported data types.
-        """
-        # partition = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
-        # row = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
-        partition, row = self._create_pk_rk(pk, rk)
-        properties = {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': 39,
-            'sex': u'male',
-            'married': True,
-            'deceased': False,
-            'optional': None,
-            'ratio': 3.1,
-            'evenratio': 3.0,
-            'large': 933311100,
-            'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
-            'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
-            'binary': b'binary',
-            'other': EntityProperty(20, EdmType.INT32),
-            'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        }
-        return TableEntity(**properties)
-
-    def _create_updated_entity_dict(self, partition, row):
-        '''
-        Creates a dictionary-based entity with fixed values, with a
-        different set of values than the default entity. It
-        adds fields, changes field values, changes field types,
-        and removes fields when compared to the default entity.
-        '''
-        return {
-            'PartitionKey': partition,
-            'RowKey': row,
-            'age': u'abc',
-            'sex': u'female',
-            'sign': u'aquarius',
-            'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
-        }
-
-    def _assert_default_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-        assert entity['age'] ==  39
-        assert entity['sex'] ==  'male'
-        assert entity['married'] ==  True
-        assert entity['deceased'] ==  False
-        assert not "optional" in entity
-        assert entity['ratio'] ==  3.1
-        assert entity['evenratio'] ==  3.0
-        assert entity['large'] ==  933311100
-        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'] == datetime(1970, 10, 4, tzinfo=tzutc())
-        assert entity['binary'].value ==  b'binary'
-        assert entity['other'] ==  20
-        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_updated_entity(self, entity):
-        '''
-        Asserts that the entity passed in matches the updated entity.
-        '''
-        assert entity['age'] ==  'abc'
-        assert entity['sex'] ==  'female'
-        assert not "married" in entity
-        assert not "deceased" in entity
-        assert entity['sign'] ==  'aquarius'
-        assert not "optional" in entity
-        assert not "ratio" in entity
-        assert not "evenratio" in entity
-        assert not "large" in entity
-        assert not "Birthday" in entity
-        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not "other" in entity
-        assert not "clsid" in entity
-        assert entity.metadata['etag']
-        assert entity.metadata['timestamp']
-
-    def _assert_valid_batch_transaction(self, transaction, length):
-        assert length ==  len(transaction)
-
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -362,8 +231,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 sent_entity1,
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -404,8 +275,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 {'etag':u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition': MatchConditions.IfNotModified}
             )]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -616,7 +489,8 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
-            table2 = self._get_table_reference('table2')
+            table2_name = self._get_table_reference('table2')
+            table2 = self.ts.get_table_client(table2_name)
             table2.create_table()
 
             # Act
@@ -765,7 +639,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         invalid_key = tables_primary_storage_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
         tables_primary_storage_account_key = AzureNamedKeyCredential(tables_storage_account_name, invalid_key)
         credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key.named_key.key)
-        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential)
+        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=credential)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
 
@@ -807,8 +681,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             received.metadata["etag"] = good_etag
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
@@ -826,7 +702,8 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
 
-            token = generate_table_sas(
+            token = self.generate_sas(
+                generate_table_sas,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True, read=True, update=True, delete=True),

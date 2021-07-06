@@ -45,7 +45,7 @@ class OpenShiftManagedClustersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OpenShiftManagedClusterListResult"]:
         """Gets a list of OpenShift managed clusters in the specified subscription.
 
@@ -115,7 +115,7 @@ class OpenShiftManagedClustersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OpenShiftManagedClusterListResult"]:
         """Lists OpenShift managed clusters in the specified subscription and resource group.
 
@@ -189,7 +189,7 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OpenShiftManagedCluster":
         """Gets a OpenShift managed cluster.
 
@@ -250,7 +250,7 @@ class OpenShiftManagedClustersOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.OpenShiftManagedCluster",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OpenShiftManagedCluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         error_map = {
@@ -307,7 +307,7 @@ class OpenShiftManagedClustersOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.OpenShiftManagedCluster",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OpenShiftManagedCluster"]:
         """Creates or updates an OpenShift managed cluster.
 
@@ -323,8 +323,8 @@ class OpenShiftManagedClustersOperations:
         :type parameters: ~azure.mgmt.containerservice.v2019_04_30.models.OpenShiftManagedCluster
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OpenShiftManagedCluster or the result of cls(response)
@@ -382,7 +382,7 @@ class OpenShiftManagedClustersOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OpenShiftManagedCluster":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OpenShiftManagedCluster"]
         error_map = {
@@ -435,7 +435,7 @@ class OpenShiftManagedClustersOperations:
         resource_group_name: str,
         resource_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OpenShiftManagedCluster"]:
         """Updates tags on an OpenShift managed cluster.
 
@@ -449,8 +449,8 @@ class OpenShiftManagedClustersOperations:
         :type parameters: ~azure.mgmt.containerservice.v2019_04_30.models.TagsObject
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OpenShiftManagedCluster or the result of cls(response)
@@ -507,7 +507,7 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -551,7 +551,7 @@ class OpenShiftManagedClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an OpenShift managed cluster.
 
@@ -563,8 +563,8 @@ class OpenShiftManagedClustersOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

@@ -110,8 +110,8 @@ async def sample_list_metric_dimension_values_async():
 
     # [END list_metric_dimension_values_async]
 
-async def sample_list_metrics_series_data_async():
-    # [START list_metrics_series_data_async]
+async def sample_list_metric_series_data_async():
+    # [START list_metric_series_data_async]
     import datetime
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
@@ -125,18 +125,18 @@ async def sample_list_metrics_series_data_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async with client:
-        results = client.list_metrics_series_data(
+        results = client.list_metric_series_data(
                 metric_id=metric_id,
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
-                series_to_filter=[
+                series_keys=[
                     {"city": "Los Angeles", "category": "Homemade"}
                 ]
             )
         async for result in results:
             print(str(result))
 
-    # [END list_metrics_series_data_async]
+    # [END list_metric_series_data_async]
 
 async def sample_list_metric_series_definitions_async():
     # [START list_metric_series_definitions_async]
@@ -195,7 +195,7 @@ async def main():
     print("---List metric dimension values...")
     await sample_list_metric_dimension_values_async()
     print("---List metric series data...")
-    await sample_list_metrics_series_data_async()
+    await sample_list_metric_series_data_async()
     print("---List metric series definitions...")
     await sample_list_metric_series_definitions_async()
     print("---List metric enrichment status...")

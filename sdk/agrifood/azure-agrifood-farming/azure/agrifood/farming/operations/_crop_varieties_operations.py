@@ -66,7 +66,7 @@ class CropVarietiesOperations(object):
         # type: (...) -> Iterable["_models.CropVarietyListResponse"]
         """Returns a paginated list of crop variety resources under a particular crop.
 
-        :param crop_id: Id of the associated crop.
+        :param crop_id: ID of the associated crop.
         :type crop_id: str
         :param crop_ids: CropIds of the resource.
         :type crop_ids: list[str]
@@ -337,9 +337,9 @@ class CropVarietiesOperations(object):
         # type: (...) -> "_models.CropVariety"
         """Gets a specified crop variety resource under a particular crop.
 
-        :param crop_id: Id of the associated crop.
+        :param crop_id: ID of the associated crop.
         :type crop_id: str
-        :param crop_variety_id: Id of the crop variety.
+        :param crop_variety_id: ID of the crop variety.
         :type crop_variety_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CropVariety, or the result of cls(response)
@@ -392,18 +392,18 @@ class CropVarietiesOperations(object):
         self,
         crop_id,  # type: str
         crop_variety_id,  # type: str
-        body=None,  # type: Optional["_models.CropVariety"]
+        crop_variety=None,  # type: Optional["_models.CropVariety"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CropVariety"
         """Creates or updates a crop variety resource.
 
-        :param crop_id: Id of the crop resource.
+        :param crop_id: ID of the crop resource.
         :type crop_id: str
-        :param crop_variety_id: Id of the crop variety resource.
+        :param crop_variety_id: ID of the crop variety resource.
         :type crop_variety_id: str
-        :param body: Crop variety resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.CropVariety
+        :param crop_variety: Crop variety resource payload to create or update.
+        :type crop_variety: ~azure.agrifood.farming.models.CropVariety
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CropVariety, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.CropVariety
@@ -437,8 +437,8 @@ class CropVarietiesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'CropVariety')
+        if crop_variety is not None:
+            body_content = self._serialize.body(crop_variety, 'CropVariety')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -472,9 +472,9 @@ class CropVarietiesOperations(object):
         # type: (...) -> None
         """Deletes a specified crop variety resource under a particular crop.
 
-        :param crop_id: Id of the crop.
+        :param crop_id: ID of the crop.
         :type crop_id: str
-        :param crop_variety_id: Id of the crop variety.
+        :param crop_variety_id: ID of the crop variety.
         :type crop_variety_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

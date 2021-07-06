@@ -15,7 +15,7 @@ USAGE:
     python sms_token_credential_auth_sample_async.py
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS resource
+    2) AZURE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS resource
 """
 
 import os
@@ -23,14 +23,14 @@ import sys
 import asyncio
 from azure.communication.sms.aio import SmsClient
 from azure.communication.sms._shared.utils import parse_connection_str
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 sys.path.append("..")
 
 class SmsTokenCredentialAuthSampleAsync(object):
 
     connection_string = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
-    phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+    phone_number = os.getenv("AZURE_PHONE_NUMBER")
     
     async def sms_token_credential_auth_async(self):
         # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have

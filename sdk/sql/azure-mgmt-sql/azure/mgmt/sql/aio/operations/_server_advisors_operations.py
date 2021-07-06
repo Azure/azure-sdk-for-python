@@ -45,7 +45,7 @@ class ServerAdvisorsOperations:
         resource_group_name: str,
         server_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.Advisor"]:
         """Gets a list of server advisors.
 
@@ -109,7 +109,7 @@ class ServerAdvisorsOperations:
         resource_group_name: str,
         server_name: str,
         advisor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Advisor":
         """Gets a server advisor.
 
@@ -173,7 +173,7 @@ class ServerAdvisorsOperations:
         server_name: str,
         advisor_name: str,
         parameters: "_models.Advisor",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Advisor":
         """Updates a server advisor.
 

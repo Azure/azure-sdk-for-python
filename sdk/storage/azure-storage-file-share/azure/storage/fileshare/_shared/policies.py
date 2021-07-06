@@ -527,9 +527,7 @@ class ExponentialRetry(StorageRetryPolicy):
         '''
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
-        increment_power^retry_count seconds. For example, by default the first retry
-        occurs after 15 seconds, the second after (15+3^1) = 18 seconds, and the
-        third after (15+3^2) = 24 seconds.
+        increment_power^retry_count seconds.
 
         :param int initial_backoff:
             The initial backoff interval, in seconds, for the first retry.

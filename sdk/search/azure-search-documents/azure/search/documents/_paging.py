@@ -70,7 +70,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
 
     def get_coverage(self):
         # type: () -> float
-        """Return the covereage percentage, if `minimum_coverage` was
+        """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
         """
@@ -134,6 +134,7 @@ class SearchPageIterator(PageIterator):
 
     @_ensure_response
     def get_facets(self):
+        self.continuation_token = None
         facets = self._response.facets
         if facets is not None and self._facets is None:
             self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
@@ -141,12 +142,15 @@ class SearchPageIterator(PageIterator):
 
     @_ensure_response
     def get_coverage(self):
+        self.continuation_token = None
         return self._response.coverage
 
     @_ensure_response
     def get_count(self):
+        self.continuation_token = None
         return self._response.count
 
     @_ensure_response
     def get_answers(self):
+        self.continuation_token = None
         return self._response.answers

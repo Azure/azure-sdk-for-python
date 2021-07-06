@@ -56,12 +56,12 @@ def get_field_value(
         return [
             FormField._from_generated(field, value, read_result)
             for value in value.value_array
-        ]
+        ] if value.value_array else []
     if value.type == "object":
         return {
             key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
-        }
+        } if value.value_object else {}
     if value.type == "selectionMark":
         return value.value_selection_mark
     if value.type == "countryRegion":
@@ -242,7 +242,9 @@ class FormElement(object):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
             "page_number": self.page_number,
             "kind": self.kind,
         }
@@ -346,7 +348,8 @@ class RecognizedForm(object):
         """
         return cls(
             fields={k: FormField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
-            if data.get("fields") else {},
+            if data.get("fields")
+            else {},
             form_type=data.get("form_type", None),
             pages=[FormPage.from_dict(v) for v in data.get("pages")]  # type: ignore
             if len(data.get("pages", [])) > 0
@@ -560,9 +563,13 @@ class FieldData(object):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
             "page_number": self.page_number,
-            "field_elements": [f.to_dict() for f in self.field_elements] if self.field_elements else []
+            "field_elements": [f.to_dict() for f in self.field_elements]
+            if self.field_elements
+            else [],
         }
 
     @classmethod
@@ -620,7 +627,9 @@ class FormPage(object):
         returned is 300 per page. The lines are sorted top to bottom, left to right, although in
         certain cases proximity is treated with higher priority. As the sorting order depends on
         the detected text, it may change across images and OCR version updates. Thus, business
-        logic should be built upon the actual line location instead of order.
+        logic should be built upon the actual line location instead of order. The reading order
+        of lines can be specified by the `reading_order` keyword argument (Note: `reading_order`
+        only supported in `begin_recognize_content` and `begin_recognize_content_from_url`).
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
 
@@ -668,7 +677,9 @@ class FormPage(object):
             "unit": self.unit,
             "tables": [table.to_dict() for table in self.tables] if self.tables else [],
             "lines": [line.to_dict() for line in self.lines] if self.lines else [],
-            "selection_marks": [mark.to_dict() for mark in self.selection_marks] if self.selection_marks else []
+            "selection_marks": [mark.to_dict() for mark in self.selection_marks]
+            if self.selection_marks
+            else [],
         }
 
     @classmethod
@@ -764,11 +775,13 @@ class FormLine(FormElement):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
             "words": [f.to_dict() for f in self.words] if self.words else [],
             "page_number": self.page_number,
             "kind": self.kind,
-            "appearance": self.appearance.to_dict() if self.appearance else None
+            "appearance": self.appearance.to_dict() if self.appearance else None,
         }
 
     @classmethod
@@ -843,7 +856,9 @@ class FormWord(FormElement):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
             "confidence": self.confidence,
             "page_number": self.page_number,
             "kind": self.kind,
@@ -905,7 +920,12 @@ class FormSelectionMark(FormElement):
 
     def __repr__(self):
         return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={}, kind={})".format(
-            self.text, self.bounding_box, self.confidence, self.page_number, self.state, self.kind
+            self.text,
+            self.bounding_box,
+            self.confidence,
+            self.page_number,
+            self.state,
+            self.kind,
         )[
             :1024
         ]
@@ -919,7 +939,9 @@ class FormSelectionMark(FormElement):
         """
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
+            "bounding_box": [f.to_dict() for f in self.bounding_box]
+            if self.bounding_box
+            else [],
             "confidence": self.confidence,
             "state": self.state,
             "page_number": self.page_number,
@@ -997,7 +1019,9 @@ class FormTable(object):
             "row_count": self.row_count,
             "column_count": self.column_count,
             "cells": [cell.to_dict() for cell in self.cells],
-            "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else []
+            "bounding_box": [box.to_dict() for box in self.bounding_box]
+            if self.bounding_box
+            else [],
         }
 
     @classmethod
@@ -1124,9 +1148,12 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
             "is_header": self.is_header,
             "is_footer": self.is_footer,
             "page_number": self.page_number,
-            "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else [],
+            "bounding_box": [box.to_dict() for box in self.bounding_box]
+            if self.bounding_box
+            else [],
             "field_elements": [element.to_dict() for element in self.field_elements]
-            if self.field_elements else []
+            if self.field_elements
+            else [],
         }
 
     @classmethod
@@ -1279,11 +1306,15 @@ class CustomFormModel(object):
             "status": self.status,
             "training_started_on": self.training_started_on,
             "training_completed_on": self.training_completed_on,
-            "submodels": [submodel.to_dict() for submodel in self.submodels] if self.submodels else [],
+            "submodels": [submodel.to_dict() for submodel in self.submodels]
+            if self.submodels
+            else [],
             "errors": [err.to_dict() for err in self.errors] if self.errors else [],
-            "training_documents": [doc.to_dict() for doc in self.training_documents] if self.training_documents else [],
+            "training_documents": [doc.to_dict() for doc in self.training_documents]
+            if self.training_documents
+            else [],
             "model_name": self.model_name,
-            "properties": self.properties.to_dict() if self.properties else None
+            "properties": self.properties.to_dict() if self.properties else None,
         }
 
     @classmethod
@@ -1421,8 +1452,10 @@ class CustomFormSubmodel(object):
         return {
             "model_id": self.model_id,
             "accuracy": self.accuracy,
-            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
-            "form_type": self.form_type
+            "fields": {k: v.to_dict() for k, v in self.fields.items()}
+            if self.fields
+            else {},
+            "form_type": self.form_type,
         }
 
     @classmethod
@@ -1438,7 +1471,8 @@ class CustomFormSubmodel(object):
             model_id=data.get("model_id", None),
             accuracy=data.get("accuracy", None),
             fields={k: CustomFormModelField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
-            if data.get("fields") else {},
+            if data.get("fields")
+            else {},
             form_type=data.get("form_type", None),
         )
 
@@ -1485,11 +1519,7 @@ class CustomFormModelField(object):
         :return: dict
         :rtype: dict
         """
-        return {
-            "label": self.label,
-            "accuracy": self.accuracy,
-            "name": self.name
-        }
+        return {"label": self.label, "accuracy": self.accuracy, "name": self.name}
 
     @classmethod
     def from_dict(cls, data):
@@ -1589,7 +1619,7 @@ class TrainingDocumentInfo(object):
             "status": self.status,
             "page_count": self.page_count,
             "errors": [err.to_dict() for err in self.errors] if self.errors else [],
-            "model_id": self.model_id
+            "model_id": self.model_id,
         }
 
     @classmethod
@@ -1646,10 +1676,7 @@ class FormRecognizerError(object):
         :return: dict
         :rtype: dict
         """
-        return {
-            "code": self.code,
-            "message": self.message
-        }
+        return {"code": self.code, "message": self.message}
 
     @classmethod
     def from_dict(cls, data):
@@ -1743,7 +1770,7 @@ class CustomFormModelInfo(object):
             "training_started_on": self.training_started_on,
             "training_completed_on": self.training_completed_on,
             "model_name": self.model_name,
-            "properties": self.properties.to_dict() if self.properties else None
+            "properties": self.properties.to_dict() if self.properties else None,
         }
 
     @classmethod
@@ -1802,7 +1829,7 @@ class AccountProperties(object):
         """
         return {
             "custom_model_count": self.custom_model_count,
-            "custom_model_limit": self.custom_model_limit
+            "custom_model_limit": self.custom_model_limit,
         }
 
     @classmethod
@@ -1850,9 +1877,7 @@ class CustomFormModelProperties(object):
         :return: dict
         :rtype: dict
         """
-        return {
-            "is_composed_model": self.is_composed_model
-        }
+        return {"is_composed_model": self.is_composed_model}
 
     @classmethod
     def from_dict(cls, data):
@@ -1889,11 +1914,13 @@ class TextAppearance(object):
             return appearance
         return cls(
             style_name=appearance.style.name,
-            style_confidence=appearance.style.confidence
+            style_confidence=appearance.style.confidence,
         )
 
     def __repr__(self):
-        return "TextAppearance(style_name={}, style_confidence={})".format(self.style_name, self.style_confidence)
+        return "TextAppearance(style_name={}, style_confidence={})".format(
+            self.style_name, self.style_confidence
+        )
 
     def to_dict(self):
         # type: () -> dict
@@ -1904,7 +1931,7 @@ class TextAppearance(object):
         """
         return {
             "style_name": self.style_name,
-            "style_confidence": self.style_confidence
+            "style_confidence": self.style_confidence,
         }
 
     @classmethod

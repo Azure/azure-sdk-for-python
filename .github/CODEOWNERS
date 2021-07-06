@@ -1,5 +1,5 @@
 # Instructions for CODEOWNERS file format and automatic build failure notifications:
-# https://github.com/Azure/azure-sdk/blob/master/docs/policies/opensource.md#codeowners
+# https://github.com/Azure/azure-sdk/blob/main/docs/policies/opensource.md#codeowners
 
 ###########
 # SDK
@@ -48,6 +48,9 @@
 
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
+
+# PRLabel: %Monitor - Log
+/sdk/monitor/azure-monitor-query                                     @rakshith91
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -128,12 +131,12 @@
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/     @00Kai0 @msyyc @jsntcy @changlong-liu
+/**/*mgmt*/                                                          @RAY-316 @msyyc
 
 
 ###########
 # Eng Sys
 ###########
-/eng/           @weshaggard @scbedd @mitchdenny @danieljurek
+/eng/           @weshaggard @scbedd @danieljurek
 /**/tests.yml   @benbp
-/**/ci.yml      @mitchdenny
+/**/ci.yml      @scbedd

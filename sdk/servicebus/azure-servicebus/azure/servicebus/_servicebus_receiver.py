@@ -503,6 +503,10 @@ class ServiceBusReceiver(
             timeout=timeout,
         )
 
+    def _close_handler(self):
+        self._message_iter = None
+        super(ServiceBusReceiver, self)._close_handler()
+
     @property
     def session(self):
         # type: () -> ServiceBusSession

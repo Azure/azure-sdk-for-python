@@ -48,7 +48,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: "_models.DiskAccess",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskAccess":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         error_map = {
@@ -105,7 +105,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: "_models.DiskAccess",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DiskAccess"]:
         """Creates or updates a disk access resource.
 
@@ -119,8 +119,8 @@ class DiskAccessesOperations:
         :type disk_access: ~azure.mgmt.compute.v2020_12_01.models.DiskAccess
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DiskAccess or the result of cls(response)
@@ -178,7 +178,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: "_models.DiskAccessUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskAccess":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiskAccess"]
         error_map = {
@@ -235,7 +235,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         disk_access: "_models.DiskAccessUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DiskAccess"]:
         """Updates (patches) a disk access resource.
 
@@ -249,8 +249,8 @@ class DiskAccessesOperations:
         :type disk_access: ~azure.mgmt.compute.v2020_12_01.models.DiskAccessUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DiskAccess or the result of cls(response)
@@ -307,7 +307,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DiskAccess":
         """Gets information about a disk access resource.
 
@@ -367,7 +367,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -411,7 +411,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a disk access resource.
 
@@ -423,8 +423,8 @@ class DiskAccessesOperations:
         :type disk_access_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -476,7 +476,7 @@ class DiskAccessesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskAccessList"]:
         """Lists all the disk access resources under a resource group.
 
@@ -545,7 +545,7 @@ class DiskAccessesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DiskAccessList"]:
         """Lists all the disk access resources under a subscription.
 
@@ -613,7 +613,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResourceListResult":
         """Gets the private link resources possible under disk access resource.
 
@@ -675,7 +675,7 @@ class DiskAccessesOperations:
         disk_access_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
@@ -734,7 +734,7 @@ class DiskAccessesOperations:
         disk_access_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Approve or reject a private endpoint connection under disk access resource, this can't be used
         to create a new private endpoint connection.
@@ -752,8 +752,8 @@ class DiskAccessesOperations:
         :type private_endpoint_connection: ~azure.mgmt.compute.v2020_12_01.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
@@ -813,7 +813,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Gets information about a private endpoint connection under a disk access resource.
 
@@ -877,7 +877,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -923,7 +923,7 @@ class DiskAccessesOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a private endpoint connection under a disk access resource.
 
@@ -937,8 +937,8 @@ class DiskAccessesOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -993,7 +993,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """List information about private endpoint connections under a disk access resource.
 

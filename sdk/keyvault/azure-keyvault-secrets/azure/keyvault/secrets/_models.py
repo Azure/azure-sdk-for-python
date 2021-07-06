@@ -23,7 +23,7 @@ class SecretProperties(object):
         # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
-        self._vault_id = parse_key_vault_id(vault_id)
+        self._vault_id = KeyVaultSecretIdentifier(vault_id)
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
@@ -243,6 +243,45 @@ class KeyVaultSecret(object):
         :rtype: str
         """
         return self._value
+
+
+class KeyVaultSecretIdentifier(object):
+    """Information about a KeyVaultSecret parsed from a secret ID.
+
+    :param str source_id: the full original identifier of a secret
+    :raises ValueError: if the secret ID is improperly formatted
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_key_vault_secret_id]
+            :end-before: [END parse_key_vault_secret_id]
+            :language: python
+            :caption: Parse a secret's ID
+            :dedent: 8
+    """
+
+    def __init__(self, source_id):
+        # type: (str) -> None
+        self._resource_id = parse_key_vault_id(source_id)
+
+    @property
+    def source_id(self):
+        # type: () -> str
+        return self._resource_id.source_id
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        return self._resource_id.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        return self._resource_id.name
+
+    @property
+    def version(self):
+        # type: () -> Optional[str]
+        return self._resource_id.version
 
 
 class DeletedSecret(object):

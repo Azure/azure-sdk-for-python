@@ -166,11 +166,11 @@ class DeploymentExportResult(msrest.serialization.Model):
     """The deployment export result.
 
     :param template: The template content.
-    :type template: str
+    :type template: any
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
     }
 
     def __init__(
@@ -315,7 +315,7 @@ class DeploymentOperationProperties(msrest.serialization.Model):
     :ivar status_code: Operation status code.
     :vartype status_code: str
     :ivar status_message: Operation status message.
-    :vartype status_message: object
+    :vartype status_message: any
     :ivar target_resource: The target resource.
     :vartype target_resource: ~azure.mgmt.resource.resources.v2017_05_10.models.TargetResource
     :ivar request: The HTTP request message.
@@ -399,7 +399,7 @@ class DeploymentProperties(msrest.serialization.Model):
      syntax directly in the request rather than link to an existing template. It can be a JObject or
      well-formed JSON string. Use either the templateLink property or the template property, but not
      both.
-    :type template: str
+    :type template: any
     :param template_link: The URI of the template. Use either the templateLink property or the
      template property, but not both.
     :type template_link: ~azure.mgmt.resource.resources.v2017_05_10.models.TemplateLink
@@ -407,7 +407,7 @@ class DeploymentProperties(msrest.serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :type parameters: str
+    :type parameters: any
     :param parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -428,9 +428,9 @@ class DeploymentProperties(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
@@ -461,18 +461,18 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :ivar timestamp: The timestamp of the template deployment.
     :vartype timestamp: ~datetime.datetime
     :param outputs: Key/value pairs that represent deployment output.
-    :type outputs: str
+    :type outputs: any
     :param providers: The list of resource providers needed for the deployment.
     :type providers: list[~azure.mgmt.resource.resources.v2017_05_10.models.Provider]
     :param dependencies: The list of deployment dependencies.
     :type dependencies: list[~azure.mgmt.resource.resources.v2017_05_10.models.Dependency]
     :param template: The template content. Use only one of Template or TemplateLink.
-    :type template: str
+    :type template: any
     :param template_link: The URI referencing the template. Use only one of Template or
      TemplateLink.
     :type template_link: ~azure.mgmt.resource.resources.v2017_05_10.models.TemplateLink
     :param parameters: Deployment parameters. Use only one of Parameters or ParametersLink.
-    :type parameters: str
+    :type parameters: any
     :param parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2017_05_10.models.ParametersLink
@@ -493,12 +493,12 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'outputs': {'key': 'outputs', 'type': 'str'},
+        'outputs': {'key': 'outputs', 'type': 'object'},
         'providers': {'key': 'providers', 'type': '[Provider]'},
         'dependencies': {'key': 'dependencies', 'type': '[Dependency]'},
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
-        'parameters': {'key': 'parameters', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'str'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
@@ -556,7 +556,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: str
+    :vartype info: any
     """
 
     _validation = {
@@ -566,7 +566,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(
@@ -711,7 +711,7 @@ class GenericResource(Resource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2017_05_10.models.Plan
     :param properties: The resource properties.
-    :type properties: str
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -736,7 +736,7 @@ class GenericResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
@@ -774,7 +774,7 @@ class GenericResourceExpanded(GenericResource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2017_05_10.models.Plan
     :param properties: The resource properties.
-    :type properties: str
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: ID of the resource that manages this resource.
@@ -811,7 +811,7 @@ class GenericResourceExpanded(GenericResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
-        'properties': {'key': 'properties', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'kind': {'key': 'kind', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
@@ -862,11 +862,11 @@ class HttpMessage(msrest.serialization.Model):
     """HTTP message.
 
     :param content: HTTP message content.
-    :type content: str
+    :type content: any
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
+        'content': {'key': 'content', 'type': 'object'},
     }
 
     def __init__(
@@ -1138,14 +1138,14 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     """Resource group export result.
 
     :param template: The template content.
-    :type template: str
+    :type template: any
     :param error: The error.
     :type error:
      ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceManagementErrorWithDetails
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
         'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
     }
 

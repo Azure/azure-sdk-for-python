@@ -47,7 +47,7 @@ class JobAgentsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobAgentListResult"]:
         """Gets a list of job agents in a server.
 
@@ -123,7 +123,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobAgent":
         """Gets a job agent.
 
@@ -187,7 +187,7 @@ class JobAgentsOperations:
         server_name: str,
         job_agent_name: str,
         parameters: "_models.JobAgent",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.JobAgent"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobAgent"]]
         error_map = {
@@ -247,7 +247,7 @@ class JobAgentsOperations:
         server_name: str,
         job_agent_name: str,
         parameters: "_models.JobAgent",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.JobAgent"]:
         """Creates or updates a job agent.
 
@@ -262,8 +262,8 @@ class JobAgentsOperations:
         :type parameters: ~azure.mgmt.sql.models.JobAgent
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobAgent or the result of cls(response)
@@ -323,7 +323,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -367,7 +367,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a job agent.
 
@@ -380,8 +380,8 @@ class JobAgentsOperations:
         :type job_agent_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -438,7 +438,7 @@ class JobAgentsOperations:
         server_name: str,
         job_agent_name: str,
         parameters: "_models.JobAgentUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.JobAgent"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobAgent"]]
         error_map = {
@@ -495,7 +495,7 @@ class JobAgentsOperations:
         server_name: str,
         job_agent_name: str,
         parameters: "_models.JobAgentUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.JobAgent"]:
         """Updates a job agent.
 
@@ -510,8 +510,8 @@ class JobAgentsOperations:
         :type parameters: ~azure.mgmt.sql.models.JobAgentUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either JobAgent or the result of cls(response)

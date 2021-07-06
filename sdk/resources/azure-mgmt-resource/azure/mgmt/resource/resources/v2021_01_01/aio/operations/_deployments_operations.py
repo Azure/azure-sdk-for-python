@@ -47,7 +47,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -90,7 +90,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -108,8 +108,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -161,7 +161,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -217,7 +217,7 @@ class DeploymentsOperations:
         scope: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
@@ -273,7 +273,7 @@ class DeploymentsOperations:
         scope: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at a given scope.
 
@@ -287,8 +287,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -344,7 +344,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
@@ -401,7 +401,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -461,7 +461,7 @@ class DeploymentsOperations:
         scope: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DeploymentValidateResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
@@ -518,7 +518,7 @@ class DeploymentsOperations:
         scope: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -531,8 +531,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -588,7 +588,7 @@ class DeploymentsOperations:
         self,
         scope: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
@@ -646,7 +646,7 @@ class DeploymentsOperations:
         scope: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments at the given scope.
 
@@ -724,7 +724,7 @@ class DeploymentsOperations:
     async def _delete_at_tenant_scope_initial(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -765,7 +765,7 @@ class DeploymentsOperations:
     async def begin_delete_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -781,8 +781,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -831,7 +831,7 @@ class DeploymentsOperations:
     async def check_existence_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -883,7 +883,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
@@ -937,7 +937,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at tenant scope.
 
@@ -949,8 +949,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -1003,7 +1003,7 @@ class DeploymentsOperations:
     async def get_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
@@ -1056,7 +1056,7 @@ class DeploymentsOperations:
     async def cancel_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -1112,7 +1112,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DeploymentValidateResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
@@ -1167,7 +1167,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -1178,8 +1178,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -1233,7 +1233,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.ScopedDeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WhatIfOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
@@ -1290,7 +1290,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.ScopedDeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
@@ -1301,8 +1301,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.ScopedDeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -1355,7 +1355,7 @@ class DeploymentsOperations:
     async def export_template_at_tenant_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
@@ -1409,7 +1409,7 @@ class DeploymentsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments at the tenant scope.
 
@@ -1482,7 +1482,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1525,7 +1525,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -1543,8 +1543,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1596,7 +1596,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -1652,7 +1652,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
@@ -1708,7 +1708,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at management group scope.
 
@@ -1722,8 +1722,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -1779,7 +1779,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
@@ -1836,7 +1836,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -1896,7 +1896,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DeploymentValidateResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
@@ -1953,7 +1953,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         parameters: "_models.ScopedDeployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -1966,8 +1966,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.ScopedDeployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -2024,7 +2024,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         parameters: "_models.ScopedDeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WhatIfOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
@@ -2083,7 +2083,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         parameters: "_models.ScopedDeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the management
         group.
@@ -2096,8 +2096,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.ScopedDeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -2153,7 +2153,7 @@ class DeploymentsOperations:
         self,
         group_id: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
@@ -2211,7 +2211,7 @@ class DeploymentsOperations:
         group_id: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments for a management group.
 
@@ -2289,7 +2289,7 @@ class DeploymentsOperations:
     async def _delete_at_subscription_scope_initial(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -2331,7 +2331,7 @@ class DeploymentsOperations:
     async def begin_delete_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -2347,8 +2347,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -2398,7 +2398,7 @@ class DeploymentsOperations:
     async def check_existence_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -2451,7 +2451,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
@@ -2506,7 +2506,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources at subscription scope.
 
@@ -2518,8 +2518,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -2573,7 +2573,7 @@ class DeploymentsOperations:
     async def get_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
@@ -2627,7 +2627,7 @@ class DeploymentsOperations:
     async def cancel_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -2684,7 +2684,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DeploymentValidateResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
@@ -2740,7 +2740,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -2751,8 +2751,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -2807,7 +2807,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.DeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WhatIfOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
@@ -2865,7 +2865,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         parameters: "_models.DeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the
         subscription.
@@ -2876,8 +2876,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.DeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -2931,7 +2931,7 @@ class DeploymentsOperations:
     async def export_template_at_subscription_scope(
         self,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
@@ -2986,7 +2986,7 @@ class DeploymentsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments for a subscription.
 
@@ -3063,7 +3063,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -3107,7 +3107,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
@@ -3127,8 +3127,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -3181,7 +3181,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether the deployment exists.
 
@@ -3239,7 +3239,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
@@ -3296,7 +3296,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Deploys resources to a resource group.
 
@@ -3311,8 +3311,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -3369,7 +3369,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         """Gets a deployment.
 
@@ -3427,7 +3427,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancels a currently running template deployment.
 
@@ -3488,7 +3488,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.DeploymentValidateResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DeploymentValidateResult"]]
         error_map = {
@@ -3546,7 +3546,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentValidateResult"]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -3560,8 +3560,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentValidateResult or the result of cls(response)
@@ -3619,7 +3619,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.DeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.WhatIfOperationResult"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.WhatIfOperationResult"]]
         error_map = {
@@ -3679,7 +3679,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.DeploymentWhatIf",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the resource
         group.
@@ -3693,8 +3693,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2021_01_01.models.DeploymentWhatIf
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
@@ -3751,7 +3751,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExportResult":
         """Exports the template used for specified deployment.
 
@@ -3810,7 +3810,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get all the deployments for a resource group.
 
@@ -3889,13 +3889,13 @@ class DeploymentsOperations:
 
     async def calculate_template_hash(
         self,
-        template: str,
-        **kwargs
+        template: Any,
+        **kwargs: Any
     ) -> "_models.TemplateHashResult":
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
-        :type template: str
+        :type template: any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateHashResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2021_01_01.models.TemplateHashResult
@@ -3923,7 +3923,7 @@ class DeploymentsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(template, 'str')
+        body_content = self._serialize.body(template, 'object')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

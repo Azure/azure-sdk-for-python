@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:27:59 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:27:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Fri, 18 Dec 2020 17:30:00 GMT
+      date: Tue, 08 Jun 2021 02:27:59 GMT
       location: https://fake_table_account.table.core.windows.net/Tables('pytableasyncd261181d')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -39,7 +39,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-12-18T17:25:00Z</Start><Expiry>2020-12-18T18:30:00Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2021-06-08T02:05:09Z</Start><Expiry>2021-06-08T03:10:09Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Accept:
       - application/xml
@@ -48,11 +48,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:28:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:28:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -62,7 +62,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Dec 2020 17:30:00 GMT
+      date: Tue, 08 Jun 2021 02:27:59 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -75,21 +75,21 @@ interactions:
       Accept:
       - application/xml
       Date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:28:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:28:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://fake_table_account.table.core.windows.net/pytableasyncd261181d?comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-12-18T17:25:00.0000000Z</Start><Expiry>2020-12-18T18:30:00.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2021-06-08T02:05:09.0000000Z</Start><Expiry>2021-06-08T03:10:09.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
       content-type: application/xml
-      date: Fri, 18 Dec 2020 17:30:00 GMT
+      date: Tue, 08 Jun 2021 02:27:59 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -103,11 +103,11 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:28:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 17:30:00 GMT
+      - Tue, 08 Jun 2021 02:28:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -118,7 +118,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Fri, 18 Dec 2020 17:30:01 GMT
+      date: Tue, 08 Jun 2021 02:27:59 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'

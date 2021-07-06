@@ -44,8 +44,8 @@ class FarmOperationsOperations:
     async def _create_data_ingestion_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.FarmOperationDataIngestionJob"] = None,
-        **kwargs
+        job: Optional["_models.FarmOperationDataIngestionJob"] = None,
+        **kwargs: Any
     ) -> "_models.FarmOperationDataIngestionJob":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
         error_map = {
@@ -74,8 +74,8 @@ class FarmOperationsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'FarmOperationDataIngestionJob')
+        if job is not None:
+            body_content = self._serialize.body(job, 'FarmOperationDataIngestionJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -99,15 +99,15 @@ class FarmOperationsOperations:
     async def begin_create_data_ingestion_job(
         self,
         job_id: str,
-        body: Optional["_models.FarmOperationDataIngestionJob"] = None,
-        **kwargs
+        job: Optional["_models.FarmOperationDataIngestionJob"] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.FarmOperationDataIngestionJob"]:
         """Create a farm operation data ingestion job.
 
-        :param job_id: Job Id supplied by user.
+        :param job_id: Job ID supplied by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.agrifood.farming.models.FarmOperationDataIngestionJob
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.agrifood.farming.models.FarmOperationDataIngestionJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -128,7 +128,7 @@ class FarmOperationsOperations:
         if cont_token is None:
             raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -165,11 +165,11 @@ class FarmOperationsOperations:
     async def get_data_ingestion_job_details(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.FarmOperationDataIngestionJob":
         """Get a farm operation data ingestion job.
 
-        :param job_id: Id of the job.
+        :param job_id: ID of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FarmOperationDataIngestionJob, or the result of cls(response)

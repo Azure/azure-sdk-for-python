@@ -17,9 +17,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/languages?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"2","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":0.75},"warnings":[]},{"id":"4","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":0.99},"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -30,13 +30,13 @@ interactions:
         is empty."}}}],"modelVersion":"2021-01-05"}'
     headers:
       apim-request-id:
-      - 6f1709f6-21c0-4693-9cea-39e7d8af30cd
+      - 513b8783-f827-48e1-91d8-94e1a7ee4d3d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2,CognitiveServices.TextAnalytics.TextRecords=2
       date:
-      - Thu, 13 May 2021 22:35:44 GMT
+      - Wed, 23 Jun 2021 01:53:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

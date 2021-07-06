@@ -61,7 +61,7 @@ class CheckNameResult(msrest.serialization.Model):
     :type message: str
     :param reason: Message providing the reason why the given name is invalid. Possible values
      include: "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.digitaltwins.models.Reason
+    :type reason: str or ~azure.mgmt.digitaltwins.v2020_10_31.models.Reason
     """
 
     _attribute_map = {
@@ -157,7 +157,8 @@ class DigitalTwinsDescription(DigitalTwinsResource):
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "Warning", "Suspending", "Restoring",
      "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.ProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_10_31.models.ProvisioningState
     :ivar host_name: Api endpoint to work with DigitalTwinsInstance.
     :vartype host_name: str
     """
@@ -205,7 +206,7 @@ class DigitalTwinsDescriptionListResult(msrest.serialization.Model):
     :param next_link: The link used to get the next page of DigitalTwins description objects.
     :type next_link: str
     :param value: A list of DigitalTwins description objects.
-    :type value: list[~azure.mgmt.digitaltwins.models.DigitalTwinsDescription]
+    :type value: list[~azure.mgmt.digitaltwins.v2020_10_31.models.DigitalTwinsDescription]
     """
 
     _attribute_map = {
@@ -274,7 +275,8 @@ class DigitalTwinsEndpointResource(ExternalResource):
     :ivar type: The resource type.
     :vartype type: str
     :param properties: Required. DigitalTwinsInstance endpoint resource properties.
-    :type properties: ~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResourceProperties
+    :type properties:
+     ~azure.mgmt.digitaltwins.v2020_10_31.models.DigitalTwinsEndpointResourceProperties
     """
 
     _validation = {
@@ -307,7 +309,7 @@ class DigitalTwinsEndpointResourceListResult(msrest.serialization.Model):
     :param next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
     :type next_link: str
     :param value: A list of DigitalTwinsInstance Endpoints.
-    :type value: list[~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResource]
+    :type value: list[~azure.mgmt.digitaltwins.v2020_10_31.models.DigitalTwinsEndpointResource]
     """
 
     _attribute_map = {
@@ -339,11 +341,12 @@ class DigitalTwinsEndpointResourceProperties(msrest.serialization.Model):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "Warning", "Suspending", "Restoring",
      "Moving", "Disabled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
@@ -411,7 +414,7 @@ class ErrorDefinition(msrest.serialization.Model):
     :ivar message: Description of the error.
     :vartype message: str
     :ivar details: Internal error details.
-    :vartype details: list[~azure.mgmt.digitaltwins.models.ErrorDefinition]
+    :vartype details: list[~azure.mgmt.digitaltwins.v2020_10_31.models.ErrorDefinition]
     """
 
     _validation = {
@@ -440,7 +443,7 @@ class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
     :param error: Error description.
-    :type error: ~azure.mgmt.digitaltwins.models.ErrorDefinition
+    :type error: ~azure.mgmt.digitaltwins.v2020_10_31.models.ErrorDefinition
     """
 
     _attribute_map = {
@@ -466,11 +469,12 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "Warning", "Suspending", "Restoring",
      "Moving", "Disabled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
@@ -526,11 +530,12 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "Warning", "Suspending", "Restoring",
      "Moving", "Disabled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
@@ -581,7 +586,7 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {provider}/{resource}/{read | write | action | delete}.
     :vartype name: str
     :param display: Operation properties display.
-    :type display: ~azure.mgmt.digitaltwins.models.OperationDisplay
+    :type display: ~azure.mgmt.digitaltwins.v2020_10_31.models.OperationDisplay
     :ivar origin: The intended executor of the operation.
     :vartype origin: str
     :ivar is_data_action: If the operation is a data action (for data plane rbac).
@@ -663,7 +668,7 @@ class OperationListResult(msrest.serialization.Model):
     :type next_link: str
     :ivar value: A list of DigitalTwins operations supported by the Microsoft.DigitalTwins resource
      provider.
-    :vartype value: list[~azure.mgmt.digitaltwins.models.Operation]
+    :vartype value: list[~azure.mgmt.digitaltwins.v2020_10_31.models.Operation]
     """
 
     _validation = {
@@ -695,11 +700,12 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
 
     :param endpoint_type: Required. The type of Digital Twins endpoint.Constant filled by server.
      Possible values include: "EventHub", "EventGrid", "ServiceBus".
-    :type endpoint_type: str or ~azure.mgmt.digitaltwins.models.EndpointType
+    :type endpoint_type: str or ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointType
     :ivar provisioning_state: The provisioning state. Possible values include: "Provisioning",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "Warning", "Suspending", "Restoring",
      "Moving", "Disabled".
-    :vartype provisioning_state: str or ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
+    :vartype provisioning_state: str or
+     ~azure.mgmt.digitaltwins.v2020_10_31.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to DigitalTwinsInstance.
     :vartype created_time: ~datetime.datetime
     :param dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.

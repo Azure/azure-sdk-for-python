@@ -45,7 +45,7 @@ class PolicyExemptionsOperations:
         self,
         scope: str,
         policy_exemption_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy exemption.
 
@@ -108,7 +108,7 @@ class PolicyExemptionsOperations:
         scope: str,
         policy_exemption_name: str,
         parameters: "_models.PolicyExemption",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyExemption":
         """Creates or updates a policy exemption.
 
@@ -185,7 +185,7 @@ class PolicyExemptionsOperations:
         self,
         scope: str,
         policy_exemption_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicyExemption":
         """Retrieves a policy exemption.
 
@@ -248,7 +248,7 @@ class PolicyExemptionsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyExemptionListResult"]:
         """Retrieves all policy exemptions that apply to a subscription.
 
@@ -338,7 +338,7 @@ class PolicyExemptionsOperations:
         self,
         resource_group_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyExemptionListResult"]:
         """Retrieves all policy exemptions that apply to a resource group.
 
@@ -435,7 +435,7 @@ class PolicyExemptionsOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyExemptionListResult"]:
         """Retrieves all policy exemptions that apply to a resource.
 
@@ -554,7 +554,7 @@ class PolicyExemptionsOperations:
         self,
         management_group_id: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyExemptionListResult"]:
         """Retrieves all policy exemptions that apply to a management group.
 

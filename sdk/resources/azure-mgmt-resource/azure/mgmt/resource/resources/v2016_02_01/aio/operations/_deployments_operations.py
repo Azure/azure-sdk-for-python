@@ -47,7 +47,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -89,7 +89,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete deployment.
 
@@ -99,8 +99,8 @@ class DeploymentsOperations:
         :type deployment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -153,7 +153,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> bool:
         """Checks whether deployment exists.
 
@@ -209,7 +209,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentExtended"]
         error_map = {
@@ -266,7 +266,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentExtended"]:
         """Create a named template deployment using a template.
 
@@ -278,8 +278,8 @@ class DeploymentsOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2016_02_01.models.Deployment
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
@@ -336,7 +336,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExtended":
         """Get a deployment.
 
@@ -395,7 +395,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancel a currently running template deployment.
 
@@ -449,7 +449,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         parameters: "_models.Deployment",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentValidateResult":
         """Validate a deployment template.
 
@@ -518,7 +518,7 @@ class DeploymentsOperations:
         self,
         resource_group_name: str,
         deployment_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentExportResult":
         """Exports a deployment template.
 
@@ -577,7 +577,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentListResult"]:
         """Get a list of deployments.
 
@@ -655,13 +655,13 @@ class DeploymentsOperations:
 
     async def calculate_template_hash(
         self,
-        template: str,
-        **kwargs
+        template: Any,
+        **kwargs: Any
     ) -> "_models.TemplateHashResult":
         """Calculate the hash of the given template.
 
         :param template: The template provided to calculate hash.
-        :type template: str
+        :type template: any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateHashResult, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateHashResult
@@ -689,7 +689,7 @@ class DeploymentsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(template, 'str')
+        body_content = self._serialize.body(template, 'object')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

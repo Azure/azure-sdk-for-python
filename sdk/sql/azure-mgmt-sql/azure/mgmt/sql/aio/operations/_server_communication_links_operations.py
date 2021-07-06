@@ -48,7 +48,7 @@ class ServerCommunicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         communication_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a server communication link.
 
@@ -106,7 +106,7 @@ class ServerCommunicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         communication_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerCommunicationLink":
         """Returns a server communication link.
 
@@ -170,7 +170,7 @@ class ServerCommunicationLinksOperations:
         server_name: str,
         communication_link_name: str,
         parameters: "_models.ServerCommunicationLink",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ServerCommunicationLink"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerCommunicationLink"]]
         error_map = {
@@ -227,7 +227,7 @@ class ServerCommunicationLinksOperations:
         server_name: str,
         communication_link_name: str,
         parameters: "_models.ServerCommunicationLink",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ServerCommunicationLink"]:
         """Creates a server communication link.
 
@@ -242,8 +242,8 @@ class ServerCommunicationLinksOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerCommunicationLink
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerCommunicationLink or the result of cls(response)
@@ -302,7 +302,7 @@ class ServerCommunicationLinksOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServerCommunicationLinkListResult"]:
         """Gets a list of server communication links.
 

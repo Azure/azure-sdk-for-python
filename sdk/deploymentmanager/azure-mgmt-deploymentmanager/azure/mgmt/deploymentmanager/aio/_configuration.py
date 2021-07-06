@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DeploymentManagerClientConfiguration(Configuration):
-    """Configuration for DeploymentManagerClient.
+class AzureDeploymentManagerConfiguration(Configuration):
+    """Configuration for AzureDeploymentManager.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,7 +41,7 @@ class DeploymentManagerClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(DeploymentManagerClientConfiguration, self).__init__(**kwargs)
+        super(AzureDeploymentManagerConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id

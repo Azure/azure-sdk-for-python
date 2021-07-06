@@ -47,6 +47,9 @@ class EntitiesOperations(object):
 
     def list(
         self,
+        skiptoken=None,  # type: Optional[str]
+        skip=None,  # type: Optional[int]
+        top=None,  # type: Optional[int]
         select=None,  # type: Optional[str]
         search=None,  # type: Optional[Union[str, "_models.Enum2"]]
         filter=None,  # type: Optional[str]
@@ -58,6 +61,17 @@ class EntitiesOperations(object):
         # type: (...) -> Iterable["_models.EntityListResult"]
         """List all entities (Management Groups, Subscriptions, etc.) for the authenticated user.
 
+        :param skiptoken: Page continuation token is only used if a previous operation returned a
+         partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a token parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
+        :param skip: Number of entities to skip over when retrieving results. Passing this in will
+         override $skipToken.
+        :type skip: int
+        :param top: Number of elements to return when retrieving results. Passing this in will override
+         $skipToken.
+        :type top: int
         :param select: This parameter specifies the fields to include in the response. Can include any
          combination of Name,DisplayName,Type,ParentDisplayNameChain,ParentChain, e.g.
          '$select=Name,DisplayName,Type,ParentDisplayNameChain,ParentNameChain'. When specified the
@@ -90,7 +104,8 @@ class EntitiesOperations(object):
         :param group_name: A filter which allows the get entities call to focus on a particular group
          (i.e. "$filter=name eq 'groupName'").
         :type group_name: str
-        :param cache_control: Indicates that the request shouldn't utilize any caches.
+        :param cache_control: Indicates whether the request should utilize any caches. Populate the
+         header with 'no-cache' value to bypass existing caches.
         :type cache_control: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EntityListResult or the result of cls(response)
@@ -102,7 +117,7 @@ class EntitiesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -118,12 +133,12 @@ class EntitiesOperations(object):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if self._config.skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("self._config.skiptoken", self._config.skiptoken, 'str')
-                if self._config.skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("self._config.skip", self._config.skip, 'int')
-                if self._config.top is not None:
-                    query_parameters['$top'] = self._serialize.query("self._config.top", self._config.top, 'int')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if search is not None:
@@ -156,7 +171,7 @@ class EntitiesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

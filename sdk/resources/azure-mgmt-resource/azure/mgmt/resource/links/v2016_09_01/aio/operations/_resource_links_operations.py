@@ -44,7 +44,7 @@ class ResourceLinksOperations:
     async def delete(
         self,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a resource link with the specified ID.
 
@@ -96,7 +96,7 @@ class ResourceLinksOperations:
         self,
         link_id: str,
         parameters: "_models.ResourceLink",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceLink":
         """Creates or updates a resource link between the specified resources.
 
@@ -163,7 +163,7 @@ class ResourceLinksOperations:
     async def get(
         self,
         link_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ResourceLink":
         """Gets a resource link with the specified ID.
 
@@ -217,7 +217,7 @@ class ResourceLinksOperations:
     def list_at_subscription(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceLinkResult"]:
         """Gets all the linked resources for the subscription.
 
@@ -290,7 +290,7 @@ class ResourceLinksOperations:
         self,
         scope: str,
         filter: Optional[str] = "atScope()",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ResourceLinkResult"]:
         """Gets a list of resource links at and below the specified source scope.
 

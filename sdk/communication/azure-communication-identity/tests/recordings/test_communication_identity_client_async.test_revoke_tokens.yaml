@@ -8,10 +8,10 @@ interactions:
       - '2'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:04:05 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -20,18 +20,20 @@ interactions:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Apr 2021 01:04:04 GMT
-      ms-cv: q+ucnkroYUqgGSLLb7AE/w.0
+      date: Tue, 22 Jun 2021 18:58:58 GMT
+      ms-cv: mJmgM9zu2kGn0sD7GWAPeQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 12ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 59ms
     status:
       code: 201
       message: Created
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -41,39 +43,41 @@ interactions:
       - '20'
       Content-Type:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:04:05 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-04-22T01:04:04.2125267+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-06-23T18:58:58.4494428+00:00"}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Apr 2021 01:04:04 GMT
-      ms-cv: gOgVb9xDOU6aJ58CkV4Eag.0
+      date: Tue, 22 Jun 2021 18:58:58 GMT
+      ms-cv: EyrkOFV4gEayIxQQzsv/Xw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 143ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 35ms
     status:
       code: 200
       message: OK
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 - request:
     body: ''
     headers:
       Accept:
       - application/json
-      Date:
-      - Wed, 21 Apr 2021 01:04:05 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:59 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -82,14 +86,16 @@ interactions:
     body:
       string: ''
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
-      date: Wed, 21 Apr 2021 01:04:04 GMT
-      ms-cv: z3IGAket8EuW3k4420x+Jw.0
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
+      date: Tue, 22 Jun 2021 18:58:58 GMT
+      ms-cv: TOQFHBkQpkqIRdzCAbyiNw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
-      x-processing-time: 134ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 97ms
     status:
       code: 204
       message: No Content
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
 version: 1

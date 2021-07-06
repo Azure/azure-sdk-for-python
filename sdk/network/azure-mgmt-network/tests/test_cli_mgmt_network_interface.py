@@ -140,6 +140,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = compute_client.virtual_machines.begin_delete(group_name, vm_name)
         result = result.result()
     
+    @unittest.skip('skip test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 

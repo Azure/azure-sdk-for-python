@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-sqlvirtualmachine"
-PACKAGE_PPRINT_NAME = "SQL Virtual Machine Management"
+PACKAGE_PPRINT_NAME = "Sqlvirtualmachine Management"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -36,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py') 
+with open(os.path.join(package_folder_path, 'version.py')
           if os.path.exists(os.path.join(package_folder_path, 'version.py'))
           else os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -70,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -80,9 +81,9 @@ setup(
         'azure.mgmt',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
+        'msrest>=0.6.21',
         'azure-common~=1.1',
+        'azure-mgmt-core>=1.2.0,<2.0.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],

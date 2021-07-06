@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._accounts_operations import AccountsOperations
+from ._deleted_accounts_operations import DeletedAccountsOperations
 from ._resource_skus_operations import ResourceSkusOperations
 from ._operations import Operations
 from ._cognitive_services_management_client_operations import CognitiveServicesManagementClientOperationsMixin
@@ -15,6 +16,7 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'AccountsOperations',
+    'DeletedAccountsOperations',
     'ResourceSkusOperations',
     'Operations',
     'CognitiveServicesManagementClientOperationsMixin',

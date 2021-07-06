@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -30,19 +31,19 @@ class IotHubClient(object):
     """Use this API to manage the IoT hubs in your Azure subscription.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.iothub.aio.operations.Operations
+    :vartype operations: azure.mgmt.iothub.v2020_03_01.aio.operations.Operations
     :ivar iot_hub_resource: IotHubResourceOperations operations
-    :vartype iot_hub_resource: azure.mgmt.iothub.aio.operations.IotHubResourceOperations
+    :vartype iot_hub_resource: azure.mgmt.iothub.v2020_03_01.aio.operations.IotHubResourceOperations
     :ivar resource_provider_common: ResourceProviderCommonOperations operations
-    :vartype resource_provider_common: azure.mgmt.iothub.aio.operations.ResourceProviderCommonOperations
+    :vartype resource_provider_common: azure.mgmt.iothub.v2020_03_01.aio.operations.ResourceProviderCommonOperations
     :ivar certificates: CertificatesOperations operations
-    :vartype certificates: azure.mgmt.iothub.aio.operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.iothub.v2020_03_01.aio.operations.CertificatesOperations
     :ivar iot_hub: IotHubOperations operations
-    :vartype iot_hub: azure.mgmt.iothub.aio.operations.IotHubOperations
+    :vartype iot_hub: azure.mgmt.iothub.v2020_03_01.aio.operations.IotHubOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.iothub.aio.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.iothub.v2020_03_01.aio.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.iothub.aio.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.iothub.v2020_03_01.aio.operations.PrivateEndpointConnectionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription identifier.
@@ -82,6 +83,23 @@ class IotHubClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

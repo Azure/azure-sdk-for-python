@@ -51,7 +51,7 @@ class DatabaseColumnsOperations:
         column: Optional[List[str]] = None,
         order_by: Optional[List[str]] = None,
         skiptoken: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseColumnListResult"]:
         """List database columns.
 
@@ -153,7 +153,7 @@ class DatabaseColumnsOperations:
         schema_name: str,
         table_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DatabaseColumnListResult"]:
         """List database columns.
 
@@ -245,7 +245,7 @@ class DatabaseColumnsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DatabaseColumn":
         """Get database column.
 

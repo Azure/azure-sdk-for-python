@@ -32,7 +32,7 @@ class DigitalTwinsEndpointOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.digitaltwins.models
+    :type models: ~azure.mgmt.digitaltwins.v2020_12_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -63,7 +63,7 @@ class DigitalTwinsEndpointOperations(object):
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DigitalTwinsEndpointResourceListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResourceListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.digitaltwins.v2020_12_01.models.DigitalTwinsEndpointResourceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsEndpointResourceListResult"]
@@ -113,7 +113,7 @@ class DigitalTwinsEndpointOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -143,7 +143,7 @@ class DigitalTwinsEndpointOperations(object):
         :type endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DigitalTwinsEndpointResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResource
+        :rtype: ~azure.mgmt.digitaltwins.v2020_12_01.models.DigitalTwinsEndpointResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsEndpointResource"]
@@ -178,7 +178,7 @@ class DigitalTwinsEndpointOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DigitalTwinsEndpointResource', pipeline_response)
@@ -235,7 +235,7 @@ class DigitalTwinsEndpointOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -269,15 +269,15 @@ class DigitalTwinsEndpointOperations(object):
         :param endpoint_name: Name of Endpoint Resource.
         :type endpoint_name: str
         :param endpoint_description: The DigitalTwinsInstance endpoint metadata and security metadata.
-        :type endpoint_description: ~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResource
+        :type endpoint_description: ~azure.mgmt.digitaltwins.v2020_12_01.models.DigitalTwinsEndpointResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DigitalTwinsEndpointResource or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResource]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.digitaltwins.v2020_12_01.models.DigitalTwinsEndpointResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -368,7 +368,7 @@ class DigitalTwinsEndpointOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -403,12 +403,12 @@ class DigitalTwinsEndpointOperations(object):
         :type endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DigitalTwinsEndpointResource or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResource]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.digitaltwins.v2020_12_01.models.DigitalTwinsEndpointResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]

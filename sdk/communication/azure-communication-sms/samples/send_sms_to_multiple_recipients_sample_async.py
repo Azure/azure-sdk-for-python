@@ -15,7 +15,7 @@ USAGE:
     python send_sms_to_multiple_recipients_sample_async.py
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
-    2) AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS resource
+    2) AZURE_PHONE_NUMBER - a phone number with SMS capabilities in your ACS resource
 """
 
 import os
@@ -28,7 +28,7 @@ sys.path.append("..")
 class SmsMultipleRecipientsSampleAsync(object):
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-    phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
+    phone_number = os.getenv("AZURE_PHONE_NUMBER")
         
     async def send_sms_to_multiple_recipients_async(self):
         sms_client = SmsClient.from_connection_string(self.connection_string)

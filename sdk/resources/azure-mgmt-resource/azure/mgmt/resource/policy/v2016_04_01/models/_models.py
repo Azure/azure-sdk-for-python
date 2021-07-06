@@ -89,7 +89,7 @@ class PolicyDefinition(msrest.serialization.Model):
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
-    :type policy_rule: str
+    :type policy_rule: any
     """
 
     _validation = {
@@ -102,7 +102,7 @@ class PolicyDefinition(msrest.serialization.Model):
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'policy_rule': {'key': 'properties.policyRule', 'type': 'str'},
+        'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
     }
 
     def __init__(

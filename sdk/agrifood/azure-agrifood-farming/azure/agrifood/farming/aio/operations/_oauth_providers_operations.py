@@ -53,7 +53,7 @@ class OAuthProvidersOperations:
         max_last_modified_date_time: Optional[datetime.datetime] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.OAuthProviderListResponse"]:
         """Returns a paginated list of oauthProvider resources.
 
@@ -167,7 +167,7 @@ class OAuthProvidersOperations:
     async def get(
         self,
         oauth_provider_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.OAuthProvider":
         """Get a specified oauthProvider resource.
 
@@ -222,15 +222,15 @@ class OAuthProvidersOperations:
     async def create_or_update(
         self,
         oauth_provider_id: str,
-        body: Optional["_models.OAuthProvider"] = None,
-        **kwargs
+        oauth_provider: Optional["_models.OAuthProvider"] = None,
+        **kwargs: Any
     ) -> "_models.OAuthProvider":
         """Creates or updates an oauthProvider resource.
 
         :param oauth_provider_id: ID of oauthProvider resource.
         :type oauth_provider_id: str
-        :param body: OauthProvider resource payload to create or update.
-        :type body: ~azure.agrifood.farming.models.OAuthProvider
+        :param oauth_provider: OauthProvider resource payload to create or update.
+        :type oauth_provider: ~azure.agrifood.farming.models.OAuthProvider
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OAuthProvider, or the result of cls(response)
         :rtype: ~azure.agrifood.farming.models.OAuthProvider
@@ -263,8 +263,8 @@ class OAuthProvidersOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'OAuthProvider')
+        if oauth_provider is not None:
+            body_content = self._serialize.body(oauth_provider, 'OAuthProvider')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -292,7 +292,7 @@ class OAuthProvidersOperations:
     async def delete(
         self,
         oauth_provider_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes an specified oauthProvider resource.
 

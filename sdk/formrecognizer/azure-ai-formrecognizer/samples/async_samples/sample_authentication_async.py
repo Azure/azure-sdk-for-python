@@ -28,7 +28,6 @@ USAGE:
     3) AZURE_CLIENT_ID - the client ID of your active directory application.
     4) AZURE_TENANT_ID - the tenant ID of your active directory application.
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
-    6) AZURE_FORM_RECOGNIZER_AAD_ENDPOINT - the endpoint to your Form Recognizer resource for using AAD.
 """
 
 import os
@@ -37,7 +36,7 @@ import asyncio
 
 class AuthenticationSampleAsync(object):
 
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
 
     async def authentication_with_api_key_credential_form_recognizer_client_async(self):
         # [START create_fr_client_with_key_async]
@@ -60,7 +59,7 @@ class AuthenticationSampleAsync(object):
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         from azure.identity.aio import DefaultAzureCredential
 
-        endpoint = os.environ["AZURE_FORM_RECOGNIZER_AAD_ENDPOINT"]
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_recognizer_client = FormRecognizerClient(endpoint, credential)
@@ -89,7 +88,7 @@ class AuthenticationSampleAsync(object):
         from azure.ai.formrecognizer.aio import FormTrainingClient
         from azure.identity.aio import DefaultAzureCredential
 
-        endpoint = os.environ["AZURE_FORM_RECOGNIZER_AAD_ENDPOINT"]
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_training_client = FormTrainingClient(endpoint, credential)

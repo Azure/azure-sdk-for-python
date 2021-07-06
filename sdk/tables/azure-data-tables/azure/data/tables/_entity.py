@@ -12,14 +12,14 @@ class TableEntity(dict):
     An Entity dictionary with additional metadata
 
     """
-    _metadata = None
+    _metadata = {}  # type: Dict[str, Any]
 
     @property
     def metadata(self):
         # type: () -> Dict[str, Any]
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
-        :rtype Dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         return self._metadata
 

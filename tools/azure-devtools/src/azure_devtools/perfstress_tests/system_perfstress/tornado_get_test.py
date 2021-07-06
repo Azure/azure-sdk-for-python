@@ -9,7 +9,6 @@ from azure_devtools.perfstress_tests import PerfStressTest
 
 
 class TornadoGetTest(PerfStressTest):
-
     async def global_setup(self):
         httpclient.AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
         type(self).client = httpclient.AsyncHTTPClient()
@@ -19,4 +18,4 @@ class TornadoGetTest(PerfStressTest):
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('-u', '--url', required=True)
+        parser.add_argument("-u", "--url", required=True)

@@ -13,13 +13,19 @@ class TestConfig(object):  # pylint: disable=too-few-public-methods
         parent_parsers = parent_parsers or []
         self.parser = configargparse.ArgumentParser(parents=parent_parsers)
         self.parser.add_argument(
-            '-c', '--config', is_config_file=True, default=config_file,
-            help='Path to a configuration file in YAML format.'
+            "-c",
+            "--config",
+            is_config_file=True,
+            default=config_file,
+            help="Path to a configuration file in YAML format.",
         )
         self.parser.add_argument(
-            '-l', '--live-mode', action='store_true', dest='live_mode',
+            "-l",
+            "--live-mode",
+            action="store_true",
+            dest="live_mode",
             env_var=ENV_LIVE_TEST,
-            help='Activate "live" recording mode for tests.'
+            help='Activate "live" recording mode for tests.',
         )
         self.args = self.parser.parse_args([])
 

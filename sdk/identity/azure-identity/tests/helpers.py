@@ -99,7 +99,7 @@ class Request:
         def add_discrepancy(name, expected, actual):
             discrepancies.append("{}:\n\t expected: {}\n\t   actual: {}".format(name, expected, actual))
 
-        if self.base_url and self.base_url != request.url.split("?")[0]:
+        if self.base_url and not request.url.startswith(self.base_url):
             add_discrepancy("base url", self.base_url, request.url)
 
         if self.url and self.url != request.url:

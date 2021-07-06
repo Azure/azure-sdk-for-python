@@ -10,7 +10,7 @@ class DocumentTranslationApiVersion(str, Enum):
     """Document Translation API versions supported by this package"""
 
     #: This is the default version
-    V1_0_PREVIEW = "1.0-preview.1"
+    V1_0 = "1.0"
 
 
 def validate_api_version(api_version):
@@ -24,5 +24,6 @@ def validate_api_version(api_version):
     except ValueError:
         raise ValueError(
             "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, ", ".join(v.value for v in DocumentTranslationApiVersion))
+                api_version, ", ".join(v.value for v in DocumentTranslationApiVersion)
+            )
         )

@@ -46,7 +46,7 @@ class JobTargetGroupsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobTargetGroupListResult"]:
         """Gets all target groups in an agent.
 
@@ -126,7 +126,7 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobTargetGroup":
         """Gets a target group.
 
@@ -194,7 +194,7 @@ class JobTargetGroupsOperations:
         job_agent_name: str,
         target_group_name: str,
         parameters: "_models.JobTargetGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobTargetGroup":
         """Creates or updates a target group.
 
@@ -272,7 +272,7 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a target group.
 

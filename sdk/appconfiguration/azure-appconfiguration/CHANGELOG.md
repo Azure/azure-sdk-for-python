@@ -1,6 +1,12 @@
 # Release History
 
-## 1.2.0b2 (2021-05-11)
+## 1.2.0 (2021-07-06)
+### Features Added
+* Adds `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting` models
+* `AzureAppConfigurationClient` can now be used as a context manager.
+* Adds `update_sync_token` to update sync tokens from Event Grid notifications.
+
+## 1.2.0b2 (2021-06-08)
 
 ### Features
 - Adds context manager functionality to the sync and async `AzureAppConfigurationClient`s.

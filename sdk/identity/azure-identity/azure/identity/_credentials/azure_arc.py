@@ -42,11 +42,9 @@ class AzureArcCredential(GetTokenMixin):
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         self._available = url and imds
         if self._available:
-            identity_config = kwargs.pop("_identity_config", None) or {}
             config = _get_configuration()
 
             self._client = ManagedIdentityClient(
-                _identity_config=identity_config,
                 policies=_get_policies(config),
                 request_factory=functools.partial(_get_request, url),
                 **kwargs

@@ -45,7 +45,7 @@ class TagsOperations:
         self,
         tag_name: str,
         tag_value: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a subscription resource tag value.
 
@@ -98,7 +98,7 @@ class TagsOperations:
         self,
         tag_name: str,
         tag_value: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagValue":
         """Create a subscription resource tag value.
 
@@ -159,7 +159,7 @@ class TagsOperations:
     async def create_or_update(
         self,
         tag_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TagDetails":
         """Create a subscription resource tag.
 
@@ -217,7 +217,7 @@ class TagsOperations:
     async def delete(
         self,
         tag_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a subscription resource tag.
 
@@ -265,7 +265,7 @@ class TagsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TagsListResult"]:
         """Get a list of subscription resource tags.
 

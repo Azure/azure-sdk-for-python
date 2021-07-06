@@ -44,7 +44,7 @@ class TimeZonesOperations:
     def list_by_location(
         self,
         location_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TimeZoneListResult"]:
         """Gets a list of managed instance time zones by location.
 
@@ -115,7 +115,7 @@ class TimeZonesOperations:
         self,
         location_name: str,
         time_zone_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TimeZone":
         """Gets a managed instance time zone.
 

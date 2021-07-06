@@ -4,7 +4,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -59,6 +57,9 @@ extends:
     - name: azure-messaging-nspkg
       safeName: azuremessagingnspkg
       skipVerifyChangeLog: true
+    - name: azure-monitor-nspkg
+      safeName: azuremonitornspkg
+      skipVerifyChangeLog: true
     - name: azure-purview-nspkg
       safeName: azurepurviewnspkg
       skipVerifyChangeLog: true
@@ -73,4 +74,19 @@ extends:
       skipVerifyChangeLog: true
     - name: azure-synapse-nspkg
       safeName: azuresynapsenspkg
+      skipVerifyChangeLog: true
+    - name: azure-cognitiveservices-knowledge-nspkg
+      safeName: azurecognitiveservicesknowledgenspkg
+      skipVerifyChangeLog: true
+    - name: azure-cognitiveservices-language-nspkg
+      safeName: azurecognitiveserviceslanguagenspkg
+      skipVerifyChangeLog: true
+    - name: azure-cognitiveservices-nspkg
+      safeName: azurecognitiveservicesnspkg
+      skipVerifyChangeLog: true
+    - name: azure-cognitiveservices-search-nspkg
+      safeName: azurecognitiveservicessearchnspkg
+      skipVerifyChangeLog: true
+    - name: azure-cognitiveservices-vision-nspkg
+      safeName: azurecognitiveservicesvisionnspkg
       skipVerifyChangeLog: true

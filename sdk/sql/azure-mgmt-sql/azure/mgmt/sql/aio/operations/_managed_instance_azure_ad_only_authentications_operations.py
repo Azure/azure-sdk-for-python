@@ -48,7 +48,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         authentication_name: Union[str, "_models.AuthenticationName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstanceAzureADOnlyAuthentication":
         """Gets a specific Azure Active Directory only authentication property.
 
@@ -112,7 +112,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         managed_instance_name: str,
         authentication_name: Union[str, "_models.AuthenticationName"],
         parameters: "_models.ManagedInstanceAzureADOnlyAuthentication",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ManagedInstanceAzureADOnlyAuthentication"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedInstanceAzureADOnlyAuthentication"]]
         error_map = {
@@ -172,7 +172,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         managed_instance_name: str,
         authentication_name: Union[str, "_models.AuthenticationName"],
         parameters: "_models.ManagedInstanceAzureADOnlyAuthentication",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedInstanceAzureADOnlyAuthentication"]:
         """Sets Server Active Directory only authentication property or updates an existing server Active
         Directory only authentication property.
@@ -189,8 +189,8 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAzureADOnlyAuthentication
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedInstanceAzureADOnlyAuthentication or the result of cls(response)
@@ -250,7 +250,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         authentication_name: Union[str, "_models.AuthenticationName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -294,7 +294,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         authentication_name: Union[str, "_models.AuthenticationName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing server Active Directory only authentication property.
 
@@ -307,8 +307,8 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -363,7 +363,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceAzureADOnlyAuthListResult"]:
         """Gets a list of server Azure Active Directory only authentications.
 

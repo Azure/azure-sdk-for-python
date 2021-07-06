@@ -1,6 +1,7 @@
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
+    condition: succeededOrFailed()
     inputs:
      versionSpec: '$(PythonVersion)'
 
@@ -8,14 +9,17 @@ steps:
      pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
     displayName: 'Verify Readmes'
+    condition: succeededOrFailed()
 
   - pwsh: |
       mkdir "$(Build.ArtifactStagingDirectory)/reports"
       Copy-Item -Path "$(Build.SourcesDirectory)/eng/common/InterdependencyGraph.html" -Destination "$(Build.ArtifactStagingDirectory)/reports/InterdependencyGraph.html"
     displayName: 'Populate Reports Staging Folder'
+    condition: succeededOrFailed()
 
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
+    condition: succeededOrFailed()
     inputs:
      scriptPath: 'scripts/analyze_deps.py'
      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports/data.js"'
