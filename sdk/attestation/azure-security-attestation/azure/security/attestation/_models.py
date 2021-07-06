@@ -468,8 +468,6 @@ class AttestationToken(object):
     :keyword str signing_certificate: If specified, the PEM encoded certificate
         used to sign the token.
     :keyword str token: If no body or signer is provided, the string representation of the token.
-    :keyword Type body_type: The underlying type of the body of the 'token' parameter,
-        used to deserialize the underlying body when parsing the token.
 
     If the `signing_key` and `signing_certificate` properties are not specified,
     the token created is unsecured.
