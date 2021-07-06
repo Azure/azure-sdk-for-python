@@ -24,8 +24,8 @@ from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
     AuthenticationMetadataFilter,
-    OAuthRequestResponsesFilter,
     SubscriptionRecordingProcessor,
+    OAuthRequestResponsesFilter,
 )
 from azure_devtools.scenario_tests.config import TestConfig
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
