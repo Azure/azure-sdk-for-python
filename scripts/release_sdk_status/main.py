@@ -167,10 +167,10 @@ def write_to_csv(sdk_status_list, csv_name):
     with open(csv_name, 'w') as file_out:
         file_out.write('package name,'
                        'pypi link,'
-                       'latest track1 version,'
+                       'latest track1,'
                        'release date,'
                        'track1 GA,'
-                       'latest track2 version,'
+                       'latest track2,'
                        'track2 GA,'
                        'release date,'
                        'cli dependency,'
