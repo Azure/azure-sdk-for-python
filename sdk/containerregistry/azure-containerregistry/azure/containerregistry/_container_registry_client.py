@@ -32,7 +32,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         :keyword credential_scopes: URL for credential authentication if different from the default
-        :paramtype credential_scopes: str
+        :paramtype credential_scopes: List[str]
         :returns: None
         :raises: None
 

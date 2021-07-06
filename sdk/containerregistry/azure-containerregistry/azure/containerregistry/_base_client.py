@@ -29,7 +29,7 @@ class ContainerRegistryBaseClient(object):
     :param credential: AAD Token for authenticating requests with Azure
     :type credential: :class:`azure.identity.DefaultTokenCredential`
     :keyword credential_scopes: URL for credential authentication if different from the default
-    :paramtype credential_scopes: str
+    :paramtype credential_scopes: List[str]
     """
 
     def __init__(self, endpoint, credential, **kwargs):
