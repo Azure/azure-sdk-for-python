@@ -157,6 +157,8 @@ def sdk_info_from_pypi(sdk_info, cli_dependency):
             text_to_write = pypi_ins.write_to_list()
             if pypi_ins.pypi_link != 'NA':
                 all_sdk_status.append(text_to_write)
+
+    my_print(f'total pypi package kinds: {len(all_sdk_status)}')
     return all_sdk_status
 
 
@@ -254,7 +256,7 @@ def sdk_info_from_swagger():
                                                            track_config,
                                                            readme_python,
                                                            str(href)))
-
+    my_print(f'total package kinds: {len(resource_manager)}')
     return resource_manager
 
 
@@ -275,7 +277,6 @@ def upload_to_azure(out_file):
 def main():
     cli_dependency = get_cli_dependency()
     sdk_info = sdk_info_from_swagger()
-    return
     all_sdk_status = sdk_info_from_pypi(sdk_info, cli_dependency)
 
     OUT_FILE = 'release_sdk_status.csv'
