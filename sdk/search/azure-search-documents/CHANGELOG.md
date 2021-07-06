@@ -1,12 +1,19 @@
 # Release History
 
+## 11.3.0b1 (2021-07-07)
+
+### Features Added
+
+- Added AAD support
+- Added support for semantic search
+- Added normalizer support
+
 ## 11.2.0 (2021-06-08)
 
 This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
 
 **New features**
 
-- Added `create_from_file` for `SynonymMap`
 - Added support for knowledge store    #18461
 - Added new data source type ADLS gen2  #16852
 

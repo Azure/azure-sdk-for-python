@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b5 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?status=Paused
   response:
@@ -17,21 +17,21 @@ interactions:
       string: '{"value":[]}'
     headers:
       apim-request-id:
-      - 48e939de-a5a5-4d21-bcc9-151e4d15e83e
+      - 10627a17-472e-41a2-b98c-6db376c30ff4
       content-length:
       - '12'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 21 May 2021 19:58:35 GMT
+      - Fri, 11 Jun 2021 23:33:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5134'
+      - '32'
       x-request-id:
-      - 48e939de-a5a5-4d21-bcc9-151e4d15e83e
+      - 10627a17-472e-41a2-b98c-6db376c30ff4
     status:
       code: 200
       message: OK

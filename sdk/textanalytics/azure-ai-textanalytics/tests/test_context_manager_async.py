@@ -12,7 +12,7 @@ import asyncio
 import sys
 
 from asynctestcase import AsyncTextAnalyticsTest
-from testcase import GlobalTextAnalyticsAccountPreparer
+from testcase import TextAnalyticsPreparer
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -34,12 +34,12 @@ class AsyncMockTransport(mock.MagicMock):
             self.__aexit__ = mock.Mock(return_value=get_completed_future())
 
 class TestContextManager(AsyncTextAnalyticsTest):
-    @GlobalTextAnalyticsAccountPreparer()
-    async def test_close(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    @TextAnalyticsPreparer()
+    async def test_close(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
-            text_analytics_account,
-            AzureKeyCredential(text_analytics_account_key),
+            textanalytics_test_endpoint,
+            AzureKeyCredential(textanalytics_test_api_key),
             transport=transport
         )
 
@@ -47,12 +47,12 @@ class TestContextManager(AsyncTextAnalyticsTest):
         assert transport.__aenter__.call_count == 0
         assert transport.__aexit__.call_count == 1
 
-    @GlobalTextAnalyticsAccountPreparer()
-    async def test_context_manager(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+    @TextAnalyticsPreparer()
+    async def test_context_manager(self, textanalytics_test_endpoint, textanalytics_test_api_key):
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
-            text_analytics_account,
-            AzureKeyCredential(text_analytics_account_key),
+            textanalytics_test_endpoint,
+            AzureKeyCredential(textanalytics_test_api_key),
             transport=transport
         )
 

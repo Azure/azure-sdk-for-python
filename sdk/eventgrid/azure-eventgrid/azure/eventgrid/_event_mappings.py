@@ -37,8 +37,6 @@ class SystemEventNames(str, Enum):
 
     ResourceWriteCancelEventName = 'Microsoft.Resources.ResourceWriteCancel'
 
-    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener'
-
     ResourceActionFailureEventName = 'Microsoft.Resources.ResourceActionFailure'
 
     AcsChatMemberRemovedFromThreadWithUserEventName = 'Microsoft.Communication.ChatMemberRemovedFromThreadWithUser'
@@ -242,6 +240,8 @@ class SystemEventNames(str, Enum):
 
     ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailablePeriodicNotifications'
 
+    ServiceBusDeadletterMessagesAvailableWithNoListenersEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+
     SignalRServiceClientConnectionConnectedEventName = 'Microsoft.SignalRService.ClientConnectionConnected'
 
     SignalRServiceClientConnectionDisconnectedEventName = 'Microsoft.SignalRService.ClientConnectionDisconnected'
@@ -251,6 +251,8 @@ class SystemEventNames(str, Enum):
     StorageBlobCreatedEventName = 'Microsoft.Storage.BlobCreated'
 
     StorageBlobDeletedEventName = 'Microsoft.Storage.BlobDeleted'
+
+    StorageBlobInventoryPolicyCompletedEventName = 'Microsoft.Storage.BlobInventoryPolicyCompleted'
 
     StorageBlobRenamedEventName = 'Microsoft.Storage.BlobRenamed'
 
@@ -293,3 +295,6 @@ class SystemEventNames(str, Enum):
     WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
 
     WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    # servicebus alias
+    ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'

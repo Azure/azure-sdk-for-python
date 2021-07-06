@@ -4,7 +4,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -58,6 +56,9 @@ extends:
       skipVerifyChangeLog: true
     - name: azure-messaging-nspkg
       safeName: azuremessagingnspkg
+      skipVerifyChangeLog: true
+    - name: azure-monitor-nspkg
+      safeName: azuremonitornspkg
       skipVerifyChangeLog: true
     - name: azure-purview-nspkg
       safeName: azurepurviewnspkg

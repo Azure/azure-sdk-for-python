@@ -135,7 +135,7 @@ class DataMoveLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CONTAINER = "Container"
 
 class DataSourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of workload this item represents.
+    """Container Type - VM, SQLPaaS, DPM, AzureFileShare...
     """
 
     INVALID = "Invalid"

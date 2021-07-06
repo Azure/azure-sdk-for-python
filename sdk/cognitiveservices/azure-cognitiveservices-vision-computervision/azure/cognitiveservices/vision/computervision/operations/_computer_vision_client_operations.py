@@ -763,6 +763,154 @@ class ComputerVisionClientOperationsMixin(object):
         return deserialized
     get_area_of_interest.metadata = {'url': '/areaOfInterest'}
 
+    def read(
+            self, url, language=None, pages=None, model_version="latest", reading_order="basic", custom_headers=None, raw=False, **operation_config):
+        """Use this interface to get the result of a Read operation, employing the
+        state-of-the-art Optical Character Recognition (OCR) algorithms
+        optimized for text-heavy documents. When you use the Read interface,
+        the response contains a field called 'Operation-Location'. The
+        'Operation-Location' field contains the URL that you must use for your
+        'GetReadResult' operation to access OCR results.​.
+
+        :param url: Publicly reachable URL of an image.
+        :type url: str
+        :param language: The BCP-47 language code of the text in the document.
+         Read supports auto language identification and multi-language
+         documents, so only provide a language code if you would like to force
+         the document to be processed in that specific language. See
+         https://aka.ms/ocr-languages for list of supported languages. Possible
+         values include: 'af', 'ast', 'bi', 'br', 'ca', 'ceb', 'ch', 'co',
+         'crh', 'cs', 'csb', 'da', 'de', 'en', 'es', 'et', 'eu', 'fi', 'fil',
+         'fj', 'fr', 'fur', 'fy', 'ga', 'gd', 'gil', 'gl', 'gv', 'hni', 'hsb',
+         'ht', 'hu', 'ia', 'id', 'it', 'iu', 'ja', 'jv', 'kaa', 'kac', 'kea',
+         'kha', 'kl', 'ko', 'ku', 'kw', 'lb', 'ms', 'mww', 'nap', 'nl', 'no',
+         'oc', 'pl', 'pt', 'quc', 'rm', 'sco', 'sl', 'sq', 'sv', 'sw', 'tet',
+         'tr', 'tt', 'uz', 'vo', 'wae', 'yua', 'za', 'zh-Hans', 'zh-Hant', 'zu'
+        :type language: str or
+         ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF),
+         input the number of the pages you want to get OCR result. For a range
+         of pages, use a hyphen. Separate each page or range with a comma.
+        :type pages: list[str]
+        :param model_version: Optional parameter to specify the version of the
+         OCR model used for text extraction. Accepted values are: "latest",
+         "latest-preview", "2021-04-12". Defaults to "latest".
+        :type model_version: str
+        :param reading_order: Optional parameter to specify which reading
+         order algorithm should be applied when ordering the extract text
+         elements. Can be either 'basic' or 'natural'. Will default to 'basic'
+         if not specified
+        :type reading_order: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
+        """
+        image_url = models.ImageUrl(url=url)
+
+        # Construct URL
+        url = self.read.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if pages is not None:
+            query_parameters['pages'] = self._serialize.query("pages", pages, '[str]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
+        if reading_order is not None:
+            query_parameters['readingOrder'] = self._serialize.query("reading_order", reading_order, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(image_url, 'ImageUrl')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    read.metadata = {'url': '/read/analyze'}
+
+    def get_read_result(
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
+        """This interface is used for getting OCR results of Read operation. The
+        URL to this interface should be retrieved from 'Operation-Location'
+        field returned from Read interface.
+
+        :param operation_id: Id of read operation returned in the response of
+         the 'Read' interface.
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ReadOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.computervision.models.ReadOperationResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
+        """
+        # Construct URL
+        url = self.get_read_result.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ReadOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_read_result.metadata = {'url': '/read/analyzeResults/{operationId}'}
+
     def analyze_image_in_stream(
             self, image, visual_features=None, details=None, language="en", description_exclude=None, model_version="latest", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation extracts a rich set of visual features based on the
@@ -1473,149 +1621,8 @@ class ComputerVisionClientOperationsMixin(object):
         return deserialized
     tag_image_in_stream.metadata = {'url': '/tag'}
 
-    def read(
-            self, url, language=None, pages=None, model_version="latest", custom_headers=None, raw=False, **operation_config):
-        """Use this interface to get the result of a Read operation, employing the
-        state-of-the-art Optical Character Recognition (OCR) algorithms
-        optimized for text-heavy documents. When you use the Read interface,
-        the response contains a field called 'Operation-Location'. The
-        'Operation-Location' field contains the URL that you must use for your
-        'GetReadResult' operation to access OCR results.​.
-
-        :param url: Publicly reachable URL of an image.
-        :type url: str
-        :param language: The BCP-47 language code of the text in the document.
-         Read supports auto language identification and multi-language
-         documents, so only provide a language code if you would like to force
-         the document to be processed in that specific language. See
-         https://aka.ms/ocr-languages for list of supported languages. Possible
-         values include: 'af', 'ast', 'bi', 'br', 'ca', 'ceb', 'ch', 'co',
-         'crh', 'cs', 'csb', 'da', 'de', 'en', 'es', 'et', 'eu', 'fi', 'fil',
-         'fj', 'fr', 'fur', 'fy', 'ga', 'gd', 'gil', 'gl', 'gv', 'hni', 'hsb',
-         'ht', 'hu', 'ia', 'id', 'it', 'iu', 'ja', 'jv', 'kaa', 'kac', 'kea',
-         'kha', 'kl', 'ko', 'ku', 'kw', 'lb', 'ms', 'mww', 'nap', 'nl', 'no',
-         'oc', 'pl', 'pt', 'quc', 'rm', 'sco', 'sl', 'sq', 'sv', 'sw', 'tet',
-         'tr', 'tt', 'uz', 'vo', 'wae', 'yua', 'za', 'zh-Hans', 'zh-Hant', 'zu'
-        :type language: str or
-         ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
-        :param pages: Custom page numbers for multi-page documents(PDF/TIFF),
-         input the number of the pages you want to get OCR result. For a range
-         of pages, use a hyphen. Separate each page or range with a comma.
-        :type pages: list[str]
-        :param model_version: Optional parameter to specify the version of the
-         OCR model used for text extraction. Accepted values are: "latest",
-         "latest-preview", "2021-04-12". Defaults to "latest".
-        :type model_version: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
-        """
-        image_url = models.ImageUrl(url=url)
-
-        # Construct URL
-        url = self.read.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if language is not None:
-            query_parameters['language'] = self._serialize.query("language", language, 'str')
-        if pages is not None:
-            query_parameters['pages'] = self._serialize.query("pages", pages, '[str]', div=',')
-        if model_version is not None:
-            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(image_url, 'ImageUrl')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'Operation-Location': 'str',
-            })
-            return client_raw_response
-    read.metadata = {'url': '/read/analyze'}
-
-    def get_read_result(
-            self, operation_id, custom_headers=None, raw=False, **operation_config):
-        """This interface is used for getting OCR results of Read operation. The
-        URL to this interface should be retrieved from 'Operation-Location'
-        field returned from Read interface.
-
-        :param operation_id: Id of read operation returned in the response of
-         the 'Read' interface.
-        :type operation_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ReadOperationResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.computervision.models.ReadOperationResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ComputerVisionOcrErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionOcrErrorException>`
-        """
-        # Construct URL
-        url = self.get_read_result.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ComputerVisionOcrErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ReadOperationResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_read_result.metadata = {'url': '/read/analyzeResults/{operationId}'}
-
     def read_in_stream(
-            self, image, language=None, pages=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, language=None, pages=None, model_version="latest", reading_order="basic", custom_headers=None, raw=False, callback=None, **operation_config):
         """Use this interface to get the result of a Read operation, employing the
         state-of-the-art Optical Character Recognition (OCR) algorithms
         optimized for text-heavy documents. When you use the Read interface,
@@ -1643,6 +1650,15 @@ class ComputerVisionClientOperationsMixin(object):
          input the number of the pages you want to get OCR result. For a range
          of pages, use a hyphen. Separate each page or range with a comma.
         :type pages: list[str]
+        :param model_version: Optional parameter to specify the version of the
+         OCR model used for text extraction. Accepted values are: "latest",
+         "latest-preview", "2021-04-12". Defaults to "latest".
+        :type model_version: str
+        :param reading_order: Optional parameter to specify which reading
+         order algorithm should be applied when ordering the extract text
+         elements. Can be either 'basic' or 'natural'. Will default to 'basic'
+         if not specified
+        :type reading_order: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1671,6 +1687,10 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['language'] = self._serialize.query("language", language, 'str')
         if pages is not None:
             query_parameters['pages'] = self._serialize.query("pages", pages, '[str]', div=',')
+        if model_version is not None:
+            query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str', pattern=r'^(latest|\d{4}-\d{2}-\d{2})(-preview)?$')
+        if reading_order is not None:
+            query_parameters['readingOrder'] = self._serialize.query("reading_order", reading_order, 'str')
 
         # Construct headers
         header_parameters = {}

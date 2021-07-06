@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to `azure-eventhub` v5 from v1. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-Familiarity with the `azure-eventhub` v1 package is assumed. For those new to the Event Hubs client library for Python, please refer to the [README for `azure-eventhub`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/README.md) rather than this guide.
+Familiarity with the `azure-eventhub` v1 package is assumed. For those new to the Event Hubs client library for Python, please refer to the [README for `azure-eventhub`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/README.md) rather than this guide.
 
 ## Table of contents
 
@@ -28,7 +28,7 @@ To try and improve the development experience across Azure services, a set of un
 ### Cross Service SDK improvements
 
 The modern Event Hubs client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as:
-- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
+- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
 
 ### New features
@@ -37,9 +37,9 @@ We have a variety of new features in version 5 of the Event Hubs library.
 
 - Ability to create a batch of messages with the `EventHubProducer.create_batch()` and `EventDataBatch.add()` APIs. This will help you manage events to be sent in the most optimal way.
 - Ability to configure the retry policy used by operations on the clients.
-- Authentication with AAD credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md).
+- Authentication with AAD credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
 
-Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/CHANGELOG.md) for more new features, changes and bug fixes.
+Refer to the [changelog](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/CHANGELOG.md) for more new features, changes and bug fixes.
 
 ## Important changes
 
@@ -64,7 +64,7 @@ This provides consistency and predictability on the various features of the libr
 
 While we continue to support connection strings when constructing a client, below are the differences in the two versions:
 - In v5, we now support the use of Azure Active Directory for authentication.
-The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library allows us
+The new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library allows us
 to share a single authentication solution between clients of different Azure services.
 - The option to construct a client using an address of the form `amqps://<SAS-policy-name>:<SAS-key>@<fully-qualified-namespace>/<eventhub-name>` is no longer supported in v5. This address is not readily available in the Azure portal or in any tooling and so was subject to human error. We instead recommend using the connection string if you want to use a SAS policy.
 
@@ -284,7 +284,7 @@ If pointed at the same blob, consumption will begin at the first message.
 V1 checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
 In V1 checkpoints (sequence_number and offset) are stored in the format of json along with ownership information
 as the content of the blob, while in V5, checkpoints are kept in the metadata of a blob and the metadata is composed of name-value pairs.
-Please check [update_checkpoint](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_blobstoragecs.py#L231-L250) in V5 for implementation detail.
+Please check [update_checkpoint](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_blobstoragecs.py#L231-L250) in V5 for implementation detail.
 
 The following code snippet can be used to migrate checkpoint data from the legacy format. This snippet assumes that the default prefix configuration for the `EventProcessorHost` was used. If a custom prefix was configured, this code will need to be adjusted to account for the difference in format.
 ```python
@@ -357,4 +357,4 @@ if __name__ == "__main__":
 
 ## Additional samples
 
-More examples can be found at [Samples for azure-eventhub](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
+More examples can be found at [Samples for azure-eventhub](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples)

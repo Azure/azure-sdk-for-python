@@ -9,7 +9,6 @@ from azure_devtools.perfstress_tests import PerfStressTest
 
 
 class HttpxGetTest(PerfStressTest):
-
     async def global_setup(self):
         type(self).client = httpx.AsyncClient()
 
@@ -22,4 +21,4 @@ class HttpxGetTest(PerfStressTest):
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('-u', '--url', required=True)
+        parser.add_argument("-u", "--url", required=True)

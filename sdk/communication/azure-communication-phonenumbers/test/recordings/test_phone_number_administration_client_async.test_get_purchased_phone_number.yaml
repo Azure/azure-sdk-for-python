@@ -4,10 +4,10 @@ interactions:
     headers:
       Accept:
       - application/json
-      Date:
-      - Mon, 19 Apr 2021 21:50:55 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:47:33 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -16,16 +16,17 @@ interactions:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
         "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound", "sms":
-        "inbound+outbound"}, "assignmentType": "application", "purchaseDate": "2000-01-01T00:00:00+00:00",
+        "outbound"}, "assignmentType": "application", "purchaseDate": "2021-03-09T15:01:55.0949003+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}'
     headers:
       api-supported-versions: '2021-03-07'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 21:50:56 GMT
-      ms-cv: AFGxY/duj06Kmg3TuDfcGA.0
+      date: Tue, 22 Jun 2021 20:47:34 GMT
+      ms-cv: ak3TkQ+u6kKnYzN0owAzFw.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 1847ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 1929ms
     status:
       code: 200
       message: OK

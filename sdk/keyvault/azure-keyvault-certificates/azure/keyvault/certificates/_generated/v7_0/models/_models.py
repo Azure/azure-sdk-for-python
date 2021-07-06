@@ -343,8 +343,8 @@ class CertificateImportParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param base64_encoded_certificate: Required. Base64 encoded representation of the certificate
-     object to import. This certificate needs to contain the private key.
+    :param base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
+     files need to contain the private key.
     :type base64_encoded_certificate: str
     :param password: If the private key in base64EncodedCertificate is encrypted, the password used
      for encryption.
@@ -2085,8 +2085,9 @@ class JsonWebKey(msrest.serialization.Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: JsonWebKey Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-
-     jose-json-web-algorithms-40. Possible values include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
+    :param kty: JsonWebKey Key Type (kty), as defined in
+     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Possible values include:
+     "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
     :type kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
     :param key_ops:
     :type key_ops: list[str]
@@ -2358,8 +2359,8 @@ class KeyOperationsParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP", "RSA-
-     OAEP-256", "RSA1_5".
+    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
+     "RSA-OAEP-256", "RSA1_5".
     :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
     :param value: Required.
     :type value: bytes

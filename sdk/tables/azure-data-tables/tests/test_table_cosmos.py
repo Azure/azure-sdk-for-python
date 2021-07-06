@@ -1,12 +1,10 @@
 # coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from time import sleep
 
 from devtools_testutils import AzureTestCase
 
@@ -26,24 +24,22 @@ class StorageTableTest(AzureTestCase, TableTestCase):
     @cosmos_decorator
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
         table_name = self._get_table_reference()
 
         # Act
-        created = ts.create_table(table_name)
+        table = ts.get_table_client(table_name)
+        created = table.create_table()
 
         # Assert
-        assert created.table_name == table_name
+        assert created.name == table_name
         ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -55,13 +51,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert created
         ts.delete_table(table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator
     def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
         table_name = "mytable"
 
@@ -85,14 +78,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-
     @cosmos_decorator
     def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = self._create_table(ts)
 
         # Act
@@ -104,13 +93,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert tables[0] is not None
         ts.delete_table(table.table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator
     def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = self._create_table(ts)
 
         # Act
@@ -124,14 +110,11 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator
     def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_list = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_list)
@@ -152,13 +135,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator
     def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -183,13 +163,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         self._delete_all_tables(ts)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator
     def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = self._create_table(ts)
 
         # Act
@@ -197,21 +174,15 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Assert
         existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
-        assert len(existing) ==  0
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        assert len(existing) == 0
 
     @cosmos_decorator
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
         ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
 
 class TestTableUnitTest(TableTestCase):
@@ -221,7 +192,7 @@ class TestTableUnitTest(TableTestCase):
 
     def test_create_table_invalid_name(self):
         # Arrange
-        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.credential)
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -232,7 +203,7 @@ class TestTableUnitTest(TableTestCase):
 
     def test_delete_table_invalid_name(self):
         # Arrange
-        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.credential)
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -244,7 +215,7 @@ class TestTableUnitTest(TableTestCase):
     def test_unicode_create_table_unicode_name(self):
         # Arrange
         url = self.account_url(self.tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, self.credential)
+        ts = TableServiceClient(url, credential=self.credential)
         table_name = u'啊齄丂狛狜'
 
         # Act

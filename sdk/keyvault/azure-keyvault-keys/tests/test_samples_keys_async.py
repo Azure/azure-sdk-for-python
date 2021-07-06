@@ -12,6 +12,7 @@ from _test_case import client_setup, get_decorator, KeysTestCase
 
 
 all_api_versions = get_decorator(is_async=True, vault_only=True)
+hsm_only = get_decorator(hsm_only=True, is_async=True)
 
 
 def print(*args):
@@ -122,6 +123,19 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
         # [END delete_key]
+
+    @hsm_only()
+    @client_setup
+    async def test_example_create_oct_key(self, key_client, **kwargs):
+        key_name = self.get_resource_name("key")
+
+        # [START create_oct_key]
+        key = await key_client.create_oct_key(key_name, size=256, hardware_protected=True)
+
+        print(key.id)
+        print(key.name)
+        print(key.key_type)
+        # [END create_oct_key]
 
     @all_api_versions()
     @client_setup

@@ -10,33 +10,22 @@ interactions:
     uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/documents/formats
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAK1VUU/CMBD+L30VhvjIq0I0kUiEKInhoa43aOzWpi1jhvDfvW4MMaxbNb5s2e7u
-        +77e3b7tSU7FFsjobU8SqVNqyYjMBOXZAgpLeiThAsaFhcxwmRnMI5HFwKpHYpnha7v4VFC+t1gw
-        UK7URXPQdcXq0DsDf1KQLVPxKjVrhmcyLprwqVKCx9Ri4iDPWCQRqEhFBWz6Mkl4DFi8TbEq2iG+
-        0jIGY3i2TkVUR0LEzTQYTC25mkUqZf9BpDrjQYnnjyEy51hAmdkAeCZVCPMPKs03DYqs6FrVba2Q
-        8mNKuZhi++kamtWlZh0iLkVBFWIr6z2KmyBJM9cGoxhxd+/uljltFDOpLX0XcHfszKQKNC8IS7oO
-        d0zx0i0fHyYT32A70QvBk+SquDgSGUbXCDqMhuX1hvwkXcxfPF+9yV0DsQHeBmKsb0BRTS2wfmks
-        pvWEtz6yGMl8LMeYF/SZxxtnXm3T0bazf8cUL40zsHoRvEbWRZIa51MdS7cDrSTPbJArBX5R6oTa
-        Sj4uYgiymUBacHid1la31f8LkizooJIabkp3O5mZW6FgAd0dl0z9UcivzL4W1DkKyYJG0aDnzOUv
-        5KwOX9wiVlsoCAAA
+      string: '{"value":[{"format":"PlainText","fileExtensions":[".txt"],"contentTypes":["text/plain"],"versions":[]},{"format":"OpenXmlWord","fileExtensions":[".docx"],"contentTypes":["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],"versions":[]},{"format":"OpenXmlPresentation","fileExtensions":[".pptx"],"contentTypes":["application/vnd.openxmlformats-officedocument.presentationml.presentation"],"versions":[]},{"format":"OpenXmlSpreadsheet","fileExtensions":[".xlsx"],"contentTypes":["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],"versions":[]},{"format":"OutlookMailMessage","fileExtensions":[".msg"],"contentTypes":["application/vnd.ms-outlook"],"versions":[]},{"format":"HtmlFile","fileExtensions":[".html",".htm"],"contentTypes":["text/html"],"versions":[]},{"format":"PortableDocumentFormat","fileExtensions":[".pdf"],"contentTypes":["application/pdf"],"versions":[]},{"format":"XLIFF","fileExtensions":[".xlf"],"contentTypes":["application/xliff+xml"],"versions":["1.0","1.1","1.2"]},{"format":"TSV","fileExtensions":[".tsv",".tab"],"contentTypes":["text/tab-separated-values"],"versions":[]},{"format":"CSV","fileExtensions":[".csv"],"contentTypes":["text/csv"],"versions":[]},{"format":"RichTextFormat","fileExtensions":[".rtf"],"contentTypes":["application/rtf"],"versions":[]},{"format":"WordDocument","fileExtensions":[".doc"],"contentTypes":["application/msword"],"versions":[]},{"format":"PowerpointPresentation","fileExtensions":[".ppt"],"contentTypes":["application/vnd.ms-powerpoint"],"versions":[]},{"format":"ExcelSpreadsheet","fileExtensions":[".xls"],"contentTypes":["application/vnd.ms-excel"],"versions":[]},{"format":"OpenDocumentText","fileExtensions":[".odt"],"contentTypes":["application/vnd.oasis.opendocument.text"],"versions":[]},{"format":"OpenDocumentPresentation","fileExtensions":[".odp"],"contentTypes":["application/vnd.oasis.opendocument.presentation"],"versions":[]},{"format":"OpenDocumentSpreadsheet","fileExtensions":[".ods"],"contentTypes":["application/vnd.oasis.opendocument.spreadsheet"],"versions":[]}]}'
     headers:
-      age: '0'
-      apim-request-id: 16b598c7-0942-43ed-bf3b-acf497963837
+      apim-request-id: 9325e8aa-bcd5-45fd-8f82-e6c94854d63b
       cache-control: public,max-age=1
-      content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Fri, 21 May 2021 17:00:47 GMT
+      date: Wed, 02 Jun 2021 06:34:37 GMT
       etag: '"44A88B37BE223B6C068718250B179D652514ABB810E8DD9DCD271B2759493859"'
-      set-cookie: ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      set-cookie: ARRAffinitySameSite=0ff46fa6d58b00f2d44b7073721903c0eace480139d8ecfc38f61130af5e1587;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: 3bb730b2-5175-4c08-a6bc-def02cf41be4
+      x-requestid: 9325e8aa-bcd5-45fd-8f82-e6c94854d63b
     status:
       code: 200
       message: OK
-    url: https://redacted.cognitiveservices.azure.com/translatortext/batch/v1.0/documents/formats
+    url: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/documents/formats
 version: 1

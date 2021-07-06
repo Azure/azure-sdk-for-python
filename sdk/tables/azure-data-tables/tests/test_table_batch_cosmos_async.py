@@ -13,7 +13,7 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import (
     ResourceNotFoundError,
     HttpResponseError,
@@ -29,6 +29,7 @@ from azure.data.tables import (
     TransactionOperation,
     TableSasPermissions,
     generate_table_sas,
+    TableErrorCode
 )
 from azure.data.tables.aio import TableServiceClient
 
@@ -223,8 +224,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TableTransactionError) as error:
                 await self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             # Assert
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -475,21 +478,16 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     @pytest.mark.live_test_only
     @cosmos_decorator_async
     async def test_new_invalid_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        invalid_key = tables_primary_cosmos_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
-        key_list = list(tables_primary_cosmos_account_key)
-
-        key_list[-6:] = list("0000==")
-        invalid_key = ''.join(key_list)
-
-        self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "table"), invalid_key)
+        invalid_key = tables_primary_cosmos_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
+        tables_primary_cosmos_account_key = AzureNamedKeyCredential(tables_cosmos_account_name, invalid_key)
+        credential = AzureNamedKeyCredential(name=tables_cosmos_account_name, key=tables_primary_cosmos_account_key.named_key.key)
+        self.ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "table"), credential=credential)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
 
         entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
         batch = [('create', entity)]
-
         with pytest.raises(ClientAuthenticationError):
             resp = await self.table.submit_transaction(batch)
 
@@ -546,8 +544,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
 
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TableTransactionError) as error:
                 await self.table.submit_transaction(batch)
+            assert error.value.status_code == 412
+            assert error.value.error_code == TableErrorCode.update_condition_not_satisfied
 
             received.metadata["etag"] = good_etag
             batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
@@ -565,7 +565,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         try:
             token = self.generate_sas(
                 generate_table_sas,
-                tables_cosmos_account_name,
                 tables_primary_cosmos_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True, read=True, update=True, delete=True),

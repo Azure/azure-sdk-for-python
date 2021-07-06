@@ -47,13 +47,12 @@ class ExportsOperations(object):
     def list(
         self,
         scope,  # type: str
-        expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ExportListResult"
         """The operation to list all exports at the given scope.
 
-        :param scope: The scope associated with export operations. This includes
+        :param scope: The scope associated with query and export operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -70,9 +69,6 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners.
         :type scope: str
-        :param expand: May be used to expand the properties within an export. Currently only
-         'runHistory' is supported and will return information for the last execution of each export.
-        :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExportListResult, or the result of cls(response)
         :rtype: ~azure.mgmt.costmanagement.models.ExportListResult
@@ -83,7 +79,7 @@ class ExportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -96,8 +92,6 @@ class ExportsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -109,7 +103,7 @@ class ExportsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ExportListResult', pipeline_response)
@@ -124,13 +118,12 @@ class ExportsOperations(object):
         self,
         scope,  # type: str
         export_name,  # type: str
-        expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Export"
         """The operation to get the export for the defined scope by export name.
 
-        :param scope: The scope associated with export operations. This includes
+        :param scope: The scope associated with query and export operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -149,9 +142,6 @@ class ExportsOperations(object):
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
-        :param expand: May be used to expand the properties within an export. Currently only
-         'runHistory' is supported and will return information for the last 10 executions of the export.
-        :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Export, or the result of cls(response)
         :rtype: ~azure.mgmt.costmanagement.models.Export
@@ -162,7 +152,7 @@ class ExportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -176,8 +166,6 @@ class ExportsOperations(object):
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -189,7 +177,7 @@ class ExportsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Export', pipeline_response)
@@ -212,7 +200,7 @@ class ExportsOperations(object):
         the request. You may obtain the latest eTag by performing a get operation. Create operation
         does not require eTag.
 
-        :param scope: The scope associated with export operations. This includes
+        :param scope: The scope associated with query and export operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -243,7 +231,7 @@ class ExportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -273,7 +261,7 @@ class ExportsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -297,7 +285,7 @@ class ExportsOperations(object):
         # type: (...) -> None
         """The operation to delete a export.
 
-        :param scope: The scope associated with export operations. This includes
+        :param scope: The scope associated with query and export operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -326,7 +314,7 @@ class ExportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -351,7 +339,7 @@ class ExportsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -366,9 +354,9 @@ class ExportsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """The operation to execute an export.
+        """The operation to execute a export.
 
-        :param scope: The scope associated with export operations. This includes
+        :param scope: The scope associated with query and export operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -397,7 +385,7 @@ class ExportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -422,7 +410,7 @@ class ExportsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -437,9 +425,9 @@ class ExportsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ExportExecutionListResult"
-        """The operation to get the execution history of an export for the defined scope and export name.
+        """The operation to get the execution history of an export for the defined scope by export name.
 
-        :param scope: The scope associated with export operations. This includes
+        :param scope: The scope associated with query and export operations. This includes
          '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope and
@@ -468,7 +456,7 @@ class ExportsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2019-11-01"
         accept = "application/json"
 
         # Construct URL
@@ -493,7 +481,7 @@ class ExportsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ExportExecutionListResult', pipeline_response)

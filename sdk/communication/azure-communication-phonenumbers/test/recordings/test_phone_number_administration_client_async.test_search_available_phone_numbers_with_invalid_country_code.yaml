@@ -9,10 +9,10 @@ interactions:
       - '131'
       Content-Type:
       - application/json
-      Date:
-      - Fri, 30 Apr 2021 21:35:58 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 20:47:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,11 +24,12 @@ interactions:
     headers:
       api-supported-versions: '2021-03-07'
       content-type: application/json
-      date: Fri, 30 Apr 2021 21:35:58 GMT
-      ms-cv: vS+4qpNfgUqjc0RGNA/ZgQ.0
+      date: Tue, 22 Jun 2021 20:47:47 GMT
+      ms-cv: yjkV05mHAUiTKwXC80sLow.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 33ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 71ms
     status:
       code: 400
       message: Bad Request

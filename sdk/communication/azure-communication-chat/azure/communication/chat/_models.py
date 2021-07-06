@@ -57,7 +57,7 @@ class ChatParticipant(object):
         )
 
 
-class ChatMessage(object):
+class ChatMessage(object): # pylint: disable=too-many-instance-attributes
     """Chat message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -87,6 +87,8 @@ class ChatMessage(object):
     :ivar edited_on: The last timestamp (if applicable) when the message was edited. The timestamp
      is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type edited_on: ~datetime.datetime
+    :ivar metadata: Message metadata.
+    :type metadata: dict[str, str]
     """
 
     def __init__(
@@ -105,6 +107,7 @@ class ChatMessage(object):
         self.sender = kwargs['sender']
         self.deleted_on = kwargs['deleted_on']
         self.edited_on = kwargs['edited_on']
+        self.metadata = kwargs.get('metadata')
 
     @classmethod
     def _get_message_type(cls, chat_message_type):
@@ -131,7 +134,8 @@ class ChatMessage(object):
             created_on=chat_message.created_on,
             sender=sender_communication_identifier,
             deleted_on=chat_message.deleted_on,
-            edited_on=chat_message.edited_on
+            edited_on=chat_message.edited_on,
+            metadata=chat_message.metadata
         )
 
 

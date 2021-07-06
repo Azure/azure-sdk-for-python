@@ -1,10 +1,10 @@
 # Azure Document Translation client library for Python
 
-Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages 
+Azure Cognitive Services Document Translation is a cloud service that translates documents to and from 90 languages
 and dialects while preserving document structure and data format. Use the client library for Document Translation to:
 
 * Translate numerous, large files from an Azure Blob Storage container to a target container in your language of choice.
-* Check the translation status and progress of each document in the translation job.
+* Check the translation status and progress of each document in the translation operation.
 * Apply a custom translation model or glossaries to tailor translation to your specific case.
 
 [Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs] | [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
@@ -86,6 +86,33 @@ credential = AzureKeyCredential("<api_key>")
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 ```
 
+#### Create the client with an Azure Active Directory credential
+
+`AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also
+authenticate with Azure Active Directory using the [azure-identity][azure_identity] library.
+
+To use the [DefaultAzureCredential][default_azure_credential] type shown below, or other credential types provided
+with the Azure SDK, please install the `azure-identity` package:
+
+```pip install azure-identity```
+
+You will also need to [register a new AAD application and grant access][register_aad_app] to your
+Translator resource by assigning the `"Cognitive Services User"` role to your service principal.
+
+Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.translation.document import DocumentTranslationClient
+credential = DefaultAzureCredential()
+
+document_translation_client = DocumentTranslationClient(
+    endpoint="https://<resource-name>.cognitiveservices.azure.com/",
+    credential=credential
+)
+```
+
 ## Key concepts
 
 The Document Translation service requires that you upload your files to an Azure Blob Storage source container and provide
@@ -103,37 +130,30 @@ the service documentation:
 Interaction with the Document Translation client library begins with an instance of the `DocumentTranslationClient`.
 The client provides operations for:
 
- - Creating a translation job to translate documents in your source container(s) and write results to you target container(s).
- - Checking the status of individual documents in the translation job and monitoring each document's progress.
- - Enumerating all past and current translation jobs with the option to wait until the job(s) finish.
+ - Creating a translation operation to translate documents in your source container(s) and write results to you target container(s).
+ - Checking the status of individual documents in the translation operation and monitoring each document's progress.
+ - Enumerating all past and current translations operations.
  - Identifying supported glossary and document formats.
 
 ### Translation Input
 
-To create a translation job, pass a list of `DocumentTranslationInput` into the `create_translation_job` client method.
-Constructing a `DocumentTranslationInput` requires that you pass the SAS URLs to your source and target containers (or files)
-and the target language(s) for translation.
+Input to the `begin_translation` client method can be provided in two different ways:
 
-A single source container with documents can be translated to many different languages:
+1) A single source container with documents can be translated to a different language:
 
 ```python
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.translation.document import DocumentTranslationClient
 
-my_input = [
-    DocumentTranslationInput(
-        source_url="<sas_url_to_source>",
-        targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language_code="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language_code="de")
-        ]
-    )
-]
+document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCredential("<api_key>"))
+poller = document_translation_client.begin_translation("<sas_url_to_source>", "<sas_url_to_target>", "<target_language_code>")
 ```
 
-Or multiple different sources can be provided each with their own targets.
+2) Or multiple different sources can be provided each with their own targets.
 
 ```python
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
 
 my_input = [
     DocumentTranslationInput(
@@ -158,29 +178,73 @@ my_input = [
         ]
     )
 ]
+
+document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCredential("<api_key>"))
+poller = document_translation_client.begin_translation(my_input)
 ```
 
 > Note: the target_url for each target language must be unique.
 
 See the service documentation for all [supported languages][supported_languages].
 
-### Return value
+### Long-Running Operations
+Long-running operations are operations which consist of an initial request sent to the service to start an operation,
+followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
+succeeded, to get the result.
 
-There are primarily two types of return values when checking on the result of a translation job - `JobStatusResult` and `DocumentStatusResult`.
-* A `JobStatusResult` will contain the details of the entire job, such as it's status, ID, any errors, and status summaries of the documents in the job.
-* A `DocumentStatusResult` will contain the details of an individual document, such as it's status, translation progress, any errors,
-and the URLs to the source document and translated document.
+Methods that translate documents are modeled as long-running operations.
+The client exposes a `begin_<method-name>` method that returns a `DocumentTranslationLROPoller` or `AsyncDocumentTranslationLROPoller`. Callers should wait
+for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
+Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 ## Examples
 
 The following section provides several code snippets covering some of the most common Document Translation tasks, including:
 
 * [Translate your documents](#translate-your-documents "Translate Your Documents")
-* [Check status on individual documents](#check-status-on-individual-documents "Check Status On Individual Documents")
-* [List translation jobs](#list-translation-jobs "List Translation Jobs")
+* [Translate multiple inputs](#translate-multiple-inputs "Translate Multiple Inputs")
+* [List translation operations](#list-translation-operations "List Translation Operations")
 
 ### Translate your documents
-Translate the documents in your source container to the target containers.
+Translate the documents in your source container to the target container.
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.translation.document import DocumentTranslationClient
+
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+source_container_sas_url_en = "<sas-url-en>"
+target_container_sas_url_es = "<sas-url-es>"
+
+document_translation_client = DocumentTranslationClient(endpoint, credential)
+
+poller = document_translation_client.begin_translation(source_container_sas_url_en, target_container_sas_url_es, "es")
+
+result = poller.result()
+
+print("Status: {}".format(poller.status()))
+print("Created on: {}".format(poller.details.created_on))
+print("Last updated on: {}".format(poller.details.last_updated_on))
+print("Total number of translations on documents: {}".format(poller.details.documents_total_count))
+
+print("\nOf total documents...")
+print("{} failed".format(poller.details.documents_failed_count))
+print("{} succeeded".format(poller.details.documents_succeeded_count))
+
+for document in result:
+    print("Document ID: {}".format(document.id))
+    print("Document status: {}".format(document.status))
+    if document.status == "Succeeded":
+        print("Source document location: {}".format(document.source_document_url))
+        print("Translated document location: {}".format(document.translated_document_url))
+        print("Translated to language: {}\n".format(document.translated_to))
+    else:
+        print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+```
+
+### Translate multiple inputs
+Begin translating with documents in multiple source containers to multiple target containers in different languages.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -188,13 +252,15 @@ from azure.ai.translation.document import DocumentTranslationClient, DocumentTra
 
 endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
+source_container_sas_url_de = "<sas-url-de>"
 source_container_sas_url_en = "<sas-url-en>"
 target_container_sas_url_es = "<sas-url-es>"
 target_container_sas_url_fr = "<sas-url-fr>"
+target_container_sas_url_ar = "<sas-url-ar>"
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
-job = document_translation_client.create_translation_job(
+poller = document_translation_client.begin_translation(
     [
         DocumentTranslationInput(
             source_url=source_container_sas_url_en,
@@ -202,61 +268,31 @@ job = document_translation_client.create_translation_job(
                 TranslationTarget(target_url=target_container_sas_url_es, language_code="es"),
                 TranslationTarget(target_url=target_container_sas_url_fr, language_code="fr"),
             ],
+        ),
+        DocumentTranslationInput(
+            source_url=source_container_sas_url_de,
+            targets=[
+                TranslationTarget(target_url=target_container_sas_url_ar, language_code="ar"),
+            ],
         )
     ]
-)  # type: JobStatusResult
+)
 
-job_result = document_translation_client.wait_until_done(job.id)  # type: JobStatusResult
+result = poller.result()
 
-print("Job created on: {}".format(job_result.created_on))
-print("Job last updated on: {}".format(job_result.last_updated_on))
-print("Total number of translations on documents: {}".format(job_result.documents_total_count))
-
-print("Of total documents...")
-print("{} failed".format(job_result.documents_failed_count))
-print("{} succeeded".format(job_result.documents_succeeded_count))
-
-if job_result.status == "Succeeded":
-    print("Our translation job succeeded")
-
-if job_result.status == "Failed":
-    print("All documents failed in the translation job")
-
-# check document statuses... see next sample
+for document in result:
+    print("Document ID: {}".format(document.id))
+    print("Document status: {}".format(document.status))
+    if document.status == "Succeeded":
+        print("Source document location: {}".format(document.source_document_url))
+        print("Translated document location: {}".format(document.translated_document_url))
+        print("Translated to language: {}\n".format(document.translated_to))
+    else:
+        print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
 ```
 
-### Check status on individual documents
-Check status and translation progress of each document under a job.
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient
-
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-job_id = "<job-id>"
-
-document_translation_client = DocumentTranslationClient(endpoint, credential)
-
-documents =  document_translation_client.list_all_document_statuses(job_id)  # type: ItemPaged[DocumentStatusResult]
-
-for doc in documents:
-    if doc.status == "Succeeded":
-        print("Document at {} was translated to {} language".format(
-            doc.translated_document_url, doc.translate_to
-        ))
-    if doc.status == "Running":
-        print("Document ID: {}, translation progress is {} percent".format(
-            doc.id, doc.translation_progress*100
-        ))
-    if doc.status == "Failed":
-        print("Document ID: {}, Error Code: {}, Message: {}".format(
-            doc.id, doc.error.code, doc.error.message
-        ))
-```
-
-### List translation jobs
-Enumerate over the translation jobs submitted for the resource.
+### List translation operations
+Enumerate over the translation operations submitted for the resource.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -267,27 +303,24 @@ credential = AzureKeyCredential("<api_key>")
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 
-jobs = document_translation_client.list_submitted_jobs()  # type: ItemPaged[JobStatusResult]
+operations = document_translation_client.list_all_translation_statuses()  # type: ItemPaged[TranslationStatus]
 
-for job in jobs:
-    if not job.has_completed:
-        job = document_translation_client.wait_until_done(job.id)
-
-    print("Job ID: {}".format(job.id))
-    print("Job status: {}".format(job.status))
-    print("Job created on: {}".format(job.created_on))
-    print("Job last updated on: {}".format(job.last_updated_on))
-    print("Total number of translations on documents: {}".format(job.documents_total_count))
-    print("Total number of characters charged: {}".format(job.total_characters_charged))
+for operation in operations:
+    print("\nID: {}".format(operation.id))
+    print("Status: {}".format(operation.status))
+    print("Created on: {}".format(operation.created_on))
+    print("Last updated on: {}".format(operation.last_updated_on))
+    print("Total number of translations on documents: {}".format(operation.documents_total_count))
+    print("Total number of characters charged: {}".format(operation.total_characters_charged))
 
     print("Of total documents...")
-    print("{} failed".format(job.documents_failed_count))
-    print("{} succeeded".format(job.documents_succeeded_count))
-    print("{} cancelled".format(job.documents_cancelled_count))
+    print("{} failed".format(operation.documents_failed_count))
+    print("{} succeeded".format(operation.documents_succeeded_count))
+    print("{} cancelled".format(operation.documents_cancelled_count))
 ```
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
-for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob]. 
+for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob].
 Note that you will need to install the [azure-storage-blob][azure_storage_blob] library to run this sample.
 
 ## Troubleshooting
@@ -321,9 +354,10 @@ The following section provides several code snippets illustrating common pattern
 These code samples show common scenario operations with the Azure Document Translation client library.
 
 * Client authentication: [sample_authentication.py][sample_authentication]
-* Create a translation job: [sample_create_translation_job.py][sample_create_translation_job]
+* Begin translating documents: [sample_begin_translation.py][sample_begin_translation]
+* Translate with multiple inputs: [sample_translate_multiple_inputs.py][sample_translate_multiple_inputs]
 * Check the status of documents: [sample_check_document_statuses.py][sample_check_document_statuses]
-* List all submitted translation jobs: [sample_list_all_submitted_jobs.py][sample_list_all_submitted_jobs]
+* List all submitted translation operations: [sample_list_all_translations.py][sample_list_all_translations]
 * Apply a custom glossary to translation: [sample_translation_with_glossaries.py][sample_translation_with_glossaries]
 * Use Azure Blob Storage to set up translation resources: [sample_translation_with_azure_blob.py][sample_translation_with_azure_blob]
 
@@ -334,9 +368,10 @@ first install an async transport, such as [aiohttp](https://pypi.org/project/aio
 are found under the `azure.ai.translation.document.aio` namespace.
 
 * Client authentication: [sample_authentication_async.py][sample_authentication_async]
-* Create a translation job: [sample_create_translation_job_async.py][sample_create_translation_job_async]
+* Begin translating documents: [sample_begin_translation_async.py][sample_begin_translation_async]
+* Translate with multiple inputs: [sample_translate_multiple_inputs_async.py][sample_translate_multiple_inputs_async]
 * Check the status of documents: [sample_check_document_statuses_async.py][sample_check_document_statuses_async]
-* List all submitted translation jobs: [sample_list_all_submitted_jobs_async.py][sample_list_all_submitted_jobs_async]
+* List all submitted translation operations: [sample_list_all_translations_async.py][sample_list_all_translations_async]
 * Apply a custom glossary to translation: [sample_translation_with_glossaries_async.py][sample_translation_with_glossaries_async]
 * Use Azure Blob Storage to set up translation resources: [sample_translation_with_azure_blob_async.py][sample_translation_with_azure_blob_async]
 
@@ -353,11 +388,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/azure/ai/translation/document
+[python-dt-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/azure/ai/translation/document
 [python-dt-pypi]: https://aka.ms/azsdk/python/texttranslation/pypi
 [python-dt-product-docs]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 [python-dt-ref-docs]: https://aka.ms/azsdk/python/documenttranslation/docs
-[python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples
+[python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples
 
 [azure_subscription]: https://azure.microsoft.com/free/
 [DT_resource]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=python
@@ -380,21 +415,27 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-custom-domain-name-and-subscription-key
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#get-your-subscription-key
+[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+[custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
-[sample_create_translation_job]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_create_translation_job.py
-[sample_create_translation_job_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_create_translation_job_async.py
-[sample_check_document_statuses]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_check_document_statuses.py
-[sample_check_document_statuses_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_check_document_statuses_async.py
-[sample_list_all_submitted_jobs]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_list_all_submitted_jobs.py
-[sample_list_all_submitted_jobs_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_all_submitted_jobs_async.py
-[sample_translation_with_glossaries]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_glossaries.py
-[sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
-[sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
-[sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
+[sample_begin_translation]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
+[sample_begin_translation_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_begin_translation_async.py
+[sample_translate_multiple_inputs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translate_multiple_inputs.py
+[sample_translate_multiple_inputs_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translate_multiple_inputs_async.py
+[sample_check_document_statuses]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_check_document_statuses.py
+[sample_check_document_statuses_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_check_document_statuses_async.py
+[sample_list_all_translations]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_list_all_translations.py
+[sample_list_all_translations_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_all_translations_async.py
+[sample_translation_with_glossaries]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_glossaries.py
+[sample_translation_with_glossaries_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_glossaries_async.py
+[sample_translation_with_azure_blob]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_azure_blob.py
+[sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

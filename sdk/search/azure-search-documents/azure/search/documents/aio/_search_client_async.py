@@ -3,11 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING
+from typing import cast, List, TYPE_CHECKING, Union
 import six
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
+from ._utils_async import get_async_authentication_policy
 from .._generated.aio import SearchClient as SearchIndexClient
 from .._generated.models import IndexingResult
 from .._search_documents_error import RequestEntityTooLargeError
@@ -20,7 +22,7 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SearchClient(HeadersMixin):
@@ -31,7 +33,7 @@ class SearchClient(HeadersMixin):
     :param index_name: The name of the index to connect to
     :type index_name: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
 
     .. admonition:: Example:
@@ -46,20 +48,34 @@ class SearchClient(HeadersMixin):
 
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
 
-    def __init__(self, endpoint, index_name, credential, **kwargs):
-        # type: (str, str, AzureKeyCredential, **Any) -> None
-
+    def __init__(self, endpoint: str,
+                 index_name: str,
+                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+                 **kwargs
+                 ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
-        self._credential = credential  # type: AzureKeyCredential
-        self._client = SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            sdk_moniker=SDK_MONIKER,
-            api_version=self._api_version, **kwargs
-        )  # type: SearchIndexClient
+        self._credential = credential
+        if isinstance(credential, AzureKeyCredential):
+            self._aad = False
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
+        else:
+            self._aad = True
+            authentication_policy = get_async_authentication_policy(credential)
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                authentication_policy=authentication_policy,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
 
 
     def __repr__(self):
@@ -157,6 +173,15 @@ class SearchClient(HeadersMixin):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Possible values
+         include: "none", "en-us".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Possible values include: "none", "lexicon".
+        :paramtype speller: str or ~azure.search.documents.models.Speller
+        :keyword answers: A value that specifies whether answers should be returned as part of the search
+         response. Possible values include: "none", "extractive".
+        :paramtype answers: str or ~azure.search.documents.models.Answers
         :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
@@ -209,6 +234,9 @@ class SearchClient(HeadersMixin):
         search_fields = kwargs.pop("search_fields", None)
         search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
+        query_language = kwargs.pop("query_language", None)
+        speller = kwargs.pop("speller", None)
+        answers = kwargs.pop("answers", None)
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
@@ -227,6 +255,9 @@ class SearchClient(HeadersMixin):
             scoring_profile=scoring_profile,
             search_fields=search_fields_str,
             search_mode=search_mode,
+            query_language=query_language,
+            speller=speller,
+            answers=answers,
             select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top

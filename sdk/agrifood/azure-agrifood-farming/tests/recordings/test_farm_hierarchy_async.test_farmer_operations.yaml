@@ -11,61 +11,59 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"test-farmer-farmer-ops-async","eTag":"00007e1e-0000-0600-0000-60a44b1a0000","status":"Sample
-        Status","createdDateTime":"2021-05-18T23:17:46Z","modifiedDateTime":"2021-05-18T23:17:46Z","name":"Test
+      string: '{"id":"test-farmer-farmer-ops-async","eTag":"02007e9d-0000-0600-0000-60cfd9710000","status":"Sample
+        Status","createdDateTime":"2021-06-21T00:12:33Z","modifiedDateTime":"2021-06-21T00:12:33Z","name":"Test
         Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
         one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-length: '320'
+      content-length: '324'
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 23:17:46 GMT
-      etag: 00007e1e-0000-0600-0000-60a44b1a0000
-      location: http://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:12:33 GMT
+      etag: 02007e9d-0000-0600-0000-60cfd9710000
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async
       strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-throttle-information: '5'
     status:
       code: 201
       message: Created
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async-215?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4yPO27DMAyGryJwtgrJcZ3Cc9ELxFM2xqIDorUkSPIQBLl7qDjeq4GPnx8fugM7
-        GKBQLnrGtFDaXYhZY775CRqgEa9CGXlHsqRroE1fTY16g113sVgToXPBsmbhT7jEP1KnLW9gSoSF
-        3LeYkRcSojWt1eZT26+xPQz2OHT9WcAlOJ75P6THV3WU+9XP63ARHeUpcSwcvNQ2Wb2XK7cm9ldV
-        fyz+Q/CYQqRUmOTmO8whSNMF6yC/SidPKnhZYhuwUtm1X7rB4/EEAAD//wMACyviQUABAAA=
+      string: '{"id":"test-farmer-farmer-ops-async","eTag":"02007e9d-0000-0600-0000-60cfd9710000","status":"Sample
+        Status","createdDateTime":"2021-06-21T00:12:33Z","modifiedDateTime":"2021-06-21T00:12:33Z","name":"Test
+        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 23:17:46 GMT
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:12:33 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
+      x-ms-throttle-information: '1'
     status:
       code: 200
       message: OK
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async-215?api-version=2021-03-31-preview
 - request:
     body: '{"status": "Sample Status", "name": "Test Farmer Updated", "description":
       "Farmer created during testing.", "properties": {"foo": "bar", "numeric one":
@@ -78,71 +76,65 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4SPPW7DMAyFryJwtgrJde3Cc9ALxFm60RYdEK0lQZKHIMjdQ6XJXA380fsIPl6B
-        HYxQKBe9YtoovVKIWWO++AUaoAnPQhl5w2pJ10KbvoZa9Qa7brZzbYTOBcuehT/iFn9JHf/6BpZE
-        WMgdJEy8kRCtaa02H9p+Tu37aIex678F3ILjlf8hh0p6fKiT+FdfD+PqFF3dIqKjvCSOhYMX5ik/
-        TSi3J/ZnVS+X/CZ4TCFSKkzi/QprCDI0Y6pbdpnkRQUvy2wDVpTX3w9d4Ha7AwAA//8DAC6+RRVI
-        AQAA
+      string: '{"id":"test-farmer-farmer-ops-async","eTag":"02007f9d-0000-0600-0000-60cfd9720000","status":"Sample
+        Status","createdDateTime":"2021-06-21T00:12:33Z","modifiedDateTime":"2021-06-21T00:12:34Z","name":"Test
+        Farmer Updated","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 23:17:47 GMT
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:12:34 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
+      x-ms-throttle-information: '5'
     status:
       code: 200
       message: OK
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async-215?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA4SPPW7DMAyFryJwtgrJde3Cc9ALxFm60RYdEK0lQZKHIMjdQ6XJXA380fsIPl6B
-        HYxQKBe9YtoovVKIWWO++AUaoAnPQhl5w2pJ10KbvoZa9Qa7brZzbYTOBcuehT/iFn9JHf/6BpZE
-        WMgdJEy8kRCtaa02H9p+Tu37aIex678F3ILjlf8hh0p6fKiT+FdfD+PqFF3dIqKjvCSOhYMX5ik/
-        TSi3J/ZnVS+X/CZ4TCFSKkzi/QprCDI0Y6pbdpnkRQUvy2wDVpTX3w9d4Ha7AwAA//8DAC6+RRVI
-        AQAA
+      string: '{"id":"test-farmer-farmer-ops-async","eTag":"02007f9d-0000-0600-0000-60cfd9720000","status":"Sample
+        Status","createdDateTime":"2021-06-21T00:12:33Z","modifiedDateTime":"2021-06-21T00:12:34Z","name":"Test
+        Farmer Updated","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 18 May 2021 23:17:48 GMT
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:12:34 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
+      x-ms-throttle-information: '1'
     status:
       code: 200
       message: OK
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async-215?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
   response:
@@ -153,42 +145,38 @@ interactions:
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
       content-length: '0'
-      date: Tue, 18 May 2021 23:17:49 GMT
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:12:35 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
+      x-ms-throttle-information: '1'
     status:
       code: 204
       message: No Content
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async-215?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+      - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA0xOWwrCQAy8ypKf/rQiimD3AEUFH/QGy26sC+1GkhSV0rtb0YLzM8xMyMwAyEwM
-        dgBPAcFCjUI9ezyRVtSnADl0KOKa/9A8ot5MDCZTFC2ujjvkmeguhZNX8pkJhGISqcFnFF1Mv9Rx
-        gwo29W2bQ0B1sZVZxpSQf4M+zjjds/O4D1P3cnfcXupDWZ3Lzdouv1jB+AYAAP//AwB+7e0UwwAA
-        AA==
+      string: '{"error":{"code":"ResourceNotFound","message":"Resource with id ''test-farmer-farmer-ops-async''
+        does not exist.","target":null,"details":null,"innererror":null},"traceId":"0HM9GS8R97PU9:00000003"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
       connection: keep-alive
-      content-encoding: gzip
       content-type: application/json
-      date: Tue, 18 May 2021 23:17:50 GMT
-      server: nginx/1.19.1
+      date: Mon, 21 Jun 2021 00:12:35 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
+      x-ms-throttle-information: '1'
     status:
       code: 404
       message: Not Found
-    url: https://sdk-testing-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/test-farmer-farmer-ops-async-215?api-version=2021-03-31-preview
 version: 1

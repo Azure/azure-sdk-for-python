@@ -22,21 +22,21 @@ from azure_devtools.ci_tools.github_tools import (
     GithubLink,
     DashboardCommentableObject,
     DashboardComment,
-    get_or_create_pull
+    get_or_create_pull,
 )
 
-class GithubTools(Framework.TestCase):
 
+class GithubTools(Framework.TestCase):
     def setUp(self):
-        self.maxDiff = None # Big diff to come
+        self.maxDiff = None  # Big diff to come
         self.recordMode = False  # turn to True to record
         self.tokenAuthMode = True
         self.replayDataFolder = os.path.join(os.path.dirname(__file__), "ReplayData")
         super(GithubTools, self).setUp()
 
-    @mock.patch('traceback.format_exc')
+    @mock.patch("traceback.format_exc")
     def test_exception_to_github(self, format_exc):
-        format_exc.return_value = 'something to do with an exception'
+        format_exc.return_value = "something to do with an exception"
 
         # Prepare
         repo = self.g.get_repo("lmazuel/TestingRepo")
@@ -72,11 +72,7 @@ class GithubTools(Framework.TestCase):
 
         # Act
         with exception_to_github(issue, "Python bot") as error:
-            raise CalledProcessError(
-                2,
-                ["autorest", "readme.md"],
-                "Error line 1\nError line 2"
-            )
+            raise CalledProcessError(2, ["autorest", "readme.md"], "Error line 1\nError line 2")
 
         # Test
         assert error.comment is not None
@@ -111,9 +107,9 @@ class GithubTools(Framework.TestCase):
         prresult = get_or_create_pull(repo, "Title", "Body", "b1", "b2", none_if_no_commit=True)
         assert prresult is None
 
-    @mock.patch('traceback.format_exc')
+    @mock.patch("traceback.format_exc")
     def test_dashboard(self, format_exc):
-        format_exc.return_value = 'something to do with an exception'
+        format_exc.return_value = "something to do with an exception"
 
         # Prepare
         repo = self.g.get_repo("lmazuel/TestingRepo")
@@ -142,17 +138,21 @@ class GithubTools(Framework.TestCase):
     def test_get_user(self):
         github_token = self.oauth_token
         user = user_from_token(github_token)
-        assert user.login == 'lmazuel'
+        assert user.login == "lmazuel"
 
     def test_get_files(self):
         repo = self.g.get_repo("Azure/azure-sdk-for-python")
         pr = repo.get_pull(1833)
         files = get_files(pr)
-        assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [f.filename for f in files]
+        assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [
+            f.filename for f in files
+        ]
 
         commit = repo.get_commit("042b7a5840ff471776bb64e46b50950ee9f84430")
         files = get_files(commit)
-        assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [f.filename for f in files]
+        assert "azure-mgmt-consumption/azure/mgmt/consumption/consumption_management_client.py" in [
+            f.filename for f in files
+        ]
 
     def test_create_comment(self):
         repo = self.g.get_repo("lmazuel/TestingRepo")
@@ -170,13 +170,13 @@ class GithubTools(Framework.TestCase):
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 try:
-                    Repo.clone_from('https://github.com/lmazuel/TestingRepo.git', temp_dir)
+                    Repo.clone_from("https://github.com/lmazuel/TestingRepo.git", temp_dir)
                     repo = Repo(temp_dir)
 
                     # If it's not throwing, I'm happy enough
                     configure_user(github_token, repo)
 
-                    assert repo.git.config('--get', 'user.name') == 'Laurent Mazuel'
+                    assert repo.git.config("--get", "user.name") == "Laurent Mazuel"
                 except Exception as err:
                     print(err)
                     pytest.fail(err)
@@ -189,7 +189,7 @@ class GithubTools(Framework.TestCase):
 
     def test_clone_path(self):
         github_token = self.oauth_token
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo")
@@ -200,7 +200,7 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 clone_to_path(github_token, temp_dir, "https://github.com/lmazuel/TestingRepo")
@@ -211,7 +211,7 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", "lmazuel-patch-1")
@@ -222,7 +222,7 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 with pytest.raises(GitCommandError):
@@ -233,7 +233,7 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         # PR 2 must be open, or the test means nothing
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -245,7 +245,7 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         # PR 1 must be MERGED, or the test means nothing
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -257,21 +257,23 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         # PR 2 must be opened, or the test means nothing
         repo = self.g.get_repo("lmazuel/TestingRepo")
         pr = repo.get_pull(2)
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
-                clone_to_path(github_token, temp_dir, "lmazuel/TestingRepo", branch_or_commit=pr.merge_commit_sha, pr_number=2)
-                assert (Path(temp_dir) / Path("README.md")).stat().st_size >= 107 # File in the PR
+                clone_to_path(
+                    github_token, temp_dir, "lmazuel/TestingRepo", branch_or_commit=pr.merge_commit_sha, pr_number=2
+                )
+                assert (Path(temp_dir) / Path("README.md")).stat().st_size >= 107  # File in the PR
 
                 finished = True
         except (PermissionError, FileNotFoundError):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 with pytest.raises(GitCommandError):
@@ -284,10 +286,11 @@ class GithubTools(Framework.TestCase):
 
     def test_manage_git_folder(self):
         github_token = self.oauth_token
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
-            with tempfile.TemporaryDirectory() as temp_dir, \
-                        manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo") as rest_repo:
+            with tempfile.TemporaryDirectory() as temp_dir, manage_git_folder(
+                github_token, temp_dir, "lmazuel/TestingRepo"
+            ) as rest_repo:
 
                 assert (Path(rest_repo) / Path("README.md")).exists()
 
@@ -296,10 +299,11 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
-            with tempfile.TemporaryDirectory() as temp_dir, \
-                        manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo@lmazuel-patch-1") as rest_repo:
+            with tempfile.TemporaryDirectory() as temp_dir, manage_git_folder(
+                github_token, temp_dir, "lmazuel/TestingRepo@lmazuel-patch-1"
+            ) as rest_repo:
 
                 assert (Path(rest_repo) / Path("README.md")).exists()
                 assert "lmazuel-patch-1" in str(Repo(rest_repo).active_branch)
@@ -309,10 +313,11 @@ class GithubTools(Framework.TestCase):
             if not finished:
                 raise
 
-        finished = False # Authorize PermissionError on cleanup
+        finished = False  # Authorize PermissionError on cleanup
         try:
-            with tempfile.TemporaryDirectory() as temp_dir, \
-                        manage_git_folder(github_token, temp_dir, "lmazuel/TestingRepo", pr_number=1) as rest_repo:
+            with tempfile.TemporaryDirectory() as temp_dir, manage_git_folder(
+                github_token, temp_dir, "lmazuel/TestingRepo", pr_number=1
+            ) as rest_repo:
 
                 assert (Path(rest_repo) / Path("README.md")).exists()
                 with pytest.raises(TypeError) as err:
@@ -327,10 +332,10 @@ class GithubTools(Framework.TestCase):
     def test_do_pr(self):
         github_token = self.oauth_token
         # Should do nothing
-        do_pr(None, 'bad', 'bad', 'bad', 'bad')
+        do_pr(None, "bad", "bad", "bad", "bad")
 
         # Should do nothing
-        do_pr(github_token, 'bad', None, 'bad', 'bad')
+        do_pr(github_token, "bad", None, "bad", "bad")
 
         # FIXME - more tests
 
@@ -347,7 +352,9 @@ def test_github_link():
     assert isinstance(raw_link, GithubLink)
     assert str(raw_link) == str(link)
 
-    inputstr = "https://github.com/Azure/azure-rest-api-specs/blob/master/specification/billing/resource-manager/readme.md"
+    inputstr = (
+        "https://github.com/Azure/azure-rest-api-specs/blob/master/specification/billing/resource-manager/readme.md"
+    )
     link = GithubLink.from_string(inputstr)
     assert link.gitid == "Azure/azure-rest-api-specs"
     assert link.branch_or_commit == "master"
@@ -356,7 +363,10 @@ def test_github_link():
     assert str(link) == inputstr
     raw_link = link.as_raw_link()
     assert isinstance(raw_link, GithubLink)
-    assert str(raw_link) == "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/billing/resource-manager/readme.md"
+    assert (
+        str(raw_link)
+        == "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/billing/resource-manager/readme.md"
+    )
 
     inputstr = "https://github.com/Azure/azure-rest-api-specs/tree/master/specification/billing/resource-manager"
     link = GithubLink.from_string(inputstr)
@@ -379,4 +389,7 @@ def test_github_link():
     raw_link = link.as_raw_link()
     assert isinstance(raw_link, GithubLink)
     # Raw link with token does not use token in URL, since it has to be provided as Authorization: token <token>
-    assert str(raw_link) == "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/billing/resource-manager/readme.md"
+    assert (
+        str(raw_link)
+        == "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/billing/resource-manager/readme.md"
+    )

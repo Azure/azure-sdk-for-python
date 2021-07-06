@@ -20,9 +20,7 @@ HDI_ADLS_ACCOUNT_NAME = "fakehdiadlsaccount"
 HDI_ADLS_CLIENT_ID = "00000000-0000-0000-0000-000000000000"
 
 # Ubuntu image
-LINUX_OS_VHD = (
-    "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd"
-)
+LINUX_OS_VHD = "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd"
 
 # Storage tests related
 ACTIVE_DIRECTORY_APPLICATION_ID = "00000000-0000-0000-0000-00000000000"

@@ -18,7 +18,7 @@ from azure.ai.metricsadvisor import (
     MetricsAdvisorClient,
 )
 from azure.ai.metricsadvisor.models import (
-    SQLServerDataFeedSource,
+    SqlServerDataFeedSource,
     DataFeedSchema,
     DataFeedMetric,
     DataFeedDimension,
@@ -26,7 +26,6 @@ from azure.ai.metricsadvisor.models import (
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
     DataFeedRollupSettings,
-    DataFeedOptions,
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
     MetricAnomalyAlertConditions,
@@ -156,7 +155,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=name,
-            source=SQLServerDataFeedSource(
+            source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query="select * from adsample2 where Timestamp = @StartTime"
             ),
@@ -175,30 +174,34 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         )
 
     def _create_data_feed_and_detection_config(self, name):
-        data_feed = self._create_data_feed(name)
-        detection_config_name = create_random_name(name)
-        detection_config = self.admin_client.create_detection_configuration(
-            name=detection_config_name,
-            metric_id=data_feed.metric_ids['cost'],
-            description="testing",
-            whole_series_detection_condition=MetricDetectionCondition(
-                smart_detection_condition=SmartDetectionCondition(
-                    sensitivity=50,
-                    anomaly_detector_direction="Both",
-                    suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
+        try:
+            data_feed = self._create_data_feed(name)
+            detection_config_name = create_random_name(name)
+            detection_config = self.admin_client.create_detection_configuration(
+                name=detection_config_name,
+                metric_id=data_feed.metric_ids['cost'],
+                description="testing",
+                whole_series_detection_condition=MetricDetectionCondition(
+                    smart_detection_condition=SmartDetectionCondition(
+                        sensitivity=50,
+                        anomaly_detector_direction="Both",
+                        suppress_condition=SuppressCondition(
+                            min_number=5,
+                            min_ratio=5
+                        )
                     )
                 )
             )
-        )
-        return detection_config, data_feed
+            return detection_config, data_feed
+        except Exception as e:
+            self.admin_client.delete_data_feed(data_feed.id)
+            raise e
 
     def _create_data_feed_for_update(self, name):
         data_feed_name = create_random_name(name)
         return self.admin_client.create_data_feed(
             name=data_feed_name,
-            source=SQLServerDataFeedSource(
+            source=SqlServerDataFeedSource(
                 connection_string=self.sql_server_connection_string,
                 query=u"select * from adsample2 where Timestamp = @StartTime"
             ),
@@ -223,140 +226,146 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 ingestion_start_offset=-1,
                 stop_retry_after=-1,
             ),
-            options=DataFeedOptions(
-                admin_emails=["yournamehere@microsoft.com"],
-                data_feed_description="my first data feed",
-                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                    fill_type="SmartFilling"
-                ),
-                rollup_settings=DataFeedRollupSettings(
-                    rollup_type="NoRollup",
-                    rollup_method="None",
-                ),
-                viewer_emails=["viewers"],
-                access_mode="Private",
-                action_link_template="action link template"
-            )
-
+            admins=["yournamehere@microsoft.com"],
+            data_feed_description="my first data feed",
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type="SmartFilling"
+            ),
+            rollup_settings=DataFeedRollupSettings(
+                rollup_type="NoRollup",
+                rollup_method="None",
+            ),
+            viewers=["viewers"],
+            access_mode="Private",
+            action_link_template="action link template"
         )
+
 
     def _create_alert_config_for_update(self, name):
-        detection_config, data_feed = self._create_data_feed_and_detection_config(name)
-        alert_config_name = create_random_name(name)
-        alert_config = self.admin_client.create_alert_configuration(
-            name=alert_config_name,
-            cross_metrics_operator="AND",
-            metric_alert_configurations=[
-                MetricAlertConfiguration(
-                    detection_configuration_id=detection_config.id,
-                    alert_scope=MetricAnomalyAlertScope(
-                        scope_type="TopN",
-                        top_n_group_in_scope=TopNGroupScope(
-                            top=5,
-                            period=10,
-                            min_top_count=9
+        try:
+            detection_config, data_feed = self._create_data_feed_and_detection_config(name)
+            alert_config_name = create_random_name(name)
+            alert_config = self.admin_client.create_alert_configuration(
+                name=alert_config_name,
+                cross_metrics_operator="AND",
+                metric_alert_configurations=[
+                    MetricAlertConfiguration(
+                        detection_configuration_id=detection_config.id,
+                        alert_scope=MetricAnomalyAlertScope(
+                            scope_type="TopN",
+                            top_n_group_in_scope=TopNGroupScope(
+                                top=5,
+                                period=10,
+                                min_top_count=9
+                            )
+                        ),
+                        alert_conditions=MetricAnomalyAlertConditions(
+                            metric_boundary_condition=MetricBoundaryCondition(
+                                direction="Both",
+                                companion_metric_id=data_feed.metric_ids['cost'],
+                                lower=1.0,
+                                upper=5.0
+                            )
                         )
                     ),
-                    alert_conditions=MetricAnomalyAlertConditions(
-                        metric_boundary_condition=MetricBoundaryCondition(
-                            direction="Both",
-                            companion_metric_id=data_feed.metric_ids['cost'],
-                            lower=1.0,
-                            upper=5.0
+                    MetricAlertConfiguration(
+                        detection_configuration_id=detection_config.id,
+                        alert_scope=MetricAnomalyAlertScope(
+                            scope_type="SeriesGroup",
+                            series_group_in_scope={'city': 'Shenzhen'}
+                        ),
+                        alert_conditions=MetricAnomalyAlertConditions(
+                            severity_condition=SeverityCondition(
+                                min_alert_severity="Low",
+                                max_alert_severity="High"
+                            )
                         )
-                    )
-                ),
-                MetricAlertConfiguration(
-                    detection_configuration_id=detection_config.id,
-                    alert_scope=MetricAnomalyAlertScope(
-                        scope_type="SeriesGroup",
-                        series_group_in_scope={'city': 'Shenzhen'}
                     ),
-                    alert_conditions=MetricAnomalyAlertConditions(
-                        severity_condition=SeverityCondition(
-                            min_alert_severity="Low",
-                            max_alert_severity="High"
+                    MetricAlertConfiguration(
+                        detection_configuration_id=detection_config.id,
+                        alert_scope=MetricAnomalyAlertScope(
+                            scope_type="WholeSeries"
+                        ),
+                        alert_conditions=MetricAnomalyAlertConditions(
+                            severity_condition=SeverityCondition(
+                                min_alert_severity="Low",
+                                max_alert_severity="High"
+                            )
                         )
                     )
-                ),
-                MetricAlertConfiguration(
-                    detection_configuration_id=detection_config.id,
-                    alert_scope=MetricAnomalyAlertScope(
-                        scope_type="WholeSeries"
-                    ),
-                    alert_conditions=MetricAnomalyAlertConditions(
-                        severity_condition=SeverityCondition(
-                            min_alert_severity="Low",
-                            max_alert_severity="High"
-                        )
-                    )
-                )
-            ],
-            hook_ids=[]
-        )
-        return alert_config, data_feed, detection_config
+                ],
+                hook_ids=[]
+            )
+            return alert_config, data_feed, detection_config
+        except Exception as e:
+            self.admin_client.delete_data_feed(data_feed.id)
+            raise e
 
     def _create_detection_config_for_update(self, name):
-        data_feed = self._create_data_feed(name)
-        detection_config_name = create_random_name("testupdated")
-        detection_config = self.admin_client.create_detection_configuration(
-            name=detection_config_name,
-            metric_id=data_feed.metric_ids['cost'],
-            description="My test metric anomaly detection configuration",
-            whole_series_detection_condition=MetricDetectionCondition(
-                cross_conditions_operator="AND",
-                smart_detection_condition=SmartDetectionCondition(
-                    sensitivity=50,
-                    anomaly_detector_direction="Both",
-                    suppress_condition=SuppressCondition(
-                        min_number=50,
-                        min_ratio=50
-                    )
-                ),
-                hard_threshold_condition=HardThresholdCondition(
-                    anomaly_detector_direction="Both",
-                    suppress_condition=SuppressCondition(
-                        min_number=5,
-                        min_ratio=5
+        try:
+            data_feed = self._create_data_feed(name)
+            detection_config_name = create_random_name("testupdated")
+            detection_config = self.admin_client.create_detection_configuration(
+                name=detection_config_name,
+                metric_id=data_feed.metric_ids['cost'],
+                description="My test metric anomaly detection configuration",
+                whole_series_detection_condition=MetricDetectionCondition(
+                    condition_operator="AND",
+                    smart_detection_condition=SmartDetectionCondition(
+                        sensitivity=50,
+                        anomaly_detector_direction="Both",
+                        suppress_condition=SuppressCondition(
+                            min_number=5,
+                            min_ratio=5
+                        )
                     ),
-                    lower_bound=0,
-                    upper_bound=100
+                    hard_threshold_condition=HardThresholdCondition(
+                        anomaly_detector_direction="Both",
+                        suppress_condition=SuppressCondition(
+                            min_number=5,
+                            min_ratio=5
+                        ),
+                        lower_bound=0,
+                        upper_bound=100
+                    ),
+                    change_threshold_condition=ChangeThresholdCondition(
+                        change_percentage=50,
+                        shift_point=30,
+                        within_range=True,
+                        anomaly_detector_direction="Both",
+                        suppress_condition=SuppressCondition(
+                            min_number=2,
+                            min_ratio=2
+                        )
+                    )
                 ),
-                change_threshold_condition=ChangeThresholdCondition(
-                    change_percentage=50,
-                    shift_point=30,
-                    within_range=True,
-                    anomaly_detector_direction="Both",
-                    suppress_condition=SuppressCondition(
-                        min_number=2,
-                        min_ratio=2
+                series_detection_conditions=[MetricSingleSeriesDetectionCondition(
+                    series_key={"city": "Shenzhen", "category": "Jewelry"},
+                    smart_detection_condition=SmartDetectionCondition(
+                        anomaly_detector_direction="Both",
+                        sensitivity=63,
+                        suppress_condition=SuppressCondition(
+                            min_number=1,
+                            min_ratio=100
+                        )
                     )
-                )
-            ),
-            series_detection_conditions=[MetricSingleSeriesDetectionCondition(
-                series_key={"city": "Shenzhen", "category": "Jewelry"},
-                smart_detection_condition=SmartDetectionCondition(
-                    anomaly_detector_direction="Both",
-                    sensitivity=63,
-                    suppress_condition=SuppressCondition(
-                        min_number=1,
-                        min_ratio=100
+                )],
+                series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
+                    series_group_key={"city": "Sao Paulo"},
+                    smart_detection_condition=SmartDetectionCondition(
+                        anomaly_detector_direction="Both",
+                        sensitivity=63,
+                        suppress_condition=SuppressCondition(
+                            min_number=1,
+                            min_ratio=100
+                        )
                     )
-                )
-            )],
-            series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
-                series_group_key={"city": "Sao Paulo"},
-                smart_detection_condition=SmartDetectionCondition(
-                    anomaly_detector_direction="Both",
-                    sensitivity=63,
-                    suppress_condition=SuppressCondition(
-                        min_number=1,
-                        min_ratio=100
-                    )
-                )
-            )]
-        )
-        return detection_config, data_feed
+                )]
+            )
+            return detection_config, data_feed
+        except Exception as e:
+            self.admin_client.delete_data_feed(data_feed.id)
+            raise e
 
     def _create_email_hook_for_update(self, name):
         return self.admin_client.create_hook(

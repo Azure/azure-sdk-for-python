@@ -2,6 +2,6 @@
 -e ../../../tools/azure-devtools
 ../../core/azure-core
 ../../storage/azure-storage-blob
-../../nspkg/azure-ai-translation-nspkg
+-e ../../identity/azure-identity
 aiohttp>=3.0; python_version >= '3.5'
 pytz
