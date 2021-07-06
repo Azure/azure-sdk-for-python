@@ -4,3 +4,4 @@
 ../azure-mgmt-containerregistry
 aiohttp>=3.0; python_version >= '3.5'
 azure-identity
+msrestazure>=0.4.11
