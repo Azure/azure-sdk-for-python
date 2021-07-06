@@ -14,12 +14,14 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     TagOrder,
 )
+from azure.containerregistry.aio import ContainerRegistryClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
+from testcase import get_authority
 
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
@@ -563,7 +565,9 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @pytest.mark.live_test_only
     @acr_preparer()
     async def test_incorrect_credential_scopes(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint, credential_scopes="https://microsoft.com")
+        authority = get_authority(containerregistry_endpoint)
+        credential = self.get_credential(authority)
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, credential_scopes="https://microsoft.com")
 
         with pytest.raises(ClientAuthenticationError):
             properties = await client.get_repository_properties(HELLO_WORLD)

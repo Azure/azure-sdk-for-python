@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+from azure.core import credentials
 import pytest
 import six
 import time
@@ -14,11 +15,12 @@ from azure.containerregistry import (
     ManifestOrder,
     ArtifactTagProperties,
     TagOrder,
+    ContainerRegistryClient,
 )
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass, get_authority
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 
@@ -570,7 +572,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @pytest.mark.live_test_only
     @acr_preparer()
     def test_incorrect_credential_scopes(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint, credential_scopes="https://microsoft.com")
+        authority = get_authority(containerregistry_endpoint)
+        credential = self.get_credential(authority)
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, credential_scopes="https://microsoft.com")
 
         with pytest.raises(ClientAuthenticationError):
             properties = client.get_repository_properties(HELLO_WORLD)
