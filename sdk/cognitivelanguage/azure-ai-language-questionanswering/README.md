@@ -2,7 +2,7 @@
 
 # Azure Cognitive Language Services Question Answering client library for Python
 
-Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users’ questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from user behavior.
+Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users’ questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from users' behavior.
 
 [Source code][questionanswering_client_src] | [Package (PyPI)][questionanswering_pypi_package] | [API reference documentation][questionanswering_refdocs] | [Product documentation][questionanswering_docs] | [Samples][questionanswering_samples]
 
@@ -21,7 +21,7 @@ Question Answering is a cloud-based API service that lets you create a conversat
 Install the Azure QuestionAnswering client library for Python with [pip][pip_link]:
 
 ```bash
-pip install azure-ai-language-questionanswering --pre
+pip install azure-ai-language-questionanswering
 ```
 
 ### Authenticate the client
@@ -46,17 +46,7 @@ Once you've determined your **endpoint** and **API key** you can instantiate a `
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering import QuestionAnsweringClient
 
-endpoint = "https://myaccount.api.cognitive.microsoft.com"
-credential = AzureKeyCredential("{api-key}")
-
-client = QuestionAnsweringClient(endpoint, credential)
-```
-Or an asynchronous client:
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-
-endpoint = "https://myaccount.api.cognitive.microsoft.com"
+endpoint = "https://{myaccount}.api.cognitive.microsoft.com"
 credential = AzureKeyCredential("{api-key}")
 
 client = QuestionAnsweringClient(endpoint, credential)
@@ -74,15 +64,18 @@ For asynchronous operations, an async `QuestionAnsweringClient` is in the `azure
 The `azure-ai-language-questionanswering` client library provides both synchronous and asynchronous APIs.
 
 The following examples show common scenarios using the `client` [created above](#create-questionansweringclient).
+- [Ask a question](#ask-a-question)
+- [Ask a follow-up question](#ask-a-follow-up-question)
+- [Asynchronous operations](#asynchronous-operations)
 
 ### Ask a question
 
-The only input required to a ask a question using a knowledgebase is just the question itself:
+The only input required to ask a question using a knowledgebase is just the question itself:
 
 ```python
-from azure.ai.lanuage import questionanswering as qna
+from azure.ai.language.questionanswering import models as qna
 
-params = qna.models.KnowledgebaseQueryParameters(
+params = qna.KnowledgebaseQueryParameters(
     question="How long should my Surface battery last?"
 )
 
@@ -90,9 +83,9 @@ output = client.query_knowledgebase(
     project_name="FAQ",
     knowledgebase_query_parameters=params
 )
-for answer in output.answers:
-    print("({}) {}".format(answer.confidence_score, answer.answer))
-    print("Source: {}".format(answer.source))
+for candidate in output.answers:
+    print("({}) {}".format(candidate.confidence_score, candidate.answer))
+    print("Source: {}".format(candidate.source))
 
 ```
 
@@ -107,7 +100,7 @@ params = qna.models.KnowledgebaseQueryParameters(
     question="How long should charging take?"
     context=qna.models.KnowledgebaseAnswerRequestContext(
         previous_user_query="How long should my Surface battery last?",
-        previous_qna_id=previous_asnwer.id
+        previous_qna_id=previous_answer.id
     )
 )
 
@@ -115,47 +108,33 @@ output = client.query_knowledgebase(
     project_name="FAQ",
     knowledgebase_query_parameters=params
 )
-for answer in output.answers:
-    print("({}) {}".format(answer.confidence_score, answer.answer))
-    print("Source: {}".format(answer.source))
+for candidate in output.answers:
+    print("({}) {}".format(candidate.confidence_score, candidate.answer))
+    print("Source: {}".format(candidate.source))
 
+```
+### Asynchronous operations
+
+The above examples can also be run asynchronously using the client in the `aio` namespace:
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
+from azure.ai.language.questionanswering import models as qna
+
+client = QuestionAnsweringClient(endpoint, credential)
+
+params = qna.KnowledgebaseQueryParameters(
+    question="How long should my Surface battery last?"
+)
+
+output = await client.query_knowledgebase(
+    project_name="FAQ",
+    knowledgebase_query_parameters=params
+)
 ```
 
 ## Optional Configuration
 Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
-
-
-### Retry Policy configuration
-
-Use the following keyword arguments when instantiating a client to configure the retry policy:
-
-* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
-Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
-* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
-* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
-* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able.
-This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
-Defaults to `False`.
-
-### Other client / per-operation configuration
-
-Other optional configuration keyword arguments that can be specified on the client or per-operation.
-
-**Client keyword arguments:**
-
-* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
-* __transport__ (Any): User-provided transport to send the HTTP request.
-
-**Per-operation keyword arguments:**
-
-* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
-* __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
-* __client_request_id__ (str): Optional user specified identification of the request.
-* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
-* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
-the client level to enable it for all requests.
-* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 ## Troubleshooting
 
@@ -177,7 +156,6 @@ except HttpResponseError as error:
     print("Query failed: {}".format(error.message))
 ```
 
-
 ### Logging
 This library uses the standard
 [logging][python_logging] library for logging.
@@ -185,37 +163,9 @@ Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` argument:
-```python
-import sys
-import logging
-from azure.ai.language.questionanswering import QuestionAnsweringClient
+headers, can be enabled on a client with the `logging_enable` argument.
 
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-client = QuestionAnsweringClient(
-    endpoint,
-    credential,
-    logging_enable=True
-)
-```
-
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it is not enabled for the client:
-```python
-client.query_knowledgebase(
-    project_name="FAQ",
-    knowledgebase_query_parameters=params,
-    logging_enable=True
-)
-```
+See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 ## Next steps
 
@@ -244,6 +194,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication/
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3/library/logging.html
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]:https://pypi.org/project/pip/
