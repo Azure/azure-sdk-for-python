@@ -344,7 +344,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-    :ivar list[str] admin_emails: Data feed administrator emails.
+    :ivar list[str] admins: Data feed administrators.
     :ivar str data_feed_description: Data feed description.
     :ivar missing_data_point_fill_settings: The fill missing point type and value.
     :vartype missing_data_point_fill_settings:
@@ -352,7 +352,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar rollup_settings: The rollup settings.
     :vartype rollup_settings:
         ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :ivar list[str] viewer_emails: Data feed viewer emails.
+    :ivar list[str] viewers: Data feed viewers.
     :ivar access_mode: Data feed access mode. Possible values include:
         "Private", "Public". Default value: "Private".
     :vartype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -377,19 +377,19 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         self.is_admin = kwargs.get('is_admin', None)
         self.metric_ids = kwargs.get('metric_ids', None)
         self.status = kwargs.get('status', None)
-        self.admin_emails = kwargs.get('admin_emails', None)
+        self.admins = kwargs.get('admins', None)
         self.data_feed_description = kwargs.get('data_feed_description', None)
         self.missing_data_point_fill_settings = kwargs.get('missing_data_point_fill_settings', None)
         self.rollup_settings = kwargs.get('rollup_settings', None)
-        self.viewer_emails = kwargs.get('viewer_emails', None)
+        self.viewers = kwargs.get('viewers', None)
         self.access_mode = kwargs.get('access_mode', "Private")
         self.action_link_template = kwargs.get('action_link_template', None)
 
     def __repr__(self):
         return "DataFeed(created_time={}, granularity={}, id={}, ingestion_settings={}, is_admin={}, " \
-                "metric_ids={}, name={}, schema={}, source={}, status={}, admin_emails={}, " \
+                "metric_ids={}, name={}, schema={}, source={}, status={}, admins={}, " \
                "data_feed_description={}, missing_data_point_fill_settings={}, " \
-               "rollup_settings={}, viewer_emails={}, access_mode={}, action_link_template={})".format(
+               "rollup_settings={}, viewers={}, access_mode={}, action_link_template={})".format(
             self.created_time,
             repr(self.granularity),
             self.id,
@@ -400,11 +400,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             repr(self.schema),
             repr(self.source),
             self.status,
-            self.admin_emails,
+            self.admins,
             self.data_feed_description,
             repr(self.missing_data_point_fill_settings),
             repr(self.rollup_settings),
-            self.viewer_emails,
+            self.viewers,
             self.access_mode,
             self.action_link_template
         )[:1024]
@@ -425,7 +425,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             is_admin=data_feed.is_admin,
             metric_ids={metric.metric_name: metric.metric_id for metric in data_feed.metrics},
             name=data_feed.data_feed_name,
-            admin_emails=data_feed.admins,
+            admins=data_feed.admins,
             data_feed_description=data_feed.data_feed_description,
             missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                 fill_type=data_feed.fill_missing_point_type,
@@ -437,7 +437,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                 auto_rollup_group_by_column_names=data_feed.roll_up_columns,
                 rollup_method=data_feed.roll_up_method
             ),
-            viewer_emails=data_feed.viewers,
+            viewers=data_feed.viewers,
             access_mode=data_feed.view_mode,
             action_link_template=data_feed.action_link_template,
             schema=DataFeedSchema(
@@ -495,11 +495,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             or self.missing_data_point_fill_settings.custom_fill_value
             if self.missing_data_point_fill_settings else None,
             viewers=kwargs.pop("viewers", None)
-            or self.viewer_emails,
+            or self.viewers,
             view_mode=kwargs.pop("viewMode", None)
             or self.access_mode,
             admins=kwargs.pop("admins", None)
-            or self.admin_emails,
+            or self.admins,
             status=kwargs.pop("status", None) or self.status,
             action_link_template=kwargs.pop("actionLinkTemplate", None)
             or self.action_link_template,
@@ -1892,7 +1892,7 @@ class NotificationHook(dict):
     :param str name: Hook unique name.
     :ivar str description: Hook description.
     :ivar str external_link: Hook external link.
-    :ivar list[str] admin_emails: Hook administrator emails.
+    :ivar list[str] admins: Hook administrators.
     :ivar str hook_type: Constant filled by server. Possible values include:
         "Webhook", "Email".
     :ivar str id: Hook unique id.
@@ -1904,17 +1904,17 @@ class NotificationHook(dict):
         self.name = name
         self.description = kwargs.get('description', None)
         self.external_link = kwargs.get('external_link', None)
-        self.admin_emails = kwargs.get('admin_emails', None)
+        self.admins = kwargs.get('admins', None)
         self.hook_type = None
 
     def __repr__(self):
-        return "NotificationHook(id={}, name={}, description={}, external_link={}, admin_emails={}, " \
+        return "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, " \
                "hook_type={})".format(
                     self.id,
                     self.name,
                     self.description,
                     self.external_link,
-                    self.admin_emails,
+                    self.admins,
                     self.hook_type
                 )[:1024]
 
@@ -1926,7 +1926,7 @@ class EmailNotificationHook(NotificationHook):
     :param list[str] emails_to_alert: Required. Email TO: list.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
-    :ivar list[str] admin_emails: Hook administrator emails.
+    :ivar list[str] admins: Hook administrators.
     :ivar str hook_type: Constant filled by server - "Email".
     :ivar str id: Hook unique id.
     """
@@ -1944,7 +1944,7 @@ class EmailNotificationHook(NotificationHook):
                     self.name,
                     self.description,
                     self.external_link,
-                    self.admin_emails,
+                    self.admins,
                     self.hook_type,
                     self.emails_to_alert
                 )[:1024]
@@ -1956,7 +1956,7 @@ class EmailNotificationHook(NotificationHook):
             name=hook.hook_name,
             description=hook.description,
             external_link=hook.external_link,
-            admin_emails=hook.admins,
+            admins=hook.admins,
             id=hook.hook_id
         )
 
@@ -1965,7 +1965,7 @@ class EmailNotificationHook(NotificationHook):
             hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_EmailHookParameterPatch(
                 to_list=self.emails_to_alert
             )
@@ -1976,7 +1976,7 @@ class EmailNotificationHook(NotificationHook):
             hook_name=name or self.name,
             description=description or self.description,
             external_link=external_link or self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_EmailHookParameterPatch(
                 to_list=emails_to_alert or self.emails_to_alert
             )
@@ -1995,7 +1995,7 @@ class WebNotificationHook(NotificationHook):
     :keyword str certificate_password: client certificate password.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
-    :ivar list[str] admin_emails: Hook administrator emails.
+    :ivar list[str] admins: Hook administrators.
     :ivar str hook_type: Constant filled by server - "Webhook".
     :ivar str id: Hook unique id.
     """
@@ -2011,13 +2011,13 @@ class WebNotificationHook(NotificationHook):
         self.certificate_password = kwargs.get('certificate_password', None)
 
     def __repr__(self):
-        return "WebNotificationHook(id={}, name={}, description={}, external_link={}, admin_emails={}, hook_type={}, " \
+        return "WebNotificationHook(id={}, name={}, description={}, external_link={}, admins={}, hook_type={}, " \
                "endpoint={}, username={}, password={}, certificate_key={}, certificate_password={})".format(
                     self.id,
                     self.name,
                     self.description,
                     self.external_link,
-                    self.admin_emails,
+                    self.admins,
                     self.hook_type,
                     self.endpoint,
                     self.username,
@@ -2037,7 +2037,7 @@ class WebNotificationHook(NotificationHook):
             name=hook.hook_name,
             description=hook.description,
             external_link=hook.external_link,
-            admin_emails=hook.admins,
+            admins=hook.admins,
             id=hook.hook_id
         )
 
@@ -2046,7 +2046,7 @@ class WebNotificationHook(NotificationHook):
             hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_WebhookHookParameterPatch(
                 endpoint=self.endpoint,
                 username=self.username,
@@ -2070,7 +2070,7 @@ class WebNotificationHook(NotificationHook):
             hook_name=name or self.name,
             description=description or self.description,
             external_link=external_link or self.external_link,
-            admins=self.admin_emails,
+            admins=self.admins,
             hook_parameter=_WebhookHookParameterPatch(
                 endpoint=endpoint or self.endpoint,
                 username=username or self.username,

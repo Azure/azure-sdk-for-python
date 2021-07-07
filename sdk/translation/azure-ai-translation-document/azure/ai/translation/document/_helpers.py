@@ -27,7 +27,9 @@ def get_translation_input(args, kwargs, continuation_token):
         if not inputs:
             inputs = args[0]
         request = (
-            DocumentTranslationInput._to_generated_list(inputs)  # pylint: disable=protected-access
+            DocumentTranslationInput._to_generated_list(  # pylint: disable=protected-access
+                inputs
+            )
             if not continuation_token
             else None
         )

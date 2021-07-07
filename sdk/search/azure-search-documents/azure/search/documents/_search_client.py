@@ -6,6 +6,7 @@
 from typing import cast, List, TYPE_CHECKING
 import six
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DEFAULT_VERSION
 from ._generated import SearchClient as SearchIndexClient
@@ -15,12 +16,13 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
+from ._utils import get_authentication_policy
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials import TokenCredential
 
 
 def odata(statement, **kwargs):
@@ -59,7 +61,7 @@ class SearchClient(HeadersMixin):
     :param index_name: The name of the index to connect to
     :type index_name: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
 
     .. admonition:: Example:
@@ -75,18 +77,30 @@ class SearchClient(HeadersMixin):
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
-        # type: (str, str, AzureKeyCredential, **Any) -> None
+        # type: (str, str, Union[AzureKeyCredential, TokenCredential], **Any) -> None
 
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
-        self._credential = credential  # type: AzureKeyCredential
-        self._client = SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            sdk_moniker=SDK_MONIKER,
-            api_version=self._api_version, **kwargs
-        )  # type: SearchIndexClient
+        self._credential = credential
+        if isinstance(credential, AzureKeyCredential):
+            self._aad = False
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
+        else:
+            self._aad = True
+            authentication_policy = get_authentication_policy(credential)
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                authentication_policy=authentication_policy,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
 
     def __repr__(self):
         # type: () -> str
