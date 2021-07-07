@@ -183,6 +183,9 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
+    def __init__(self, logging_enable=False, **kwargs):
+        self.logging_request_body = kwargs.pop("logging_request_body", False)
+        super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
@@ -216,11 +219,11 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
 
-                # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType):
-                    _LOGGER.debug("File upload")
-                else:
+                if self.logging_request_body or options.pop("logging_request_body", False):
                     _LOGGER.debug(str(http_request.body))
+                else:
+                    # We don't want to log the binary data of a file upload.
+                    _LOGGER.debug("Hidden body, please use logging_request_body to show body")
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
