@@ -49,10 +49,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
         the application is registered in. When False, which is the default, the credential will acquire tokens only from
-        the tenant specified by **tenant_id**. This argument doesn't apply to managed identity authentication.
+        its configured tenant. This argument doesn't apply to managed identity authentication.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
-          defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
@@ -148,6 +148,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
+        :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """

@@ -28,7 +28,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         supports only Azure Active Directory work or school accounts.
     :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
         the user is registered in. When False, which is the default, the credential will acquire tokens only from the
-        user's home tenant or the tenant specified by **tenant_id**.
+        user's home tenant or the tenant configured by **tenant_id** or VS Code's user settings.
     """
 
     async def __aenter__(self) -> "VisualStudioCodeCredential":
@@ -48,9 +48,13 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
-          Studio Code
+            Studio Code
         """
         if self._unavailable_reason:
             raise CredentialUnavailableError(message=self._unavailable_reason)

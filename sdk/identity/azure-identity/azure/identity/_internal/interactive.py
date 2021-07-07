@@ -109,13 +109,17 @@ class InteractiveCredential(MsalCredential, ABC):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
           claims challenge following an authorization failure
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
-          required data, state, or platform support
+            required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason.
+            attribute gives a reason.
         :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
-          configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
+            configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
             message = "'get_token' requires at least one scope"
