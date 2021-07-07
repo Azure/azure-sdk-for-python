@@ -54,6 +54,7 @@ except (SyntaxError, ImportError):
 from ._search_client_enums import (
     Answers,
     AutocompleteMode,
+    Captions,
     IndexActionType,
     QueryLanguage,
     QueryType,
@@ -86,6 +87,7 @@ __all__ = [
     'SuggestResult',
     'Answers',
     'AutocompleteMode',
+    'Captions',
     'IndexActionType',
     'QueryLanguage',
     'QueryType',

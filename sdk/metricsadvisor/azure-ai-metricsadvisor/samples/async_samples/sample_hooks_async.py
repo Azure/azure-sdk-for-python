@@ -71,7 +71,7 @@ async def sample_get_hook_async(hook_id):
         print("Description: {}".format(hook.description))
         print("Emails to alert: {}".format(hook.emails_to_alert))
         print("External link: {}".format(hook.external_link))
-        print("Admins: {}".format(hook.admin_emails))
+        print("Admins: {}".format(hook.admins))
 
     # [END get_hook_async]
 

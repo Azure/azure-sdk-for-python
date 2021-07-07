@@ -30,6 +30,7 @@ extends:
   parameters:
     ServiceDirectory: appconfiguration
     VerifyAutorest: true
+    ValidateFormatting: false
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration

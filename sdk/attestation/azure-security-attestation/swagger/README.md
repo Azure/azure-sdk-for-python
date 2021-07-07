@@ -34,11 +34,19 @@ azure-arm: false
 payload-flattening-threshold: 2
 package-name: azure-security-attestation
 credential-scopes: 'https://attest.azure.net/.default'
+```
 
-#directive:
-#  from: swagger-document
-#  where: "$.definitions.PolicyCertificatesModificationResult"
-#  transform: >
-#    $["x-ms-client-name"] = "GeneratedPolicyCertificatesModificationResult"
+```yaml
+directive:
+  from: swagger-document
+  where: "$.x-ms-parameterized-host.parameters"
+  transform: >
+    $.name = "endpoint"
+```
 
+```yaml
+directive:
+  where: "$.x-ms-parameterized-host"
+  transform: >
+    $.hostTemplate = "endpoint"
 ```

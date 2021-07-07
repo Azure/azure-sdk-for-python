@@ -1,6 +1,6 @@
 # Release History
 
-## 7.3.1 (Unreleased)
+## 7.3.1 (2021-07-07)
 
 ### Fixed
 

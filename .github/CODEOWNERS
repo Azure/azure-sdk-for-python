@@ -137,6 +137,6 @@
 ###########
 # Eng Sys
 ###########
-/eng/           @weshaggard @scbedd @mitchdenny @danieljurek
+/eng/           @weshaggard @scbedd @danieljurek
 /**/tests.yml   @benbp
-/**/ci.yml      @mitchdenny
+/**/ci.yml      @scbedd
