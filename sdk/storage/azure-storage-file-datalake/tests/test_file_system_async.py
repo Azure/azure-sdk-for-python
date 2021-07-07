@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 import unittest
 import asyncio
 import uuid
@@ -218,7 +219,7 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_undelete_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Needs soft delete enabled account.
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -235,52 +236,18 @@ class FileSystemTest(StorageTestCase):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
-        restored_version = 0
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name,
-                                                                         filesystem.deleted_version,
-                                                                         new_name="restored" +
-                                                                                  name + str(restored_version))
-                restored_version += 1
+                restored_fs_client = await self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version)
 
                 # to make sure the deleted filesystem is restored
                 props = await restored_fs_client.get_file_system_properties()
                 self.assertIsNotNone(props)
 
     @DataLakePreparer()
-    async def test_restore_to_existing_file_system(self, datalake_storage_account_name, datalake_storage_account_key):
-        # Needs soft delete enabled account.
-        if not self.is_playback():
-            return
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        # get an existing filesystem
-        existing_name = self._get_file_system_reference(prefix="existing")
-        name = self._get_file_system_reference(prefix="filesystem")
-        existing_filesystem_client = await self.dsc.create_file_system(existing_name)
-        filesystem_client = await self.dsc.create_file_system(name)
-
-        # Act
-        await filesystem_client.delete_file_system()
-        # to make sure the filesystem deleted
-        with self.assertRaises(ResourceNotFoundError):
-            await filesystem_client.get_file_system_properties()
-
-        filesystem_list = []
-        async for fs in self.dsc.list_file_systems(include_deleted=True):
-            filesystem_list.append(fs)
-        self.assertTrue(len(filesystem_list) >= 1)
-
-        for filesystem in filesystem_list:
-            # find the deleted filesystem and restore it
-            if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                with self.assertRaises(HttpResponseError):
-                    await self.dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
-                                                        new_name=existing_filesystem_client.file_system_name)
-
-    @DataLakePreparer()
     async def test_restore_file_system_with_sas(self, datalake_storage_account_name, datalake_storage_account_key):
+        # TODO: Needs soft delete enabled account in ARM template.
         pytest.skip(
             "We are generating a SAS token therefore play only live but we also need a soft delete enabled account.")
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -304,13 +271,10 @@ class FileSystemTest(StorageTestCase):
             filesystem_list.append(fs)
         self.assertTrue(len(filesystem_list) >= 1)
 
-        restored_version = 0
         for filesystem in filesystem_list:
             # find the deleted filesystem and restore it
             if filesystem.deleted and filesystem.name == filesystem_client.file_system_name:
-                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.deleted_version,
-                                                                    new_name="restored" + name + str(restored_version))
-                restored_version += 1
+                restored_fs_client = await dsc.undelete_file_system(filesystem.name, filesystem.deleted_version)
 
                 # to make sure the deleted filesystem is restored
                 props = await restored_fs_client.get_file_system_properties()
@@ -576,6 +540,7 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_get_deleted_paths(self, datalake_storage_account_name, datalake_storage_account_key):
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
@@ -757,9 +722,10 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_undelete_dir_with_version_id(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = await self._create_file_system("fs")
         dir_path = 'dir10'
         dir_client = await file_system_client.create_directory(dir_path)
@@ -772,9 +738,10 @@ class FileSystemTest(StorageTestCase):
 
     @DataLakePreparer()
     async def test_undelete_file_with_version_id(self, datalake_storage_account_name, datalake_storage_account_key):
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # TODO: Needs soft delete enabled account in ARM template.
         if not self.is_playback():
             return
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = await self._create_file_system("fs")
         file_path = 'dir10/fileŇ'
         dir_client = await file_system_client.create_file(file_path)

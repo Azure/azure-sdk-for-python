@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 from time import sleep
 
 import pytest
@@ -890,8 +891,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
+        # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = await self._create_container(bsc)
 
@@ -906,47 +906,14 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             container_list.append(c)
         self.assertTrue(len(container_list) >= 1)
 
-        restored_version = 0
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = await bsc.undelete_container(container.name, container.version,
-                                                                    new_name="restoredctn" + str(restored_version))
-                restored_version += 1
+                restored_ctn_client = await bsc.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = await restored_ctn_client.get_container_properties()
                 self.assertIsNotNone(props)
-
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip('This will be added back along with STG74 features')
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        # get an existing container
-        existing_container_client = await self._create_container(bsc, prefix="existing")
-        container_client = await self._create_container(bsc)
-
-        # Act
-        await container_client.delete_container()
-        # to make sure the container deleted
-        with self.assertRaises(ResourceNotFoundError):
-            await container_client.get_container_properties()
-
-        container_list = list()
-        async for c in bsc.list_containers(include_deleted=True):
-            container_list.append(c)
-        self.assertTrue(len(container_list) >= 1)
-
-        for container in container_list:
-            # find the deleted container and restore it
-            if container.deleted and container.name == container_client.container_name:
-                with self.assertRaises(HttpResponseError):
-                    await bsc.undelete_container(container.name, container.version,
-                                                  new_name=existing_container_client.container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
