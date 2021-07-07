@@ -1,5 +1,5 @@
 azure.eventhub.amqp package
-==========================
+===========================
 
     .. autoclass:: azure.eventhub.amqp.AmqpAnnotatedMessage
         :members:
