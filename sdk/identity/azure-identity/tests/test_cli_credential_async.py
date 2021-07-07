@@ -254,9 +254,7 @@ async def test_multitenant_authentication_not_allowed():
             await credential.get_token("scope", tenant_id="un" + expected_tenant)
 
         # ...unless the compat switch is enabled
-        with mock.patch.dict(
-            "os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}, clear=True
-        ):
+        with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
             token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert (
             token.token == expected_token
