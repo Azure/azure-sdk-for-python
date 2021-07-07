@@ -1419,9 +1419,9 @@ class ShareOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
-        :param deleted_share_name: Specifies the name of the preivously-deleted share.
+        :param deleted_share_name: Specifies the name of the previously-deleted share.
         :type deleted_share_name: str
-        :param deleted_share_version: Specifies the version of the preivously-deleted share.
+        :param deleted_share_version: Specifies the version of the previously-deleted share.
         :type deleted_share_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

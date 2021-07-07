@@ -180,6 +180,14 @@ class DirectoryItem(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
+    :param file_id:
+    :type file_id: str
+    :param properties: File properties.
+    :type properties: ~azure.storage.fileshare.models.FileProperty
+    :param attributes:
+    :type attributes: str
+    :param permission_key:
+    :type permission_key: str
     """
 
     _validation = {
@@ -188,6 +196,10 @@ class DirectoryItem(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
+        'file_id': {'key': 'FileId', 'type': 'str'},
+        'properties': {'key': 'Properties', 'type': 'FileProperty'},
+        'attributes': {'key': 'Attributes', 'type': 'str'},
+        'permission_key': {'key': 'PermissionKey', 'type': 'str'},
     }
     _xml_map = {
         'name': 'Directory'
@@ -199,6 +211,10 @@ class DirectoryItem(msrest.serialization.Model):
     ):
         super(DirectoryItem, self).__init__(**kwargs)
         self.name = kwargs['name']
+        self.file_id = kwargs.get('file_id', None)
+        self.properties = kwargs.get('properties', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.permission_key = kwargs.get('permission_key', None)
 
 
 class FileHTTPHeaders(msrest.serialization.Model):
@@ -249,8 +265,14 @@ class FileItem(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
+    :param file_id:
+    :type file_id: str
     :param properties: Required. File properties.
     :type properties: ~azure.storage.fileshare.models.FileProperty
+    :param attributes:
+    :type attributes: str
+    :param permission_key:
+    :type permission_key: str
     """
 
     _validation = {
@@ -260,7 +282,10 @@ class FileItem(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
+        'file_id': {'key': 'FileId', 'type': 'str'},
         'properties': {'key': 'Properties', 'type': 'FileProperty'},
+        'attributes': {'key': 'Attributes', 'type': 'str'},
+        'permission_key': {'key': 'PermissionKey', 'type': 'str'},
     }
     _xml_map = {
         'name': 'File'
@@ -272,7 +297,10 @@ class FileItem(msrest.serialization.Model):
     ):
         super(FileItem, self).__init__(**kwargs)
         self.name = kwargs['name']
+        self.file_id = kwargs.get('file_id', None)
         self.properties = kwargs['properties']
+        self.attributes = kwargs.get('attributes', None)
+        self.permission_key = kwargs.get('permission_key', None)
 
 
 class FileProperty(msrest.serialization.Model):
@@ -285,6 +313,18 @@ class FileProperty(msrest.serialization.Model):
      reflect that fact until the handle is closed or the op-lock is broken. To retrieve current
      property values, call Get File Properties.
     :type content_length: long
+    :param creation_time:
+    :type creation_time: ~datetime.datetime
+    :param last_access_time:
+    :type last_access_time: ~datetime.datetime
+    :param last_write_time:
+    :type last_write_time: ~datetime.datetime
+    :param change_time:
+    :type change_time: ~datetime.datetime
+    :param last_modified:
+    :type last_modified: ~datetime.datetime
+    :param etag:
+    :type etag: str
     """
 
     _validation = {
@@ -293,6 +333,12 @@ class FileProperty(msrest.serialization.Model):
 
     _attribute_map = {
         'content_length': {'key': 'Content-Length', 'type': 'long'},
+        'creation_time': {'key': 'CreationTime', 'type': 'iso-8601'},
+        'last_access_time': {'key': 'LastAccessTime', 'type': 'iso-8601'},
+        'last_write_time': {'key': 'LastWriteTime', 'type': 'iso-8601'},
+        'change_time': {'key': 'ChangeTime', 'type': 'iso-8601'},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
+        'etag': {'key': 'Etag', 'type': 'str'},
     }
 
     def __init__(
@@ -301,6 +347,12 @@ class FileProperty(msrest.serialization.Model):
     ):
         super(FileProperty, self).__init__(**kwargs)
         self.content_length = kwargs['content_length']
+        self.creation_time = kwargs.get('creation_time', None)
+        self.last_access_time = kwargs.get('last_access_time', None)
+        self.last_write_time = kwargs.get('last_write_time', None)
+        self.change_time = kwargs.get('change_time', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.etag = kwargs.get('etag', None)
 
 
 class FileRange(msrest.serialization.Model):
@@ -474,6 +526,8 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
     :type segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
     :param next_marker: Required.
     :type next_marker: str
+    :param directory_id:
+    :type directory_id: str
     """
 
     _validation = {
@@ -495,6 +549,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         'max_results': {'key': 'MaxResults', 'type': 'int'},
         'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment'},
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'directory_id': {'key': 'DirectoryId', 'type': 'str'},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -514,6 +569,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         self.max_results = kwargs.get('max_results', None)
         self.segment = kwargs['segment']
         self.next_marker = kwargs['next_marker']
+        self.directory_id = kwargs.get('directory_id', None)
 
 
 class ListHandlesResponse(msrest.serialization.Model):
