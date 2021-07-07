@@ -116,7 +116,11 @@ async def record_response(cassette, vcr_request, response):
     """Record a VCR request-response chain to the cassette."""
 
     try:
-        body = {"string": (await response.read())}
+        data = await response.read()
+        body = {"string": (data)}
+        response.content = MockStream()
+        response.content.feed_data(data)
+        response.content.feed_eof()
     # aiohttp raises a ClientConnectionError on reads when
     # there is no body. We can use this to know to not write one.
     except ClientConnectionError:
