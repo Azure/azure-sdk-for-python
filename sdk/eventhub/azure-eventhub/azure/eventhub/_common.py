@@ -319,9 +319,13 @@ class EventData(object):
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.eventhub.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.eventhub.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
+        For :class:`azure.eventhub.amqp.AmqpMessageBodyType.DATA<azure.eventhub.amqp.AmqpMessageBodyType.DATA>`,
+        the body could be bytes or Iterable[bytes].
+        For :class:`azure.eventhub.amqp.AmqpMessageBodyType.SEQUENCE<azure.eventhub.amqp.AmqpMessageBodyType.SEQUENCE>`,
+        the body could be List or Iterable[List].
+        For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
+        the body could be any type.
+
         :rtype: Any
         """
         try:
@@ -333,7 +337,8 @@ class EventData(object):
     def body_type(self):
         # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
-        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+
+        :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return self._raw_amqp_message.body_type
 
