@@ -249,6 +249,13 @@ class AzureError(Exception):
             self.__traceback__ = self.exc_traceback
             raise self
 
+    def __repr__(self):
+        class_name = self.__class__.__name__
+
+        return "{}(message={})".format(
+            class_name, self.message
+        )[:1024]
+
 
 class ServiceRequestError(AzureError):
     """An error occurred while attempt to make a request to the service.
