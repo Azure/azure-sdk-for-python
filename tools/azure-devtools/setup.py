@@ -7,13 +7,6 @@
 
 import io
 from setuptools import setup
-import subprocess
-import os
-import sys
-import pdb
-
-patched_vcr = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'vcrpy'))
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', patched_vcr])
 
 VERSION = "1.2.1"
 
@@ -30,7 +23,7 @@ CLASSIFIERS = [
     "License :: OSI Approved :: MIT License",
 ]
 
-DEPENDENCIES = ["ConfigArgParse>=0.12.0", "six>=1.10.0"]
+DEPENDENCIES = ["ConfigArgParse>=0.12.0", "six>=1.10.0", "vcrpy~=3.0.0"]
 
 with io.open("README.rst", "r", encoding="utf-8") as f:
     README = f.read()
