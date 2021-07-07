@@ -100,7 +100,7 @@ def get_safe_working_dir():
     """Invoke 'az' from a directory controlled by the OS, not the executing program's directory"""
 
     if sys.platform.startswith("win"):
-        path = os.environ.get("SYSTEMROOT")
+        path = os.environ.get("SYSTEMROOT") or os.environ.get("WINDIR")
         if not path:
             raise CredentialUnavailableError(message="Environment variable 'SYSTEMROOT' has no value")
         return path
