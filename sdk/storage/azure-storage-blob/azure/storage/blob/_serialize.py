@@ -163,7 +163,12 @@ def serialize_blob_tags(tags=None):
 
 
 def serialize_query_format(formater):
-    if isinstance(formater, DelimitedJsonDialect):
+    if formater == "ParquetDialect":
+        qq_format = QueryFormat(
+            type=QueryFormatType.PARQUET,
+            parquet_text_configuration=' '
+        )
+    elif isinstance(formater, DelimitedJsonDialect):
         serialization_settings = JsonTextConfiguration(
             record_separator=formater.delimiter
         )
@@ -196,5 +201,5 @@ def serialize_query_format(formater):
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect.")
+        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect or ParquetDialect.")
     return QuerySerialization(format=qq_format)
