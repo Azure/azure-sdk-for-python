@@ -346,7 +346,7 @@ In order to use glossaries with Document Translation, you first need to upload y
 
 ### **Custom Translation Models**
 Instead of using Document Translation's engine for translation, you can use your own custom Azure machine/deep learning model.
-
+ 
 #### **How To Create a Custom Translation Model**
 For more info on how to create, provision, and deploy your own custom Azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
 
