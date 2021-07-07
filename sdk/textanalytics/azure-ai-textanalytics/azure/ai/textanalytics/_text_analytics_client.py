@@ -68,9 +68,9 @@ if TYPE_CHECKING:
 class TextAnalyticsClient(TextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
-    tasks such as sentiment analysis, key phrase extraction, and language detection. No training data
-    is needed to use this API - just bring your text data. This API uses advanced natural language
-    processing techniques to deliver best in class predictions.
+    tasks such as sentiment analysis, key phrase extraction, entities recognition,
+    and language detection. No training data is needed to use this API - just bring your text data.
+    This API uses advanced natural language processing techniques to deliver best in class predictions.
 
     Further documentation can be found in
     https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
@@ -340,7 +340,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
             `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
+        :paramtype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
@@ -858,7 +858,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
         combine multiple Text Analytics actions into one call. Otherwise, we recommend you use
-        the action specific endpoints, for example :func:`analyze_sentiment`:
+        the action specific endpoints, for example :func:`analyze_sentiment`.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -933,7 +933,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             analyze_tasks = self._client.models(api_version="v3.1").JobManifestTasks(
                 entity_recognition_tasks=[
-                    t.to_generated()
+                    t._to_generated()  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -942,7 +942,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 entity_recognition_pii_tasks=[
-                    t.to_generated()
+                    t._to_generated()  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -951,7 +951,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 key_phrase_extraction_tasks=[
-                    t.to_generated()
+                    t._to_generated()  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -960,7 +960,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 entity_linking_tasks=[
-                    t.to_generated()
+                    t._to_generated()  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -969,7 +969,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 sentiment_analysis_tasks=[
-                    t.to_generated()
+                    t._to_generated()  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
