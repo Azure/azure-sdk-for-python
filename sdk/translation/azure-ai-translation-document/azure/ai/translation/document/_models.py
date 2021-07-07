@@ -59,7 +59,8 @@ class TranslationGlossary(object):  # pylint: disable=useless-object-inheritance
     @staticmethod
     def _to_generated_list(glossaries):
         return [
-            glossary._to_generated() for glossary in glossaries  # pylint: disable=protected-access
+            glossary._to_generated()  # pylint: disable=protected-access
+            for glossary in glossaries
         ]
 
     def __repr__(self):
@@ -124,7 +125,8 @@ class TranslationTarget(object):  # pylint: disable=useless-object-inheritance
     @staticmethod
     def _to_generated_list(targets):
         return [
-            target._to_generated() for target in targets  # pylint: disable=protected-access
+            target._to_generated()  # pylint: disable=protected-access
+            for target in targets
         ]
 
     def __repr__(self):
@@ -382,7 +384,9 @@ class DocumentStatus(
             last_updated_on=doc_status.last_action_date_time_utc,
             status=doc_status.status,
             translated_to=doc_status.to,
-            error=DocumentTranslationError._from_generated(doc_status.error)  # pylint: disable=protected-access
+            error=DocumentTranslationError._from_generated(  # pylint: disable=protected-access
+                doc_status.error
+            )
             if doc_status.error
             else None,
             translation_progress=doc_status.progress,

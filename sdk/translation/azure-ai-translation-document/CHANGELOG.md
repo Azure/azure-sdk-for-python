@@ -1,8 +1,8 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2021-07-07)
 
-**Breaking changes**
+### Breaking changes
 
 - `TranslationStatusResult` was renamed to `TranslationStatus`.
 - `DocumentStatusResult` was renamed to `DocumentStatus`.

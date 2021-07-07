@@ -31,6 +31,10 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+
     async def close(self) -> None:
         await self._client.close()
 
