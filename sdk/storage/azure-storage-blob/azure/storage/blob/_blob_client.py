@@ -55,7 +55,8 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob, _any_conditions)
-from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
+from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
+    DelimitedJsonDialect, DelimitedTextDialect
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
 
@@ -832,16 +833,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (str, **Any) -> Dict[str, Any]
         delimiter = '\n'
         input_format = kwargs.pop('blob_format', None)
-        if input_format:
+        if input_format == QuickQueryDialect.DelimitedJsonDialect:
+            input_format = DelimitedJsonDialect()
+        if input_format == QuickQueryDialect.DelimitedTextDialect:
+            input_format = DelimitedTextDialect()
+        input_parquet_format = input_format == "ParquetDialect"
+        if input_format and not input_parquet_format:
             try:
                 delimiter = input_format.lineterminator
             except AttributeError:
                 try:
                     delimiter = input_format.delimiter
                 except AttributeError:
-                    raise ValueError("The Type of blob_format can only be DelimitedTextDialect or DelimitedJsonDialect")
+                    raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
+                                     "DelimitedJsonDialect or ParquetDialect")
         output_format = kwargs.pop('output_format', None)
+        if output_format == QuickQueryDialect.DelimitedJsonDialect:
+            output_format = DelimitedJsonDialect()
+        if output_format == QuickQueryDialect.DelimitedTextDialect:
+            output_format = DelimitedTextDialect()
         if output_format:
+            if output_format == "ParquetDialect":
+                raise ValueError("ParquetDialect is invalid as an output format.")
             try:
                 delimiter = output_format.lineterminator
             except AttributeError:
@@ -850,7 +863,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 except AttributeError:
                     pass
         else:
-            output_format = input_format
+            output_format = input_format if not input_parquet_format else None
         query_request = QueryRequest(
             expression=query_expression,
             input_serialization=serialize_query_format(input_format),
@@ -894,14 +907,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
+            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or ~azure.storage.blob.QuickQueryDialect or str
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
-            as it is represented in the blob. By providing an output format, the blob data will be reformatted
-            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
-        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect, ~azure.storage.blob.DelimitedJsonDialect
-            or list[~azure.storage.blob.ArrowDialect]
+            as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
+            By providing an output format, the blob data will be reformatted according to that profile.
+            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
+            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
+        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or list[~azure.storage.blob.ArrowDialect] or ~azure.storage.blob.QuickQueryDialect or str
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.

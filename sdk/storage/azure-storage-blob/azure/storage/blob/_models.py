@@ -67,6 +67,14 @@ class PremiumPageBlobTier(str, Enum):
     P60 = 'P60'  #: P60 Tier
 
 
+class QuickQueryDialect(str, Enum):
+    """Specifies the quick query input/output dialect."""
+
+    DelimitedTextDialect = 'DelimitedTextDialect'
+    DelimitedJsonDialect = 'DelimitedJsonDialect'
+    ParquetDialect = 'ParquetDialect'
+
+
 class SequenceNumberAction(str, Enum):
     """Sequence number actions."""
 
