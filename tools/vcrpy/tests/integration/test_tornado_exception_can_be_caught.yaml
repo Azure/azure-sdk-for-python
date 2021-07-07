@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: http://httpbin.org/status/500
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+    - !!python/tuple
+      - Content-Length
+      - ['0']
+    - !!python/tuple
+      - Server
+      - [nginx]
+    - !!python/tuple
+      - Connection
+      - [close]
+    - !!python/tuple
+      - Access-Control-Allow-Credentials
+      - ['true']
+    - !!python/tuple
+      - Date
+      - ['Thu, 30 Jul 2015 17:32:39 GMT']
+    - !!python/tuple
+      - Access-Control-Allow-Origin
+      - ['*']
+    - !!python/tuple
+      - Content-Type
+      - [text/html; charset=utf-8]
+    status: {code: 500, message: INTERNAL SERVER ERROR}
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: http://httpbin.org/status/404
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+    - !!python/tuple
+      - Content-Length
+      - ['0']
+    - !!python/tuple
+      - Server
+      - [nginx]
+    - !!python/tuple
+      - Connection
+      - [close]
+    - !!python/tuple
+      - Access-Control-Allow-Credentials
+      - ['true']
+    - !!python/tuple
+      - Date
+      - ['Thu, 30 Jul 2015 17:32:39 GMT']
+    - !!python/tuple
+      - Access-Control-Allow-Origin
+      - ['*']
+    - !!python/tuple
+      - Content-Type
+      - [text/html; charset=utf-8]
+    status: {code: 404, message: NOT FOUND}
+version: 1
