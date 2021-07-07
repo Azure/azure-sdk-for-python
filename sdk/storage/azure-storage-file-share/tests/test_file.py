@@ -63,7 +63,7 @@ class StorageFileTest(StorageTestCase):
         # the tests would take too long to execute
         self.fsc = ShareServiceClient(url, credential=credential, max_range_size=4 * 1024)
         self.bsc = BlobServiceClient(blob_url, credential=credential)
-        self.share_name = self.get_resource_name('utshdfare')
+        self.share_name = self.get_resource_name('utshare')
         self.source_container_name = self.get_resource_name('sourceshare')
         if self.is_live:
             try:

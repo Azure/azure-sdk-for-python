@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utshdfare329d155b?restype=share
+    uri: https://storagename.file.core.windows.net/utshare329d155b?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
@@ -154,7 +154,7 @@ interactions:
       x-ms-version:
       - '2020-10-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utshdfare329d155b/filetoupdate
+    uri: https://storagename.file.core.windows.net/utshare329d155b/filetoupdate
   response:
     body:
       string: ''
@@ -216,7 +216,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: https://storagename.file.core.windows.net/utshdfare329d155b/filetoupdate?comp=range
+    uri: https://storagename.file.core.windows.net/utshare329d155b/filetoupdate?comp=range
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>CannotVerifyCopySource</Code><Message>Server
@@ -267,7 +267,7 @@ interactions:
       x-ms-write:
       - update
     method: PUT
-    uri: https://storagename.file.core.windows.net/utshdfare329d155b/filetoupdate?comp=range
+    uri: https://storagename.file.core.windows.net/utshare329d155b/filetoupdate?comp=range
   response:
     body:
       string: ''
