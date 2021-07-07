@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b4 (2021-07-07)
 ### Bugs Fixed
 * Fixes a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
