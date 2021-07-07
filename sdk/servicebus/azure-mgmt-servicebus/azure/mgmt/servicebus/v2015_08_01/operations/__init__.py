@@ -6,11 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._service_bus_management_client import ServiceBusManagementClient
-__all__ = ['ServiceBusManagementClient']
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._queues_operations import QueuesOperations
+from ._topics_operations import TopicsOperations
+from ._subscriptions_operations import SubscriptionsOperations
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'Operations',
+    'NamespacesOperations',
+    'QueuesOperations',
+    'TopicsOperations',
+    'SubscriptionsOperations',
+]
