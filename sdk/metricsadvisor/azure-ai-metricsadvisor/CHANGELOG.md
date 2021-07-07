@@ -1,15 +1,28 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.1 (Unreleased)
 
-**Breaking Changes**
+### Features Added
 
-- Renamed
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2021-07-06)
+
+### Breaking Changes
+
+- Changed
   - `DetectionConditionsOperator` -> `DetectionConditionOperator`
   - `cross_conditions_operator` -> `condition_operator`
   - `AnomalyAlert.created_on` -> `AnomalyAlert.created_time`
   - `AnomalyAlert.modified_on` -> `AnomalyAlert.modified_time`
   - `Anomaly.created_on` -> `Anomaly.created_time`
+  - `admin_emails` has been renamed to `admins` in `NotificationHook`
+  - `admin_emails` has been renamed to `admins` in `DataFeedOptions`
+  - `viewer_emails` has been renamed to `viewers` in `DataFeedOptions`
 
 ## 1.0.0b4 (2021-06-07)
 

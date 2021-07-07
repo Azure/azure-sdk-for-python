@@ -261,6 +261,8 @@ class ChatThreadClient(object):
     async def send_message(
         self,
         content: str,
+        *,
+        metadata: Dict[str, str] = None,
         **kwargs
     ) -> SendChatMessageResult:
         """Sends a message to a thread.
@@ -272,6 +274,7 @@ class ChatThreadClient(object):
         :paramtype chat_message_type: Union[str, ~azure.communication.chat.ChatMessageType]
         :keyword str sender_display_name: The display name of the message sender. This property is used to
             populate sender name for push notifications.
+        :keyword dict[str, str] metadata : Message metadata.
         :return: SendChatMessageResult
         :rtype: ~azure.communication.chat.SendChatMessageResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -307,7 +310,8 @@ class ChatThreadClient(object):
         create_message_request = SendChatMessageRequest(
             content=content,
             type=chat_message_type,
-            sender_display_name=sender_display_name
+            sender_display_name=sender_display_name,
+            metadata=metadata
         )
         send_chat_message_result = await self._client.chat_thread.send_chat_message(
             chat_thread_id=self._thread_id,
@@ -382,14 +386,16 @@ class ChatThreadClient(object):
             self,
             message_id: str,
             content: str = None,
+            *,
+            metadata: Dict[str, str] = None,
             **kwargs
     ) -> None:
         """Updates a message.
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :param content: Chat message content.
-        :type content: str
+        :keyword content: Chat message content
+        :keyword dict[str, str] metadata : Message metadata.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -406,7 +412,7 @@ class ChatThreadClient(object):
         if not message_id:
             raise ValueError("message_id cannot be None.")
 
-        update_message_request = UpdateChatMessageRequest(content=content)
+        update_message_request = UpdateChatMessageRequest(content=content, metadata=metadata)
 
         return await self._client.chat_thread.update_chat_message(
             chat_thread_id=self._thread_id,
