@@ -44,7 +44,7 @@ class ServiceOperations:
         storage_service_properties: "_models.StorageServiceProperties",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets properties for a storage account's Queue service endpoint, including properties for
         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
@@ -52,8 +52,8 @@ class ServiceOperations:
         :param storage_service_properties: The StorageService properties.
         :type storage_service_properties: ~azure.storage.queue.models.StorageServiceProperties
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -104,7 +104,7 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -120,14 +120,14 @@ class ServiceOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageServiceProperties":
         """gets the properties of a storage account's Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -173,7 +173,7 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -191,15 +191,15 @@ class ServiceOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageServiceStats":
         """Retrieves statistics related to replication for the Queue service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         storage account.
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -245,7 +245,7 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -268,7 +268,7 @@ class ServiceOperations:
         include: Optional[List[str]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListQueuesSegmentResponse":
         """The List Queues Segment operation returns a list of the queues under the specified account.
 
@@ -288,12 +288,12 @@ class ServiceOperations:
          possible that the service will return fewer results than specified by maxresults, or than the
          default of 5000.
         :type maxresults: int
-        :param include: Include this parameter to specify that the queues's metadata be returned as
-         part of the response body.
+        :param include: Include this parameter to specify that the queues' metadata be returned as part
+         of the response body.
         :type include: list[str]
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -345,7 +345,7 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

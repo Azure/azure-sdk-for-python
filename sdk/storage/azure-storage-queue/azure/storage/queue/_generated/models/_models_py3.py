@@ -377,7 +377,7 @@ class Logging(msrest.serialization.Model):
 
 
 class Metrics(msrest.serialization.Model):
-    """Metrics.
+    """a summary of request statistics grouped by API in hour or minute aggregates for queues.
 
     All required parameters must be populated in order to send to Azure.
 

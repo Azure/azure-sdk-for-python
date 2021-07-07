@@ -46,7 +46,7 @@ class MessageIdOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         queue_message: Optional["_models.QueueMessage"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Update operation was introduced with version 2011-08-18 of the Queue service API. The
         Update Message operation updates the visibility timeout of a message. You can also use this
@@ -64,8 +64,8 @@ class MessageIdOperations:
          later than the expiry time.
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -119,7 +119,7 @@ class MessageIdOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -139,7 +139,7 @@ class MessageIdOperations:
         pop_receipt: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Delete operation deletes the specified message.
 
@@ -147,8 +147,8 @@ class MessageIdOperations:
          call to the Get Messages or Update Message operation.
         :type pop_receipt: str
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -191,7 +191,7 @@ class MessageIdOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

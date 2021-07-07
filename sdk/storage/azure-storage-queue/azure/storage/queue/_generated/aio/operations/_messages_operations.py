@@ -45,7 +45,7 @@ class MessagesOperations:
         visibilitytimeout: Optional[int] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.DequeuedMessageItem"]:
         """The Dequeue operation retrieves one or more messages from the front of the queue.
 
@@ -61,8 +61,8 @@ class MessagesOperations:
          later than the expiry time.
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -108,7 +108,7 @@ class MessagesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -127,13 +127,13 @@ class MessagesOperations:
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """The Clear operation deletes all messages from the specified queue.
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -175,7 +175,7 @@ class MessagesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -195,7 +195,7 @@ class MessagesOperations:
         message_time_to_live: Optional[int] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.EnqueuedMessage"]:
         """The Enqueue operation adds a new message to the back of the message queue. A visibility timeout
         can also be specified to make the message invisible until the visibility timeout expires. A
@@ -205,9 +205,9 @@ class MessagesOperations:
 
         :param queue_message: A Message object which can be stored in a Queue.
         :type queue_message: ~azure.storage.queue.models.QueueMessage
-        :param visibilitytimeout: Optional. If specified, the request must be made using an x-ms-
-         version of 2011-08-18 or later. If not specified, the default value is 0. Specifies the new
-         visibility timeout value, in seconds, relative to server time. The new value must be larger
+        :param visibilitytimeout: Optional. If specified, the request must be made using an
+         x-ms-version of 2011-08-18 or later. If not specified, the default value is 0. Specifies the
+         new visibility timeout value, in seconds, relative to server time. The new value must be larger
          than or equal to 0, and cannot be larger than 7 days. The visibility timeout of a message
          cannot be set to a value later than the expiry time. visibilitytimeout should be set to a value
          smaller than the time-to-live value.
@@ -215,12 +215,12 @@ class MessagesOperations:
         :param message_time_to_live: Optional. Specifies the time-to-live interval for the message, in
          seconds. Prior to version 2017-07-29, the maximum time-to-live allowed is 7 days. For version
          2017-07-29 or later, the maximum time-to-live can be any positive number, as well as -1
-         indicating that the message does not expire. If this parameter is omitted, the default time-to-
-         live is 7 days.
+         indicating that the message does not expire. If this parameter is omitted, the default
+         time-to-live is 7 days.
         :type message_time_to_live: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -271,7 +271,7 @@ class MessagesOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -291,7 +291,7 @@ class MessagesOperations:
         number_of_messages: Optional[int] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.PeekedMessageItem"]:
         """The Peek operation retrieves one or more messages from the front of the queue, but does not
         alter the visibility of the message.
@@ -302,8 +302,8 @@ class MessagesOperations:
          operation.
         :type number_of_messages: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-
-         service-operations>Setting Timeouts for Queue Service Operations.</a>.
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -349,7 +349,7 @@ class MessagesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
