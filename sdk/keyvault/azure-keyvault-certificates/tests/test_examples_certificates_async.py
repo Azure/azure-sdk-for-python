@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+from asyncio.tasks import wait
 
 from azure.keyvault.certificates import ApiVersion, CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 import pytest
@@ -203,6 +204,12 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
         await certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         if self.is_live:
+            # perform operations to prevent our connection from getting closed while waiting
+            await asyncio.sleep(60)
+            wait_cert_name = self.get_resource_name("waitcert")
+            await certificate_client.create_certificate(wait_cert_name, policy=cert_policy)
+            await asyncio.sleep(60)
+            await certificate_client.get_certificate(wait_cert_name)
             await asyncio.sleep(60)
 
         # [START restore_certificate]

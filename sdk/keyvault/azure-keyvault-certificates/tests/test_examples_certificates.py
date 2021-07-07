@@ -208,6 +208,12 @@ class TestExamplesKeyVault(CertificatesTestCase, KeyVaultTestCase):
         certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         if self.is_live:
+            # perform operations to prevent our connection from getting closed while waiting
+            time.sleep(60)
+            wait_cert_name = self.get_resource_name("waitcert")
+            certificate_client.begin_create_certificate(wait_cert_name, policy=cert_policy)
+            time.sleep(60)
+            certificate_client.get_certificate(wait_cert_name)
             time.sleep(60)
 
         # [START restore_certificate]

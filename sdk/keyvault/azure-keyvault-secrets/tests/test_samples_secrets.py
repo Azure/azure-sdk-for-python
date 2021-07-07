@@ -158,6 +158,12 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
         secret_client.purge_deleted_secret(secret_name)
 
         if self.is_live:
+            # perform operations to prevent our connection from getting closed while waiting
+            time.sleep(60)
+            wait_secret_name = self.get_resource_name("waitsecret")
+            secret_client.set_secret(wait_secret_name, "secret-value")
+            time.sleep(60)
+            secret_client.get_secret(wait_secret_name)
             time.sleep(60)
 
         # [START restore_secret_backup]
