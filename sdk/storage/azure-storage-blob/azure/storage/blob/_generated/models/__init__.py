@@ -30,10 +30,7 @@ try:
     from ._models_py3 import CorsRule
     from ._models_py3 import CpkInfo
     from ._models_py3 import CpkScopeInfo
-    from ._models_py3 import DataLakeStorageError
-    from ._models_py3 import DataLakeStorageErrorError
     from ._models_py3 import DelimitedTextConfiguration
-    from ._models_py3 import DirectoryHttpHeaders
     from ._models_py3 import FilterBlobItem
     from ._models_py3 import FilterBlobSegment
     from ._models_py3 import GeoReplication
@@ -84,10 +81,7 @@ except (SyntaxError, ImportError):
     from ._models import CorsRule  # type: ignore
     from ._models import CpkInfo  # type: ignore
     from ._models import CpkScopeInfo  # type: ignore
-    from ._models import DataLakeStorageError  # type: ignore
-    from ._models import DataLakeStorageErrorError  # type: ignore
     from ._models import DelimitedTextConfiguration  # type: ignore
-    from ._models import DirectoryHttpHeaders  # type: ignore
     from ._models import FilterBlobItem  # type: ignore
     from ._models import FilterBlobSegment  # type: ignore
     from ._models import GeoReplication  # type: ignore
@@ -134,7 +128,6 @@ from ._azure_blob_storage_enums import (
     LeaseStatusType,
     ListBlobsIncludeItem,
     ListContainersIncludeType,
-    PathRenameMode,
     PremiumPageBlobAccessTier,
     PublicAccessType,
     QueryFormatType,
@@ -168,10 +161,7 @@ __all__ = [
     'CorsRule',
     'CpkInfo',
     'CpkScopeInfo',
-    'DataLakeStorageError',
-    'DataLakeStorageErrorError',
     'DelimitedTextConfiguration',
-    'DirectoryHttpHeaders',
     'FilterBlobItem',
     'FilterBlobSegment',
     'GeoReplication',
@@ -216,7 +206,6 @@ __all__ = [
     'LeaseStatusType',
     'ListBlobsIncludeItem',
     'ListContainersIncludeType',
-    'PathRenameMode',
     'PremiumPageBlobAccessTier',
     'PublicAccessType',
     'QueryFormatType',
