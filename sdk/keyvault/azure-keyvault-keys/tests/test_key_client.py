@@ -19,6 +19,7 @@ from _test_case import client_setup, get_decorator, KeysTestCase
 
 
 all_api_versions = get_decorator()
+exclude_7_3_preview = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V7_3_PREVIEW])
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(logging_enable=True)
@@ -141,7 +142,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @all_api_versions()
+    @exclude_7_3_preview()
     @client_setup
     def test_key_crud_operations(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
