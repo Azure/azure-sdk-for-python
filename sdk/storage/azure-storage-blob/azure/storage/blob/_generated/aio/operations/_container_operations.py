@@ -42,7 +42,6 @@ class ContainerOperations:
 
     async def create(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
@@ -53,8 +52,6 @@ class ContainerOperations:
         """creates a new container under the specified account. If the container with the same name
         already exists, the operation fails.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -99,7 +96,6 @@ class ContainerOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -148,7 +144,6 @@ class ContainerOperations:
 
     async def get_properties(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -157,8 +152,6 @@ class ContainerOperations:
         """returns all user-defined metadata and system properties for the specified container. The data
         returned does not include the container's list of blobs.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -190,7 +183,6 @@ class ContainerOperations:
         url = self.get_properties.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -243,7 +235,6 @@ class ContainerOperations:
 
     async def delete(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -253,8 +244,6 @@ class ContainerOperations:
         """operation marks the specified container for deletion. The container and any blobs contained
         within it are later deleted during garbage collection.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -293,7 +282,6 @@ class ContainerOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -338,7 +326,6 @@ class ContainerOperations:
 
     async def set_metadata(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
@@ -348,8 +335,6 @@ class ContainerOperations:
     ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified container.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -395,7 +380,6 @@ class ContainerOperations:
         url = self.set_metadata.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -443,7 +427,6 @@ class ContainerOperations:
 
     async def get_access_policy(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -452,8 +435,6 @@ class ContainerOperations:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -486,7 +467,6 @@ class ContainerOperations:
         url = self.get_access_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -533,7 +513,6 @@ class ContainerOperations:
 
     async def set_access_policy(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         request_id_parameter: Optional[str] = None,
@@ -545,8 +524,6 @@ class ContainerOperations:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -592,7 +569,6 @@ class ContainerOperations:
         url = self.set_access_policy.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -650,7 +626,6 @@ class ContainerOperations:
 
     async def restore(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         deleted_container_name: Optional[str] = None,
@@ -659,8 +634,6 @@ class ContainerOperations:
     ) -> None:
         """Restores a previously-deleted container.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -693,7 +666,6 @@ class ContainerOperations:
         url = self.restore.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -737,7 +709,6 @@ class ContainerOperations:
 
     async def rename(
         self,
-        container_name: str,
         source_container_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -746,8 +717,6 @@ class ContainerOperations:
     ) -> None:
         """Renames an existing container.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param source_container_name: Required.  Specifies the name of the container to rename.
         :type source_container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -779,7 +748,6 @@ class ContainerOperations:
         url = self.rename.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -822,7 +790,6 @@ class ContainerOperations:
 
     async def submit_batch(
         self,
-        container_name: str,
         content_length: int,
         multipart_content_type: str,
         body: IO,
@@ -832,8 +799,6 @@ class ContainerOperations:
     ) -> IO:
         """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param content_length: The length of the request.
         :type content_length: long
         :param multipart_content_type: Required. The value of this header must be multipart/mixed with
@@ -869,7 +834,6 @@ class ContainerOperations:
         url = self.submit_batch.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -916,7 +880,6 @@ class ContainerOperations:
 
     async def acquire_lease(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
@@ -927,8 +890,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -972,7 +933,6 @@ class ContainerOperations:
         url = self.acquire_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1024,7 +984,6 @@ class ContainerOperations:
 
     async def release_lease(
         self,
-        container_name: str,
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1034,8 +993,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1073,7 +1030,6 @@ class ContainerOperations:
         url = self.release_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1121,7 +1077,6 @@ class ContainerOperations:
 
     async def renew_lease(
         self,
-        container_name: str,
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1131,8 +1086,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1170,7 +1123,6 @@ class ContainerOperations:
         url = self.renew_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1219,7 +1171,6 @@ class ContainerOperations:
 
     async def break_lease(
         self,
-        container_name: str,
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1229,8 +1180,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1274,7 +1223,6 @@ class ContainerOperations:
         url = self.break_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1324,7 +1272,6 @@ class ContainerOperations:
 
     async def change_lease(
         self,
-        container_name: str,
         lease_id: str,
         proposed_lease_id: str,
         timeout: Optional[int] = None,
@@ -1335,8 +1282,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
@@ -1378,7 +1323,6 @@ class ContainerOperations:
         url = self.change_lease.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1428,7 +1372,6 @@ class ContainerOperations:
 
     async def list_blob_flat_segment(
         self,
-        container_name: str,
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
@@ -1439,8 +1382,6 @@ class ContainerOperations:
     ) -> "_models.ListBlobsFlatSegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param prefix: Filters the results to return only containers whose name begins with the
          specified prefix.
         :type prefix: str
@@ -1487,7 +1428,6 @@ class ContainerOperations:
         url = self.list_blob_flat_segment.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1538,7 +1478,6 @@ class ContainerOperations:
 
     async def list_blob_hierarchy_segment(
         self,
-        container_name: str,
         delimiter: str,
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
@@ -1550,8 +1489,6 @@ class ContainerOperations:
     ) -> "_models.ListBlobsHierarchySegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
-        :param container_name: The container name.
-        :type container_name: str
         :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
          element in the response body that acts as a placeholder for all blobs whose names begin with
          the same substring up to the appearance of the delimiter character. The delimiter may be a
@@ -1603,7 +1540,6 @@ class ContainerOperations:
         url = self.list_blob_hierarchy_segment.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1655,13 +1591,10 @@ class ContainerOperations:
 
     async def get_account_info(
         self,
-        container_name: str,
         **kwargs: Any
     ) -> None:
         """Returns the sku name and account kind.
 
-        :param container_name: The container name.
-        :type container_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1680,7 +1613,6 @@ class ContainerOperations:
         url = self.get_account_info.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

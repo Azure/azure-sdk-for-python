@@ -42,8 +42,6 @@ class BlockBlobOperations:
 
     async def upload(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         body: IO,
         timeout: Optional[int] = None,
@@ -68,10 +66,6 @@ class BlockBlobOperations:
         the new blob. To perform a partial update of the content of a block blob, use the Put Block
         List operation.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param body: Initial data.
@@ -172,8 +166,6 @@ class BlockBlobOperations:
         url = self.upload.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -269,8 +261,6 @@ class BlockBlobOperations:
 
     async def put_blob_from_url(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -296,10 +286,6 @@ class BlockBlobOperations:
         overwritten with the content of the new blob.  To perform partial updates to a block blob’s
         contents using a source URL, use the Put Block from URL API in conjunction with Put Block List.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
@@ -417,8 +403,6 @@ class BlockBlobOperations:
         url = self.put_blob_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -522,8 +506,6 @@ class BlockBlobOperations:
 
     async def stage_block(
         self,
-        container_name: str,
-        blob: str,
         block_id: str,
         content_length: int,
         body: IO,
@@ -538,10 +520,6 @@ class BlockBlobOperations:
     ) -> None:
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
          string must be less than or equal to 64 bytes in size. For a given blob, the length of the
          value specified for the blockid parameter must be the same size for each block.
@@ -602,8 +580,6 @@ class BlockBlobOperations:
         url = self.stage_block.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -666,8 +642,6 @@ class BlockBlobOperations:
 
     async def stage_block_from_url(
         self,
-        container_name: str,
-        blob: str,
         block_id: str,
         content_length: int,
         source_url: str,
@@ -686,10 +660,6 @@ class BlockBlobOperations:
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
          string must be less than or equal to 64 bytes in size. For a given blob, the length of the
          value specified for the blockid parameter must be the same size for each block.
@@ -765,8 +735,6 @@ class BlockBlobOperations:
         url = self.stage_block_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -839,8 +807,6 @@ class BlockBlobOperations:
 
     async def commit_block_list(
         self,
-        container_name: str,
-        blob: str,
         blocks: "_models.BlockLookupList",
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
@@ -867,10 +833,6 @@ class BlockBlobOperations:
         or from the uncommitted block list, or to commit the most recently uploaded version of the
         block, whichever list it may belong to.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param blocks: Blob Blocks.
         :type blocks: ~azure.storage.blob.models.BlockLookupList
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -972,8 +934,6 @@ class BlockBlobOperations:
         url = self.commit_block_list.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1072,8 +1032,6 @@ class BlockBlobOperations:
 
     async def get_block_list(
         self,
-        container_name: str,
-        blob: str,
         snapshot: Optional[str] = None,
         list_type: Union[str, "_models.BlockListType"] = "committed",
         timeout: Optional[int] = None,
@@ -1085,10 +1043,6 @@ class BlockBlobOperations:
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -1134,8 +1088,6 @@ class BlockBlobOperations:
         url = self.get_block_list.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

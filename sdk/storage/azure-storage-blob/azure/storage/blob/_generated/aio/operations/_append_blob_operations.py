@@ -42,8 +42,6 @@ class AppendBlobOperations:
 
     async def create(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
@@ -61,10 +59,6 @@ class AppendBlobOperations:
     ) -> None:
         """The Create Append Blob operation creates a new append blob.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -157,8 +151,6 @@ class AppendBlobOperations:
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -247,8 +239,6 @@ class AppendBlobOperations:
 
     async def append_block(
         self,
-        container_name: str,
-        blob: str,
         content_length: int,
         body: IO,
         timeout: Optional[int] = None,
@@ -266,10 +256,6 @@ class AppendBlobOperations:
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param content_length: The length of the request.
         :type content_length: long
         :param body: Initial data.
@@ -346,8 +332,6 @@ class AppendBlobOperations:
         url = self.append_block.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -427,8 +411,6 @@ class AppendBlobOperations:
 
     async def append_block_from_url(
         self,
-        container_name: str,
-        blob: str,
         source_url: str,
         content_length: int,
         source_range: Optional[str] = None,
@@ -451,10 +433,6 @@ class AppendBlobOperations:
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
         version 2015-02-21 version or later.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param source_url: Specify a URL to the copy source.
         :type source_url: str
         :param content_length: The length of the request.
@@ -549,8 +527,6 @@ class AppendBlobOperations:
         url = self.append_block_from_url.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -641,8 +617,6 @@ class AppendBlobOperations:
 
     async def seal(
         self,
-        container_name: str,
-        blob: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
@@ -653,10 +627,6 @@ class AppendBlobOperations:
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 
-        :param container_name: The container name.
-        :type container_name: str
-        :param blob: The blob name.
-        :type blob: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -704,8 +674,6 @@ class AppendBlobOperations:
         url = self.seal.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'containerName': self._serialize.url("container_name", container_name, 'str'),
-            'blob': self._serialize.url("blob", blob, 'str', max_length=1024, min_length=1, pattern=r'^[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)*(?:\.[a-zA-Z0-9]+){0,1}$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
