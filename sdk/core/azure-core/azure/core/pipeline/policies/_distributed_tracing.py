@@ -85,7 +85,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
-            if span_impl_type is None:
+            if (not settings.tracing_enabled()) or (span_impl_type is None):
                 return
 
             namer = ctxt.pop('network_span_namer', self._network_span_namer)
