@@ -42,6 +42,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     This default behavior is configurable with keyword arguments.
 
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the application is registered in. When False, which is the default, the credential will acquire tokens only from
+        the tenant specified by **tenant_id**. This argument doesn't apply to managed identity authentication.
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
@@ -73,7 +76,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         vscode_tenant_id = kwargs.pop(
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
-        vscode_args = {}
+        vscode_args = dict(kwargs)
         if authority:
             vscode_args["authority"] = authority
         if vscode_tenant_id:
@@ -118,9 +121,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential())
+            credentials.append(AzureCliCredential(**kwargs))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential())
+            credentials.append(AzurePowerShellCredential(**kwargs))
 
         super().__init__(*credentials)
 
