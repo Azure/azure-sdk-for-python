@@ -25,59 +25,51 @@ from azure.agrifood.farming.aio import FarmBeatsClient
 from azure.agrifood.farming.models import Farmer
 import os
 import asyncio
+from dotenv import load_dotenv
 
 
-class HelloWorldSampleAsync:
+async def sample_hello_world_async():
 
-    @staticmethod
-    async def run(client):
+    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    auth_authority = os.environ.get('AZURE_AUTHORITY')
+    auth_scope = os.environ.get('FARMBEATS_SCOPE')
 
-        farmer_id = "contoso-farmer"
-        farmer_name = "Contoso"
-        farmer_description = "Contoso is hard working."
-
-        print("Creating farmer, or updating if farmer already exists...", end=" ", flush=True)
-        farmer = await client.farmers.create_or_update(
-            farmer_id=farmer_id,
-            farmer=Farmer(
-                name=farmer_name,
-                description=farmer_description
-            )
-        )
-        print("Done")
-        print("Here are the details of the farmer:")
-        print(f"ID: {farmer.id}")
-        print(f"Name: {farmer.name}")
-        print(f"Description: {farmer.description}")
-        print(f"Created timestamp: {farmer.created_date_time}")
-        print(f"Last modified timestamp: {farmer.modified_date_time}")
-
-
-async def main():
-
-    # Get farmbeats endpoint
-    try:
-        farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
-    except KeyError:
-        raise SystemExit("Please set the 'FARMBEATS_ENDPOINT' env variable to your FarmBeats endpoint.")
-
-    # Init credentials
-    credential = DefaultAzureCredential()
-
-    # Init the client
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
+    credential = DefaultAzureCredential(
+        authority=auth_authority
     )
 
-    # Run the sample
-    await HelloWorldSampleAsync.run(client)
+    client = FarmBeatsClient(
+        endpoint=farmbeats_endpoint,
+        credential=credential,
+        credential_scopes=[auth_scope]
+    )
 
-    # Close the open async connectors
+    farmer_id = "contoso-farmer"
+    farmer_name = "Contoso"
+    farmer_description = "Contoso is hard working."
+
+    print("Creating farmer, or updating if farmer already exists...", end=" ", flush=True)
+    farmer = await client.farmers.create_or_update(
+        farmer_id=farmer_id,
+        farmer=Farmer(
+            name=farmer_name,
+            description=farmer_description
+        )
+    )
+    print("Done")
+    print("Details of the farmer:")
+    print(f"\tID: {farmer.id}")
+    print(f"\tName: {farmer.name}")
+    print(f"\tDescription: {farmer.description}")
+    print(f"\tCreated timestamp: {farmer.created_date_time}")
+    print(f"\tLast modified timestamp: {farmer.modified_date_time}")
+
     await client.close()
     await credential.close()
 
 
 if __name__ == "__main__":
 
-    asyncio.run(main())
+    load_dotenv()
+    
+    asyncio.get_event_loop().run_until_complete(sample_hello_world_async())

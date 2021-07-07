@@ -26,67 +26,61 @@ from datetime import datetime, timedelta
 from random import randint
 from isodate import UTC
 import asyncio
-
-class CascadeDeleteJobSampleAsync:
-
-    @staticmethod
-    async def run(client):
-
-        job_id_prefix = "cascade-delete-job"
-
-        # Getting list of farmers modified in the last 7 days
-        print("Getting list of recently modified farmer id's... ", end="", flush=True)
-        farmers = client.farmers.list(
-            min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7)
-        )
-        farmer_ids = [farmer.id async for farmer in farmers]
-        print("Done")
-
-        # Ask for the id of the farmer which is to be deleted.
-        print(f"Recentely modified farmer id's:")
-        print(*farmer_ids, sep="\n")
-        farmer_id_to_delete = input("Please enter the id of the farmer you wish to delete resources for: ").strip()
-        if farmer_id_to_delete not in farmer_ids:
-            raise SystemExit("Entered id for farmer does not exist.")
-
-        # Deleting the farmer and it's associated resources. Queuing the cascade delete job.
-
-        job_id = f"{job_id_prefix}-{randint(0, 1000)}"
-        print(f"Queuing cascade delete job {job_id}... ", end="", flush=True)
-        cascade_delete_job_poller = await client.farmers.begin_create_cascade_delete_job(
-            job_id=job_id,
-            farmer_id = farmer_id_to_delete
-        )
-        print("Queued. Waiting for completion... ", end="", flush=True)
-        await cascade_delete_job_poller.result()
-        print("The job completed with status", cascade_delete_job_poller.status())
+from dotenv import load_dotenv
 
 
-async def main():
+async def sample_cascade_delete_async():
 
-    # Get farmbeats endpoint
-    try:
-        farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
-    except KeyError:
-        raise SystemExit("Please set the 'FARMBEATS_ENDPOINT' env variable to your FarmBeats endpoint.")
+    farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
+    auth_authority = os.environ.get('AZURE_AUTHORITY')
+    auth_scope = os.environ.get('FARMBEATS_SCOPE')
 
-    # Init credentials
-    credential = DefaultAzureCredential()
-
-    # Init the client
-    client = FarmBeatsClient(
-        endpoint=farmbeats_endpoint,
-        credential=credential
+    credential = DefaultAzureCredential(
+        authority=auth_authority
     )
 
-    # Run the sample
-    await CascadeDeleteJobSampleAsync.run(client)
+    client = FarmBeatsClient(
+        endpoint=farmbeats_endpoint,
+        credential=credential,
+        credential_scopes=[auth_scope]
+    )
 
-    # Close the open async connectors
+    job_id_prefix = "cascade-delete-job"
+
+    # Getting list of farmers modified in the last 7 days
+    print("Getting list of recently modified farmer id's... ", end="", flush=True)
+    farmers = client.farmers.list(
+        min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7)
+    )
+    farmer_ids = [farmer.id async for farmer in farmers]
+    print("Done")
+
+    # Ask for the id of the farmer which is to be deleted.
+    print(f"Recentely modified farmer id's:")
+    print(*farmer_ids, sep="\n")
+    farmer_id_to_delete = input("Please enter the id of the farmer you wish to delete resources for: ").strip()
+    if farmer_id_to_delete not in farmer_ids:
+        raise SystemExit("Entered id for farmer does not exist.")
+
+    # Deleting the farmer and it's associated resources. Queuing the cascade delete job.
+
+    job_id = f"{job_id_prefix}-{randint(0, 1000)}"
+    print(f"Queuing cascade delete job {job_id}... ", end="", flush=True)
+    cascade_delete_job_poller = await client.farmers.begin_create_cascade_delete_job(
+        job_id=job_id,
+        farmer_id = farmer_id_to_delete
+    )
+    print("Queued. Waiting for completion... ", end="", flush=True)
+    await cascade_delete_job_poller.result()
+
+    print("The job completed with status", cascade_delete_job_poller.status())
+
     await client.close()
     await credential.close()
 
 
 if __name__ == "__main__":
 
-    asyncio.run(main())
+    load_dotenv()
+
+    asyncio.get_event_loop().run_until_complete(sample_cascade_delete_async())

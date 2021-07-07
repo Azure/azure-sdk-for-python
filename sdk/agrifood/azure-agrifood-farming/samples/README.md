@@ -25,7 +25,7 @@ These sample programs demonstrate some common use case scenairos for the [FarmBe
 - [sample_cascade_delete.py][cascade_delete_sample] demonstrates the usage of cascade delete jobs to perform cleanup of farm hierarchy objects. A cascade delete job handles the recursive deletion of all dependent data for the given parent resource. Use this to clean up the sample resources that you create in the other samples.
 
 
-Additionally, for each sample, there are corresponding files in the [`samples/async`][async_samples] directory
+Additionally, for each sample, there are corresponding files in the [`samples/async`][async_samples] directory that demonstrate the same scenarios using the async FarmBeats client. Using the async approach will offer much better performance when parts of the code can be executed concurrentlly. This is especially important when downloading files, such as in the satellite data download sample, and in the attachments sample.
 
 ## Prerequisites
 
@@ -43,23 +43,23 @@ Additionally, there are some specific prerequisites if you want to leverage thir
 
 ### Install the dependencies
 
-To run the samples, you need the following three dependencies.
+To run the samples, you need to install the following dependencies:
 ```bash
-pip install azure-agrifood-farming azure-identity aiohttp
+pip install azure-agrifood-farming azure-identity aiohttp python-dotenv
 ```
 
 ### Set up the credentials for authentication
 
-We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate to your FarmBeats instance. If you have followed the [installation docs][install_farmbeats], you should already have an application created, and the appropriate RBAC roles assigned. Set the following environment variables to the appropriate values. 
+We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate to your FarmBeats instance. If you have followed the [installation docs][install_farmbeats], you should already have an application created, and the appropriate RBAC roles assigned.
+
+Set the following variables to the appropriate values either in the [`.env`][dot_env_file] file, or alternatively in your environment variables.
 
 - `AZURE_TENANT_ID`
 - `AZURE_CLIENT_ID`
 - `AZURE_CLIENT_SECRET`
 - `FARMBEATS_ENDPOINT`
 
-
-
-_Note: There are alternate mechanisms of authentication supported by `azure-identity`. Check out the docs [here][azure_identity]_
+_Note: There are alternate mechanisms of authentication supported by `azure-identity`. Check out the docs [here][azure_identity]_.
 
 Once these are set correctly, you can go ahead and run the sample_hello_world.py sample to make sure everything works correctly.
 
@@ -93,6 +93,7 @@ Last modified timestamp: 2021-06-22 21:01:35+00:00
 [farm_hierarchy_complete_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy_complete.py
 [farm_hierarchy_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/sample_farm_hierarchy.py
 [satellie_download_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/async/sample_satellie_download_async.py
+[dot_env_file]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agrifood/azure-agrifood-farming/samples/.env
 
 <!-- Microsoft/Azure related links -->
 [azure_free_sub]: https://azure.microsoft.com/free/
