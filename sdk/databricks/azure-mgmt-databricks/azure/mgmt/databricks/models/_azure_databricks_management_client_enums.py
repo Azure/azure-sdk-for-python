@@ -26,6 +26,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class CustomParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning status of the workspace.
     """
@@ -33,6 +42,12 @@ class CustomParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BOOL = "Bool"
     OBJECT = "Object"
     STRING = "String"
+
+class EncryptionKeySource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Keyvault
+    """
+
+    MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
 
 class KeySource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The encryption keySource (provider). Possible values (case-insensitive):  Default,
@@ -59,6 +74,25 @@ class PeeringState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
 
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of a private endpoint connection
+    """
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning status of the workspace.
     """
@@ -74,3 +108,21 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
+
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The network access type for accessing workspace. Set value to disabled to access workspace only
+    via private link.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class RequiredNsgRules(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets or sets a value indicating whether data plane (clusters) to control plane communication
+    happen over private endpoint. Supported values are 'AllRules' and 'NoAzureDatabricksRules'.
+    'NoAzureServiceRules' value is for internal use only.
+    """
+
+    ALL_RULES = "AllRules"
+    NO_AZURE_DATABRICKS_RULES = "NoAzureDatabricksRules"
+    NO_AZURE_SERVICE_RULES = "NoAzureServiceRules"
