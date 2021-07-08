@@ -5,8 +5,6 @@
 import time
 from typing import TYPE_CHECKING
 
-import msal
-
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .get_token_mixin import GetTokenMixin
@@ -24,7 +22,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
     @wrap_exceptions
     def _acquire_token_silently(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
-        app = self._get_app()
+        app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_silent_with_error(list(scopes), account=None, **kwargs)
         if result and "access_token" in result and "expires_in" in result:
@@ -34,7 +32,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
     @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> Optional[AccessToken]
-        app = self._get_app()
+        app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_for_client(list(scopes))
         if "access_token" not in result:
@@ -42,9 +40,3 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
             raise ClientAuthenticationError(message=message)
 
         return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
-
-    def _get_app(self):
-        # type: () -> msal.ConfidentialClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.ConfidentialClientApplication)
-        return self._msal_app
