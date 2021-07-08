@@ -73,7 +73,6 @@ def build_response(vcr_request, vcr_response, history):
     response._headers = CIMultiDictProxy(CIMultiDict(vcr_response["headers"]))
     response._history = tuple(history)
 
-    # response.close()
     return response
 
 
