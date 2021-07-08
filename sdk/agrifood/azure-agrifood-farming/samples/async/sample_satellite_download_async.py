@@ -53,7 +53,7 @@ async def download_image(client, file_link, out_path, semaphore):
                 tif_file.write(bits)
         return str(out_path.resolve())
         
-async def sample_satellie_download_async():
+async def sample_satellite_download_async():
 
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
     auth_authority = os.environ.get('AZURE_AUTHORITY')
@@ -181,4 +181,4 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_satellie_download_async())
+    asyncio.get_event_loop().run_until_complete(sample_satellite_download_async())
