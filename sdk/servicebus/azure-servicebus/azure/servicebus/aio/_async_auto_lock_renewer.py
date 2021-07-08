@@ -233,4 +233,5 @@ class AutoLockRenewer:
     async def close(self) -> None:
         """Cease autorenewal by cancelling any remaining open lock renewal futures."""
         self._shutdown.set()
-        await asyncio.wait(self._futures)
+        if self._futures:
+            await asyncio.wait(self._futures)
