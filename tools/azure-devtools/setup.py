@@ -8,9 +8,7 @@
 import io
 from setuptools import setup
 
-
 VERSION = "1.2.1"
-
 
 CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
@@ -25,8 +23,7 @@ CLASSIFIERS = [
     "License :: OSI Approved :: MIT License",
 ]
 
-
-DEPENDENCIES = ["ConfigArgParse>=0.12.0", "six>=1.10.0", "vcrpy==3.0.0"]
+DEPENDENCIES = ["ConfigArgParse>=0.12.0", "six>=1.10.0", "vcrpy~=3.0.0"]
 
 with io.open("README.rst", "r", encoding="utf-8") as f:
     README = f.read()

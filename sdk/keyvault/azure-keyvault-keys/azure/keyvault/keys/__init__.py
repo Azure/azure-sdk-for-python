@@ -17,8 +17,9 @@ __all__ = [
     "KeyOperation",
     "KeyType",
     "DeletedKey",
-    "KeyProperties"
+    "KeyProperties",
 ]
 
 from ._version import VERSION
+
 __version__ = VERSION

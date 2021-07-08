@@ -260,3 +260,17 @@ class TestExceptions(object):
         error_message = "Http response error"
         error = HttpResponseError(message=error_message)
         assert error.__repr__() == 'HttpResponseError(message=\'Http response error\', exc_type=\'<class \'NoneType\'>\', exc_value=\'None\')'
+
+    def test_null_odata_details(self):
+        message = {
+            "error": {
+                "code": "501",
+                "message": "message",
+                "target": None,
+                "details": None,
+                "innererror": None,
+            }
+        }
+        exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.error.code == "501"
+
