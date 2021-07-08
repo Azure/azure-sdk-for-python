@@ -254,12 +254,12 @@ class TestExceptions(object):
     def test_azure_error_repr(self):
         error_message = "Azure error"
         error = AzureError(message=error_message)
-        assert error.__repr__() == 'AzureError(message=\'Azure error\', exc_type=\'<class \'NoneType\'>\', exc_value=\'None\')'
+        assert error.__repr__() == 'AzureError(message=\'Azure error\', exc_type=\'<type \'NoneType\'>\', exc_value=\'None\')'
 
     def test_httpresponse_error_repr(self):
         error_message = "Http response error"
         error = HttpResponseError(message=error_message)
-        assert error.__repr__() == 'HttpResponseError(message=\'Http response error\', exc_type=\'<class \'NoneType\'>\', exc_value=\'None\')'
+        assert error.__repr__() == 'HttpResponseError(message=\'Http response error\', exc_type=\'<type \'NoneType\'>\', exc_value=\'None\')'
 
     def test_null_odata_details(self):
         message = {
