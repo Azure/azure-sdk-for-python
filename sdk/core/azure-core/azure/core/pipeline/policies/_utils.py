@@ -26,7 +26,7 @@
 import datetime
 import email.utils
 from requests.structures import CaseInsensitiveDict
-from ..._utils import _FixedOffset
+from ...utils._utils import _FixedOffset
 
 def _parse_http_date(text):
     """Parse a HTTP date format into datetime."""

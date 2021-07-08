@@ -7,7 +7,7 @@ import json
 import datetime
 
 from azure.core.messaging import CloudEvent
-from azure.core._utils import _convert_to_isoformat
+from azure.core.utils._utils import _convert_to_isoformat
 from azure.core.serialization import NULL
 
 # Cloud Event tests
