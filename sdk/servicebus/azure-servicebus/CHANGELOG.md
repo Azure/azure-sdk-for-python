@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug that `azure.servicebus.aio.AutoLockRenewer` crashes on disposal if no messages have been registered (#19642).
 
 ### Other Changes
 
