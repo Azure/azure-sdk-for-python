@@ -54,10 +54,10 @@ We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identit
 
 Set the following variables to the appropriate values either in the [`.env`][dot_env_file] file, or alternatively in your environment variables.
 
-- `AZURE_TENANT_ID`
-- `AZURE_CLIENT_ID`
-- `AZURE_CLIENT_SECRET`
-- `FARMBEATS_ENDPOINT`
+- `AZURE_TENANT_ID`: The tenant ID of your active directory application.
+- `AZURE_CLIENT_ID`: The client ID of your active directory application.
+- `AZURE_CLIENT_SECRET`: The client secret of your active directory application.
+- `FARMBEATS_ENDPOINT`: The FarmBeats endpoint that you want to run these samples on.
 
 _Note: There are alternate mechanisms of authentication supported by `azure-identity`. Check out the docs [here][azure_identity]_.
 

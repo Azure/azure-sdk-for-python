@@ -14,10 +14,10 @@ USAGE:
     ```python sample_hello_world_async.py```
 
     Set the environment variables with your own values before running the sample:
-    - `AZURE_TENANT_ID`
-    - `AZURE_CLIENT_ID`
-    - `AZURE_CLIENT_SECRET`
-    - `FARMBEATS_ENDPOINT`
+    - `AZURE_TENANT_ID`: The tenant ID of your active directory application.
+    - `AZURE_CLIENT_ID`: The client ID of your active directory application.
+    - `AZURE_CLIENT_SECRET`: The client secret of your active directory application.
+    - `FARMBEATS_ENDPOINT`: The FarmBeats endpoint that you want to run these samples on.
 """
 
 from azure.identity.aio import DefaultAzureCredential
