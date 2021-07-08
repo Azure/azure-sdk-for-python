@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
+    AzurePowerShellCredential,
     AzureCliCredential,
     DefaultAzureCredential,
     ManagedIdentityCredential,
@@ -121,6 +122,9 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
     assert_credentials_not_present(credential, VisualStudioCodeCredential)
 
+    credential = DefaultAzureCredential(exclude_powershell_credential=True)
+    assert_credentials_not_present(credential, AzurePowerShellCredential)
+
 
 @pytest.mark.asyncio
 async def test_shared_cache_tenant_id():
@@ -208,28 +212,44 @@ async def test_shared_cache_username():
     assert token.token == expected_access_token
 
 
-def test_vscode_tenant_id():
-    """the credential should allow configuring a tenant ID for VisualStudioCodeCredential by kwarg or environment"""
+def test_vscode_arguments(monkeypatch):
+    monkeypatch.delenv(EnvironmentVariables.AZURE_AUTHORITY_HOST, raising=False)
+    monkeypatch.delenv(EnvironmentVariables.AZURE_TENANT_ID, raising=False)
 
-    expected_args = {"tenant_id": "the-tenant"}
+    credential = DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential"
 
-    with patch(DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential") as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
-    mock_credential.assert_called_once_with(**expected_args)
+    # DefaultAzureCredential shouldn't specify a default authority or tenant to VisualStudioCodeCredential
+    with patch(credential) as mock_credential:
+        DefaultAzureCredential()
+    mock_credential.assert_called_once_with()
+
+    tenant = {"tenant_id": "the-tenant"}
+
+    with patch(credential) as mock_credential:
+        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
+    mock_credential.assert_called_once_with(**tenant)
 
     # tenant id can also be specified in $AZURE_TENANT_ID
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: expected_args["tenant_id"]}, clear=True):
-        with patch(DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential") as mock_credential:
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant["tenant_id"]}):
+        with patch(credential) as mock_credential:
             DefaultAzureCredential()
-    mock_credential.assert_called_once_with(**expected_args)
+    mock_credential.assert_called_once_with(**tenant)
 
     # keyword argument should override environment variable
-    with patch.dict(
-        os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + expected_args["tenant_id"]}, clear=True
-    ):
-        with patch(DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential") as mock_credential:
-            DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
-    mock_credential.assert_called_once_with(**expected_args)
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant["tenant_id"]}):
+        with patch(credential) as mock_credential:
+            DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
+    mock_credential.assert_called_once_with(**tenant)
+
+    # DefaultAzureCredential should pass the authority kwarg along
+    authority = {"authority": "the-authority"}
+    with patch(credential) as mock_credential:
+        DefaultAzureCredential(**authority)
+    mock_credential.assert_called_once_with(**authority)
+
+    with patch(credential) as mock_credential:
+        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"], **authority)
+    mock_credential.assert_called_once_with(**dict(authority, **tenant))
 
 
 @pytest.mark.asyncio
@@ -290,3 +310,35 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
     # this credential uses a mock shared cache, so it works on all platforms
     with patch.object(SharedTokenCacheCredential, "supported", lambda: True):
         return DefaultAzureCredential(_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)
+
+
+@pytest.mark.parametrize("expected_value", (True, False))
+def test_allow_multitenant_authentication(expected_value):
+    """the credential should pass "allow_multitenant_authentication" to the inner credentials which support it"""
+
+    inner_credentials = {
+        credential: Mock()
+        for credential in (
+            "AzureCliCredential",
+            "AzurePowerShellCredential",
+            "EnvironmentCredential",
+            "ManagedIdentityCredential",  # will ignore the argument
+            "SharedTokenCacheCredential",
+        )
+    }
+    with patch.multiple(DefaultAzureCredential.__module__, **inner_credentials):
+        DefaultAzureCredential(allow_multitenant_authentication=expected_value)
+
+    for credential_name, mock_credential in inner_credentials.items():
+        assert mock_credential.call_count == 1
+        _, kwargs = mock_credential.call_args
+
+        assert "allow_multitenant_authentication" in kwargs, (
+            '"allow_multitenant_authentication" was not passed to ' + credential_name
+        )
+        assert kwargs["allow_multitenant_authentication"] == expected_value
+
+
+def test_unexpected_kwarg():
+    """the credential shouldn't raise when given an unexpected keyword argument"""
+    DefaultAzureCredential(foo=42)

@@ -182,6 +182,22 @@ class TestSearchClient(object):
             )
 
     @mock.patch(
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.search_post"
+    )
+    def test_get_count_reset_continuation_token(self, mock_search_post):
+        client = SearchClient("endpoint", "index name", CREDENTIAL)
+        result = client.search(search_text="search text")
+        assert isinstance(result, ItemPaged)
+        assert result._page_iterator_class is SearchPageIterator
+        search_result = SearchDocumentsResult()
+        search_result.results = [SearchResult(additional_properties={"key": "val"})]
+        mock_search_post.return_value = search_result
+        result.__next__()
+        result._first_page_iterator_instance.continuation_token = "fake token"
+        result.get_count()
+        assert not result._first_page_iterator_instance.continuation_token
+
+    @mock.patch(
         "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):

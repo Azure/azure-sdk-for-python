@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -15,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -32,8 +30,6 @@ extends:
     Artifacts:
     - name: azure-search-documents
       safeName: azuresearchdocuments
-    - name: azure-search-nspkg
-      safeName: azuresearchnspkg
     - name: azure-mgmt-search
       safeName: azuremgmtsearch
 

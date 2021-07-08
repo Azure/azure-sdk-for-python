@@ -61,8 +61,8 @@ class FileSharesOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param maxpagesize: Optional. Specified maximum number of shares that can be included in the
          list.
@@ -157,8 +157,8 @@ class FileSharesOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -239,8 +239,8 @@ class FileSharesOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -316,8 +316,8 @@ class FileSharesOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -389,8 +389,8 @@ class FileSharesOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and
@@ -456,8 +456,8 @@ class FileSharesOperations(object):
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :param share_name: The name of the file share within the specified storage account. File share
          names must be between 3 and 63 characters in length and use numbers, lower-case letters and

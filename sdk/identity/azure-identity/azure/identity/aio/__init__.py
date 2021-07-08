@@ -7,6 +7,7 @@
 from ._credentials import (
     AuthorizationCodeCredential,
     AzureCliCredential,
+    AzurePowerShellCredential,
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,
@@ -21,6 +22,7 @@ from ._credentials import (
 __all__ = [
     "AuthorizationCodeCredential",
     "AzureCliCredential",
+    "AzurePowerShellCredential",
     "CertificateCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",

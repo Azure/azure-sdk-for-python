@@ -38,8 +38,8 @@ class ServiceFabricCredential(GetTokenMixin):
             )
         return super(ServiceFabricCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):
@@ -49,8 +49,6 @@ class ServiceFabricCredential(GetTokenMixin):
 
 def _get_client_args(**kwargs):
     # type: (**Any) -> Optional[dict]
-    identity_config = kwargs.pop("_identity_config", None) or {}
-
     url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
     secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
     thumbprint = os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
@@ -60,7 +58,6 @@ def _get_client_args(**kwargs):
 
     return dict(
         kwargs,
-        _identity_config=identity_config,
         base_headers={"Secret": secret},
         connection_verify=False,
         request_factory=functools.partial(_get_request, url),

@@ -1,6 +1,6 @@
 # Azure Communication Phone Numbers Package client library for Python
 
-Azure Communication Phone Numbers client package is used to administer Phone Numbers. 
+Azure Communication Phone Numbers client package is used to administer Phone Numbers.
 
 # Getting started
 ### Prerequisites
@@ -23,8 +23,7 @@ import os
 from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
-
+endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have your
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
 phone_numbers_client = PhoneNumbersClient(endpoint, DefaultAzureCredential())
@@ -38,7 +37,7 @@ Connection string authentication is also available for Phone Numbers Client.
 import os
 from azure.communication.phonenumbers import PhoneNumbersClient
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+connection_str = "endpoint=ENDPOINT;accessKey=KEY"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 ```
 
@@ -60,8 +59,8 @@ Lists all of your purchased phone numbers
 
 ```python
 purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-purchased_phone_number = purchased_phone_numbers.next()
-print(acquired_phone_number.phone_number)
+for acquired_phone_number in purchased_phone_numbers:
+    print(acquired_phone_number.phone_number)
 ```
 
 ### Get Purchased Phone Number
@@ -102,11 +101,11 @@ search_result = poller.result()
 
 ### Purchase Phone Numbers
 
-The result of your search can be used to purchase the specificied phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
+The result of your search can be used to purchase the specified phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
 
 ```python
 purchase_poller = phone_numbers_client.begin_purchase_phone_numbers(
-    search_result.search_id, 
+    search_result.search_id,
     polling=True
 )
 ```
@@ -117,14 +116,14 @@ Releases an acquired phone number.
 
 ```python
 poller = self.phone_number_client.begin_release_phone_number(
-    "<phone number>", 
+    "<phone number>",
     polling = True
 )
 ```
 
 ### Updating Phone Number Capabilities
 
-Updates the specified phone number capabilities for Calling and SMS to one of: 
+Updates the specified phone number capabilities for Calling and SMS to one of:
 
 - `PhoneNumberCapabilityType.NONE`
 - `PhoneNumberCapabilityType.INBOUND`
@@ -146,7 +145,7 @@ The Phone Numbers Administration client will raise exceptions defined in [Azure 
 # Next steps
 ## More sample code
 
-Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/communication/azure-communication-phonenumbers/samples) directory for detailed examples of how to use this library.
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-phonenumbers/samples) directory for detailed examples of how to use this library.
 
 ## Provide Feedback
 
@@ -163,4 +162,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 <!-- LINKS -->
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md

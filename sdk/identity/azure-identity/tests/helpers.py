@@ -99,7 +99,7 @@ class Request:
         def add_discrepancy(name, expected, actual):
             discrepancies.append("{}:\n\t expected: {}\n\t   actual: {}".format(name, expected, actual))
 
-        if self.base_url and self.base_url != request.url.split("?")[0]:
+        if self.base_url and not request.url.startswith(self.base_url):
             add_discrepancy("base url", self.base_url, request.url)
 
         if self.url and self.url != request.url:
@@ -153,8 +153,14 @@ def mock_response(status_code=200, headers=None, json_payload=None):
 
 
 def get_discovery_response(endpoint="https://a/b"):
+    """Get a mock response containing the values MSAL requires from tenant and instance discovery.
+
+    The response is incomplete and its values aren't necessarily valid, particularly for instance discovery, but it's
+    sufficient. MSAL will send token requests to "{endpoint}/oauth2/v2.0/token_endpoint" after receiving a tenant
+    discovery response created by this method.
+    """
     aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
-    payload = {name: endpoint for name in aad_metadata_endpoint_names}
+    payload = {name: endpoint + "/oauth2/v2.0/" + name for name in aad_metadata_endpoint_names}
     payload["metadata"] = ""
     return mock_response(json_payload=payload)
 

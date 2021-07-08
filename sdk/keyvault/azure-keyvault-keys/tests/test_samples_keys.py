@@ -3,21 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
-import functools
 import time
 
-from azure.keyvault.keys import KeyClient, KeyType
-from azure.keyvault.keys._shared import HttpChallengeCache
-from devtools_testutils import PowerShellPreparer
+from azure.keyvault.keys import KeyType
 
 from _shared.test_case import KeyVaultTestCase
+from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+all_api_versions = get_decorator(only_vault=True)
+only_hsm = get_decorator(only_hsm=True)
 
 
 def print(*args):
@@ -37,19 +32,10 @@ def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeyVaultTestCase):
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(TestExamplesKeyVault, self).tearDown()
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    @KeyVaultPreparer()
-    def test_example_key_crud_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
+    @all_api_versions()
+    @client_setup
+    def test_example_key_crud_operations(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]
@@ -138,10 +124,22 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
-    @KeyVaultPreparer()
-    def test_example_key_list_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @only_hsm()
+    @client_setup
+    def test_example_create_oct_key(self, key_client, **kwargs):
+        key_name = self.get_resource_name("key")
 
+        # [START create_oct_key]
+        key = key_client.create_oct_key(key_name, size=256, hardware_protected=True)
+
+        print(key.id)
+        print(key.name)
+        print(key.key_type)
+        # [END create_oct_key]
+
+    @all_api_versions()
+    @client_setup
+    def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
             key_client.create_ec_key(key_name)
@@ -179,9 +177,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @KeyVaultPreparer()
-    def test_example_keys_backup_restore(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @all_api_versions()
+    @client_setup
+    def test_example_keys_backup_restore(self, key_client, **kwargs):
         key_name = self.get_resource_name("keyrec")
         key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -196,6 +194,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         key_client.purge_deleted_key(key_name)
 
         if self.is_live:
+            # perform operations to prevent our connection from getting closed while waiting
+            time.sleep(60)
+            wait_key_name = self.get_resource_name("waitkey")
+            key_client.create_key(wait_key_name, "RSA")
+            time.sleep(60)
+            key_client.get_key(wait_key_name)
             time.sleep(60)
 
         # [START restore_key_backup]
@@ -205,9 +209,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @KeyVaultPreparer()
-    def test_example_keys_recover(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @all_api_versions()
+    @client_setup
+    def test_example_keys_recover(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         created_key = key_client.create_key(key_name, "RSA")
         key_client.begin_delete_key(created_key.name).wait()

@@ -28,7 +28,6 @@ class CloudShellCredential(GetTokenMixin):
             self._client = ManagedIdentityClient(
                 request_factory=functools.partial(_get_request, url),
                 base_headers={"Metadata": "true"},
-                _identity_config=kwargs.pop("identity_config", None),
                 **kwargs
             )
         else:
@@ -42,8 +41,8 @@ class CloudShellCredential(GetTokenMixin):
             )
         return super(CloudShellCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):

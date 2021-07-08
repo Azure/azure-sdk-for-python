@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ServerAutomaticTuningOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class ServerAutomaticTuningOperations(object):
         server_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServerAutomaticTuning"
+        # type: (...) -> "_models.ServerAutomaticTuning"
         """Retrieves server automatic tuning options.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -63,12 +63,12 @@ class ServerAutomaticTuningOperations(object):
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerAutomaticTuning"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerAutomaticTuning"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -108,10 +108,10 @@ class ServerAutomaticTuningOperations(object):
         self,
         resource_group_name,  # type: str
         server_name,  # type: str
-        parameters,  # type: "models.ServerAutomaticTuning"
+        parameters,  # type: "_models.ServerAutomaticTuning"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServerAutomaticTuning"
+        # type: (...) -> "_models.ServerAutomaticTuning"
         """Update automatic tuning options on server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -126,12 +126,12 @@ class ServerAutomaticTuningOperations(object):
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerAutomaticTuning"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerAutomaticTuning"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

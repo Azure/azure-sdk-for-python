@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -12,13 +11,10 @@ trigger:
     include:
     - sdk/storage/
     - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -28,13 +24,12 @@ pr:
     include:
     - sdk/storage/
     - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: storage
+    TestTimeoutInMinutes: 120
     # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: storage_ci_matrix
@@ -62,7 +57,7 @@ extends:
       safeName: azuremgmtstorageimportexport
     CondaArtifacts:
     - name: azure-storage
-      meta_source: meta.yaml
+      meta_source: conda-recipe/meta.yaml
       common_root: azure/storage
       checkout:
         - package: azure-storage-blob

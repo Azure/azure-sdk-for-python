@@ -5,17 +5,16 @@
 # -------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
+import time
 import datetime
 import uuid
 import logging
-import copy
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
 import uamqp.errors
 import uamqp.message
-from uamqp.constants import MessageState
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -34,15 +33,21 @@ from .constants import (
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
     ANNOTATION_SYMBOL_KEY_MAP,
     MESSAGE_PROPERTY_MAX_LENGTH,
+    MAX_ABSOLUTE_EXPIRY_TIME,
+    MAX_DURATION_VALUE,
 )
-
+from ..amqp import (
+    AmqpAnnotatedMessage,
+    AmqpMessageBodyType,
+    AmqpMessageHeader,
+    AmqpMessageProperties
+)
 from ..exceptions import MessageSizeExceededError
 from .utils import (
     utc_from_timestamp,
     utc_now,
-    transform_messages_to_sendable_if_needed,
     trace_message,
-    create_messages_from_dicts_if_needed
+    transform_messages_if_needed,
 )
 
 if TYPE_CHECKING:
@@ -76,9 +81,6 @@ class ServiceBusMessage(
     :keyword Optional[str] reply_to: The address of an entity to send replies to.
     :keyword Optional[str] reply_to_session_id: The session identifier augmenting the `reply_to` address.
 
-    :ivar AMQPAnnotatedMessage raw_amqp_message: Advanced use only.
-        The internal AMQP message payload that is sent or received.
-
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
@@ -95,19 +97,20 @@ class ServiceBusMessage(
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
-        self._amqp_properties = uamqp.message.MessageProperties(encoding=self._encoding)
-        self._amqp_header = uamqp.message.MessageHeader()
 
-        if "message" in kwargs:
+        if "raw_amqp_message" in kwargs and "message" in kwargs:
+            # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
+            self.message = kwargs["message"]
+            self._raw_amqp_message = kwargs["raw_amqp_message"]
+        elif "message" in kwargs:
             # Note: This cannot be renamed until UAMQP no longer relies on this specific name.
             self.message = kwargs["message"]
-            self._amqp_properties = self.message.properties
-            self._amqp_header = self.message.header
+            self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
         else:
             self._build_message(body)
             self.application_properties = kwargs.pop("application_properties", None)
             self.session_id = kwargs.pop("session_id", None)
-            self.message_id = kwargs.get("message_id", None)
+            self.message_id = kwargs.pop("message_id", None)
             self.content_type = kwargs.pop("content_type", None)
             self.correlation_id = kwargs.pop("correlation_id", None)
             self.to = kwargs.pop("to", None)
@@ -120,13 +123,65 @@ class ServiceBusMessage(
             self.time_to_live = kwargs.pop("time_to_live", None)
             self.partition_key = kwargs.pop("partition_key", None)
 
-        # If message is the full message, raw_amqp_message is the "public facing interface" for what we expose.
-        self.raw_amqp_message = AMQPAnnotatedMessage(
-            self.message
-        )  # type: AMQPAnnotatedMessage
-
     def __str__(self):
-        return str(self.message)
+        # type: () -> str
+        return str(self.raw_amqp_message)
+
+    def __repr__(self):
+        # type: () -> str
+        # pylint: disable=bare-except
+        message_repr = "body={}".format(
+            str(self)
+        )
+        try:
+            message_repr += ", application_properties={}".format(self.application_properties)
+        except:
+            message_repr += ", application_properties=<read-error>"
+        try:
+            message_repr += ", session_id={}".format(self.session_id)
+        except:
+            message_repr += ", session_id=<read-error>"
+        try:
+            message_repr += ", message_id={}".format(self.message_id)
+        except:
+            message_repr += ", message_id=<read-error>"
+        try:
+            message_repr += ", content_type={}".format(self.content_type)
+        except:
+            message_repr += ", content_type=<read-error>"
+        try:
+            message_repr += ", correlation_id={}".format(self.correlation_id)
+        except:
+            message_repr += ", correlation_id=<read-error>"
+        try:
+            message_repr += ", to={}".format(self.to)
+        except:
+            message_repr += ", to=<read-error>"
+        try:
+            message_repr += ", reply_to={}".format(self.reply_to)
+        except:
+            message_repr += ", reply_to=<read-error>"
+        try:
+            message_repr += ", reply_to_session_id={}".format(self.reply_to_session_id)
+        except:
+            message_repr += ", reply_to_session_id=<read-error>"
+        try:
+            message_repr += ", subject={}".format(self.subject)
+        except:
+            message_repr += ", subject=<read-error>"
+        try:
+            message_repr += ", time_to_live={}".format(self.time_to_live)
+        except:
+            message_repr += ", time_to_live=<read-error>"
+        try:
+            message_repr += ", partition_key={}".format(self.partition_key)
+        except:
+            message_repr += ", partition_key=<read-error>"
+        try:
+            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+        except:
+            message_repr += ", scheduled_enqueue_time_utc=<read-error>"
+        return "ServiceBusMessage({})".format(message_repr)[:1024]
 
     def _build_message(self, body):
         if not (
@@ -138,33 +193,40 @@ class ServiceBusMessage(
                 )
             )
 
-        self.message = uamqp.Message(
-            body, properties=self._amqp_properties, header=self._amqp_header
-        )
+        self._raw_amqp_message = AmqpAnnotatedMessage(value_body=None, encoding=self._encoding) \
+            if body is None else AmqpAnnotatedMessage(data_body=body, encoding=self._encoding)
+        self._raw_amqp_message.header = AmqpMessageHeader()
+        self._raw_amqp_message.properties = AmqpMessageProperties()
 
     def _set_message_annotations(self, key, value):
-        if not self.message.annotations:
-            self.message.annotations = {}
+        if not self._raw_amqp_message.annotations:
+            self._raw_amqp_message.annotations = {}
 
         if isinstance(self, ServiceBusReceivedMessage):
             try:
-                del self.message.annotations[key]
+                del self._raw_amqp_message.annotations[key]
             except KeyError:
                 pass
 
         if value is None:
             try:
-                del self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]]
+                del self._raw_amqp_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]]
             except KeyError:
                 pass
         else:
-            self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
+            self._raw_amqp_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
 
     def _to_outgoing_message(self):
         # type: () -> ServiceBusMessage
-        self.message.state = MessageState.WaitingToBeSent
-        self.message._response = None  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        self.message = self.raw_amqp_message._to_outgoing_amqp_message()
         return self
+
+    @property
+    def raw_amqp_message(self):
+        # type: () -> AmqpAnnotatedMessage
+        """Advanced usage only. The internal AMQP message payload that is sent or received."""
+        return self._raw_amqp_message
 
     @property
     def session_id(self):
@@ -179,10 +241,12 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.group_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.group_id
+            return self._raw_amqp_message.properties.group_id
 
     @session_id.setter
     def session_id(self, value):
@@ -194,7 +258,10 @@ class ServiceBusMessage(
                 )
             )
 
-        self._amqp_properties.group_id = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+
+        self._raw_amqp_message.properties.group_id = value
 
     @property
     def application_properties(self):
@@ -203,12 +270,12 @@ class ServiceBusMessage(
 
         :rtype: dict
         """
-        return self.message.application_properties
+        return self._raw_amqp_message.application_properties
 
     @application_properties.setter
     def application_properties(self, value):
         # type: (dict) -> None
-        self.message.application_properties = value
+        self._raw_amqp_message.application_properties = value
 
     @property
     def partition_key(self):
@@ -226,10 +293,10 @@ class ServiceBusMessage(
         """
         p_key = None
         try:
-            p_key = self.message.annotations.get(
-                _X_OPT_PARTITION_KEY
-            ) or self.message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
-            return p_key.decode("UTF-8")
+            p_key = self._raw_amqp_message.annotations.get(  # type: ignore
+                _X_OPT_PARTITION_KEY  # type: ignore
+            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)  # type: ignore
+            return p_key.decode("UTF-8")  # type: ignore
         except (AttributeError, UnicodeDecodeError):
             return p_key
 
@@ -243,7 +310,7 @@ class ServiceBusMessage(
                 )
             )
 
-        if value and value != self.session_id:
+        if value and self.session_id and value != self.session_id:
             raise ValueError(
                 "partition_key:{} cannot be set to a different value than session_id:{}".format(
                     value, self.session_id
@@ -266,21 +333,33 @@ class ServiceBusMessage(
 
         :rtype: ~datetime.timedelta
         """
-        if self._amqp_header and self._amqp_header.time_to_live:
-            return datetime.timedelta(milliseconds=self._amqp_header.time_to_live)
+        if self._raw_amqp_message.header and self._raw_amqp_message.header.time_to_live:
+            return datetime.timedelta(milliseconds=self._raw_amqp_message.header.time_to_live)
         return None
 
     @time_to_live.setter
     def time_to_live(self, value):
         # type: (datetime.timedelta) -> None
-        if not self._amqp_header:
-            self._amqp_header = uamqp.message.MessageHeader()
+        if not self._raw_amqp_message.header:
+            self._raw_amqp_message.header = AmqpMessageHeader()
         if value is None:
-            self._amqp_header.time_to_live = value
+            self._raw_amqp_message.header.time_to_live = value
+            if self._raw_amqp_message.properties.absolute_expiry_time:
+                self._raw_amqp_message.properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
-            self._amqp_header.time_to_live = value.seconds * 1000
+            self._raw_amqp_message.header.time_to_live = value.seconds * 1000
         else:
-            self._amqp_header.time_to_live = int(value) * 1000
+            self._raw_amqp_message.header.time_to_live = int(value) * 1000
+
+        if self._raw_amqp_message.header.time_to_live and \
+                self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE:
+            if not self._raw_amqp_message.properties:
+                self._raw_amqp_message.properties = AmqpMessageProperties()
+            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple())) * 1000
+            self._raw_amqp_message.properties.absolute_expiry_time = min(
+                MAX_ABSOLUTE_EXPIRY_TIME,
+                self._raw_amqp_message.properties.creation_time + self._raw_amqp_message.header.time_to_live
+            )
 
     @property
     def scheduled_enqueue_time_utc(self):
@@ -294,10 +373,10 @@ class ServiceBusMessage(
 
         :rtype: ~datetime.datetime
         """
-        if self.message.annotations:
-            timestamp = self.message.annotations.get(
+        if self._raw_amqp_message.annotations:
+            timestamp = self._raw_amqp_message.annotations.get(
                 _X_OPT_SCHEDULED_ENQUEUE_TIME
-            ) or self.message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
+            ) or self._raw_amqp_message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 try:
                     in_seconds = timestamp / 1000.0
@@ -309,18 +388,36 @@ class ServiceBusMessage(
     @scheduled_enqueue_time_utc.setter
     def scheduled_enqueue_time_utc(self, value):
         # type: (datetime.datetime) -> None
-        if not self._amqp_properties.message_id:
-            self._amqp_properties.message_id = str(uuid.uuid4())
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        if not self._raw_amqp_message.properties.message_id:
+            self._raw_amqp_message.properties.message_id = str(uuid.uuid4())
         self._set_message_annotations(_X_OPT_SCHEDULED_ENQUEUE_TIME, value)
 
     @property
     def body(self):
-        # type: () -> Optional[Union[bytes, Iterable[bytes]]]
-        """The body of the Message.
+        # type: () -> Any
+        """The body of the Message. The format may vary depending on the body type:
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.DATA<azure.servicebus.amqp.AmqpMessageBodyType.DATA>`,
+        the body could be bytes or Iterable[bytes].
+        For
+        :class:`azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE<azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE>`,
+        the body could be List or Iterable[List].
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.VALUE<azure.servicebus.amqp.AmqpMessageBodyType.VALUE>`,
+        the body could be any type.
 
-        :rtype: bytes or Iterable[bytes]
+        :rtype: Any
         """
-        return self.message.get_data()
+        return self._raw_amqp_message.body
+
+    @property
+    def body_type(self):
+        # type: () -> AmqpMessageBodyType
+        """The body type of the underlying AMQP message.
+
+        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        """
+        return self._raw_amqp_message.body_type
 
     @property
     def content_type(self):
@@ -332,15 +429,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.content_type.decode("UTF-8")
+            return self._raw_amqp_message.properties.content_type.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.content_type
+            return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
     def content_type(self, value):
         # type: (str) -> None
-        self._amqp_properties.content_type = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.content_type = value
 
     @property
     def correlation_id(self):
@@ -356,15 +457,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.correlation_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.correlation_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.correlation_id
+            return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
     def correlation_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.correlation_id = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.correlation_id = value
 
     @property
     def subject(self):
@@ -376,15 +481,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.subject.decode("UTF-8")
+            return self._raw_amqp_message.properties.subject.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.subject
+            return self._raw_amqp_message.properties.subject
 
     @subject.setter
     def subject(self, value):
         # type: (str) -> None
-        self._amqp_properties.subject = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.subject = value
 
     @property
     def message_id(self):
@@ -399,10 +508,12 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.message_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.message_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.message_id
+            return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
     def message_id(self, value):
@@ -413,8 +524,9 @@ class ServiceBusMessage(
                     MESSAGE_PROPERTY_MAX_LENGTH
                 )
             )
-
-        self._amqp_properties.message_id = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.message_id = value
 
     @property
     def reply_to(self):
@@ -431,15 +543,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.reply_to.decode("UTF-8")
+            return self._raw_amqp_message.properties.reply_to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.reply_to
+            return self._raw_amqp_message.properties.reply_to
 
     @reply_to.setter
     def reply_to(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.reply_to = value
 
     @property
     def reply_to_session_id(self):
@@ -455,10 +571,12 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.reply_to_group_id.decode("UTF-8")
+            return self._raw_amqp_message.properties.reply_to_group_id.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.reply_to_group_id
+            return self._raw_amqp_message.properties.reply_to_group_id
 
     @reply_to_session_id.setter
     def reply_to_session_id(self, value):
@@ -470,7 +588,9 @@ class ServiceBusMessage(
                 )
             )
 
-        self._amqp_properties.reply_to_group_id = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.reply_to_group_id = value
 
     @property
     def to(self):
@@ -485,15 +605,19 @@ class ServiceBusMessage(
 
         :rtype: str
         """
+        if not self._raw_amqp_message.properties:
+            return None
         try:
-            return self._amqp_properties.to.decode("UTF-8")
+            return self._raw_amqp_message.properties.to.decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
-            return self._amqp_properties.to
+            return self._raw_amqp_message.properties.to
 
     @to.setter
     def to(self, value):
         # type: (str) -> None
-        self._amqp_properties.to = value
+        if not self._raw_amqp_message.properties:
+            self._raw_amqp_message.properties = AmqpMessageProperties()
+        self._raw_amqp_message.properties.to = value
 
 
 class ServiceBusMessageBatch(object):
@@ -540,50 +664,17 @@ class ServiceBusMessageBatch(object):
         for message in messages:
             self._add(message, parent_span)
 
-    @property
-    def max_size_in_bytes(self):
-        # type: () -> int
-        """The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
-
-        :rtype: int
-        """
-        return self._max_size_in_bytes
-
-    @property
-    def size_in_bytes(self):
-        # type: () -> int
-        """The combined size of the messages in the batch, in bytes.
-
-        :rtype: int
-        """
-        return self._size
-
-    def add_message(self, message):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any]]) -> None
-        """Try to add a single Message to the batch.
-
-        The total size of an added message is the sum of its body, properties, etc.
-        If this added size results in the batch exceeding the maximum batch size, a `MessageSizeExceededError` will
-        be raised.
-
-        :param message: The Message to be added to the batch.
-        :type message: ~azure.servicebus.ServiceBusMessage
-        :rtype: None
-        :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
-        """
-
-        return self._add(message)
-
     def _add(self, add_message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any]], AbstractSpan) -> None
+        # type: (Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage], AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-        message = create_messages_from_dicts_if_needed(add_message, ServiceBusMessage)
-        message = transform_messages_to_sendable_if_needed(message)
+        message = transform_messages_if_needed(add_message, ServiceBusMessage)
         message = cast(ServiceBusMessage, message)
         trace_message(
             message, parent_span
         )  # parent_span is e.g. if built as part of a send operation.
-        message_size = message.message.get_message_encoded_size()
+        message_size = (
+            message.message.get_message_encoded_size()
+        )
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
@@ -604,6 +695,40 @@ class ServiceBusMessageBatch(object):
         self._size = size_after_add
         self._count += 1
         self._messages.append(message)
+
+    @property
+    def max_size_in_bytes(self):
+        # type: () -> int
+        """The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
+
+        :rtype: int
+        """
+        return self._max_size_in_bytes
+
+    @property
+    def size_in_bytes(self):
+        # type: () -> int
+        """The combined size of the messages in the batch, in bytes.
+
+        :rtype: int
+        """
+        return self._size
+
+    def add_message(self, message):
+        # type: (Union[ServiceBusMessage, AmqpAnnotatedMessage, Mapping[str, Any]]) -> None
+        """Try to add a single Message to the batch.
+
+        The total size of an added message is the sum of its body, properties, etc.
+        If this added size results in the batch exceeding the maximum batch size, a `MessageSizeExceededError` will
+        be raised.
+
+        :param message: The Message to be added to the batch.
+        :type message: Union[~azure.servicebus.ServiceBusMessage, ~azure.servicebus.amqp.AmqpAnnotatedMessage]
+        :rtype: None
+        :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
+        """
+
+        return self._add(message)
 
 
 class ServiceBusReceivedMessage(ServiceBusMessage):
@@ -666,30 +791,108 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     def _to_outgoing_message(self):
         # type: () -> ServiceBusMessage
-        amqp_message = self.message
-        amqp_body = amqp_message._body  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
 
-        if isinstance(amqp_body, uamqp.message.DataBody):
-            body = b"".join(amqp_body.data)
-        else:
-            # amqp_body is type of uamqp.message.ValueBody
-            body = amqp_body.data
-
-        return ServiceBusMessage(
-            body=body,
-            content_type=self.content_type,
-            correlation_id=self.correlation_id,
-            subject=self.subject,
-            message_id=self.message_id,
-            partition_key=self.partition_key,
-            application_properties=self.application_properties,
-            reply_to=self.reply_to,
-            reply_to_session_id=self.reply_to_session_id,
-            session_id=self.session_id,
-            scheduled_enqueue_time_utc=self.scheduled_enqueue_time_utc,
-            time_to_live=self.time_to_live,
-            to=self.to,
+    def __repr__(self):  # pylint: disable=too-many-branches,too-many-statements
+        # type: () -> str
+        # pylint: disable=bare-except
+        message_repr = "body={}".format(
+            str(self)
         )
+        try:
+            message_repr += ", application_properties={}".format(self.application_properties)
+        except:
+            message_repr += ", application_properties=<read-error>"
+        try:
+            message_repr += ", session_id={}".format(self.session_id)
+        except:
+            message_repr += ", session_id=<read-error>"
+        try:
+            message_repr += ", message_id={}".format(self.message_id)
+        except:
+            message_repr += ", message_id=<read-error>"
+        try:
+            message_repr += ", content_type={}".format(self.content_type)
+        except:
+            message_repr += ", content_type=<read-error>"
+        try:
+            message_repr += ", correlation_id={}".format(self.correlation_id)
+        except:
+            message_repr += ", correlation_id=<read-error>"
+        try:
+            message_repr += ", to={}".format(self.to)
+        except:
+            message_repr += ", to=<read-error>"
+        try:
+            message_repr += ", reply_to={}".format(self.reply_to)
+        except:
+            message_repr += ", reply_to=<read-error>"
+        try:
+            message_repr += ", reply_to_session_id={}".format(self.reply_to_session_id)
+        except:
+            message_repr += ", reply_to_session_id=<read-error>"
+        try:
+            message_repr += ", subject={}".format(self.subject)
+        except:
+            message_repr += ", subject=<read-error>"
+        try:
+            message_repr += ", time_to_live={}".format(self.time_to_live)
+        except:
+            message_repr += ", time_to_live=<read-error>"
+        try:
+            message_repr += ", partition_key={}".format(self.partition_key)
+        except:
+            message_repr += ", partition_key=<read-error>"
+        try:
+            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+        except:
+            message_repr += ", scheduled_enqueue_time_utc=<read-error>"
+        try:
+            message_repr += ", auto_renew_error={}".format(self.auto_renew_error)
+        except:
+            message_repr += ", auto_renew_error=<read-error>"
+        try:
+            message_repr += ", dead_letter_error_description={}".format(self.dead_letter_error_description)
+        except:
+            message_repr += ", dead_letter_error_description=<read-error>"
+        try:
+            message_repr += ", dead_letter_reason={}".format(self.dead_letter_reason)
+        except:
+            message_repr += ", dead_letter_reason=<read-error>"
+        try:
+            message_repr += ", dead_letter_source={}".format(self.dead_letter_source)
+        except:
+            message_repr += ", dead_letter_source=<read-error>"
+        try:
+            message_repr += ", delivery_count={}".format(self.delivery_count)
+        except:
+            message_repr += ", delivery_count=<read-error>"
+        try:
+            message_repr += ", enqueued_sequence_number={}".format(self.enqueued_sequence_number)
+        except:
+            message_repr += ", enqueued_sequence_number=<read-error>"
+        try:
+            message_repr += ", enqueued_time_utc={}".format(self.enqueued_time_utc)
+        except:
+            message_repr += ", enqueued_time_utc=<read-error>"
+        try:
+            message_repr += ", expires_at_utc={}".format(self.expires_at_utc)
+        except:
+            message_repr += ", expires_at_utc=<read-error>"
+        try:
+            message_repr += ", sequence_number={}".format(self.sequence_number)
+        except:
+            message_repr += ", sequence_number=<read-error>"
+        try:
+            message_repr += ", lock_token={}".format(self.lock_token)
+        except:
+            message_repr += ", lock_token=<read-error>"
+        try:
+            message_repr += ", locked_until_utc={}".format(self.locked_until_utc)
+        except:
+            message_repr += ", locked_until_utc=<read-error>"
+        return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
     @property
     def dead_letter_error_description(self):
@@ -699,9 +902,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: str
         """
-        if self.message.application_properties:
+        if self._raw_amqp_message.application_properties:
             try:
-                return self.message.application_properties.get(
+                return self._raw_amqp_message.application_properties.get(  # type: ignore
                     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
                 ).decode("UTF-8")
             except AttributeError:
@@ -716,9 +919,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: str
         """
-        if self.message.application_properties:
+        if self._raw_amqp_message.application_properties:
             try:
-                return self.message.application_properties.get(
+                return self._raw_amqp_message.application_properties.get(  # type: ignore
                     PROPERTIES_DEAD_LETTER_REASON
                 ).decode("UTF-8")
             except AttributeError:
@@ -735,9 +938,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: str
         """
-        if self.message.annotations:
+        if self._raw_amqp_message.annotations:
             try:
-                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(
+                return self._raw_amqp_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(  # type: ignore
                     "UTF-8"
                 )
             except AttributeError:
@@ -753,8 +956,8 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: int
         """
-        if self._amqp_header:
-            return self._amqp_header.delivery_count
+        if self._raw_amqp_message.header:
+            return self._raw_amqp_message.header.delivery_count
         return None
 
     @property
@@ -766,8 +969,8 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: int
         """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
+        if self._raw_amqp_message.annotations:
+            return self._raw_amqp_message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
         return None
 
     @property
@@ -778,8 +981,8 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: ~datetime.datetime
         """
-        if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
+        if self._raw_amqp_message.annotations:
+            timestamp = self._raw_amqp_message.annotations.get(_X_OPT_ENQUEUED_TIME)
             if timestamp:
                 in_seconds = timestamp / 1000.0
                 return utc_from_timestamp(in_seconds)
@@ -810,8 +1013,8 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: int
         """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
+        if self._raw_amqp_message.annotations:
+            return self._raw_amqp_message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
 
     @property
@@ -829,7 +1032,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         if self.message.delivery_tag:
             return uuid.UUID(bytes_le=self.message.delivery_tag)
 
-        delivery_annotations = self.message.delivery_annotations
+        delivery_annotations = self._raw_amqp_message.delivery_annotations
         if delivery_annotations:
             return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
         return None
@@ -852,116 +1055,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             pass
         if self._expiry:
             return self._expiry
-        if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
-            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL] / 1000
+        if self._raw_amqp_message.annotations and _X_OPT_LOCKED_UNTIL in self._raw_amqp_message.annotations:
+            expiry_in_seconds = self._raw_amqp_message.annotations[_X_OPT_LOCKED_UNTIL] / 1000
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
-
-
-class AMQPAnnotatedMessage(object):
-    """
-    The internal AMQP message that this ServiceBusMessage represents.  Is read-only.
-    """
-
-    def __init__(self, message):
-        # type: (uamqp.Message) -> None
-        self._message = message
-
-    @property
-    def properties(self):
-        # type: () -> uamqp.message.MessageProperties
-        """
-        Properties to add to the message.
-
-        :rtype: ~uamqp.message.MessageProperties
-        """
-        return uamqp.message.MessageProperties(
-            message_id=self._message.properties.message_id,
-            user_id=self._message.properties.user_id,
-            to=self._message.properties.to,
-            subject=self._message.properties.subject,
-            reply_to=self._message.properties.reply_to,
-            correlation_id=self._message.properties.correlation_id,
-            content_type=self._message.properties.content_type,
-            content_encoding=self._message.properties.content_encoding,
-        )
-
-    # NOTE: These are disabled pending arch. design and cross-sdk consensus on
-    # how we will expose sendability of amqp focused messages. To undo, uncomment and remove deepcopies/workarounds.
-    #
-    # @properties.setter
-    # def properties(self, value):
-    #    self._message.properties = value
-
-    @property
-    def application_properties(self):
-        # type: () -> Optional[dict]
-        """
-        Service specific application properties.
-
-        :rtype: dict
-        """
-        return copy.deepcopy(self._message.application_properties)
-
-    # @application_properties.setter
-    # def application_properties(self, value):
-    #    self._message.application_properties = value
-
-    @property
-    def annotations(self):
-        # type: () -> Optional[dict]
-        """
-        Service specific message annotations. Keys in the dictionary
-        must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-
-        :rtype: dict
-        """
-        return copy.deepcopy(self._message.annotations)
-
-    # @annotations.setter
-    # def annotations(self, value):
-    #    self._message.annotations = value
-
-    @property
-    def delivery_annotations(self):
-        # type: () -> Optional[dict]
-        """
-        Delivery-specific non-standard properties at the head of the message.
-        Delivery annotations convey information from the sending peer to the receiving peer.
-        Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-
-        :rtype: dict
-        """
-        return copy.deepcopy(self._message.delivery_annotations)
-
-    # @delivery_annotations.setter
-    # def delivery_annotations(self, value):
-    #    self._message.delivery_annotations = value
-
-    @property
-    def header(self):
-        # type: () -> uamqp.message.MessageHeader
-        """
-        The message header.
-
-        :rtype: ~uamqp.message.MessageHeader
-        """
-        return uamqp.message.MessageHeader(header=self._message.header)
-
-    # @header.setter
-    # def header(self, value):
-    #    self._message.header = value
-
-    @property
-    def footer(self):
-        # type: () -> Optional[dict]
-        """
-        The message footer.
-
-        :rtype: dict
-        """
-        return copy.deepcopy(self._message.footer)
-
-    # @footer.setter
-    # def footer(self, value):
-    #    self._message.footer = value

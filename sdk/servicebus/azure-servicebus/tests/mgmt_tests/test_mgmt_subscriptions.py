@@ -220,10 +220,33 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
             assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
             assert subscription_description.lock_duration == datetime.timedelta(minutes=3, seconds=3)
 
+            # updating all settings with keyword arguments.
+            mgmt_service.update_subscription(
+                topic_description.name,
+                subscription_description,
+                auto_delete_on_idle = datetime.timedelta(minutes=15),
+                dead_lettering_on_message_expiration=False,
+                default_message_time_to_live=datetime.timedelta(minutes=16),
+                lock_duration=datetime.timedelta(seconds=17),
+                max_delivery_count=15,
+                forward_to=None,
+                forward_dead_lettered_messages_to=None
+            )
+
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=15)
+            assert subscription_description.dead_lettering_on_message_expiration == False
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=16)
+            assert subscription_description.max_delivery_count == 15
+            assert subscription_description.lock_duration == datetime.timedelta(seconds=17)
+            assert subscription_description.forward_to == None
+            assert subscription_description.forward_dead_lettered_messages_to == None
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -438,9 +461,33 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
             assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
             assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
 
+            # updating all settings with keyword arguments.
+            mgmt_service.update_subscription(
+                topic_description.name,
+                dict(subscription_description),
+                auto_delete_on_idle=datetime.timedelta(minutes=15),
+                dead_lettering_on_message_expiration=False,
+                default_message_time_to_live=datetime.timedelta(minutes=16),
+                lock_duration=datetime.timedelta(seconds=17),
+                max_delivery_count=15,
+                forward_to=None,
+                forward_dead_lettered_messages_to=None
+            )
+
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=15)
+            assert subscription_description.dead_lettering_on_message_expiration == False
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=16)
+            assert subscription_description.max_delivery_count == 15
+            assert subscription_description.lock_duration == datetime.timedelta(seconds=17)
+            assert subscription_description.forward_to == None
+            assert subscription_description.forward_dead_lettered_messages_to == None
+
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

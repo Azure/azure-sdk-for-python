@@ -5,28 +5,27 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search3d4a19fe.search.windows.net/servicestats?api-version=2020-06-30-Preview
+    uri: https://search3d4a19fe.search.windows.net/servicestats?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://search3d4a19fe.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
+      string: '{"@odata.context":"https://search3d4a19fe.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '431'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 25 Mar 2021 20:32:37 GMT
-      elapsed-time: '46'
+      date: Wed, 30 Jun 2021 23:29:25 GMT
+      elapsed-time: '45'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 3cadf01d-8da9-11eb-a2c6-a0481ca055a9
+      request-id: 01ab3c5b-d9fb-11eb-a664-a0481ca055a9
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search3d4a19fe.search.windows.net/servicestats?api-version=2020-06-30-Preview
+    url: https://search3d4a19fe.search.windows.net/servicestats?api-version=2021-04-30-Preview
 version: 1

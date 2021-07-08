@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import time
 
 from msal.application import PublicClientApplication
@@ -11,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AadClient, validate_tenant_id
+from .._internal import AadClient, resolve_tenant, validate_tenant_id
 from .._internal.decorators import log_get_token, wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
@@ -23,7 +24,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any, Dict, Optional
     from .. import AuthenticationRecord
     from .._internal import AadClientBase
 
@@ -45,6 +46,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
         will use the persistent cache shared by Microsoft development applications
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the user is registered in. When False, which is the default, the credential will acquire tokens only from the
+        user's home tenant or, if a value was given for **authentication_record**, the tenant specified by the
+        :class:`AuthenticationRecord`.
     """
 
     def __init__(self, username=None, **kwargs):
@@ -55,9 +60,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
             validate_tenant_id(self._tenant_id)
+            self._allow_multitenant = kwargs.pop("allow_multitenant_authentication", False)
             self._cache = kwargs.pop("_cache", None)
-            self._app = None
-            self._client_kwargs = kwargs
+            self._client_applications = {}  # type: Dict[str, PublicClientApplication]
+            self._msal_client = MsalClient(**kwargs)
             self._initialized = False
         else:
             super(SharedTokenCacheCredential, self).__init__(username=username, **kwargs)
@@ -100,7 +106,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
-            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token)
+            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
@@ -118,30 +124,35 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             return
 
         self._load_cache()
-        if self._cache:
-            self._app = PublicClientApplication(
-                client_id=self._auth_record.client_id,
-                authority="https://{}/{}".format(self._auth_record.authority, self._tenant_id),
-                token_cache=self._cache,
-                http_client=MsalClient(**self._client_kwargs),
-                client_capabilities=["CP1"]
-            )
-
         self._initialized = True
+
+    def _get_client_application(self, **kwargs):
+        tenant_id = resolve_tenant(self._tenant_id, self._allow_multitenant, **kwargs)
+        if tenant_id not in self._client_applications:
+            # CP1 = can handle claims challenges (CAE)
+            capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
+            self._client_applications[tenant_id] = PublicClientApplication(
+                client_id=self._auth_record.client_id,
+                authority="https://{}/{}".format(self._auth_record.authority, tenant_id),
+                token_cache=self._cache,
+                http_client=self._msal_client,
+                client_capabilities=capabilities
+            )
+        return self._client_applications[tenant_id]
 
     @wrap_exceptions
     def _acquire_token_silent(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Silently acquire a token from MSAL. Requires an AuthenticationRecord."""
 
-        # self._auth_record and ._app will not be None when this method is called by get_token
-        # but should either be None anyway (and to satisfy mypy) we raise
-        if self._app is None or self._auth_record is None:
+        # this won't be None when this method is called by get_token but we check anyway to satisfy mypy
+        if self._auth_record is None:
             raise CredentialUnavailableError("Initialization failed")
 
         result = None
 
-        accounts_for_user = self._app.get_accounts(username=self._auth_record.username)
+        client_application = self._get_client_application(**kwargs)
+        accounts_for_user = client_application.get_accounts(username=self._auth_record.username)
         if not accounts_for_user:
             raise CredentialUnavailableError("The cache contains no account matching the given AuthenticationRecord.")
 
@@ -150,7 +161,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 continue
 
             now = int(time.time())
-            result = self._app.acquire_token_silent_with_error(
+            result = client_application.acquire_token_silent_with_error(
                 list(scopes), account=account, claims_challenge=kwargs.get("claims")
             )
             if result and "access_token" in result and "expires_in" in result:

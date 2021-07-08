@@ -48,7 +48,7 @@ class DeploymentScriptsOperations:
         resource_group_name: str,
         script_name: str,
         deployment_script: "_models.DeploymentScript",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentScript":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentScript"]
         error_map = {
@@ -106,7 +106,7 @@ class DeploymentScriptsOperations:
         resource_group_name: str,
         script_name: str,
         deployment_script: "_models.DeploymentScript",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DeploymentScript"]:
         """Creates a deployment script.
 
@@ -118,8 +118,8 @@ class DeploymentScriptsOperations:
         :type deployment_script: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.DeploymentScript
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentScript or the result of cls(response)
@@ -177,7 +177,7 @@ class DeploymentScriptsOperations:
         resource_group_name: str,
         script_name: str,
         deployment_script: Optional["_models.DeploymentScriptUpdateParameter"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentScript":
         """Updates deployment script tags with specified values.
 
@@ -246,7 +246,7 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         script_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DeploymentScript":
         """Gets a deployment script with a given name.
 
@@ -305,7 +305,7 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         script_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a deployment script. When operation completes, status code 200 returned without
         content.
@@ -360,7 +360,7 @@ class DeploymentScriptsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentScriptListResult"]:
         """Lists all deployment scripts for a given subscription.
 
@@ -429,7 +429,7 @@ class DeploymentScriptsOperations:
         self,
         resource_group_name: str,
         script_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ScriptLogsList":
         """Gets deployment script logs for a given deployment script name.
 
@@ -489,7 +489,7 @@ class DeploymentScriptsOperations:
         resource_group_name: str,
         script_name: str,
         tail: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ScriptLog":
         """Gets deployment script logs for a given deployment script name.
 
@@ -553,7 +553,7 @@ class DeploymentScriptsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentScriptListResult"]:
         """Lists deployments scripts.
 

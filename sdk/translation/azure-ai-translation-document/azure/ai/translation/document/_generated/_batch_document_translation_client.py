@@ -42,7 +42,7 @@ class BatchDocumentTranslationClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}/translator/text/batch/v1.0-preview.1'
+        base_url = '{endpoint}/translator/text/batch/v1.0'
         self._config = BatchDocumentTranslationClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 

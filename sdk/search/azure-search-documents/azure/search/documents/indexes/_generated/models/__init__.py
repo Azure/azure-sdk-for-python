@@ -39,7 +39,9 @@ try:
     from ._models_py3 import EdgeNGramTokenFilterV2
     from ._models_py3 import EdgeNGramTokenizer
     from ._models_py3 import ElisionTokenFilter
+    from ._models_py3 import EntityLinkingSkill
     from ._models_py3 import EntityRecognitionSkill
+    from ._models_py3 import EntityRecognitionSkillV3
     from ._models_py3 import FieldMapping
     from ._models_py3 import FieldMappingFunction
     from ._models_py3 import FreshnessScoringFunction
@@ -82,6 +84,7 @@ try:
     from ._models_py3 import NGramTokenizer
     from ._models_py3 import OcrSkill
     from ._models_py3 import OutputFieldMappingEntry
+    from ._models_py3 import PIIDetectionSkill
     from ._models_py3 import PathHierarchyTokenizerV2
     from ._models_py3 import PatternAnalyzer
     from ._models_py3 import PatternCaptureTokenFilter
@@ -98,8 +101,18 @@ try:
     from ._models_py3 import SearchIndex
     from ._models_py3 import SearchIndexer
     from ._models_py3 import SearchIndexerDataContainer
+    from ._models_py3 import SearchIndexerDataIdentity
+    from ._models_py3 import SearchIndexerDataNoneIdentity
     from ._models_py3 import SearchIndexerDataSource
+    from ._models_py3 import SearchIndexerDataUserAssignedIdentity
     from ._models_py3 import SearchIndexerError
+    from ._models_py3 import SearchIndexerKnowledgeStore
+    from ._models_py3 import SearchIndexerKnowledgeStoreBlobProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreFileProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreObjectProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreProjection
+    from ._models_py3 import SearchIndexerKnowledgeStoreProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreTableProjectionSelector
     from ._models_py3 import SearchIndexerLimits
     from ._models_py3 import SearchIndexerSkill
     from ._models_py3 import SearchIndexerSkillset
@@ -107,6 +120,7 @@ try:
     from ._models_py3 import SearchIndexerWarning
     from ._models_py3 import SearchResourceEncryptionKey
     from ._models_py3 import SentimentSkill
+    from ._models_py3 import SentimentSkillV3
     from ._models_py3 import ServiceCounters
     from ._models_py3 import ServiceLimits
     from ._models_py3 import ServiceStatistics
@@ -167,7 +181,9 @@ except (SyntaxError, ImportError):
     from ._models import EdgeNGramTokenFilterV2  # type: ignore
     from ._models import EdgeNGramTokenizer  # type: ignore
     from ._models import ElisionTokenFilter  # type: ignore
+    from ._models import EntityLinkingSkill  # type: ignore
     from ._models import EntityRecognitionSkill  # type: ignore
+    from ._models import EntityRecognitionSkillV3  # type: ignore
     from ._models import FieldMapping  # type: ignore
     from ._models import FieldMappingFunction  # type: ignore
     from ._models import FreshnessScoringFunction  # type: ignore
@@ -210,6 +226,7 @@ except (SyntaxError, ImportError):
     from ._models import NGramTokenizer  # type: ignore
     from ._models import OcrSkill  # type: ignore
     from ._models import OutputFieldMappingEntry  # type: ignore
+    from ._models import PIIDetectionSkill  # type: ignore
     from ._models import PathHierarchyTokenizerV2  # type: ignore
     from ._models import PatternAnalyzer  # type: ignore
     from ._models import PatternCaptureTokenFilter  # type: ignore
@@ -226,8 +243,18 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndex  # type: ignore
     from ._models import SearchIndexer  # type: ignore
     from ._models import SearchIndexerDataContainer  # type: ignore
+    from ._models import SearchIndexerDataIdentity  # type: ignore
+    from ._models import SearchIndexerDataNoneIdentity  # type: ignore
     from ._models import SearchIndexerDataSource  # type: ignore
+    from ._models import SearchIndexerDataUserAssignedIdentity  # type: ignore
     from ._models import SearchIndexerError  # type: ignore
+    from ._models import SearchIndexerKnowledgeStore  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreBlobProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreFileProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreObjectProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreProjection  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreTableProjectionSelector  # type: ignore
     from ._models import SearchIndexerLimits  # type: ignore
     from ._models import SearchIndexerSkill  # type: ignore
     from ._models import SearchIndexerSkillset  # type: ignore
@@ -235,6 +262,7 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerWarning  # type: ignore
     from ._models import SearchResourceEncryptionKey  # type: ignore
     from ._models import SentimentSkill  # type: ignore
+    from ._models import SentimentSkillV3  # type: ignore
     from ._models import ServiceCounters  # type: ignore
     from ._models import ServiceLimits  # type: ignore
     from ._models import ServiceStatistics  # type: ignore
@@ -283,9 +311,11 @@ from ._search_client_enums import (
     LexicalAnalyzerName,
     LexicalNormalizerName,
     LexicalTokenizerName,
+    LineEnding,
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
     OcrSkillLanguage,
+    PIIDetectionSkillMaskingMode,
     PhoneticEncoder,
     RegexFlags,
     ScoringFunctionAggregation,
@@ -337,7 +367,9 @@ __all__ = [
     'EdgeNGramTokenFilterV2',
     'EdgeNGramTokenizer',
     'ElisionTokenFilter',
+    'EntityLinkingSkill',
     'EntityRecognitionSkill',
+    'EntityRecognitionSkillV3',
     'FieldMapping',
     'FieldMappingFunction',
     'FreshnessScoringFunction',
@@ -380,6 +412,7 @@ __all__ = [
     'NGramTokenizer',
     'OcrSkill',
     'OutputFieldMappingEntry',
+    'PIIDetectionSkill',
     'PathHierarchyTokenizerV2',
     'PatternAnalyzer',
     'PatternCaptureTokenFilter',
@@ -396,8 +429,18 @@ __all__ = [
     'SearchIndex',
     'SearchIndexer',
     'SearchIndexerDataContainer',
+    'SearchIndexerDataIdentity',
+    'SearchIndexerDataNoneIdentity',
     'SearchIndexerDataSource',
+    'SearchIndexerDataUserAssignedIdentity',
     'SearchIndexerError',
+    'SearchIndexerKnowledgeStore',
+    'SearchIndexerKnowledgeStoreBlobProjectionSelector',
+    'SearchIndexerKnowledgeStoreFileProjectionSelector',
+    'SearchIndexerKnowledgeStoreObjectProjectionSelector',
+    'SearchIndexerKnowledgeStoreProjection',
+    'SearchIndexerKnowledgeStoreProjectionSelector',
+    'SearchIndexerKnowledgeStoreTableProjectionSelector',
     'SearchIndexerLimits',
     'SearchIndexerSkill',
     'SearchIndexerSkillset',
@@ -405,6 +448,7 @@ __all__ = [
     'SearchIndexerWarning',
     'SearchResourceEncryptionKey',
     'SentimentSkill',
+    'SentimentSkillV3',
     'ServiceCounters',
     'ServiceLimits',
     'ServiceStatistics',
@@ -451,9 +495,11 @@ __all__ = [
     'LexicalAnalyzerName',
     'LexicalNormalizerName',
     'LexicalTokenizerName',
+    'LineEnding',
     'MicrosoftStemmingTokenizerLanguage',
     'MicrosoftTokenizerLanguage',
     'OcrSkillLanguage',
+    'PIIDetectionSkillMaskingMode',
     'PhoneticEncoder',
     'RegexFlags',
     'ScoringFunctionAggregation',

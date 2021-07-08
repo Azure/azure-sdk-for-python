@@ -14,13 +14,50 @@ import msrest.serialization
 from ._postgre_sql_management_client_enums import *
 
 
+class Backup(msrest.serialization.Model):
+    """Backup properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param backup_retention_days: Backup retention days for the server.
+    :type backup_retention_days: int
+    :param geo_redundant_backup: A value indicating whether Geo-Redundant backup is enabled on the
+     server. Possible values include: "Enabled", "Disabled".
+    :type geo_redundant_backup: str or ~postgre_sql_management_client.models.GeoRedundantBackupEnum
+    :ivar earliest_restore_date: The earliest restore point time (ISO8601 format) for server.
+    :vartype earliest_restore_date: ~datetime.datetime
+    """
+
+    _validation = {
+        'earliest_restore_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
+        'geo_redundant_backup': {'key': 'geoRedundantBackup', 'type': 'str'},
+        'earliest_restore_date': {'key': 'earliestRestoreDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        backup_retention_days: Optional[int] = None,
+        geo_redundant_backup: Optional[Union[str, "GeoRedundantBackupEnum"]] = None,
+        **kwargs
+    ):
+        super(Backup, self).__init__(**kwargs)
+        self.backup_retention_days = backup_retention_days
+        self.geo_redundant_backup = geo_redundant_backup
+        self.earliest_restore_date = None
+
+
 class CapabilitiesListResult(msrest.serialization.Model):
     """location capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: A list of supported capabilities.
-    :vartype value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilityProperties]
+    :vartype value: list[~postgre_sql_management_client.models.CapabilityProperties]
     :ivar next_link: Link to retrieve next page of results.
     :vartype next_link: str
     """
@@ -51,19 +88,43 @@ class CapabilityProperties(msrest.serialization.Model):
 
     :ivar zone: zone name.
     :vartype zone: str
+    :ivar geo_backup_supported: A value indicating whether a new server in this region can have
+     geo-backups to paired region.
+    :vartype geo_backup_supported: bool
+    :ivar zone_redundant_ha_supported: A value indicating whether a new server in this region can
+     support multi zone HA.
+    :vartype zone_redundant_ha_supported: bool
+    :ivar zone_redundant_ha_and_geo_backup_supported: A value indicating whether a new server in
+     this region can have geo-backups to paired region.
+    :vartype zone_redundant_ha_and_geo_backup_supported: bool
     :ivar supported_flexible_server_editions:
     :vartype supported_flexible_server_editions:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerEditionCapability]
+     list[~postgre_sql_management_client.models.FlexibleServerEditionCapability]
+    :ivar supported_hyperscale_node_editions:
+    :vartype supported_hyperscale_node_editions:
+     list[~postgre_sql_management_client.models.HyperscaleNodeEditionCapability]
+    :ivar status: The status.
+    :vartype status: str
     """
 
     _validation = {
         'zone': {'readonly': True},
+        'geo_backup_supported': {'readonly': True},
+        'zone_redundant_ha_supported': {'readonly': True},
+        'zone_redundant_ha_and_geo_backup_supported': {'readonly': True},
         'supported_flexible_server_editions': {'readonly': True},
+        'supported_hyperscale_node_editions': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'zone': {'key': 'zone', 'type': 'str'},
-        'supported_flexible_server_editions': {'key': 'supportedFlexibleServerEditions', 'type': '[ServerEditionCapability]'},
+        'geo_backup_supported': {'key': 'geoBackupSupported', 'type': 'bool'},
+        'zone_redundant_ha_supported': {'key': 'zoneRedundantHaSupported', 'type': 'bool'},
+        'zone_redundant_ha_and_geo_backup_supported': {'key': 'zoneRedundantHaAndGeoBackupSupported', 'type': 'bool'},
+        'supported_flexible_server_editions': {'key': 'supportedFlexibleServerEditions', 'type': '[FlexibleServerEditionCapability]'},
+        'supported_hyperscale_node_editions': {'key': 'supportedHyperscaleNodeEditions', 'type': '[HyperscaleNodeEditionCapability]'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(
@@ -72,7 +133,12 @@ class CapabilityProperties(msrest.serialization.Model):
     ):
         super(CapabilityProperties, self).__init__(**kwargs)
         self.zone = None
+        self.geo_backup_supported = None
+        self.zone_redundant_ha_supported = None
+        self.zone_redundant_ha_and_geo_backup_supported = None
         self.supported_flexible_server_editions = None
+        self.supported_hyperscale_node_editions = None
+        self.status = None
 
 
 class Resource(msrest.serialization.Model):
@@ -112,7 +178,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class Configuration(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -125,6 +225,8 @@ class Configuration(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~postgre_sql_management_client.models.SystemData
     :param value: Value of the configuration.
     :type value: str
     :ivar description: Description of the configuration.
@@ -133,8 +235,7 @@ class Configuration(Resource):
     :vartype default_value: str
     :ivar data_type: Data type of the configuration. Possible values include: "Boolean", "Numeric",
      "Integer", "Enumeration".
-    :vartype data_type: str or
-     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ConfigurationDataType
+    :vartype data_type: str or ~postgre_sql_management_client.models.ConfigurationDataType
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
     :param source: Source of the configuration.
@@ -145,6 +246,7 @@ class Configuration(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'description': {'readonly': True},
         'default_value': {'readonly': True},
         'data_type': {'readonly': True},
@@ -155,6 +257,7 @@ class Configuration(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'value': {'key': 'properties.value', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'default_value': {'key': 'properties.defaultValue', 'type': 'str'},
@@ -171,6 +274,7 @@ class Configuration(Resource):
         **kwargs
     ):
         super(Configuration, self).__init__(**kwargs)
+        self.system_data = None
         self.value = value
         self.description = None
         self.default_value = None
@@ -183,7 +287,7 @@ class ConfigurationListResult(msrest.serialization.Model):
     """A list of server configurations.
 
     :param value: The list of server configurations.
-    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Configuration]
+    :type value: list[~postgre_sql_management_client.models.Configuration]
     :param next_link: The link used to get the next page of operations.
     :type next_link: str
     """
@@ -205,7 +309,7 @@ class ConfigurationListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class Database(Resource):
+class Database(ProxyResource):
     """Represents a Database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -218,6 +322,8 @@ class Database(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~postgre_sql_management_client.models.SystemData
     :param charset: The charset of the database.
     :type charset: str
     :param collation: The collation of the database.
@@ -228,12 +334,14 @@ class Database(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'charset': {'key': 'properties.charset', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
     }
@@ -246,6 +354,7 @@ class Database(Resource):
         **kwargs
     ):
         super(Database, self).__init__(**kwargs)
+        self.system_data = None
         self.charset = charset
         self.collation = collation
 
@@ -254,7 +363,7 @@ class DatabaseListResult(msrest.serialization.Model):
     """A List of databases.
 
     :param value: The list of databases housed in a server.
-    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Database]
+    :type value: list[~postgre_sql_management_client.models.Database]
     :param next_link: The link used to get the next page of databases.
     :type next_link: str
     """
@@ -314,7 +423,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -348,10 +457,9 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ErrorResponse]
+    :vartype details: list[~postgre_sql_management_client.models.ErrorResponse]
     :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~postgre_sql_management_client.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -382,7 +490,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.additional_info = None
 
 
-class FirewallRule(Resource):
+class FirewallRule(ProxyResource):
     """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -397,6 +505,8 @@ class FirewallRule(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~postgre_sql_management_client.models.SystemData
     :param start_ip_address: Required. The start IP address of the server firewall rule. Must be
      IPv4 format.
     :type start_ip_address: str
@@ -409,6 +519,7 @@ class FirewallRule(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'start_ip_address': {'required': True, 'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
         'end_ip_address': {'required': True, 'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
     }
@@ -417,6 +528,7 @@ class FirewallRule(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
@@ -429,6 +541,7 @@ class FirewallRule(Resource):
         **kwargs
     ):
         super(FirewallRule, self).__init__(**kwargs)
+        self.system_data = None
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
@@ -437,7 +550,7 @@ class FirewallRuleListResult(msrest.serialization.Model):
     """A list of firewall rules.
 
     :param value: The list of firewall rules in a server.
-    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.FirewallRule]
+    :type value: list[~postgre_sql_management_client.models.FirewallRule]
     :param next_link: The link used to get the next page of operations.
     :type next_link: str
     """
@@ -459,6 +572,133 @@ class FirewallRuleListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
+class FlexibleServerEditionCapability(msrest.serialization.Model):
+    """Flexible server edition capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Server edition name.
+    :vartype name: str
+    :ivar supported_storage_editions: The list of editions supported by this server edition.
+    :vartype supported_storage_editions:
+     list[~postgre_sql_management_client.models.StorageEditionCapability]
+    :ivar supported_server_versions: The list of server versions supported by this server edition.
+    :vartype supported_server_versions:
+     list[~postgre_sql_management_client.models.ServerVersionCapability]
+    :ivar status: The status.
+    :vartype status: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'supported_storage_editions': {'readonly': True},
+        'supported_server_versions': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_storage_editions': {'key': 'supportedStorageEditions', 'type': '[StorageEditionCapability]'},
+        'supported_server_versions': {'key': 'supportedServerVersions', 'type': '[ServerVersionCapability]'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FlexibleServerEditionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_storage_editions = None
+        self.supported_server_versions = None
+        self.status = None
+
+
+class HighAvailability(msrest.serialization.Model):
+    """High availability properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param mode: The HA mode for the server. Possible values include: "Disabled", "ZoneRedundant".
+    :type mode: str or ~postgre_sql_management_client.models.HighAvailabilityMode
+    :ivar state: A state of a HA server that is visible to user. Possible values include:
+     "NotEnabled", "CreatingStandby", "ReplicatingData", "FailingOver", "Healthy",
+     "RemovingStandby".
+    :vartype state: str or ~postgre_sql_management_client.models.ServerHAState
+    :param standby_availability_zone: availability zone information of the standby.
+    :type standby_availability_zone: str
+    """
+
+    _validation = {
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'standby_availability_zone': {'key': 'standbyAvailabilityZone', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "HighAvailabilityMode"]] = None,
+        standby_availability_zone: Optional[str] = None,
+        **kwargs
+    ):
+        super(HighAvailability, self).__init__(**kwargs)
+        self.mode = mode
+        self.state = None
+        self.standby_availability_zone = standby_availability_zone
+
+
+class HyperscaleNodeEditionCapability(msrest.serialization.Model):
+    """Hyperscale node edition capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Server edition name.
+    :vartype name: str
+    :ivar supported_storage_editions: The list of editions supported by this server edition.
+    :vartype supported_storage_editions:
+     list[~postgre_sql_management_client.models.StorageEditionCapability]
+    :ivar supported_server_versions: The list of server versions supported by this server edition.
+    :vartype supported_server_versions:
+     list[~postgre_sql_management_client.models.ServerVersionCapability]
+    :ivar supported_node_types: The list of Node Types supported by this server edition.
+    :vartype supported_node_types: list[~postgre_sql_management_client.models.NodeTypeCapability]
+    :ivar status: The status.
+    :vartype status: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'supported_storage_editions': {'readonly': True},
+        'supported_server_versions': {'readonly': True},
+        'supported_node_types': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_storage_editions': {'key': 'supportedStorageEditions', 'type': '[StorageEditionCapability]'},
+        'supported_server_versions': {'key': 'supportedServerVersions', 'type': '[ServerVersionCapability]'},
+        'supported_node_types': {'key': 'supportedNodeTypes', 'type': '[NodeTypeCapability]'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HyperscaleNodeEditionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_storage_editions = None
+        self.supported_server_versions = None
+        self.supported_node_types = None
+        self.status = None
+
+
 class Identity(msrest.serialization.Model):
     """Identity for the resource.
 
@@ -468,14 +708,14 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The identity type. The only acceptable values to pass in are None and
+     "SystemAssigned". The default value is None.
+    :type type: str
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'constant': True},
     }
 
     _attribute_map = {
@@ -484,19 +724,20 @@ class Identity(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
+        *,
+        type: Optional[str] = None,
         **kwargs
     ):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = type
 
 
 class MaintenanceWindow(msrest.serialization.Model):
-    """Maintenance window of a server.
+    """Maintenance window properties of a server.
 
     :param custom_window: indicates whether custom window is enabled or disabled.
     :type custom_window: str
@@ -599,6 +840,79 @@ class NameAvailabilityRequest(msrest.serialization.Model):
         self.type = type
 
 
+class Network(msrest.serialization.Model):
+    """Network properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar public_network_access: public network access is enabled or not. Possible values include:
+     "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~postgre_sql_management_client.models.ServerPublicNetworkAccessState
+    :param delegated_subnet_resource_id: delegated subnet arm resource id.
+    :type delegated_subnet_resource_id: str
+    :param private_dns_zone_arm_resource_id: private dns zone arm resource id.
+    :type private_dns_zone_arm_resource_id: str
+    """
+
+    _validation = {
+        'public_network_access': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        'delegated_subnet_resource_id': {'key': 'delegatedSubnetResourceId', 'type': 'str'},
+        'private_dns_zone_arm_resource_id': {'key': 'privateDnsZoneArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        delegated_subnet_resource_id: Optional[str] = None,
+        private_dns_zone_arm_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(Network, self).__init__(**kwargs)
+        self.public_network_access = None
+        self.delegated_subnet_resource_id = delegated_subnet_resource_id
+        self.private_dns_zone_arm_resource_id = private_dns_zone_arm_resource_id
+
+
+class NodeTypeCapability(msrest.serialization.Model):
+    """node type capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: note type name.
+    :vartype name: str
+    :ivar node_type: note type.
+    :vartype node_type: str
+    :ivar status: The status.
+    :vartype status: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'node_type': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'node_type': {'key': 'nodeType', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NodeTypeCapability, self).__init__(**kwargs)
+        self.name = None
+        self.node_type = None
+        self.status = None
+
+
 class Operation(msrest.serialization.Model):
     """REST API operation definition.
 
@@ -607,14 +921,14 @@ class Operation(msrest.serialization.Model):
     :ivar name: The name of the operation being performed on this particular object.
     :vartype name: str
     :ivar display: The localized display information for this particular operation or action.
-    :vartype display: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationDisplay
+    :vartype display: ~postgre_sql_management_client.models.OperationDisplay
     :param is_data_action: Indicates whether the operation is a data action.
     :type is_data_action: bool
     :ivar origin: The intended executor of the operation. Possible values include: "NotSpecified",
      "user", "system".
-    :vartype origin: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationOrigin
+    :vartype origin: str or ~postgre_sql_management_client.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, object]
+    :vartype properties: dict[str, any]
     """
 
     _validation = {
@@ -690,7 +1004,7 @@ class OperationListResult(msrest.serialization.Model):
     """A list of resource provider operations.
 
     :param value: Collection of available operation details.
-    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Operation]
+    :type value: list[~postgre_sql_management_client.models.Operation]
     :param next_link: URL client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
     :type next_link: str
@@ -713,38 +1027,30 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+class RestartParameter(msrest.serialization.Model):
+    """Represents server restart parameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
+    :param restart_with_failover: Indicates whether to restart the server with failover.
+    :type restart_with_failover: bool
+    :param failover_mode: Failover mode.
+    :type failover_mode: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'restart_with_failover': {'key': 'restartWithFailover', 'type': 'bool'},
+        'failover_mode': {'key': 'failoverMode', 'type': 'str'},
     }
 
     def __init__(
         self,
+        *,
+        restart_with_failover: Optional[bool] = None,
+        failover_mode: Optional[str] = None,
         **kwargs
     ):
-        super(ProxyResource, self).__init__(**kwargs)
+        super(RestartParameter, self).__init__(**kwargs)
+        self.restart_with_failover = restart_with_failover
+        self.failover_mode = failover_mode
 
 
 class TrackedResource(Resource):
@@ -815,63 +1121,47 @@ class Server(TrackedResource):
     :param location: Required. The geo-location where the resource lives.
     :type location: str
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Identity
+    :type identity: ~postgre_sql_management_client.models.Identity
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Sku
+    :type sku: ~postgre_sql_management_client.models.Sku
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~postgre_sql_management_client.models.SystemData
     :param administrator_login: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
     :type administrator_login: str
     :param administrator_login_password: The administrator login password (required for server
      creation).
     :type administrator_login_password: str
-    :param version: PostgreSQL Server version. Possible values include: "12", "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerVersion
+    :param version: PostgreSQL Server version. Possible values include: "13", "12", "11".
+    :type version: str or ~postgre_sql_management_client.models.ServerVersion
+    :ivar minor_version: The minor version of the server.
+    :vartype minor_version: str
     :ivar state: A state of a server that is visible to user. Possible values include: "Ready",
      "Dropping", "Disabled", "Starting", "Stopping", "Stopped", "Updating".
-    :vartype state: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerState
-    :ivar ha_state: A state of a HA server that is visible to user. Possible values include:
-     "NotEnabled", "CreatingStandby", "ReplicatingData", "FailingOver", "Healthy",
-     "RemovingStandby".
-    :vartype ha_state: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerHAState
+    :vartype state: str or ~postgre_sql_management_client.models.ServerState
     :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
     :vartype fully_qualified_domain_name: str
-    :param display_name: The display name of a server.
-    :type display_name: str
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageProfile
-    :ivar public_network_access: public network access is enabled or not. Possible values include:
-     "Enabled", "Disabled".
-    :vartype public_network_access: str or
-     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerPublicNetworkAccessState
-    :param maintenance_window: Maintenance window of a server.
-    :type maintenance_window: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MaintenanceWindow
-    :param ha_enabled: stand by count value can be either enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type ha_enabled: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.HAEnabledEnum
-    :param source_server_name: The source PostgreSQL server name to restore from.
-    :type source_server_name: str
-    :param source_subscription_id: The subscription id of source serve PostgreSQL server name to
-     restore from.
-    :type source_subscription_id: str
-    :param source_resource_group_name: The resource group name of source serve PostgreSQL server
-     name to restore from.
-    :type source_resource_group_name: str
+    :param storage: Storage properties of a server.
+    :type storage: ~postgre_sql_management_client.models.Storage
+    :param backup: Backup properties of a server.
+    :type backup: ~postgre_sql_management_client.models.Backup
+    :param network: Network properties of a server.
+    :type network: ~postgre_sql_management_client.models.Network
+    :param high_availability: High availability properties of a server.
+    :type high_availability: ~postgre_sql_management_client.models.HighAvailability
+    :param maintenance_window: Maintenance window properties of a server.
+    :type maintenance_window: ~postgre_sql_management_client.models.MaintenanceWindow
+    :param source_server_resource_id: The source server resource ID to restore from. It's required
+     when 'createMode' is 'PointInTimeRestore'.
+    :type source_server_resource_id: str
     :param point_in_time_utc: Restore point creation time (ISO8601 format), specifying the time to
-     restore from.
+     restore from. It's required when 'createMode' is 'PointInTimeRestore'.
     :type point_in_time_utc: ~datetime.datetime
-    :param availability_zone: availability Zone information of the server.
+    :param availability_zone: availability zone information of the server.
     :type availability_zone: str
-    :ivar standby_availability_zone: availability Zone information of the server.
-    :vartype standby_availability_zone: str
-    :ivar byok_enforcement: Status showing whether the data encryption is enabled with customer-
-     managed keys.
-    :vartype byok_enforcement: str
-    :param delegated_subnet_arguments:
-    :type delegated_subnet_arguments:
-     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerPropertiesDelegatedSubnetArguments
     :param create_mode: The mode to create a new PostgreSQL server. Possible values include:
-     "Default", "PointInTimeRestore".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateMode
+     "Default", "Create", "Update", "PointInTimeRestore".
+    :type create_mode: str or ~postgre_sql_management_client.models.CreateMode
     :param tags_properties_tags: Application-specific metadata in the form of key-value pairs.
     :type tags_properties_tags: dict[str, str]
     """
@@ -881,12 +1171,10 @@ class Server(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
+        'minor_version': {'readonly': True},
         'state': {'readonly': True},
-        'ha_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
-        'public_network_access': {'readonly': True},
-        'standby_availability_zone': {'readonly': True},
-        'byok_enforcement': {'readonly': True},
     }
 
     _attribute_map = {
@@ -897,25 +1185,21 @@ class Server(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
+        'minor_version': {'key': 'properties.minorVersion', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
-        'ha_state': {'key': 'properties.haState', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'storage': {'key': 'properties.storage', 'type': 'Storage'},
+        'backup': {'key': 'properties.backup', 'type': 'Backup'},
+        'network': {'key': 'properties.network', 'type': 'Network'},
+        'high_availability': {'key': 'properties.highAvailability', 'type': 'HighAvailability'},
         'maintenance_window': {'key': 'properties.maintenanceWindow', 'type': 'MaintenanceWindow'},
-        'ha_enabled': {'key': 'properties.haEnabled', 'type': 'str'},
-        'source_server_name': {'key': 'properties.sourceServerName', 'type': 'str'},
-        'source_subscription_id': {'key': 'properties.sourceSubscriptionId', 'type': 'str'},
-        'source_resource_group_name': {'key': 'properties.sourceResourceGroupName', 'type': 'str'},
+        'source_server_resource_id': {'key': 'properties.sourceServerResourceId', 'type': 'str'},
         'point_in_time_utc': {'key': 'properties.pointInTimeUTC', 'type': 'iso-8601'},
         'availability_zone': {'key': 'properties.availabilityZone', 'type': 'str'},
-        'standby_availability_zone': {'key': 'properties.standbyAvailabilityZone', 'type': 'str'},
-        'byok_enforcement': {'key': 'properties.byokEnforcement', 'type': 'str'},
-        'delegated_subnet_arguments': {'key': 'properties.delegatedSubnetArguments', 'type': 'ServerPropertiesDelegatedSubnetArguments'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'tags_properties_tags': {'key': 'properties.tags', 'type': '{str}'},
     }
@@ -930,16 +1214,14 @@ class Server(TrackedResource):
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "ServerVersion"]] = None,
-        display_name: Optional[str] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        storage: Optional["Storage"] = None,
+        backup: Optional["Backup"] = None,
+        network: Optional["Network"] = None,
+        high_availability: Optional["HighAvailability"] = None,
         maintenance_window: Optional["MaintenanceWindow"] = None,
-        ha_enabled: Optional[Union[str, "HAEnabledEnum"]] = None,
-        source_server_name: Optional[str] = None,
-        source_subscription_id: Optional[str] = None,
-        source_resource_group_name: Optional[str] = None,
+        source_server_resource_id: Optional[str] = None,
         point_in_time_utc: Optional[datetime.datetime] = None,
         availability_zone: Optional[str] = None,
-        delegated_subnet_arguments: Optional["ServerPropertiesDelegatedSubnetArguments"] = None,
         create_mode: Optional[Union[str, "CreateMode"]] = None,
         tags_properties_tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -947,64 +1229,23 @@ class Server(TrackedResource):
         super(Server, self).__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
+        self.system_data = None
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
+        self.minor_version = None
         self.state = None
-        self.ha_state = None
         self.fully_qualified_domain_name = None
-        self.display_name = display_name
-        self.storage_profile = storage_profile
-        self.public_network_access = None
+        self.storage = storage
+        self.backup = backup
+        self.network = network
+        self.high_availability = high_availability
         self.maintenance_window = maintenance_window
-        self.ha_enabled = ha_enabled
-        self.source_server_name = source_server_name
-        self.source_subscription_id = source_subscription_id
-        self.source_resource_group_name = source_resource_group_name
+        self.source_server_resource_id = source_server_resource_id
         self.point_in_time_utc = point_in_time_utc
         self.availability_zone = availability_zone
-        self.standby_availability_zone = None
-        self.byok_enforcement = None
-        self.delegated_subnet_arguments = delegated_subnet_arguments
         self.create_mode = create_mode
         self.tags_properties_tags = tags_properties_tags
-
-
-class ServerEditionCapability(msrest.serialization.Model):
-    """Server edition capabilities.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Server edition name.
-    :vartype name: str
-    :ivar supported_storage_editions:
-    :vartype supported_storage_editions:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageEditionCapability]
-    :ivar supported_server_versions:
-    :vartype supported_server_versions:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerVersionCapability]
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'supported_storage_editions': {'readonly': True},
-        'supported_server_versions': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'supported_storage_editions': {'key': 'supportedStorageEditions', 'type': '[StorageEditionCapability]'},
-        'supported_server_versions': {'key': 'supportedServerVersions', 'type': '[ServerVersionCapability]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerEditionCapability, self).__init__(**kwargs)
-        self.name = None
-        self.supported_storage_editions = None
-        self.supported_server_versions = None
 
 
 class ServerForUpdate(msrest.serialization.Model):
@@ -1013,18 +1254,22 @@ class ServerForUpdate(msrest.serialization.Model):
     :param location: The location the resource resides in.
     :type location: str
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.Sku
+    :type sku: ~postgre_sql_management_client.models.Sku
     :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     :param administrator_login_password: The password of the administrator login.
     :type administrator_login_password: str
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageProfile
-    :param ha_enabled: stand by count value can be either enabled or disabled. Possible values
-     include: "Enabled", "Disabled".
-    :type ha_enabled: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.HAEnabledEnum
-    :param maintenance_window: Maintenance window of a server.
-    :type maintenance_window: ~azure.mgmt.rdbms.postgresql_flexibleservers.models.MaintenanceWindow
+    :param storage: Storage properties of a server.
+    :type storage: ~postgre_sql_management_client.models.Storage
+    :param backup: Backup properties of a server.
+    :type backup: ~postgre_sql_management_client.models.Backup
+    :param high_availability: High availability properties of a server.
+    :type high_availability: ~postgre_sql_management_client.models.HighAvailability
+    :param maintenance_window: Maintenance window properties of a server.
+    :type maintenance_window: ~postgre_sql_management_client.models.MaintenanceWindow
+    :param create_mode: The mode to update a new PostgreSQL server. Possible values include:
+     "Default", "Update".
+    :type create_mode: str or ~postgre_sql_management_client.models.CreateModeForUpdate
     """
 
     _attribute_map = {
@@ -1032,9 +1277,11 @@ class ServerForUpdate(msrest.serialization.Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'ha_enabled': {'key': 'properties.haEnabled', 'type': 'str'},
+        'storage': {'key': 'properties.storage', 'type': 'Storage'},
+        'backup': {'key': 'properties.backup', 'type': 'Backup'},
+        'high_availability': {'key': 'properties.highAvailability', 'type': 'HighAvailability'},
         'maintenance_window': {'key': 'properties.maintenanceWindow', 'type': 'MaintenanceWindow'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
     }
 
     def __init__(
@@ -1044,9 +1291,11 @@ class ServerForUpdate(msrest.serialization.Model):
         sku: Optional["Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         administrator_login_password: Optional[str] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        ha_enabled: Optional[Union[str, "HAEnabledEnum"]] = None,
+        storage: Optional["Storage"] = None,
+        backup: Optional["Backup"] = None,
+        high_availability: Optional["HighAvailability"] = None,
         maintenance_window: Optional["MaintenanceWindow"] = None,
+        create_mode: Optional[Union[str, "CreateModeForUpdate"]] = None,
         **kwargs
     ):
         super(ServerForUpdate, self).__init__(**kwargs)
@@ -1054,16 +1303,18 @@ class ServerForUpdate(msrest.serialization.Model):
         self.sku = sku
         self.tags = tags
         self.administrator_login_password = administrator_login_password
-        self.storage_profile = storage_profile
-        self.ha_enabled = ha_enabled
+        self.storage = storage
+        self.backup = backup
+        self.high_availability = high_availability
         self.maintenance_window = maintenance_window
+        self.create_mode = create_mode
 
 
 class ServerListResult(msrest.serialization.Model):
     """A list of servers.
 
     :param value: The list of flexible servers.
-    :type value: list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Server]
+    :type value: list[~postgre_sql_management_client.models.Server]
     :param next_link: The link used to get the next page of operations.
     :type next_link: str
     """
@@ -1085,27 +1336,6 @@ class ServerListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class ServerPropertiesDelegatedSubnetArguments(msrest.serialization.Model):
-    """ServerPropertiesDelegatedSubnetArguments.
-
-    :param subnet_arm_resource_id: delegated subnet arm resource id.
-    :type subnet_arm_resource_id: str
-    """
-
-    _attribute_map = {
-        'subnet_arm_resource_id': {'key': 'subnetArmResourceId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        subnet_arm_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ServerPropertiesDelegatedSubnetArguments, self).__init__(**kwargs)
-        self.subnet_arm_resource_id = subnet_arm_resource_id
-
-
 class ServerVersionCapability(msrest.serialization.Model):
     """Server version capabilities.
 
@@ -1114,18 +1344,21 @@ class ServerVersionCapability(msrest.serialization.Model):
     :ivar name: server version.
     :vartype name: str
     :ivar supported_vcores:
-    :vartype supported_vcores:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.VcoreCapability]
+    :vartype supported_vcores: list[~postgre_sql_management_client.models.VcoreCapability]
+    :ivar status: The status.
+    :vartype status: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'supported_vcores': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'supported_vcores': {'key': 'supportedVcores', 'type': '[VcoreCapability]'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(
@@ -1135,6 +1368,7 @@ class ServerVersionCapability(msrest.serialization.Model):
         super(ServerVersionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_vcores = None
+        self.status = None
 
 
 class Sku(msrest.serialization.Model):
@@ -1147,7 +1381,7 @@ class Sku(msrest.serialization.Model):
     :type name: str
     :param tier: Required. The tier of the particular SKU, e.g. Burstable. Possible values include:
      "Burstable", "GeneralPurpose", "MemoryOptimized".
-    :type tier: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.SkuTier
+    :type tier: str or ~postgre_sql_management_client.models.SkuTier
     """
 
     _validation = {
@@ -1172,6 +1406,27 @@ class Sku(msrest.serialization.Model):
         self.tier = tier
 
 
+class Storage(msrest.serialization.Model):
+    """Storage properties of a server.
+
+    :param storage_size_gb: Max storage allowed for a server.
+    :type storage_size_gb: int
+    """
+
+    _attribute_map = {
+        'storage_size_gb': {'key': 'storageSizeGB', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_size_gb: Optional[int] = None,
+        **kwargs
+    ):
+        super(Storage, self).__init__(**kwargs)
+        self.storage_size_gb = storage_size_gb
+
+
 class StorageEditionCapability(msrest.serialization.Model):
     """storage edition capability.
 
@@ -1180,18 +1435,21 @@ class StorageEditionCapability(msrest.serialization.Model):
     :ivar name: storage edition name.
     :vartype name: str
     :ivar supported_storage_mb:
-    :vartype supported_storage_mb:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageMBCapability]
+    :vartype supported_storage_mb: list[~postgre_sql_management_client.models.StorageMBCapability]
+    :ivar status: The status.
+    :vartype status: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'supported_storage_mb': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'supported_storage_mb': {'key': 'supportedStorageMB', 'type': '[StorageMBCapability]'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(
@@ -1201,6 +1459,7 @@ class StorageEditionCapability(msrest.serialization.Model):
         super(StorageEditionCapability, self).__init__(**kwargs)
         self.name = None
         self.supported_storage_mb = None
+        self.status = None
 
 
 class StorageMBCapability(msrest.serialization.Model):
@@ -1214,18 +1473,22 @@ class StorageMBCapability(msrest.serialization.Model):
     :vartype supported_iops: long
     :ivar storage_size_mb: storage size in MB.
     :vartype storage_size_mb: long
+    :ivar status: The status.
+    :vartype status: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'supported_iops': {'readonly': True},
         'storage_size_mb': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'supported_iops': {'key': 'supportedIops', 'type': 'long'},
         'storage_size_mb': {'key': 'storageSizeMB', 'type': 'long'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(
@@ -1236,32 +1499,55 @@ class StorageMBCapability(msrest.serialization.Model):
         self.name = None
         self.supported_iops = None
         self.storage_size_mb = None
+        self.status = None
 
 
-class StorageProfile(msrest.serialization.Model):
-    """Storage Profile properties of a server.
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
 
-    :param backup_retention_days: Backup retention days for the server.
-    :type backup_retention_days: int
-    :param storage_mb: Max storage allowed for a server.
-    :type storage_mb: int
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~postgre_sql_management_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~postgre_sql_management_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
-        'storage_mb': {'key': 'storageMB', 'type': 'int'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
     }
 
     def __init__(
         self,
         *,
-        backup_retention_days: Optional[int] = None,
-        storage_mb: Optional[int] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(StorageProfile, self).__init__(**kwargs)
-        self.backup_retention_days = backup_retention_days
-        self.storage_mb = storage_mb
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class VcoreCapability(msrest.serialization.Model):
@@ -1277,6 +1563,8 @@ class VcoreCapability(msrest.serialization.Model):
     :vartype supported_iops: long
     :ivar supported_memory_per_vcore_mb: supported memory per vCore in MB.
     :vartype supported_memory_per_vcore_mb: long
+    :ivar status: The status.
+    :vartype status: str
     """
 
     _validation = {
@@ -1284,6 +1572,7 @@ class VcoreCapability(msrest.serialization.Model):
         'v_cores': {'readonly': True},
         'supported_iops': {'readonly': True},
         'supported_memory_per_vcore_mb': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1291,6 +1580,7 @@ class VcoreCapability(msrest.serialization.Model):
         'v_cores': {'key': 'vCores', 'type': 'long'},
         'supported_iops': {'key': 'supportedIops', 'type': 'long'},
         'supported_memory_per_vcore_mb': {'key': 'supportedMemoryPerVcoreMB', 'type': 'long'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(
@@ -1302,6 +1592,7 @@ class VcoreCapability(msrest.serialization.Model):
         self.v_cores = None
         self.supported_iops = None
         self.supported_memory_per_vcore_mb = None
+        self.status = None
 
 
 class VirtualNetworkSubnetUsageParameter(msrest.serialization.Model):
@@ -1332,7 +1623,7 @@ class VirtualNetworkSubnetUsageResult(msrest.serialization.Model):
 
     :ivar delegated_subnets_usage:
     :vartype delegated_subnets_usage:
-     list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.DelegatedSubnetUsage]
+     list[~postgre_sql_management_client.models.DelegatedSubnetUsage]
     """
 
     _validation = {

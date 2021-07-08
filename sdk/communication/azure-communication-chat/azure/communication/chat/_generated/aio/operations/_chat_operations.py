@@ -45,7 +45,7 @@ class ChatOperations:
         self,
         create_chat_thread_request: "_models.CreateChatThreadRequest",
         repeatability_request_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CreateChatThreadResult":
         """Creates a chat thread.
 
@@ -75,7 +75,7 @@ class ChatOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-07"
+        api_version = "2021-04-05-preview6"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -120,7 +120,7 @@ class ChatOperations:
         self,
         max_page_size: Optional[int] = None,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ChatThreadsItemCollection"]:
         """Gets the list of chat threads of a user.
 
@@ -146,7 +146,7 @@ class ChatOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-07"
+        api_version = "2021-04-05-preview6"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -207,7 +207,7 @@ class ChatOperations:
     async def delete_chat_thread(
         self,
         chat_thread_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a thread.
 
@@ -230,7 +230,7 @@ class ChatOperations:
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-07"
+        api_version = "2021-04-05-preview6"
         accept = "application/json"
 
         # Construct URL

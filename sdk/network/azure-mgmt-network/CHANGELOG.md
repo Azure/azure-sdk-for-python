@@ -1,5 +1,59 @@
 # Release History
 
+## 19.0.0 (2021-05-14)
+
+**Features**
+
+  - Model ApplicationGatewayTrustedClientCertificate has a new parameter validated_cert_data
+  - Model ApplicationGatewayTrustedClientCertificate has a new parameter client_cert_issuer_dn
+  - Model VirtualNetwork has a new parameter flow_timeout_in_minutes
+  - Model FrontendIPConfiguration has a new parameter gateway_load_balancer
+  - Model IPAddressAvailabilityResult has a new parameter is_platform_reserved
+  - Model CustomIpPrefix has a new parameter custom_ip_prefix_parent
+  - Model CustomIpPrefix has a new parameter failed_reason
+  - Model CustomIpPrefix has a new parameter child_custom_ip_prefixes
+  - Model CustomIpPrefix has a new parameter authorization_message
+  - Model CustomIpPrefix has a new parameter signed_message
+  - Model VirtualNetworkPeering has a new parameter peering_sync_level
+  - Model VirtualNetworkPeering has a new parameter resource_guid
+  - Model VirtualNetworkPeering has a new parameter do_not_verify_remote_gateways
+  - Model VirtualNetworkPeering has a new parameter type
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_address_space
+  - Model Subnet has a new parameter application_gateway_ip_configurations
+  - Model Subnet has a new parameter type
+  - Model LoadBalancingRule has a new parameter backend_address_pools
+  - Model EffectiveNetworkSecurityGroupAssociation has a new parameter network_manager
+  - Model BastionHost has a new parameter sku
+  - Model VirtualNetworkGateway has a new parameter extended_location
+  - Model VirtualNetworkGateway has a new parameter nat_rules
+  - Model VirtualNetworkGateway has a new parameter enable_bgp_route_translation_for_nat
+  - Model NetworkInterface has a new parameter workload_type
+  - Model NetworkInterface has a new parameter private_link_service
+  - Model NetworkInterface has a new parameter nic_type
+  - Model NetworkInterface has a new parameter migration_phase
+  - Model Delegation has a new parameter type
+  - Model PublicIPPrefix has a new parameter nat_gateway
+  - Model VirtualNetworkGatewayConnection has a new parameter egress_nat_rules
+  - Model VirtualNetworkGatewayConnection has a new parameter ingress_nat_rules
+  - Model NetworkInterfaceIPConfiguration has a new parameter gateway_load_balancer
+  - Model NetworkInterfaceIPConfiguration has a new parameter type
+  - Model AvailablePrivateEndpointType has a new parameter display_name
+  - Model PublicIPAddress has a new parameter delete_option
+  - Model PublicIPAddress has a new parameter nat_gateway
+  - Model PublicIPAddress has a new parameter service_public_ip_address
+  - Model PublicIPAddress has a new parameter linked_public_ip_address
+  - Model PublicIPAddress has a new parameter migration_phase
+  - Model VirtualHub has a new parameter preferred_routing_gateway
+  - Model BackendAddressPool has a new parameter tunnel_interfaces
+  - Model ServiceTagInformationPropertiesFormat has a new parameter state
+  - Added operation LoadBalancersOperations.begin_swap_public_ip_addresses
+  - Added operation group VirtualNetworkGatewayNatRulesOperations
+
+**Breaking changes**
+
+  - Operation VirtualNetworkPeeringsOperations.begin_create_or_update has a new signature
+  - Model VirtualNetworkGateway no longer has parameter virtual_network_extended_location
+
 ## 18.0.0 (2021-03-08)
 
 **Features**
@@ -83,7 +137,7 @@
 
   - Operation ConnectionMonitorsOperations.begin_create_or_update has a new signature
   - Model VirtualHub no longer has parameter enable_virtual_router_route_propogation
-  
+
 ## 16.0.0 (2020-09-15)
 
 **Features**
@@ -186,7 +240,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -194,13 +248,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
 ## 10.2.0 (2020-04-10)

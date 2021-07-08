@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class RegistriesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,8 +47,8 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        parameters: "models.ImportImageParameters",
-        **kwargs
+        parameters: "_models.ImportImageParameters",
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -95,8 +95,8 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        parameters: "models.ImportImageParameters",
-        **kwargs
+        parameters: "_models.ImportImageParameters",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copies an image to this container registry from the specified container registry.
 
@@ -110,8 +110,8 @@ class RegistriesOperations:
         :type parameters: ~azure.mgmt.containerregistry.v2017_10_01.models.ImportImageParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -141,7 +141,13 @@ class RegistriesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -157,9 +163,9 @@ class RegistriesOperations:
 
     async def check_name_availability(
         self,
-        registry_name_check_request: "models.RegistryNameCheckRequest",
-        **kwargs
-    ) -> "models.RegistryNameStatus":
+        registry_name_check_request: "_models.RegistryNameCheckRequest",
+        **kwargs: Any
+    ) -> "_models.RegistryNameStatus":
         """Checks whether the container registry name is available for use. The name must contain only
         alphanumeric characters, be globally unique, and between 5 and 50 characters in length.
 
@@ -171,7 +177,7 @@ class RegistriesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryNameStatus
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryNameStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryNameStatus"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,8 +225,8 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> "models.Registry":
+        **kwargs: Any
+    ) -> "_models.Registry":
         """Gets the properties of the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -233,7 +239,7 @@ class RegistriesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.Registry
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -278,10 +284,10 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        registry: "models.Registry",
-        **kwargs
-    ) -> "models.Registry":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        registry: "_models.Registry",
+        **kwargs: Any
+    ) -> "_models.Registry":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -335,9 +341,9 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        registry: "models.Registry",
-        **kwargs
-    ) -> AsyncLROPoller["models.Registry"]:
+        registry: "_models.Registry",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Registry"]:
         """Creates a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -349,8 +355,8 @@ class RegistriesOperations:
         :type registry: ~azure.mgmt.containerregistry.v2017_10_01.models.Registry
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Registry or the result of cls(response)
@@ -358,7 +364,7 @@ class RegistriesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -383,7 +389,13 @@ class RegistriesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -401,7 +413,7 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -443,7 +455,7 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a container registry.
 
@@ -454,8 +466,8 @@ class RegistriesOperations:
         :type registry_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -484,7 +496,13 @@ class RegistriesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -502,10 +520,10 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        registry_update_parameters: "models.RegistryUpdateParameters",
-        **kwargs
-    ) -> "models.Registry":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        registry_update_parameters: "_models.RegistryUpdateParameters",
+        **kwargs: Any
+    ) -> "_models.Registry":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -559,9 +577,9 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        registry_update_parameters: "models.RegistryUpdateParameters",
-        **kwargs
-    ) -> AsyncLROPoller["models.Registry"]:
+        registry_update_parameters: "_models.RegistryUpdateParameters",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Registry"]:
         """Updates a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -573,8 +591,8 @@ class RegistriesOperations:
         :type registry_update_parameters: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Registry or the result of cls(response)
@@ -582,7 +600,7 @@ class RegistriesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -607,7 +625,13 @@ class RegistriesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -624,8 +648,8 @@ class RegistriesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.RegistryListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.RegistryListResult"]:
         """Lists all the container registries under the specified resource group.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -636,7 +660,7 @@ class RegistriesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2017_10_01.models.RegistryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -694,8 +718,8 @@ class RegistriesOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["models.RegistryListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.RegistryListResult"]:
         """Lists all the container registries under the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -703,7 +727,7 @@ class RegistriesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2017_10_01.models.RegistryListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -762,8 +786,8 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> "models.RegistryListCredentialsResult":
+        **kwargs: Any
+    ) -> "_models.RegistryListCredentialsResult":
         """Lists the login credentials for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -776,7 +800,7 @@ class RegistriesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryListCredentialsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListCredentialsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListCredentialsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -821,9 +845,9 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        regenerate_credential_parameters: "models.RegenerateCredentialParameters",
-        **kwargs
-    ) -> "models.RegistryListCredentialsResult":
+        regenerate_credential_parameters: "_models.RegenerateCredentialParameters",
+        **kwargs: Any
+    ) -> "_models.RegistryListCredentialsResult":
         """Regenerates one of the login credentials for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -839,7 +863,7 @@ class RegistriesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryListCredentialsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryListCredentialsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryListCredentialsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -889,8 +913,8 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> "models.RegistryUsageListResult":
+        **kwargs: Any
+    ) -> "_models.RegistryUsageListResult":
         """Gets the quota usages for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -903,7 +927,7 @@ class RegistriesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryUsageListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryUsageListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryUsageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -948,8 +972,8 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> "models.RegistryPolicies":
+        **kwargs: Any
+    ) -> "_models.RegistryPolicies":
         """Lists the policies for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -962,7 +986,7 @@ class RegistriesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryPolicies
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryPolicies"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1007,10 +1031,10 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        registry_policies_update_parameters: "models.RegistryPolicies",
-        **kwargs
-    ) -> Optional["models.RegistryPolicies"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.RegistryPolicies"]]
+        registry_policies_update_parameters: "_models.RegistryPolicies",
+        **kwargs: Any
+    ) -> Optional["_models.RegistryPolicies"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.RegistryPolicies"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1062,9 +1086,9 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        registry_policies_update_parameters: "models.RegistryPolicies",
-        **kwargs
-    ) -> AsyncLROPoller["models.RegistryPolicies"]:
+        registry_policies_update_parameters: "_models.RegistryPolicies",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.RegistryPolicies"]:
         """Updates the policies for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -1077,8 +1101,8 @@ class RegistriesOperations:
         :type registry_policies_update_parameters: ~azure.mgmt.containerregistry.v2017_10_01.models.RegistryPolicies
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RegistryPolicies or the result of cls(response)
@@ -1086,7 +1110,7 @@ class RegistriesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RegistryPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryPolicies"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1111,7 +1135,13 @@ class RegistriesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

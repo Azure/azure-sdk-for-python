@@ -44,7 +44,7 @@ class DataPolicyManifestsOperations:
     async def get_by_policy_mode(
         self,
         policy_mode: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataPolicyManifest":
         """Retrieves a data policy manifest.
 
@@ -99,7 +99,7 @@ class DataPolicyManifestsOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataPolicyManifestListResult"]:
         """Retrieves data policy manifests.
 

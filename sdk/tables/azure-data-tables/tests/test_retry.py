@@ -3,35 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 
-from devtools_testutils import AzureTestCase
-
+from devtools_testutils import AzureTestCase, ResponseCallback
 
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     AzureError,
-    ClientAuthenticationError
 )
 from azure.core.pipeline.policies import RetryMode
-from azure.core.pipeline.transport import(
-    RequestsTransport
-)
+from azure.core.pipeline.transport import RequestsTransport
+from azure.data.tables import TableServiceClient
 
-from azure.data.tables import (
-    TableServiceClient,
-    LocationMode
-)
+from _shared.testcase import TableTestCase
 
-from _shared.testcase import (
-    TableTestCase,
-    ResponseCallback,
-    RetryCounter
-)
-
-from preparers import TablesPreparer
+from preparers import tables_decorator
 
 
 class RetryRequestTransport(RequestsTransport):
@@ -39,7 +26,7 @@ class RetryRequestTransport(RequestsTransport):
     def __init__(self, *args, **kwargs):
         super(RetryRequestTransport, self).__init__(*args, **kwargs)
         self.count = 0
-    
+
     def send(self, request, **kwargs):
         self.count += 1
         response = super(RetryRequestTransport, self).send(request, **kwargs)
@@ -64,6 +51,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
         self.query_tables = []
 
+    # TODO: Figure out why this is needed by the "test_retry_on_socket_timeout" test
     def _tear_down(self, **kwargs):
         if self.is_live:
             try:
@@ -81,7 +69,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
                 pass
 
     # --Test Cases --------------------------------------------
-    @TablesPreparer()
+    @tables_decorator
     def test_retry_on_server_error(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -96,7 +84,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             self.ts.delete_table(new_table_name)
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_retry_on_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(
             tables_storage_account_name,
@@ -115,7 +103,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.live_test_only
-    @TablesPreparer()
+    @tables_decorator
     def test_retry_on_socket_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
         retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
         self._set_up(
@@ -125,21 +113,16 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             default_table=False,
             retry_mode=RetryMode.Fixed,
             retry_backoff_factor=1)
-    
-        new_table_name = self.get_resource_name('uttable')
-        try:
-            with pytest.raises(AzureError) as error:
-                self.ts.get_service_properties()
 
-            # 3 retries + 1 original == 4
-            assert retry_transport.count == 4
-            # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
+        with pytest.raises(AzureError) as error:
+            self.ts.get_service_properties()
 
-        finally:
-            self._tear_down()
+        # 3 retries + 1 original == 4
+        assert retry_transport.count == 4
+        # This call should succeed on the server side, but fail on the client side due to socket timeout
+        self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
 
-    @TablesPreparer()
+    @tables_decorator
     def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 

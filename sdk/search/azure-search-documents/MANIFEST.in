@@ -4,3 +4,4 @@ include azure/search/__init__.py
 include LICENSE.txt
 recursive-include tests *.py
 recursive-include samples *.py *.md
+include azure/search/documents/py.typed

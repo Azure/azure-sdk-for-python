@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ServerCommunicationLinksOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class ServerCommunicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         communication_link_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a server communication link.
 
@@ -106,8 +106,8 @@ class ServerCommunicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         communication_link_name: str,
-        **kwargs
-    ) -> "models.ServerCommunicationLink":
+        **kwargs: Any
+    ) -> "_models.ServerCommunicationLink":
         """Returns a server communication link.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -122,7 +122,7 @@ class ServerCommunicationLinksOperations:
         :rtype: ~azure.mgmt.sql.models.ServerCommunicationLink
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerCommunicationLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerCommunicationLink"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -169,10 +169,10 @@ class ServerCommunicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         communication_link_name: str,
-        parameters: "models.ServerCommunicationLink",
-        **kwargs
-    ) -> Optional["models.ServerCommunicationLink"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ServerCommunicationLink"]]
+        parameters: "_models.ServerCommunicationLink",
+        **kwargs: Any
+    ) -> Optional["_models.ServerCommunicationLink"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ServerCommunicationLink"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -226,9 +226,9 @@ class ServerCommunicationLinksOperations:
         resource_group_name: str,
         server_name: str,
         communication_link_name: str,
-        parameters: "models.ServerCommunicationLink",
-        **kwargs
-    ) -> AsyncLROPoller["models.ServerCommunicationLink"]:
+        parameters: "_models.ServerCommunicationLink",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ServerCommunicationLink"]:
         """Creates a server communication link.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -242,8 +242,8 @@ class ServerCommunicationLinksOperations:
         :type parameters: ~azure.mgmt.sql.models.ServerCommunicationLink
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ServerCommunicationLink or the result of cls(response)
@@ -251,7 +251,7 @@ class ServerCommunicationLinksOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerCommunicationLink"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerCommunicationLink"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -277,7 +277,14 @@ class ServerCommunicationLinksOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'communicationLinkName': self._serialize.url("communication_link_name", communication_link_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -295,8 +302,8 @@ class ServerCommunicationLinksOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ServerCommunicationLinkListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ServerCommunicationLinkListResult"]:
         """Gets a list of server communication links.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -309,7 +316,7 @@ class ServerCommunicationLinksOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ServerCommunicationLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServerCommunicationLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerCommunicationLinkListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

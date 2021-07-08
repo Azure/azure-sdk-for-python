@@ -31,8 +31,8 @@ class GetTokenMixin(ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
@@ -56,20 +56,24 @@ class GetTokenMixin(ABC):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
+
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
-          required data, state, or platform support
+            required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason.
+            attribute gives a reason.
         """
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = self._acquire_token_silently(*scopes)
+            token = self._acquire_token_silently(*scopes, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
-                token = self._request_token(*scopes)
+                token = self._request_token(*scopes, **kwargs)
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())

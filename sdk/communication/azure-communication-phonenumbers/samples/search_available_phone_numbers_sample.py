@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python search_available_phone_numbers_sample.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The connection string including your endpoint and 
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - The connection string including your endpoint and 
         access key of your Azure Communication Service
 """
 
@@ -26,7 +26,7 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilityType
 )
 
-connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 def search_available_phone_numbers():

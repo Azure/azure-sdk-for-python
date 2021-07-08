@@ -248,17 +248,24 @@ def test_timeout():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 (ability to handle claims challenges)"""
+    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = DeviceCodeCredential(transport=transport)
 
     with patch("msal.PublicClientApplication") as PublicClientApplication:
-        credential._get_app()
+        DeviceCodeCredential(transport=transport)._get_app()
 
     assert PublicClientApplication.call_count == 1
     _, kwargs = PublicClientApplication.call_args
     assert kwargs["client_capabilities"] == ["CP1"]
+
+    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+        with patch("msal.PublicClientApplication") as PublicClientApplication:
+            DeviceCodeCredential(transport=transport)._get_app()
+
+    assert PublicClientApplication.call_count == 1
+    _, kwargs = PublicClientApplication.call_args
+    assert kwargs["client_capabilities"] is None
 
 
 def test_claims_challenge():

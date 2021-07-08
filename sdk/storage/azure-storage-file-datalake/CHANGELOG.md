@@ -1,7 +1,28 @@
 # Release History
 
-## 12.3.1b1 (Unreleased)
+## 12.4.0 (2021-06-09)
+**New features**
+- Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
+- Added support for `list_deleted_paths()` on `FileSystemClient`
 
+## 12.4.0b1 (2021-05-12)
+**New features**
+- Added support `set_service_properties()`,`get_service_properties()` on `DataLakeServiceClient`
+- Added support for `list_deleted_paths()` on `FileSystemClient`
+
+**Fixes**
+- Fixed initiating `PathProperties` problem (#18490)
+
+## 12.3.1 (2021-04-20)
+**Fixes**
+- Fixed `recursive=True` on file deletion
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed `downloader.chunks()` return chunks in different size (#9419, #15648)
+- Optimized memory usage for datalake file uploads large chunks (#16890)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
+
+**New Features**
+- Added `get_account_information()` API
 
 ## 12.3.0 (2021-03-01)
 **Stable release of preview features**
@@ -67,7 +88,7 @@
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 
-## 12.0.2 
+## 12.0.2
 **Fixes**
 - Improve the performance of upload when using max_concurrency
 
@@ -86,8 +107,8 @@
 **Breaking changes**
 - For `generate_file_system_sas`, `generate_directory_sas`, `generate_file_sas` APIs, `account_key` and `user_delegation_key` are merged into one parameter called `credential`.
 - Rename `rename_destination` to `new_name` for rename_directory and rename_file APIs
-- Rename `read_file` to `download_file`. The return type is changed to `StorageStreamDownloader` with which user can do `readinto()` and `readall()` 
-- `metadata` is a required parameter for FileSystemClient, DataLakeFileClient and DataLakeDirectoryClient  `set_*_metadata` APIs. 
+- Rename `read_file` to `download_file`. The return type is changed to `StorageStreamDownloader` with which user can do `readinto()` and `readall()`
+- `metadata` is a required parameter for FileSystemClient, DataLakeFileClient and DataLakeDirectoryClient  `set_*_metadata` APIs.
 
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
@@ -115,6 +136,6 @@
 - Support for DataLakeFileClient: create, delete, rename, get properties, get access control, set metadata, set properties, set access control, append, flush, read
 
 This package's
-[documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/README.md)
+[documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/README.md)
 and
-[samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples)

@@ -45,7 +45,7 @@ These options are available for all perf tests:
 ### T2 Tests
 The tests currently written for the T2 SDK:
 - `CreateEntityTest` Upsert a single entity.
-- `CreateEntityBatchTest` Upsert a batch of entities.
+- `CreateEntityBatchTest` Upsert a transaction of entities.
 - `ListEntitiesTest` List entities in a table.
 
 

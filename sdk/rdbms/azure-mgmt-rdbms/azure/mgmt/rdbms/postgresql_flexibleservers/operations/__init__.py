@@ -14,6 +14,7 @@ from ._location_based_capabilities_operations import LocationBasedCapabilitiesOp
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
 from ._operations import Operations
 from ._databases_operations import DatabasesOperations
+from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations
 
 __all__ = [
     'ServersOperations',
@@ -24,4 +25,5 @@ __all__ = [
     'VirtualNetworkSubnetUsageOperations',
     'Operations',
     'DatabasesOperations',
+    'GetPrivateDnsZoneSuffixOperations',
 ]

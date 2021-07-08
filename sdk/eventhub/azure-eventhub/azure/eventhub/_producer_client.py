@@ -10,13 +10,16 @@ from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 from uamqp import constants
 
 from .exceptions import ConnectError, EventHubError
+from .amqp import AmqpAnnotatedMessage
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureSasCredential
+    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
+
+SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,6 +36,7 @@ class EventHubProducerClient(ClientBase):
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
     :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
+     or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -74,7 +78,7 @@ class EventHubProducerClient(ClientBase):
         self,
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
-        credential,  # type: Union[AzureSasCredential, TokenCredential]
+        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
         **kwargs  # type: Any
     ):
         # type:(...) -> None
@@ -205,17 +209,18 @@ class EventHubProducerClient(ClientBase):
         return cls(**constructor_args)
 
     def send_batch(self, event_data_batch, **kwargs):
-        # type: (Union[EventDataBatch, List[EventData]], Any) -> None
+        # type: (Union[EventDataBatch, SendEventTypes], Any) -> None
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
-        If you're sending a finite list of `EventData` and you know it's within the event hub
-        frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
-        to create `EventDataBatch` and add `EventData` into the batch one by one until the size limit,
-        and then call this method to send out the batch.
+        If you're sending a finite list of `EventData` or `AmqpAnnotatedMessage` and you know it's within the
+        event hub frame size limit, you can send them with a `send_batch` call. Otherwise, use :meth:`create_batch`
+        to create `EventDataBatch` and add either `EventData` or `AmqpAnnotatedMessage` into the batch one by one
+        until the size limit, and then call this method to send out the batch.
 
-        :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent
-         in a batch. All `EventData` in the list or `EventDataBatch` will land on the same partition.
-        :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[~azure.eventhub.EventData]]
+        :param event_data_batch: The `EventDataBatch` object to be sent or a list of `EventData` to be sent in a batch.
+         All `EventData` or `AmqpAnnotatedMessage` in the list or `EventDataBatch` will land on the same partition.
+        :type event_data_batch: Union[~azure.eventhub.EventDataBatch, List[Union[~azure.eventhub.EventData,
+            ~azure.eventhub.amqp.AmqpAnnotatedMessage]]
         :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service

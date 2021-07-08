@@ -60,6 +60,7 @@ try:
     from ._models_py3 import UserIdentityProperties
     from ._models_py3 import Workspace
     from ._models_py3 import WorkspaceCapping
+    from ._models_py3 import WorkspaceFeatures
     from ._models_py3 import WorkspaceListManagementGroupsResult
     from ._models_py3 import WorkspaceListResult
     from ._models_py3 import WorkspaceListUsagesResult
@@ -123,6 +124,7 @@ except (SyntaxError, ImportError):
     from ._models import UserIdentityProperties  # type: ignore
     from ._models import Workspace  # type: ignore
     from ._models import WorkspaceCapping  # type: ignore
+    from ._models import WorkspaceFeatures  # type: ignore
     from ._models import WorkspaceListManagementGroupsResult  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
     from ._models import WorkspaceListUsagesResult  # type: ignore
@@ -206,6 +208,7 @@ __all__ = [
     'UserIdentityProperties',
     'Workspace',
     'WorkspaceCapping',
+    'WorkspaceFeatures',
     'WorkspaceListManagementGroupsResult',
     'WorkspaceListResult',
     'WorkspaceListUsagesResult',

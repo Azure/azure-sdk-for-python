@@ -72,10 +72,10 @@ class DiffDiskPlacement(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the ephemeral disk placement for operating system disk. This property can be used by
     user in the request to choose the location i.e, cache disk or resource disk space for Ephemeral
     OS disk provisioning. For more information on Ephemeral OS disk size requirements, please refer
-    Ephemeral OS disk size requirements for Windows VM at https://docs.microsoft.com/en-
-    us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements and Linux VM at
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-
-    requirements
+    Ephemeral OS disk size requirements for Windows VM at
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+    and Linux VM at
+    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
     """
 
     CACHE_DISK = "CacheDisk"
@@ -436,6 +436,14 @@ class RollingUpgradeStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     COMPLETED = "Completed"
     FAULTED = "Faulted"
 
+class SecurityTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the SecurityType of the virtual machine. It is set as TrustedLaunch to enable
+    UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not be enabled unless this
+    property is set as TrustedLaunch.
+    """
+
+    TRUSTED_LAUNCH = "TrustedLaunch"
+
 class SettingNames(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the name of the setting to which the content applies. Possible values are:
     FirstLogonCommands and AutoLogon.
@@ -464,15 +472,14 @@ class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "Error"
 
 class StorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the storage account type for the managed disk. Managed OS disk storage account type
-    can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
-    disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD. StandardSSD_LRS uses
-    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. Premium_ZRS uses
-    Premium SSD zone redundant storage. StandardSSD_ZRS uses Standard SSD zone redundant storage.
-    For more information regarding disks supported for Windows Virtual Machines, refer to
-    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for Linux
-    Virtual Machines, refer to https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-
-    types
+    """Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used
+    with data disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD.
+    StandardSSD_LRS uses Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk.
+    Premium_ZRS uses Premium SSD zone redundant storage. StandardSSD_ZRS uses Standard SSD zone
+    redundant storage. For more information regarding disks supported for Windows Virtual Machines,
+    refer to https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disks-types and, for
+    Linux Virtual Machines, refer to
+    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
     """
 
     STANDARD_LRS = "Standard_LRS"

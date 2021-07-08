@@ -817,8 +817,8 @@ class RequestStatistics(msrest.serialization.Model):
 
     :param documents_count: Required. Number of documents submitted in the request.
     :type documents_count: int
-    :param valid_documents_count: Required. Number of valid documents. This excludes empty, over-
-     size limit or non-supported languages documents.
+    :param valid_documents_count: Required. Number of valid documents. This excludes empty,
+     over-size limit or non-supported languages documents.
     :type valid_documents_count: int
     :param erroneous_documents_count: Required. Number of invalid documents. This includes empty,
      over-size limit or non-supported languages documents.

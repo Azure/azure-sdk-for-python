@@ -54,6 +54,7 @@
     "serviceBusSubscriptionName": "[concat('sb-', parameters('baseName'), '-subscription')]",
     "serviceBusTopicName": "[concat('sb-', parameters('baseName'), '-topic')]",
     "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
+    "queueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-queue-auth')]",
     "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
     "sessionQueueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-session-queue-auth')]",
     "serviceBusSessionId": "[concat('sb-', parameters('baseName'), '-session-queue-id')]",
@@ -112,7 +113,20 @@
             "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
             "enablePartitioning": false,
             "enableExpress": false
-          }
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('queueAuthorizationRuleName')]",
+              "type": "authorizationRules",
+              "dependsOn": [
+                  "[variables('serviceBusQueueName')]"
+              ],
+              "properties": {
+                  "Rights": ["Manage", "Send", "Listen"]
+              }
+            }
+          ]
         },
         {
           "type": "Queues",
@@ -199,6 +213,14 @@
       "type": "string",
       "value": "[variables('serviceBusQueueName')]"
     },
+    "SERVICE_BUS_SAS_POLICY":{
+      "type": "string",
+      "value": "[variables('queueAuthorizationRuleName')]"
+    },
+    "SERVICE_BUS_SAS_KEY":{
+      "type": "string",
+      "value": "[listkeys(variables('queueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
+    },
     "SERVICE_BUS_SESSION_QUEUE_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSessionQueueName')]"
@@ -207,14 +229,13 @@
       "type": "string",
       "value": "[variables('serviceBusSessionId')]"
     },
-    "SERVICE_BUS_SAS_POLICY":{
+    "SERVICE_BUS_SESSION_QUEUE_SAS_POLICY":{
       "type": "string",
       "value": "[variables('sessionQueueAuthorizationRuleName')]"
     },
-    "SERVICE_BUS_SAS_KEY":{
+    "SERVICE_BUS_SESSION_QUEUE_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
     }
-
   }
 }

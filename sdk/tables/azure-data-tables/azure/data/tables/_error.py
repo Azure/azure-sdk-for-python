@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from sys import version_info
+import sys
 from re import match
 from enum import Enum
 
@@ -17,7 +17,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.policies import ContentDecodePolicy
 
-if version_info < (3,):
+if sys.version_info < (3,):
 
     def _str(value):
         if isinstance(value, unicode):  # pylint: disable=undefined-variable
@@ -33,11 +33,8 @@ def _to_str(value):
     return _str(value) if value is not None else None
 
 
-_ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
-_ERROR_BATCH_COMMIT_FAIL = "Batch Commit Fail"
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
-_ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
 _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
 _ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
@@ -52,7 +49,7 @@ def _wrap_exception(ex, desired_type):
     msg = ""
     if len(ex.args) > 0:
         msg = ex.args[0]
-    if version_info >= (3,):
+    if sys.version_info >= (3,):
         # Automatic chaining in Python 3 means we keep the trace
         return desired_type(msg)
 
@@ -70,15 +67,11 @@ def _validate_table_name(table_name):
         )
 
 
-def _process_table_error(storage_error):
-    raise_error = HttpResponseError
-    error_code = storage_error.response.headers.get("x-ms-error-code")
-    error_message = storage_error.message
+def _decode_error(response, error_message=None, error_type=None, **kwargs):
+    error_code = response.headers.get("x-ms-error-code")
     additional_data = {}
     try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(
-            storage_error.response
-        )
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(response)
         if isinstance(error_body, dict):
             for info in error_body.get("odata.error", {}):
                 if info == "code":
@@ -100,33 +93,38 @@ def _process_table_error(storage_error):
         pass
 
     try:
-        if error_code:
+        if not error_type:
             error_code = TableErrorCode(error_code)
-            if error_code in [TableErrorCode.condition_not_met]:
-                raise_error = ResourceModifiedError
             if error_code in [
+                TableErrorCode.condition_not_met,
+                TableErrorCode.update_condition_not_satisfied
+            ]:
+                error_type = ResourceModifiedError
+            elif error_code in [
                 TableErrorCode.invalid_authentication_info,
                 TableErrorCode.authentication_failed,
             ]:
-                raise_error = ClientAuthenticationError
-            if error_code in [
+                error_type = ClientAuthenticationError
+            elif error_code in [
                 TableErrorCode.resource_not_found,
                 TableErrorCode.table_not_found,
                 TableErrorCode.entity_not_found,
                 ResourceNotFoundError,
             ]:
-                raise_error = ResourceNotFoundError
-            if error_code in [
+                error_type = ResourceNotFoundError
+            elif error_code in [
                 TableErrorCode.resource_already_exists,
                 TableErrorCode.table_already_exists,
                 TableErrorCode.account_already_exists,
                 TableErrorCode.entity_already_exists,
                 ResourceExistsError,
             ]:
-                raise_error = ResourceExistsError
+                error_type = ResourceExistsError
+            else:
+                error_type = HttpResponseError
     except ValueError:
         # Got an unknown error code
-        pass
+        error_type = HttpResponseError
 
     try:
         error_message += "\nErrorCode:{}".format(error_code.value)
@@ -135,10 +133,51 @@ def _process_table_error(storage_error):
     for name, info in additional_data.items():
         error_message += "\n{}:{}".format(name, info)
 
-    error = raise_error(message=error_message, response=storage_error.response)
+    error = error_type(message=error_message, response=response, **kwargs)
     error.error_code = error_code
     error.additional_info = additional_data
-    raise error
+    return error
+
+
+def _reraise_error(decoded_error):
+    _, _, exc_traceback = sys.exc_info()
+    try:
+        raise decoded_error.with_traceback(exc_traceback)
+    except AttributeError:
+        decoded_error.__traceback__ = exc_traceback
+        raise decoded_error
+
+
+def _process_table_error(storage_error):
+    decoded_error = _decode_error(storage_error.response, storage_error.message)
+    _reraise_error(decoded_error)
+
+
+class TableTransactionError(HttpResponseError):
+    """There is a failure in the transaction operations.
+
+    :ivar int index: If available, the index of the operation in the transaction that caused the error.
+     Defaults to 0 in the case where an index was not provided, or the error applies across operations.
+    :ivar ~azure.data.tables.TableErrorCode error_code: The error code.
+    :ivar str message: The error message.
+    :ivar additional_info: Any additional data for the error.
+    :vartype additional_info: Mapping[str, Any]
+    """
+
+    def __init__(self, **kwargs):
+        super(TableTransactionError, self).__init__(**kwargs)
+        self.index = kwargs.get('index', self._extract_index())
+
+    def _extract_index(self):
+        try:
+            message_sections = self.message.split(':', 1)
+            return int(message_sections[0])
+        except:  # pylint: disable=bare-except
+            return 0
+
+
+class RequestTooLargeError(TableTransactionError):
+    """An error response with status code 413 - Request Entity Too Large"""
 
 
 class TableErrorCode(str, Enum):

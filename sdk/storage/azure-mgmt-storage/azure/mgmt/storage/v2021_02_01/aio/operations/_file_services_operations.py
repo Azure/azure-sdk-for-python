@@ -52,8 +52,8 @@ class FileServicesOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileServiceItems, or the result of cls(response)
@@ -115,11 +115,11 @@ class FileServicesOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
-        :param parameters: The properties of file services in storage accounts, including CORS (Cross-
-         Origin Resource Sharing) rules.
+        :param parameters: The properties of file services in storage accounts, including CORS
+         (Cross-Origin Resource Sharing) rules.
         :type parameters: ~azure.mgmt.storage.v2021_02_01.models.FileServiceProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileServiceProperties, or the result of cls(response)
@@ -187,8 +187,8 @@ class FileServicesOperations:
          name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the specified resource group.
-         Storage account names must be between 3 and 24 characters in length and use numbers and lower-
-         case letters only.
+         Storage account names must be between 3 and 24 characters in length and use numbers and
+         lower-case letters only.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileServiceProperties, or the result of cls(response)

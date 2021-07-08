@@ -6,6 +6,7 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
+from copy import deepcopy
 from typing import TYPE_CHECKING, Dict, Any, Union, cast, Mapping
 from xml.etree.ElementTree import ElementTree
 
@@ -69,7 +70,6 @@ from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated._service_bus_management_client import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
-from ._model_workaround import avoid_timedelta_overflow
 from . import _constants as constants
 from ._models import (
     QueueRuntimeProperties,
@@ -378,14 +378,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=kwargs.pop("user_metadata", None),
         )
-        to_create = queue._to_internal_entity()
+        to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_create,  # type: ignore
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        self._create_forward_to_header_tokens(queue, kwargs)
+        self._create_forward_to_header_tokens(to_create, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -410,30 +410,18 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
         `QueueProperties` instance, then update the properties. Only a portion of properties can
         be updated. Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `QueueProperties` instance. Refer to ~azure.servicebus.management.QueueProperties for names of properties.
 
         :param queue: The queue that is returned from `get_queue`, `create_queue` or `list_queues` and
          has the updated properties.
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
-        queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
-            queue.forward_to, self.fully_qualified_namespace
-        )
-        queue.forward_dead_lettered_messages_to = (
-            _normalize_entity_path_to_full_path_if_needed(
-                queue.forward_dead_lettered_messages_to,
-                self.fully_qualified_namespace,
-            )
-        )
-        to_update = queue._to_internal_entity()
-
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
-            to_update.default_message_time_to_live
-        )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
-            to_update.auto_delete_on_idle
-        )
+        # we should not mutate the input, making a copy first for update
+        queue = deepcopy(create_properties_from_dict_if_needed(queue, QueueProperties))
+        to_update = queue._to_internal_entity(self.fully_qualified_namespace, kwargs)
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
@@ -441,7 +429,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        self._create_forward_to_header_tokens(queue, kwargs)
+        self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             self._impl.entity.put(
                 queue.name,  # type: ignore
@@ -650,31 +638,18 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
         `TopicProperties` instance, then update the properties. Only a portion of properties can be updated.
         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `TopicProperties` instance. Refer to ~azure.servicebus.management.TopicProperties for names of properties.
 
         :param topic: The topic that is returned from `get_topic`, `create_topic`, or `list_topics`
          and has the updated properties.
         :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
-
-        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
-        to_update = topic._to_internal_entity()
-
-        to_update.default_message_time_to_live = (
-            kwargs.get("default_message_time_to_live")
-            or topic.default_message_time_to_live
-        )
-        to_update.duplicate_detection_history_time_window = (
-            kwargs.get("duplicate_detection_history_time_window")
-            or topic.duplicate_detection_history_time_window
-        )
-
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
-            to_update.default_message_time_to_live
-        )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
-            to_update.auto_delete_on_idle
-        )
+        # we should not mutate the input, making a copy first for update
+        topic = deepcopy(create_properties_from_dict_if_needed(topic, TopicProperties))
+        to_update = topic._to_internal_entity(kwargs)
 
         create_entity_body = CreateTopicBody(
             content=CreateTopicBodyContent(
@@ -881,7 +856,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             availability_status=None,
         )
-        to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
+        to_create = subscription._to_internal_entity(self.fully_qualified_namespace)  # type: ignore  # pylint:disable=protected-access
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -889,7 +864,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        self._create_forward_to_header_tokens(subscription, kwargs)
+        self._create_forward_to_header_tokens(to_create, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -914,39 +889,30 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
         to get a `SubscriptionProperties` instance, then update the properties.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `SubscriptionProperties` instance.
+        Refer to ~azure.servicebus.management.SubscriptionProperties for names of properties.
 
         :param str topic_name: The topic that owns the subscription.
         :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription that is returned
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
-
         _validate_entity_name_type(topic_name, display_name="topic_name")
-        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
-        subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
-            subscription.forward_to, self.fully_qualified_namespace
+        # we should not mutate the input, making a copy first for update
+        subscription = deepcopy(
+            create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
         )
-        subscription.forward_dead_lettered_messages_to = (
-            _normalize_entity_path_to_full_path_if_needed(
-                subscription.forward_dead_lettered_messages_to,
-                self.fully_qualified_namespace,
-            )
-        )
-        to_update = subscription._to_internal_entity()
+        to_update = subscription._to_internal_entity(self.fully_qualified_namespace, kwargs)
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
-            to_update.default_message_time_to_live
-        )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
-            to_update.auto_delete_on_idle
-        )
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
                 subscription_description=to_update,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        self._create_forward_to_header_tokens(subscription, kwargs)
+        self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             self._impl.subscription.put(
                 topic_name,
@@ -1110,6 +1076,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`
         instance, then update the properties.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `RuleProperties` instance. Refer to ~azure.servicebus.management.RuleProperties for names of properties.
 
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
@@ -1121,9 +1090,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
-
-        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
-        to_update = rule._to_internal_entity()
+        # we should not mutate the input, making a copy first for update
+        rule = deepcopy(create_properties_from_dict_if_needed(rule, RuleProperties))
+        to_update = rule._to_internal_entity(kwargs)
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(

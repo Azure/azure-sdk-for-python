@@ -1,17 +1,21 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "latest", "stringIndexType": "UnicodeCodePoint"}}],
-      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
-      "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
-      "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
-      "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
-      "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
-      {"id": "5", "text": "input document", "language": "en"}, {"id": "6", "text":
-      "input document", "language": "en"}, {"id": "7", "text": "input document", "language":
-      "en"}, {"id": "8", "text": "input document", "language": "en"}, {"id": "9",
-      "text": "input document", "language": "en"}, {"id": "10", "text": "input document",
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
+      "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
+      false, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
+      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "opinionMining": false}}]}, "analysisInput":
+      {"documents": [{"id": "0", "text": "input document", "language": "en"}, {"id":
+      "1", "text": "input document", "language": "en"}, {"id": "2", "text": "input
+      document", "language": "en"}, {"id": "3", "text": "input document", "language":
+      "en"}, {"id": "4", "text": "input document", "language": "en"}, {"id": "5",
+      "text": "input document", "language": "en"}, {"id": "6", "text": "input document",
+      "language": "en"}, {"id": "7", "text": "input document", "language": "en"},
+      {"id": "8", "text": "input document", "language": "en"}, {"id": "9", "text":
+      "input document", "language": "en"}, {"id": "10", "text": "input document",
       "language": "en"}, {"id": "11", "text": "input document", "language": "en"},
       {"id": "12", "text": "input document", "language": "en"}, {"id": "13", "text":
       "input document", "language": "en"}, {"id": "14", "text": "input document",
@@ -32,24 +36,24 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1845'
+      - '2170'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1/analyze
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
-        request contains too many documents. Max 25 documents are permitted."}}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 25 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 72d3add6-2eee-4b38-9e83-a37d88c06d1d
+      - 69ddb6d1-d555-4bb5-b3ec-833a4fcb111f
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 23 Feb 2021 17:08:51 GMT
+      - Wed, 23 Jun 2021 01:33:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -57,7 +61,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '5'
     status:
       code: 400
       message: Bad Request

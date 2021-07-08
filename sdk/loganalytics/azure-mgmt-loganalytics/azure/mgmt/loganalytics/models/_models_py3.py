@@ -657,7 +657,7 @@ class DataSource(ProxyResource):
     :vartype type: str
     :param properties: Required. The data source properties in raw json format, each kind of data
      source have it's own schema.
-    :type properties: object
+    :type properties: str
     :param etag: The ETag of the data source.
     :type etag: str
     :param kind: Required. The kind of the DataSource. Possible values include: "WindowsEvent",
@@ -688,7 +688,7 @@ class DataSource(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'properties': {'key': 'properties', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -697,7 +697,7 @@ class DataSource(ProxyResource):
     def __init__(
         self,
         *,
-        properties: object,
+        properties: str,
         kind: Union[str, "DataSourceKind"],
         etag: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -775,7 +775,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: str
     """
 
     _validation = {
@@ -785,7 +785,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        'info': {'key': 'info', 'type': 'str'},
     }
 
     def __init__(
@@ -1913,25 +1913,16 @@ class Table(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param retention_in_days: The data table data retention in days, between 7 and 730. Setting
+    :param retention_in_days: The data table data retention in days, between 30 and 730. Setting
      this property to null will default to the workspace retention.
     :type retention_in_days: int
-    :ivar is_troubleshooting_allowed: Specifies if IsTroubleshootingEnabled property can be set for
-     this table.
-    :vartype is_troubleshooting_allowed: bool
-    :param is_troubleshoot_enabled: Enable or disable troubleshoot for this table.
-    :type is_troubleshoot_enabled: bool
-    :ivar last_troubleshoot_date: Last time when troubleshooting was set for this table.
-    :vartype last_troubleshoot_date: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 7},
-        'is_troubleshooting_allowed': {'readonly': True},
-        'last_troubleshoot_date': {'readonly': True},
+        'retention_in_days': {'maximum': 730, 'minimum': 30},
     }
 
     _attribute_map = {
@@ -1939,23 +1930,16 @@ class Table(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
-        'is_troubleshooting_allowed': {'key': 'properties.isTroubleshootingAllowed', 'type': 'bool'},
-        'is_troubleshoot_enabled': {'key': 'properties.isTroubleshootEnabled', 'type': 'bool'},
-        'last_troubleshoot_date': {'key': 'properties.lastTroubleshootDate', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         retention_in_days: Optional[int] = None,
-        is_troubleshoot_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(Table, self).__init__(**kwargs)
         self.retention_in_days = retention_in_days
-        self.is_troubleshooting_allowed = None
-        self.is_troubleshoot_enabled = is_troubleshoot_enabled
-        self.last_troubleshoot_date = None
 
 
 class TablesListResult(msrest.serialization.Model):
@@ -2140,8 +2124,16 @@ class Workspace(TrackedResource):
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.loganalytics.models.PrivateLinkScopedResource]
-    :param features: Workspace features.
-    :type features: dict[str, object]
+    :param enable_data_export: Flag that indicate if data should be exported.
+    :type enable_data_export: bool
+    :param immediate_purge_data_on30_days: Flag that describes if we want to remove the data after
+     30 days.
+    :type immediate_purge_data_on30_days: bool
+    :param enable_log_access_using_only_resource_permissions: Flag that indicate which permission
+     to use - resource or workspace or both.
+    :type enable_log_access_using_only_resource_permissions: bool
+    :param cluster_resource_id: Dedicated LA cluster resourceId that is linked to the workspaces.
+    :type cluster_resource_id: str
     """
 
     _validation = {
@@ -2173,7 +2165,10 @@ class Workspace(TrackedResource):
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'features': {'key': 'properties.features', 'type': '{object}'},
+        'enable_data_export': {'key': 'properties.features.enableDataExport', 'type': 'bool'},
+        'immediate_purge_data_on30_days': {'key': 'properties.features.immediatePurgeDataOn30Days', 'type': 'bool'},
+        'enable_log_access_using_only_resource_permissions': {'key': 'properties.features.enableLogAccessUsingOnlyResourcePermissions', 'type': 'bool'},
+        'cluster_resource_id': {'key': 'properties.features.clusterResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -2189,7 +2184,10 @@ class Workspace(TrackedResource):
         public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         force_cmk_for_query: Optional[bool] = None,
-        features: Optional[Dict[str, object]] = None,
+        enable_data_export: Optional[bool] = None,
+        immediate_purge_data_on30_days: Optional[bool] = None,
+        enable_log_access_using_only_resource_permissions: Optional[bool] = None,
+        cluster_resource_id: Optional[str] = None,
         **kwargs
     ):
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
@@ -2205,7 +2203,10 @@ class Workspace(TrackedResource):
         self.public_network_access_for_query = public_network_access_for_query
         self.force_cmk_for_query = force_cmk_for_query
         self.private_link_scoped_resources = None
-        self.features = features
+        self.enable_data_export = enable_data_export
+        self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
+        self.enable_log_access_using_only_resource_permissions = enable_log_access_using_only_resource_permissions
+        self.cluster_resource_id = cluster_resource_id
 
 
 class WorkspaceCapping(msrest.serialization.Model):
@@ -2244,6 +2245,50 @@ class WorkspaceCapping(msrest.serialization.Model):
         self.daily_quota_gb = daily_quota_gb
         self.quota_next_reset_time = None
         self.data_ingestion_status = None
+
+
+class WorkspaceFeatures(msrest.serialization.Model):
+    """Workspace features.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, str]
+    :param enable_data_export: Flag that indicate if data should be exported.
+    :type enable_data_export: bool
+    :param immediate_purge_data_on30_days: Flag that describes if we want to remove the data after
+     30 days.
+    :type immediate_purge_data_on30_days: bool
+    :param enable_log_access_using_only_resource_permissions: Flag that indicate which permission
+     to use - resource or workspace or both.
+    :type enable_log_access_using_only_resource_permissions: bool
+    :param cluster_resource_id: Dedicated LA cluster resourceId that is linked to the workspaces.
+    :type cluster_resource_id: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{str}'},
+        'enable_data_export': {'key': 'enableDataExport', 'type': 'bool'},
+        'immediate_purge_data_on30_days': {'key': 'immediatePurgeDataOn30Days', 'type': 'bool'},
+        'enable_log_access_using_only_resource_permissions': {'key': 'enableLogAccessUsingOnlyResourcePermissions', 'type': 'bool'},
+        'cluster_resource_id': {'key': 'clusterResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, str]] = None,
+        enable_data_export: Optional[bool] = None,
+        immediate_purge_data_on30_days: Optional[bool] = None,
+        enable_log_access_using_only_resource_permissions: Optional[bool] = None,
+        cluster_resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(WorkspaceFeatures, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.enable_data_export = enable_data_export
+        self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
+        self.enable_log_access_using_only_resource_permissions = enable_log_access_using_only_resource_permissions
+        self.cluster_resource_id = cluster_resource_id
 
 
 class WorkspaceListManagementGroupsResult(msrest.serialization.Model):
@@ -2357,8 +2402,16 @@ class WorkspacePatch(AzureEntityResource):
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.loganalytics.models.PrivateLinkScopedResource]
-    :param features: Workspace features.
-    :type features: dict[str, object]
+    :param enable_data_export: Flag that indicate if data should be exported.
+    :type enable_data_export: bool
+    :param immediate_purge_data_on30_days: Flag that describes if we want to remove the data after
+     30 days.
+    :type immediate_purge_data_on30_days: bool
+    :param enable_log_access_using_only_resource_permissions: Flag that indicate which permission
+     to use - resource or workspace or both.
+    :type enable_log_access_using_only_resource_permissions: bool
+    :param cluster_resource_id: Dedicated LA cluster resourceId that is linked to the workspaces.
+    :type cluster_resource_id: str
     """
 
     _validation = {
@@ -2389,7 +2442,10 @@ class WorkspacePatch(AzureEntityResource):
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'features': {'key': 'properties.features', 'type': '{object}'},
+        'enable_data_export': {'key': 'properties.features.enableDataExport', 'type': 'bool'},
+        'immediate_purge_data_on30_days': {'key': 'properties.features.immediatePurgeDataOn30Days', 'type': 'bool'},
+        'enable_log_access_using_only_resource_permissions': {'key': 'properties.features.enableLogAccessUsingOnlyResourcePermissions', 'type': 'bool'},
+        'cluster_resource_id': {'key': 'properties.features.clusterResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -2403,7 +2459,10 @@ class WorkspacePatch(AzureEntityResource):
         public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         force_cmk_for_query: Optional[bool] = None,
-        features: Optional[Dict[str, object]] = None,
+        enable_data_export: Optional[bool] = None,
+        immediate_purge_data_on30_days: Optional[bool] = None,
+        enable_log_access_using_only_resource_permissions: Optional[bool] = None,
+        cluster_resource_id: Optional[str] = None,
         **kwargs
     ):
         super(WorkspacePatch, self).__init__(**kwargs)
@@ -2419,7 +2478,10 @@ class WorkspacePatch(AzureEntityResource):
         self.public_network_access_for_query = public_network_access_for_query
         self.force_cmk_for_query = force_cmk_for_query
         self.private_link_scoped_resources = None
-        self.features = features
+        self.enable_data_export = enable_data_export
+        self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
+        self.enable_log_access_using_only_resource_permissions = enable_log_access_using_only_resource_permissions
+        self.cluster_resource_id = cluster_resource_id
 
 
 class WorkspacePurgeBody(msrest.serialization.Model):
@@ -2565,23 +2627,18 @@ class WorkspaceSku(msrest.serialization.Model):
     :param capacity_reservation_level: The capacity reservation level for this workspace, when
      CapacityReservation sku is selected.
     :type capacity_reservation_level: int
-    :ivar max_capacity_reservation_level: The maximum capacity reservation level available for this
-     workspace, when CapacityReservation sku is selected.
-    :vartype max_capacity_reservation_level: int
     :ivar last_sku_update: The last time when the sku was updated.
     :vartype last_sku_update: str
     """
 
     _validation = {
         'name': {'required': True},
-        'max_capacity_reservation_level': {'readonly': True},
         'last_sku_update': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'capacity_reservation_level': {'key': 'capacityReservationLevel', 'type': 'int'},
-        'max_capacity_reservation_level': {'key': 'maxCapacityReservationLevel', 'type': 'int'},
         'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
     }
 
@@ -2595,5 +2652,4 @@ class WorkspaceSku(msrest.serialization.Model):
         super(WorkspaceSku, self).__init__(**kwargs)
         self.name = name
         self.capacity_reservation_level = capacity_reservation_level
-        self.max_capacity_reservation_level = None
         self.last_sku_update = None

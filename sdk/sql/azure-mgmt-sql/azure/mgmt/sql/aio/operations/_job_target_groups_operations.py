@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class JobTargetGroupsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,8 +46,8 @@ class JobTargetGroupsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.JobTargetGroupListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.JobTargetGroupListResult"]:
         """Gets all target groups in an agent.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -62,12 +62,12 @@ class JobTargetGroupsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobTargetGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobTargetGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobTargetGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -126,8 +126,8 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        **kwargs
-    ) -> "models.JobTargetGroup":
+        **kwargs: Any
+    ) -> "_models.JobTargetGroup":
         """Gets a target group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -144,12 +144,12 @@ class JobTargetGroupsOperations:
         :rtype: ~azure.mgmt.sql.models.JobTargetGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobTargetGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobTargetGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -193,9 +193,9 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        parameters: "models.JobTargetGroup",
-        **kwargs
-    ) -> "models.JobTargetGroup":
+        parameters: "_models.JobTargetGroup",
+        **kwargs: Any
+    ) -> "_models.JobTargetGroup":
         """Creates or updates a target group.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -214,12 +214,12 @@ class JobTargetGroupsOperations:
         :rtype: ~azure.mgmt.sql.models.JobTargetGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.JobTargetGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobTargetGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -272,7 +272,7 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a target group.
 
@@ -295,7 +295,7 @@ class JobTargetGroupsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-03-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore

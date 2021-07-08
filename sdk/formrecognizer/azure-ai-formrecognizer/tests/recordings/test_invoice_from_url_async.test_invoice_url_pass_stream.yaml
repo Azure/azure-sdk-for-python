@@ -9,23 +9,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "12ae5b42-7d54-4e48-aa8e-b281c28958f0"},
+      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "7447bde4-255f-4f59-b31b-59177f34dca2"},
         "message": "Image URL is badly formatted."}}'
     headers:
-      apim-request-id: 12ae5b42-7d54-4e48-aa8e-b281c28958f0
+      apim-request-id: 7447bde4-255f-4f59-b31b-59177f34dca2
       content-length: '144'
       content-type: application/json; charset=utf-8
-      date: Fri, 19 Mar 2021 21:45:14 GMT
+      date: Tue, 11 May 2021 02:35:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/prebuilt/invoice/analyze?includeTextDetails=false
 version: 1

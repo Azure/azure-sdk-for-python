@@ -274,14 +274,26 @@ class SubscriptionTransferValidationErrorCode(with_metaclass(_CaseInsensitiveEnu
     """Error code of the transfer validation response.
     """
 
-    INVALID_SOURCE = "InvalidSource"
-    SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
-    INSUFFICIENT_PERMISSION_ON_SOURCE = "InsufficientPermissionOnSource"
-    INSUFFICIENT_PERMISSION_ON_DESTINATION = "InsufficientPermissionOnDestination"
-    DESTINATION_BILLING_PROFILE_PAST_DUE = "DestinationBillingProfilePastDue"
-    SUBSCRIPTION_TYPE_NOT_SUPPORTED = "SubscriptionTypeNotSupported"
+    BILLING_ACCOUNT_INACTIVE = "BillingAccountInactive"
     CROSS_BILLING_ACCOUNT_NOT_ALLOWED = "CrossBillingAccountNotAllowed"
+    DESTINATION_BILLING_PROFILE_INACTIVE = "DestinationBillingProfileInactive"
+    DESTINATION_BILLING_PROFILE_NOT_FOUND = "DestinationBillingProfileNotFound"
+    DESTINATION_BILLING_PROFILE_PAST_DUE = "DestinationBillingProfilePastDue"
+    DESTINATION_INVOICE_SECTION_INACTIVE = "DestinationInvoiceSectionInactive"
+    DESTINATION_INVOICE_SECTION_NOT_FOUND = "DestinationInvoiceSectionNotFound"
+    INSUFFICIENT_PERMISSION_ON_DESTINATION = "InsufficientPermissionOnDestination"
+    INSUFFICIENT_PERMISSION_ON_SOURCE = "InsufficientPermissionOnSource"
+    INVALID_DESTINATION = "InvalidDestination"
+    INVALID_SOURCE = "InvalidSource"
+    MARKETPLACE_NOT_ENABLED_ON_DESTINATION = "MarketplaceNotEnabledOnDestination"
     NOT_AVAILABLE_FOR_DESTINATION_MARKET = "NotAvailableForDestinationMarket"
+    PRODUCT_INACTIVE = "ProductInactive"
+    PRODUCT_NOT_FOUND = "ProductNotFound"
+    PRODUCT_TYPE_NOT_SUPPORTED = "ProductTypeNotSupported"
+    SOURCE_BILLING_PROFILE_PAST_DUE = "SourceBillingProfilePastDue"
+    SOURCE_INVOICE_SECTION_INACTIVE = "SourceInvoiceSectionInactive"
+    SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
+    SUBSCRIPTION_TYPE_NOT_SUPPORTED = "SubscriptionTypeNotSupported"
 
 class TargetCloud(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Possible cloud environments.
@@ -299,8 +311,8 @@ class TransactionTypeKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESERVATION = "reservation"
 
 class ViewCharges(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The policy that controls whether the users in customer's organization can view charges at pay-
-    as-you-go prices.
+    """The policy that controls whether the users in customer's organization can view charges at
+    pay-as-you-go prices.
     """
 
     ALLOWED = "Allowed"

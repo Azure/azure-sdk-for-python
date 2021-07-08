@@ -9,23 +9,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
     body:
-      string: '{"error": {"code": "FailedToDownloadImage", "message": "Failed to download
-        image from input URL."}}'
+      string: '{"error": {"code": "Timeout", "message": "The operation was timeout."}}'
     headers:
-      apim-request-id: 266bd056-8978-4761-bcba-ada9974352b2
-      content-length: '95'
-      content-type: application/json; charset=utf-8
-      date: Wed, 03 Mar 2021 19:31:03 GMT
+      apim-request-id: d7d114e1-217a-4990-b5b7-b3ae9cbc1ebf
+      content-length: '75'
+      content-type: application/json
+      date: Tue, 11 May 2021 00:38:01 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '416'
     status:
-      code: 400
-      message: Bad Request
-    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+      code: 408
+      message: Timeout
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
 version: 1

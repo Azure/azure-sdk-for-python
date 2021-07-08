@@ -28,7 +28,7 @@ class PeeringManagementClientOperationsMixin:
         """Checks if the peering service provider is present within 1000 miles of customer's location.
 
         :param check_service_provider_availability_input: The CheckServiceProviderAvailabilityInput
-         indicating customer location and service provider.
+                     indicating customer location and service provider.
         :type check_service_provider_availability_input: ~azure.mgmt.peering.models.CheckServiceProviderAvailabilityInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Enum0, or the result of cls(response)
@@ -40,7 +40,7 @@ class PeeringManagementClientOperationsMixin:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2019-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -69,7 +69,7 @@ class PeeringManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('str', pipeline_response)

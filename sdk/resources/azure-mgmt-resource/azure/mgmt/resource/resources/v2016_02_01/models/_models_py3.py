@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import msrest.serialization
 
@@ -179,7 +179,7 @@ class DeploymentExportResult(msrest.serialization.Model):
     """DeploymentExportResult.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     """
 
     _attribute_map = {
@@ -189,7 +189,7 @@ class DeploymentExportResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         **kwargs
     ):
         super(DeploymentExportResult, self).__init__(**kwargs)
@@ -327,7 +327,7 @@ class DeploymentOperationProperties(msrest.serialization.Model):
     :param status_code: Operation status code.
     :type status_code: str
     :param status_message: Operation status message.
-    :type status_message: object
+    :type status_message: any
     :param target_resource: The target resource.
     :type target_resource: ~azure.mgmt.resource.resources.v2016_02_01.models.TargetResource
     :param request: The HTTP request message.
@@ -354,7 +354,7 @@ class DeploymentOperationProperties(msrest.serialization.Model):
         timestamp: Optional[datetime.datetime] = None,
         service_request_id: Optional[str] = None,
         status_code: Optional[str] = None,
-        status_message: Optional[object] = None,
+        status_message: Optional[Any] = None,
         target_resource: Optional["TargetResource"] = None,
         request: Optional["HttpMessage"] = None,
         response: Optional["HttpMessage"] = None,
@@ -404,12 +404,12 @@ class DeploymentProperties(msrest.serialization.Model):
 
     :param template: The template content. It can be a JObject or a well formed JSON string. Use
      only one of Template or TemplateLink.
-    :type template: object
+    :type template: any
     :param template_link: The template URI. Use only one of Template or TemplateLink.
     :type template_link: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateLink
     :param parameters: Deployment parameters. It can be a JObject or a well formed JSON string. Use
      only one of Parameters or ParametersLink.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The parameters URI. Use only one of Parameters or ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
     :param mode: Required. The deployment mode. Possible values include: "Incremental", "Complete".
@@ -435,9 +435,9 @@ class DeploymentProperties(msrest.serialization.Model):
         self,
         *,
         mode: Union[str, "DeploymentMode"],
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         template_link: Optional["TemplateLink"] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[Any] = None,
         parameters_link: Optional["ParametersLink"] = None,
         debug_setting: Optional["DebugSetting"] = None,
         **kwargs
@@ -461,18 +461,18 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
     :param timestamp: The timestamp of the template deployment.
     :type timestamp: ~datetime.datetime
     :param outputs: Key/value pairs that represent deployment output.
-    :type outputs: object
+    :type outputs: any
     :param providers: The list of resource providers needed for the deployment.
     :type providers: list[~azure.mgmt.resource.resources.v2016_02_01.models.Provider]
     :param dependencies: The list of deployment dependencies.
     :type dependencies: list[~azure.mgmt.resource.resources.v2016_02_01.models.Dependency]
     :param template: The template content. Use only one of Template or TemplateLink.
-    :type template: object
+    :type template: any
     :param template_link: The URI referencing the template. Use only one of Template or
      TemplateLink.
     :type template_link: ~azure.mgmt.resource.resources.v2016_02_01.models.TemplateLink
     :param parameters: Deployment parameters. Use only one of Parameters or ParametersLink.
-    :type parameters: object
+    :type parameters: any
     :param parameters_link: The URI referencing the parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: ~azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink
@@ -503,12 +503,12 @@ class DeploymentPropertiesExtended(msrest.serialization.Model):
         provisioning_state: Optional[str] = None,
         correlation_id: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
-        outputs: Optional[object] = None,
+        outputs: Optional[Any] = None,
         providers: Optional[List["Provider"]] = None,
         dependencies: Optional[List["Dependency"]] = None,
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         template_link: Optional["TemplateLink"] = None,
-        parameters: Optional[object] = None,
+        parameters: Optional[Any] = None,
         parameters_link: Optional["ParametersLink"] = None,
         mode: Optional[Union[str, "DeploymentMode"]] = None,
         debug_setting: Optional["DebugSetting"] = None,
@@ -565,7 +565,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -726,7 +726,7 @@ class GenericResource(Resource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2016_02_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: Id of the resource that manages this resource.
@@ -763,7 +763,7 @@ class GenericResource(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         plan: Optional["Plan"] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
         sku: Optional["Sku"] = None,
@@ -797,7 +797,7 @@ class GenericResourceExpanded(GenericResource):
     :param plan: The plan of the resource.
     :type plan: ~azure.mgmt.resource.resources.v2016_02_01.models.Plan
     :param properties: The resource properties.
-    :type properties: object
+    :type properties: any
     :param kind: The kind of the resource.
     :type kind: str
     :param managed_by: Id of the resource that manages this resource.
@@ -849,7 +849,7 @@ class GenericResourceExpanded(GenericResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         plan: Optional["Plan"] = None,
-        properties: Optional[object] = None,
+        properties: Optional[Any] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
         sku: Optional["Sku"] = None,
@@ -897,7 +897,7 @@ class HttpMessage(msrest.serialization.Model):
     """HttpMessage.
 
     :param content: HTTP message content.
-    :type content: object
+    :type content: any
     """
 
     _attribute_map = {
@@ -907,7 +907,7 @@ class HttpMessage(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        content: Optional[object] = None,
+        content: Optional[Any] = None,
         **kwargs
     ):
         super(HttpMessage, self).__init__(**kwargs)
@@ -1177,7 +1177,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     """ResourceGroupExportResult.
 
     :param template: The template content.
-    :type template: object
+    :type template: any
     :param error: The error.
     :type error:
      ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails
@@ -1191,7 +1191,7 @@ class ResourceGroupExportResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        template: Optional[object] = None,
+        template: Optional[Any] = None,
         error: Optional["ResourceManagementErrorWithDetails"] = None,
         **kwargs
     ):

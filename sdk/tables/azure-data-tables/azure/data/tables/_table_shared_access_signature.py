@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union
+from typing import Union, Any, TYPE_CHECKING
 
 from ._models import AccountSasPermissions
 from ._common_conversion import _sign_string
@@ -15,24 +15,26 @@ from ._shared_access_signature import (
     QueryStringConstants,
 )
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.core.credentials import AzureNamedKeyCredential
+    from ._models import ResourceTypes
+
 
 def generate_account_sas(
-    account_name,  # type:str
-    account_key,  # type:str
-    resource_types,  # type:ResourceTypes
-    permission,  # type:Union[str,AccountSasPermissions]
-    expiry,  # type:Union[datetime,str]
-    **kwargs  # type:Any
+    credential,  # type: AzureNamedKeyCredential
+    resource_types,  # type: ResourceTypes
+    permission,  # type: Union[str, AccountSasPermissions]
+    expiry,  # type: Union[datetime, str]
+    **kwargs  # type: Any
 ):
     # type: (...) -> str
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
 
-    :param account_name: Account name
-    :type account_name:str
-    :param account_key: Account key
-    :type account_key:str
+    :param credential: Credential for the Azure account
+    :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential`
     :param resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :type resource_types: ResourceTypes
@@ -70,11 +72,11 @@ def generate_account_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    _validate_not_none("account_name", account_name)
-    _validate_not_none("account_key", account_key)
+    _validate_not_none("account_name", credential.named_key.name)
+    _validate_not_none("account_key", credential.named_key.key)
     if permission is str:
-        permission = AccountSasPermissions.from_string(permission=permission)
-    sas = TableSharedAccessSignature(account_name, account_key)
+        permission = AccountSasPermissions.from_string(permission=permission)  # type: ignore
+    sas = TableSharedAccessSignature(credential)
     return sas.generate_account(
         "t",
         resource_types,
@@ -86,22 +88,15 @@ def generate_account_sas(
     )
 
 
-def generate_table_sas(
-    account_name,  # type: str
-    account_key,  # type: str
-    table_name,  # type: str
-    **kwargs  # type: Any
-):  # type: (...) -> str
-
+def generate_table_sas(credential, table_name, **kwargs):
+    # type: (AzureNamedKeyCredential, str, **Any) -> str
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
 
 
-    :param account_key: Account key
-    :type account_key: str
-    :param account_name: Account name
-    :type account_name: str
+    :param credential: Credential used for creating Shared Access Signature
+    :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential`
     :param table_name: Table name
     :type table_name: str
     :keyword TableSasPermissions permission:
@@ -143,7 +138,7 @@ def generate_table_sas(
     :rtype: str
     """
 
-    sas = TableSharedAccessSignature(account_name, account_key)
+    sas = TableSharedAccessSignature(credential)
     return sas.generate_table(
         table_name=table_name,
         permission=kwargs.pop("permission", None),
@@ -168,17 +163,13 @@ class TableSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     """
 
-    def __init__(self, account_name, account_key):
+    def __init__(self, credential):
         """
-        :param account_name:
-            The storage account name used to generate the shared access signatures.
-        :type account_name: str
-        :param account_key:
-            The access key to generate the shares access signatures.
-        :type account_key: str
+        :param credential: The credential used for authenticating requests
+        :type credential: :class:`~azure.core.credentials.NamedKeyCredential`
         """
         super(TableSharedAccessSignature, self).__init__(
-            account_name, account_key, x_ms_version=X_MS_VERSION
+            credential, x_ms_version=X_MS_VERSION
         )
 
     def generate_table(

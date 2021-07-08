@@ -9,7 +9,13 @@ except ImportError:
     from cStringIO import StringIO as BytesIO
 import pytest
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import AzureError, ServiceResponseError, ServiceResponseTimeoutError
+from azure.core.exceptions import (
+    AzureError,
+    ServiceRequestError,
+    ServiceRequestTimeoutError,
+    ServiceResponseError,
+    ServiceResponseTimeoutError,
+)
 from azure.core.pipeline.policies import (
     RetryPolicy,
     RetryMode,
@@ -255,3 +261,25 @@ def test_timeout_defaults():
 
     pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
     assert transport.send.call_count == 1, "policy should not retry: its first send succeeded"
+
+
+@pytest.mark.parametrize(
+    "transport_error,expected_timeout_error",
+    ((ServiceRequestError, ServiceRequestTimeoutError), (ServiceResponseError, ServiceResponseTimeoutError)),
+)
+def test_does_not_sleep_after_timeout(transport_error, expected_timeout_error):
+    # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
+    # It should not sleep the second time when given timeout=1
+    timeout = 1
+
+    transport = Mock(
+        spec=HttpTransport,
+        send=Mock(side_effect=transport_error("oops")),
+        sleep=Mock(wraps=time.sleep),
+    )
+    pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
+
+    with pytest.raises(expected_timeout_error):
+        pipeline.run(HttpRequest("GET", "http://127.0.0.1/"))
+
+    assert transport.sleep.call_count == 1

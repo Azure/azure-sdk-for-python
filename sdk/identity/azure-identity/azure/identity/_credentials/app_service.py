@@ -38,8 +38,8 @@ class AppServiceCredential(GetTokenMixin):
             )
         return super(AppServiceCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes, **kwargs):
@@ -63,7 +63,7 @@ def _get_client_args(**kwargs):
     return dict(
         kwargs,
         _content_callback=_parse_app_service_expires_on,
-        _identity_config=identity_config,
+        identity_config=identity_config,
         base_headers={"secret": secret},
         request_factory=functools.partial(_get_request, url),
     )

@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_maps_resource_provider import AzureMapsResourceProvider
-__all__ = ['AzureMapsResourceProvider']
+from ._azure_maps_management_client import AzureMapsManagementClient
+__all__ = ['AzureMapsManagementClient']

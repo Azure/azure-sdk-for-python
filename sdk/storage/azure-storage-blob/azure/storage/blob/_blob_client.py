@@ -78,7 +78,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
     #optional-configuration>`_.
 
     :param str account_url:
@@ -967,8 +967,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             error_cls=error_cls)
 
     @staticmethod
-    def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Any]
+    def _generic_delete_blob_options(delete_snapshots=None, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         if delete_snapshots:
@@ -982,8 +982,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
-    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Any]
+    def _delete_blob_options(self, delete_snapshots=None, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         if self.snapshot and delete_snapshots:
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
@@ -3754,7 +3754,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace
-    def get_container_client(self): # pylint: disable=client-method-missing-kwargs
+    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
         # type: (...) -> ContainerClient
         """Get a client to interact with the blob's parent container.
 

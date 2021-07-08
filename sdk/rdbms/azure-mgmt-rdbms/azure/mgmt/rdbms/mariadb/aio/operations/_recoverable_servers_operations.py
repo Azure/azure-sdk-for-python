@@ -44,7 +44,7 @@ class RecoverableServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecoverableServerResource":
         """Gets a recoverable MariaDB Server.
 

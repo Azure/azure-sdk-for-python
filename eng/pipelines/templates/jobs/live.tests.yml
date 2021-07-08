@@ -44,9 +44,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 120
-  - name: TestSamples
-    type: boolean
-    default: false
   - name: Location
     type: string
     default: ''
@@ -95,7 +92,6 @@ jobs:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
           AgentImage: $(OSVmImage)
-      - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
       - ${{ if eq(parameters['AllocateResourceGroup'], true) }}:
         - pwsh: |
@@ -114,19 +110,24 @@ jobs:
 
         # figure out what's up with the create resource group above
       - ${{ if eq(parameters['DeployArmTemplate'], true) }}:
+        - template: /eng/common/TestResources/build-test-resource-config.yml
+          parameters:
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+
         - template: ../../../common/TestResources/deploy-test-resources.yml
           parameters:
             Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
             ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            SubscriptionConfiguration: $(SubscriptionConfiguration)
             ArmTemplateParameters: $(ArmTemplateParameters)
 
       - template: ../steps/build-test.yml
         parameters:
           BuildTargetingString: $(BuildTargetingStringValue)
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          CloudName: ${{ parameters.CloudConfig.Cloud }}
           CoverageArg: $(CoverageArg)
-          TestSamples: ${{ parameters.TestSamples }}
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
             ${{ insert }}: ${{ parameters.EnvVars }}
@@ -150,4 +151,4 @@ jobs:
         - template: /eng/common/TestResources/remove-test-resources.yml
           parameters:
             ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            SubscriptionConfiguration: $(SubscriptionConfiguration)

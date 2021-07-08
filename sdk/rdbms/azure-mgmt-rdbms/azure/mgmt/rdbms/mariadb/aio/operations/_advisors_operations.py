@@ -46,7 +46,7 @@ class AdvisorsOperations:
         resource_group_name: str,
         server_name: str,
         advisor_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Advisor":
         """Get a recommendation action advisor.
 
@@ -107,7 +107,7 @@ class AdvisorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AdvisorsResultList"]:
         """List recommendation action advisors.
 

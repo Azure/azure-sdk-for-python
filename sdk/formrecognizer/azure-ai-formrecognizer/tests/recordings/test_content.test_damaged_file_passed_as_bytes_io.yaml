@@ -18,9 +18,9 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?readingOrder=basic
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1/layout/analyze?readingOrder=basic
   response:
     body:
       string: '{"error": {"code": "InvalidImage", "message": "The file submitted couldn''t
@@ -29,13 +29,13 @@ interactions:
         the file is corrupted or password protected."}}'
     headers:
       apim-request-id:
-      - 98f3953e-86ed-4d0f-8ef6-b5100f2c33f2
+      - 134cc456-084c-428e-84c1-43208b501734
       content-length:
       - '270'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 01 Mar 2021 18:49:49 GMT
+      - Tue, 11 May 2021 00:28:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:

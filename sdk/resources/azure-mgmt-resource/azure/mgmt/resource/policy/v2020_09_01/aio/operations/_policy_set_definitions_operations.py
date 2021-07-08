@@ -45,7 +45,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         parameters: "_models.PolicySetDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
@@ -113,7 +113,7 @@ class PolicySetDefinitionsOperations:
     async def delete(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
 
@@ -166,7 +166,7 @@ class PolicySetDefinitionsOperations:
     async def get(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Retrieves a policy set definition.
 
@@ -223,7 +223,7 @@ class PolicySetDefinitionsOperations:
     async def get_built_in(
         self,
         policy_set_definition_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Retrieves a built in policy set definition.
 
@@ -279,7 +279,7 @@ class PolicySetDefinitionsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves the policy set definitions for a subscription.
 
@@ -374,7 +374,7 @@ class PolicySetDefinitionsOperations:
         self,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves built-in policy set definitions.
 
@@ -459,7 +459,7 @@ class PolicySetDefinitionsOperations:
         policy_set_definition_name: str,
         management_group_id: str,
         parameters: "_models.PolicySetDefinition",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Creates or updates a policy set definition.
 
@@ -530,7 +530,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
 
@@ -587,7 +587,7 @@ class PolicySetDefinitionsOperations:
         self,
         policy_set_definition_name: str,
         management_group_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PolicySetDefinition":
         """Retrieves a policy set definition.
 
@@ -648,7 +648,7 @@ class PolicySetDefinitionsOperations:
         management_group_id: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionListResult"]:
         """Retrieves all policy set definitions in management group.
 

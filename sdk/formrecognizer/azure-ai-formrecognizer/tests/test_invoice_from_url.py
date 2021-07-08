@@ -224,8 +224,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_invoice_pdf_include_field_elements(self, client):
-        poller = client.begin_recognize_invoices_from_url(self.invoice_url_pdf, include_field_elements=True)
+    def test_invoice_jpg_include_field_elements(self, client):
+        poller = client.begin_recognize_invoices_from_url(self.invoice_url_jpg, include_field_elements=True)
 
         result = poller.result()
         self.assertEqual(len(result), 1)
@@ -239,16 +239,36 @@ class TestInvoiceFromUrl(FormRecognizerTest):
             self.assertFieldElementsHasValues(field.value_data.field_elements, invoice.page_range.first_page_number)
         self.assertInvoiceItemsHasValues(invoice.fields["Items"].value, invoice.page_range.first_page_number, True)
 
-        # check dict values
-        self.assertEqual(invoice.fields.get("VendorName").value, "Contoso")
-        self.assertEqual(invoice.fields.get("VendorAddress").value, '1 Redmond way Suite 6000 Redmond, WA 99243')
-        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("CustomerAddress").value, '1020 Enterprise Way Sunnayvale, CA 87659')
-        self.assertEqual(invoice.fields.get("CustomerName").value, "Microsoft")
-        self.assertEqual(invoice.fields.get("InvoiceId").value, '34278587')
-        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
-        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
-        self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
+        self.assertEqual(invoice.fields.get("AmountDue").value, 610.0)
+        self.assertEqual(invoice.fields.get("BillingAddress").value, "123 Bill St, Redmond WA, 98052")
+        self.assertEqual(invoice.fields.get("BillingAddressRecipient").value, "Microsoft Finance")
+        self.assertEqual(invoice.fields.get("CustomerAddress").value, "123 Other St, Redmond WA, 98052")
+        self.assertEqual(invoice.fields.get("CustomerAddressRecipient").value, "Microsoft Corp")
+        self.assertEqual(invoice.fields.get("CustomerId").value, "CID-12345")
+        self.assertEqual(invoice.fields.get("CustomerName").value, "MICROSOFT CORPORATION")
+        self.assertEqual(invoice.fields.get("DueDate").value, date(2019, 12, 15))
+        self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2019, 11, 15))
+        self.assertEqual(invoice.fields.get("InvoiceId").value, "INV-100")
+        self.assertEqual(invoice.fields.get("InvoiceTotal").value, 110.0)
+        self.assertEqual(invoice.fields.get("PreviousUnpaidBalance").value, 500.0)
+        self.assertEqual(invoice.fields.get("PurchaseOrder").value, "PO-3333")
+        self.assertEqual(invoice.fields.get("RemittanceAddress").value, "123 Remit St New York, NY, 10001")
+        self.assertEqual(invoice.fields.get("RemittanceAddressRecipient").value, "Contoso Billing")
+        self.assertEqual(invoice.fields.get("ServiceAddress").value, "123 Service St, Redmond WA, 98052")
+        self.assertEqual(invoice.fields.get("ServiceAddressRecipient").value, "Microsoft Services")
+        self.assertEqual(invoice.fields.get("ServiceEndDate").value, date(2019, 11, 14))
+        self.assertEqual(invoice.fields.get("ServiceStartDate").value, date(2019, 10, 14))
+        self.assertEqual(invoice.fields.get("ShippingAddress").value, "123 Ship St, Redmond WA, 98052")
+        self.assertEqual(invoice.fields.get("ShippingAddressRecipient").value, "Microsoft Delivery")
+        self.assertEqual(invoice.fields.get("SubTotal").value, 100.0)
+        self.assertEqual(invoice.fields.get("TotalTax").value, 10.0)
+        self.assertEqual(invoice.fields.get("VendorName").value, "CONTOSO LTD.")
+        self.assertEqual(invoice.fields.get("VendorAddress").value, "123 456th St New York, NY, 10001")
+        self.assertEqual(invoice.fields.get("VendorAddressRecipient").value, "Contoso Headquarters")
+        self.assertEqual(invoice.fields.get("Items").value[0].value["Amount"].value, 100.0)
+        self.assertEqual(invoice.fields.get("Items").value[0].value["Description"].value, "Consulting service")
+        self.assertEqual(invoice.fields.get("Items").value[0].value["Quantity"].value, 1.0)
+        self.assertEqual(invoice.fields.get("Items").value[0].value["UnitPrice"].value, 1.0)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -267,7 +287,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     def test_invoice_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
-        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -291,3 +311,18 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_invoice_no_sub_line_items(self, client):
+
+        poller = client.begin_recognize_invoices_from_url(
+            invoice_url=self.invoice_no_sub_line_item,
+        )
+
+        result = poller.result()
+        invoice = result[0]
+        assert invoice.fields["Items"].value[0].value == {}
+        assert invoice.fields["Items"].value[0].value_data.text == "1"
+        assert invoice.fields["Items"].value[1].value == {}
+        assert invoice.fields["Items"].value[1].value_data.text == "1"

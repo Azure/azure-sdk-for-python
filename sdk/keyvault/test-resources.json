@@ -32,15 +32,25 @@
         },
         "hsmLocation": {
             "type": "string",
-            "defaultValue": "eastus2",
+            "defaultValue": "westus",
             "allowedValues": [
+                "australiacentral",
+                "canadacentral",
+                "centralus",
+                "eastasia",
                 "eastus2",
-                "southcentralus",
+                "koreacentral",
                 "northeurope",
-                "westeurope"
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "switzerlandnorth",
+                "uksouth",
+                "westeurope",
+                "westus"
             ],
             "metadata": {
-                "description": "The location of the Managed HSM. By default, this is 'southcentralus'."
+                "description": "The location of the Managed HSM. By default, this is 'westus'."
             }
         },
         "enableHsm": {
@@ -48,13 +58,6 @@
             "defaultValue": false,
             "metadata": {
                 "description": "Whether to enable deployment of Managed HSM. The default is false."
-            }
-        },
-        "enableSoftDelete": {
-            "type": "bool",
-            "defaultValue": true,
-            "metadata": {
-                "description": "Whether to enable soft delete for the Key Vault. The default is true."
             }
         },
         "keyVaultDomainSuffix": {
@@ -74,7 +77,7 @@
     },
     "variables": {
         "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
-        "hsmApiVersion": "2020-04-01-preview",
+        "hsmApiVersion": "2021-04-01-preview",
         "hsmName": "[concat(parameters('baseName'), 'hsm')]",
         "mgmtApiVersion": "2019-04-01",
         "blobContainerName": "backup",
@@ -89,10 +92,8 @@
         },
         "networkAcls": {
             "bypass": "AzureServices",
-            "virtualNetworkRules": [
-            ],
-            "ipRules": [
-            ],
+            "virtualNetworkRules": [],
+            "ipRules": [],
             "defaultAction": "Allow"
         }
     },
@@ -165,7 +166,7 @@
                 "enabledForDeployment": false,
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": false,
-                "enableSoftDelete": "[parameters('enableSoftDelete')]"
+                "enableSoftDelete": true
             }
         },
         {
@@ -184,7 +185,9 @@
                     "[parameters('testApplicationOid')]"
                 ],
                 "enablePurgeProtection": false,
-                "enableSoftDelete": "[parameters('enableSoftDelete')]"
+                "enableSoftDelete": true,
+                "publicNetworkAccess": "Enabled",
+                "networkAcls": "[variables('networkAcls')]"
             }
         },
         {

@@ -85,7 +85,7 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 3)
-        self.assertEqual(layout.tables[0].column_count, 6)
+        self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 1)
 
     @FormRecognizerPreparer()
@@ -119,7 +119,7 @@ class TestContentFromUrl(FormRecognizerTest):
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
         self.assertEqual(layout.tables[0].row_count, 5)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[1].row_count, 4)
         self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
@@ -279,7 +279,7 @@ class TestContentFromUrl(FormRecognizerTest):
     def test_content_language_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
-        assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "'language' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

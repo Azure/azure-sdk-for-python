@@ -71,11 +71,10 @@ class CommunicationTestCase(AzureTestCase):
 
     def setUp(self):
         super(CommunicationTestCase, self).setUp()
-
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized/;accesskey=fake==="
         else:
-            self.connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")

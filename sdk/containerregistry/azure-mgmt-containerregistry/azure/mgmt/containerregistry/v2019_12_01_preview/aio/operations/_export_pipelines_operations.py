@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ExportPipelinesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,8 +48,8 @@ class ExportPipelinesOperations:
         resource_group_name: str,
         registry_name: str,
         export_pipeline_name: str,
-        **kwargs
-    ) -> "models.ExportPipeline":
+        **kwargs: Any
+    ) -> "_models.ExportPipeline":
         """Gets the properties of the export pipeline.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -64,7 +64,7 @@ class ExportPipelinesOperations:
         :rtype: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipeline
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExportPipeline"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExportPipeline"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,10 +111,10 @@ class ExportPipelinesOperations:
         resource_group_name: str,
         registry_name: str,
         export_pipeline_name: str,
-        export_pipeline_create_parameters: "models.ExportPipeline",
-        **kwargs
-    ) -> "models.ExportPipeline":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExportPipeline"]
+        export_pipeline_create_parameters: "_models.ExportPipeline",
+        **kwargs: Any
+    ) -> "_models.ExportPipeline":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExportPipeline"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -170,9 +170,9 @@ class ExportPipelinesOperations:
         resource_group_name: str,
         registry_name: str,
         export_pipeline_name: str,
-        export_pipeline_create_parameters: "models.ExportPipeline",
-        **kwargs
-    ) -> AsyncLROPoller["models.ExportPipeline"]:
+        export_pipeline_create_parameters: "_models.ExportPipeline",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.ExportPipeline"]:
         """Creates an export pipeline for a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -186,8 +186,8 @@ class ExportPipelinesOperations:
         :type export_pipeline_create_parameters: ~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipeline
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ExportPipeline or the result of cls(response)
@@ -195,7 +195,7 @@ class ExportPipelinesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExportPipeline"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExportPipeline"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -221,7 +221,14 @@ class ExportPipelinesOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'exportPipelineName': self._serialize.url("export_pipeline_name", export_pipeline_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -240,7 +247,7 @@ class ExportPipelinesOperations:
         resource_group_name: str,
         registry_name: str,
         export_pipeline_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -284,7 +291,7 @@ class ExportPipelinesOperations:
         resource_group_name: str,
         registry_name: str,
         export_pipeline_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an export pipeline from a container registry.
 
@@ -297,8 +304,8 @@ class ExportPipelinesOperations:
         :type export_pipeline_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -328,7 +335,14 @@ class ExportPipelinesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+            'exportPipelineName': self._serialize.url("export_pipeline_name", export_pipeline_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -346,8 +360,8 @@ class ExportPipelinesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        **kwargs
-    ) -> AsyncIterable["models.ExportPipelineListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.ExportPipelineListResult"]:
         """Lists all export pipelines for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -360,7 +374,7 @@ class ExportPipelinesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerregistry.v2019_12_01_preview.models.ExportPipelineListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExportPipelineListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExportPipelineListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

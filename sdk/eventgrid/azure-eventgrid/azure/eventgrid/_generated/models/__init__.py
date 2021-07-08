@@ -30,6 +30,9 @@ try:
     from ._models_py3 import AcsChatThreadPropertiesUpdatedEventData
     from ._models_py3 import AcsChatThreadPropertiesUpdatedPerUserEventData
     from ._models_py3 import AcsChatThreadWithUserDeletedEventData
+    from ._models_py3 import AcsRecordingChunkInfoProperties
+    from ._models_py3 import AcsRecordingFileStatusUpdatedEventData
+    from ._models_py3 import AcsRecordingStorageInfoProperties
     from ._models_py3 import AcsSmsDeliveryAttemptProperties
     from ._models_py3 import AcsSmsDeliveryReportReceivedEventData
     from ._models_py3 import AcsSmsEventBaseProperties
@@ -118,6 +121,9 @@ try:
     from ._models_py3 import MediaLiveEventTrackDiscontinuityDetectedEventData
     from ._models_py3 import MicrosoftTeamsUserIdentifierModel
     from ._models_py3 import PhoneNumberIdentifierModel
+    from ._models_py3 import PolicyInsightsPolicyStateChangedEventData
+    from ._models_py3 import PolicyInsightsPolicyStateCreatedEventData
+    from ._models_py3 import PolicyInsightsPolicyStateDeletedEventData
     from ._models_py3 import RedisExportRDBCompletedEventData
     from ._models_py3 import RedisImportRDBCompletedEventData
     from ._models_py3 import RedisPatchingCompletedEventData
@@ -137,9 +143,12 @@ try:
     from ._models_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from ._models_py3 import SignalRServiceClientConnectionConnectedEventData
     from ._models_py3 import SignalRServiceClientConnectionDisconnectedEventData
+    from ._models_py3 import StorageAsyncOperationInitiatedEventData
     from ._models_py3 import StorageBlobCreatedEventData
     from ._models_py3 import StorageBlobDeletedEventData
+    from ._models_py3 import StorageBlobInventoryPolicyCompletedEventData
     from ._models_py3 import StorageBlobRenamedEventData
+    from ._models_py3 import StorageBlobTierChangedEventData
     from ._models_py3 import StorageDirectoryCreatedEventData
     from ._models_py3 import StorageDirectoryDeletedEventData
     from ._models_py3 import StorageDirectoryRenamedEventData
@@ -186,6 +195,9 @@ except (SyntaxError, ImportError):
     from ._models import AcsChatThreadPropertiesUpdatedEventData  # type: ignore
     from ._models import AcsChatThreadPropertiesUpdatedPerUserEventData  # type: ignore
     from ._models import AcsChatThreadWithUserDeletedEventData  # type: ignore
+    from ._models import AcsRecordingChunkInfoProperties  # type: ignore
+    from ._models import AcsRecordingFileStatusUpdatedEventData  # type: ignore
+    from ._models import AcsRecordingStorageInfoProperties  # type: ignore
     from ._models import AcsSmsDeliveryAttemptProperties  # type: ignore
     from ._models import AcsSmsDeliveryReportReceivedEventData  # type: ignore
     from ._models import AcsSmsEventBaseProperties  # type: ignore
@@ -274,6 +286,9 @@ except (SyntaxError, ImportError):
     from ._models import MediaLiveEventTrackDiscontinuityDetectedEventData  # type: ignore
     from ._models import MicrosoftTeamsUserIdentifierModel  # type: ignore
     from ._models import PhoneNumberIdentifierModel  # type: ignore
+    from ._models import PolicyInsightsPolicyStateChangedEventData  # type: ignore
+    from ._models import PolicyInsightsPolicyStateCreatedEventData  # type: ignore
+    from ._models import PolicyInsightsPolicyStateDeletedEventData  # type: ignore
     from ._models import RedisExportRDBCompletedEventData  # type: ignore
     from ._models import RedisImportRDBCompletedEventData  # type: ignore
     from ._models import RedisPatchingCompletedEventData  # type: ignore
@@ -293,9 +308,12 @@ except (SyntaxError, ImportError):
     from ._models import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData  # type: ignore
     from ._models import SignalRServiceClientConnectionConnectedEventData  # type: ignore
     from ._models import SignalRServiceClientConnectionDisconnectedEventData  # type: ignore
+    from ._models import StorageAsyncOperationInitiatedEventData  # type: ignore
     from ._models import StorageBlobCreatedEventData  # type: ignore
     from ._models import StorageBlobDeletedEventData  # type: ignore
+    from ._models import StorageBlobInventoryPolicyCompletedEventData  # type: ignore
     from ._models import StorageBlobRenamedEventData  # type: ignore
+    from ._models import StorageBlobTierChangedEventData  # type: ignore
     from ._models import StorageDirectoryCreatedEventData  # type: ignore
     from ._models import StorageDirectoryDeletedEventData  # type: ignore
     from ._models import StorageDirectoryRenamedEventData  # type: ignore
@@ -355,6 +373,9 @@ __all__ = [
     'AcsChatThreadPropertiesUpdatedEventData',
     'AcsChatThreadPropertiesUpdatedPerUserEventData',
     'AcsChatThreadWithUserDeletedEventData',
+    'AcsRecordingChunkInfoProperties',
+    'AcsRecordingFileStatusUpdatedEventData',
+    'AcsRecordingStorageInfoProperties',
     'AcsSmsDeliveryAttemptProperties',
     'AcsSmsDeliveryReportReceivedEventData',
     'AcsSmsEventBaseProperties',
@@ -443,6 +464,9 @@ __all__ = [
     'MediaLiveEventTrackDiscontinuityDetectedEventData',
     'MicrosoftTeamsUserIdentifierModel',
     'PhoneNumberIdentifierModel',
+    'PolicyInsightsPolicyStateChangedEventData',
+    'PolicyInsightsPolicyStateCreatedEventData',
+    'PolicyInsightsPolicyStateDeletedEventData',
     'RedisExportRDBCompletedEventData',
     'RedisImportRDBCompletedEventData',
     'RedisPatchingCompletedEventData',
@@ -462,9 +486,12 @@ __all__ = [
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'SignalRServiceClientConnectionConnectedEventData',
     'SignalRServiceClientConnectionDisconnectedEventData',
+    'StorageAsyncOperationInitiatedEventData',
     'StorageBlobCreatedEventData',
     'StorageBlobDeletedEventData',
+    'StorageBlobInventoryPolicyCompletedEventData',
     'StorageBlobRenamedEventData',
+    'StorageBlobTierChangedEventData',
     'StorageDirectoryCreatedEventData',
     'StorageDirectoryDeletedEventData',
     'StorageDirectoryRenamedEventData',

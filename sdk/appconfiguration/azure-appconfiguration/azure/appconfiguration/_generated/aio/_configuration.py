@@ -48,7 +48,7 @@ class AzureAppConfigurationConfiguration(Configuration):
         self.endpoint = endpoint
         self.sync_token = sync_token
         self.api_version = "1.0"
-        self.credential_scopes = kwargs.pop('credential_scopes', [])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'appconfiguration/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -65,7 +65,5 @@ class AzureAppConfigurationConfiguration(Configuration):
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
-        if not self.credential_scopes and not self.authentication_policy:
-            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
@@ -21,21 +21,23 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 17:54:29 GMT
+      - Tue, 22 Jun 2021 18:58:45 GMT
       ms-cv:
-      - 3qpzL2TAgU2LX4OLE/ZWKQ.0
+      - Ug7Zn5/Gz0KQgz9N4Xhucg.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 91ms
+      - 184ms
     status:
       code: 201
       message: Created
@@ -51,7 +53,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-03-07
   response:
@@ -59,17 +61,19 @@ interactions:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1
       date:
-      - Tue, 13 Apr 2021 17:54:30 GMT
+      - Tue, 22 Jun 2021 18:58:46 GMT
       ms-cv:
-      - 04FDSY1mSkeU92Los0y+zA.0
+      - nilo/u16T0+MwV1DVmJmKA.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 591ms
+      - 602ms
     status:
       code: 204
       message: No Content

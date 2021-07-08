@@ -3,29 +3,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
-import json
+import logging
 import os
-import re
-import six
 
 from azure.containerregistry.aio import (
-    ContainerRepositoryClient,
     ContainerRegistryClient,
-)
-from azure.containerregistry import (
-    TagProperties,
-    ContentPermissions,
-    RegistryArtifactProperties,
 )
 
 from azure.core.credentials import AccessToken
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
+from azure.identity import AzureAuthorityHosts
 
-from azure_devtools.scenario_tests import RecordingProcessor
-from devtools_testutils import AzureTestCase
+from testcase import ContainerRegistryTestClass, get_authorization_scope, get_authority
 
-from testcase import ContainerRegistryTestClass
+logger = logging.getLogger()
 
 
 class AsyncFakeTokenCredential(object):
@@ -44,22 +35,27 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
     def __init__(self, method_name):
         super(AsyncContainerRegistryTestClass, self).__init__(method_name)
 
-    def get_credential(self):
+    def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            return DefaultAzureCredential()
+            if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+                return ClientSecretCredential(
+                    tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+                    client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+                    client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+                    authority=authority
+                )
+            return DefaultAzureCredential(**kwargs)
         return AsyncFakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        return ContainerRegistryClient(
-            endpoint=endpoint,
-            credential=self.get_credential(),
-            **kwargs,
-        )
+        authority = get_authority(endpoint)
+        audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = get_authorization_scope(authority)
+        credential = self.get_credential(authority=authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, credential_scopes=audience, **kwargs)
 
-    def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(
-            endpoint=endpoint,
-            repository=name,
-            credential=self.get_credential(),
-            **kwargs,
-        )
+    def create_anon_client(self, endpoint, **kwargs):
+        authority = get_authority(endpoint)
+        audience = get_authorization_scope(authority)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, credential_scopes=audience, **kwargs)

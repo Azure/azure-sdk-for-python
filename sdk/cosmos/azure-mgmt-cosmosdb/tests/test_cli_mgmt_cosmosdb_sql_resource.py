@@ -24,6 +24,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
             azure.mgmt.cosmosdb.CosmosDBManagementClient
         )
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sql_resource(self, resource_group):
 
@@ -116,6 +117,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
         result = self.mgmt_client.database_accounts.begin_delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sql_container(self, resource_group):
 
@@ -272,6 +274,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
         result = self.mgmt_client.database_accounts.begin_delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sql_trigger(self, resource_group):
 
@@ -419,6 +422,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
         result = self.mgmt_client.database_accounts.begin_delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sql_stored_procedure(self, resource_group):
 
@@ -564,6 +568,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
         result = self.mgmt_client.database_accounts.begin_delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
         result = result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_sql_defined_function(self, resource_group):
 

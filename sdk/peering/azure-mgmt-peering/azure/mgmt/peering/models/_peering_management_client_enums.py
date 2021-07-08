@@ -47,13 +47,11 @@ class DirectPeeringType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TRANSIT = "Transit"
     CDN = "Cdn"
     INTERNAL = "Internal"
-    IX = "Ix"
-    IX_RS = "IxRs"
 
 class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     AVAILABLE = "Available"
-    UNAVAILABLE = "Unavailable"
+    UN_AVAILABLE = "UnAvailable"
 
 class Enum1(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -71,8 +69,6 @@ class Enum15(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TRANSIT = "Transit"
     CDN = "Cdn"
     INTERNAL = "Internal"
-    IX = "Ix"
-    IX_RS = "IxRs"
 
 class Family(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The family of the peering SKU.
@@ -93,11 +89,22 @@ class LearnedType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     NONE = "None"
-    VIA_SERVICE_PROVIDER = "ViaServiceProvider"
+    VIA_PARTNER = "ViaPartner"
     VIA_SESSION = "ViaSession"
 
+class Name(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The name of the peering SKU.
+    """
+
+    BASIC_EXCHANGE_FREE = "Basic_Exchange_Free"
+    BASIC_DIRECT_FREE = "Basic_Direct_Free"
+    PREMIUM_DIRECT_FREE = "Premium_Direct_Free"
+    PREMIUM_EXCHANGE_METERED = "Premium_Exchange_Metered"
+    PREMIUM_DIRECT_METERED = "Premium_Direct_Metered"
+    PREMIUM_DIRECT_UNLIMITED = "Premium_Direct_Unlimited"
+
 class PrefixValidationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The prefix validation state.
+    """The prefix validation state
     """
 
     NONE = "None"
@@ -105,7 +112,6 @@ class PrefixValidationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     VERIFIED = "Verified"
     FAILED = "Failed"
     PENDING = "Pending"
-    WARNING = "Warning"
     UNKNOWN = "Unknown"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -116,17 +122,6 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
-
-class Role(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The role of the contact.
-    """
-
-    NOC = "Noc"
-    POLICY = "Policy"
-    TECHNICAL = "Technical"
-    SERVICE = "Service"
-    ESCALATION = "Escalation"
-    OTHER = "Other"
 
 class SessionAddressProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The field indicating if Microsoft provides session ip addresses.

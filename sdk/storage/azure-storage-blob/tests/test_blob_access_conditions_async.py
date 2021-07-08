@@ -29,7 +29,7 @@ from azure.storage.blob import (
     generate_container_sas, CustomerProvidedEncryptionKey,
 )
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -108,7 +108,7 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
 
         # Get blob service client from container client
         bsc_props1 = await bsc1.get_service_properties()
-        bsc2 = container_client1.get_blob_service_client()
+        bsc2 = container_client1._get_blob_service_client()
         bsc_props2 = await bsc2.get_service_properties()
         self.assertDictEqual(bsc_props1, bsc_props2)
 
@@ -145,7 +145,7 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         await blob_client1.upload_blob(b"this is test data")
         downloaded_blob1 = await blob_client1.download_blob()
         blob_client1_data = await downloaded_blob1.readall()
-        container_client2 = blob_client1.get_container_client()
+        container_client2 = blob_client1._get_container_client()
 
         props2 = await container_client2.get_container_properties()
         md2 = props2.metadata

@@ -64,6 +64,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
@@ -93,7 +94,7 @@ setup(
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
-        "msrest>=0.6.18",
+        "msrest>=0.6.21",
         "azure-storage-blob<13.0.0,>=12.8.0b1"
     ],
     extras_require={

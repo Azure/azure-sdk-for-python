@@ -24,6 +24,10 @@ class MgmtComputeTestMultiVersion(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtComputeTestMultiVersion, self).setUp()
+        self.re_replacer.register_pattern_pair(
+          '\"accessSAS\": \"https://.*\"',
+          '\"accessSAS\": \"FakeUrl\"'
+        )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
@@ -109,6 +113,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtComputeTest, self).setUp()
+        self.re_replacer.register_pattern_pair(
+          '\"accessSAS\": \"https://.*\"',
+          '\"accessSAS\": \"FakeUrl\"'
+        )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )

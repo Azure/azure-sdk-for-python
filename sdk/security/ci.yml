@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -15,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -32,5 +30,3 @@ extends:
     Artifacts:
     - name: azure-mgmt-security
       safeName: azuremgmtsecurity
-    - name: azure-security-nspkg
-      safeName: azuresecuritynspkg

@@ -30,7 +30,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             self.assertIsNotNone(email_hook.id)
             self.assertIsNotNone(email_hook.name)
-            self.assertIsNotNone(email_hook.admin_emails)
+            self.assertIsNotNone(email_hook.admins)
             self.assertEqual(email_hook.emails_to_alert, ["yournamehere@microsoft.com"])
             self.assertEqual(email_hook.description, "my email hook")
             self.assertEqual(email_hook.external_link, "external link")
@@ -42,7 +42,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 self.admin_client.get_hook(email_hook.id)
 
     def test_create_web_hook(self):
-        web_hook_name = self.create_random_name("testwebhook")
+        web_hook_name = self.create_random_name("testwebhooks")
         try:
             web_hook = self.admin_client.create_hook(
                 hook=WebNotificationHook(
@@ -54,7 +54,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             )
             self.assertIsNotNone(web_hook.id)
             self.assertIsNotNone(web_hook.name)
-            self.assertIsNotNone(web_hook.admin_emails)
+            self.assertIsNotNone(web_hook.admins)
             self.assertEqual(web_hook.endpoint, "https://httpbin.org/post")
             self.assertEqual(web_hook.description, "my web hook")
             self.assertEqual(web_hook.external_link, "external link")
@@ -171,7 +171,6 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.username, "myusername")
-            self.assertEqual(updated.password, "password")
 
         finally:
             self.admin_client.delete_hook(hook.id)
@@ -195,13 +194,12 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.username, "myusername")
-            self.assertEqual(updated.password, "password")
 
         finally:
             self.admin_client.delete_hook(hook.id)
 
     def test_update_web_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name("testwebhooks")
         try:
             hook = self._create_web_hook_for_update(name)
 
@@ -224,7 +222,6 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertEqual(updated.description, "updateMe")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.username, "myusername")
-            self.assertEqual(updated.password, "password")
 
         finally:
             self.admin_client.delete_hook(hook.id)

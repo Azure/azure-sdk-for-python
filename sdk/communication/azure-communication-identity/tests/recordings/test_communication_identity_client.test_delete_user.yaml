@@ -12,10 +12,10 @@ interactions:
       - '2'
       Content-Type:
       - application/json
-      Date:
-      - Tue, 13 Apr 2021 17:54:26 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:44 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,21 +25,23 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 17:54:27 GMT
+      - Tue, 22 Jun 2021 18:58:43 GMT
       ms-cv:
-      - NpGxr/VCv0i3/F8p8B/PEw.0
+      - 9IzqC9YNm0uDNYm6RxtIYg.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 16ms
+      - 49ms
     status:
       code: 201
       message: Created
@@ -54,10 +56,10 @@ interactions:
       - keep-alive
       Content-Length:
       - '0'
-      Date:
-      - Tue, 13 Apr 2021 17:54:27 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 22 Jun 2021 18:58:44 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -67,17 +69,19 @@ interactions:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1
       date:
-      - Tue, 13 Apr 2021 17:54:27 GMT
+      - Tue, 22 Jun 2021 18:58:44 GMT
       ms-cv:
-      - zRztRbFrrEe9RLXIARPN7w.0
+      - JTY7rdzhkUqYBDIPRq0VQQ.0
       request-context:
       - appId=
       strict-transport-security:
       - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 583ms
+      - 533ms
     status:
       code: 204
       message: No Content

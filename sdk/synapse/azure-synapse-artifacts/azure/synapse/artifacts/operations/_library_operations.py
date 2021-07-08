@@ -180,15 +180,15 @@ class LibraryOperations(object):
         :type library_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryResourceInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -353,15 +353,15 @@ class LibraryOperations(object):
         :type library_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryResourceInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -525,15 +525,15 @@ class LibraryOperations(object):
         :type library_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LibraryResourceInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -580,7 +580,7 @@ class LibraryOperations(object):
         self,
         library_name,  # type: str
         content,  # type: IO
-        x_ms_blob_condition_appendpos=None,  # type: Optional[int]
+        blob_condition_append_position=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -592,11 +592,11 @@ class LibraryOperations(object):
         :type library_name: str
         :param content: Library file chunk.
         :type content: IO
-        :param x_ms_blob_condition_appendpos: Set this header to a byte offset at which the block is
+        :param blob_condition_append_position: Set this header to a byte offset at which the block is
          expected to be appended. The request succeeds only if the current offset matches this value.
          Otherwise, the request fails with the AppendPositionConditionNotMet error (HTTP status code 412
          – Precondition Failed).
-        :type x_ms_blob_condition_appendpos: long
+        :type blob_condition_append_position: long
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -607,6 +607,7 @@ class LibraryOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        comp = "appendblock"
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/octet-stream")
         accept = "application/json"
@@ -621,12 +622,13 @@ class LibraryOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if x_ms_blob_condition_appendpos is not None:
-            header_parameters['x-ms-blob-condition-appendpos'] = self._serialize.header("x_ms_blob_condition_appendpos", x_ms_blob_condition_appendpos, 'long')
+        if blob_condition_append_position is not None:
+            header_parameters['x-ms-blob-condition-appendpos'] = self._serialize.header("blob_condition_append_position", blob_condition_append_position, 'long')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 

@@ -7,17 +7,18 @@ import json
 import os
 import platform
 import re
+import subprocess
 import sys
 import time
 from typing import TYPE_CHECKING
 
-import subprocess
+import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource
+from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
@@ -34,10 +35,17 @@ class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+
+    :keyword bool allow_multitenant_authentication: when True, enables the credential to acquire tokens from any tenant
+        the identity logged in to the Azure CLI is registered in. When False, which is the default, the credential will
+        acquire tokens only from the tenant of the Azure CLI's active subscription.
     """
 
+    def __init__(self, **kwargs):
+        self._allow_multitenant = kwargs.get("allow_multitenant_authentication", False)
+
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=no-self-use,unused-argument
+    def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -45,6 +53,9 @@ class AzureCliCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+        :keyword str tenant_id: optional tenant to include in the token request. If **allow_multitenant_authentication**
+            is False, specifying a tenant with this argument may raise an exception.
+
         :rtype: :class:`azure.core.credentials.AccessToken`
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
@@ -53,9 +64,11 @@ class AzureCliCredential(object):
         """
 
         resource = _scopes_to_resource(*scopes)
-        output, error = _run_command(COMMAND_LINE.format(resource))
-        if error:
-            raise error
+        command = COMMAND_LINE.format(resource)
+        tenant = resolve_tenant("", self._allow_multitenant, **kwargs)
+        if tenant:
+            command += " --tenant " + tenant
+        output = _run_command(command)
 
         token = parse_token(output)
         if not token:
@@ -120,25 +133,25 @@ def _run_command(command):
         if platform.python_version() >= "3.3":
             kwargs["timeout"] = 10
 
-        output = subprocess.check_output(args, **kwargs)
-        return output, None
+        return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
         if ex.returncode == 127 or ex.output.startswith("'az' is not recognized"):
-            error = CredentialUnavailableError(message=CLI_NOT_FOUND)
-        elif "az login" in ex.output or "az account set" in ex.output:
-            error = CredentialUnavailableError(message=NOT_LOGGED_IN)
+            raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+        if "az login" in ex.output or "az account set" in ex.output:
+            raise CredentialUnavailableError(message=NOT_LOGGED_IN)
+
+        # return code is from the CLI -> propagate its output
+        if ex.output:
+            message = sanitize_output(ex.output)
         else:
-            # return code is from the CLI -> propagate its output
-            if ex.output:
-                message = sanitize_output(ex.output)
-            else:
-                message = "Failed to invoke Azure CLI"
-            error = ClientAuthenticationError(message=message)
+            message = "Failed to invoke Azure CLI"
+        raise ClientAuthenticationError(message=message)
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
+        six.raise_from(error, ex)
     except Exception as ex:  # pylint:disable=broad-except
-        error = ex
-
-    return None, error
+        # could be a timeout, for example
+        error = CredentialUnavailableError(message="Failed to invoke the Azure CLI")
+        six.raise_from(error, ex)

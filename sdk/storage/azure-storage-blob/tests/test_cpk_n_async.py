@@ -15,7 +15,7 @@ from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.blob import BlobType, BlobBlock, BlobSasPermissions, generate_blob_sas, ContainerEncryptionScope
 from azure.storage.blob.aio import BlobServiceClient
 from _shared.testcase import GlobalStorageAccountPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 # The encryption scope are pre-created using management plane tool ArmClient.

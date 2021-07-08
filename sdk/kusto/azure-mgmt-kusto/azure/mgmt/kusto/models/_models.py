@@ -46,7 +46,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class AttachedDatabaseConfiguration(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AttachedDatabaseConfiguration(ProxyResource):
     """Class representing an attached database configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -77,6 +111,8 @@ class AttachedDatabaseConfiguration(Resource):
      values include: "Union", "Replace", "None".
     :type default_principals_modification_kind: str or
      ~azure.mgmt.kusto.models.DefaultPrincipalsModificationKind
+    :param table_level_sharing_properties: Table level sharing specifications.
+    :type table_level_sharing_properties: ~azure.mgmt.kusto.models.TableLevelSharingProperties
     """
 
     _validation = {
@@ -97,6 +133,7 @@ class AttachedDatabaseConfiguration(Resource):
         'cluster_resource_id': {'key': 'properties.clusterResourceId', 'type': 'str'},
         'attached_database_names': {'key': 'properties.attachedDatabaseNames', 'type': '[str]'},
         'default_principals_modification_kind': {'key': 'properties.defaultPrincipalsModificationKind', 'type': 'str'},
+        'table_level_sharing_properties': {'key': 'properties.tableLevelSharingProperties', 'type': 'TableLevelSharingProperties'},
     }
 
     def __init__(
@@ -110,6 +147,7 @@ class AttachedDatabaseConfiguration(Resource):
         self.cluster_resource_id = kwargs.get('cluster_resource_id', None)
         self.attached_database_names = None
         self.default_principals_modification_kind = kwargs.get('default_principals_modification_kind', None)
+        self.table_level_sharing_properties = kwargs.get('table_level_sharing_properties', None)
 
 
 class AttachedDatabaseConfigurationListResult(msrest.serialization.Model):
@@ -206,11 +244,12 @@ class AzureSku(msrest.serialization.Model):
 
     :param name: Required. SKU name. Possible values include: "Standard_DS13_v2+1TB_PS",
      "Standard_DS13_v2+2TB_PS", "Standard_DS14_v2+3TB_PS", "Standard_DS14_v2+4TB_PS",
-     "Standard_D13_v2", "Standard_D14_v2", "Standard_L8s", "Standard_L16s", "Standard_D11_v2",
-     "Standard_D12_v2", "Standard_L4s", "Dev(No SLA)_Standard_D11_v2", "Standard_E64i_v3",
-     "Standard_E2a_v4", "Standard_E4a_v4", "Standard_E8a_v4", "Standard_E16a_v4",
-     "Standard_E8as_v4+1TB_PS", "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS",
-     "Standard_E16as_v4+4TB_PS", "Dev(No SLA)_Standard_E2a_v4".
+     "Standard_D13_v2", "Standard_D14_v2", "Standard_L8s", "Standard_L16s", "Standard_L8s_v2",
+     "Standard_L16s_v2", "Standard_D11_v2", "Standard_D12_v2", "Standard_L4s", "Dev(No
+     SLA)_Standard_D11_v2", "Standard_E64i_v3", "Standard_E80ids_v4", "Standard_E2a_v4",
+     "Standard_E4a_v4", "Standard_E8a_v4", "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS",
+     "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS", "Dev(No
+     SLA)_Standard_E2a_v4".
     :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
     :param capacity: The number of instances of the cluster.
     :type capacity: int
@@ -408,6 +447,8 @@ class Cluster(TrackedResource):
     :type zones: list[str]
     :param identity: The identity of the cluster, if configured.
     :type identity: ~azure.mgmt.kusto.models.Identity
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
     :ivar state: The state of the resource. Possible values include: "Creating", "Unavailable",
      "Running", "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating".
     :vartype state: str or ~azure.mgmt.kusto.models.State
@@ -441,7 +482,7 @@ class Cluster(TrackedResource):
     :param enable_double_encryption: A boolean value that indicates if double encryption is
      enabled.
     :type enable_double_encryption: bool
-    :param engine_type: The engine type. Possible values include: "V2", "V3".
+    :param engine_type: The engine type. Possible values include: "V2", "V3". Default value: "V3".
     :type engine_type: str or ~azure.mgmt.kusto.models.EngineType
     """
 
@@ -451,6 +492,7 @@ class Cluster(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
+        'etag': {'readonly': True},
         'state': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'uri': {'readonly': True},
@@ -468,6 +510,7 @@ class Cluster(TrackedResource):
         'sku': {'key': 'sku', 'type': 'AzureSku'},
         'zones': {'key': 'zones', 'type': '[str]'},
         'identity': {'key': 'identity', 'type': 'Identity'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
@@ -493,6 +536,7 @@ class Cluster(TrackedResource):
         self.sku = kwargs['sku']
         self.zones = kwargs.get('zones', None)
         self.identity = kwargs.get('identity', None)
+        self.etag = None
         self.state = None
         self.provisioning_state = None
         self.uri = None
@@ -500,14 +544,14 @@ class Cluster(TrackedResource):
         self.state_reason = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
         self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
-        self.enable_disk_encryption = kwargs.get('enable_disk_encryption', None)
+        self.enable_disk_encryption = kwargs.get('enable_disk_encryption', False)
         self.enable_streaming_ingest = kwargs.get('enable_streaming_ingest', False)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
         self.enable_purge = kwargs.get('enable_purge', False)
         self.language_extensions = None
         self.enable_double_encryption = kwargs.get('enable_double_encryption', False)
-        self.engine_type = kwargs.get('engine_type', None)
+        self.engine_type = kwargs.get('engine_type', "V3")
 
 
 class ClusterCheckNameRequest(msrest.serialization.Model):
@@ -563,7 +607,7 @@ class ClusterListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class ClusterPrincipalAssignment(Resource):
+class ClusterPrincipalAssignment(ProxyResource):
     """Class representing a cluster principal assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -738,7 +782,7 @@ class ClusterUpdate(Resource):
     :param enable_double_encryption: A boolean value that indicates if double encryption is
      enabled.
     :type enable_double_encryption: bool
-    :param engine_type: The engine type. Possible values include: "V2", "V3".
+    :param engine_type: The engine type. Possible values include: "V2", "V3". Default value: "V3".
     :type engine_type: str or ~azure.mgmt.kusto.models.EngineType
     """
 
@@ -795,14 +839,14 @@ class ClusterUpdate(Resource):
         self.state_reason = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
         self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
-        self.enable_disk_encryption = kwargs.get('enable_disk_encryption', None)
+        self.enable_disk_encryption = kwargs.get('enable_disk_encryption', False)
         self.enable_streaming_ingest = kwargs.get('enable_streaming_ingest', False)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
         self.enable_purge = kwargs.get('enable_purge', False)
         self.language_extensions = None
         self.enable_double_encryption = kwargs.get('enable_double_encryption', False)
-        self.engine_type = kwargs.get('engine_type', None)
+        self.engine_type = kwargs.get('engine_type', "V3")
 
 
 class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
@@ -835,7 +879,7 @@ class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalp
         self.client_id = None
 
 
-class Database(Resource):
+class Database(ProxyResource):
     """Class representing a Kusto database.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -915,7 +959,7 @@ class DatabasePrincipal(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param role: Required. Database principal role. Possible values include: "Admin", "Ingestor",
-     "Monitor", "User", "UnrestrictedViewers", "Viewer".
+     "Monitor", "User", "UnrestrictedViewer", "Viewer".
     :type role: str or ~azure.mgmt.kusto.models.DatabasePrincipalRole
     :param name: Required. Database principal name.
     :type name: str
@@ -963,7 +1007,7 @@ class DatabasePrincipal(msrest.serialization.Model):
         self.tenant_name = None
 
 
-class DatabasePrincipalAssignment(Resource):
+class DatabasePrincipalAssignment(ProxyResource):
     """Class representing a database principal assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -980,7 +1024,7 @@ class DatabasePrincipalAssignment(Resource):
      email, application ID, or security group name.
     :type principal_id: str
     :param role: Database principal role. Possible values include: "Admin", "Ingestor", "Monitor",
-     "User", "UnrestrictedViewers", "Viewer".
+     "User", "UnrestrictedViewer", "Viewer".
     :type role: str or ~azure.mgmt.kusto.models.DatabasePrincipalRole
     :param tenant_id: The tenant id of the principal.
     :type tenant_id: str
@@ -1142,7 +1186,7 @@ class DatabaseStatistics(msrest.serialization.Model):
         self.size = kwargs.get('size', None)
 
 
-class DataConnection(Resource):
+class DataConnection(ProxyResource):
     """Class representing an data connection.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -1459,11 +1503,14 @@ class EventHubDataConnection(DataConnection):
     :param event_system_properties: System properties of the event hub.
     :type event_system_properties: list[str]
     :param compression: The event hub messages compression type. Possible values include: "None",
-     "GZip".
+     "GZip". Default value: "None".
     :type compression: str or ~azure.mgmt.kusto.models.Compression
     :ivar provisioning_state: The provisioned state of the resource. Possible values include:
      "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :param managed_identity_resource_id: The resource ID of a managed identity (system or user
+     assigned) to be used to authenticate with event hub.
+    :type managed_identity_resource_id: str
     """
 
     _validation = {
@@ -1488,6 +1535,7 @@ class EventHubDataConnection(DataConnection):
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
         'compression': {'key': 'properties.compression', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_identity_resource_id': {'key': 'properties.managedIdentityResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -1502,8 +1550,9 @@ class EventHubDataConnection(DataConnection):
         self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
         self.data_format = kwargs.get('data_format', None)
         self.event_system_properties = kwargs.get('event_system_properties', None)
-        self.compression = kwargs.get('compression', None)
+        self.compression = kwargs.get('compression', "None")
         self.provisioning_state = None
+        self.managed_identity_resource_id = kwargs.get('managed_identity_resource_id', None)
 
 
 class FollowerDatabaseDefinition(msrest.serialization.Model):
@@ -1878,6 +1927,71 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
+class OperationResult(msrest.serialization.Model):
+    """Operation Result Entity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: ID of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar status: status of the Operation result. Possible values include: "Succeeded", "Canceled",
+     "Failed", "Running".
+    :vartype status: str or ~azure.mgmt.kusto.models.Status
+    :param start_time: The operation start time.
+    :type start_time: ~datetime.datetime
+    :param end_time: The operation end time.
+    :type end_time: ~datetime.datetime
+    :param percent_complete: Percentage completed.
+    :type percent_complete: float
+    :param code: The code of the error.
+    :type code: str
+    :param message: The error message.
+    :type message: str
+    :param operation_kind: The kind of the operation.
+    :type operation_kind: str
+    :param operation_state: The state of the operation.
+    :type operation_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'status': {'readonly': True},
+        'percent_complete': {'maximum': 100, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
+        'code': {'key': 'error.code', 'type': 'str'},
+        'message': {'key': 'error.message', 'type': 'str'},
+        'operation_kind': {'key': 'properties.operationKind', 'type': 'str'},
+        'operation_state': {'key': 'properties.operationState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OperationResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.status = None
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.percent_complete = kwargs.get('percent_complete', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.operation_kind = kwargs.get('operation_kind', None)
+        self.operation_state = kwargs.get('operation_state', None)
+
+
 class OptimizedAutoscale(msrest.serialization.Model):
     """A class that contains the optimized auto scale definition.
 
@@ -1917,40 +2031,6 @@ class OptimizedAutoscale(msrest.serialization.Model):
         self.is_enabled = kwargs['is_enabled']
         self.minimum = kwargs['minimum']
         self.maximum = kwargs['maximum']
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class ReadOnlyFollowingDatabase(Database):
@@ -2109,6 +2189,120 @@ class ReadWriteDatabase(Database):
         self.is_followed = None
 
 
+class Script(ProxyResource):
+    """Class representing a database script.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.kusto.models.SystemData
+    :param script_url: The url to the KQL script blob file.
+    :type script_url: str
+    :param script_url_sas_token: The SaS token.
+    :type script_url_sas_token: str
+    :param force_update_tag: A unique string. If changed the script will be applied again.
+    :type force_update_tag: str
+    :param continue_on_errors: Flag that indicates whether to continue if one of the command fails.
+    :type continue_on_errors: bool
+    :ivar provisioning_state: The provisioned state of the resource. Possible values include:
+     "Running", "Creating", "Deleting", "Succeeded", "Failed", "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'script_url': {'key': 'properties.scriptUrl', 'type': 'str'},
+        'script_url_sas_token': {'key': 'properties.scriptUrlSasToken', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'continue_on_errors': {'key': 'properties.continueOnErrors', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Script, self).__init__(**kwargs)
+        self.system_data = None
+        self.script_url = kwargs.get('script_url', None)
+        self.script_url_sas_token = kwargs.get('script_url_sas_token', None)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.continue_on_errors = kwargs.get('continue_on_errors', False)
+        self.provisioning_state = None
+
+
+class ScriptCheckNameRequest(msrest.serialization.Model):
+    """A script name availability request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Script name.
+    :type name: str
+    :ivar type: Required. The type of resource, Microsoft.Kusto/clusters/databases/scripts. Default
+     value: "Microsoft.Kusto/clusters/databases/scripts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    type = "Microsoft.Kusto/clusters/databases/scripts"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScriptCheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs['name']
+
+
+class ScriptListResult(msrest.serialization.Model):
+    """The list Kusto database script operation response.
+
+    :param value: The list of Kusto scripts.
+    :type value: list[~azure.mgmt.kusto.models.Script]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Script]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScriptListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class SkuDescription(msrest.serialization.Model):
     """The Kusto SKU description of given resource type.
 
@@ -2211,6 +2405,88 @@ class SkuLocationInfoItem(msrest.serialization.Model):
         super(SkuLocationInfoItem, self).__init__(**kwargs)
         self.location = kwargs['location']
         self.zones = kwargs.get('zones', None)
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.kusto.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.kusto.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
+class TableLevelSharingProperties(msrest.serialization.Model):
+    """Tables that will be included and excluded in the follower database.
+
+    :param tables_to_include: List of tables to include in the follower database.
+    :type tables_to_include: list[str]
+    :param tables_to_exclude: List of tables to exclude from the follower database.
+    :type tables_to_exclude: list[str]
+    :param external_tables_to_include: List of external tables to include in the follower database.
+    :type external_tables_to_include: list[str]
+    :param external_tables_to_exclude: List of external tables exclude from the follower database.
+    :type external_tables_to_exclude: list[str]
+    :param materialized_views_to_include: List of materialized views to include in the follower
+     database.
+    :type materialized_views_to_include: list[str]
+    :param materialized_views_to_exclude: List of materialized views exclude from the follower
+     database.
+    :type materialized_views_to_exclude: list[str]
+    """
+
+    _attribute_map = {
+        'tables_to_include': {'key': 'tablesToInclude', 'type': '[str]'},
+        'tables_to_exclude': {'key': 'tablesToExclude', 'type': '[str]'},
+        'external_tables_to_include': {'key': 'externalTablesToInclude', 'type': '[str]'},
+        'external_tables_to_exclude': {'key': 'externalTablesToExclude', 'type': '[str]'},
+        'materialized_views_to_include': {'key': 'materializedViewsToInclude', 'type': '[str]'},
+        'materialized_views_to_exclude': {'key': 'materializedViewsToExclude', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TableLevelSharingProperties, self).__init__(**kwargs)
+        self.tables_to_include = kwargs.get('tables_to_include', None)
+        self.tables_to_exclude = kwargs.get('tables_to_exclude', None)
+        self.external_tables_to_include = kwargs.get('external_tables_to_include', None)
+        self.external_tables_to_exclude = kwargs.get('external_tables_to_exclude', None)
+        self.materialized_views_to_include = kwargs.get('materialized_views_to_include', None)
+        self.materialized_views_to_exclude = kwargs.get('materialized_views_to_exclude', None)
 
 
 class TrustedExternalTenant(msrest.serialization.Model):

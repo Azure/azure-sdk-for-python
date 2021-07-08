@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -15,7 +14,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -34,5 +32,3 @@ extends:
       safeName: azuremgmtdigitaltwins
     - name: azure-digitaltwins-core
       safeName: azuredigitaltwinscore
-    - name: azure-digitaltwins-nspkg
-      safeName: azuredigitaltwinsnspkg

@@ -4,7 +4,7 @@ from devtools_testutils import AzureMgmtTestCase
 import unittest
 
 
-unittest.skip("skip test")
+@unittest.skip("hard to test")
 class MgmtPartnerTest(AzureMgmtTestCase):
 
     def _validate_partner(self, PartnerResponse):

@@ -47,7 +47,7 @@ class NotebookWorkspacesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NotebookWorkspaceListResult"]:
         """Gets the notebook workspace resources of an existing Cosmos DB account.
 
@@ -65,7 +65,7 @@ class NotebookWorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -78,7 +78,7 @@ class NotebookWorkspacesOperations:
                 url = self.list_by_database_account.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -107,7 +107,7 @@ class NotebookWorkspacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -123,7 +123,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotebookWorkspace":
         """Gets the notebook workspace for a Cosmos DB account.
 
@@ -143,14 +143,14 @@ class NotebookWorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -170,7 +170,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspace', pipeline_response)
@@ -186,15 +186,15 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        notebook_create_update_parameters: "_models.ARMProxyResource",
-        **kwargs
+        notebook_create_update_parameters: "_models.NotebookWorkspaceCreateUpdateParameters",
+        **kwargs: Any
     ) -> "_models.NotebookWorkspace":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookWorkspace"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -202,7 +202,7 @@ class NotebookWorkspacesOperations:
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -218,7 +218,7 @@ class NotebookWorkspacesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(notebook_create_update_parameters, 'ARMProxyResource')
+        body_content = self._serialize.body(notebook_create_update_parameters, 'NotebookWorkspaceCreateUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -226,7 +226,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspace', pipeline_response)
@@ -242,8 +242,8 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        notebook_create_update_parameters: "_models.ARMProxyResource",
-        **kwargs
+        notebook_create_update_parameters: "_models.NotebookWorkspaceCreateUpdateParameters",
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NotebookWorkspace"]:
         """Creates the notebook workspace for a Cosmos DB account.
 
@@ -255,11 +255,11 @@ class NotebookWorkspacesOperations:
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :param notebook_create_update_parameters: The notebook workspace to create for the current
          database account.
-        :type notebook_create_update_parameters: ~azure.mgmt.cosmosdb.models.ARMProxyResource
+        :type notebook_create_update_parameters: ~azure.mgmt.cosmosdb.models.NotebookWorkspaceCreateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NotebookWorkspace or the result of cls(response)
@@ -295,7 +295,7 @@ class NotebookWorkspacesOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -319,21 +319,21 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -353,7 +353,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -366,7 +366,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the notebook workspace for a Cosmos DB account.
 
@@ -378,8 +378,8 @@ class NotebookWorkspacesOperations:
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -411,7 +411,7 @@ class NotebookWorkspacesOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -435,7 +435,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NotebookWorkspaceConnectionInfoResult":
         """Retrieves the connection info for the notebook workspace.
 
@@ -455,14 +455,14 @@ class NotebookWorkspacesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self.list_connection_info.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -482,7 +482,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('NotebookWorkspaceConnectionInfoResult', pipeline_response)
@@ -498,21 +498,21 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self._regenerate_auth_token_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -532,7 +532,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -545,7 +545,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Regenerates the auth token for the notebook workspace.
 
@@ -557,8 +557,8 @@ class NotebookWorkspacesOperations:
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -590,7 +590,7 @@ class NotebookWorkspacesOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -614,21 +614,21 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-15"
+        api_version = "2021-06-15"
         accept = "application/json"
 
         # Construct URL
         url = self._start_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }
@@ -648,7 +648,7 @@ class NotebookWorkspacesOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -661,7 +661,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, "_models.NotebookWorkspaceName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts the notebook workspace.
 
@@ -673,8 +673,8 @@ class NotebookWorkspacesOperations:
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -706,7 +706,7 @@ class NotebookWorkspacesOperations:
 
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'notebookWorkspaceName': self._serialize.url("notebook_workspace_name", notebook_workspace_name, 'str'),
         }

@@ -1,8 +1,68 @@
 # Release History
 
-## 7.1.2 (Unreleased)
+## 7.3.1 (2021-07-07)
 
+### Fixed
 
+- Fixed a bug that when setting `ServiceBusMessage.partition_key`, input value should be not validated against `session_id` of None (PR #19233, thanks @bishnu-shb).
+- Fixed a bug that setting `ServiceBusMessage.time_to_live` causes OverflowError error on Ubuntu 20.04.
+- Fixed a bug that `AmqpAnnotatedProperties.creation_time` and `AmqpAnnotatedProperties.absolute_expiry_time` should be calculated in the unit of milliseconds instead of seconds.
+- Updated uAMQP dependency to 1.4.1.
+  - Fixed a bug that attributes creation_time, absolute_expiry_time and group_sequence on MessageProperties should be compatible with integer types on Python 2.7.
+
+## 7.3.0 (2021-06-08)
+
+**New Features**
+
+- Support for sending AMQP annotated message which allows full access to the AMQP message fields is now GA.
+  - Introduced new namespace `azure.servicebus.amqp`.
+  - Introduced new classes `azure.servicebus.amqp.AmqpMessageHeader` and `azure.servicebus.amqp.AmqpMessageProperties` for accessing amqp header and properties.
+
+**Breaking Changes from 7.2.0b1**
+  - Renamed and moved `azure.servicebus.AMQPAnnotatedMessage` to `azure.servicebus.amqp.AmqpAnnotatedMessage`.
+  - Renamed and moved `azure.servicebus.AMQPMessageBodyType` to `azure.servicebus.amqp.AmqpMessageBodyType`.
+  - `AmqpAnnotatedMessage.header` returns `azure.servicebus.amqp.AmqpMessageHeader` instead of `uamqp.message.MessageHeader`.
+  - `AmqpAnnotatedMessage.properties` returns `azure.servicebus.amqp.AmqpMessageProperties` instead of `uamqp.message.MessageProperties`.
+  - `raw_amqp_message` on `ServiceBusMessage` and `ServiceBusReceivedMessage` is now a read-only property instead of an instance variable.
+
+**Bug Fixes**
+
+* Fixed a bug that `ServiceBusReceiver` iterator stops iteration after recovery from connection error (#18795).
+
+## 7.2.0 (2021-05-13)
+
+The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are not included in this version.
+
+**New Features**
+
+* Added support for using `azure.core.credentials.AzureNamedKeyCredential` as credential for authenticating the clients.
+* Support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating the clients is now GA.
+* `ServiceBusAdministrationClient.update_*` methods now accept keyword arguments to override the properties specified in the model instance.
+
+**Bug Fixes**
+
+* Fixed a bug where `update_queue` and `update_subscription` methods were mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of the model instance when those properties are entities instead of full paths.
+* Improved the `repr` on `ServiceBusMessage` and `ServiceBusReceivedMessage` to show more meaningful text.
+* Updated uAMQP dependency to 1.4.0.
+  - Fixed memory leaks in the process of link attach where source and target cython objects are not properly deallocated (#15747).
+  - Improved management operation callback not to parse description value of non AMQP_TYPE_STRING type as string (#18361).
+
+**Notes**
+
+* Updated azure-core dependency to 1.14.0.
+
+## 7.2.0b1 (2021-04-07)
+
+**New Features**
+
+* Added support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating the clients.
+* Added support for sending AMQP annotated message which allows full access to the AMQP message fields.
+  -`azure.servicebus.AMQPAnnotatedMessage` is now made public and could be instantiated for sending.
+* Added new enum class `azure.servicebus.AMQPMessageBodyType` to represent the body type of the message message which includes:
+  - `DATA`: The body of message consists of one or more data sections and each section contains opaque binary data.
+  - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
+  - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
+* Added new property `body_type` on `azure.servicebus.ServiceBusMessage` and `azure.servicebus.ReceivedMessage` which returns `azure.servicebus.AMQPMessageBodyType`.
 
 ## 7.1.1 (2021-04-07)
 
@@ -48,7 +108,7 @@ This version will be the last version to officially support Python 3.5, future v
 
 ## 7.0.0 (2020-11-23)
 
-> **Note:** This is the GA release of the `azure-servicebus` package, rolling out the official API surface area constructed over the prior preview releases.  Users migrating from `v0.50` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/migration_guide.md).
+> **Note:** This is the GA release of the `azure-servicebus` package, rolling out the official API surface area constructed over the prior preview releases.  Users migrating from `v0.50` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/migration_guide.md).
 
 **New Features**
 
@@ -312,7 +372,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 
 * Added new configuration parameters when creating `ServiceBusClient`.
     * `credential`: The credential object used for authentication which implements `TokenCredential` interface of getting tokens.
-    * `http_proxy`: A dictionary populated with proxy settings.  
+    * `http_proxy`: A dictionary populated with proxy settings.
     * For detailed information about configuration parameters, please see docstring in `ServiceBusClient` and/or the reference documentation for more information.
 * Added support for authentication using Azure Identity credentials.
 * Added support for retry policy.

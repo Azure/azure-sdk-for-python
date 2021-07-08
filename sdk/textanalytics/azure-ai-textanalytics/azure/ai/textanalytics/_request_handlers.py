@@ -13,8 +13,10 @@ from ._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     RecognizeLinkedEntitiesAction,
-    AnalyzeBatchActionsType,
+    AnalyzeSentimentAction,
+    _AnalyzeActionsType,
 )
+
 
 def _validate_input(documents, hint, whole_input_hint):
     """Validate that batch input has either all string docs
@@ -35,9 +37,13 @@ def _validate_input(documents, hint, whole_input_hint):
         raise TypeError("Input documents cannot be a dict")
 
     if not all(isinstance(x, six.string_types) for x in documents):
-        if not all(isinstance(x, (dict, TextDocumentInput, DetectLanguageInput)) for x in documents):
-            raise TypeError("Mixing string and dictionary/object document input unsupported.")
-
+        if not all(
+            isinstance(x, (dict, TextDocumentInput, DetectLanguageInput))
+            for x in documents
+        ):
+            raise TypeError(
+                "Mixing string and dictionary/object document input unsupported."
+            )
 
     request_batch = []
     for idx, doc in enumerate(documents):
@@ -49,41 +55,59 @@ def _validate_input(documents, hint, whole_input_hint):
         if isinstance(doc, dict):
             item_hint = doc.get(hint, None)
             if item_hint is None:
-                doc = {"id": doc.get("id", None), hint: whole_input_hint, "text": doc.get("text", None)}
+                doc = {
+                    "id": doc.get("id", None),
+                    hint: whole_input_hint,
+                    "text": doc.get("text", None),
+                }
             elif item_hint.lower() == "none":
-                doc = {"id": doc.get("id", None), hint: "", "text": doc.get("text", None)}
+                doc = {
+                    "id": doc.get("id", None),
+                    hint: "",
+                    "text": doc.get("text", None),
+                }
             request_batch.append(doc)
         if isinstance(doc, TextDocumentInput):
             item_hint = doc.language
             if item_hint is None:
-                doc = TextDocumentInput(id=doc.id, language=whole_input_hint, text=doc.text)
+                doc = TextDocumentInput(
+                    id=doc.id, language=whole_input_hint, text=doc.text
+                )
             request_batch.append(doc)
         if isinstance(doc, DetectLanguageInput):
             item_hint = doc.country_hint
             if item_hint is None:
-                doc = DetectLanguageInput(id=doc.id, country_hint=whole_input_hint, text=doc.text)
+                doc = DetectLanguageInput(
+                    id=doc.id, country_hint=whole_input_hint, text=doc.text
+                )
             elif item_hint.lower() == "none":
                 doc = DetectLanguageInput(id=doc.id, country_hint="", text=doc.text)
             request_batch.append(doc)
 
     return request_batch
 
+
 def _determine_action_type(action):
     if isinstance(action, RecognizeEntitiesAction):
-        return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_ENTITIES
     if isinstance(action, RecognizePiiEntitiesAction):
-        return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+        return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
     if isinstance(action, RecognizeLinkedEntitiesAction):
-        return AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
-    return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+        return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+    if isinstance(action, AnalyzeSentimentAction):
+        return _AnalyzeActionsType.ANALYZE_SENTIMENT
+    return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
-def _check_string_index_type_arg(string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"):
+
+def _check_string_index_type_arg(
+    string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"
+):
     string_index_type = None
 
     if api_version == "v3.0":
         if string_index_type_arg is not None:
             raise ValueError(
-                "'string_index_type' is only available for API version V3_1_PREVIEW and up"
+                "'string_index_type' is only available for API version V3_1 and up"
             )
 
     else:

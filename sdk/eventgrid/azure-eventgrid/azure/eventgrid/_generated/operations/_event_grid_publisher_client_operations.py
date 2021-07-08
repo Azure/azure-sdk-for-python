@@ -192,4 +192,4 @@ class EventGridPublisherClientOperationsMixin(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    publish_custom_event_events.metadata = {'url': ''}  # type: ignore
+    publish_custom_event_events.metadata = {'url': '/api/events'}  # type: ignore

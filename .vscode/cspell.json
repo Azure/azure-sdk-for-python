@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "language": "en",
+  "languageId": "python",
+  "dictionaries": [
+    "powershell",
+    "python"
+  ],
+  "ignorePaths": [
+    "**/tests/recordings/**",
+    ".vscode/cspell.json"
+  ],
+  "words": ["azsdk", "conda", "tenvparallel"],
+  "allowCompoundWords": false
+}

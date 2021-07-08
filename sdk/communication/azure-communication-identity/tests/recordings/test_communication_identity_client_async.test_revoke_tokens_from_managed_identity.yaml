@@ -9,25 +9,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 17:54:48 GMT
-      ms-cv: lWjOWYpL90CS7wvt6sWZmw.0
+      date: Tue, 22 Jun 2021 18:58:59 GMT
+      ms-cv: xMC3NdE8+UOt9+GxzhhPdA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 111ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 63ms
     status:
       code: 201
       message: Created
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities?api-version=2021-03-07
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -38,46 +40,50 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-04-14T17:54:47.3442684+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-06-23T18:58:59.4525188+00:00"}'
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 17:54:48 GMT
-      ms-cv: sdMJ7daQx0GS9bI8pul/bw.0
+      date: Tue, 22 Jun 2021 18:59:00 GMT
+      ms-cv: WQwpvECVnEOtmsOqTfyibQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 123ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 138ms
     status:
       code: 200
       message: OK
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.1 Python/3.8.6rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://sanitized.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
   response:
     body:
       string: ''
     headers:
-      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
-      date: Tue, 13 Apr 2021 17:54:48 GMT
-      ms-cv: s2kwtg8TQkG8aJp6NDHeLg.0
+      api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
+        2021-03-31-preview1
+      date: Tue, 22 Jun 2021 18:59:00 GMT
+      ms-cv: J1LfEe6dv0KsmrtnfoiCJA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
-      x-processing-time: 248ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 129ms
     status:
       code: 204
       message: No Content
-    url: https://lakshmanscommunication-communication.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
+    url: https://smstestapp.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-03-07
 version: 1

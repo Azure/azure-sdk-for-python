@@ -28,7 +28,7 @@ class BandwidthSchedulesOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databoxedge.models
+    :type models: ~azure.mgmt.databoxedge.v2019_08_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -57,7 +57,7 @@ class BandwidthSchedulesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BandwidthSchedulesList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.BandwidthSchedulesList]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.v2019_08_01.models.BandwidthSchedulesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BandwidthSchedulesList"]
@@ -134,7 +134,7 @@ class BandwidthSchedulesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BandwidthSchedule, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.BandwidthSchedule
+        :rtype: ~azure.mgmt.databoxedge.v2019_08_01.models.BandwidthSchedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BandwidthSchedule"]
@@ -253,15 +253,15 @@ class BandwidthSchedulesOperations:
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param parameters: The bandwidth schedule to be added or updated.
-        :type parameters: ~azure.mgmt.databoxedge.models.BandwidthSchedule
+        :type parameters: ~azure.mgmt.databoxedge.v2019_08_01.models.BandwidthSchedule
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BandwidthSchedule or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databoxedge.models.BandwidthSchedule]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.databoxedge.v2019_08_01.models.BandwidthSchedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -375,8 +375,8 @@ class BandwidthSchedulesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

@@ -1,7 +1,48 @@
 # Release History
 
-## 1.13.1 (Unreleased)
+## 1.16.1 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Key Bugs Fixed
+
+### Fixed
+
+
+## 1.16.0 (2021-07-01)
+
+### Features Added
+
+- Add new ***provisional*** methods `send_request` onto the `azure.core.PipelineClient` and `azure.core.AsyncPipelineClient`. This method takes in
+requests and sends them through our pipelines.
+- Add new ***provisional*** module `azure.core.rest`. `azure.core.rest` is our new public simple HTTP library in `azure.core` that users will use to create requests, and consume responses.
+- Add new ***provisional*** errors `StreamConsumedError`, `StreamClosedError`, and `ResponseNotReadError` to `azure.core.exceptions`. These errors
+are thrown if you mishandle streamed responses from the provisional `azure.core.rest` module
+
+### Fixed
+
+- Improved error message in the `from_dict` method of `CloudEvent` when a wrong schema is sent.
+
+## 1.15.0 (2021-06-04)
+
+### New Features
+
+- Added `BearerTokenCredentialPolicy.on_challenge` and `.authorize_request` to allow subclasses to optionally handle authentication challenges
+
+### Bug Fixes
+
+- Retry policies don't sleep after operations time out
+- The `from_dict` methhod in the `CloudEvent` can now convert a datetime string to datetime object when microsecond exceeds the python limitation
+
+
+## 1.14.0 (2021-05-13)
+
+### New Features
+
+- Added `azure.core.credentials.AzureNamedKeyCredential` credential #17548.
+- Added `decompress` parameter for `stream_download` method. If it is set to `False`, will not do decompression upon the stream.    #17920
 
 ## 1.13.0 (2021-04-02)
 

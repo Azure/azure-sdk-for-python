@@ -17,7 +17,7 @@ For code examples, see [Service Fabric](https://docs.microsoft.com/python/api/ov
 
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
+section of the project. 
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-servicefabric%2FREADME.png)

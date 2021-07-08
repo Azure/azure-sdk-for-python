@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -11,14 +10,10 @@ trigger:
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -27,9 +22,6 @@ pr:
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

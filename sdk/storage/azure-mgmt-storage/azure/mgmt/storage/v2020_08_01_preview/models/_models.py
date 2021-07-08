@@ -1239,8 +1239,8 @@ class Encryption(msrest.serialization.Model):
 
     :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2020_08_01_preview.models.EncryptionServices
-    :param key_source: Required. The encryption keySource (provider). Possible values (case-
-     insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
+    :param key_source: Required. The encryption keySource (provider). Possible values
+     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible values include:
      "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
     :type key_source: str or ~azure.mgmt.storage.v2020_08_01_preview.models.KeySource
     :param require_infrastructure_encryption: A boolean indicating whether or not the service

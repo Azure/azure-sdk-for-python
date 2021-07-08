@@ -11,15 +11,54 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity.aio._internal.managed_identity_client import AsyncManagedIdentityClient
-from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._credentials.imds import IMDS_URL
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport, get_completed_future
+from helpers_async import async_validating_transport, AsyncMockTransport, get_completed_future
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
+ALL_ENVIRONMENTS = (
+    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # App Service
+    {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
+    {  # Service Fabric
+        EnvironmentVariables.IDENTITY_ENDPOINT: "...",
+        EnvironmentVariables.IDENTITY_HEADER: "...",
+        EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
+    },
+    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
+    {},  # IMDS
+)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
+async def test_close(environ):
+    transport = AsyncMockTransport()
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        credential = ManagedIdentityCredential(transport=transport)
+
+    await credential.close()
+
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
+async def test_context_manager(environ):
+    transport = AsyncMockTransport()
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        credential = ManagedIdentityCredential(transport=transport)
+
+    async with credential:
+        assert transport.__aenter__.call_count == 1
+        assert transport.__aexit__.call_count == 0
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -460,9 +499,9 @@ async def test_imds():
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(url=Endpoints.IMDS),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
             Request(
-                base_url=Endpoints.IMDS,
+                base_url=IMDS_URL,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -496,14 +535,13 @@ async def test_imds_user_assigned_identity():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
-    url = Endpoints.IMDS
     scope = "scope"
     client_id = "some-guid"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=url),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
             Request(
-                base_url=url,
+                base_url=IMDS_URL,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "client_id": client_id, "resource": scope},

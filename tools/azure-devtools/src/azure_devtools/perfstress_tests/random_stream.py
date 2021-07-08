@@ -5,7 +5,7 @@
 
 import os
 
-_DEFAULT_LENGTH = 1024*1024
+_DEFAULT_LENGTH = 1024 * 1024
 _BYTE_BUFFER = [_DEFAULT_LENGTH, os.urandom(_DEFAULT_LENGTH)]
 
 
@@ -23,7 +23,7 @@ class RandomStream:
         self._base_buffer_length = initial_buffer_length
         self._position = 0
         self._remaining = length
-    
+
     def reset(self):
         self._position = 0
         self._remaining = self._data_length
@@ -60,10 +60,9 @@ class RandomStream:
 
 
 class WriteStream:
-
     def __init__(self):
         self._position = 0
-    
+
     def reset(self):
         self._position = 0
 

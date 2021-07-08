@@ -46,7 +46,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class Configuration(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -127,7 +161,7 @@ class ConfigurationListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class Database(Resource):
+class Database(ProxyResource):
     """Represents a Database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -196,7 +230,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: str
     """
 
     _validation = {
@@ -206,7 +240,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        'info': {'key': 'info', 'type': 'str'},
     }
 
     def __init__(
@@ -263,7 +297,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.additional_info = None
 
 
-class FirewallRule(Resource):
+class FirewallRule(ProxyResource):
     """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -330,7 +364,7 @@ class FirewallRuleListResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
-class LogFile(Resource):
+class LogFile(ProxyResource):
     """Represents a log file.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -474,7 +508,7 @@ class Operation(msrest.serialization.Model):
      "user", "system".
     :vartype origin: str or ~azure.mgmt.rdbms.postgresql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, object]
+    :vartype properties: dict[str, str]
     """
 
     _validation = {
@@ -488,7 +522,7 @@ class Operation(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
     }
 
     def __init__(
@@ -679,7 +713,7 @@ class PerformanceTierServiceLevelObjectives(msrest.serialization.Model):
         self.min_storage_mb = kwargs.get('min_storage_mb', None)
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -777,7 +811,7 @@ class PrivateEndpointProperty(msrest.serialization.Model):
         self.id = kwargs.get('id', None)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(ProxyResource):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -913,41 +947,7 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
         self.actions_required = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
-class RecoverableServerResource(Resource):
+class RecoverableServerResource(ProxyResource):
     """A recoverable server resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1217,7 +1217,7 @@ class Server(TrackedResource):
         self.private_endpoint_connections = None
 
 
-class ServerAdministratorResource(Resource):
+class ServerAdministratorResource(ProxyResource):
     """Represents a and external administrator to be created.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1330,7 +1330,7 @@ class ServerForCreate(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class ServerKey(Resource):
+class ServerKey(ProxyResource):
     """A PostgreSQL Server key.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1841,7 +1841,7 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         self.restore_point_in_time = kwargs['restore_point_in_time']
 
 
-class ServerSecurityAlertPolicy(Resource):
+class ServerSecurityAlertPolicy(ProxyResource):
     """A server security alert policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2094,7 +2094,7 @@ class TagsObject(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class VirtualNetworkRule(Resource):
+class VirtualNetworkRule(ProxyResource):
     """A virtual network rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.

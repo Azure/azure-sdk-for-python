@@ -8,28 +8,39 @@
 
 try:
     from ._models_py3 import AdministratorListResult
+    from ._models_py3 import Advisor
     from ._models_py3 import AutoPauseDelayTimeRange
     from ._models_py3 import AutomaticTuningOptions
     from ._models_py3 import AutomaticTuningServerOptions
     from ._models_py3 import AzureADOnlyAuthListResult
-    from ._models_py3 import BackupLongTermRetentionPolicy
     from ._models_py3 import BackupShortTermRetentionPolicy
     from ._models_py3 import BackupShortTermRetentionPolicyListResult
     from ._models_py3 import CheckNameAvailabilityRequest
     from ._models_py3 import CheckNameAvailabilityResponse
     from ._models_py3 import CompleteDatabaseRestoreDefinition
+    from ._models_py3 import CopyLongTermRetentionBackupParameters
     from ._models_py3 import CreateDatabaseRestorePointDefinition
     from ._models_py3 import DataMaskingPolicy
     from ._models_py3 import DataMaskingRule
     from ._models_py3 import DataMaskingRuleListResult
+    from ._models_py3 import DataWarehouseUserActivities
+    from ._models_py3 import DataWarehouseUserActivitiesListResult
     from ._models_py3 import Database
     from ._models_py3 import DatabaseAutomaticTuning
     from ._models_py3 import DatabaseBlobAuditingPolicy
     from ._models_py3 import DatabaseBlobAuditingPolicyListResult
+    from ._models_py3 import DatabaseColumn
+    from ._models_py3 import DatabaseColumnListResult
+    from ._models_py3 import DatabaseExtensions
     from ._models_py3 import DatabaseListResult
     from ._models_py3 import DatabaseOperation
     from ._models_py3 import DatabaseOperationListResult
+    from ._models_py3 import DatabaseSchema
+    from ._models_py3 import DatabaseSchemaListResult
+    from ._models_py3 import DatabaseSecurityAlertListResult
     from ._models_py3 import DatabaseSecurityAlertPolicy
+    from ._models_py3 import DatabaseTable
+    from ._models_py3 import DatabaseTableListResult
     from ._models_py3 import DatabaseUpdate
     from ._models_py3 import DatabaseUsage
     from ._models_py3 import DatabaseUsageListResult
@@ -38,6 +49,8 @@ try:
     from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
     from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
     from ._models_py3 import DatabaseVulnerabilityAssessmentScansExport
+    from ._models_py3 import DeletedServer
+    from ._models_py3 import DeletedServerListResult
     from ._models_py3 import EditionCapability
     from ._models_py3 import ElasticPool
     from ._models_py3 import ElasticPoolActivity
@@ -55,7 +68,7 @@ try:
     from ._models_py3 import ElasticPoolUpdate
     from ._models_py3 import EncryptionProtector
     from ._models_py3 import EncryptionProtectorListResult
-    from ._models_py3 import ExportRequest
+    from ._models_py3 import ExportDatabaseDefinition
     from ._models_py3 import ExtendedDatabaseBlobAuditingPolicy
     from ._models_py3 import ExtendedDatabaseBlobAuditingPolicyListResult
     from ._models_py3 import ExtendedServerBlobAuditingPolicy
@@ -66,13 +79,15 @@ try:
     from ._models_py3 import FailoverGroupReadWriteEndpoint
     from ._models_py3 import FailoverGroupUpdate
     from ._models_py3 import FirewallRule
+    from ._models_py3 import FirewallRuleList
     from ._models_py3 import FirewallRuleListResult
     from ._models_py3 import GeoBackupPolicy
     from ._models_py3 import GeoBackupPolicyListResult
-    from ._models_py3 import ImportExportResponse
-    from ._models_py3 import ImportExtensionProperties
-    from ._models_py3 import ImportExtensionRequest
-    from ._models_py3 import ImportRequest
+    from ._models_py3 import ImportExistingDatabaseDefinition
+    from ._models_py3 import ImportExportExtensionsOperationListResult
+    from ._models_py3 import ImportExportExtensionsOperationResult
+    from ._models_py3 import ImportExportOperationResult
+    from ._models_py3 import ImportNewDatabaseDefinition
     from ._models_py3 import InstanceFailoverGroup
     from ._models_py3 import InstanceFailoverGroupListResult
     from ._models_py3 import InstanceFailoverGroupReadOnlyEndpoint
@@ -104,12 +119,21 @@ try:
     from ._models_py3 import JobTargetGroupListResult
     from ._models_py3 import JobVersion
     from ._models_py3 import JobVersionListResult
+    from ._models_py3 import LedgerDigestUploads
+    from ._models_py3 import LedgerDigestUploadsListResult
     from ._models_py3 import LicenseTypeCapability
     from ._models_py3 import LocationCapabilities
     from ._models_py3 import LogSizeCapability
     from ._models_py3 import LogicalServerSecurityAlertPolicyListResult
     from ._models_py3 import LongTermRetentionBackup
     from ._models_py3 import LongTermRetentionBackupListResult
+    from ._models_py3 import LongTermRetentionBackupOperationResult
+    from ._models_py3 import LongTermRetentionPolicy
+    from ._models_py3 import LongTermRetentionPolicyListResult
+    from ._models_py3 import MaintenanceConfigurationCapability
+    from ._models_py3 import MaintenanceWindowOptions
+    from ._models_py3 import MaintenanceWindowTimeRange
+    from ._models_py3 import MaintenanceWindows
     from ._models_py3 import ManagedBackupShortTermRetentionPolicy
     from ._models_py3 import ManagedBackupShortTermRetentionPolicyListResult
     from ._models_py3 import ManagedDatabase
@@ -121,9 +145,12 @@ try:
     from ._models_py3 import ManagedInstance
     from ._models_py3 import ManagedInstanceAdministrator
     from ._models_py3 import ManagedInstanceAdministratorListResult
+    from ._models_py3 import ManagedInstanceAzureADOnlyAuthListResult
+    from ._models_py3 import ManagedInstanceAzureADOnlyAuthentication
     from ._models_py3 import ManagedInstanceEditionCapability
     from ._models_py3 import ManagedInstanceEncryptionProtector
     from ._models_py3 import ManagedInstanceEncryptionProtectorListResult
+    from ._models_py3 import ManagedInstanceExternalAdministrator
     from ._models_py3 import ManagedInstanceFamilyCapability
     from ._models_py3 import ManagedInstanceKey
     from ._models_py3 import ManagedInstanceKeyListResult
@@ -132,12 +159,23 @@ try:
     from ._models_py3 import ManagedInstanceLongTermRetentionBackupListResult
     from ._models_py3 import ManagedInstanceLongTermRetentionPolicy
     from ._models_py3 import ManagedInstanceLongTermRetentionPolicyListResult
+    from ._models_py3 import ManagedInstanceMaintenanceConfigurationCapability
     from ._models_py3 import ManagedInstanceOperation
     from ._models_py3 import ManagedInstanceOperationListResult
     from ._models_py3 import ManagedInstanceOperationParametersPair
     from ._models_py3 import ManagedInstanceOperationSteps
     from ._models_py3 import ManagedInstancePairInfo
+    from ._models_py3 import ManagedInstancePecProperty
+    from ._models_py3 import ManagedInstancePrivateEndpointConnection
+    from ._models_py3 import ManagedInstancePrivateEndpointConnectionListResult
+    from ._models_py3 import ManagedInstancePrivateEndpointConnectionProperties
+    from ._models_py3 import ManagedInstancePrivateEndpointProperty
+    from ._models_py3 import ManagedInstancePrivateLink
+    from ._models_py3 import ManagedInstancePrivateLinkListResult
+    from ._models_py3 import ManagedInstancePrivateLinkProperties
     from ._models_py3 import ManagedInstancePrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ManagedInstanceQuery
+    from ._models_py3 import ManagedInstanceQueryStatistics
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
     from ._models_py3 import ManagedInstanceVersionCapability
@@ -145,6 +183,8 @@ try:
     from ._models_py3 import ManagedInstanceVulnerabilityAssessmentListResult
     from ._models_py3 import ManagedServerSecurityAlertPolicy
     from ._models_py3 import ManagedServerSecurityAlertPolicyListResult
+    from ._models_py3 import ManagedTransparentDataEncryption
+    from ._models_py3 import ManagedTransparentDataEncryptionListResult
     from ._models_py3 import MaxSizeCapability
     from ._models_py3 import MaxSizeRangeCapability
     from ._models_py3 import Metric
@@ -156,29 +196,42 @@ try:
     from ._models_py3 import MetricValue
     from ._models_py3 import MinCapacityCapability
     from ._models_py3 import Name
+    from ._models_py3 import NetworkIsolationSettings
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationImpact
     from ._models_py3 import OperationListResult
+    from ._models_py3 import OperationsHealth
+    from ._models_py3 import OperationsHealthListResult
+    from ._models_py3 import OutboundFirewallRule
+    from ._models_py3 import OutboundFirewallRuleListResult
     from ._models_py3 import PartnerInfo
     from ._models_py3 import PartnerRegionInfo
     from ._models_py3 import PerformanceLevelCapability
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateEndpointConnectionProperties
+    from ._models_py3 import PrivateEndpointConnectionRequestStatus
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionStateProperty
-    from ._models_py3 import PrivateLinkServiceConnectionStatePropertyAutoGenerated
     from ._models_py3 import ProxyResource
+    from ._models_py3 import ProxyResourceWithWritableName
+    from ._models_py3 import QueryMetricInterval
+    from ._models_py3 import QueryMetricProperties
+    from ._models_py3 import QueryStatistics
+    from ._models_py3 import QueryStatisticsProperties
     from ._models_py3 import ReadScaleCapability
-    from ._models_py3 import RecommendedElasticPool
-    from ._models_py3 import RecommendedElasticPoolListMetricsResult
-    from ._models_py3 import RecommendedElasticPoolListResult
-    from ._models_py3 import RecommendedElasticPoolMetric
-    from ._models_py3 import RecommendedIndex
+    from ._models_py3 import RecommendedAction
+    from ._models_py3 import RecommendedActionErrorInfo
+    from ._models_py3 import RecommendedActionImpactRecord
+    from ._models_py3 import RecommendedActionImplementationInfo
+    from ._models_py3 import RecommendedActionMetricInfo
+    from ._models_py3 import RecommendedActionStateInfo
+    from ._models_py3 import RecommendedSensitivityLabelUpdate
+    from ._models_py3 import RecommendedSensitivityLabelUpdateList
     from ._models_py3 import RecoverableDatabase
     from ._models_py3 import RecoverableDatabaseListResult
     from ._models_py3 import RecoverableManagedDatabase
@@ -187,15 +240,23 @@ try:
     from ._models_py3 import ReplicationLinkListResult
     from ._models_py3 import Resource
     from ._models_py3 import ResourceIdentity
+    from ._models_py3 import ResourceIdentityWithUserAssignedIdentities
     from ._models_py3 import ResourceMoveDefinition
+    from ._models_py3 import ResourceWithWritableName
     from ._models_py3 import RestorableDroppedDatabase
     from ._models_py3 import RestorableDroppedDatabaseListResult
     from ._models_py3 import RestorableDroppedManagedDatabase
     from ._models_py3 import RestorableDroppedManagedDatabaseListResult
     from ._models_py3 import RestorePoint
     from ._models_py3 import RestorePointListResult
+    from ._models_py3 import SecurityEvent
+    from ._models_py3 import SecurityEventCollection
+    from ._models_py3 import SecurityEventSqlInjectionAdditionalProperties
+    from ._models_py3 import SecurityEventsFilterParameters
     from ._models_py3 import SensitivityLabel
     from ._models_py3 import SensitivityLabelListResult
+    from ._models_py3 import SensitivityLabelUpdate
+    from ._models_py3 import SensitivityLabelUpdateList
     from ._models_py3 import Server
     from ._models_py3 import ServerAutomaticTuning
     from ._models_py3 import ServerAzureADAdministrator
@@ -205,14 +266,22 @@ try:
     from ._models_py3 import ServerCommunicationLink
     from ._models_py3 import ServerCommunicationLinkListResult
     from ._models_py3 import ServerConnectionPolicy
+    from ._models_py3 import ServerDevOpsAuditSettingsListResult
+    from ._models_py3 import ServerDevOpsAuditingSettings
     from ._models_py3 import ServerDnsAlias
     from ._models_py3 import ServerDnsAliasAcquisition
     from ._models_py3 import ServerDnsAliasListResult
+    from ._models_py3 import ServerExternalAdministrator
+    from ._models_py3 import ServerInfo
     from ._models_py3 import ServerKey
     from ._models_py3 import ServerKeyListResult
     from ._models_py3 import ServerListResult
+    from ._models_py3 import ServerOperation
+    from ._models_py3 import ServerOperationListResult
     from ._models_py3 import ServerPrivateEndpointConnection
     from ._models_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import ServerTrustGroup
+    from ._models_py3 import ServerTrustGroupListResult
     from ._models_py3 import ServerUpdate
     from ._models_py3 import ServerUsage
     from ._models_py3 import ServerUsageListResult
@@ -222,10 +291,9 @@ try:
     from ._models_py3 import ServiceObjective
     from ._models_py3 import ServiceObjectiveCapability
     from ._models_py3 import ServiceObjectiveListResult
-    from ._models_py3 import ServiceTierAdvisor
-    from ._models_py3 import ServiceTierAdvisorListResult
     from ._models_py3 import Sku
     from ._models_py3 import SloUsageMetric
+    from ._models_py3 import SqlAgentConfiguration
     from ._models_py3 import StorageCapability
     from ._models_py3 import SubscriptionUsage
     from ._models_py3 import SubscriptionUsageListResult
@@ -249,16 +317,24 @@ try:
     from ._models_py3 import SyncGroupSchemaTableColumn
     from ._models_py3 import SyncMember
     from ._models_py3 import SyncMemberListResult
+    from ._models_py3 import SystemData
     from ._models_py3 import TdeCertificate
+    from ._models_py3 import TimeZone
+    from ._models_py3 import TimeZoneListResult
+    from ._models_py3 import TopQueries
+    from ._models_py3 import TopQueriesListResult
     from ._models_py3 import TrackedResource
     from ._models_py3 import TransparentDataEncryption
     from ._models_py3 import TransparentDataEncryptionActivity
     from ._models_py3 import TransparentDataEncryptionActivityListResult
     from ._models_py3 import UnlinkParameters
+    from ._models_py3 import UpdateLongTermRetentionBackupParameters
+    from ._models_py3 import UpdateManagedInstanceDnsServersOperation
     from ._models_py3 import UpsertManagedServerOperationParameters
     from ._models_py3 import UpsertManagedServerOperationStep
     from ._models_py3 import Usage
     from ._models_py3 import UsageListResult
+    from ._models_py3 import UserIdentity
     from ._models_py3 import VirtualCluster
     from ._models_py3 import VirtualClusterListResult
     from ._models_py3 import VirtualClusterUpdate
@@ -274,28 +350,39 @@ try:
     from ._models_py3 import WorkloadGroupListResult
 except (SyntaxError, ImportError):
     from ._models import AdministratorListResult  # type: ignore
+    from ._models import Advisor  # type: ignore
     from ._models import AutoPauseDelayTimeRange  # type: ignore
     from ._models import AutomaticTuningOptions  # type: ignore
     from ._models import AutomaticTuningServerOptions  # type: ignore
     from ._models import AzureADOnlyAuthListResult  # type: ignore
-    from ._models import BackupLongTermRetentionPolicy  # type: ignore
     from ._models import BackupShortTermRetentionPolicy  # type: ignore
     from ._models import BackupShortTermRetentionPolicyListResult  # type: ignore
     from ._models import CheckNameAvailabilityRequest  # type: ignore
     from ._models import CheckNameAvailabilityResponse  # type: ignore
     from ._models import CompleteDatabaseRestoreDefinition  # type: ignore
+    from ._models import CopyLongTermRetentionBackupParameters  # type: ignore
     from ._models import CreateDatabaseRestorePointDefinition  # type: ignore
     from ._models import DataMaskingPolicy  # type: ignore
     from ._models import DataMaskingRule  # type: ignore
     from ._models import DataMaskingRuleListResult  # type: ignore
+    from ._models import DataWarehouseUserActivities  # type: ignore
+    from ._models import DataWarehouseUserActivitiesListResult  # type: ignore
     from ._models import Database  # type: ignore
     from ._models import DatabaseAutomaticTuning  # type: ignore
     from ._models import DatabaseBlobAuditingPolicy  # type: ignore
     from ._models import DatabaseBlobAuditingPolicyListResult  # type: ignore
+    from ._models import DatabaseColumn  # type: ignore
+    from ._models import DatabaseColumnListResult  # type: ignore
+    from ._models import DatabaseExtensions  # type: ignore
     from ._models import DatabaseListResult  # type: ignore
     from ._models import DatabaseOperation  # type: ignore
     from ._models import DatabaseOperationListResult  # type: ignore
+    from ._models import DatabaseSchema  # type: ignore
+    from ._models import DatabaseSchemaListResult  # type: ignore
+    from ._models import DatabaseSecurityAlertListResult  # type: ignore
     from ._models import DatabaseSecurityAlertPolicy  # type: ignore
+    from ._models import DatabaseTable  # type: ignore
+    from ._models import DatabaseTableListResult  # type: ignore
     from ._models import DatabaseUpdate  # type: ignore
     from ._models import DatabaseUsage  # type: ignore
     from ._models import DatabaseUsageListResult  # type: ignore
@@ -304,6 +391,8 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseVulnerabilityAssessmentRuleBaseline  # type: ignore
     from ._models import DatabaseVulnerabilityAssessmentRuleBaselineItem  # type: ignore
     from ._models import DatabaseVulnerabilityAssessmentScansExport  # type: ignore
+    from ._models import DeletedServer  # type: ignore
+    from ._models import DeletedServerListResult  # type: ignore
     from ._models import EditionCapability  # type: ignore
     from ._models import ElasticPool  # type: ignore
     from ._models import ElasticPoolActivity  # type: ignore
@@ -321,7 +410,7 @@ except (SyntaxError, ImportError):
     from ._models import ElasticPoolUpdate  # type: ignore
     from ._models import EncryptionProtector  # type: ignore
     from ._models import EncryptionProtectorListResult  # type: ignore
-    from ._models import ExportRequest  # type: ignore
+    from ._models import ExportDatabaseDefinition  # type: ignore
     from ._models import ExtendedDatabaseBlobAuditingPolicy  # type: ignore
     from ._models import ExtendedDatabaseBlobAuditingPolicyListResult  # type: ignore
     from ._models import ExtendedServerBlobAuditingPolicy  # type: ignore
@@ -332,13 +421,15 @@ except (SyntaxError, ImportError):
     from ._models import FailoverGroupReadWriteEndpoint  # type: ignore
     from ._models import FailoverGroupUpdate  # type: ignore
     from ._models import FirewallRule  # type: ignore
+    from ._models import FirewallRuleList  # type: ignore
     from ._models import FirewallRuleListResult  # type: ignore
     from ._models import GeoBackupPolicy  # type: ignore
     from ._models import GeoBackupPolicyListResult  # type: ignore
-    from ._models import ImportExportResponse  # type: ignore
-    from ._models import ImportExtensionProperties  # type: ignore
-    from ._models import ImportExtensionRequest  # type: ignore
-    from ._models import ImportRequest  # type: ignore
+    from ._models import ImportExistingDatabaseDefinition  # type: ignore
+    from ._models import ImportExportExtensionsOperationListResult  # type: ignore
+    from ._models import ImportExportExtensionsOperationResult  # type: ignore
+    from ._models import ImportExportOperationResult  # type: ignore
+    from ._models import ImportNewDatabaseDefinition  # type: ignore
     from ._models import InstanceFailoverGroup  # type: ignore
     from ._models import InstanceFailoverGroupListResult  # type: ignore
     from ._models import InstanceFailoverGroupReadOnlyEndpoint  # type: ignore
@@ -370,12 +461,21 @@ except (SyntaxError, ImportError):
     from ._models import JobTargetGroupListResult  # type: ignore
     from ._models import JobVersion  # type: ignore
     from ._models import JobVersionListResult  # type: ignore
+    from ._models import LedgerDigestUploads  # type: ignore
+    from ._models import LedgerDigestUploadsListResult  # type: ignore
     from ._models import LicenseTypeCapability  # type: ignore
     from ._models import LocationCapabilities  # type: ignore
     from ._models import LogSizeCapability  # type: ignore
     from ._models import LogicalServerSecurityAlertPolicyListResult  # type: ignore
     from ._models import LongTermRetentionBackup  # type: ignore
     from ._models import LongTermRetentionBackupListResult  # type: ignore
+    from ._models import LongTermRetentionBackupOperationResult  # type: ignore
+    from ._models import LongTermRetentionPolicy  # type: ignore
+    from ._models import LongTermRetentionPolicyListResult  # type: ignore
+    from ._models import MaintenanceConfigurationCapability  # type: ignore
+    from ._models import MaintenanceWindowOptions  # type: ignore
+    from ._models import MaintenanceWindowTimeRange  # type: ignore
+    from ._models import MaintenanceWindows  # type: ignore
     from ._models import ManagedBackupShortTermRetentionPolicy  # type: ignore
     from ._models import ManagedBackupShortTermRetentionPolicyListResult  # type: ignore
     from ._models import ManagedDatabase  # type: ignore
@@ -387,9 +487,12 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstance  # type: ignore
     from ._models import ManagedInstanceAdministrator  # type: ignore
     from ._models import ManagedInstanceAdministratorListResult  # type: ignore
+    from ._models import ManagedInstanceAzureADOnlyAuthListResult  # type: ignore
+    from ._models import ManagedInstanceAzureADOnlyAuthentication  # type: ignore
     from ._models import ManagedInstanceEditionCapability  # type: ignore
     from ._models import ManagedInstanceEncryptionProtector  # type: ignore
     from ._models import ManagedInstanceEncryptionProtectorListResult  # type: ignore
+    from ._models import ManagedInstanceExternalAdministrator  # type: ignore
     from ._models import ManagedInstanceFamilyCapability  # type: ignore
     from ._models import ManagedInstanceKey  # type: ignore
     from ._models import ManagedInstanceKeyListResult  # type: ignore
@@ -398,12 +501,23 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceLongTermRetentionBackupListResult  # type: ignore
     from ._models import ManagedInstanceLongTermRetentionPolicy  # type: ignore
     from ._models import ManagedInstanceLongTermRetentionPolicyListResult  # type: ignore
+    from ._models import ManagedInstanceMaintenanceConfigurationCapability  # type: ignore
     from ._models import ManagedInstanceOperation  # type: ignore
     from ._models import ManagedInstanceOperationListResult  # type: ignore
     from ._models import ManagedInstanceOperationParametersPair  # type: ignore
     from ._models import ManagedInstanceOperationSteps  # type: ignore
     from ._models import ManagedInstancePairInfo  # type: ignore
+    from ._models import ManagedInstancePecProperty  # type: ignore
+    from ._models import ManagedInstancePrivateEndpointConnection  # type: ignore
+    from ._models import ManagedInstancePrivateEndpointConnectionListResult  # type: ignore
+    from ._models import ManagedInstancePrivateEndpointConnectionProperties  # type: ignore
+    from ._models import ManagedInstancePrivateEndpointProperty  # type: ignore
+    from ._models import ManagedInstancePrivateLink  # type: ignore
+    from ._models import ManagedInstancePrivateLinkListResult  # type: ignore
+    from ._models import ManagedInstancePrivateLinkProperties  # type: ignore
     from ._models import ManagedInstancePrivateLinkServiceConnectionStateProperty  # type: ignore
+    from ._models import ManagedInstanceQuery  # type: ignore
+    from ._models import ManagedInstanceQueryStatistics  # type: ignore
     from ._models import ManagedInstanceUpdate  # type: ignore
     from ._models import ManagedInstanceVcoresCapability  # type: ignore
     from ._models import ManagedInstanceVersionCapability  # type: ignore
@@ -411,6 +525,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceVulnerabilityAssessmentListResult  # type: ignore
     from ._models import ManagedServerSecurityAlertPolicy  # type: ignore
     from ._models import ManagedServerSecurityAlertPolicyListResult  # type: ignore
+    from ._models import ManagedTransparentDataEncryption  # type: ignore
+    from ._models import ManagedTransparentDataEncryptionListResult  # type: ignore
     from ._models import MaxSizeCapability  # type: ignore
     from ._models import MaxSizeRangeCapability  # type: ignore
     from ._models import Metric  # type: ignore
@@ -422,29 +538,42 @@ except (SyntaxError, ImportError):
     from ._models import MetricValue  # type: ignore
     from ._models import MinCapacityCapability  # type: ignore
     from ._models import Name  # type: ignore
+    from ._models import NetworkIsolationSettings  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationImpact  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import OperationsHealth  # type: ignore
+    from ._models import OperationsHealthListResult  # type: ignore
+    from ._models import OutboundFirewallRule  # type: ignore
+    from ._models import OutboundFirewallRuleListResult  # type: ignore
     from ._models import PartnerInfo  # type: ignore
     from ._models import PartnerRegionInfo  # type: ignore
     from ._models import PerformanceLevelCapability  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
     from ._models import PrivateEndpointConnectionProperties  # type: ignore
+    from ._models import PrivateEndpointConnectionRequestStatus  # type: ignore
     from ._models import PrivateEndpointProperty  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkResourceProperties  # type: ignore
     from ._models import PrivateLinkServiceConnectionStateProperty  # type: ignore
-    from ._models import PrivateLinkServiceConnectionStatePropertyAutoGenerated  # type: ignore
     from ._models import ProxyResource  # type: ignore
+    from ._models import ProxyResourceWithWritableName  # type: ignore
+    from ._models import QueryMetricInterval  # type: ignore
+    from ._models import QueryMetricProperties  # type: ignore
+    from ._models import QueryStatistics  # type: ignore
+    from ._models import QueryStatisticsProperties  # type: ignore
     from ._models import ReadScaleCapability  # type: ignore
-    from ._models import RecommendedElasticPool  # type: ignore
-    from ._models import RecommendedElasticPoolListMetricsResult  # type: ignore
-    from ._models import RecommendedElasticPoolListResult  # type: ignore
-    from ._models import RecommendedElasticPoolMetric  # type: ignore
-    from ._models import RecommendedIndex  # type: ignore
+    from ._models import RecommendedAction  # type: ignore
+    from ._models import RecommendedActionErrorInfo  # type: ignore
+    from ._models import RecommendedActionImpactRecord  # type: ignore
+    from ._models import RecommendedActionImplementationInfo  # type: ignore
+    from ._models import RecommendedActionMetricInfo  # type: ignore
+    from ._models import RecommendedActionStateInfo  # type: ignore
+    from ._models import RecommendedSensitivityLabelUpdate  # type: ignore
+    from ._models import RecommendedSensitivityLabelUpdateList  # type: ignore
     from ._models import RecoverableDatabase  # type: ignore
     from ._models import RecoverableDatabaseListResult  # type: ignore
     from ._models import RecoverableManagedDatabase  # type: ignore
@@ -453,15 +582,23 @@ except (SyntaxError, ImportError):
     from ._models import ReplicationLinkListResult  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceIdentity  # type: ignore
+    from ._models import ResourceIdentityWithUserAssignedIdentities  # type: ignore
     from ._models import ResourceMoveDefinition  # type: ignore
+    from ._models import ResourceWithWritableName  # type: ignore
     from ._models import RestorableDroppedDatabase  # type: ignore
     from ._models import RestorableDroppedDatabaseListResult  # type: ignore
     from ._models import RestorableDroppedManagedDatabase  # type: ignore
     from ._models import RestorableDroppedManagedDatabaseListResult  # type: ignore
     from ._models import RestorePoint  # type: ignore
     from ._models import RestorePointListResult  # type: ignore
+    from ._models import SecurityEvent  # type: ignore
+    from ._models import SecurityEventCollection  # type: ignore
+    from ._models import SecurityEventSqlInjectionAdditionalProperties  # type: ignore
+    from ._models import SecurityEventsFilterParameters  # type: ignore
     from ._models import SensitivityLabel  # type: ignore
     from ._models import SensitivityLabelListResult  # type: ignore
+    from ._models import SensitivityLabelUpdate  # type: ignore
+    from ._models import SensitivityLabelUpdateList  # type: ignore
     from ._models import Server  # type: ignore
     from ._models import ServerAutomaticTuning  # type: ignore
     from ._models import ServerAzureADAdministrator  # type: ignore
@@ -471,14 +608,22 @@ except (SyntaxError, ImportError):
     from ._models import ServerCommunicationLink  # type: ignore
     from ._models import ServerCommunicationLinkListResult  # type: ignore
     from ._models import ServerConnectionPolicy  # type: ignore
+    from ._models import ServerDevOpsAuditSettingsListResult  # type: ignore
+    from ._models import ServerDevOpsAuditingSettings  # type: ignore
     from ._models import ServerDnsAlias  # type: ignore
     from ._models import ServerDnsAliasAcquisition  # type: ignore
     from ._models import ServerDnsAliasListResult  # type: ignore
+    from ._models import ServerExternalAdministrator  # type: ignore
+    from ._models import ServerInfo  # type: ignore
     from ._models import ServerKey  # type: ignore
     from ._models import ServerKeyListResult  # type: ignore
     from ._models import ServerListResult  # type: ignore
+    from ._models import ServerOperation  # type: ignore
+    from ._models import ServerOperationListResult  # type: ignore
     from ._models import ServerPrivateEndpointConnection  # type: ignore
     from ._models import ServerSecurityAlertPolicy  # type: ignore
+    from ._models import ServerTrustGroup  # type: ignore
+    from ._models import ServerTrustGroupListResult  # type: ignore
     from ._models import ServerUpdate  # type: ignore
     from ._models import ServerUsage  # type: ignore
     from ._models import ServerUsageListResult  # type: ignore
@@ -488,10 +633,9 @@ except (SyntaxError, ImportError):
     from ._models import ServiceObjective  # type: ignore
     from ._models import ServiceObjectiveCapability  # type: ignore
     from ._models import ServiceObjectiveListResult  # type: ignore
-    from ._models import ServiceTierAdvisor  # type: ignore
-    from ._models import ServiceTierAdvisorListResult  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import SloUsageMetric  # type: ignore
+    from ._models import SqlAgentConfiguration  # type: ignore
     from ._models import StorageCapability  # type: ignore
     from ._models import SubscriptionUsage  # type: ignore
     from ._models import SubscriptionUsageListResult  # type: ignore
@@ -515,16 +659,24 @@ except (SyntaxError, ImportError):
     from ._models import SyncGroupSchemaTableColumn  # type: ignore
     from ._models import SyncMember  # type: ignore
     from ._models import SyncMemberListResult  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TdeCertificate  # type: ignore
+    from ._models import TimeZone  # type: ignore
+    from ._models import TimeZoneListResult  # type: ignore
+    from ._models import TopQueries  # type: ignore
+    from ._models import TopQueriesListResult  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import TransparentDataEncryption  # type: ignore
     from ._models import TransparentDataEncryptionActivity  # type: ignore
     from ._models import TransparentDataEncryptionActivityListResult  # type: ignore
     from ._models import UnlinkParameters  # type: ignore
+    from ._models import UpdateLongTermRetentionBackupParameters  # type: ignore
+    from ._models import UpdateManagedInstanceDnsServersOperation  # type: ignore
     from ._models import UpsertManagedServerOperationParameters  # type: ignore
     from ._models import UpsertManagedServerOperationStep  # type: ignore
     from ._models import Usage  # type: ignore
     from ._models import UsageListResult  # type: ignore
+    from ._models import UserIdentity  # type: ignore
     from ._models import VirtualCluster  # type: ignore
     from ._models import VirtualClusterListResult  # type: ignore
     from ._models import VirtualClusterUpdate  # type: ignore
@@ -542,42 +694,51 @@ except (SyntaxError, ImportError):
 from ._sql_management_client_enums import (
     AdministratorName,
     AdministratorType,
+    AdvisorStatus,
+    AggregationFunctionType,
     AuthenticationName,
-    AuthenticationType,
+    AutoExecuteStatus,
+    AutoExecuteStatusInheritedFrom,
     AutomaticTuningDisabledReason,
     AutomaticTuningMode,
     AutomaticTuningOptionModeActual,
     AutomaticTuningOptionModeDesired,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
+    BackupStorageRedundancy,
     BlobAuditingPolicyState,
     CapabilityGroup,
     CapabilityStatus,
     CatalogCollationType,
     CheckNameAvailabilityReason,
+    ColumnDataType,
     ConnectionPolicyName,
     CreateMode,
+    CreatedByType,
+    CurrentBackupStorageRedundancy,
     DataMaskingFunction,
     DataMaskingRuleState,
     DataMaskingState,
-    DatabaseEdition,
+    DataWarehouseUserActivityName,
     DatabaseLicenseType,
     DatabaseReadScale,
     DatabaseState,
     DatabaseStatus,
+    DayOfWeek,
     DiffBackupIntervalInHours,
-    ElasticPoolEdition,
+    DnsRefreshConfigurationPropertiesStatus,
     ElasticPoolLicenseType,
     ElasticPoolState,
     EncryptionProtectorName,
-    Enum65,
-    ExtensionName,
+    Enum77,
     FailoverGroupReplicationRole,
     GeoBackupPolicyName,
     GeoBackupPolicyState,
     IdentityType,
+    ImplementationMethod,
     InstanceFailoverGroupReplicationRole,
     InstancePoolLicenseType,
+    IsRetryable,
     JobAgentState,
     JobExecutionLifecycle,
     JobScheduleType,
@@ -586,8 +747,9 @@ from ._sql_management_client_enums import (
     JobStepOutputType,
     JobTargetGroupMembershipType,
     JobTargetType,
+    LedgerDigestUploadsName,
+    LedgerDigestUploadsState,
     LogSizeUnit,
-    LongTermRetentionDatabaseState,
     LongTermRetentionPolicyName,
     ManagedDatabaseCreateMode,
     ManagedDatabaseStatus,
@@ -600,37 +762,50 @@ from ._sql_management_client_enums import (
     ManagedShortTermRetentionPolicyName,
     ManagementOperationState,
     MaxSizeUnit,
+    MetricType,
+    OperationMode,
     OperationOrigin,
     PauseDelayTimeUnit,
     PerformanceLevelUnit,
     PrimaryAggregationType,
+    PrincipalType,
     PrivateEndpointProvisioningState,
     PrivateLinkServiceConnectionStateActionsRequire,
     PrivateLinkServiceConnectionStateStatus,
     ProvisioningState,
+    QueryMetricUnitType,
+    QueryTimeGrainType,
     ReadOnlyEndpointFailoverPolicy,
     ReadWriteEndpointFailoverPolicy,
-    RecommendedIndexAction,
-    RecommendedIndexState,
-    RecommendedIndexType,
+    RecommendedActionCurrentState,
+    RecommendedActionInitiatedBy,
+    RecommendedSensitivityLabelUpdateKind,
     ReplicaType,
+    ReplicationLinkType,
     ReplicationRole,
     ReplicationState,
+    RequestedBackupStorageRedundancy,
+    RestorableDroppedDatabasePropertiesBackupStorageRedundancy,
     RestoreDetailsName,
     RestorePointType,
     SampleName,
-    SecurityAlertPolicyEmailAccountAdmins,
+    SecondaryType,
     SecurityAlertPolicyName,
     SecurityAlertPolicyNameAutoGenerated,
     SecurityAlertPolicyState,
-    SecurityAlertPolicyUseServerDefault,
+    SecurityAlertsPolicyState,
+    SecurityEventType,
     SensitivityLabelRank,
     SensitivityLabelSource,
+    SensitivityLabelUpdateKind,
     ServerConnectionType,
     ServerKeyType,
-    ServerPublicNetworkAccess,
+    ServerNetworkAccessFlag,
+    ServerTrustGroupPropertiesTrustScopesItem,
+    ServerWorkspaceFeature,
     ServiceObjectiveName,
     ShortTermRetentionPolicyName,
+    SqlAgentConfigurationPropertiesState,
     StorageAccountType,
     StorageCapabilityStorageAccountType,
     StorageKeyType,
@@ -641,8 +816,11 @@ from ._sql_management_client_enums import (
     SyncGroupState,
     SyncMemberDbType,
     SyncMemberState,
+    TableTemporalType,
+    TargetBackupStorageRedundancy,
     TransparentDataEncryptionActivityStatus,
     TransparentDataEncryptionName,
+    TransparentDataEncryptionState,
     TransparentDataEncryptionStatus,
     UnitDefinitionType,
     UnitType,
@@ -656,28 +834,39 @@ from ._sql_management_client_enums import (
 
 __all__ = [
     'AdministratorListResult',
+    'Advisor',
     'AutoPauseDelayTimeRange',
     'AutomaticTuningOptions',
     'AutomaticTuningServerOptions',
     'AzureADOnlyAuthListResult',
-    'BackupLongTermRetentionPolicy',
     'BackupShortTermRetentionPolicy',
     'BackupShortTermRetentionPolicyListResult',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
     'CompleteDatabaseRestoreDefinition',
+    'CopyLongTermRetentionBackupParameters',
     'CreateDatabaseRestorePointDefinition',
     'DataMaskingPolicy',
     'DataMaskingRule',
     'DataMaskingRuleListResult',
+    'DataWarehouseUserActivities',
+    'DataWarehouseUserActivitiesListResult',
     'Database',
     'DatabaseAutomaticTuning',
     'DatabaseBlobAuditingPolicy',
     'DatabaseBlobAuditingPolicyListResult',
+    'DatabaseColumn',
+    'DatabaseColumnListResult',
+    'DatabaseExtensions',
     'DatabaseListResult',
     'DatabaseOperation',
     'DatabaseOperationListResult',
+    'DatabaseSchema',
+    'DatabaseSchemaListResult',
+    'DatabaseSecurityAlertListResult',
     'DatabaseSecurityAlertPolicy',
+    'DatabaseTable',
+    'DatabaseTableListResult',
     'DatabaseUpdate',
     'DatabaseUsage',
     'DatabaseUsageListResult',
@@ -686,6 +875,8 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentRuleBaseline',
     'DatabaseVulnerabilityAssessmentRuleBaselineItem',
     'DatabaseVulnerabilityAssessmentScansExport',
+    'DeletedServer',
+    'DeletedServerListResult',
     'EditionCapability',
     'ElasticPool',
     'ElasticPoolActivity',
@@ -703,7 +894,7 @@ __all__ = [
     'ElasticPoolUpdate',
     'EncryptionProtector',
     'EncryptionProtectorListResult',
-    'ExportRequest',
+    'ExportDatabaseDefinition',
     'ExtendedDatabaseBlobAuditingPolicy',
     'ExtendedDatabaseBlobAuditingPolicyListResult',
     'ExtendedServerBlobAuditingPolicy',
@@ -714,13 +905,15 @@ __all__ = [
     'FailoverGroupReadWriteEndpoint',
     'FailoverGroupUpdate',
     'FirewallRule',
+    'FirewallRuleList',
     'FirewallRuleListResult',
     'GeoBackupPolicy',
     'GeoBackupPolicyListResult',
-    'ImportExportResponse',
-    'ImportExtensionProperties',
-    'ImportExtensionRequest',
-    'ImportRequest',
+    'ImportExistingDatabaseDefinition',
+    'ImportExportExtensionsOperationListResult',
+    'ImportExportExtensionsOperationResult',
+    'ImportExportOperationResult',
+    'ImportNewDatabaseDefinition',
     'InstanceFailoverGroup',
     'InstanceFailoverGroupListResult',
     'InstanceFailoverGroupReadOnlyEndpoint',
@@ -752,12 +945,21 @@ __all__ = [
     'JobTargetGroupListResult',
     'JobVersion',
     'JobVersionListResult',
+    'LedgerDigestUploads',
+    'LedgerDigestUploadsListResult',
     'LicenseTypeCapability',
     'LocationCapabilities',
     'LogSizeCapability',
     'LogicalServerSecurityAlertPolicyListResult',
     'LongTermRetentionBackup',
     'LongTermRetentionBackupListResult',
+    'LongTermRetentionBackupOperationResult',
+    'LongTermRetentionPolicy',
+    'LongTermRetentionPolicyListResult',
+    'MaintenanceConfigurationCapability',
+    'MaintenanceWindowOptions',
+    'MaintenanceWindowTimeRange',
+    'MaintenanceWindows',
     'ManagedBackupShortTermRetentionPolicy',
     'ManagedBackupShortTermRetentionPolicyListResult',
     'ManagedDatabase',
@@ -769,9 +971,12 @@ __all__ = [
     'ManagedInstance',
     'ManagedInstanceAdministrator',
     'ManagedInstanceAdministratorListResult',
+    'ManagedInstanceAzureADOnlyAuthListResult',
+    'ManagedInstanceAzureADOnlyAuthentication',
     'ManagedInstanceEditionCapability',
     'ManagedInstanceEncryptionProtector',
     'ManagedInstanceEncryptionProtectorListResult',
+    'ManagedInstanceExternalAdministrator',
     'ManagedInstanceFamilyCapability',
     'ManagedInstanceKey',
     'ManagedInstanceKeyListResult',
@@ -780,12 +985,23 @@ __all__ = [
     'ManagedInstanceLongTermRetentionBackupListResult',
     'ManagedInstanceLongTermRetentionPolicy',
     'ManagedInstanceLongTermRetentionPolicyListResult',
+    'ManagedInstanceMaintenanceConfigurationCapability',
     'ManagedInstanceOperation',
     'ManagedInstanceOperationListResult',
     'ManagedInstanceOperationParametersPair',
     'ManagedInstanceOperationSteps',
     'ManagedInstancePairInfo',
+    'ManagedInstancePecProperty',
+    'ManagedInstancePrivateEndpointConnection',
+    'ManagedInstancePrivateEndpointConnectionListResult',
+    'ManagedInstancePrivateEndpointConnectionProperties',
+    'ManagedInstancePrivateEndpointProperty',
+    'ManagedInstancePrivateLink',
+    'ManagedInstancePrivateLinkListResult',
+    'ManagedInstancePrivateLinkProperties',
     'ManagedInstancePrivateLinkServiceConnectionStateProperty',
+    'ManagedInstanceQuery',
+    'ManagedInstanceQueryStatistics',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
     'ManagedInstanceVersionCapability',
@@ -793,6 +1009,8 @@ __all__ = [
     'ManagedInstanceVulnerabilityAssessmentListResult',
     'ManagedServerSecurityAlertPolicy',
     'ManagedServerSecurityAlertPolicyListResult',
+    'ManagedTransparentDataEncryption',
+    'ManagedTransparentDataEncryptionListResult',
     'MaxSizeCapability',
     'MaxSizeRangeCapability',
     'Metric',
@@ -804,29 +1022,42 @@ __all__ = [
     'MetricValue',
     'MinCapacityCapability',
     'Name',
+    'NetworkIsolationSettings',
     'Operation',
     'OperationDisplay',
     'OperationImpact',
     'OperationListResult',
+    'OperationsHealth',
+    'OperationsHealthListResult',
+    'OutboundFirewallRule',
+    'OutboundFirewallRuleListResult',
     'PartnerInfo',
     'PartnerRegionInfo',
     'PerformanceLevelCapability',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
     'PrivateEndpointConnectionProperties',
+    'PrivateEndpointConnectionRequestStatus',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionStateProperty',
-    'PrivateLinkServiceConnectionStatePropertyAutoGenerated',
     'ProxyResource',
+    'ProxyResourceWithWritableName',
+    'QueryMetricInterval',
+    'QueryMetricProperties',
+    'QueryStatistics',
+    'QueryStatisticsProperties',
     'ReadScaleCapability',
-    'RecommendedElasticPool',
-    'RecommendedElasticPoolListMetricsResult',
-    'RecommendedElasticPoolListResult',
-    'RecommendedElasticPoolMetric',
-    'RecommendedIndex',
+    'RecommendedAction',
+    'RecommendedActionErrorInfo',
+    'RecommendedActionImpactRecord',
+    'RecommendedActionImplementationInfo',
+    'RecommendedActionMetricInfo',
+    'RecommendedActionStateInfo',
+    'RecommendedSensitivityLabelUpdate',
+    'RecommendedSensitivityLabelUpdateList',
     'RecoverableDatabase',
     'RecoverableDatabaseListResult',
     'RecoverableManagedDatabase',
@@ -835,15 +1066,23 @@ __all__ = [
     'ReplicationLinkListResult',
     'Resource',
     'ResourceIdentity',
+    'ResourceIdentityWithUserAssignedIdentities',
     'ResourceMoveDefinition',
+    'ResourceWithWritableName',
     'RestorableDroppedDatabase',
     'RestorableDroppedDatabaseListResult',
     'RestorableDroppedManagedDatabase',
     'RestorableDroppedManagedDatabaseListResult',
     'RestorePoint',
     'RestorePointListResult',
+    'SecurityEvent',
+    'SecurityEventCollection',
+    'SecurityEventSqlInjectionAdditionalProperties',
+    'SecurityEventsFilterParameters',
     'SensitivityLabel',
     'SensitivityLabelListResult',
+    'SensitivityLabelUpdate',
+    'SensitivityLabelUpdateList',
     'Server',
     'ServerAutomaticTuning',
     'ServerAzureADAdministrator',
@@ -853,14 +1092,22 @@ __all__ = [
     'ServerCommunicationLink',
     'ServerCommunicationLinkListResult',
     'ServerConnectionPolicy',
+    'ServerDevOpsAuditSettingsListResult',
+    'ServerDevOpsAuditingSettings',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'ServerDnsAliasListResult',
+    'ServerExternalAdministrator',
+    'ServerInfo',
     'ServerKey',
     'ServerKeyListResult',
     'ServerListResult',
+    'ServerOperation',
+    'ServerOperationListResult',
     'ServerPrivateEndpointConnection',
     'ServerSecurityAlertPolicy',
+    'ServerTrustGroup',
+    'ServerTrustGroupListResult',
     'ServerUpdate',
     'ServerUsage',
     'ServerUsageListResult',
@@ -870,10 +1117,9 @@ __all__ = [
     'ServiceObjective',
     'ServiceObjectiveCapability',
     'ServiceObjectiveListResult',
-    'ServiceTierAdvisor',
-    'ServiceTierAdvisorListResult',
     'Sku',
     'SloUsageMetric',
+    'SqlAgentConfiguration',
     'StorageCapability',
     'SubscriptionUsage',
     'SubscriptionUsageListResult',
@@ -897,16 +1143,24 @@ __all__ = [
     'SyncGroupSchemaTableColumn',
     'SyncMember',
     'SyncMemberListResult',
+    'SystemData',
     'TdeCertificate',
+    'TimeZone',
+    'TimeZoneListResult',
+    'TopQueries',
+    'TopQueriesListResult',
     'TrackedResource',
     'TransparentDataEncryption',
     'TransparentDataEncryptionActivity',
     'TransparentDataEncryptionActivityListResult',
     'UnlinkParameters',
+    'UpdateLongTermRetentionBackupParameters',
+    'UpdateManagedInstanceDnsServersOperation',
     'UpsertManagedServerOperationParameters',
     'UpsertManagedServerOperationStep',
     'Usage',
     'UsageListResult',
+    'UserIdentity',
     'VirtualCluster',
     'VirtualClusterListResult',
     'VirtualClusterUpdate',
@@ -922,42 +1176,51 @@ __all__ = [
     'WorkloadGroupListResult',
     'AdministratorName',
     'AdministratorType',
+    'AdvisorStatus',
+    'AggregationFunctionType',
     'AuthenticationName',
-    'AuthenticationType',
+    'AutoExecuteStatus',
+    'AutoExecuteStatusInheritedFrom',
     'AutomaticTuningDisabledReason',
     'AutomaticTuningMode',
     'AutomaticTuningOptionModeActual',
     'AutomaticTuningOptionModeDesired',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
+    'BackupStorageRedundancy',
     'BlobAuditingPolicyState',
     'CapabilityGroup',
     'CapabilityStatus',
     'CatalogCollationType',
     'CheckNameAvailabilityReason',
+    'ColumnDataType',
     'ConnectionPolicyName',
     'CreateMode',
+    'CreatedByType',
+    'CurrentBackupStorageRedundancy',
     'DataMaskingFunction',
     'DataMaskingRuleState',
     'DataMaskingState',
-    'DatabaseEdition',
+    'DataWarehouseUserActivityName',
     'DatabaseLicenseType',
     'DatabaseReadScale',
     'DatabaseState',
     'DatabaseStatus',
+    'DayOfWeek',
     'DiffBackupIntervalInHours',
-    'ElasticPoolEdition',
+    'DnsRefreshConfigurationPropertiesStatus',
     'ElasticPoolLicenseType',
     'ElasticPoolState',
     'EncryptionProtectorName',
-    'Enum65',
-    'ExtensionName',
+    'Enum77',
     'FailoverGroupReplicationRole',
     'GeoBackupPolicyName',
     'GeoBackupPolicyState',
     'IdentityType',
+    'ImplementationMethod',
     'InstanceFailoverGroupReplicationRole',
     'InstancePoolLicenseType',
+    'IsRetryable',
     'JobAgentState',
     'JobExecutionLifecycle',
     'JobScheduleType',
@@ -966,8 +1229,9 @@ __all__ = [
     'JobStepOutputType',
     'JobTargetGroupMembershipType',
     'JobTargetType',
+    'LedgerDigestUploadsName',
+    'LedgerDigestUploadsState',
     'LogSizeUnit',
-    'LongTermRetentionDatabaseState',
     'LongTermRetentionPolicyName',
     'ManagedDatabaseCreateMode',
     'ManagedDatabaseStatus',
@@ -980,37 +1244,50 @@ __all__ = [
     'ManagedShortTermRetentionPolicyName',
     'ManagementOperationState',
     'MaxSizeUnit',
+    'MetricType',
+    'OperationMode',
     'OperationOrigin',
     'PauseDelayTimeUnit',
     'PerformanceLevelUnit',
     'PrimaryAggregationType',
+    'PrincipalType',
     'PrivateEndpointProvisioningState',
     'PrivateLinkServiceConnectionStateActionsRequire',
     'PrivateLinkServiceConnectionStateStatus',
     'ProvisioningState',
+    'QueryMetricUnitType',
+    'QueryTimeGrainType',
     'ReadOnlyEndpointFailoverPolicy',
     'ReadWriteEndpointFailoverPolicy',
-    'RecommendedIndexAction',
-    'RecommendedIndexState',
-    'RecommendedIndexType',
+    'RecommendedActionCurrentState',
+    'RecommendedActionInitiatedBy',
+    'RecommendedSensitivityLabelUpdateKind',
     'ReplicaType',
+    'ReplicationLinkType',
     'ReplicationRole',
     'ReplicationState',
+    'RequestedBackupStorageRedundancy',
+    'RestorableDroppedDatabasePropertiesBackupStorageRedundancy',
     'RestoreDetailsName',
     'RestorePointType',
     'SampleName',
-    'SecurityAlertPolicyEmailAccountAdmins',
+    'SecondaryType',
     'SecurityAlertPolicyName',
     'SecurityAlertPolicyNameAutoGenerated',
     'SecurityAlertPolicyState',
-    'SecurityAlertPolicyUseServerDefault',
+    'SecurityAlertsPolicyState',
+    'SecurityEventType',
     'SensitivityLabelRank',
     'SensitivityLabelSource',
+    'SensitivityLabelUpdateKind',
     'ServerConnectionType',
     'ServerKeyType',
-    'ServerPublicNetworkAccess',
+    'ServerNetworkAccessFlag',
+    'ServerTrustGroupPropertiesTrustScopesItem',
+    'ServerWorkspaceFeature',
     'ServiceObjectiveName',
     'ShortTermRetentionPolicyName',
+    'SqlAgentConfigurationPropertiesState',
     'StorageAccountType',
     'StorageCapabilityStorageAccountType',
     'StorageKeyType',
@@ -1021,8 +1298,11 @@ __all__ = [
     'SyncGroupState',
     'SyncMemberDbType',
     'SyncMemberState',
+    'TableTemporalType',
+    'TargetBackupStorageRedundancy',
     'TransparentDataEncryptionActivityStatus',
     'TransparentDataEncryptionName',
+    'TransparentDataEncryptionState',
     'TransparentDataEncryptionStatus',
     'UnitDefinitionType',
     'UnitType',

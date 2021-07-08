@@ -26,6 +26,33 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class AnalyticalStorageSchemaType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes the types of schema for analytical storage.
+    """
+
+    WELL_DEFINED = "WellDefined"
+    FULL_FIDELITY = "FullFidelity"
+
+class ApiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to indicate the API type of the restorable database account.
+    """
+
+    MONGO_DB = "MongoDB"
+    GREMLIN = "Gremlin"
+    CASSANDRA = "Cassandra"
+    TABLE = "Table"
+    SQL = "Sql"
+    GREMLIN_V2 = "GremlinV2"
+
+class BackupPolicyMigrationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes the status of migration between backup policy types.
+    """
+
+    INVALID = "Invalid"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+
 class BackupPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the mode of backups.
     """
@@ -52,6 +79,22 @@ class ConnectorOffer(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     SMALL = "Small"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to indicate the mode of account creation.
+    """
+
+    DEFAULT = "Default"
+    RESTORE = "Restore"
 
 class DatabaseAccountKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of database account. This can only be set at database account creation.
@@ -118,6 +161,15 @@ class NotebookWorkspaceName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
 
     DEFAULT = "default"
 
+class OperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to indicate the operation type of the event.
+    """
+
+    CREATE = "Create"
+    REPLACE = "Replace"
+    DELETE = "Delete"
+    SYSTEM_OPERATION = "SystemOperation"
+
 class PartitionKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the kind of algorithm used for partitioning. For MultiHash, multiple partition keys
     (upto three maximum) are supported for container create
@@ -155,6 +207,19 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     NONE = "None"
+
+class RestoreMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes the mode of the restore.
+    """
+
+    POINT_IN_TIME = "PointInTime"
+
+class RoleDefinitionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether the Role Definition was built-in or user created.
+    """
+
+    BUILT_IN_ROLE = "BuiltInRole"
+    CUSTOM_ROLE = "CustomRole"
 
 class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the ServerVersion of an a MongoDB account.

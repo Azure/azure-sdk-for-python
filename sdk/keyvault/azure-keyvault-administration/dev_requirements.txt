@@ -4,6 +4,6 @@
 -e ../../identity/azure-identity
 -e ../azure-keyvault-keys
 -e ../azure-mgmt-keyvault
-../azure-keyvault-nspkg
+../../nspkg/azure-keyvault-nspkg
 aiohttp>=3.0; python_version >= '3.5'
 azure-storage-blob==12.6.0

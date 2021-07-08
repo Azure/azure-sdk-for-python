@@ -171,7 +171,7 @@ class AzureCliScript(DeploymentScript):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param primary_script_uri: Uri for the script. This is the entry point for the external script.
     :type primary_script_uri: str
     :param supporting_script_uris: Supporting files for the external script.
@@ -372,7 +372,7 @@ class DeploymentScriptPropertiesBase(msrest.serialization.Model):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     """
 
     _validation = {
@@ -455,7 +455,7 @@ class AzureCliScriptProperties(DeploymentScriptPropertiesBase, ScriptConfigurati
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param az_cli_version: Required. Azure CLI module version to be used.
     :type az_cli_version: str
     """
@@ -570,7 +570,7 @@ class AzurePowerShellScript(DeploymentScript):
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param primary_script_uri: Uri for the script. This is the entry point for the external script.
     :type primary_script_uri: str
     :param supporting_script_uris: Supporting files for the external script.
@@ -726,7 +726,7 @@ class AzurePowerShellScriptProperties(DeploymentScriptPropertiesBase, ScriptConf
     :ivar status: Contains the results of script execution.
     :vartype status: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ScriptStatus
     :ivar outputs: List of script outputs.
-    :vartype outputs: dict[str, object]
+    :vartype outputs: dict[str, any]
     :param az_power_shell_version: Required. Azure PowerShell module version to be used.
     :type az_power_shell_version: str
     """
@@ -965,7 +965,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {

@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._maintenance_client import MaintenanceClient
+from ._maintenance_management_client import MaintenanceManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['MaintenanceClient']
+__all__ = ['MaintenanceManagementClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

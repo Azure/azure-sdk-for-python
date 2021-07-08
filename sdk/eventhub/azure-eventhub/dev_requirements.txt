@@ -5,3 +5,4 @@
 -e ../../resources/azure-mgmt-resource
 aiohttp>=3.0; python_version >= '3.5'
 -e ../../../tools/azure-devtools
+-e ../../servicebus/azure-servicebus

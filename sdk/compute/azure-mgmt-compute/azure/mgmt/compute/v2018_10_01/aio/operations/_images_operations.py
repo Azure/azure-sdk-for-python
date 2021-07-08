@@ -48,7 +48,7 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         parameters: "_models.Image",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Image":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Image"]
         error_map = {
@@ -105,7 +105,7 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         parameters: "_models.Image",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Image"]:
         """Create or update an image.
 
@@ -117,8 +117,8 @@ class ImagesOperations:
         :type parameters: ~azure.mgmt.compute.v2018_10_01.models.Image
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Image or the result of cls(response)
@@ -176,7 +176,7 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         parameters: "_models.ImageUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Image":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Image"]
         error_map = {
@@ -233,7 +233,7 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         parameters: "_models.ImageUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Image"]:
         """Update an image.
 
@@ -245,8 +245,8 @@ class ImagesOperations:
         :type parameters: ~azure.mgmt.compute.v2018_10_01.models.ImageUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Image or the result of cls(response)
@@ -303,7 +303,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -345,7 +345,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an Image.
 
@@ -355,8 +355,8 @@ class ImagesOperations:
         :type image_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -410,7 +410,7 @@ class ImagesOperations:
         resource_group_name: str,
         image_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Image":
         """Gets an image.
 
@@ -471,7 +471,7 @@ class ImagesOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ImageListResult"]:
         """Gets the list of images under a resource group.
 
@@ -540,7 +540,7 @@ class ImagesOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ImageListResult"]:
         """Gets the list of Images in the subscription. Use nextLink property in the response to get the
         next page of Images. Do this till nextLink is null to fetch all the Images.

@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class ManagedDatabaseRestoreDetailsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,12 +45,13 @@ class ManagedDatabaseRestoreDetailsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        restore_details_name: Union[str, "models.RestoreDetailsName"],
-        **kwargs
-    ) -> "models.ManagedDatabaseRestoreDetailsResult":
+        restore_details_name: Union[str, "_models.RestoreDetailsName"],
+        **kwargs: Any
+    ) -> "_models.ManagedDatabaseRestoreDetailsResult":
         """Gets managed database restore details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
@@ -63,18 +64,18 @@ class ManagedDatabaseRestoreDetailsOperations:
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseRestoreDetailsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedDatabaseRestoreDetailsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedDatabaseRestoreDetailsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-02-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
             'restoreDetailsName': self._serialize.url("restore_details_name", restore_details_name, 'str'),

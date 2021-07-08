@@ -43,7 +43,7 @@ class TopLevelDomainsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TopLevelDomainCollection"]:
         """Get all top-level domains supported for registration.
 
@@ -112,7 +112,7 @@ class TopLevelDomainsOperations:
     async def get(
         self,
         name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.TopLevelDomain":
         """Get details of a top-level domain.
 
@@ -169,7 +169,7 @@ class TopLevelDomainsOperations:
         self,
         name: str,
         agreement_option: "_models.TopLevelDomainAgreementOption",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TldLegalAgreementCollection"]:
         """Gets all legal agreements that user needs to accept before purchasing a domain.
 

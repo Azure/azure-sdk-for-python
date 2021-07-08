@@ -46,7 +46,7 @@ class AccountsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NetAppAccountList"]:
         """Describe all NetApp Accounts in a resource group.
 
@@ -64,7 +64,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -119,7 +119,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetAppAccount":
         """Describe a NetApp Account.
 
@@ -139,7 +139,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -180,14 +180,14 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         body: "_models.NetAppAccount",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetAppAccount":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetAppAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -237,7 +237,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         body: "_models.NetAppAccount",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetAppAccount"]:
         """Create or update a NetApp account.
 
@@ -251,8 +251,8 @@ class AccountsOperations:
         :type body: ~azure.mgmt.netapp.models.NetAppAccount
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetAppAccount or the result of cls(response)
@@ -309,14 +309,14 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -351,7 +351,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a NetApp account.
 
@@ -363,8 +363,8 @@ class AccountsOperations:
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -418,14 +418,14 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         body: "_models.NetAppAccountPatch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetAppAccount":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetAppAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -475,7 +475,7 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         body: "_models.NetAppAccountPatch",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NetAppAccount"]:
         """Update a NetApp account.
 
@@ -489,8 +489,8 @@ class AccountsOperations:
         :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NetAppAccount or the result of cls(response)

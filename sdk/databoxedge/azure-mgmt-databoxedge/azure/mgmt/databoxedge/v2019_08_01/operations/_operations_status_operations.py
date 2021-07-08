@@ -29,7 +29,7 @@ class OperationsStatusOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databoxedge.models
+    :type models: ~azure.mgmt.databoxedge.v2019_08_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -64,7 +64,7 @@ class OperationsStatusOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Job, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.Job
+        :rtype: ~azure.mgmt.databoxedge.v2019_08_01.models.Job
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Job"]

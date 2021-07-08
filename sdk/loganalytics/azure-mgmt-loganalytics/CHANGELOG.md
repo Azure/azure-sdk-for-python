@@ -1,5 +1,27 @@
 # Release History
 
+## 10.0.0 (2021-05-13)
+
+**Features**
+
+  - Model WorkspacePatch has a new parameter cluster_resource_id
+  - Model WorkspacePatch has a new parameter immediate_purge_data_on30_days
+  - Model WorkspacePatch has a new parameter enable_data_export
+  - Model WorkspacePatch has a new parameter enable_log_access_using_only_resource_permissions
+  - Model Workspace has a new parameter cluster_resource_id
+  - Model Workspace has a new parameter immediate_purge_data_on30_days
+  - Model Workspace has a new parameter enable_data_export
+  - Model Workspace has a new parameter enable_log_access_using_only_resource_permissions
+
+**Breaking changes**
+
+  - Model WorkspacePatch no longer has parameter features
+  - Model Table no longer has parameter is_troubleshooting_allowed
+  - Model Table no longer has parameter is_troubleshoot_enabled
+  - Model Table no longer has parameter last_troubleshoot_date
+  - Model WorkspaceSku no longer has parameter max_capacity_reservation_level
+  - Model Workspace no longer has parameter features
+
 ## 9.0.0 (2021-04-06)
 
 **Features**
@@ -55,7 +77,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -63,7 +85,7 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 ## 2.0.0(2020-11-09)
 
@@ -184,8 +206,8 @@ caused by usage of classes that were not supposed to be used in the
 first place.
 
   - LogAnalyticsManagementClient cannot be imported from
-    `azure.mgmt.loganalytics.log_analytics_management_client` anymore 
-    (import OperationalInsightsManagementClient from 
+    `azure.mgmt.loganalytics.log_analytics_management_client` anymore
+    (import OperationalInsightsManagementClient from
     `azure.mgmt.loganalytics` works like before)
   - LogAnalyticsManagementClientConfiguration import has been moved from
     `azure.mgmt.loganalytics.log_analytics_management_client` to `azure.mgmt.loganalytics`

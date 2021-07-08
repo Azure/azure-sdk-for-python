@@ -1,16 +1,13 @@
-import locale
-import os
-import sys
 from datetime import datetime, timedelta
 
 import pytest
 
 from devtools_testutils import AzureTestCase
 
-from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import (
-    AccessPolicy,
+    TableAccessPolicy,
     TableSasPermissions,
     ResourceTypes,
     AccountSasPermissions,
@@ -20,58 +17,31 @@ from azure.data.tables import (
 from azure.data.tables.aio import TableServiceClient, TableClient
 
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import TablesPreparer
+from async_preparers import tables_decorator_async
 
-TEST_TABLE_PREFIX = 'pytableasync'
-
-
-# ------------------------------------------------------------------------------
 
 class TableTestAsync(AzureTestCase, AsyncTableTestCase):
-    # --Helpers-----------------------------------------------------------------
-    def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):
-        table_name = self.get_resource_name(prefix)
-        return table_name
-
-    async def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
-        table_name = self._get_table_reference(prefix)
-        try:
-            table = await ts.create_table(table_name)
-            if table_list is not None:
-                table_list.append(table)
-        except ResourceExistsError:
-            table = ts.get_table_client(table_name)
-        return table
-
-    async def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            await ts.delete_table(table.table_name)
-        except ResourceNotFoundError:
-            pass
-
-    # --Test cases for tables --------------------------------------------------
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = self._get_table_reference()
 
         # Act
-        created = await ts.create_table(table_name=table_name)
+        table = ts.get_table_client(table_name)
+        created = await table.create_table()
 
         # Assert
-        assert created.table_name == table_name
+        assert created.name == table_name
         await ts.delete_table(table_name=table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -86,11 +56,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert isinstance(created,  TableClient)
         await ts.delete_table(table_name=table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = "myasynctable"
 
@@ -115,11 +85,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         for i in range(5):
             await ts.delete_table(table_name + str(i))
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_list_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -136,11 +106,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert tables[0] is not None
         await ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -154,20 +124,19 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert len(tables) ==  1
         for table_item in tables:
             assert isinstance(table_item,  TableItem)
-            assert table_item.date is not None
-            assert table_item.table_name is not None
+            assert table_item.name is not None
         await ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_list_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         prefix = 'listtable'
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         # Delete any existing tables
         async for table in ts.list_tables():
-            await ts.delete_table(table.table_name)
+            await ts.delete_table(table.name)
 
         table_list = []
         for i in range(0, 4):
@@ -185,11 +154,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert len(small_page) ==  2
         assert len(big_page) >=  4
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_list_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -218,11 +187,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert tables2_len == 2
         assert tables1 != tables2
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -234,25 +203,21 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             tables.append(e)
         assert tables ==  []
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name,
                                                                        tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
-
-        # Act
-        with pytest.raises(ResourceNotFoundError):
-            await ts.delete_table(table_name)
+        await ts.delete_table(table_name)
 
         # Assert
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = await self._create_table(ts)
         try:
@@ -265,11 +230,11 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = await self._create_table(ts)
         try:
@@ -283,40 +248,64 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        ts = TableServiceClient(url, tables_primary_storage_account_key)
+        ts = TableServiceClient(url, credential=tables_primary_storage_account_key)
         table = await self._create_table(ts)
         try:
-            # Act
-            await table.set_table_access_policy(signed_identifiers={'empty': None})
-            # Assert
+            dt = datetime(2021, 6, 8, 2, 10, 9)
+            signed_identifiers={
+                'null': None,
+                'empty': TableAccessPolicy(start=None, expiry=None, permission=None),
+                'partial': TableAccessPolicy(permission='r'),
+                'full': TableAccessPolicy(start=dt, expiry=dt, permission='r')
+                }
+            await table.set_table_access_policy(signed_identifiers)
             acl = await table.get_table_access_policy()
             assert acl is not None
-            assert len(acl) ==  1
-            assert acl['empty'] is not None
-            assert acl['empty'].permission is None
-            assert acl['empty'].expiry is None
-            assert acl['empty'].start is None
+            assert len(acl) ==  4
+            assert acl['null'] is None
+            assert acl['empty'] is None
+            assert acl['partial'] is not None
+            assert acl['partial'].permission == 'r'
+            assert acl['partial'].expiry is None
+            assert acl['partial'].start is None
+            assert acl['full'] is not None
+            assert acl['full'].permission == 'r'
+            self._assert_policy_datetime(dt, acl['full'].expiry)
+            self._assert_policy_datetime(dt, acl['full'].start)
+
+            signed_identifiers.pop('empty')
+            signed_identifiers['partial'] = None
+
+            await table.set_table_access_policy(signed_identifiers)
+            acl = await table.get_table_access_policy()
+            assert acl is not None
+            assert len(acl) ==  3
+            assert 'empty' not in acl
+            assert acl['null'] is None
+            assert acl['partial'] is None
+            assert acl['full'] is not None
+            assert acl['full'].permission == 'r'
+            self._assert_policy_datetime(dt, acl['full'].expiry)
+            self._assert_policy_datetime(dt, acl['full'].start)
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        ts = TableServiceClient(url, tables_primary_storage_account_key)
+        ts = TableServiceClient(url, credential=tables_primary_storage_account_key)
         table = await self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
 
         # Act
-        identifiers = dict()
-        identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
-                                             expiry=datetime.utcnow() + timedelta(hours=1),
-                                             permission=TableSasPermissions(read=True))
+        start = datetime(2021, 6, 8, 2, 10, 9) - timedelta(minutes=5)
+        expiry = datetime(2021, 6, 8, 2, 10, 9) + timedelta(hours=1)
+        identifiers = {'testid': TableAccessPolicy(start=start, expiry=expiry, permission=TableSasPermissions(read=True))}
         try:
             await client.set_table_access_policy(signed_identifiers=identifiers)
 
@@ -324,15 +313,18 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             acl = await  client.get_table_access_policy()
             assert acl is not None
             assert len(acl) ==  1
-            assert 'testid' in acl
+            assert acl.get('testid')
+            self._assert_policy_datetime(start, acl['testid'].start)
+            self._assert_policy_datetime(expiry, acl['testid'].expiry)
+            assert acl['testid'].permission == 'r'
         finally:
             await ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_set_table_acl_too_many_ids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
-        ts = TableServiceClient(url, tables_primary_storage_account_key)
+        ts = TableServiceClient(url, credential=tables_primary_storage_account_key)
         table = await self._create_table(ts)
         try:
             # Act
@@ -346,14 +338,10 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    @pytest.mark.live_test_only
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-
-        # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
 
         table = await self._create_table(tsc)
         try:
@@ -367,8 +355,8 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             entity['RowKey'] = 'test2'
             await table.upsert_entity(entity=entity)
 
-            token = generate_account_sas(
-                tables_storage_account_name,
+            token = self.generate_sas(
+                generate_account_sas,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
@@ -376,9 +364,10 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
 
-            account_url = self.account_url(tables_storage_account_name, "table")
+            token = AzureSasCredential(token)
 
-            service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
+            account_url = self.account_url(tables_storage_account_name, "table")
+            service = TableServiceClient(credential=token, endpoint=account_url)
 
             # Act
             sas_table = service.get_table_client(table.table_name)
@@ -388,21 +377,22 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].text == u'hello'
-            assert entities[1].text == u'hello'
+            assert entities[0]['text'] == u'hello'
+            assert entities[1]['text'] == u'hello'
         finally:
-            await self._delete_table(table=table, ts=tsc)
+            await tsc.delete_table(table.table_name)
 
 
 class TestTablesUnitTest(AsyncTableTestCase):
     tables_storage_account_name = "fake_storage_account"
     tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+    credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)
 
     @pytest.mark.asyncio
     async def test_unicode_create_table_unicode_name(self):
         # Arrange
         account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+        tsc = TableServiceClient(account_url, credential=self.credential)
 
         table_name = u'啊齄丂狛狜'
 
@@ -417,7 +407,7 @@ class TestTablesUnitTest(AsyncTableTestCase):
     async def test_create_table_invalid_name(self):
         # Arrange
         account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+        tsc = TableServiceClient(account_url, credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -430,7 +420,7 @@ class TestTablesUnitTest(AsyncTableTestCase):
     async def test_delete_table_invalid_name(self):
         # Arrange
         account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+        tsc = TableServiceClient(account_url, credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -438,13 +428,3 @@ class TestTablesUnitTest(AsyncTableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
-
-    def test_azurite_url(self):
-        account_url = "https://127.0.0.1:10002/my_account"
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
-
-        assert tsc.account_name == "my_account"
-        assert tsc.url == "https://127.0.0.1:10002/my_account"
-        assert tsc.location_mode == "primary"
-        assert tsc.credential.account_key == self.tables_primary_storage_account_key
-        assert tsc.credential.account_name == "my_account"

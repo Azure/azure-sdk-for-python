@@ -393,10 +393,42 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
             assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
 
+            # updating all settings with keyword arguments.
+            await mgmt_service.update_queue(
+                queue_description,
+                auto_delete_on_idle=datetime.timedelta(minutes=15),
+                dead_lettering_on_message_expiration=False,
+                default_message_time_to_live=datetime.timedelta(minutes=16),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=17),
+                enable_batched_operations=False,
+                enable_express=False,
+                lock_duration=datetime.timedelta(seconds=18),
+                max_delivery_count=15,
+                max_size_in_megabytes=2048,
+                forward_to=None,
+                forward_dead_lettered_messages_to=None
+            )
+            queue_description = await mgmt_service.get_queue(queue_name)
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=15)
+            assert queue_description.dead_lettering_on_message_expiration == False
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=16)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=17)
+            assert queue_description.enable_batched_operations == False
+            assert queue_description.enable_express == False
+            #assert queue_description.enable_partitioning == True
+            assert queue_description.lock_duration == datetime.timedelta(seconds=18)
+            assert queue_description.max_delivery_count == 15
+            assert queue_description.max_size_in_megabytes == 2048
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert queue_description.forward_to == None
+            assert queue_description.forward_dead_lettered_messages_to == None
+            #assert queue_description.requires_duplicate_detection == True
+            #assert queue_description.requires_session == True
+
         finally:
             await mgmt_service.delete_queue(queue_name)
             await mgmt_service.delete_topic(topic_name)
-            mgmt_service.close()
+            await mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -576,10 +608,43 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
+
+            # updating all settings with keyword arguments.
+            await mgmt_service.update_queue(
+                dict(queue_description),
+                auto_delete_on_idle=datetime.timedelta(minutes=15),
+                dead_lettering_on_message_expiration=False,
+                default_message_time_to_live=datetime.timedelta(minutes=16),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=17),
+                enable_batched_operations=False,
+                enable_express=False,
+                lock_duration=datetime.timedelta(seconds=18),
+                max_delivery_count=15,
+                max_size_in_megabytes=2048,
+                forward_to=None,
+                forward_dead_lettered_messages_to=None
+            )
+            queue_description = await mgmt_service.get_queue(queue_name)
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=15)
+            assert queue_description.dead_lettering_on_message_expiration == False
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=16)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=17)
+            assert queue_description.enable_batched_operations == False
+            assert queue_description.enable_express == False
+            # assert queue_description.enable_partitioning == True
+            assert queue_description.lock_duration == datetime.timedelta(seconds=18)
+            assert queue_description.max_delivery_count == 15
+            assert queue_description.max_size_in_megabytes == 2048
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert queue_description.forward_to == None
+            assert queue_description.forward_dead_lettered_messages_to == None
+            # assert queue_description.requires_duplicate_detection == True
+            # assert queue_description.requires_session == True
+
         finally:
             await mgmt_service.delete_queue(queue_name)
+            await mgmt_service.close()
     
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_mgmt_queue_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ElasticPoolsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class ElasticPoolsOperations(object):
         filter,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MetricListResult"]
+        # type: (...) -> Iterable["_models.MetricListResult"]
         """Returns elastic pool  metrics.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -72,7 +72,7 @@ class ElasticPoolsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.MetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -138,7 +138,7 @@ class ElasticPoolsOperations(object):
         elastic_pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.MetricDefinitionListResult"]
+        # type: (...) -> Iterable["_models.MetricDefinitionListResult"]
         """Returns elastic pool metric definitions.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -153,7 +153,7 @@ class ElasticPoolsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.MetricDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.MetricDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -218,7 +218,7 @@ class ElasticPoolsOperations(object):
         skip=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ElasticPoolListResult"]
+        # type: (...) -> Iterable["_models.ElasticPoolListResult"]
         """Gets all elastic pools in a server.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -233,12 +233,12 @@ class ElasticPoolsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ElasticPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ElasticPoolListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ElasticPoolListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -299,7 +299,7 @@ class ElasticPoolsOperations(object):
         elastic_pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ElasticPool"
+        # type: (...) -> "_models.ElasticPool"
         """Gets an elastic pool.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -314,12 +314,12 @@ class ElasticPoolsOperations(object):
         :rtype: ~azure.mgmt.sql.models.ElasticPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ElasticPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ElasticPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -361,16 +361,16 @@ class ElasticPoolsOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         elastic_pool_name,  # type: str
-        parameters,  # type: "models.ElasticPool"
+        parameters,  # type: "_models.ElasticPool"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ElasticPool"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ElasticPool"]]
+        # type: (...) -> Optional["_models.ElasticPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ElasticPool"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -422,10 +422,10 @@ class ElasticPoolsOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         elastic_pool_name,  # type: str
-        parameters,  # type: "models.ElasticPool"
+        parameters,  # type: "_models.ElasticPool"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ElasticPool"]
+        # type: (...) -> LROPoller["_models.ElasticPool"]
         """Creates or updates an elastic pool.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -439,8 +439,8 @@ class ElasticPoolsOperations(object):
         :type parameters: ~azure.mgmt.sql.models.ElasticPool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ElasticPool or the result of cls(response)
@@ -448,7 +448,7 @@ class ElasticPoolsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ElasticPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ElasticPool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -474,7 +474,14 @@ class ElasticPoolsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -501,7 +508,7 @@ class ElasticPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -552,8 +559,8 @@ class ElasticPoolsOperations(object):
         :type elastic_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -583,7 +590,14 @@ class ElasticPoolsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -602,16 +616,16 @@ class ElasticPoolsOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         elastic_pool_name,  # type: str
-        parameters,  # type: "models.ElasticPoolUpdate"
+        parameters,  # type: "_models.ElasticPoolUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ElasticPool"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ElasticPool"]]
+        # type: (...) -> Optional["_models.ElasticPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ElasticPool"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-10-01-preview"
+        api_version = "2020-11-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -660,10 +674,10 @@ class ElasticPoolsOperations(object):
         resource_group_name,  # type: str
         server_name,  # type: str
         elastic_pool_name,  # type: str
-        parameters,  # type: "models.ElasticPoolUpdate"
+        parameters,  # type: "_models.ElasticPoolUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ElasticPool"]
+        # type: (...) -> LROPoller["_models.ElasticPool"]
         """Updates an elastic pool.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -677,8 +691,8 @@ class ElasticPoolsOperations(object):
         :type parameters: ~azure.mgmt.sql.models.ElasticPoolUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either ElasticPool or the result of cls(response)
@@ -686,7 +700,7 @@ class ElasticPoolsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ElasticPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ElasticPool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -712,7 +726,14 @@ class ElasticPoolsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -739,7 +760,7 @@ class ElasticPoolsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self._failover_initial.metadata['url']  # type: ignore
@@ -790,8 +811,8 @@ class ElasticPoolsOperations(object):
         :type elastic_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -821,7 +842,14 @@ class ElasticPoolsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

@@ -376,6 +376,13 @@ class HealthEvaluationKind(str, Enum):
     delta_nodes_check = "DeltaNodesCheck"  #: Indicates that the health evaluation is for the delta of unhealthy cluster nodes. The value is 19.
     upgrade_domain_delta_nodes_check = "UpgradeDomainDeltaNodesCheck"  #: Indicates that the health evaluation is for the delta of unhealthy upgrade domain cluster nodes. The value is 20.
     application_type_applications = "ApplicationTypeApplications"  #: – Indicates that the health evaluation is for applications of an application type. The value is 21.
+    node_type_nodes = "NodeTypeNodes"  #: – Indicates that the health evaluation is for nodes of a node type. The value is 22.
+
+
+class Ordering(str, Enum):
+
+    desc = "Desc"  #: Descending sort order.
+    asc = "Asc"  #: Ascending sort order.
 
 
 class NodeDeactivationIntent(str, Enum):
@@ -752,6 +759,7 @@ class BackupStorageKind(str, Enum):
     file_share = "FileShare"  #: Indicates file/ SMB share to be used as backup storage.
     azure_blob_store = "AzureBlobStore"  #: Indicates Azure blob store to be used as backup storage.
     dsms_azure_blob_store = "DsmsAzureBlobStore"  #: Indicates Dsms Azure blob store to be used as backup storage.
+    managed_identity_azure_blob_store = "ManagedIdentityAzureBlobStore"  #: Indicates Azure blob store to be used as backup storage using managed identity.
 
 
 class BackupScheduleKind(str, Enum):
@@ -792,6 +800,13 @@ class BackupType(str, Enum):
     invalid = "Invalid"  #: Indicates an invalid backup type. All Service Fabric enumerations have the invalid type.
     full = "Full"  #: Indicates a full backup.
     incremental = "Incremental"  #: Indicates an incremental backup. A backup chain is comprised of a full backup followed by 0 or more incremental backups.
+
+
+class ManagedIdentityType(str, Enum):
+
+    invalid = "Invalid"  #: Indicates an invalid managed identity type. All Service Fabric enumerations have the invalid type.
+    vmss = "VMSS"  #: Indicates VMSS managed identity should be used to connect to Azure blob store.
+    cluster = "Cluster"  #: Indicates cluster managed identity should be used to connect to Azure blob store.
 
 
 class BackupScheduleFrequencyType(str, Enum):

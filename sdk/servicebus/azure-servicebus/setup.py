@@ -51,6 +51,7 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
@@ -78,10 +79,10 @@ setup(
         'azure',
     ]),
     install_requires=[
-        "uamqp>=1.3.0,<2.0.0",
+        "uamqp>=1.4.1,<2.0.0",
         'azure-common~=1.1',
         'msrest>=0.6.17,<2.0.0',
-        'azure-core<2.0.0,>=1.13.0',
+        'azure-core<2.0.0,>=1.14.0',
         "isodate>=0.6.0",
         "six>=1.11.0",
     ],
