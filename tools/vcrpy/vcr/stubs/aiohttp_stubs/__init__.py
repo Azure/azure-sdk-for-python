@@ -32,6 +32,7 @@ class MockClientResponse(ClientResponse):
             loop=asyncio.get_event_loop(),
             session=None,
         )
+        self._content = None
 
     async def json(self, *, encoding="utf-8", loads=json.loads, **kwargs):  # NOQA: E999
         stripped = self._body.strip()
@@ -51,10 +52,11 @@ class MockClientResponse(ClientResponse):
 
     @property
     def content(self):
-        s = MockStream()
-        s.feed_data(self._body)
-        s.feed_eof()
-        return s
+        if not self._content:
+            self._content = MockStream()
+            self._content.feed_data(self._body)
+            self._content.feed_eof()
+        return self._content
 
 
 def build_response(vcr_request, vcr_response, history):
@@ -71,7 +73,7 @@ def build_response(vcr_request, vcr_response, history):
     response._headers = CIMultiDictProxy(CIMultiDict(vcr_response["headers"]))
     response._history = tuple(history)
 
-    response.close()
+    # response.close()
     return response
 
 
