@@ -314,7 +314,13 @@ def test_managed_identity_client_id():
 
 def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):
     exclude_other_credentials = {
-        option: True for option in ("exclude_environment_credential", "exclude_managed_identity_credential")
+        option: True
+        for option in (
+            "exclude_cli_credential",
+            "exclude_environment_credential",
+            "exclude_managed_identity_credential",
+            "exclude_powershell_credential",
+        )
     }
     options = dict(exclude_other_credentials, **kwargs)
 
@@ -356,3 +362,38 @@ def test_interactive_browser_tenant_id():
                 exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id
             )
     validate_tenant_id(mock_credential)
+
+
+@pytest.mark.parametrize("expected_value", (True, False))
+def test_allow_multitenant_authentication(expected_value):
+    """the credential should pass "allow_multitenant_authentication" to the inner credentials which support it"""
+
+    inner_credentials = {
+        credential: Mock()
+        for credential in (
+            "AzureCliCredential",
+            "AzurePowerShellCredential",
+            "EnvironmentCredential",
+            "InteractiveBrowserCredential",
+            "ManagedIdentityCredential",  # will ignore the argument
+            "SharedTokenCacheCredential",
+        )
+    }
+    with patch.multiple(DefaultAzureCredential.__module__, **inner_credentials):
+        DefaultAzureCredential(
+            allow_multitenant_authentication=expected_value, exclude_interactive_browser_credential=False
+        )
+
+    for credential_name, mock_credential in inner_credentials.items():
+        assert mock_credential.call_count == 1
+        _, kwargs = mock_credential.call_args
+
+        assert "allow_multitenant_authentication" in kwargs, (
+            '"allow_multitenant_authentication" was not passed to ' + credential_name
+        )
+        assert kwargs["allow_multitenant_authentication"] == expected_value
+
+
+def test_unexpected_kwarg():
+    """the credential shouldn't raise when given an unexpected keyword argument"""
+    DefaultAzureCredential(foo=42)
