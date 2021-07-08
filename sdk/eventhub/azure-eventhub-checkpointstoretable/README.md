@@ -1,16 +1,21 @@
 [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
 
-# Azure Template Package client library for Python
+# Azure EventHubs Checkpoint Store client library for Python using Tables
 
-This template package matches necessary patterns that the development team has established to create a unified sdk functional from Python 2.7 onwards. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
+Azure EventHubs Checkpoint Store is used for storing checkpoints while processing events from Azure Event Hubs.
+This Checkpoint Store package works as a plug-in package to `EventHubConsumerClient`. It uses Azure Tables as the persistent store for maintaining checkpoints and partition ownership information.
 
-This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8
-
-For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
 # Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
+### Prerequisites
+
+- Python2.7, Python 3.6 or later.
+- **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription. If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://azure.microsoft.com/).
+
+- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
+
+- **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Storage Table to store the checkpoint data with entities. You may follow the guide [creating an Azure Storage Table Account](https://docs.microsoft.com/azure/storage/blobs/storage-blob-create-account-block-blob).
 
 # Key concepts
 
