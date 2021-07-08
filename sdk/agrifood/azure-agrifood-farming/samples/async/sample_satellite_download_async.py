@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 
 """
-FILE: sample_satellie_download_async.py
+FILE: sample_satellite_download_async.py
 
 DESCRIPTION:
     This sample demonstrates:
@@ -11,7 +11,7 @@ DESCRIPTION:
     - Dowloading the data parallelly with a set max degree of concurrency
 
 USAGE:
-    ```python sample_satellie_download_async.py```
+    ```python sample_satellite_download_async.py```
 
     Set the environment variables with your own values before running the sample:
     - `AZURE_TENANT_ID`

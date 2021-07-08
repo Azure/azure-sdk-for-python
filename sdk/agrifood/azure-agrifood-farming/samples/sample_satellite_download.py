@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 
 """
-FILE: sample_satellie_download.py
+FILE: sample_satellite_download.py
 
 DESCRIPTION:
     This sample demonstrates:
@@ -11,7 +11,7 @@ DESCRIPTION:
     - Dowloading the data synchronously/sequentially
 
 USAGE:
-    ```python sample_satellie_download.py```
+    ```python sample_satellite_download.py```
 
     Set the environment variables with your own values before running the sample:
     - `AZURE_TENANT_ID`
