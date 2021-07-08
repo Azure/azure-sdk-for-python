@@ -260,7 +260,7 @@ def test_allow_multitenant_authentication():
         assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
         encoded_script = command[-1].split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search("Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
 
         assert tenant is None or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
@@ -292,7 +292,7 @@ def test_multitenant_authentication_not_allowed():
         assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
         encoded_script = command[-1].split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
-        match = re.search("Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
 
         assert tenant is None, "credential shouldn't accept an explicit tenant ID"
