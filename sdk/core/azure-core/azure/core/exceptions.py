@@ -252,8 +252,8 @@ class AzureError(Exception):
     def __repr__(self):
         class_name = self.__class__.__name__
 
-        return "{}(message={})".format(
-            class_name, self.message
+        return "{}(message='{}', exc_type='{}', exc_value='{}')".format(
+            class_name, self.message, self.exc_type, self.exc_value
         )[:1024]
 
 
