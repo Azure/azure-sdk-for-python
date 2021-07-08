@@ -46,6 +46,7 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
+from .._tools import get_block_size as _get_block_size, get_internal_response as _get_internal_response
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -215,22 +216,24 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
-        self.block_size = response.block_size
+        self.block_size = _get_block_size(response)
         self._decompress = decompress
-        self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
+        internal_response = _get_internal_response(response)
+        self.content_length = int(internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
+        internal_response = _get_internal_response(self.response)
         try:
-            chunk = await self.response.internal_response.content.read(self.block_size)
+            chunk = await internal_response.content.read(self.block_size)
             if not chunk:
                 raise _ResponseStopIteration()
             if not self._decompress:
                 return chunk
-            enc = self.response.internal_response.headers.get('Content-Encoding')
+            enc = internal_response.headers.get('Content-Encoding')
             if not enc:
                 return chunk
             enc = enc.lower()
@@ -242,13 +245,13 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 chunk = self._decompressor.decompress(chunk)
             return chunk
         except _ResponseStopIteration:
-            self.response.internal_response.close()
+            internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
             raise
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.internal_response.close()
+            internal_response.close()
             raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):

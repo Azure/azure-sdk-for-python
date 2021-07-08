@@ -1,16 +1,19 @@
 # Release History
 
-## 12.0.1 (Unreleased)
+## 12.1.1 (Unreleased)
 
 ### Features Added
-* Storage Accounts only: `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
 
 ### Breaking Changes
 
-### Key Bugs Fixed
+### Bugs Fixed
 
-### Fixed
+### Other Changes
 
+## 12.1.0 (2021-07-06)
+
+### Features Added
+* Storage Accounts only: `TableClient` and `TableServiceClient`s can now use `azure-identity` credentials for authentication. Note: A `TableClient` authenticated with a `TokenCredential` cannot use the `get_table_access_policy` or `set_table_access_policy` methods.
 
 ## 12.0.0 (2021-06-08)
 **Breaking**

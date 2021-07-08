@@ -47,7 +47,7 @@ class SearchClientOperationsMixin(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL

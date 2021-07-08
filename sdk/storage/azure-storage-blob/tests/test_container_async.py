@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 from time import sleep
 
 import pytest
@@ -15,7 +16,8 @@ from dateutil.tz import tzutc
 import requests
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -36,7 +38,7 @@ from azure.storage.blob import (
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
 from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from _shared.asynctestcase import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -197,6 +199,26 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             await bsc._rename_container(name="badcontainer", new_name="container")
         props = await new_container.get_container_properties()
         self.assertEqual(new_name, props.name)
+
+    @GlobalStorageAccountPreparer()
+    async def test_download_blob_modified(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                max_single_get_size=38,
+                                max_chunk_get_size=38)
+        container = await self._create_container(bsc, prefix="cont1")
+        data = b'hello world python storage test chunks' * 5
+        blob_name = self.get_resource_name("testblob")
+        blob = container.get_blob_client(blob_name)
+        await blob.upload_blob(data, overwrite=True)
+        resp = await container.download_blob(blob_name, match_condition=MatchConditions.IfPresent)
+        chunks = resp.chunks()
+        i = 0
+        while i < 4:
+            data += await chunks.__anext__()
+            i += 1
+        await blob.upload_blob(data=data, overwrite=True)
+        with self.assertRaises(ResourceModifiedError):
+            data += await chunks.__anext__()
 
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @GlobalStorageAccountPreparer()
@@ -869,8 +891,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-        pytest.skip('This will be added back along with STG74 features')
+        # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = await self._create_container(bsc)
 
@@ -885,47 +906,14 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
             container_list.append(c)
         self.assertTrue(len(container_list) >= 1)
 
-        restored_version = 0
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = await bsc.undelete_container(container.name, container.version,
-                                                                    new_name="restoredctn" + str(restored_version))
-                restored_version += 1
+                restored_ctn_client = await bsc.undelete_container(container.name, container.version)
 
                 # to make sure the deleted container is restored
                 props = await restored_ctn_client.get_container_properties()
                 self.assertIsNotNone(props)
-
-    @pytest.mark.playback_test_only
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip('This will be added back along with STG74 features')
-        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        # get an existing container
-        existing_container_client = await self._create_container(bsc, prefix="existing")
-        container_client = await self._create_container(bsc)
-
-        # Act
-        await container_client.delete_container()
-        # to make sure the container deleted
-        with self.assertRaises(ResourceNotFoundError):
-            await container_client.get_container_properties()
-
-        container_list = list()
-        async for c in bsc.list_containers(include_deleted=True):
-            container_list.append(c)
-        self.assertTrue(len(container_list) >= 1)
-
-        for container in container_list:
-            # find the deleted container and restore it
-            if container.deleted and container.name == container_client.container_name:
-                with self.assertRaises(HttpResponseError):
-                    await bsc.undelete_container(container.name, container.version,
-                                                  new_name=existing_container_client.container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

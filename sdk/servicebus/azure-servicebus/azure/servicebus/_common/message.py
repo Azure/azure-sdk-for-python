@@ -355,7 +355,7 @@ class ServiceBusMessage(
                 self._raw_amqp_message.header.time_to_live != MAX_DURATION_VALUE:
             if not self._raw_amqp_message.properties:
                 self._raw_amqp_message.properties = AmqpMessageProperties()
-            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple()))
+            self._raw_amqp_message.properties.creation_time = int(time.mktime(utc_now().timetuple())) * 1000
             self._raw_amqp_message.properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
                 self._raw_amqp_message.properties.creation_time + self._raw_amqp_message.header.time_to_live
@@ -398,9 +398,13 @@ class ServiceBusMessage(
     def body(self):
         # type: () -> Any
         """The body of the Message. The format may vary depending on the body type:
-        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.DATA<azure.servicebus.amqp.AmqpMessageBodyType.DATA>`,
+        the body could be bytes or Iterable[bytes].
+        For
+        :class:`azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE<azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE>`,
+        the body could be List or Iterable[List].
+        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.VALUE<azure.servicebus.amqp.AmqpMessageBodyType.VALUE>`,
+        the body could be any type.
 
         :rtype: Any
         """
@@ -411,7 +415,7 @@ class ServiceBusMessage(
         # type: () -> AmqpMessageBodyType
         """The body type of the underlying AMQP message.
 
-        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
         return self._raw_amqp_message.body_type
 

@@ -9,7 +9,8 @@ import base64
 
 import pytest
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 from azure.storage.blob import (
     BlobServiceClient,
     DelimitedTextDialect,
@@ -441,7 +442,7 @@ class StorageQuickQueryTest(StorageTestCase):
         data = []
         for record in resp.records():
             data.append(record)
-        
+
         self.assertEqual(len(errors), 1)
         self.assertEqual(resp._size, 43)
         self.assertEqual(data, [b''])

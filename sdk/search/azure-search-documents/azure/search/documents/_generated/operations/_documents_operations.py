@@ -67,7 +67,7 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -154,6 +154,8 @@ class DocumentsOperations(object):
         _select = None
         _skip = None
         _top = None
+        _captions = None
+        _semantic_fields = None
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -179,7 +181,9 @@ class DocumentsOperations(object):
             _select = search_options.select
             _skip = search_options.skip
             _top = search_options.top
-        api_version = "2020-06-30-Preview"
+            _captions = search_options.captions
+            _semantic_fields = search_options.semantic_fields
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -236,6 +240,10 @@ class DocumentsOperations(object):
             query_parameters['$skip'] = self._serialize.query("skip", _skip, 'int')
         if _top is not None:
             query_parameters['$top'] = self._serialize.query("top", _top, 'int')
+        if _captions is not None:
+            query_parameters['captions'] = self._serialize.query("captions", _captions, 'str')
+        if _semantic_fields is not None:
+            query_parameters['semanticFields'] = self._serialize.query("semantic_fields", _semantic_fields, '[str]', div=',')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -288,7 +296,7 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -338,7 +346,7 @@ class DocumentsOperations(object):
         request_options=None,  # type: Optional["_models.RequestOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> object
+        # type: (...) -> Any
         """Retrieves a document from the index.
 
         :param key: The key of the document to retrieve.
@@ -349,11 +357,11 @@ class DocumentsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: object, or the result of cls(response)
-        :rtype: object
+        :return: any, or the result of cls(response)
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -362,7 +370,7 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -457,7 +465,7 @@ class DocumentsOperations(object):
             _search_fields = suggest_options.search_fields
             _select = suggest_options.select
             _top = suggest_options.top
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -542,7 +550,7 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -614,7 +622,7 @@ class DocumentsOperations(object):
             _x_ms_client_request_id = request_options.x_ms_client_request_id
 
         _batch = _models.IndexBatch(actions=actions)
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -712,7 +720,7 @@ class DocumentsOperations(object):
             _top = autocomplete_options.top
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         accept = "application/json"
 
         # Construct URL
@@ -795,7 +803,7 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2020-06-30-Preview"
+        api_version = "2021-04-30-Preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
