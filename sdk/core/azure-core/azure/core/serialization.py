@@ -8,6 +8,8 @@ import base64
 import datetime
 from json import JSONEncoder
 
+from ._utils import _FixedOffset
+
 __all__ = ["NULL"]
 
 
@@ -43,51 +45,35 @@ def iso_timedelta(value):
     seconds = round(seconds, 6)
 
     # build date
-    date = ''
+    date = ""
     if days:
-        date = '%sD' % days
+        date = "%sD" % days
 
     # build time
-    time = 'T'
+    time = "T"
 
     # hours
     bigger_exists = date or hours
     if bigger_exists:
-        time += '{:02}H'.format(hours)
+        time += "{:02}H".format(hours)
 
     # minutes
     bigger_exists = bigger_exists or minutes
     if bigger_exists:
-        time += '{:02}M'.format(minutes)
+        time += "{:02}M".format(minutes)
 
     # seconds
     if seconds.is_integer():
-        seconds = '{:02}'.format(int(seconds))
+        seconds = "{:02}".format(int(seconds))
     else:
         # 9 chars long w/leading 0, 6 digits after decimal
-        seconds = '%09.6f' % seconds
+        seconds = "%09.6f" % seconds
         # remove trailing zeros
-        seconds = seconds.rstrip('0')
+        seconds = seconds.rstrip("0")
 
-    time += '{}S'.format(seconds)
+    time += "{}S".format(seconds)
 
-    return 'P' + date + time
-
-
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0."""
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation."""
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC."""
-        return datetime.timedelta(hours=1)
+    return "P" + date + time
 
 
 try:
@@ -95,7 +81,7 @@ try:
 
     TZ_UTC = timezone.utc  # type: ignore
 except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+    TZ_UTC = _FixedOffset(0)  # type: ignore
 
 
 class ComplexEncoder(JSONEncoder):
