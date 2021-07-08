@@ -368,7 +368,7 @@ except ResourceNotFoundError as e:
 
 ### Logging
 This library uses the standard
-[logging](https://docs.python.org/3.6/library/logging.html) library for logging.
+[logging](https://docs.python.org/3/library/logging.html) library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
