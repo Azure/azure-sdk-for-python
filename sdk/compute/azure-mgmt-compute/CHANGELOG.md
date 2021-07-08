@@ -1,5 +1,17 @@
 # Release History
 
+## 22.0.0 (2021-07-08)
+
+**Features**
+
+  - Model RestorePointSourceMetadata has a new parameter location
+  - Added operation DiskRestorePointOperations.begin_revoke_access
+  - Added operation DiskRestorePointOperations.begin_grant_access
+
+**Breaking changes**
+
+  - Model PublicIPAddressSku has a new signature
+
 ## 21.0.0 (2021-05-25)
 
 **Features**
