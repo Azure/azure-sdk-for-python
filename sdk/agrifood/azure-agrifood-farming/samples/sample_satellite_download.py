@@ -54,7 +54,7 @@ def download_image(client, file_link, out_path):
         return str(out_path.resolve())
 
 
-def sample_satellie_download():
+def sample_satellite_download():
 
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
     auth_authority = os.environ.get('AZURE_AUTHORITY')
@@ -171,4 +171,4 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    sample_satellie_download()
+    sample_satellite_download()
