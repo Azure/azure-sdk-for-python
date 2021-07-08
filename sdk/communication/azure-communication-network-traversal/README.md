@@ -1,0 +1,82 @@
+# Azure Communication Network Traversal Package client library for Python
+
+Azure Communication Relay client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
+
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity) | [Package (Pypi)](https://pypi.org/project/azure-communication-identity/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
+
+
+# Getting started
+### Prerequisites
+- Python 2.7, or 3.6 or later is required to use this package.
+- You must have an [Azure subscription](https://azure.microsoft.com/free/)
+- A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
+### Install the package
+Install the Azure Communication Identity client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Communication Relay Client library for Python with [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install azure-communication-identity
+pip install azure-communication-network-traversal
+```
+
+# Key concepts
+
+### Initializing Relay Client
+```python
+# You can find your endpoint and access token from your resource in the Azure Portal
+import os
+from azure.communication.network.traversal import CommunicationRelayClient
+from azure.identity import DefaultAzureCredential
+from azure.communication.identity import CommunicationIdentityClient
+
+connection_str = "endpoint=ENDPOINT;accessKey=KEY"
+endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+# We also need Identity client to get a User Identifier
+identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
+relay_client = CommunicationRelayClient(endpoint, DefaultAzureCredential())
+           
+
+#You can also authenticate using your connection string
+identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
+relay_client = CommunicationRelayClient.from_connection_string(self.connection_string)
+
+```
+
+### Getting the configurationRelay 
+```python
+
+# We need a user from Identity
+user = identity_client.create_user()
+request = CommunicationRelayConfigurationRequest(id=user.properties.get('id'))
+
+relay_configuration = relay_client.get_relay_configuration(request)
+
+for iceServer in relay_configuration.ice_servers:
+    print(iceServer)
+```
+
+# Troubleshooting
+The Azure Communication Relay client will raise exceptions defined in [Azure Core][azure_core].
+
+# Next steps
+## More sample code
+
+## Provide Feedback
+
+If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project
+
+# Contributing
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the
+PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+<!-- LINKS -->
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
