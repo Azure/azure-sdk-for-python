@@ -81,7 +81,7 @@ class MultivariateSample():
             # Model list after training
             new_model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
 
-            print("Done.", "\n--------------------")
+            print("Done.\n--------------------")
             print("{:d} available models after training.".format(len(new_model_list)))
 
             # Return the latest model id
