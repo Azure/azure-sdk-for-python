@@ -44,7 +44,7 @@ class MultivariateSample():
 
         self.data_source = data_source
 
-    def train(self, start_time, end_time, timeout=1000):
+    def train(self, start_time, end_time, timeout_in_seconds=1000):
 
         # Number of models available now
         model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
@@ -58,14 +58,11 @@ class MultivariateSample():
                 -1]
         trained_model_id = response_header['Location'].split("/")[-1]
 
-        # Model list after training
-        new_model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
-
         # Wait until the model is ready. It usually takes several minutes
         model_status = None
 
         start = time.time()
-        while time.time() - start < timeout and model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
+        while time.time() - start < timeout_in_seconds and model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
             model_info = self.ad_client.get_multivariate_model(trained_model_id).model_info
             model_status = model_info.status
             time.sleep(1)
@@ -74,13 +71,16 @@ class MultivariateSample():
             print("Creating model failed.")
             print("Errors:")
             if model_info.errors:
-                for res in model_info.errors:
-                    print("Error code: {}. Message: {}".format(res.code, res.message))
+                for error in model_info.errors:
+                    print("Error code: {}. Message: {}".format(error.code, error.message))
             else:
                 print("None")
             return None
 
         if model_status == ModelStatus.READY:
+            # Model list after training
+            new_model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
+
             print("Done.", "\n--------------------")
             print("{:d} available models after training.".format(len(new_model_list)))
 
@@ -91,7 +91,7 @@ class MultivariateSample():
         print("Model is not ready yet. Model status: {}".format(model_status))
         return None
 
-    def detect(self, model_id, start_time, end_time, timeout=500):
+    def detect(self, model_id, start_time, end_time, timeout_in_seconds=500):
 
         # Detect anomaly in the same data source (but a different interval)
         try:
@@ -103,7 +103,7 @@ class MultivariateSample():
             # Get results (may need a few seconds)
             r = self.ad_client.get_detection_result(result_id)
             start = time.time()
-            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED and time.time() - start < timeout:
+            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED and time.time() - start < timeout_in_seconds:
                 r = self.ad_client.get_detection_result(result_id)
                 time.sleep(1)
 
