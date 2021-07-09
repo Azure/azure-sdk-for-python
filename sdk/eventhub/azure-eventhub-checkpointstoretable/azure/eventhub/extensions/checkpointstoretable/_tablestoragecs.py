@@ -1,11 +1,8 @@
 from typing import Sequence
-from azure.data.tables import TableClient
 from collections import defaultdict
-from azure.eventhub.aio import CheckpointStore 
-from azure.data.tables import TableServiceClient
 from datetime import datetime
-from azure.data.tables import UpdateMode
-from azure.eventhub.aio import EventHubConsumerClient
+from azure.eventhub.aio import CheckpointStore, EventHubConsumerClient
+from azure.data.tables import TableClient, TableServiceClient, UpdateMode
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError 
 
 class TableCheckpointStore:
