@@ -1,0 +1,96 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.0.1 Python/3.7.4 (Windows-10-10.0.21390-SP0)
+      x-ms-date:
+      - Fri, 09 Jul 2021 07:54:10 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 09 Jul 2021 07:54:10 GMT
+      ms-cv:
+      - lF1qmYEmEEajLK7De3cunA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 64ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"id": "sanitized"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '89'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-network-traversal/1package-2021-06-21-preview Python/3.7.4
+        (Windows-10-10.0.21390-SP0)
+      x-ms-date:
+      - Fri, 09 Jul 2021 07:54:11 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-06-21-preview
+  response:
+    body:
+      string: '{"expiresOn": "sanitized", "iceServers": [{"urls": "sanitized", "username":
+        "sanitized", "credential": "sanitized"}]}'
+    headers:
+      api-supported-versions:
+      - 2021-02-22-preview1, 2021-06-21-preview
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 09 Jul 2021 07:54:11 GMT
+      ms-cv:
+      - 4VCad1kOcEOFNUNJBXhoxA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 111ms
+    status:
+      code: 200
+      message: OK
+version: 1

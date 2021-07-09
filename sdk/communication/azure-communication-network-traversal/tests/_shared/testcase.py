@@ -57,6 +57,8 @@ class BodyReplacerProcessor(RecordingProcessor):
                     dictionary[key] = self._replacement
                 elif isinstance(value, dict):
                     _replace_recursively(value)
+                elif key == 'iceServers':
+                    _replace_recursively(value[0])
 
         import json
         try:

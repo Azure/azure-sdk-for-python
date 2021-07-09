@@ -28,7 +28,7 @@ class CommunicationRelayClientTest(CommunicationTestCase):
     def setUp(self):
         super(CommunicationRelayClientTest, self).setUp()
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token", "username", "credential", "urls"]),
+            BodyReplacerProcessor(keys=["id", "token", "expiresOn", "username", "credential", "urls"]),
             URIIdentityReplacer()])
 
     @CommunicationPreparer()
