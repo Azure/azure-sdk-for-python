@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, ContextManager, AsyncIterator
+from typing import Iterator, Optional, ContextManager, AsyncIterator, Any, Union
 import httpx
 import urllib3
 from ._base import HttpResponse, HttpTransport, HttpRequest, _HttpResponseBase
@@ -327,7 +327,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
                 **kwargs
             }
 
-            stream_ctx = None  # type: Optional[asynccontextmanager]
+            stream_ctx = None
             if stream_response:
                 stream_ctx = self.client.stream(**parameters)
                 response = await stream_ctx.__aenter__()
