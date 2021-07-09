@@ -21,7 +21,7 @@ USAGE:
 
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.ai.anomalydetector.models import DetectionRequest, ModelInfo
@@ -113,10 +113,10 @@ class MultivariateSample():
 
             if r.summary.status == DetectionStatus.FAILED:
                 print("Detection failed.")
-                print("Errors")
+                print("Errors:")
                 if r.summary.errors:
-                    for res in r.summary.errors:
-                        print("Error code: {}. Message: {}".format(res.code, res.message))
+                    for error in r.summary.errors:
+                        print("Error code: {}. Message: {}".format(error.code, error.message))
                 else:
                     print("None")
                 return None
@@ -162,11 +162,13 @@ if __name__ == '__main__':
     sample = MultivariateSample(SUBSCRIPTION_KEY, ANOMALY_DETECTOR_ENDPOINT, data_source)
 
     # Train a new model
-    model_id = sample.train(datetime(2021, 1, 1, 0, 0, 0), datetime(2021, 1, 2, 12, 0, 0))
+    model_id = sample.train(datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+                            datetime(2021, 1, 2, 12, 0, 0, tzinfo=timezone.utc))
     assert model_id is not None
 
     # Reference
-    result = sample.detect(model_id, datetime(2021, 1, 2, 12, 0, 0), datetime(2021, 1, 3, 0, 0, 0))
+    result = sample.detect(model_id, datetime(2021, 1, 2, 12, 0, 0, tzinfo=timezone.utc),
+                           datetime(2021, 1, 3, 0, 0, 0, tzinfo=timezone.utc))
     assert result is not None
 
     print("Result ID:\t", result.result_id)
