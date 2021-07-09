@@ -1,5 +1,15 @@
 # Release History
 
+## 4.5.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 4.5.0b1 (2021-07-08)
 Beginning with this release, this library requires Python 2.7 or 3.6+.
 
