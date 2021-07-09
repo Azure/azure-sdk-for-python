@@ -25,6 +25,7 @@ from datetime import datetime
 
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.ai.anomalydetector.models import DetectionRequest, ModelInfo
+from azure.ai.anomalydetector.models import ModelStatus, DetectionStatus
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -43,7 +44,7 @@ class MultivariateSample():
 
         self.data_source = data_source
 
-    def train(self, start_time, end_time, max_tryout=500):
+    def train(self, start_time, end_time, timeout=1000):
 
         # Number of models available now
         model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
@@ -62,21 +63,35 @@ class MultivariateSample():
 
         # Wait until the model is ready. It usually takes several minutes
         model_status = None
-        tryout_count = 0
-        while (tryout_count < max_tryout and model_status != "READY"):
-            model_status = self.ad_client.get_multivariate_model(trained_model_id).model_info.status
-            tryout_count += 1
-            time.sleep(2)
 
-        assert model_status == "READY"
+        start = time.time()
+        while time.time() - start < timeout and model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
+            model_info = self.ad_client.get_multivariate_model(trained_model_id).model_info
+            model_status = model_info.status
+            time.sleep(1)
 
-        print("Done.", "\n--------------------")
-        print("{:d} available models after training.".format(len(new_model_list)))
+        if model_status == ModelStatus.FAILED:
+            print("Creating model failed.")
+            print("Errors:")
+            if model_info.errors:
+                for res in model_info.errors:
+                    print("Error code: {}. Message: {}".format(res.code, res.message))
+            else:
+                print("None")
+            return None
 
-        # Return the latest model id
-        return trained_model_id
+        if model_status == ModelStatus.READY:
+            print("Done.", "\n--------------------")
+            print("{:d} available models after training.".format(len(new_model_list)))
 
-    def detect(self, model_id, start_time, end_time, max_tryout=500):
+            # Return the latest model id
+            return trained_model_id
+
+        # If model status is "CREATED" or "RUNNING"
+        print("Model is not ready yet. Model status: {}".format(model_status))
+        return None
+
+    def detect(self, model_id, start_time, end_time, timeout=500):
 
         # Detect anomaly in the same data source (but a different interval)
         try:
@@ -87,14 +102,23 @@ class MultivariateSample():
 
             # Get results (may need a few seconds)
             r = self.ad_client.get_detection_result(result_id)
-            tryout_count = 0
-            while r.summary.status != "READY" and tryout_count < max_tryout:
-                time.sleep(1)
+            start = time.time()
+            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED and time.time() - start < timeout:
                 r = self.ad_client.get_detection_result(result_id)
-                tryout_count += 1
+                time.sleep(1)
 
-            if r.summary.status != "READY":
-                print("Request timeout after %d tryouts.".format(max_tryout))
+            if r.summary.status == DetectionStatus.RUNNING or r.summary.status == DetectionStatus.CREATED:
+                print("Detection is not ready yet. Detection status: {}".format(r.summary.status))
+                return None
+
+            if r.summary.status == DetectionStatus.FAILED:
+                print("Detection failed.")
+                print("Errors")
+                if r.summary.errors:
+                    for res in r.summary.errors:
+                        print("Error code: {}. Message: {}".format(res.code, res.message))
+                else:
+                    print("None")
                 return None
 
         except HttpResponseError as e:
@@ -139,9 +163,12 @@ if __name__ == '__main__':
 
     # Train a new model
     model_id = sample.train(datetime(2021, 1, 1, 0, 0, 0), datetime(2021, 1, 2, 12, 0, 0))
+    assert model_id is not None
 
     # Reference
     result = sample.detect(model_id, datetime(2021, 1, 2, 12, 0, 0), datetime(2021, 1, 3, 0, 0, 0))
+    assert result is not None
+
     print("Result ID:\t", result.result_id)
     print("Result summary:\t", result.summary)
     print("Result length:\t", len(result.results))
