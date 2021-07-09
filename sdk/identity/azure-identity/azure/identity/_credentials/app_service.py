@@ -30,6 +30,16 @@ class AppServiceCredential(GetTokenMixin):
         else:
             self._available = False
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def close(self):
+        self.__exit__()
+
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         if not self._available:
