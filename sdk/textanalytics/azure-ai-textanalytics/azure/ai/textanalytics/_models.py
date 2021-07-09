@@ -2191,3 +2191,90 @@ class SummarySentence(DictMixin):
             offset=sentence.offset,
             length=sentence.length
         )
+
+
+class RecognizeCustomEntitiesAction(DictMixin):
+    """RecognizeCustomEntitiesAction.
+
+    :keyword str project_name:
+    :keyword str deployment_name:
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar str project_name:
+    :ivar str deployment_name:
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.project_name = kwargs.get('project_name', None)
+        self.deployment_name = kwargs.get('deployment_name', None)
+        self.string_index_type = kwargs.get('string_index_type', "UnicodeCodePoint")
+
+
+class CustomClassificationAction(DictMixin):
+    """CustomClassificationAction.
+
+    :keyword str project_name:
+    :keyword str deployment_name:
+    :keyword bool multi_classification:
+    :ivar str project_name:
+    :ivar str deployment_name:
+    :ivar bool multi_classification:
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.project_name = kwargs.get('project_name', None)
+        self.deployment_name = kwargs.get('deployment_name', None)
+        self.multi_classification = kwargs.get('multi_classification', None)
+
+
+class CustomClassificationResult(DictMixin):
+    """CustomClassificationResult.
+
+    :ivar str id: Required. Unique, non-empty document identifier.
+    :ivar classification: Required. Recognized custom classification for the document.
+    :vartype classification: ~azure.ai.textanalytics.Classification
+    :ivar warnings: Required. Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of an ExtractSummaryResult.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs['id']
+        self.classification = kwargs['classification']
+        self.warnings = kwargs['warnings']
+        self.statistics = kwargs.get('statistics', None)
+        self.is_error = False
+
+
+class Classification(DictMixin):
+    """Classification.
+
+    :ivar str category: Required. Class name.
+    :ivar float confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.category = kwargs['category']
+        self.confidence_score = kwargs['confidence_score']

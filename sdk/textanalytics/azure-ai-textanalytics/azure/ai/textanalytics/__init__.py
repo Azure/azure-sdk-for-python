@@ -52,7 +52,11 @@ from ._models import (
     HealthcareEntityCategory,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    SummarySentence
+    SummarySentence,
+    CustomClassificationAction,
+    RecognizeCustomEntitiesAction,
+    CustomClassificationResult,
+    Classification
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
@@ -106,7 +110,11 @@ __all__ = [
     "HealthcareEntityCategory",
     "ExtractSummaryAction",
     "ExtractSummaryResult",
-    "SummarySentence"
+    "SummarySentence",
+    "CustomClassificationAction",
+    "RecognizeCustomEntitiesAction",
+    "CustomClassificationResult",
+    "Classification"
 ]
 
 __version__ = VERSION

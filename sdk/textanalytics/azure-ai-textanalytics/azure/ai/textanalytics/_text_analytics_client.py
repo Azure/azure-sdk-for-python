@@ -62,7 +62,10 @@ if TYPE_CHECKING:
         AnalyzeSentimentAction,
         AnalyzeHealthcareEntitiesResult,
         ExtractSummaryAction,
-        ExtractSummaryResult
+        ExtractSummaryResult,
+        CustomClassificationAction,
+        RecognizeCustomEntitiesAction,
+        CustomClassificationResult,
     )
     from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
 
@@ -853,9 +856,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction]] # pylint: disable=line-too-long
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction, RecognizeCustomEntitiesAction, CustomClassificationAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, DocumentError]]]]  # pylint: disable=line-too-long
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, CustomClassificationResult, DocumentError]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -876,7 +879,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction]
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction
+            or RecognizeCustomEntitiesAction or CustomClassificationAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -900,13 +904,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
             list[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult,
-            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryAction, DocumentError]]]]
+            ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, CustomClassificationResult,
+            DocumentError]]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
             The *begin_analyze_actions* client method.
         .. versionadded:: v3.2-preview
-            The *ExtractSummaryAction* input option
+            The *ExtractSummaryAction*, *RecognizeCustomEntitiesAction*, and *CustomClassificationAction* input options
 
         .. admonition:: Example:
 
