@@ -42,7 +42,7 @@ class RuntimeVersionsOperations:
 
     async def list_runtime_versions(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AvailableRuntimeVersions":
         """Lists all of the available runtime versions supported by Microsoft.AppPlatform provider.
 
