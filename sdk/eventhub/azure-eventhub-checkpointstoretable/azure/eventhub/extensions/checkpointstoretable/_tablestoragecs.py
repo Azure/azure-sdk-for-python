@@ -52,8 +52,8 @@ class TableCheckpointStore:
     def upload_ownership(self, ownership, metadata, **kwargs):
         pass
 
-    def claim_one_partition(self,ownership, **kwargs):
+    def claim_one_partition(self, ownership, **kwargs):
         pass
 
-    def claim_ownership(self,ownershiplist, **kwargs):
+    def claim_ownership(self, ownershiplist, **kwargs):
         pass
