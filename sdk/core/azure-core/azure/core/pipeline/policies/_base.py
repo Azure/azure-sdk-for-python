@@ -65,7 +65,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
 
     @abc.abstractmethod
     def send(self, request):
-        # type: (PipelineRequest) -> Optional[PipelineResponse]
+        # type: (PipelineRequest) -> PipelineResponse
         """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.

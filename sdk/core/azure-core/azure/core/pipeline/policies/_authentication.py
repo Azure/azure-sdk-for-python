@@ -108,7 +108,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         self._update_headers(request.http_request.headers, self._token.token)
 
     def send(self, request):
-        # type: (PipelineRequest) -> Optional[PipelineResponse]
+        # type: (PipelineRequest) -> PipelineResponse
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
@@ -137,7 +137,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                             if not handled:
                                 raise
 
-        return response
+        return response # type: ignore
 
     def on_challenge(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> bool
