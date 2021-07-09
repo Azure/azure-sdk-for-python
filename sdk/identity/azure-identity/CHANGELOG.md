@@ -29,6 +29,10 @@
   workarounds when importing transitive dependencies such as pywin32
   fails
   ([#19989](https://github.com/Azure/azure-sdk-for-python/issues/19989))
+- Added context manager methods and `close()` to credentials in the
+  `azure.identity` namespace. At the end of a `with` block, or when `close()`
+  is called, these credentials close their underlying transport sessions.
+  ([#18798](https://github.com/Azure/azure-sdk-for-python/issues/18798))
 
 
 ## 1.7.0b2 (2021-07-08)
