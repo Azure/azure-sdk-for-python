@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict
+from typing import Generic, TypeVar, List, Union, Any, Dict, Optional
 from azure.core.pipeline import (
     AbstractContextManager,
     PipelineRequest,
@@ -58,7 +58,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         self._policy = policy
 
     def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+        # type: (PipelineRequest) -> Optional[PipelineResponse]
         """Modifies the request and sends to the next policy in the chain.
 
         :param request: The PipelineRequest object.
@@ -75,7 +75,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
                 raise
         else:
             _await_result(self._policy.on_response, request, response)
-        return response # type: ignore
+        return response
 
 
 class _TransportRunner(HTTPPolicy):
