@@ -3,10 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import TYPE_CHECKING
 
 from six.moves.urllib_parse import urlparse
 
+from azure.core.exceptions import ClientAuthenticationError
+
 from .._constants import EnvironmentVariables, KnownAuthorities
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
 
 
 def normalize_authority(authority):
@@ -43,6 +49,24 @@ def validate_tenant_id(tenant_id):
         )
 
 
+def resolve_tenant(default_tenant, allow_multitenant, tenant_id=None, **_):
+    # type: (str, bool, Optional[str], **Any) -> str
+    """Returns the correct tenant for a token request given a credential's configuration"""
+    if (
+        tenant_id is None
+        or tenant_id == default_tenant
+        or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION)
+    ):
+        return default_tenant
+
+    if not allow_multitenant:
+        raise ClientAuthenticationError(
+            'The specified tenant for this token request, "{}", does not match'.format(tenant_id)
+            + ' the configured tenant, and "allow_multitenant_authentication" is False.'
+        )
+    return tenant_id
+
+
 # pylint:disable=wrong-import-position
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase
@@ -74,5 +98,6 @@ __all__ = [
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",
+    "resolve_tenant",
     "wrap_exceptions",
 ]

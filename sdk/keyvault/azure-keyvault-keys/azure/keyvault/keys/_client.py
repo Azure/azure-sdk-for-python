@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import KeyVaultKey, KeyProperties, DeletedKey
+from ._models import DeletedKey, KeyVaultKey, KeyProperties
 
 try:
     from typing import TYPE_CHECKING
@@ -94,7 +94,7 @@ class KeyClient(KeyVaultClientBase):
             key_ops=kwargs.pop("key_operations", None),
             tags=kwargs.pop("tags", None),
             curve=kwargs.pop("curve", None),
-            public_exponent=kwargs.pop("public_exponent", None)
+            public_exponent=kwargs.pop("public_exponent", None),
         )
 
         bundle = self._client.create_key(
@@ -494,7 +494,7 @@ class KeyClient(KeyVaultClientBase):
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = self._client.update_key(
@@ -601,7 +601,7 @@ class KeyClient(KeyVaultClientBase):
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = self._client.import_key(
@@ -612,3 +612,16 @@ class KeyClient(KeyVaultClientBase):
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def get_random_bytes(self, count, **kwargs):
+        # type: (int, **Any) -> bytes
+        """Get the requested number of random bytes from a managed HSM.
+
+        :param int count: The requested number of random bytes.
+        :return: The random bytes.
+        :rtype: bytes
+        """
+        parameters = self._models.GetRandomBytesRequest(count=count)
+        result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        return result.value
