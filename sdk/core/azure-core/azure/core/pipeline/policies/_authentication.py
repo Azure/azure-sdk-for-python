@@ -137,7 +137,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                             if not handled:
                                 raise
 
-        return response
+        return response # type: ignore
 
     def on_challenge(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> bool
