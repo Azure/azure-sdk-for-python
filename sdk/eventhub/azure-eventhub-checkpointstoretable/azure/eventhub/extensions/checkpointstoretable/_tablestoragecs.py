@@ -28,7 +28,7 @@ class TableCheckpointStore:
     def __init__(self):
         pass
 
-    def create_the_entity_checkpoint(self,eventhubname,namespace,consumergroup,partition_id,offset,sequencenumber):
+    def create_entity_checkpoint(self, checkpoint, **kwargs):
         pass
 
     def create_the_entity_ownership(self,eventhubname,namespace,consumergroup,partition_id,owner_id,time):
