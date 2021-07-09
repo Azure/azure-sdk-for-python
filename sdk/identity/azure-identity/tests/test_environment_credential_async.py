@@ -12,8 +12,44 @@ from azure.identity._constants import EnvironmentVariables
 import pytest
 
 from helpers import mock_response, Request
-from helpers_async import async_validating_transport
+from helpers_async import async_validating_transport, AsyncMockTransport
 from test_environment_credential import ALL_VARIABLES
+
+
+@pytest.mark.asyncio
+async def test_close():
+    transport = AsyncMockTransport()
+    with mock.patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+        credential = EnvironmentCredential(transport=transport)
+    assert transport.__aexit__.call_count == 0
+
+    await credential.close()
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_context_manager():
+    transport = AsyncMockTransport()
+    with mock.patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
+        credential = EnvironmentCredential(transport=transport)
+
+    async with credential:
+        assert transport.__aenter__.call_count == 1
+        assert transport.__aexit__.call_count == 0
+
+    assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_close_incomplete_configuration():
+    await EnvironmentCredential().close()
+
+
+@pytest.mark.asyncio
+async def test_context_manager_incomplete_configuration():
+    async with EnvironmentCredential():
+        pass
 
 
 @pytest.mark.asyncio

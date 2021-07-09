@@ -9,7 +9,7 @@ from azure.identity import CredentialUnavailableError, EnvironmentCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock, mock_response, Request, validating_transport
+from helpers import mock
 
 
 ALL_VARIABLES = {
@@ -18,6 +18,15 @@ ALL_VARIABLES = {
     + EnvironmentVariables.CERT_VARS
     + EnvironmentVariables.USERNAME_PASSWORD_VARS
 }
+
+
+def test_close_incomplete_configuration():
+    EnvironmentCredential().close()
+
+
+def test_context_manager_incomplete_configuration():
+    with EnvironmentCredential():
+        pass
 
 
 def test_incomplete_configuration():
