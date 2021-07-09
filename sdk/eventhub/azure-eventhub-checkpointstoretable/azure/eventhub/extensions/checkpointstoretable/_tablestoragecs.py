@@ -34,7 +34,7 @@ class TableCheckpointStore:
     def create_the_entity_ownership(self,eventhubname,namespace,consumergroup,partition_id,owner_id,time):
         pass
 
-    def list_ownership(self,eventhub,namespace,consumergroup):
+    def list_ownership(self, eventhub, namespace, consumergroup):
         pass
 
     def list_checkpoints(self,eventhub,namespace,consumergroup):
