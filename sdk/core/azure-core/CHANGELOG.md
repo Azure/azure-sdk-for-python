@@ -10,6 +10,7 @@
 
 ### Fixed
 
+- UnboundLocalError when SansIOHTTPPolicy handles an exception    #15222
 
 ## 1.16.0 (2021-07-01)
 

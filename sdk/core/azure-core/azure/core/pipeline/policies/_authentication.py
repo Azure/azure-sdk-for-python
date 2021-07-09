@@ -114,6 +114,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        response = None
         self.on_request(request)
         try:
             response = self.next.send(request)
