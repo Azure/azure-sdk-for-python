@@ -222,7 +222,7 @@ class HttpXTransport(HttpTransport):
 
         return HttpXTransportResponse(
             request,
-            response,
+            response,   # type: ignore
             stream_contextmanager=stream_ctx,
         )
 
@@ -348,6 +348,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             raise error
         return AsyncHttpXTransportResponse(
             request,
-            response,
-            stream_contextmanager=stream_ctx,
+            response,   # type: ignore
+            stream_contextmanager=stream_ctx,   # type: ignore
         )
