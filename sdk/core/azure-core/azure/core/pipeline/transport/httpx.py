@@ -33,14 +33,6 @@ from ._base_async import AsyncHttpResponse, AsyncHttpTransport
 from ...exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from ...configuration import ConnectionConfiguration
 
-__all__ = [
-    'HttpXTransport',
-    'HttpxStreamDownloadGenerator',
-    'HttpXTransportResponse',
-    'HttpXAsyncTransport',
-    'HttpXAsyncResponse',
-]
-
 _LOGGER = logging.getLogger(__name__)
 
 class _HttpXTransportResponseBase(_HttpResponseBase):
@@ -202,7 +194,7 @@ class HttpXTransport(HttpTransport):
                 "data": request.data,
                 "files": request.files,
                 "allow_redirects": False,
-                "timeout": timeout
+                "timeout": timeout,
                 **kwargs
             }
 
@@ -274,7 +266,9 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     :keyword httpx.Client client: Request client to use instead of the default one.
     :keyword bool client_owner: Decide if the client provided by user is owned by this transport. Default to True.
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
+
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/test_example_httpx.py
             :start-after: [START httpx]
             :end-before: [END httpx]
@@ -334,15 +328,15 @@ class AsyncHttpXTransport(AsyncHttpTransport):
 
             stream_ctx = None
             if stream_response:
-                stream_ctx = self.client.stream(**parameters)
+                stream_ctx = self.client.stream(**parameters)   # type: ignore
                 response = await stream_ctx.__aenter__()
             else:
-                response = await self.client.request(**parameters)
+                response = await self.client.request(**parameters)  # type: ignore
         except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:
             error = ServiceRequestError(err, error=err)
         except httpx.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
-        except httpx._exceptions.ConnectError as err:  # https://github.com/encode/httpx/pull/1045
+        except httpx.ConnectError as err:
             if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
