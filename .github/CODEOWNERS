@@ -140,3 +140,7 @@
 /eng/           @weshaggard @scbedd @danieljurek
 /**/tests.yml   @benbp
 /**/ci.yml      @scbedd
+
+# Add owners for notifications for specific pipelines
+/eng/pipelines/templates/jobs/tests-nightly-python.yml @lmazuel @mccoyp
+/eng/pipelines/aggregate-reports.yml @lmazuel @mccoyp
