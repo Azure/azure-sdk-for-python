@@ -24,13 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, ContextManager, AsyncIterator, Any, Union
+from typing import Iterator, Optional, ContextManager, AsyncIterator as AsyncIteratorType, Any, Union
+from collections.abc import AsyncIterator
 import httpx
 import urllib3
 from ._base import HttpResponse, HttpTransport, HttpRequest, _HttpResponseBase
 from ._base_async import AsyncHttpResponse, AsyncHttpTransport
-from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
-from azure.core.configuration import ConnectionConfiguration
+from ...exceptions import DecodeError, ServiceRequestError, ServiceResponseError
+from ...configuration import ConnectionConfiguration
 
 __all__ = [
     'HttpXTransport',
@@ -52,8 +53,8 @@ class _HttpXTransportResponseBase(_HttpResponseBase):
                  request: HttpRequest,
                  httpx_response: httpx.Response,
                  *,
-                 stream_contextmanager: Optional[ContextManager]=None,
-                 block_size: Optional[int]=None
+                 stream_contextmanager: Optional[ContextManager] = None,
+                 block_size: Optional[int] = None
                  ):
         super(_HttpXTransportResponseBase, self).__init__(request, httpx_response, block_size=block_size)
         self.status_code = httpx_response.status_code
@@ -103,6 +104,7 @@ class HttpxStreamDownloadGenerator(object):
         on the *content-encoding* header.
     """
     def __init__(self, pipeline, response, **kwargs):
+        self.pipeline = pipeline
         self.response = response
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
@@ -133,6 +135,7 @@ class HttpXTransport(HttpTransport):
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/test_example_httpx.py
             :start-after: [START httpx]
             :end-before: [END httpx]
@@ -199,21 +202,22 @@ class HttpXTransport(HttpTransport):
                 "data": request.data,
                 "files": request.files,
                 "allow_redirects": False,
+                "timeout": timeout
                 **kwargs
             }
 
             stream_ctx = None  # type: Optional[ContextManager]
             if stream_response:
-                stream_ctx = self.client.stream(**parameters)
+                stream_ctx = self.client.stream(**parameters)   # type: ignore
                 response = stream_ctx.__enter__()
             else:
-                response = self.client.request(**parameters)
+                response = self.client.request(**parameters)    # type: ignore
 
         except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:
             error = ServiceRequestError(err, error=err)
         except httpx.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
-        except httpx._exceptions.ConnectError as err:  # https://github.com/encode/httpx/pull/1045
+        except httpx.ConnectError as err:
             if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
@@ -232,7 +236,7 @@ class HttpXTransport(HttpTransport):
 
 
 class AsyncHttpXTransportResponse(AsyncHttpResponse, _HttpXTransportResponseBase):
-    def stream_download(self, pipeline, **kwargs) -> AsyncIterator[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         return AsyncHttpxStreamDownloadGenerator(pipeline, self, **kwargs)
 
 class AsyncHttpxStreamDownloadGenerator(AsyncIterator):
@@ -244,6 +248,7 @@ class AsyncHttpxStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
     def __init__(self, pipeline, response, **kwargs):
+        self.pipeline = pipeline
         self.response = response
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
