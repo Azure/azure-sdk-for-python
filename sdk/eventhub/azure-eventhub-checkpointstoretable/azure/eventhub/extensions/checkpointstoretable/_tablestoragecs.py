@@ -25,30 +25,35 @@ class TableCheckpointStore:
         The hostname of the secondary endpoint.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         pass
 
-    def create_entity_checkpoint(self, checkpoint, **kwargs):
+    def _create_entity_checkpoint(self, checkpoint, **kwargs):
         pass
 
-    def create_entity_ownership(self, ownership, **kwargs):
+    def _create_entity_ownership(self, ownership, **kwargs):
         pass
 
-    def list_ownership(self, eventhub, namespace, consumergroup):
+    def _look_entity_ownership(self, ownership, **kwargs):
         pass
 
-    def list_checkpoints(self,eventhub,namespace,consumergroup):
+    def _look_entity_checkpoint(self, checkpoint, **kwargs):
         pass
 
-    def update_checkpoint(self,checkpoint):
+    def list_ownership(self, eventhub, namespace, consumergroup, **kwargs):
         pass
 
-    def upload_ownership(self,ownership,metadata):
+    def list_checkpoints(self, eventhub, namespace, consumergroup, **kwargs):
         pass
 
-
-    def claim_one_partition(self,ownership):
+    def update_checkpoint(self, checkpoint, **kwargs):
         pass
 
-    def claim_ownership(self,ownershiplist):
+    def upload_ownership(self, ownership, metadata, **kwargs):
+        pass
+
+    def claim_one_partition(self,ownership, **kwargs):
+        pass
+
+    def claim_ownership(self,ownershiplist, **kwargs):
         pass
