@@ -9,6 +9,7 @@ from typing import Optional, Any, cast, Mapping
 import uamqp
 
 from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
+from ..pyamqp.message import Message as PyMessage, Header as PyHeader, Properties as PyProperties
 
 
 class DictMixin(object):
@@ -136,7 +137,7 @@ class AmqpAnnotatedMessage(object):
             self._body = kwargs.get("value_body")
             self._body_type = uamqp.MessageBodyType.Value
 
-        self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
+        #self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
         header_dict = cast(Mapping, kwargs.get("header"))
         self._header = AmqpMessageHeader(**header_dict) if "header" in kwargs else None
         self._footer = kwargs.get("footer")
@@ -213,17 +214,18 @@ class AmqpAnnotatedMessage(object):
 
     def _to_outgoing_amqp_message(self):
         message_header = None
-        if self.header:
-            message_header = uamqp.message.MessageHeader()
-            message_header.delivery_count = self.header.delivery_count
-            message_header.time_to_live = self.header.time_to_live
-            message_header.first_acquirer = self.header.first_acquirer
-            message_header.durable = self.header.durable
-            message_header.priority = self.header.priority
+        if self.header and any(self.header.values()):
+            message_header = PyHeader(
+                delivery_count=self.header.delivery_count,
+                ttl=self.header.time_to_live,
+                first_acquirer=self.header.first_acquirer,
+                durable=self.header.durable,
+                priority=self.header.priority
+            )
 
         message_properties = None
-        if self.properties:
-            message_properties = uamqp.message.MessageProperties(
+        if self.properties and any(self.properties.values()):
+            message_properties = PyProperties(
                 message_id=self.properties.message_id,
                 user_id=self.properties.user_id,
                 to=self.properties.to,
@@ -237,32 +239,42 @@ class AmqpAnnotatedMessage(object):
                 if self.properties.absolute_expiry_time else None,
                 group_id=self.properties.group_id,
                 group_sequence=self.properties.group_sequence,
-                reply_to_group_id=self.properties.reply_to_group_id,
-                encoding=self._encoding
+                reply_to_group_id=self.properties.reply_to_group_id
             )
 
-        amqp_body = self._message._body  # pylint: disable=protected-access
-        if isinstance(amqp_body, uamqp.message.DataBody):
-            amqp_body_type = uamqp.MessageBodyType.Data
-            amqp_body = list(amqp_body.data)
-        elif isinstance(amqp_body, uamqp.message.SequenceBody):
-            amqp_body_type = uamqp.MessageBodyType.Sequence
-            amqp_body = list(amqp_body.data)
-        else:
-            # amqp_body is type of uamqp.message.ValueBody
-            amqp_body_type = uamqp.MessageBodyType.Value
-            amqp_body = amqp_body.data
-
-        return uamqp.message.Message(
-            body=amqp_body,
-            body_type=amqp_body_type,
+        # TODO: let's only support data body for prototyping
+        return PyMessage(
+            data=self._body,
             header=message_header,
             properties=message_properties,
             application_properties=self.application_properties,
-            annotations=self.annotations,
+            message_annotations=self.annotations,
             delivery_annotations=self.delivery_annotations,
             footer=self.footer
         )
+
+        # amqp_body = self._message._body  # pylint: disable=protected-access
+        # if isinstance(amqp_body, uamqp.message.DataBody):
+        #     amqp_body_type = uamqp.MessageBodyType.Data
+        #     amqp_body = list(amqp_body.data)
+        # elif isinstance(amqp_body, uamqp.message.SequenceBody):
+        #     amqp_body_type = uamqp.MessageBodyType.Sequence
+        #     amqp_body = list(amqp_body.data)
+        # else:
+        #     # amqp_body is type of uamqp.message.ValueBody
+        #     amqp_body_type = uamqp.MessageBodyType.Value
+        #     amqp_body = amqp_body.data
+        #
+        # return uamqp.message.Message(
+        #     body=amqp_body,
+        #     body_type=amqp_body_type,
+        #     header=message_header,
+        #     properties=message_properties,
+        #     application_properties=self.application_properties,
+        #     annotations=self.annotations,
+        #     delivery_annotations=self.delivery_annotations,
+        #     footer=self.footer
+        # )
 
     @property
     def body(self):

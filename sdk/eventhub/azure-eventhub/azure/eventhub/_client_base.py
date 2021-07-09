@@ -19,6 +19,10 @@ except ImportError:
     from urllib.parse import urlparse, quote_plus
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
+from .pyamqp.client import AMQPClient as PyAMQPClient
+from .pyamqp.authentication import JWTTokenAuth as PyJWTTokenAuth
+from .pyamqp.authentication import _generate_sas_token as Py_generate_sas_token
+from .pyamqp.message import Message as PyMessage, Properties as PyMessageProperties
 import six
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.utils import parse_connection_string as core_parse_connection_string
@@ -172,7 +176,9 @@ class EventHubSharedKeyCredential(object):
         # type: (str, Any) -> _AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
-        return _generate_sas_token(scopes[0], self.policy, self.key)
+
+        return Py_generate_sas_token(scopes[0], self.policy, self.key)
+
 
 class EventhubAzureNamedKeyTokenCredential(object):
     """The named key credential used for authentication.
@@ -261,7 +267,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "amqps://{}/{}".format(
+        self._mgmt_target = "{}/{}".format(
             self._address.hostname, self.eventhub_name
         )
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
@@ -294,20 +300,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAuth(
-                self._auth_uri,
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
-                token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-                port=self._config.connection_port,
-                verify=self._config.connection_verify
-            )
-            auth.update_token()
-            return auth
+            return PyJWTTokenAuth(self._auth_uri, self._auth_uri, functools.partial(self._credential.get_token, self._auth_uri))
         return authentication.JWTTokenAuth(
             self._auth_uri,
             self._auth_uri,
@@ -418,18 +411,23 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
-        response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
-        output = {}
-        eh_info = response.get_data()  # type: Dict[bytes, Any]
-        if eh_info:
-            output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-            output["created_at"] = utc_from_timestamp(
-                float(eh_info[b"created_at"]) / 1000
-            )
-            output["partition_ids"] = [
-                p.decode("utf-8") for p in eh_info[b"partition_ids"]
-            ]
+        # TODO: amqp management support is missing
+        # mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+        # response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
+        # output = {}
+        # eh_info = response.get_data()  # type: Dict[bytes, Any]
+        # if eh_info:
+        #     output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
+        #     output["created_at"] = utc_from_timestamp(
+        #         float(eh_info[b"created_at"]) / 1000
+        #     )
+        #     output["partition_ids"] = [
+        #         p.decode("utf-8") for p in eh_info[b"partition_ids"]
+        #     ]
+        output = {
+            # 32 is the max allowed partition count on azure portal
+            "partition_ids": [str(i) for i in range(32)]
+        }
         return output
 
     def _get_partition_ids(self):
@@ -499,14 +497,14 @@ class ConsumerProducerMixin(object):
             auth = self._client._create_auth()
             self._create_handler(auth)
             self._handler.open(
-                connection=self._client._conn_manager.get_connection(
-                    self._client._address.hostname, auth
-                )  # pylint: disable=protected-access
+                # connection=self._client._conn_manager.get_connection(
+                #     self._client._address.hostname, auth
+                # )  # pylint: disable=protected-access
             )
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
+                self._handler._link.remote_max_message_size
                 or constants.MAX_MESSAGE_LENGTH_BYTES
             )  # pylint: disable=protected-access
             self.running = True
