@@ -4,7 +4,11 @@
 
 ### Features Added
 
+- Added enum `AggragationType` which can be used to specify aggregations in the query API.
+
 ### Breaking Changes
+
+- `aggregation` param in the query API is renamed to `aggregations`
 
 ### Bugs Fixed
 
