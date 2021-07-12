@@ -1,7 +1,7 @@
 from typing import Sequence
 from collections import defaultdict
 from datetime import datetime
-from azure.eventhub.aio import CheckpointStore, EventHubConsumerClient
+from azure.eventhub import CheckpointStore, EventHubConsumerClient
 from azure.data.tables import TableClient, TableServiceClient, UpdateMode
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError 
 
