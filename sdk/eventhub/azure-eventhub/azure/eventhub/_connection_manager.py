@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 from threading import Lock
 from enum import Enum
 
-from uamqp import Connection, TransportType, c_uamqp
+from .pyamqp._connection import Connection, _CLOSING_STATES
+from ._constants import TransportType
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAuth
@@ -53,13 +54,12 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
             "remote_idle_timeout_empty_frame_send_ratio"
         )
 
-    def get_connection(self, host, auth):
+    def get_connection(self, endpoint):
         # type: (str, JWTTokenAuth) -> Connection
         with self._lock:
             if self._conn is None:
                 self._conn = Connection(
-                    host,
-                    auth,
+                    endpoint,
                     container_id=self._container_id,
                     max_frame_size=self._max_frame_size,
                     channel_max=self._channel_max,
@@ -76,18 +76,13 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         # type: () -> None
         with self._lock:
             if self._conn:
-                self._conn.destroy()
+                self._conn.close()
             self._conn = None
 
     def reset_connection_if_broken(self):
         # type: () -> None
         with self._lock:
-            if self._conn and self._conn._state in (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
-            ):
+            if self._conn and self._conn.state in _CLOSING_STATES:
                 self._conn = None
 
 
@@ -95,8 +90,8 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
-        # type: (str, JWTTokenAuth) -> None
+    def get_connection(self, endpoint):  # pylint:disable=unused-argument, no-self-use
+        # type: (str) -> None
         return None
 
     def close_connection(self):
