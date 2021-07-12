@@ -37,6 +37,7 @@ try:
     from ._models_py3 import ExtractiveSummarizationResult
     from ._models_py3 import ExtractiveSummarizationTask
     from ._models_py3 import ExtractiveSummarizationTaskParameters
+    from ._models_py3 import ExtractiveSummarizationTaskResult
     from ._models_py3 import HealthcareAssertion
     from ._models_py3 import HealthcareEntity
     from ._models_py3 import HealthcareEntityLink
@@ -86,6 +87,7 @@ try:
     from ._models_py3 import TasksStateTasksEntityLinkingTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
+    from ._models_py3 import TasksStateTasksExtractiveSummarizationTasksItem
     from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
     from ._models_py3 import TasksStateTasksSentimentAnalysisTasksItem
     from ._models_py3 import TextAnalyticsError
@@ -121,6 +123,7 @@ except (SyntaxError, ImportError):
     from ._models import ExtractiveSummarizationResult  # type: ignore
     from ._models import ExtractiveSummarizationTask  # type: ignore
     from ._models import ExtractiveSummarizationTaskParameters  # type: ignore
+    from ._models import ExtractiveSummarizationTaskResult  # type: ignore
     from ._models import HealthcareAssertion  # type: ignore
     from ._models import HealthcareEntity  # type: ignore
     from ._models import HealthcareEntityLink  # type: ignore
@@ -170,6 +173,7 @@ except (SyntaxError, ImportError):
     from ._models import TasksStateTasksEntityLinkingTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
+    from ._models import TasksStateTasksExtractiveSummarizationTasksItem  # type: ignore
     from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
     from ._models import TasksStateTasksSentimentAnalysisTasksItem  # type: ignore
     from ._models import TextAnalyticsError  # type: ignore
@@ -226,6 +230,7 @@ __all__ = [
     'ExtractiveSummarizationResult',
     'ExtractiveSummarizationTask',
     'ExtractiveSummarizationTaskParameters',
+    'ExtractiveSummarizationTaskResult',
     'HealthcareAssertion',
     'HealthcareEntity',
     'HealthcareEntityLink',
@@ -275,6 +280,7 @@ __all__ = [
     'TasksStateTasksEntityLinkingTasksItem',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
+    'TasksStateTasksExtractiveSummarizationTasksItem',
     'TasksStateTasksKeyPhraseExtractionTasksItem',
     'TasksStateTasksSentimentAnalysisTasksItem',
     'TextAnalyticsError',

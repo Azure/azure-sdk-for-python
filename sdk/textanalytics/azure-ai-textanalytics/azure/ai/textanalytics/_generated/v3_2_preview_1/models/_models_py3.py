@@ -1332,6 +1332,8 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
 
     :param model_version:
     :type model_version: str
+    :param logging_opt_out:
+    :type logging_opt_out: bool
     :param string_index_type:  Possible values include: "TextElement_v8", "UnicodeCodePoint",
      "Utf16CodeUnit".
     :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
@@ -1344,6 +1346,7 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
 
     _attribute_map = {
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
         'sentence_count': {'key': 'sentenceCount', 'type': 'int'},
         'sort_by': {'key': 'sortBy', 'type': 'str'},
@@ -1353,6 +1356,7 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
         self,
         *,
         model_version: Optional[str] = "latest",
+        logging_opt_out: Optional[bool] = True,
         string_index_type: Optional[Union[str, "StringIndexType"]] = None,
         sentence_count: Optional[int] = 3,
         sort_by: Optional[Union[str, "ExtractiveSummarizationTaskParametersSortBy"]] = "offset",
@@ -1360,9 +1364,31 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
     ):
         super(ExtractiveSummarizationTaskParameters, self).__init__(**kwargs)
         self.model_version = model_version
+        self.logging_opt_out = logging_opt_out
         self.string_index_type = string_index_type
         self.sentence_count = sentence_count
         self.sort_by = sort_by
+
+
+class ExtractiveSummarizationTaskResult(msrest.serialization.Model):
+    """ExtractiveSummarizationTaskResult.
+
+    :param results:
+    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.ExtractiveSummarizationResult
+    """
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': 'ExtractiveSummarizationResult'},
+    }
+
+    def __init__(
+        self,
+        *,
+        results: Optional["ExtractiveSummarizationResult"] = None,
+        **kwargs
+    ):
+        super(ExtractiveSummarizationTaskResult, self).__init__(**kwargs)
+        self.results = results
 
 
 class HealthcareAssertion(msrest.serialization.Model):
@@ -3014,6 +3040,9 @@ class TasksStateTasks(msrest.serialization.Model):
     :param sentiment_analysis_tasks:
     :type sentiment_analysis_tasks:
      list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksSentimentAnalysisTasksItem]
+    :param extractive_summarization_tasks:
+    :type extractive_summarization_tasks:
+     list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksExtractiveSummarizationTasksItem]
     """
 
     _validation = {
@@ -3033,6 +3062,7 @@ class TasksStateTasks(msrest.serialization.Model):
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[TasksStateTasksKeyPhraseExtractionTasksItem]'},
         'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[TasksStateTasksEntityLinkingTasksItem]'},
         'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[TasksStateTasksSentimentAnalysisTasksItem]'},
+        'extractive_summarization_tasks': {'key': 'extractiveSummarizationTasks', 'type': '[TasksStateTasksExtractiveSummarizationTasksItem]'},
     }
 
     def __init__(
@@ -3047,6 +3077,7 @@ class TasksStateTasks(msrest.serialization.Model):
         key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionTasksItem"]] = None,
         entity_linking_tasks: Optional[List["TasksStateTasksEntityLinkingTasksItem"]] = None,
         sentiment_analysis_tasks: Optional[List["TasksStateTasksSentimentAnalysisTasksItem"]] = None,
+        extractive_summarization_tasks: Optional[List["TasksStateTasksExtractiveSummarizationTasksItem"]] = None,
         **kwargs
     ):
         super(TasksStateTasks, self).__init__(**kwargs)
@@ -3059,6 +3090,7 @@ class TasksStateTasks(msrest.serialization.Model):
         self.key_phrase_extraction_tasks = key_phrase_extraction_tasks
         self.entity_linking_tasks = entity_linking_tasks
         self.sentiment_analysis_tasks = sentiment_analysis_tasks
+        self.extractive_summarization_tasks = extractive_summarization_tasks
 
 
 class TaskState(msrest.serialization.Model):
@@ -3230,6 +3262,51 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, EntitiesTaskResult):
         **kwargs
     ):
         super(TasksStateTasksEntityRecognitionTasksItem, self).__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
+        self.results = results
+        self.last_update_date_time = last_update_date_time
+        self.task_name = task_name
+        self.status = status
+
+
+class TasksStateTasksExtractiveSummarizationTasksItem(TaskState, ExtractiveSummarizationTaskResult):
+    """TasksStateTasksExtractiveSummarizationTasksItem.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param results:
+    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.ExtractiveSummarizationResult
+    :param last_update_date_time: Required.
+    :type last_update_date_time: ~datetime.datetime
+    :param task_name: Required.
+    :type task_name: str
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling".
+    :type status: str or ~azure.ai.textanalytics.v3_2_preview_1.models.State
+    """
+
+    _validation = {
+        'last_update_date_time': {'required': True},
+        'task_name': {'required': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': 'ExtractiveSummarizationResult'},
+        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        task_name: str,
+        status: Union[str, "State"],
+        results: Optional["ExtractiveSummarizationResult"] = None,
+        **kwargs
+    ):
+        super(TasksStateTasksExtractiveSummarizationTasksItem, self).__init__(last_update_date_time=last_update_date_time, task_name=task_name, status=status, results=results, **kwargs)
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.task_name = task_name

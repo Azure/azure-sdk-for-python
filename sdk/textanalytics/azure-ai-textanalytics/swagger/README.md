@@ -66,7 +66,7 @@ output-folder: ../azure/ai/textanalytics/_generated/v3_1
 These settings apply only when `--tag=release_3_2_preview.1` is specified on the command line.
 
 ```yaml $(tag) == 'release_3_2_preview.1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/143ac79e3cfa029217315bd96c3cd58f35bf35f9/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.1/TextAnalytics.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/22a310f5d36c4a771526d68fefe368ad34f6c3b2/specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.1/TextAnalytics.json
 namespace: azure.ai.textanalytics.v3_2_preview_1
 output-folder: ../azure/ai/textanalytics/_generated/v3_2_preview_1
 ```
