@@ -73,8 +73,9 @@ class MetricsQueryClient(object):
          with either start_time or duration.
         :keyword interval: The interval (i.e. timegrain) of the query.
         :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The list of aggregation types to retrieve.
-        :paramtype aggregation: list[str]
+        :keyword aggregations: The list of aggregation types to retrieve. Use `azure.monitor.query.AggregationType`
+         enum to get each aggregation type.
+        :paramtype aggregations: list[str]
         :keyword top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
@@ -113,9 +114,9 @@ class MetricsQueryClient(object):
         """
         start = kwargs.pop('start_time', None)
         end = kwargs.pop('end_time', None)
-        aggregation = kwargs.pop("aggregation", None)
-        if aggregation:
-            kwargs.setdefault("aggregation", ",".join(aggregation))
+        aggregations = kwargs.pop("aggregations", None)
+        if aggregations:
+            kwargs.setdefault("aggregation", ",".join(aggregations))
         timespan = construct_iso8601(start, end, duration)
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
