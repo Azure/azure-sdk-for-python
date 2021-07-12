@@ -47,7 +47,7 @@ class UsersOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UserList"]:
         """Gets all the users registered on a Data Box Edge/Data Box Gateway device.
 
@@ -122,7 +122,7 @@ class UsersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.User":
         """Gets the properties of the specified user.
 
@@ -185,7 +185,7 @@ class UsersOperations:
         name: str,
         resource_group_name: str,
         user: "_models.User",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.User"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.User"]]
         error_map = {
@@ -242,7 +242,7 @@ class UsersOperations:
         name: str,
         resource_group_name: str,
         user: "_models.User",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.User"]:
         """Creates a new user or updates an existing user's information on a Data Box Edge/Data Box
         Gateway device.
@@ -257,8 +257,8 @@ class UsersOperations:
         :type user: ~azure.mgmt.databoxedge.v2019_07_01.models.User
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either User or the result of cls(response)
@@ -318,7 +318,7 @@ class UsersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -364,7 +364,7 @@ class UsersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the user on a databox edge/gateway device.
 
@@ -376,8 +376,8 @@ class UsersOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

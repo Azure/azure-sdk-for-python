@@ -43,7 +43,7 @@ class AvailableSkusOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataBoxEdgeSkuList"]:
         """List all the available Skus and information related to them.
 

@@ -45,7 +45,7 @@ class NodesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NodeList"]:
         """Gets all the nodes currently configured under this Data Box Edge device.
 

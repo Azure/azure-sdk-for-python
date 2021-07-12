@@ -45,7 +45,7 @@ class AlertsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.AlertList"]:
         """Gets all the alerts for a Data Box Edge/Data Box Gateway device.
 
@@ -120,7 +120,7 @@ class AlertsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Alert":
         """Gets an alert by name.
 

@@ -46,7 +46,7 @@ class DevicesOperations:
     def list_by_subscription(
         self,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataBoxEdgeDeviceList"]:
         """Gets all the Data Box Edge/Data Box Gateway devices in a subscription.
 
@@ -119,7 +119,7 @@ class DevicesOperations:
         self,
         resource_group_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DataBoxEdgeDeviceList"]:
         """Gets all the Data Box Edge/Data Box Gateway devices in a resource group.
 
@@ -195,7 +195,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataBoxEdgeDevice":
         """Gets the properties of the Data Box Edge/Data Box Gateway device.
 
@@ -254,7 +254,7 @@ class DevicesOperations:
         device_name: str,
         resource_group_name: str,
         data_box_edge_device: "_models.DataBoxEdgeDevice",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataBoxEdgeDevice":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeDevice"]
         error_map = {
@@ -307,7 +307,7 @@ class DevicesOperations:
         device_name: str,
         resource_group_name: str,
         data_box_edge_device: "_models.DataBoxEdgeDevice",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.DataBoxEdgeDevice"]:
         """Creates or updates a Data Box Edge/Data Box Gateway resource.
 
@@ -319,8 +319,8 @@ class DevicesOperations:
         :type data_box_edge_device: ~azure.mgmt.databoxedge.v2020_05_01_preview.models.DataBoxEdgeDevice
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataBoxEdgeDevice or the result of cls(response)
@@ -377,7 +377,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -421,7 +421,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Data Box Edge/Data Box Gateway device.
 
@@ -431,8 +431,8 @@ class DevicesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -486,7 +486,7 @@ class DevicesOperations:
         device_name: str,
         resource_group_name: str,
         parameters: "_models.DataBoxEdgeDevicePatch",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataBoxEdgeDevice":
         """Modifies a Data Box Edge/Data Box Gateway resource.
 
@@ -551,7 +551,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -595,7 +595,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Downloads the updates on a Data Box Edge/Data Box Gateway device.
 
@@ -607,8 +607,8 @@ class DevicesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -661,7 +661,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DataBoxEdgeDeviceExtendedInfo":
         """Gets additional information for the specified Data Box Edge/Data Box Gateway device.
 
@@ -719,7 +719,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -763,7 +763,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Installs the updates on the Data Box Edge/Data Box Gateway device.
 
@@ -775,8 +775,8 @@ class DevicesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -829,7 +829,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NetworkSettings":
         """Gets the network settings of the specified Data Box Edge/Data Box Gateway device.
 
@@ -887,7 +887,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -931,7 +931,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Scans for updates on a Data Box Edge/Data Box Gateway device.
 
@@ -943,8 +943,8 @@ class DevicesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -998,7 +998,7 @@ class DevicesOperations:
         device_name: str,
         resource_group_name: str,
         security_settings: "_models.SecuritySettings",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -1048,7 +1048,7 @@ class DevicesOperations:
         device_name: str,
         resource_group_name: str,
         security_settings: "_models.SecuritySettings",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Updates the security settings on a Data Box Edge/Data Box Gateway device.
 
@@ -1060,8 +1060,8 @@ class DevicesOperations:
         :type security_settings: ~azure.mgmt.databoxedge.v2020_05_01_preview.models.SecuritySettings
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1115,7 +1115,7 @@ class DevicesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UpdateSummary":
         """Gets information about the availability of updates based on the last scan of the device. It also gets information about any ongoing download or install jobs on the device.
 
@@ -1177,7 +1177,7 @@ class DevicesOperations:
         device_name: str,
         resource_group_name: str,
         parameters: "_models.UploadCertificateRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UploadCertificateResponse":
         """Uploads registration certificate for the device.
 

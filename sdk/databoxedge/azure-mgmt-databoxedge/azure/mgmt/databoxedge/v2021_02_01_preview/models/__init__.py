@@ -102,6 +102,7 @@ try:
     from ._models_py3 import ShareAccessRight
     from ._models_py3 import ShareList
     from ._models_py3 import Sku
+    from ._models_py3 import SkuCapability
     from ._models_py3 import SkuCost
     from ._models_py3 import SkuInformation
     from ._models_py3 import SkuInformationList
@@ -221,6 +222,7 @@ except (SyntaxError, ImportError):
     from ._models import ShareAccessRight  # type: ignore
     from ._models import ShareList  # type: ignore
     from ._models import Sku  # type: ignore
+    from ._models import SkuCapability  # type: ignore
     from ._models import SkuCost  # type: ignore
     from ._models import SkuInformation  # type: ignore
     from ._models import SkuInformationList  # type: ignore
@@ -403,6 +405,7 @@ __all__ = [
     'ShareAccessRight',
     'ShareList',
     'Sku',
+    'SkuCapability',
     'SkuCost',
     'SkuInformation',
     'SkuInformationList',

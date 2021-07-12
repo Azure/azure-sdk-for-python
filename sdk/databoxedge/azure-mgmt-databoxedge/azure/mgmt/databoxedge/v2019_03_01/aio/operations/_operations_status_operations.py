@@ -45,7 +45,7 @@ class OperationsStatusOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Job":
         """Gets the details of a specified job on a data box edge/gateway device.
 

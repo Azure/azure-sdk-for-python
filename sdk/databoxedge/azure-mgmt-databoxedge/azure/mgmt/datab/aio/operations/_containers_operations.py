@@ -48,7 +48,7 @@ class ContainersOperations:
         device_name: str,
         storage_account_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ContainerList"]:
         """Lists all the containers of a storage Account in a Data Box Edge/Data Box Gateway device.
 
@@ -129,7 +129,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Container":
         """Gets a container by name.
 
@@ -198,7 +198,7 @@ class ContainersOperations:
         container_name: str,
         resource_group_name: str,
         container: "_models.Container",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.Container"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Container"]]
         error_map = {
@@ -257,7 +257,7 @@ class ContainersOperations:
         container_name: str,
         resource_group_name: str,
         container: "_models.Container",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.Container"]:
         """Creates a new container or updates an existing container on the device.
 
@@ -275,8 +275,8 @@ class ContainersOperations:
         :type container: ~azure.mgmt.databoxedge.v2020_12_01.models.Container
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Container or the result of cls(response)
@@ -339,7 +339,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -387,7 +387,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the container on the Data Box Edge/Data Box Gateway device.
 
@@ -401,8 +401,8 @@ class ContainersOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -461,7 +461,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -509,7 +509,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Refreshes the container metadata with the data from the cloud.
 
@@ -525,8 +525,8 @@ class ContainersOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

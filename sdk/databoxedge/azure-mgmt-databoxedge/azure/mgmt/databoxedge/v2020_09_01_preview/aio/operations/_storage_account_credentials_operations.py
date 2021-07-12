@@ -47,7 +47,7 @@ class StorageAccountCredentialsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.StorageAccountCredentialList"]:
         """Gets all the storage account credentials in a Data Box Edge/Data Box Gateway device.
 
@@ -124,7 +124,7 @@ class StorageAccountCredentialsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.StorageAccountCredential":
         """Gets the properties of the specified storage account credential.
 
@@ -187,7 +187,7 @@ class StorageAccountCredentialsOperations:
         name: str,
         resource_group_name: str,
         storage_account_credential: "_models.StorageAccountCredential",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.StorageAccountCredential"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.StorageAccountCredential"]]
         error_map = {
@@ -244,7 +244,7 @@ class StorageAccountCredentialsOperations:
         name: str,
         resource_group_name: str,
         storage_account_credential: "_models.StorageAccountCredential",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.StorageAccountCredential"]:
         """Creates or updates the storage account credential.
 
@@ -258,8 +258,8 @@ class StorageAccountCredentialsOperations:
         :type storage_account_credential: ~azure.mgmt.databoxedge.v2020_09_01_preview.models.StorageAccountCredential
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either StorageAccountCredential or the result of cls(response)
@@ -319,7 +319,7 @@ class StorageAccountCredentialsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -365,7 +365,7 @@ class StorageAccountCredentialsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the storage account credential.
 
@@ -377,8 +377,8 @@ class StorageAccountCredentialsOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

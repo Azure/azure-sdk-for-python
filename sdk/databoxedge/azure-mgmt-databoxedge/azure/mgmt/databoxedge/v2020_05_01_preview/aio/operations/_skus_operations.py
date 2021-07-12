@@ -44,7 +44,7 @@ class SkusOperations:
     def list(
         self,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.SkuInformationList"]:
         """List all the available Skus in the region and information related to them.
 

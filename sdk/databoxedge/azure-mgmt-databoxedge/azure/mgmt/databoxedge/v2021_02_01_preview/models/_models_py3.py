@@ -1445,6 +1445,8 @@ class DataBoxEdgeSku(msrest.serialization.Model):
     :ivar shipment_types: List of Shipment Types supported by this SKU.
     :vartype shipment_types: list[str or
      ~azure.mgmt.databoxedge.v2021_02_01_preview.models.ShipmentType]
+    :ivar capabilities: The capability info of the SKU.
+    :vartype capabilities: list[~azure.mgmt.databoxedge.v2021_02_01_preview.models.SkuCapability]
     """
 
     _validation = {
@@ -1462,6 +1464,7 @@ class DataBoxEdgeSku(msrest.serialization.Model):
         'version': {'readonly': True},
         'availability': {'readonly': True},
         'shipment_types': {'readonly': True},
+        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1479,6 +1482,7 @@ class DataBoxEdgeSku(msrest.serialization.Model):
         'version': {'key': 'version', 'type': 'str'},
         'availability': {'key': 'availability', 'type': 'str'},
         'shipment_types': {'key': 'shipmentTypes', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SkuCapability]'},
     }
 
     def __init__(
@@ -1500,6 +1504,7 @@ class DataBoxEdgeSku(msrest.serialization.Model):
         self.version = None
         self.availability = None
         self.shipment_types = None
+        self.capabilities = None
 
 
 class DataBoxEdgeSkuList(msrest.serialization.Model):
@@ -4431,6 +4436,36 @@ class Sku(msrest.serialization.Model):
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
+
+
+class SkuCapability(msrest.serialization.Model):
+    """The metadata to describe the capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: An invariant to describe the feature.
+    :vartype name: str
+    :ivar value: An invariant if the feature is measured by quantity.
+    :vartype value: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SkuCapability, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
 
 
 class SkuCost(msrest.serialization.Model):

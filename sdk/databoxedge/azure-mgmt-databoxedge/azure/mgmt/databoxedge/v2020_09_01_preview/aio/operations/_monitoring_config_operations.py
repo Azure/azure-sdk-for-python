@@ -48,7 +48,7 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.MonitoringMetricConfigurationList"]:
         """Lists metric configurations in a role.
 
@@ -128,7 +128,7 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.MonitoringMetricConfiguration":
         """Gets a  metric configuration of a role.
 
@@ -193,7 +193,7 @@ class MonitoringConfigOperations:
         role_name: str,
         resource_group_name: str,
         monitoring_metric_configuration: "_models.MonitoringMetricConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.MonitoringMetricConfiguration"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.MonitoringMetricConfiguration"]]
         error_map = {
@@ -250,7 +250,7 @@ class MonitoringConfigOperations:
         role_name: str,
         resource_group_name: str,
         monitoring_metric_configuration: "_models.MonitoringMetricConfiguration",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.MonitoringMetricConfiguration"]:
         """Creates a new metric configuration or updates an existing one for a role.
 
@@ -266,8 +266,8 @@ class MonitoringConfigOperations:
         :type monitoring_metric_configuration: ~azure.mgmt.databoxedge.v2020_09_01_preview.models.MonitoringMetricConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either MonitoringMetricConfiguration or the result of cls(response)
@@ -327,7 +327,7 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -373,7 +373,7 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """deletes a new metric configuration for a role.
 
@@ -387,8 +387,8 @@ class MonitoringConfigOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
