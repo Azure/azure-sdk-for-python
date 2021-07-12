@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Any
 from .pyamqp import ReceiveClient, types, utils, error as errors, constants as pyamqp_constants
 from .pyamqp.endpoints import Source, ApacheFilters
 from .pyamqp.message import Message
-from .pyamqp.authentication import SASTokenAuth
 #from uamqp.errors import ErrorPolicy    # TODO: REMOVE AND REPLACE
 
 from .exceptions import _error_handler
@@ -136,8 +135,7 @@ class EventHubConsumer(
         # type: (JWTTokenAuth) -> None
         source = Source(address=self._source, filters={})
         if self._offset is not None:
-            # set_filter - from which event should I start receiving?
-            # TODO: move set_filter stuff to separate method?
+            # TODO: implement setting filter on offset
             filter_key = ApacheFilters.selector_filter
             source.filters[filter_key] = event_position_selector(self._offset, self._offset_inclusive)
         desired_capabilities = None
@@ -200,18 +198,7 @@ class EventHubConsumer(
             if self._handler:
                 self._handler.close()
             # TODO: using JWTTokenAuth not working 
-            #auth = self._client._create_auth()
-            eventhub_name = self._client._address.path.strip("/")
-            hostname = self._client._address.hostname
-            uri = "sb://{}/{}".format(hostname, eventhub_name)
-            key = self._client._credential.key
-            policy = self._client._credential.policy
-            auth = SASTokenAuth(
-                uri=uri,
-                audience=uri,
-                username=policy,
-                password=key
-            )
+            auth = self._client._create_auth()
             self._create_handler(auth)
             self._handler.open()
             while not self._handler.client_ready():

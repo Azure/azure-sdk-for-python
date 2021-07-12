@@ -18,7 +18,9 @@ try:
 except ImportError:
     from urllib.parse import urlparse, quote_plus
 
-from .pyamqp import authentication, constants, error as errors, utils
+from uamqp import authentication
+from .pyamqp import constants, error as errors, utils
+from .pyamqp.authentication import JWTTokenAuth as PyJWTTokenAuth
 from .pyamqp.client import AMQPClient
 from .pyamqp.message import Message
 import six
@@ -295,24 +297,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAuth(
-                self._auth_uri,
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
-                token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-                port=self._config.connection_port,
-                verify=self._config.connection_verify
-            )
-            # TODO: determine if below should move to `def update_token()` method
-            access_token = auth.get_token()
-            self.expires_at = access_token.expires_on
-            value = access_token.token
-            self.token = value.encode('utf-8') if isinstance(value, six.text_type) else value
-            return auth
+            return PyJWTTokenAuth(self._auth_uri, self._auth_uri, functools.partial(self._credential.get_token, self._auth_uri))
         return authentication.JWTTokenAuth(
             self._auth_uri,
             self._auth_uri,
@@ -436,20 +421,23 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
-        # TODO: remove mocked response
+        # TODO: amqp mgmt support missing
+        #mgmt_msg = Message(application_properties={"name": self.eventhub_name})
         #response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
-        output = {}
-        eh_info = {b"name": b"eventhub-test", b"created_at": 1608181432000, b"partition_ids": [b'0']}
+        #output = {}
         #eh_info = response.data  # type: Dict[bytes, Any]
-        if eh_info:
-            output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-            output["created_at"] = utc_from_timestamp(
-                float(eh_info[b"created_at"]) / 1000
-            )
-            output["partition_ids"] = [
-                p.decode("utf-8") for p in eh_info[b"partition_ids"]
-            ]
+        #if eh_info:
+        #    output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
+        #    output["created_at"] = utc_from_timestamp(
+        #        float(eh_info[b"created_at"]) / 1000
+        #    )
+        #    output["partition_ids"] = [
+        #        p.decode("utf-8") for p in eh_info[b"partition_ids"]
+        #    ]
+        output = {
+             # 32 is the max allowed partition count on azure portal
+            "partition_ids": [str(i) for i in range(32)]
+        }
         return output
 
     def _get_partition_ids(self):
