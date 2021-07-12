@@ -4,6 +4,7 @@
 
 ### Added
 - Added support to add `metadata` for `message`
+- Added support to add `sender_display_name` for `SendTypingNotification`
 
 ## 1.0.0 (2021-03-29)
 ### Breaking Changes
