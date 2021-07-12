@@ -9,8 +9,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from uamqp.constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
-from azure.core.pipeline.policies import RetryMode
+from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes

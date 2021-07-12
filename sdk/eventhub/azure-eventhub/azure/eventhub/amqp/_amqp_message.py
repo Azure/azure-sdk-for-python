@@ -123,6 +123,7 @@ class AmqpAnnotatedMessage(object):
 
     def _from_amqp_message(self, message):
         # populate the properties from an uamqp message
+        # TODO: message.properties should not be a list
         self._properties = AmqpMessageProperties(
             message_id=message.properties.message_id,
             user_id=message.properties.user_id,
@@ -137,18 +138,18 @@ class AmqpAnnotatedMessage(object):
             group_id=message.properties.group_id,
             group_sequence=message.properties.group_sequence,
             reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties else None
+        ) if message.properties and len(message.properties) > 0 else None
         self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
             time_to_live=message.header.time_to_live,
             first_acquirer=message.header.first_acquirer,
             durable=message.header.durable,
             priority=message.header.priority
-        ) if message.header else None
-        self._footer = message.footer
-        self._annotations = message.annotations
-        self._delivery_annotations = message.delivery_annotations
-        self._application_properties = message.application_properties
+        ) if message.header and len(message.header) > 0 else None
+        self._footer = message.footer if message.footer else {}
+        self._annotations = message.message_annotations if message.message_annotations else {}
+        self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
+        self._application_properties = message.application_properties if message.application_properties else {}
 
     def _to_outgoing_amqp_message(self):
         message_header = None

@@ -22,7 +22,8 @@ from typing_extensions import TypedDict
 
 import six
 
-from uamqp import BatchMessage, Message, constants
+from .pyamqp import constants, _encode as encode
+from .pyamqp.message import BatchMessage, Message
 
 from ._utils import (
     set_message_partition_key,
@@ -140,6 +141,7 @@ class EventData(object):
         # type: () -> str
         # pylint: disable=bare-except
         try:
+            # TODO: below call won't work b/c pyamqp.message.message doesn't have body_type
             body_str = self.body_as_str()
         except:
             body_str = "<read-error>"
@@ -541,13 +543,13 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
+        self.max_size_in_bytes = max_size_in_bytes #TODO: FIND REPLACEMENT - or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id
         self._partition_key = partition_key
 
         set_message_partition_key(self.message, self._partition_key)
-        self._size = self.message.gather()[0].get_message_encoded_size()
+        self._size = len(encode.encode_payload(b"", self.message))
         self._count = 0
 
     def __repr__(self):
