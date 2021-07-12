@@ -18,7 +18,10 @@ from ._constants import (
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
 )
-
+try:
+    from urllib.parse import urlparse
+except:
+    from urlparse import urlparse
 if TYPE_CHECKING:
     from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message, types as uamqp_types
     from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
@@ -49,7 +52,7 @@ class EventHubConsumer(
     :param client: The parent EventHubConsumerClient.
     :type client: ~azure.eventhub.EventHubConsumerClient
     :param source: The source EventHub from which to receive events.
-    :type source: ~uamqp.address.Source
+    :type source: ~azure.eventhub.pyamqp.endpoints.Source
     :keyword event_position: The position from which to start receiving.
     :paramtype event_position: int, str, datetime.datetime
     :keyword int prefetch: The number of events to prefetch from the service
@@ -165,6 +168,7 @@ class EventHubConsumer(
         if not self.running:
             if self._handler:
                 self._handler.close()
+            # TODO: using JWTTokenAuth not working 
             auth = self._client._create_auth()
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access

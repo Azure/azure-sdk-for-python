@@ -136,6 +136,7 @@ class EventData(object):
     def __repr__(self) -> str:
         # pylint: disable=bare-except
         try:
+            # TODO: below call won't work b/c pyamqp.message.message doesn't have body_type
             body_str = self.body_as_str()
         except:
             body_str = "<read-error>"

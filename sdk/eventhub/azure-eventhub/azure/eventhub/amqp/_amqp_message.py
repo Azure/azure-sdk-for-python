@@ -150,7 +150,7 @@ class AmqpAnnotatedMessage(object):
             group_id=message.properties.group_id,
             group_sequence=message.properties.group_sequence,
             reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties else None
+        ) if message.properties and len(message.properties) > 0 else None
         self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
             time_to_live=message.header.ttl,
