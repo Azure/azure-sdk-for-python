@@ -1,5 +1,35 @@
 # Release History
 
+## 2.0.0 (2021-07-12)
+
+**Features**
+
+  - Model PatchTrackedResource has a new parameter etag
+  - Model Resource has a new parameter etag
+  - Model VaultProperties has a new parameter encryption
+  - Model PatchVault has a new parameter etag
+  - Model Sku has a new parameter tier
+  - Model VaultExtendedInfoResource has a new parameter etag
+  - Model ResourceCertificateAndAadDetails has a new parameter service_resource_id
+  - Model Vault has a new parameter system_data
+  - Model Vault has a new parameter etag
+  - Model IdentityData has a new parameter user_assigned_identities
+  - Model TrackedResource has a new parameter etag
+  - Added operation VaultsOperations.begin_update
+  - Added operation VaultsOperations.begin_create_or_update
+  - Added operation group RecoveryServicesClientOperationsMixin
+
+**Breaking changes**
+
+  - Model PatchTrackedResource no longer has parameter e_tag
+  - Model Resource no longer has parameter e_tag
+  - Model PatchVault no longer has parameter e_tag
+  - Model VaultExtendedInfoResource no longer has parameter e_tag
+  - Model Vault no longer has parameter e_tag
+  - Model TrackedResource no longer has parameter e_tag
+  - Removed operation VaultsOperations.create_or_update
+  - Removed operation VaultsOperations.update
+
 ## 1.0.0 (2020-12-17)
 
 **Features**

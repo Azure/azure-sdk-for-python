@@ -313,3 +313,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-costmanagement msrest>=0.6.21
 #override azure-mgmt-testbase msrest>=0.6.21
 #override azure-mgmt-agrifood msrest>=0.6.21
+#override azure-mgmt-recoveryservices msrest>=0.6.21
