@@ -269,7 +269,7 @@ class ChatThreadClient(object):
         sender_display_name = kwargs.pop("sender_display_name", None)
         send_typing_notification_request = SendTypingNotificationRequest(sender_display_name=sender_display_name)
         return self._client.chat_thread.send_typing_notification(
-            chat_thread_id=self._thread_id, 
+            chat_thread_id=self._thread_id,
             send_typing_notification_request=send_typing_notification_request,
             **kwargs)
 
