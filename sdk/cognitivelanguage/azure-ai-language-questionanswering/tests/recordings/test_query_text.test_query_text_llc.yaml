@@ -136,25 +136,25 @@ interactions:
         recommended alternative, though you might want to wait a few months for the
         rumored Surface Laptop 3.   Overall, the HP Envy 13 is a fantastic laptop
         that checks all the right boxes --- as long as you buy the 1080p model.\",\n
-        \     \"confidenceScore\": 0.007057250943034887,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.0070572528056800365,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"battery life\",\n        \"confidenceScore\":
         0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - eae82c61-0d7f-4130-8c21-680060b8a75d
+      - 0611366d-2ace-4db7-b458-d8fcf70e51fc
       content-length:
-      - '2147'
+      - '2148'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Jun 2021 19:41:19 GMT
+      - Tue, 13 Jul 2021 17:24:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '287'
+      - '372'
     status:
       code: 200
       message: OK

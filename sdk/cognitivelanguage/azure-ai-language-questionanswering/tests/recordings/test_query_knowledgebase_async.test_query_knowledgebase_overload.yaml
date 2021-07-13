@@ -7,10 +7,6 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '254'
       Content-Type:
@@ -44,21 +40,15 @@ interactions:
         {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
         \ ]\n}"
     headers:
-      apim-request-id:
-      - 8d86acd0-29cd-4683-9127-6fe15e1ec37a
-      content-length:
-      - '1609'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 13 Jul 2021 17:24:04 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '330'
+      apim-request-id: 96655173-855c-4e32-bff0-4025625ad191
+      content-length: '1609'
+      content-type: application/json; charset=utf-8
+      date: Tue, 13 Jul 2021 17:24:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '314'
     status:
       code: 200
       message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/:query-knowledgebases?projectName=190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c&deploymentName=test&api-version=2021-05-01-preview
 version: 1

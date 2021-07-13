@@ -115,7 +115,7 @@ interactions:
         Battery Life - Longest Lasting Laptop Batteries  Competing laptops like the
         ZenBook S UX391UA (7:05), Surface Laptop 2 (9:22) and Notebook 9 Pro (8:53)
         outstayed the 4K Envy 13 but powered down long before the 1080p version.\",\n
-        \     \"confidenceScore\": 0.01745828054845333,\n      \"id\": \"doc3\",\n
+        \     \"confidenceScore\": 0.017458289861679077,\n      \"id\": \"doc3\",\n
         \     \"answerSpan\": {\n        \"text\": \"Battery Life\",\n        \"confidenceScore\":
         0.26247412,\n        \"offset\": 0,\n        \"length\": 12\n      },\n      \"offset\":
         1779,\n      \"length\": 555\n    },\n    {\n      \"answer\": \"Along with
@@ -137,13 +137,13 @@ interactions:
         0.59143245,\n        \"offset\": 98,\n        \"length\": 13\n      },\n      \"offset\":
         5391,\n      \"length\": 393\n    }\n  ]\n}"
     headers:
-      apim-request-id: ba49fbf2-8c63-4ae1-b5d6-2b2ec86d8776
-      content-length: '2147'
+      apim-request-id: daf3d0f9-c8a7-45a8-93e7-c472277fece0
+      content-length: '2148'
       content-type: application/json; charset=utf-8
-      date: Fri, 25 Jun 2021 19:41:20 GMT
+      date: Tue, 13 Jul 2021 17:24:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '272'
+      x-envoy-upstream-service-time: '264'
     status:
       code: 200
       message: OK

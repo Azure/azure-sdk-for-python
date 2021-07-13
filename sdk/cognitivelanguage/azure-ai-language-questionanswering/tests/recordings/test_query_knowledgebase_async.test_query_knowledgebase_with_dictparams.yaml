@@ -40,13 +40,13 @@ interactions:
         {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
         \ ]\n}"
     headers:
-      apim-request-id: d3136678-d454-41f9-b064-ebf1b207e82b
+      apim-request-id: a92a72c6-69df-4e20-84d5-83c4f6c834e7
       content-length: '1609'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Jun 2021 15:36:56 GMT
+      date: Tue, 13 Jul 2021 17:24:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '949'
+      x-envoy-upstream-service-time: '279'
     status:
       code: 200
       message: OK

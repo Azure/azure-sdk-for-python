@@ -26,30 +26,30 @@ interactions:
         It takes two to four hours to charge the Surface Pro 4 battery fully from
         an empty state. It can take longer if you\u2019re using your Surface for power-intensive
         activities like gaming or video streaming while you\u2019re charging it.\",\n
-        \     \"confidenceScore\": 0.9298818111419678,\n      \"id\": \"1\",\n      \"answerSpan\":
+        \     \"confidenceScore\": 0.9298818707466125,\n      \"id\": \"1\",\n      \"answerSpan\":
         {\n        \"text\": \"two to four hours\",\n        \"confidenceScore\":
         0.98579097,\n        \"offset\": 28,\n        \"length\": 18\n      },\n      \"offset\":
         0,\n      \"length\": 245\n    },\n    {\n      \"answer\": \"It takes two
         to four hours to charge the Surface Pro 4 battery fully from an empty state.
         It can take longer if you\u2019re using your Surface for power-intensive activities
         like gaming or video streaming while you\u2019re charging it.\",\n      \"confidenceScore\":
-        0.9254359602928162,\n      \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\":
-        \"two to four hours\",\n        \"confidenceScore\": 0.9856282,\n        \"offset\":
+        0.9254360198974609,\n      \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\":
+        \"two to four hours\",\n        \"confidenceScore\": 0.98562825,\n        \"offset\":
         8,\n        \"length\": 18\n      },\n      \"offset\": 20,\n      \"length\":
         225\n    },\n    {\n      \"answer\": \"It can take longer if you\u2019re
         using your Surface for power-intensive activities like gaming or video streaming
-        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503518134355545,\n
+        while you\u2019re charging it.\",\n      \"confidenceScore\": 0.05503516271710396,\n
         \     \"id\": \"1\",\n      \"answerSpan\": {\n        \"text\": \"longer\",\n
         \       \"confidenceScore\": 0.624118,\n        \"offset\": 11,\n        \"length\":
         7\n      },\n      \"offset\": 110,\n      \"length\": 135\n    }\n  ]\n}"
     headers:
-      apim-request-id: fc0cf99e-2f1a-4cf1-8234-4d40c42eaca7
-      content-length: '1478'
+      apim-request-id: 144b7b34-1d78-4c3e-9166-f69592a0ca31
+      content-length: '1479'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Jun 2021 15:07:15 GMT
+      date: Tue, 13 Jul 2021 17:24:20 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '362'
+      x-envoy-upstream-service-time: '209'
     status:
       code: 200
       message: OK
