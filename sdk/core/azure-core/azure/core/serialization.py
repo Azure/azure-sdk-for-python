@@ -8,7 +8,7 @@ import base64
 import datetime
 from json import JSONEncoder
 
-from ._utils import _FixedOffset
+from .utils._utils import _FixedOffset
 
 __all__ = ["NULL"]
 
