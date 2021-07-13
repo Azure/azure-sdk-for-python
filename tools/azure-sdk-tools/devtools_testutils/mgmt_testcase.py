@@ -87,9 +87,7 @@ class AzureMgmtTestCase(AzureTestCase):
         for key in constants_to_scrub:
             key_value = self.get_settings_value(key)
             if key_value and hasattr(self._fake_settings, key):
-                self.scrubber.register_name_pair(
-                    key_value, getattr(self._fake_settings, key)
-                )
+                self.scrubber.register_name_pair(key_value, getattr(self._fake_settings, key))
 
     def setUp(self):
         # Every test uses a different resource group name calculated from its
@@ -124,9 +122,7 @@ class AzureMgmtTestCase(AzureTestCase):
         if not subscription_id:
             subscription_id = self.settings.SUBSCRIPTION_ID
 
-        return self.create_basic_client(
-            client_class, subscription_id=subscription_id, **kwargs
-        )
+        return self.create_basic_client(client_class, subscription_id=subscription_id, **kwargs)
 
 
 class AzureMgmtPreparer(AbstractPreparer):
@@ -139,9 +135,7 @@ class AzureMgmtPreparer(AbstractPreparer):
         client_kwargs=None,
         random_name_enabled=False,
     ):
-        super(AzureMgmtPreparer, self).__init__(
-            name_prefix, random_name_length, disable_recording=disable_recording
-        )
+        super(AzureMgmtPreparer, self).__init__(name_prefix, random_name_length, disable_recording=disable_recording)
         self.client = None
         self.resource = playback_fake_resource
         self.client_kwargs = client_kwargs or {}
@@ -179,12 +173,10 @@ class AzureMgmtPreparer(AbstractPreparer):
         if not subscription_id:
             subscription_id = self.test_class_instance.settings.SUBSCRIPTION_ID
 
-        return self.test_class_instance.create_basic_client(
-            client_class, subscription_id=subscription_id, **kwargs
-        )
+        return self.test_class_instance.create_basic_client(client_class, subscription_id=subscription_id, **kwargs)
+
 
 class RENameReplacer(GeneralNameReplacer):
-
     def __init__(self):
         super(RENameReplacer, self).__init__()
         self.patterns = []
@@ -207,18 +199,17 @@ class RENameReplacer(GeneralNameReplacer):
     def process_response(self, response):
         response = super(RENameReplacer, self).process_response(response)
         for expr, new in self.patterns:
-            if is_text_payload(response) and response['body']['string']:
-                if isinstance(response['body']['string'], bytes):
-                    body = response['body']['string'].decode('utf8', 'backslashreplace')
+            if is_text_payload(response) and response["body"]["string"]:
+                if isinstance(response["body"]["string"], bytes):
+                    body = response["body"]["string"].decode("utf8", "backslashreplace")
                 else:
-                    body = response['body']['string']
-
+                    body = response["body"]["string"]
 
                 for old in re.findall(expr, body):
                     body = body.replace(old, new)
 
-                if isinstance(response['body']['string'], bytes):
-                    response['body']['string'] = body.encode('utf8', 'backslashreplace')
+                if isinstance(response["body"]["string"], bytes):
+                    response["body"]["string"] = body.encode("utf8", "backslashreplace")
                 else:
-                    response['body']['string'] = body
+                    response["body"]["string"] = body
         return response

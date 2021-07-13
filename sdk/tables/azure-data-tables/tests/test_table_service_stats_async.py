@@ -33,7 +33,7 @@ class TestTableServiceStats(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
         # Act
         stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -43,7 +43,7 @@ class TestTableServiceStats(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
     async def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
+        tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
         # Act
         stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

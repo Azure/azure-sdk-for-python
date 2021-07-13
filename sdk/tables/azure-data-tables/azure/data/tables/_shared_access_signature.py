@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import date
+from typing import Optional, Union, TYPE_CHECKING
 
 from ._deserialize import url_quote
 
@@ -13,6 +14,10 @@ from ._common_conversion import (
     _to_str,
 )
 from ._constants import DEFAULT_X_MS_VERSION
+
+if TYPE_CHECKING:
+    from datetime import datetime  # pylint: disable=ungrouped-imports
+    from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 
 
 def _to_utc_datetime(value):
@@ -41,27 +46,28 @@ class SharedAccessSignature(object):
 
     def generate_account(
         self,
-        services,
-        resource_types,
-        permission,
-        expiry,
-        start=None,
-        ip_address_or_range=None,
-        protocol=None,
+        services,  # type: str
+        resource_types,  # type: ResourceTypes
+        permission,  # type: Union[AccountSasPermissions, str]
+        expiry,  # type: Union[datetime, str]
+        start=None,  # type: Optional[Union[datetime, str]]
+        ip_address_or_range=None,  # type: Optional[str]
+        protocol=None,  # type: Optional[Union[str, SASProtocol]]
     ):
+    # type: (...) -> str
         """
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
-        :param Services services:
-            Specifies the services accessible with the account SAS. You can
+        :param str services:
+            Specifies the services as a bitmap accessible with the account SAS. You can
             combine values to provide access to more than one service.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
             resource type.
-        :param AccountPermissions permission:
+        :param AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
@@ -243,6 +249,7 @@ class _SharedAccessHelper(object):
         )
 
     def add_account_signature(self, account_name, account_key):
+        # type: (str, str) -> None
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ""
             return return_value + "\n"
@@ -266,6 +273,7 @@ class _SharedAccessHelper(object):
         )
 
     def get_token(self):
+        # type: () -> str
         return "&".join(
             [
                 "{0}={1}".format(n, url_quote(v))

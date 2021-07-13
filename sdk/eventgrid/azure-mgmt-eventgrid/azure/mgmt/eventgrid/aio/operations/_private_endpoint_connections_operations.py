@@ -46,10 +46,10 @@ class PrivateEndpointConnectionsOperations:
     async def get(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum14"],
+        parent_type: Union[str, "_models.Enum25"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         """Get a specific private endpoint connection.
 
@@ -59,7 +59,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum14
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum25
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -76,7 +76,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         # Construct URL
@@ -117,18 +117,18 @@ class PrivateEndpointConnectionsOperations:
     async def _update_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum15"],
+        parent_type: Union[str, "_models.Enum26"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -178,11 +178,11 @@ class PrivateEndpointConnectionsOperations:
     async def begin_update(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum15"],
+        parent_type: Union[str, "_models.Enum26"],
         parent_name: str,
         private_endpoint_connection_name: str,
         private_endpoint_connection: "_models.PrivateEndpointConnection",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
         """Update a specific private endpoint connection.
 
@@ -192,7 +192,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum15
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum26
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -203,8 +203,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
@@ -264,17 +264,17 @@ class PrivateEndpointConnectionsOperations:
     async def _delete_initial(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum16"],
+        parent_type: Union[str, "_models.Enum27"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -310,10 +310,10 @@ class PrivateEndpointConnectionsOperations:
     async def begin_delete(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum16"],
+        parent_type: Union[str, "_models.Enum27"],
         parent_name: str,
         private_endpoint_connection_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a specific private endpoint connection.
 
@@ -323,7 +323,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum16
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum27
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -332,8 +332,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -389,11 +389,11 @@ class PrivateEndpointConnectionsOperations:
     def list_by_resource(
         self,
         resource_group_name: str,
-        parent_type: Union[str, "_models.Enum17"],
+        parent_type: Union[str, "_models.Enum28"],
         parent_name: str,
         filter: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
         """Lists all private endpoint connections under a resource.
 
@@ -403,7 +403,7 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param parent_type: The type of the parent resource. This can be either \'topics\' or
          \'domains\'.
-        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum17
+        :type parent_type: str or ~azure.mgmt.eventgrid.models.Enum28
         :param parent_name: The name of the parent resource (namely, either, the topic name or domain
          name).
         :type parent_name: str
@@ -428,7 +428,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-06-01"
+        api_version = "2020-10-15-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):

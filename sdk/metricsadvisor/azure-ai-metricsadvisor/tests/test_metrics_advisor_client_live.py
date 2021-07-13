@@ -90,11 +90,11 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         assert len(list(results)) > 0
 
     def test_list_metrics_series_data(self):
-        results = list(self.client.list_metrics_series_data(
+        results = list(self.client.list_metric_series_data(
             metric_id=self.metric_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 10, 21),
-            series_to_filter=[
+            series_keys=[
                 {"city": "Los Angeles", "category": "Homemade"}
             ]
         ))
@@ -141,7 +141,12 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         self.client.add_feedback(period_feedback)
 
     def test_list_feedback(self):
-        results = list(self.client.list_feedback(metric_id=self.metric_id))
+        results = list(self.client.list_feedback(
+            metric_id=self.metric_id,
+            start_time=datetime.datetime(2021, 6, 1),
+            end_time=datetime.datetime(2021, 6, 3),
+            time_mode="FeedbackCreatedTime"
+        ))
         assert len(results) > 0
 
     def test_get_feedback(self):

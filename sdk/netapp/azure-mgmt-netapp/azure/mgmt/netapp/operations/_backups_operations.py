@@ -47,6 +47,144 @@ class BackupsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    def get_status(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        pool_name,  # type: str
+        volume_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.BackupStatus"
+        """Get volume's backup status.
+
+        Get the status of the backup for a volume.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: BackupStatus, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.BackupStatus
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupStatus"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-04-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_status.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('BackupStatus', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/backupStatus'}  # type: ignore
+
+    def get_volume_restore_status(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        pool_name,  # type: str
+        volume_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.RestoreStatus"
+        """Get volume's restore status.
+
+        Get the status of the restore for a volume.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RestoreStatus, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.RestoreStatus
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreStatus"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-04-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_volume_restore_status.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('RestoreStatus', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_volume_restore_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/restoreStatus'}  # type: ignore
+
     def list(
         self,
         resource_group_name,  # type: str
@@ -78,7 +216,7 @@ class BackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -144,7 +282,7 @@ class BackupsOperations(object):
         # type: (...) -> "_models.Backup"
         """Get a backup.
 
-        Get a particular backup of the volume.
+        Gets the specified backup of the volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -166,7 +304,7 @@ class BackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -221,7 +359,7 @@ class BackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -299,8 +437,8 @@ class BackupsOperations(object):
         :type body: ~azure.mgmt.netapp.models.Backup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Backup or the result of cls(response)
@@ -375,7 +513,7 @@ class BackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -455,8 +593,8 @@ class BackupsOperations(object):
         :type body: ~azure.mgmt.netapp.models.BackupPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Backup or the result of cls(response)
@@ -530,7 +668,7 @@ class BackupsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -590,8 +728,8 @@ class BackupsOperations(object):
         :type backup_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

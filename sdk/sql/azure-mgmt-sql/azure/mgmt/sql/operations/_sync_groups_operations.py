@@ -187,8 +187,8 @@ class SyncGroupsOperations(object):
         :type sync_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -333,7 +333,7 @@ class SyncGroupsOperations(object):
         sync_group_name,  # type: str
         start_time,  # type: str
         end_time,  # type: str
-        type,  # type: Union[str, "_models.Enum81"]
+        type,  # type: Union[str, "_models.Enum77"]
         continuation_token_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -354,7 +354,7 @@ class SyncGroupsOperations(object):
         :param end_time: Get logs generated before this time.
         :type end_time: str
         :param type: The types of logs to retrieve.
-        :type type: str or ~azure.mgmt.sql.models.Enum81
+        :type type: str or ~azure.mgmt.sql.models.Enum77
         :param continuation_token_parameter: The continuation token for this operation.
         :type continuation_token_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -708,8 +708,8 @@ class SyncGroupsOperations(object):
         :type parameters: ~azure.mgmt.sql.models.SyncGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SyncGroup or the result of cls(response)
@@ -835,8 +835,8 @@ class SyncGroupsOperations(object):
         :type sync_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -974,8 +974,8 @@ class SyncGroupsOperations(object):
         :type parameters: ~azure.mgmt.sql.models.SyncGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either SyncGroup or the result of cls(response)

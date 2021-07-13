@@ -45,7 +45,7 @@ class RecoverableManagedDatabasesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecoverableManagedDatabaseListResult"]:
         """Gets a list of recoverable managed databases.
 
@@ -121,7 +121,7 @@ class RecoverableManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         recoverable_database_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.RecoverableManagedDatabase":
         """Gets a recoverable managed database.
 

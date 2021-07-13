@@ -48,7 +48,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceKeyListResult"]:
         """Gets a list of managed instance keys.
 
@@ -128,7 +128,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ManagedInstanceKey":
         """Gets a managed instance key.
 
@@ -192,7 +192,7 @@ class ManagedInstanceKeysOperations:
         managed_instance_name: str,
         key_name: str,
         parameters: "_models.ManagedInstanceKey",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.ManagedInstanceKey"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ManagedInstanceKey"]]
         error_map = {
@@ -252,7 +252,7 @@ class ManagedInstanceKeysOperations:
         managed_instance_name: str,
         key_name: str,
         parameters: "_models.ManagedInstanceKey",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ManagedInstanceKey"]:
         """Creates or updates a managed instance key.
 
@@ -267,8 +267,8 @@ class ManagedInstanceKeysOperations:
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceKey
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ManagedInstanceKey or the result of cls(response)
@@ -328,7 +328,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -372,7 +372,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         key_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the managed instance key with the given name.
 
@@ -385,8 +385,8 @@ class ManagedInstanceKeysOperations:
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)

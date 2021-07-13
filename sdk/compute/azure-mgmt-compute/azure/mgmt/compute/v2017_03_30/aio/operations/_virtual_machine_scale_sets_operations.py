@@ -48,7 +48,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         parameters: "_models.VirtualMachineScaleSet",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineScaleSet":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSet"]
         error_map = {
@@ -105,7 +105,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         parameters: "_models.VirtualMachineScaleSet",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualMachineScaleSet"]:
         """Create or update a VM scale set.
 
@@ -117,8 +117,8 @@ class VirtualMachineScaleSetsOperations:
         :type parameters: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSet
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualMachineScaleSet or the result of cls(response)
@@ -176,7 +176,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         parameters: "_models.VirtualMachineScaleSetUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineScaleSet":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineScaleSet"]
         error_map = {
@@ -229,7 +229,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         parameters: "_models.VirtualMachineScaleSetUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualMachineScaleSet"]:
         """Update a VM scale set.
 
@@ -241,8 +241,8 @@ class VirtualMachineScaleSetsOperations:
         :type parameters: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualMachineScaleSet or the result of cls(response)
@@ -299,7 +299,7 @@ class VirtualMachineScaleSetsOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -348,7 +348,7 @@ class VirtualMachineScaleSetsOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Deletes a VM scale set.
 
@@ -358,8 +358,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_scale_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -415,7 +415,7 @@ class VirtualMachineScaleSetsOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineScaleSet":
         """Display information about a virtual machine scale set.
 
@@ -474,7 +474,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -532,7 +532,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Deallocates specific virtual machines in a VM scale set. Shuts down the virtual machines and
         releases the compute resources. You are not billed for the compute resources that this virtual
@@ -546,8 +546,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -605,7 +605,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: "_models.VirtualMachineScaleSetVMInstanceRequiredIDs",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -660,7 +660,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: "_models.VirtualMachineScaleSetVMInstanceRequiredIDs",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Deletes virtual machines in a VM scale set.
 
@@ -672,8 +672,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceRequiredIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -730,7 +730,7 @@ class VirtualMachineScaleSetsOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualMachineScaleSetInstanceView":
         """Gets the status of a VM scale set instance.
 
@@ -787,7 +787,7 @@ class VirtualMachineScaleSetsOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineScaleSetListResult"]:
         """Gets a list of all VM scale sets under a resource group.
 
@@ -856,7 +856,7 @@ class VirtualMachineScaleSetsOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineScaleSetListWithLinkResult"]:
         """Gets a list of all VM Scale Sets in the subscription, regardless of the associated resource
         group. Use nextLink property in the response to get the next page of VM Scale Sets. Do this
@@ -926,7 +926,7 @@ class VirtualMachineScaleSetsOperations:
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualMachineScaleSetListSkusResult"]:
         """Gets a list of SKUs available for your VM scale set, including the minimum and maximum VM
         instances allowed for each SKU.
@@ -1002,7 +1002,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -1060,7 +1060,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Power off (stop) one or more virtual machines in a VM scale set. Note that resources are still
         attached and you are getting charged for the resources. Instead, use deallocate to release
@@ -1074,8 +1074,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -1133,7 +1133,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -1191,7 +1191,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Restarts one or more virtual machines in a VM scale set.
 
@@ -1203,8 +1203,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -1262,7 +1262,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -1320,7 +1320,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Starts one or more virtual machines in a VM scale set.
 
@@ -1332,8 +1332,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -1391,7 +1391,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: "_models.VirtualMachineScaleSetVMInstanceRequiredIDs",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -1446,7 +1446,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: "_models.VirtualMachineScaleSetVMInstanceRequiredIDs",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Upgrades one or more virtual machines to the latest SKU set in the VM scale set model.
 
@@ -1458,8 +1458,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceRequiredIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -1517,7 +1517,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -1575,7 +1575,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Reimages (upgrade the operating system) one or more virtual machines in a VM scale set.
 
@@ -1587,8 +1587,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
@@ -1646,7 +1646,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.OperationStatusResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OperationStatusResponse"]]
         error_map = {
@@ -1704,7 +1704,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["_models.VirtualMachineScaleSetVMInstanceIDs"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.OperationStatusResponse"]:
         """Reimages all the disks ( including data disks ) in the virtual machines in a VM scale set. This
         operation is only supported for managed disks.
@@ -1717,8 +1717,8 @@ class VirtualMachineScaleSetsOperations:
         :type vm_instance_i_ds: ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetVMInstanceIDs
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)

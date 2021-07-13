@@ -5,25 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from contextlib import contextmanager
-import copy
-import inspect
-import os
 import os.path
 import time
-from datetime import datetime, timedelta
-
-try:
-    import unittest.mock as mock
-except ImportError:
-    import mock
-
-import zlib
-import math
-import sys
-import string
-import random
-import re
+import os
 import logging
 import pdb
 from devtools_testutils import (
@@ -33,60 +17,28 @@ from devtools_testutils import (
     StorageAccountPreparer,
     FakeResource,
 )
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
     from io import StringIO
 
-from azure.core.credentials import AccessToken
-from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 try:
+    # Running locally - use configuration in settings_real.py
     from .settings_real import *
 except ImportError:
+    # Running on the pipeline - use fake values in order to create rg, etc.
     from .settings_fake import *
-
-try:
-    from devtools_testutils import mgmt_settings_real as settings
-except ImportError:
-    from devtools_testutils import mgmt_settings_fake as settings
 
 import pytest
 
 ENABLE_LOGGING = True
+from devtools_testutils.storage import StorageTestCase
+
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) or RUN_IN_LIVE
 os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
-
-
-class FakeTokenCredential(object):
-    """Protocol for classes able to provide OAuth tokens.
-    :param str scopes: Lets you specify the type of access needed.
-    """
-    def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
-        self.get_token_count = 0
-
-    def get_token(self, *args):
-        self.get_token_count += 1
-        return self.token
-
-
-class XMSRequestIDBody(RecordingProcessor):
-    """This process is used for Storage batch call only, to avoid the echo policy.
-    """
-    def process_response(self, response):
-        content_type = None
-        for key, value in response.get('headers', {}).items():
-            if key.lower() == 'content-type':
-                content_type = (value[0] if isinstance(value, list) else value).lower()
-                break
-
-        if content_type and 'multipart/mixed' in content_type:
-            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
-
-        return response
 
 
 class GlobalStorageAccountPreparer(AzureMgmtPreparer):
@@ -123,6 +75,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
 
+
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
         super(GlobalResourceGroupPreparer, self).__init__(
@@ -149,198 +102,10 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         }
 
 
-class StorageTestCase(AzureMgmtTestCase):
-
-    def __init__(self, *args, **kwargs):
-        super(StorageTestCase, self).__init__(*args, **kwargs)
-        self.replay_processors.append(XMSRequestIDBody())
-        self.logger = logging.getLogger('azure.storage')
-        self.configure_logging()
-
-    def connection_string(self, account, key):
-        return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
-
-    def account_url(self, storage_account, storage_type):
-        """Return an url of storage account.
-
-        :param str storage_account: Storage account name
-        :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
-        """
-        try:
-            if storage_type == "blob":
-                return storage_account.primary_endpoints.blob.rstrip("/")
-            if storage_type == "queue":
-                return storage_account.primary_endpoints.queue.rstrip("/")
-            if storage_type == "file":
-                return storage_account.primary_endpoints.file.rstrip("/")
-            else:
-                raise ValueError("Unknown storage type {}".format(storage_type))
-        except AttributeError: # Didn't find "primary_endpoints"
-            return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
-
-    def configure_logging(self):
-        enable_logging = ENABLE_LOGGING
-
-        self.enable_logging() if enable_logging else self.disable_logging()
-
-    def enable_logging(self):
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-        self.logger.handlers = [handler]
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.propagate = True
-        self.logger.disabled = False
-
-    def disable_logging(self):
-        self.logger.propagate = False
-        self.logger.disabled = True
-        self.logger.handlers = []
-
-    def sleep(self, seconds):
-        if self.is_live:
-            time.sleep(seconds)
-
-    def get_random_bytes(self, size):
-        # recordings don't like random stuff. making this more
-        # deterministic.
-        return b'a'*size
-
-    def get_random_text_data(self, size):
-        '''Returns random unicode text data exceeding the size threshold for
-        chunking blob upload.'''
-        checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-        rand = random.Random(checksum)
-        text = u''
-        words = [u'hello', u'world', u'python', u'啊齄丂狛狜']
-        while (len(text) < size):
-            index = int(rand.random()*(len(words) - 1))
-            text = text + u' ' + words[index]
-
-        return text
-
-    @staticmethod
-    def _set_test_proxy(service, settings):
-        if settings.USE_PROXY:
-            service.set_proxy(
-                settings.PROXY_HOST,
-                settings.PROXY_PORT,
-                settings.PROXY_USER,
-                settings.PROXY_PASSWORD,
-            )
-
-    def assertNamedItemInContainer(self, container, item_name, msg=None):
-        def _is_string(obj):
-            if sys.version_info >= (3,):
-                return isinstance(obj, str)
-            else:
-                return isinstance(obj, basestring)
-        for item in container:
-            if _is_string(item):
-                if item == item_name:
-                    return
-            elif isinstance(item, dict):
-                if item_name == item['name']:
-                    return
-            elif item.name == item_name:
-                return
-            elif hasattr(item, 'snapshot') and item.snapshot == item_name:
-                return
-
-
-        standardMsg = '{0} not found in {1}'.format(
-            repr(item_name), [str(c) for c in container])
-        self.fail(self._formatMessage(msg, standardMsg))
-
-    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
-        for item in container:
-            if item.name == item_name:
-                standardMsg = '{0} unexpectedly found in {1}'.format(
-                    repr(item_name), repr(container))
-                self.fail(self._formatMessage(msg, standardMsg))
-
-    def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
-        '''Validates that the progress chunks align with our chunking procedure.'''
-        index = 0
-        total = None if unknown_size else size
-        small_chunk_size = size % max_chunk_size
-        self.assertEqual(len(progress), math.ceil(size / max_chunk_size))
-        for i in progress:
-            self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
-            self.assertEqual(i[1], total)
-
-    def assert_download_progress(self, size, max_chunk_size, max_get_size, progress):
-        '''Validates that the progress chunks align with our chunking procedure.'''
-        if size <= max_get_size:
-            self.assertEqual(len(progress), 1)
-            self.assertTrue(progress[0][0], size)
-            self.assertTrue(progress[0][1], size)
-        else:
-            small_chunk_size = (size - max_get_size) % max_chunk_size
-            self.assertEqual(len(progress), 1 + math.ceil((size - max_get_size) / max_chunk_size))
-
-            self.assertTrue(progress[0][0], max_get_size)
-            self.assertTrue(progress[0][1], size)
-            for i in progress[1:]:
-                self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
-                self.assertEqual(i[1], size)
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
-    def generate_sas_token(self):
-        fake_key = 'a'*30 + 'b'*30
-
-        return '?' + generate_account_sas(
-            account_name = 'test', # name of the storage account
-            account_key = fake_key, # key for the storage account
-            resource_types = ResourceTypes(object=True),
-            permission = AccountSasPermissions(read=True,list=True),
-            start = datetime.now() - timedelta(hours = 24),
-            expiry = datetime.now() + timedelta(days = 8)
-        )
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()
-
-
 def not_for_emulator(test):
     def skip_test_if_targeting_emulator(self):
         test(self)
     return skip_test_if_targeting_emulator
-
-
-class RetryCounter(object):
-    def __init__(self):
-        self.count = 0
-
-    def simple_count(self, retry_context):
-        self.count += 1
-
-
-class ResponseCallback(object):
-    def __init__(self, status=None, new_status=None):
-        self.status = status
-        self.new_status = new_status
-        self.first = True
-        self.count = 0
-
-    def override_first_status(self, response):
-        if self.first and response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
-            self.first = False
-        self.count += 1
-
-    def override_status(self, response):
-        if response.http_response.status_code == self.status:
-            response.http_response.status_code = self.new_status
-        self.count += 1
 
 
 class LogCaptured(object):
@@ -475,8 +240,15 @@ def storage_account():
                     storage_key = storage_connection_string_parts["AccountKey"]
 
             else:
-                logging.info("CREATE STORAGE ACCOUNT")
-                storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                for i in range(5):
+                    try:
+                        time.sleep(i) if i == 0 else time.sleep(2 ** i)
+                        storage_name, storage_kwargs = storage_preparer._prepare_create_resource(
+                            test_case, **rg_kwargs)
+                        break
+                        # Some tests may be running on the storage account and a conflict may occur. Backoff & Retry.
+                    except HttpResponseError:
+                        continue
                 storage_account = storage_kwargs['storage_account']
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
@@ -493,5 +265,9 @@ def storage_account():
                 )
     finally:
         if i_need_to_create_rg:
-            rg_preparer.remove_resource(rg_name)
+            try:
+                rg_preparer.remove_resource(rg_name)
+            # This covers the case where another test had already removed the resource group
+            except ResourceNotFoundError:
+                pass
         StorageTestCase._RESOURCE_GROUP = None

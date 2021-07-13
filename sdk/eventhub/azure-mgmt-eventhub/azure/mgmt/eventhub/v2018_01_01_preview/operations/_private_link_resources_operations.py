@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class PrivateLinkResourcesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class PrivateLinkResourcesOperations(object):
         namespace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkResourcesListResult"
+        # type: (...) -> "_models.PrivateLinkResourcesListResult"
         """Gets lists of resources that supports Privatelinks.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -62,7 +62,7 @@ class PrivateLinkResourcesOperations(object):
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateLinkResourcesListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourcesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourcesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -93,7 +93,7 @@ class PrivateLinkResourcesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkResourcesListResult', pipeline_response)

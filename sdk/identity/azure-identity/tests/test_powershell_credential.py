@@ -5,8 +5,10 @@
 import base64
 import logging
 from platform import python_version
+import re
 import subprocess
 import sys
+import time
 
 try:
     from unittest.mock import Mock, patch
@@ -15,6 +17,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzurePowerShellCredential, CredentialUnavailableError
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_powershell import (
     AZ_ACCOUNT_NOT_INSTALLED,
     BLOCKED_BY_EXECUTION_POLICY,
@@ -87,6 +90,7 @@ def test_get_token(stderr):
 
     encoded_script = command.split()[-1]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+    assert "TenantId" not in decoded_script
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
 
     assert Popen().communicate.call_count == 1
@@ -243,3 +247,72 @@ def test_windows_powershell_fallback():
                     AzurePowerShellCredential().get_token("scope")
 
     assert Fake.calls == 2
+
+
+def test_allow_multitenant_authentication():
+    """When allow_multitenant_authentication is True, the credential should respect get_token(tenant_id=...)"""
+
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def fake_Popen(command, **_):
+        assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
+        encoded_script = command[-1].split()[-1]
+        decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        tenant = match.groups()[1]
+
+        assert tenant is None or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if tenant is None else second_token
+        stdout = "azsdk%{}%{}".format(token, int(time.time()) + 3600)
+
+        communicate = Mock(return_value=(stdout, ""))
+        return Mock(communicate=communicate, returncode=0)
+
+    credential = AzurePowerShellCredential(allow_multitenant_authentication=True)
+    with patch(POPEN, fake_Popen):
+        token = credential.get_token("scope")
+        assert token.token == first_token
+
+        token = credential.get_token("scope", tenant_id=second_tenant)
+        assert token.token == second_token
+
+        # should still default to the first tenant
+        token = credential.get_token("scope")
+        assert token.token == first_token
+
+
+def test_multitenant_authentication_not_allowed():
+    """get_token(tenant_id=...) should raise when allow_multitenant_authentication is False (the default)"""
+
+    expected_token = "***"
+
+    def fake_Popen(command, **_):
+        assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
+        encoded_script = command[-1].split()[-1]
+        decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        tenant = match.groups()[1]
+
+        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
+        stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
+
+        communicate = Mock(return_value=(stdout, ""))
+        return Mock(communicate=communicate, returncode=0)
+
+    credential = AzurePowerShellCredential()
+    with patch(POPEN, fake_Popen):
+        token = credential.get_token("scope")
+        assert token.token == expected_token
+
+        # specifying a tenant should get an error
+        with pytest.raises(ClientAuthenticationError, match="allow_multitenant_authentication"):
+            credential.get_token("scope", tenant_id="some tenant")
+
+        # ...unless the compat switch is enabled
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_ENABLE_LEGACY_TENANT_SELECTION: "true"}):
+            token = credential.get_token("scope", tenant_id="some tenant")
+        assert (
+            token.token == expected_token
+        ), "credential should ignore tenant_id kwarg when the compat switch is enabled"

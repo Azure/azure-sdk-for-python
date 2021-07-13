@@ -47,7 +47,7 @@ class TransparentDataEncryptionActivitiesOperations:
         server_name: str,
         database_name: str,
         transparent_data_encryption_name: Union[str, "_models.TransparentDataEncryptionName"],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.TransparentDataEncryptionActivityListResult"]:
         """Returns a database's transparent data encryption operation result.
 

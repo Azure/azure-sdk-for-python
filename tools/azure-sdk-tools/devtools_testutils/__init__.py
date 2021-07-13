@@ -10,11 +10,14 @@ from .resource_testcase import (
 from .storage_testcase import (
     FakeStorageAccount,
     StorageAccountPreparer,
+    BlobAccountPreparer,
     CachedStorageAccountPreparer,
 )
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
 from .proxy_testcase import RecordedByProxy
+from .helpers import ResponseCallback, RetryCounter
+from .fake_credential import FakeTokenCredential
 
 __all__ = [
     "AzureRecordedTestCase",
@@ -23,6 +26,7 @@ __all__ = [
     "FakeResource",
     "ResourceGroupPreparer",
     "StorageAccountPreparer",
+    "BlobAccountPreparer",
     "CachedStorageAccountPreparer",
     "FakeStorageAccount",
     "AzureTestCase",
@@ -32,5 +36,8 @@ __all__ = [
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
-    "RecordedByProxy"
+    "RecordedByProxy",
+    "ResponseCallback",
+    "RetryCounter",
+    "FakeTokenCredential"
 ]

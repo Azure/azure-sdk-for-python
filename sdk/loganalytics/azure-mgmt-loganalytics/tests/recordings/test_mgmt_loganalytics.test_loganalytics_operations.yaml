@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-loganalytics/10.0.0 Python/3.8.9 (Linux-5.4.0-1046-azure-x86_64-with-glibc2.2.5)
+      - azsdk-python-mgmt-loganalytics/11.0.0 Python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5)
         VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/providers/Microsoft.OperationalInsights/operations?api-version=2020-10-01
@@ -1114,6 +1114,11 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"ABSDependenciesRequests\",\r\n
         \       \"operation\": \"Read ABSDependenciesRequests data\",\r\n        \"description\":
         \"Read data from the ABSDependenciesRequests table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACICollaborationAudit/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"ACICollaborationAudit\",\r\n
+        \       \"operation\": \"Read ACICollaborationAudit data\",\r\n        \"description\":
+        \"Read data from the ACICollaborationAudit table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/ACSAuthIncomingOperations/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"ACSAuthIncomingOperations\",\r\n
@@ -2449,7 +2454,16 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"McasShadowItReporting\",\r\n
         \       \"operation\": \"Read McasShadowItReporting data\",\r\n        \"description\":
         \"Read data from the McasShadowItReporting table\"\r\n      }\r\n    },\r\n
-        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MicrosoftAzureBastionAuditLogs/read\",\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MCCEventLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"MCCEventLogs\",\r\n        \"operation\":
+        \"Read MCCEventLogs data\",\r\n        \"description\": \"Read data from the
+        MCCEventLogs table\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/MCVPOperationLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"MCVPOperationLogs\",\r\n
+        \       \"operation\": \"Read MCVPOperationLogs data\",\r\n        \"description\":
+        \"Read data from the MCVPOperationLogs table\"\r\n      }\r\n    },\r\n    {\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/MicrosoftAzureBastionAuditLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"MicrosoftAzureBastionAuditLogs\",\r\n
         \       \"operation\": \"Read MicrosoftAzureBastionAuditLogs data\",\r\n        \"description\":
@@ -2557,7 +2571,12 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"ProtectionStatus\",\r\n
         \       \"operation\": \"Read ProtectionStatus data\",\r\n        \"description\":
         \"Read data from the ProtectionStatus table\"\r\n      }\r\n    },\r\n    {\r\n
-        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/PurviewScanStatusLogs/read\",\r\n
+        \     \"name\": \"Microsoft.OperationalInsights/workspaces/query/PurviewDataSensitivityLogs/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"PurviewDataSensitivityLogs\",\r\n
+        \       \"operation\": \"Read PurviewDataSensitivityLogs data\",\r\n        \"description\":
+        \"Read data from the PurviewDataSensitivityLogs table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/PurviewScanStatusLogs/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"PurviewScanStatusLogs\",\r\n
         \       \"operation\": \"Read PurviewScanStatusLogs data\",\r\n        \"description\":
@@ -2708,6 +2727,11 @@ interactions:
         \"Azure Log Analytics\",\r\n        \"resource\": \"SQLQueryPerformance\",\r\n
         \       \"operation\": \"Read SQLQueryPerformance data\",\r\n        \"description\":
         \"Read data from the SQLQueryPerformance table\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SQLSecurityAuditEvents/read\",\r\n
+        \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
+        \"Azure Log Analytics\",\r\n        \"resource\": \"SQLSecurityAuditEvents\",\r\n
+        \       \"operation\": \"Read SQLSecurityAuditEvents data\",\r\n        \"description\":
+        \"Read data from the SQLSecurityAuditEvents table\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"name\": \"Microsoft.OperationalInsights/workspaces/query/SqlVulnerabilityAssessmentResult/read\",\r\n
         \     \"isDataAction\": false,\r\n      \"display\": {\r\n        \"provider\":
         \"Azure Log Analytics\",\r\n        \"resource\": \"SqlVulnerabilityAssessmentResult\",\r\n
@@ -3182,11 +3206,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '249624'
+      - '251526'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 13 May 2021 06:32:03 GMT
+      - Mon, 12 Jul 2021 02:18:32 GMT
       expires:
       - '-1'
       pragma:

@@ -27,6 +27,7 @@ try:
     from ._models_py3 import DailySchedule
     from ._models_py3 import Dimension
     from ._models_py3 import ExportPolicyRule
+    from ._models_py3 import FilePathAvailabilityRequest
     from ._models_py3 import HourlySchedule
     from ._models_py3 import MetricSpecification
     from ._models_py3 import MonthlySchedule
@@ -44,6 +45,7 @@ try:
     from ._models_py3 import ReplicationStatus
     from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceNameAvailabilityRequest
+    from ._models_py3 import RestoreStatus
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Snapshot
     from ._models_py3 import SnapshotPoliciesList
@@ -88,6 +90,7 @@ except (SyntaxError, ImportError):
     from ._models import DailySchedule  # type: ignore
     from ._models import Dimension  # type: ignore
     from ._models import ExportPolicyRule  # type: ignore
+    from ._models import FilePathAvailabilityRequest  # type: ignore
     from ._models import HourlySchedule  # type: ignore
     from ._models import MetricSpecification  # type: ignore
     from ._models import MonthlySchedule  # type: ignore
@@ -105,6 +108,7 @@ except (SyntaxError, ImportError):
     from ._models import ReplicationStatus  # type: ignore
     from ._models import ResourceIdentity  # type: ignore
     from ._models import ResourceNameAvailabilityRequest  # type: ignore
+    from ._models import RestoreStatus  # type: ignore
     from ._models import ServiceSpecification  # type: ignore
     from ._models import Snapshot  # type: ignore
     from ._models import SnapshotPoliciesList  # type: ignore
@@ -131,8 +135,10 @@ except (SyntaxError, ImportError):
 
 from ._net_app_management_client_enums import (
     ActiveDirectoryStatus,
+    BackupType,
     CheckNameResourceTypes,
     CheckQuotaNameResourceTypes,
+    ChownMode,
     CreatedByType,
     EndpointType,
     InAvailabilityReasonType,
@@ -165,6 +171,7 @@ __all__ = [
     'DailySchedule',
     'Dimension',
     'ExportPolicyRule',
+    'FilePathAvailabilityRequest',
     'HourlySchedule',
     'MetricSpecification',
     'MonthlySchedule',
@@ -182,6 +189,7 @@ __all__ = [
     'ReplicationStatus',
     'ResourceIdentity',
     'ResourceNameAvailabilityRequest',
+    'RestoreStatus',
     'ServiceSpecification',
     'Snapshot',
     'SnapshotPoliciesList',
@@ -206,8 +214,10 @@ __all__ = [
     'VolumeSnapshotProperties',
     'WeeklySchedule',
     'ActiveDirectoryStatus',
+    'BackupType',
     'CheckNameResourceTypes',
     'CheckQuotaNameResourceTypes',
+    'ChownMode',
     'CreatedByType',
     'EndpointType',
     'InAvailabilityReasonType',

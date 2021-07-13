@@ -72,7 +72,7 @@ class BackupPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -152,7 +152,7 @@ class BackupPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         accept = "application/json"
 
         # Construct URL
@@ -203,7 +203,7 @@ class BackupPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -273,8 +273,8 @@ class BackupPoliciesOperations(object):
         :type body: ~azure.mgmt.netapp.models.BackupPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either BackupPolicy or the result of cls(response)
@@ -329,7 +329,7 @@ class BackupPoliciesOperations(object):
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}'}  # type: ignore
 
-    def update(
+    def _update_initial(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
@@ -338,34 +338,17 @@ class BackupPoliciesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.BackupPolicy"
-        """Patch a backup policy.
-
-        Patch a backup policy for Netapp Account.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account.
-        :type account_name: str
-        :param backup_policy_name: Backup policy Name which uniquely identify backup policy.
-        :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BackupPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.BackupPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.update.metadata['url']  # type: ignore
+        url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -404,7 +387,86 @@ class BackupPoliciesOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}'}  # type: ignore
+
+    def begin_update(
+        self,
+        resource_group_name,  # type: str
+        account_name,  # type: str
+        backup_policy_name,  # type: str
+        body,  # type: "_models.BackupPolicyPatch"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.BackupPolicy"]
+        """Patch a backup policy.
+
+        Patch a backup policy for Netapp Account.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account.
+        :type account_name: str
+        :param backup_policy_name: Backup policy Name which uniquely identify backup policy.
+        :type backup_policy_name: str
+        :param body: Backup policy object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either BackupPolicy or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupPolicy"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                backup_policy_name=backup_policy_name,
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('BackupPolicy', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}'}  # type: ignore
 
     def _delete_initial(
         self,
@@ -419,7 +481,7 @@ class BackupPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-01"
+        api_version = "2021-04-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -471,8 +533,8 @@ class BackupPoliciesOperations(object):
         :type backup_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)

@@ -9,11 +9,13 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from azure.identity import CredentialUnavailableError
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import ImdsCredential, IMDS_URL, PIPELINE_SETTINGS
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
 
 from helpers import mock, mock_response, Request, validating_transport
+from recorded_test_case import RecordedTestCase
 
 
 def test_no_scopes():
@@ -173,3 +175,56 @@ def test_identity_config():
     token = credential.get_token(scope)
 
     assert token == expected_token
+
+
+def test_imds_url_override():
+    url = "https://localhost/token"
+    expected_token = "***"
+    scope = "scope"
+    now = int(time.time())
+
+    transport = validating_transport(
+        requests=[
+            Request(
+                base_url=url,
+                method="GET",
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
+                required_params={"api-version": "2018-02-01", "resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": 42,
+                    "expires_on": now + 42,
+                    "ext_expires_in": 42,
+                    "not_before": now,
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_POD_IDENTITY_TOKEN_URL: url}, clear=True):
+        credential = ImdsCredential(transport=transport)
+        token = credential.get_token(scope)
+
+    assert token.token == expected_token
+
+
+@pytest.mark.usefixtures("record_imds_test")
+class RecordedTests(RecordedTestCase):
+    def test_system_assigned(self):
+        credential = ImdsCredential()
+        token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)
+
+    @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    def test_user_assigned(self):
+        credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
+        token = credential.get_token(self.scope)
+        assert token.token
+        assert isinstance(token.expires_on, int)

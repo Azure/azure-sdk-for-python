@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_manifests
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:43 GMT
+      - Wed, 19 May 2021 21:19:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=password&service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read
+    body: service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&grant_type=password
     headers:
       Accept:
       - application/json
@@ -59,7 +59,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -71,13 +71,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:44 GMT
+      - Wed, 19 May 2021 21:19:10 GMT
       server:
       - openresty
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
       - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -91,7 +93,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_manifests
   response:
@@ -106,6 +108,16 @@ interactions:
         "imageSize": 525, "createdTime": "2021-05-11T21:17:47.5289051Z", "lastUpdateTime":
         "2021-05-11T21:17:47.5289051Z", "architecture": "arm", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:5122f6204b6a3596e048758cabba3c46b1c937a46b5be6225b835d091b90e46c",
+        "imageSize": 5325, "createdTime": "2021-05-13T16:00:26.4243258Z", "lastUpdateTime":
+        "2021-05-13T16:00:26.4243258Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        "tags": ["latest", "v1", "v2", "v3", "v4"], "changeableAttributes": {"deleteEnabled":
+        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}, {"digest":
+        "sha256:7fed95756fe4ebeb6eb1d82c2176e0800a02807cc66fe48beb179e57c54ddcf1",
+        "imageSize": 1125, "createdTime": "2021-05-13T16:00:27.8207151Z", "lastUpdateTime":
+        "2021-05-13T16:00:27.8207151Z", "architecture": "amd64", "os": "windows",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
         "imageSize": 525, "createdTime": "2021-05-11T21:17:47.1680665Z", "lastUpdateTime":
@@ -145,8 +157,8 @@ interactions:
         true, "quarantineState": "Passed"}}, {"digest": "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
         "imageSize": 5325, "createdTime": "2021-05-11T21:17:46.7851308Z", "lastUpdateTime":
         "2021-05-11T21:17:46.7851308Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
-        "tags": ["latest", "v1", "v2", "v3", "v4"], "changeableAttributes": {"deleteEnabled":
-        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}]}'
+        "changeableAttributes": {"deleteEnabled": true, "writeEnabled": true, "readEnabled":
+        true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -158,7 +170,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 11 May 2021 21:18:44 GMT
+      - Wed, 19 May 2021 21:19:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

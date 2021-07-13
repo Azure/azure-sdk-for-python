@@ -24,8 +24,8 @@ include azure/__init__.py
 include azure/mgmt/__init__.py
 """
 
-class TestServiceMetadata(unittest.TestCase):
 
+class TestServiceMetadata(unittest.TestCase):
     def setUp(self):
         self.sdk_folder = "sdk"
         self.data = {
@@ -43,19 +43,16 @@ class TestServiceMetadata(unittest.TestCase):
                     "python-mode": "update",
                     "sdkrel:python-sdks-folder": "./sdk/.",
                     "multiapi": "",
-                    "track2": ""
+                    "track2": "",
                 },
                 "advanced_options": {
                     "create_sdk_pull_requests": True,
-                    "sdk_generation_pull_request_base": "integration_branch"
+                    "sdk_generation_pull_request_base": "integration_branch",
                 },
                 "repotag": "azure-sdk-for-python-track2",
-                "version": "0.2.0"
+                "version": "0.2.0",
             },
-            "projects": {
-                "./azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md": {}
-            }
-
+            "projects": {"./azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md": {}},
         }
         self.folder_name = "monitor"
         self.package_name = "azure-mgmt-monitor"
@@ -87,7 +84,7 @@ class TestServiceMetadata(unittest.TestCase):
                 folder_name=self.folder_name,
                 package_name=self.package_name,
                 spec_folder=self.spec_folder,
-                input_readme=self.input_readme
+                input_readme=self.input_readme,
             )
 
             assert os.path.isfile(metadata_file_path) == True
@@ -104,7 +101,7 @@ class TestServiceMetadata(unittest.TestCase):
                 folder_name=self.folder_name,
                 package_name=self.package_name,
                 spec_folder=self.spec_folder,
-                input_readme=self.input_readme
+                input_readme=self.input_readme,
             )
 
             assert os.path.isfile(metadata_file_path) == True
@@ -123,7 +120,7 @@ class TestServiceMetadata(unittest.TestCase):
                 folder_name=self.folder_name,
                 package_name=self.package_name,
                 spec_folder=self.spec_folder,
-                input_readme=self.input_readme
+                input_readme=self.input_readme,
             )
 
             assert os.path.isfile(metadata_file_path) == True
@@ -141,7 +138,7 @@ class TestServiceMetadata(unittest.TestCase):
                 folder_name=self.folder_name,
                 package_name=self.package_name,
                 spec_folder=self.spec_folder,
-                input_readme=self.input_readme
+                input_readme=self.input_readme,
             )
 
             assert os.path.isfile(metadata_file_path) == True

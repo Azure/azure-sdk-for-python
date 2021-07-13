@@ -47,7 +47,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.UpdateManagedInstanceDnsServersOperation":
         """Synchronizes the DNS server settings used by the managed instances inside the given virtual
         cluster.
@@ -105,7 +105,7 @@ class VirtualClustersOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualClusterListResult"]:
         """Gets a list of all virtualClusters in the subscription.
 
@@ -172,7 +172,7 @@ class VirtualClustersOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.VirtualClusterListResult"]:
         """Gets a list of virtual clusters in a resource group.
 
@@ -244,7 +244,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.VirtualCluster":
         """Gets a virtual cluster.
 
@@ -303,7 +303,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -345,7 +345,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a virtual cluster.
 
@@ -356,8 +356,8 @@ class VirtualClustersOperations:
         :type virtual_cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -411,7 +411,7 @@ class VirtualClustersOperations:
         resource_group_name: str,
         virtual_cluster_name: str,
         parameters: "_models.VirtualClusterUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.VirtualCluster"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VirtualCluster"]]
         error_map = {
@@ -466,7 +466,7 @@ class VirtualClustersOperations:
         resource_group_name: str,
         virtual_cluster_name: str,
         parameters: "_models.VirtualClusterUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.VirtualCluster"]:
         """Updates a virtual cluster.
 
@@ -479,8 +479,8 @@ class VirtualClustersOperations:
         :type parameters: ~azure.mgmt.sql.models.VirtualClusterUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualCluster or the result of cls(response)

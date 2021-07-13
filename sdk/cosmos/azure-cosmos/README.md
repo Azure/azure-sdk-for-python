@@ -83,58 +83,76 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-Currently the features below are **not supported**.
+Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
 
-**Data Plane Limitations:**
+### Data Plane Limitations:
 
-* Group By queries (in roadmap for 2021)
-* Language Native async i/o (in roadmap for 2021)
-* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Bulk/Transactional batch processing
-* Direct TCP Mode access
-* Continuation token for cross partitions queries
-* Change Feed: Processor
-* Change Feed: Read multiple partitions key values
-* Change Feed: Read specific time 
-* Change Feed: Read from the beggining
-* Change Feed: Pull model
-* Cross-partition ORDER BY for mixed types
+* Group By queries (in roadmap for 2021).
+* Language Native async i/o (in roadmap for 2021).
+* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C).
+* Bulk/Transactional batch processing.
+* Direct TCP Mode access.
+* Continuation token for cross partitions queries.
+* Change Feed: Processor.
+* Change Feed: Read multiple partitions key values.
+* Change Feed: Read specific time.
+* Change Feed: Read from the beggining.
+* Change Feed: Pull model.
+* Cross-partition ORDER BY for mixed types.
+* Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
 
-**Control Plane Limitations:**
+### Control Plane Limitations:
 
-* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
-* Create Geospatial Index
-* Provision Autoscale DBs or containers
-* Update Autoscale throughput
-* Update analytical store ttl (time to live)
-* Get the connection string
-* Get the minimum RU/s of a container. 
+* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics.
+* Create Geospatial Index.
+* Provision Autoscale DBs or containers.
+* Update Autoscale throughput.
+* Update analytical store ttl (time to live).
+* Get the connection string.
+* Get the minimum RU/s of a container.
 
-## Bulk processing Limitation Workaround
+### Security Limitations:
+
+* AAD support.
+
+## Workarounds
+
+### Bulk processing Limitation Workaround
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
-## Control Plane Limitations Workaround
+### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
+### AAD Support Workaround
+
+A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
+
+## Consistency Level
+
+Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
 
 ## Boolean Data Type
 
 While the Python language [uses](https://docs.python.org/3/library/stdtypes.html?highlight=boolean#truth-value-testing) "True" and "False" for boolean types, Cosmos DB [accepts](https://docs.microsoft.com/azure/cosmos-db/sql-query-is-bool) "true" and "false" only. In other words, the Python language uses Boolean values with the first uppercase letter and all other lowercase letters, while Cosmos DB and its SQL language use only lowercase letters for those same Boolean values. How to deal with this challenge?
 
-* Your JSON documents created with Python must use "True" and "False", to pass the language validation. The SDK will convert it to "true" and "false" for you. Meaning that "true" and "false" is what will be stored in Cosmos DB. 
-* If you retrieve those documents with the Cosmos DB Portal's Data Explorer, you will see "true" and "false". 
+* Your JSON documents created with Python must use "True" and "False", to pass the language validation. The SDK will convert it to "true" and "false" for you. Meaning that "true" and "false" is what will be stored in Cosmos DB.
+* If you retrieve those documents with the Cosmos DB Portal's Data Explorer, you will see "true" and "false".
 * If you retrieve those documents with this Python SDK, "true" and "false" values will be automatically converted to "True" and "False".
 
 ## SQL Queries x FROM Clause Subitems
 
-This SDK uses the [query_items](https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.containerproxy?preserve-view=true&view=azure-python#query-items-query--parameters-none--partition-key-none--enable-cross-partition-query-none--max-item-count-none--enable-scan-in-query-none--populate-query-metrics-none----kwargs-) method to submit SQL queries to Azure Cosmos DB. 
+This SDK uses the [query_items](https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.containerproxy?preserve-view=true&view=azure-python#query-items-query--parameters-none--partition-key-none--enable-cross-partition-query-none--max-item-count-none--enable-scan-in-query-none--populate-query-metrics-none----kwargs-) method to submit SQL queries to Azure Cosmos DB.
 
 Cosmos DB SQL language allows you to [get subitems by using the FROM clause](https://docs.microsoft.com/azure/cosmos-db/sql-query-from#get-subitems-by-using-the-from-clause), to reduce the source to a smaller subset. As an example, you can use `select * from Families.children` instead of `select * from Families`. But please note that:
 
-* For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag. 
+* For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag.
 * If you are getting subitems and specifying the `partition_key`, please make sure that your partition key is included in the subitems, which is not true for most of the cases.
+
+## Max Item Count
+
+This is a parameter of the query_items method, an integer indicating the maximum number of items to be returned per page. The `None` value can be specified to let the service determine the optimal item count. This is the recommended configuration value, and the default behavior of this SDK when it is not set.
 
 ## Examples
 
@@ -368,7 +386,7 @@ print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.f
 container_name = 'testContainer'
 container = database.get_container_client(container_name)
 container_offer = container.read_offer()
-print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput'])) 
+print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
 ```
 
 
@@ -467,7 +485,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_container]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-containers
 [cosmos_database]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-databases
 [cosmos_docs]: https://docs.microsoft.com/azure/cosmos-db/
-[cosmos_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples
+[cosmos_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples
 [cosmos_pypi]: https://pypi.org/project/azure-cosmos/
 [cosmos_http_status_codes]: https://docs.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
 [cosmos_item]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
@@ -485,10 +503,10 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_cosmosclient]: https://aka.ms/azsdk-python-cosmos-ref-cosmos-client
 [ref_database]: https://aka.ms/azsdk-python-cosmos-ref-database
 [ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
-[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/database_management.py
-[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/document_management.py
-[sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/examples.py
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos
+[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
+[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
+[sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 

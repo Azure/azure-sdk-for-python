@@ -47,7 +47,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.InstancePool":
         """Gets an instance pool.
 
@@ -107,7 +107,7 @@ class InstancePoolsOperations:
         resource_group_name: str,
         instance_pool_name: str,
         parameters: "_models.InstancePool",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.InstancePool"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.InstancePool"]]
         error_map = {
@@ -165,7 +165,7 @@ class InstancePoolsOperations:
         resource_group_name: str,
         instance_pool_name: str,
         parameters: "_models.InstancePool",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.InstancePool"]:
         """Creates or updates an instance pool.
 
@@ -178,8 +178,8 @@ class InstancePoolsOperations:
         :type parameters: ~azure.mgmt.sql.models.InstancePool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either InstancePool or the result of cls(response)
@@ -236,7 +236,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -278,7 +278,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an instance pool.
 
@@ -289,8 +289,8 @@ class InstancePoolsOperations:
         :type instance_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -344,7 +344,7 @@ class InstancePoolsOperations:
         resource_group_name: str,
         instance_pool_name: str,
         parameters: "_models.InstancePoolUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> Optional["_models.InstancePool"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.InstancePool"]]
         error_map = {
@@ -399,7 +399,7 @@ class InstancePoolsOperations:
         resource_group_name: str,
         instance_pool_name: str,
         parameters: "_models.InstancePoolUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.InstancePool"]:
         """Updates an instance pool.
 
@@ -412,8 +412,8 @@ class InstancePoolsOperations:
         :type parameters: ~azure.mgmt.sql.models.InstancePoolUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either InstancePool or the result of cls(response)
@@ -469,7 +469,7 @@ class InstancePoolsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InstancePoolListResult"]:
         """Gets a list of instance pools in the resource group.
 
@@ -539,7 +539,7 @@ class InstancePoolsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.InstancePoolListResult"]:
         """Gets a list of all instance pools in the subscription.
 

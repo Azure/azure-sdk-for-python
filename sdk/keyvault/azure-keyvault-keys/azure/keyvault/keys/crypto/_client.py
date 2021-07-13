@@ -47,6 +47,8 @@ def _validate_arguments(operation, algorithm, **kwargs):
             raise ValueError(
                 "iv should only be provided with AES-CBC algorithms; {} does not accept an iv".format(algorithm)
             )
+        if iv is None and "CBC" in algorithm:
+            raise ValueError("iv is a required parameter for encryption with AES-CBC algorithms.")
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
                 "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
@@ -58,12 +60,16 @@ def _validate_arguments(operation, algorithm, **kwargs):
             raise ValueError(
                 "iv should only be provided with AES algorithms; {} does not accept an iv".format(algorithm)
             )
+        if iv is None and ("CBC" in algorithm or "GCM" in algorithm):
+            raise ValueError("iv is a required parameter for decryption with AES algorithms.")
         if tag and "GCM" not in algorithm:
             raise ValueError(
                 "authentication_tag should only be provided with AES-GCM algorithms; {} does not accept a tag".format(
                     algorithm
                 )
             )
+        if tag is None and "GCM" in algorithm:
+            raise ValueError("authentication_tag is a required parameter for AES-GCM decryption.")
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError(
                 "additional_authenticated_data should only be provided with AES algorithms; {} does not accept "
@@ -204,14 +210,15 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
-        """Encrypt bytes using the client's key. Requires the keys/encrypt permission.
+        """Encrypt bytes using the client's key.
 
-        This method encrypts only a single block of data, whose size depends on the key and encryption algorithm.
+        Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
+        the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: bytes to encrypt
-        :keyword bytes iv: optional initialization vector. For use with AES-CBC encryption.
+        :keyword bytes iv: initialization vector. Required for only AES-CBC(PAD) encryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
@@ -262,18 +269,19 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> DecryptResult
-        """Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
+        """Decrypt a single block of encrypted data using the client's key.
 
-        This method decrypts only a single block of data, whose size depends on the key and encryption algorithm.
+        Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
+        the key and encryption algorithm.
 
         :param algorithm: encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes ciphertext: encrypted bytes to decrypt
-        :keyword bytes iv: the initialization vector used during encryption. For use with AES encryption.
-        :keyword bytes authentication_tag: the authentication tag generated during encryption. For use with AES-GCM
-            encryption.
+        :keyword bytes iv: the initialization vector used during encryption. Required for AES decryption.
+        :keyword bytes authentication_tag: the authentication tag generated during encryption. Required for only AES-GCM
+            decryption.
         :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
-            with AES-GCM encryption.
+            with AES-GCM decryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
         :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
 
@@ -317,7 +325,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def wrap_key(self, algorithm, key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> WrapResult
-        """Wrap a key with the client's key. Requires the keys/wrapKey permission.
+        """Wrap a key with the client's key.
+
+        Requires the keys/wrapKey permission.
 
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
@@ -358,7 +368,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def unwrap_key(self, algorithm, encrypted_key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> UnwrapResult
-        """Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
+        """Unwrap a key previously wrapped with the client's key.
+
+        Requires the keys/unwrapKey permission.
 
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
@@ -397,7 +409,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
         # type: (SignatureAlgorithm, bytes, **Any) -> SignResult
-        """Create a signature from a digest using the client's key. Requires the keys/sign permission.
+        """Create a signature from a digest using the client's key.
+
+        Requires the keys/sign permission.
 
         :param algorithm: signing algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
@@ -438,7 +452,9 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def verify(self, algorithm, digest, signature, **kwargs):
         # type: (SignatureAlgorithm, bytes, bytes, **Any) -> VerifyResult
-        """Verify a signature using the client's key. Requires the keys/verify permission.
+        """Verify a signature using the client's key.
+
+        Requires the keys/verify permission.
 
         :param algorithm: verification algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`

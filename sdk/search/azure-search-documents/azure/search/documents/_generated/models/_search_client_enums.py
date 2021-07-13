@@ -57,6 +57,20 @@ class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: terms could include 'washington medicaid' and 'washington medical'.
     ONE_TERM_WITH_CONTEXT = "oneTermWithContext"
 
+class Captions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """This parameter is only valid if the query type is 'semantic'. If set, the query returns
+    captions extracted from key passages in the highest ranked documents. When Captions is set to
+    'extractive', highlighting is enabled by default, and can be configured by appending the pipe
+    character '|' followed by the 'highlight-<true/false>' option, such as
+    'extractive|highlight-true'. Defaults to 'None'.
+    """
+
+    #: Do not return captions for the query.
+    NONE = "none"
+    #: Extracts captions from the matching documents that contain passages relevant to the search
+    #: query.
+    EXTRACTIVE = "extractive"
+
 class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operation to perform on a document in an indexing batch.
     """

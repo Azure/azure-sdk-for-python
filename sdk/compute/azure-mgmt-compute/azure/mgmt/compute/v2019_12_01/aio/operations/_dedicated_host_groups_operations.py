@@ -46,7 +46,7 @@ class DedicatedHostGroupsOperations:
         resource_group_name: str,
         host_group_name: str,
         parameters: "_models.DedicatedHostGroup",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DedicatedHostGroup":
         """Create or update a dedicated host group. For details of Dedicated Host and Dedicated Host
         Groups please see [Dedicated Host Documentation]
@@ -118,7 +118,7 @@ class DedicatedHostGroupsOperations:
         resource_group_name: str,
         host_group_name: str,
         parameters: "_models.DedicatedHostGroupUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DedicatedHostGroup":
         """Update an dedicated host group.
 
@@ -183,7 +183,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Delete a dedicated host group.
 
@@ -236,7 +236,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.DedicatedHostGroup":
         """Retrieves information about a dedicated host group.
 
@@ -293,7 +293,7 @@ class DedicatedHostGroupsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DedicatedHostGroupListResult"]:
         """Lists all of the dedicated host groups in the specified resource group. Use the nextLink
         property in the response to get the next page of dedicated host groups.
@@ -363,7 +363,7 @@ class DedicatedHostGroupsOperations:
 
     def list_by_subscription(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.DedicatedHostGroupListResult"]:
         """Lists all of the dedicated host groups in the subscription. Use the nextLink property in the
         response to get the next page of dedicated host groups.

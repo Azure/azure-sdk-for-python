@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, AzureTestCase, ResponseCallback
 
 
 from azure.core.exceptions import (
@@ -22,9 +21,6 @@ from azure.core.pipeline.transport import(
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import (
-    ResponseCallback,
-)
 
 from async_preparers import tables_decorator_async
 
@@ -107,21 +103,13 @@ class TestStorageRetry(AzureRecordedTestCase, AsyncTableTestCase):
             transport=retry_transport,
             default_table=False)
 
-        try:
-            with pytest.raises(AzureError) as error:
-                await self.ts.get_service_properties()
+        with pytest.raises(AzureError) as error:
+            await self.ts.get_service_properties()
 
-            # 3 retries + 1 original == 4
-            assert retry_transport.count == 4
-            # This call should succeed on the server side, but fail on the client side due to socket timeout
-            assert 'Timeout on reading' in str(error.value)
-
-        finally:
-            self.ts = TableServiceClient(
-                self.account_url(tables_storage_account_name, "table"),
-                credential=tables_primary_storage_account_key,
-            )
-            await self._tear_down()
+        # 3 retries + 1 original == 4
+        assert retry_transport.count == 4
+        # This call should succeed on the server side, but fail on the client side due to socket timeout
+        self.assertTrue('Timeout on reading' in str(error.value), 'Expected socket timeout but got different exception.')
 
     @tables_decorator_async
     async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):

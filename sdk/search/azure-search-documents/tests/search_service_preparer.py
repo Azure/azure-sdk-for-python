@@ -19,7 +19,7 @@ from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2020-06-30-Preview"
+SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2021-04-30-Preview"
 TIME_TO_SLEEP = 3
 
 class SearchResourceGroupPreparer(ResourceGroupPreparer):

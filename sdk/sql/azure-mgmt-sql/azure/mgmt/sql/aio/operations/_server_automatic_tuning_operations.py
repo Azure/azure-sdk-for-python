@@ -44,7 +44,7 @@ class ServerAutomaticTuningOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerAutomaticTuning":
         """Retrieves server automatic tuning options.
 
@@ -104,7 +104,7 @@ class ServerAutomaticTuningOperations:
         resource_group_name: str,
         server_name: str,
         parameters: "_models.ServerAutomaticTuning",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ServerAutomaticTuning":
         """Update automatic tuning options on server.
 

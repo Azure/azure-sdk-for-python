@@ -16,8 +16,8 @@ from azure.storage.blob import (
     BlobClient,
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RecordedByProxy
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
-#from azure.storage.common import TokenCredential
+from _shared.testcase import GlobalStorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -610,7 +610,7 @@ class StorageClientTest(StorageTestCase):
                 # Act
                 with self.assertRaises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, blob_name="test", container_name="foo/bar")
-                
+
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
                     self.assertEqual(
                         str(e.exception), "Connection string is either blank or malformed.")

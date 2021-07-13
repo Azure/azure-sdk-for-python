@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import functools
 import logging
-import os
 from time import sleep
 
 # let this import fail, this package is used intentionally without the presence of azure-core
@@ -14,8 +13,18 @@ try:
 except:
     pass
 
-from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.models import StorageAccount, Endpoints
+try:
+    # Note: these models are only available from v17.0.0 and higher, if you need them you'll also need azure-core 1.4.0 and higher
+    from azure.mgmt.storage import StorageManagementClient
+    from azure.mgmt.storage.models import (
+        StorageAccount,
+        Endpoints,
+        LastAccessTimeTrackingPolicy,
+        BlobServiceProperties,
+        DeleteRetentionPolicy,
+    )
+except ImportError:
+    pass
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
@@ -65,26 +74,13 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(StorageManagementClient)
             group = self._get_resource_group(**kwargs)
-            storage_async_operation = self.client.storage_accounts.begin_create(
-                group.name,
-                name,
-                {
-                    "sku": {"name": self.sku},
-                    "location": self.location,
-                    "kind": self.kind,
-                    "enable_https_traffic_only": True,
-                },
-            )
+            storage_async_operation = self._create_account(group.name, name)
+
             self.resource = storage_async_operation.result()
-            storage_keys = {
-                v.key_name: v.value
-                for v in self.client.storage_accounts.list_keys(group.name, name).keys
-            }
+            storage_keys = {v.key_name: v.value for v in self.client.storage_accounts.list_keys(group.name, name).keys}
             self.storage_key = storage_keys["key1"]
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name, self.resource_moniker
-            )
+            self.test_class_instance.scrubber.register_name_pair(name, self.resource_moniker)
         else:
             self.resource = StorageAccount(
                 location=self.location,
@@ -92,18 +88,10 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             self.resource.name = name
             self.resource.id = name
             self.resource.primary_endpoints = Endpoints()
-            self.resource.primary_endpoints.blob = (
-                "https://{}.{}.core.windows.net".format(name, "blob")
-            )
-            self.resource.primary_endpoints.queue = (
-                "https://{}.{}.core.windows.net".format(name, "queue")
-            )
-            self.resource.primary_endpoints.table = (
-                "https://{}.{}.core.windows.net".format(name, "table")
-            )
-            self.resource.primary_endpoints.file = (
-                "https://{}.{}.core.windows.net".format(name, "file")
-            )
+            self.resource.primary_endpoints.blob = "https://{}.{}.core.windows.net".format(name, "blob")
+            self.resource.primary_endpoints.queue = "https://{}.{}.core.windows.net".format(name, "queue")
+            self.resource.primary_endpoints.table = "https://{}.{}.core.windows.net".format(name, "table")
+            self.resource.primary_endpoints.file = "https://{}.{}.core.windows.net".format(name, "file")
             self.storage_key = "ZmFrZV9hY29jdW50X2tleQ=="
         return {
             self.parameter_name: self.resource,
@@ -140,6 +128,18 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                     )
                     sleep(30)
 
+    def _create_account(self, resource_group_name, account_name):
+        return self.client.storage_accounts.begin_create(
+            resource_group_name,
+            account_name,
+            {
+                "sku": {"name": self.sku},
+                "location": self.location,
+                "kind": self.kind,
+                "enable_https_traffic_only": True,
+            },
+        )
+
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs.get(self.resource_group_parameter_name)
@@ -151,6 +151,42 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
 
-CachedStorageAccountPreparer = functools.partial(
-    StorageAccountPreparer, use_cache=True, random_name_enabled=True
-)
+class BlobAccountPreparer(StorageAccountPreparer):
+    def __init__(self, **kwargs):
+        self.is_versioning_enabled = kwargs.pop("is_versioning_enabled", None)
+        self.is_last_access_time_enabled = kwargs.pop("is_last_access_time_enabled", None)
+        self.container_retention_days = kwargs.pop("container_retention_days", None)
+
+        super(BlobAccountPreparer, self).__init__(**kwargs)
+
+    def _create_account(self, resource_group_name, account_name):
+        storage_async_operation = self.client.storage_accounts.begin_create(
+            resource_group_name,
+            account_name,
+            {
+                "sku": {"name": self.sku},
+                "location": self.location,
+                "kind": self.kind,
+                "enable_https_traffic_only": True,
+            },
+        )
+
+        props = BlobServiceProperties()
+        if self.is_versioning_enabled is True:
+            props.is_versioning_enabled = True
+        if self.container_retention_days:
+            props.container_delete_retention_policy = DeleteRetentionPolicy(
+                enabled=True, days=self.container_retention_days
+            )
+        if self.is_last_access_time_enabled:
+            props.last_access_time_tracking_policy = LastAccessTimeTrackingPolicy(enable=True)
+
+        if not all(prop is None for prop in props.as_dict().values()):
+            self.client.blob_services.set_service_properties(resource_group_name, account_name, props)
+
+        sleep(30)
+
+        return storage_async_operation
+
+
+CachedStorageAccountPreparer = functools.partial(StorageAccountPreparer, use_cache=True, random_name_enabled=True)

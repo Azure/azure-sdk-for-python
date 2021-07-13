@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchClient as _SearchServiceClient
@@ -20,12 +21,13 @@ from ..models import (
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
+from ...aio._utils_async import get_async_authentication_policy
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from .._generated.models import SearchIndexer, SearchIndexerStatus
     from typing import Any, Optional, Sequence
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
@@ -34,22 +36,38 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     :param endpoint: The URL endpoint of an Azure search service
     :type endpoint: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
 
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, AzureKeyCredential, **Any) -> None
-
+    def __init__(self, endpoint: str,
+                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+                 **kwargs
+                 ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
-        self._credential = credential  # type: AzureKeyCredential
-        self._client = _SearchServiceClient(
-            endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
-        )  # type: _SearchServiceClient
+        self._credential = credential
+        if isinstance(credential, AzureKeyCredential):
+            self._aad = False
+            self._client = _SearchServiceClient(
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version,
+                **kwargs
+            )  # type: _SearchServiceClient
+        else:
+            self._aad = True
+            authentication_policy = get_async_authentication_policy(credential)
+            self._client = _SearchServiceClient(
+                endpoint=endpoint,
+                authentication_policy=authentication_policy,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version,
+                **kwargs
+            )  # type: _SearchServiceClient
 
     async def __aenter__(self):
         # type: () -> SearchIndexersClient

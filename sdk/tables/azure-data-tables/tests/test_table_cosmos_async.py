@@ -1,5 +1,3 @@
-from time import sleep
-
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase
@@ -20,24 +18,22 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     async def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
-        created = await ts.create_table(table_name=table_name)
+        table = ts.get_table_client(table_name)
+        created = await table.create_table()
 
         # Assert
-        assert created.table_name == table_name
+        assert created.name == table_name
 
         await ts.delete_table(table_name=table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
     @cosmos_decorator_async
     async def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -49,13 +45,10 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert created
         await ts.delete_table(table_name=table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
         table_name = "myasynctable"
 
@@ -77,16 +70,12 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert page_count == 2
         assert table_count == 3
 
-        for i in range(5):
-            await ts.delete_table(table_name + str(i))
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
     @cosmos_decorator_async
     async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
 
         # Act
@@ -99,13 +88,10 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert len(tables) >=  1
         assert tables[0] is not None
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
 
         # Act
@@ -119,15 +105,12 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert len(tables) ==  1
         await ts.delete_table(table.table_name)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_list = []
         for i in range(0, 4):
             await self._create_table(ts, prefix + str(i), table_list)
@@ -148,13 +131,10 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert small_page == 2
         assert all_tables == 4
 
-        # if self.is_live:
-        #     sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -183,36 +163,26 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert tables2_len ==  2
         assert tables1 != tables2
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_delete_table_with_existing_table(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table = await self._create_table(ts)
 
         # Act
-        # deleted = table.delete_table()
         deleted = await ts.delete_table(table_name=table.table_name)
 
         # Assert
         assert deleted is None
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @cosmos_decorator_async
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                        tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
         await ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
 
 class TestTableUnitTest(AsyncTableTestCase):
@@ -224,7 +194,7 @@ class TestTableUnitTest(AsyncTableTestCase):
     async def test_unicode_create_table_unicode_name(self):
         # Arrange
         url = self.account_url(self.tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, self.credential)
+        ts = TableServiceClient(url, credential=self.credential)
         table_name = u'啊齄丂狛狜'
 
         with pytest.raises(ValueError) as excinfo:
@@ -236,7 +206,7 @@ class TestTableUnitTest(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_create_table_invalid_name(self):
         # Arrange
-        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.credential)
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -248,7 +218,7 @@ class TestTableUnitTest(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_delete_table_invalid_name(self):
         # Arrange
-        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.credential)
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:

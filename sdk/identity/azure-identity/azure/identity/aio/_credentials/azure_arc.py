@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.policies import SansIOHTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport
+    from azure.core.pipeline.transport import AsyncHttpTransport
 
     PolicyType = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -42,15 +42,19 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         self._available = url and imds
         if self._available:
-            identity_config = kwargs.pop("_identity_config", None) or {}
             config = _get_configuration()
 
             self._client = AsyncManagedIdentityClient(
-                _identity_config=identity_config,
-                policies=_get_policies(config),
-                request_factory=functools.partial(_get_request, url),
-                **kwargs
+                policies=_get_policies(config), request_factory=functools.partial(_get_request, url), **kwargs
             )
+
+    async def __aenter__(self):
+        if self._available:
+            await self._client.__aenter__()
+        return self
+
+    async def close(self) -> None:
+        await self._client.close()
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         if not self._available:
@@ -60,10 +64,7 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
-
-    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         return self._client.get_cached_token(*scopes)
 
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":

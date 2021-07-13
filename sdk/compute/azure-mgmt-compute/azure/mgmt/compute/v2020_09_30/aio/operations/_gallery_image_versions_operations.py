@@ -50,7 +50,7 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: "_models.GalleryImageVersion",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryImageVersion":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         error_map = {
@@ -114,7 +114,7 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: "_models.GalleryImageVersion",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.GalleryImageVersion"]:
         """Create or update a gallery image version.
 
@@ -136,8 +136,8 @@ class GalleryImageVersionsOperations:
         :type gallery_image_version: ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersion
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GalleryImageVersion or the result of cls(response)
@@ -201,7 +201,7 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: "_models.GalleryImageVersionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryImageVersion":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryImageVersion"]
         error_map = {
@@ -258,7 +258,7 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         gallery_image_version: "_models.GalleryImageVersionUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.GalleryImageVersion"]:
         """Update a gallery image version.
 
@@ -280,8 +280,8 @@ class GalleryImageVersionsOperations:
         :type gallery_image_version: ~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersionUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GalleryImageVersion or the result of cls(response)
@@ -345,7 +345,7 @@ class GalleryImageVersionsOperations:
         gallery_image_name: str,
         gallery_image_version_name: str,
         expand: Optional[Union[str, "_models.ReplicationStatusTypes"]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.GalleryImageVersion":
         """Retrieves information about a gallery image version.
 
@@ -417,7 +417,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -465,7 +465,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a gallery image version.
 
@@ -481,8 +481,8 @@ class GalleryImageVersionsOperations:
         :type gallery_image_version_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -540,7 +540,7 @@ class GalleryImageVersionsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.GalleryImageVersionList"]:
         """List gallery image versions in a gallery image definition.
 

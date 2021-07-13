@@ -3,12 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, TYPE_CHECKING
+from typing import cast, List, TYPE_CHECKING, Union
 import time
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
+from ._utils_async import get_async_authentication_policy
 from .._utils import is_retryable_status_code
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from .._generated.aio import SearchClient as SearchIndexClient
@@ -21,7 +23,7 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials import AzureKeyCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixin):
@@ -32,7 +34,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :param index_name: The name of the index to connect to
     :type index_name: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
         when auto_flush is on. Default to 60 seconds.
     :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
@@ -50,20 +52,35 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     """
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, endpoint, index_name, credential, **kwargs):
-        # type: (str, str, AzureKeyCredential, **Any) -> None
+    def __init__(self, endpoint: str,
+                 index_name: str,
+                 credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+                 **kwargs
+                 ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint,
             index_name=index_name,
             credential=credential,
             **kwargs)
         self._index_documents_batch = IndexDocumentsBatch()
-        self._client = SearchIndexClient(
-            endpoint=endpoint,
-            index_name=index_name,
-            sdk_moniker=SDK_MONIKER,
-            api_version=self._api_version, **kwargs
-        )  # type: SearchIndexClient
+        if isinstance(credential, AzureKeyCredential):
+            self._aad = False
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
+        else:
+            self._aad = True
+            authentication_policy = get_async_authentication_policy(credential)
+            self._client = SearchIndexClient(
+                endpoint=endpoint,
+                index_name=index_name,
+                authentication_policy=authentication_policy,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version, **kwargs
+            )  # type: SearchIndexClient
         self._reset_timer()
 
     async def _cleanup(self, flush=True):

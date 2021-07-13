@@ -11,7 +11,8 @@ from _shared.test_case import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-all_api_versions = get_decorator(vault_only=True)
+all_api_versions = get_decorator(only_vault=True)
+only_hsm = get_decorator(only_hsm=True)
 
 
 def print(*args):
@@ -123,6 +124,19 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
+    @only_hsm()
+    @client_setup
+    def test_example_create_oct_key(self, key_client, **kwargs):
+        key_name = self.get_resource_name("key")
+
+        # [START create_oct_key]
+        key = key_client.create_oct_key(key_name, size=256, hardware_protected=True)
+
+        print(key.id)
+        print(key.name)
+        print(key.key_type)
+        # [END create_oct_key]
+
     @all_api_versions()
     @client_setup
     def test_example_key_list_operations(self, key_client, **kwargs):
@@ -180,6 +194,12 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         key_client.purge_deleted_key(key_name)
 
         if self.is_live:
+            # perform operations to prevent our connection from getting closed while waiting
+            time.sleep(60)
+            wait_key_name = self.get_resource_name("waitkey")
+            key_client.create_key(wait_key_name, "RSA")
+            time.sleep(60)
+            key_client.get_key(wait_key_name)
             time.sleep(60)
 
         # [START restore_key_backup]

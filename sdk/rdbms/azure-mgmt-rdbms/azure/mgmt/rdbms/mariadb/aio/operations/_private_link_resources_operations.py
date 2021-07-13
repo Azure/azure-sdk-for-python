@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.PrivateLinkResourceListResult"]:
         """Gets the private link resources for MariaDB server.
 
@@ -120,7 +120,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         server_name: str,
         group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.PrivateLinkResource":
         """Gets a private link resource for MariaDB server.
 

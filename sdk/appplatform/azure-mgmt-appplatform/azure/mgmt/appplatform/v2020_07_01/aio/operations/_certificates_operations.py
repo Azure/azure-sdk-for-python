@@ -48,7 +48,7 @@ class CertificatesOperations:
         resource_group_name: str,
         service_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResource":
         """Get the certificate resource.
 
@@ -112,7 +112,7 @@ class CertificatesOperations:
         service_name: str,
         certificate_name: str,
         certificate_resource: "_models.CertificateResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.CertificateResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateResource"]
         error_map = {
@@ -174,7 +174,7 @@ class CertificatesOperations:
         service_name: str,
         certificate_name: str,
         certificate_resource: "_models.CertificateResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.CertificateResource"]:
         """Create or update certificate resource.
 
@@ -189,8 +189,8 @@ class CertificatesOperations:
         :type certificate_resource: ~azure.mgmt.appplatform.v2020_07_01.models.CertificateResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either CertificateResource or the result of cls(response)
@@ -250,7 +250,7 @@ class CertificatesOperations:
         resource_group_name: str,
         service_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -296,7 +296,7 @@ class CertificatesOperations:
         resource_group_name: str,
         service_name: str,
         certificate_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete the certificate resource.
 
@@ -309,8 +309,8 @@ class CertificatesOperations:
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -365,7 +365,7 @@ class CertificatesOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.CertificateResourceCollection"]:
         """List all the certificates of one user.
 

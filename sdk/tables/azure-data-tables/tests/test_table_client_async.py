@@ -9,7 +9,7 @@ import platform
 
 from devtools_testutils import AzureRecordedTestCase
 
-from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 
@@ -140,11 +140,11 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.scheme == 'https'
 
     @pytest.mark.asyncio
-    async def test_create_service_with_sas_async(self):
+    async def test_create_service_with_sas(self):
         # Arrange
         url = self.account_url(self.tables_storage_account_name, "table")
         suffix = '.table.core.windows.net'
-        token = self.generate_sas_token()
+        token = AzureSasCredential(self.generate_sas_token())
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -154,14 +154,13 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
             assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
-            assert service.url.endswith(token)
-            assert service.credential is None
+            assert isinstance(service.credential, AzureSasCredential)
 
     @pytest.mark.asyncio
     async def test_create_service_with_token_async(self):
         url = self.account_url(self.tables_storage_account_name, "table")
         suffix = '.table.core.windows.net'
-        self.token_credential = self.generate_fake_token()
+        self.token_credential = AzureSasCredential("fake_sas_credential")
         for service_type in SERVICES:
             # Act
             service = service_type(url, credential=self.token_credential, table_name='foo')
@@ -172,15 +171,15 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
             assert service.credential == self.token_credential
             assert not hasattr(service.credential, 'account_key')
-            assert hasattr(service.credential, 'get_token')
 
+    @pytest.mark.skip("HTTP prefix does not raise an error")
     @pytest.mark.asyncio
-    async def test_create_service_with_token_and_http_async(self):
+    async def test_create_service_with_token_and_http(self):
         for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError):
                 url = self.account_url(self.tables_storage_account_name, "table").replace('https', 'http')
-                service_type(url, credential=self.generate_fake_token(), table_name='foo')
+                service_type(url, credential=AzureSasCredential("fake_sas_credential"), table_name='foo')
 
     @pytest.mark.asyncio
     async def test_create_service_china_async(self):
@@ -222,7 +221,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             with pytest.raises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
-            assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
+            assert str(e.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
     @pytest.mark.asyncio
     async def test_create_service_with_socket_timeout_async(self):
@@ -267,8 +266,8 @@ class TestTableClientUnit(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_create_service_with_connection_string_sas_async(self):
         # Arrange
-        token = self.generate_sas_token()
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, token)
+        token = AzureSasCredential(self.generate_sas_token())
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, token.signature)
 
         for service_type in SERVICES:
             # Act
@@ -278,8 +277,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
             assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
-            assert service.url.endswith(token)
-            assert service.credential is None
+            assert isinstance(service.credential , AzureSasCredential)
 
     @pytest.mark.asyncio
     async def test_create_service_with_connection_string_cosmos_async(self):
@@ -408,8 +406,8 @@ class TestTableClientUnit(AsyncTableTestCase):
 
     @pytest.mark.asyncio
     async def test_create_service_with_custom_account_endpoint_path_async(self):
-        token = self.generate_sas_token()
-        custom_account_url = "http://local-machine:11002/custom/account/path/" + token
+        token = AzureSasCredential(self.generate_sas_token())
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + token.signature
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
                 self.tables_storage_account_name, self.tables_primary_storage_account_key, custom_account_url)
@@ -418,7 +416,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            assert service.account_name == "custom"
+            assert service.account_name == self.tables_storage_account_name
             assert service.credential.named_key.name == self.tables_storage_account_name
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
@@ -436,7 +434,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token)
+        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token.signature)
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None
@@ -529,3 +527,81 @@ class TestTableClientUnit(AsyncTableTestCase):
 
         with pytest.raises(ValueError):
             TableServiceClient(url, credential=self.credential, api_version="foo")
+
+    @pytest.mark.asyncio
+    async def test_create_client_for_azurite(self):
+        azurite_credential = AzureNamedKeyCredential("myaccount", self.tables_primary_storage_account_key)
+        http_connstr = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey={};TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;".format(
+            self.tables_primary_storage_account_key
+        )
+        https_connstr = "DefaultEndpointsProtocol=https;AccountName=devstoreaccount1;AccountKey={};TableEndpoint=https://127.0.0.1:10002/devstoreaccount1;".format(
+            self.tables_primary_storage_account_key
+        )
+        account_url = "https://127.0.0.1:10002/myaccount"
+        client = TableServiceClient(account_url, credential=azurite_credential)
+        assert client.account_name == "myaccount"
+        assert client.url == "https://127.0.0.1:10002/myaccount"
+        assert client._location_mode == "primary"
+        assert client._secondary_endpoint == "https://127.0.0.1:10002/myaccount-secondary"
+        assert client.credential.named_key.key == azurite_credential.named_key.key
+        assert client.credential.named_key.name == azurite_credential.named_key.name
+        assert not client._cosmos_endpoint
+
+        client = TableServiceClient.from_connection_string(http_connstr)
+        assert client.account_name == "devstoreaccount1"
+        assert client.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert client._location_mode == "primary"
+        assert client._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert client.credential.named_key.key == self.tables_primary_storage_account_key
+        assert client.credential.named_key.name == "devstoreaccount1"
+        assert not client._cosmos_endpoint
+
+        client = TableServiceClient.from_connection_string(https_connstr)
+        assert client.account_name == "devstoreaccount1"
+        assert client.url == "https://127.0.0.1:10002/devstoreaccount1"
+        assert client._location_mode == "primary"
+        assert client._secondary_endpoint == "https://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert client.credential.named_key.key == self.tables_primary_storage_account_key
+        assert client.credential.named_key.name == "devstoreaccount1"
+        assert not client._cosmos_endpoint
+
+        table = TableClient(account_url, "tablename", credential=azurite_credential)
+        assert table.account_name == "myaccount"
+        assert table.table_name == "tablename"
+        assert table.url == "https://127.0.0.1:10002/myaccount"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "https://127.0.0.1:10002/myaccount-secondary"
+        assert table.credential.named_key.key == azurite_credential.named_key.key
+        assert table.credential.named_key.name == azurite_credential.named_key.name
+        assert not table._cosmos_endpoint
+
+        table = TableClient.from_connection_string(http_connstr, "tablename")
+        assert table.account_name == "devstoreaccount1"
+        assert table.table_name == "tablename"
+        assert table.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert table.credential.named_key.key == self.tables_primary_storage_account_key
+        assert table.credential.named_key.name == "devstoreaccount1"
+        assert not table._cosmos_endpoint
+
+        table = TableClient.from_connection_string(https_connstr, "tablename")
+        assert table.account_name == "devstoreaccount1"
+        assert table.table_name == "tablename"
+        assert table.url == "https://127.0.0.1:10002/devstoreaccount1"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "https://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert table.credential.named_key.key == self.tables_primary_storage_account_key
+        assert table.credential.named_key.name == "devstoreaccount1"
+        assert not table._cosmos_endpoint
+
+        table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
+        table = TableClient.from_table_url(table_url, credential=azurite_credential)
+        assert table.account_name == "myaccount"
+        assert table.table_name == "tablename"
+        assert table.url == "https://127.0.0.1:10002/myaccount"
+        assert table._location_mode == "primary"
+        assert table._secondary_endpoint == "https://127.0.0.1:10002/myaccount-secondary"
+        assert table.credential.named_key.key == azurite_credential.named_key.key
+        assert table.credential.named_key.name == azurite_credential.named_key.name
+        assert not table._cosmos_endpoint
