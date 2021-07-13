@@ -14,7 +14,7 @@ and dialects while preserving document structure and data format. Use the client
 ### Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
-[Translation resource][DT_resource] to use this package.
+[Translator resource][DT_resource] to use this package.
 
 ### Install the package
 Install the Azure Document Translation client library for Python with [pip][pip]:
