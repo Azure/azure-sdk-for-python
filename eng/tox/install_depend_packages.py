@@ -34,7 +34,8 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'typing-extensions': '3.6.5',
     'opentelemetry-api': '1.3.0',
     'azure-core': '1.11.0',
-    'requests': '2.19.0'
+    'requests': '2.19.0',
+    'six': '1.12.0'
 }
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
