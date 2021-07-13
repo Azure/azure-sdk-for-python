@@ -14,7 +14,7 @@ and dialects while preserving document structure and data format. Use the client
 ### Prerequisites
 * Python 2.7, or 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
-[Document Translation resource][DT_resource] to use this package.
+[Translation resource][DT_resource] to use this package.
 
 ### Install the package
 Install the Azure Document Translation client library for Python with [pip][pip]:
@@ -25,8 +25,8 @@ pip install azure-ai-translation-document --pre
 
 > Note: This version of the client library defaults to the v1.0 version of the service
 
-#### Create a Document Translation resource
-Document Translation supports [single-service access][single_service] only.
+#### Create a Translator resource
+The Document Translation feature supports [single-service access][single_service] only.
 To access the service, create a Translator resource.
 
 You can create the resource using
@@ -34,10 +34,10 @@ You can create the resource using
 **Option 1:** [Azure Portal][azure_portal_create_DT_resource]
 
 **Option 2:** [Azure CLI][azure_cli_create_DT_resource].
-Below is an example of how you can create a Document Translation resource using the CLI:
+Below is an example of how you can create a Translator resource using the CLI:
 
 ```bash
-# Create a new resource group to hold the document translation resource -
+# Create a new resource group to hold the Translator resource -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
 ```
@@ -55,12 +55,12 @@ az cognitiveservices account create \
 ```
 
 ### Authenticate the client
-In order to interact with the Document Translation service, you will need to create an instance of a client.
+In order to interact with the Document Translation feature service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 
 #### Looking up the endpoint
-You can find the endpoint for your Document Translation resource using the
+You can find the endpoint for your Translator resource using the
 [Azure Portal][azure_portal_get_endpoint].
 
 > Note that the service requires a custom domain endpoint. Follow the instructions in the above link to format your endpoint:
