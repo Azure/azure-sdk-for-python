@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.network.traversal import CommunicationRelayClient, CommunicationRelayConfigurationRequest
+from azure.communication.network.traversal import CommunicationRelayClient
 from _shared.helper import URIIdentityReplacer
 from _shared.testcase import (
     CommunicationTestCase,
@@ -28,7 +28,7 @@ class CommunicationRelayClientTest(CommunicationTestCase):
     def setUp(self):
         super(CommunicationRelayClientTest, self).setUp()
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token", "expiresOn", "username", "credential", "urls"]),
+            BodyReplacerProcessor(keys=["id", "token", "username", "credential"]),
             URIIdentityReplacer()])
 
     @CommunicationPreparer()
@@ -38,7 +38,6 @@ class CommunicationRelayClientTest(CommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
-        request = CommunicationRelayConfigurationRequest(id = user.properties['id'])
 
         relay_client = CommunicationRelayClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
@@ -46,11 +45,19 @@ class CommunicationRelayClientTest(CommunicationTestCase):
         )
 
         print('Getting relay config:\n')
-        config = relay_client.get_relay_configuration(request)
+        config = relay_client.get_relay_configuration(user)
         
         print('Ice Servers: \n')
         for iceServer in config.ice_servers:
-            print(iceServer)
+            assert iceServer.username is not None
+            print('Username: ' + iceServer.username)
+
+            assert iceServer.credential is not None
+            print('Credential: ' + iceServer.credential)
+            
+            assert iceServer.urls is not None
+            for url in iceServer.urls:
+                print('Url: ' + url)
 
         assert config is not None
         

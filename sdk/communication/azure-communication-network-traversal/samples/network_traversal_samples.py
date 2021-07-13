@@ -32,8 +32,7 @@ class CommunicationRelayClientSamples(object):
 
     def get_relay_config(self):
         from azure.communication.network.traversal import (
-            CommunicationRelayClient,
-            CommunicationRelayConfigurationRequest
+            CommunicationRelayClient
         )
         from azure.communication.identity import (
             CommunicationIdentityClient
@@ -51,10 +50,9 @@ class CommunicationRelayClientSamples(object):
         print("Creating new user")
         user = identity_client.create_user()
         print("User created with id:" + user.properties.get('id'))
-        request = CommunicationRelayConfigurationRequest(id=user.properties.get('id'))
 
         print("Getting relay configuration")
-        relay_configuration = relay_client.get_relay_configuration(request)
+        relay_configuration = relay_client.get_relay_configuration(user)
 
         for iceServer in relay_configuration.ice_servers:
             print("Icer server:")

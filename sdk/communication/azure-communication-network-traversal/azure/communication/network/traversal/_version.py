@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1package-2021-06-21-preview"
+VERSION = "1.0.0b1"
 
 SDK_MONIKER = "communication-network-traversal/{}".format(VERSION)  # type: str

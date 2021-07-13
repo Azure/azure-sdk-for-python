@@ -1,6 +1,7 @@
 # Release History
 
-## 1package-2021-06-21-preview
+## 1.0.0b1 (2021-07-13)
+- Preview release of `azure-communication-network-traversal`.
 
 The first preview of the Azure Communication Relay Client has the following features:
 
@@ -12,6 +13,3 @@ The first preview of the Azure Communication Relay Client has the following feat
 
 <!-- LINKS -->
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/
-[documentation]: https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python
-
-### Breaking Changes

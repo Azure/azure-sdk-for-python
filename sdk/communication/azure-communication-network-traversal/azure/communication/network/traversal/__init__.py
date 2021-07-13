@@ -5,11 +5,3 @@
 # --------------------------------------------------------------------------
 
 from ._communication_relay_client import CommunicationRelayClient
-
-from ._generated.models import (
-  CommunicationRelayConfigurationRequest
-)
-
-__all__ = [
-    'CommunicationRelayConfigurationRequest',
-]

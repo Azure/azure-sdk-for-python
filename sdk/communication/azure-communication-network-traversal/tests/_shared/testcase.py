@@ -59,6 +59,8 @@ class BodyReplacerProcessor(RecordingProcessor):
                     _replace_recursively(value)
                 elif key == 'iceServers':
                     _replace_recursively(value[0])
+                elif key == 'urls':
+                    dictionary[key][0] = "turn.skype.com"
 
         import json
         try:

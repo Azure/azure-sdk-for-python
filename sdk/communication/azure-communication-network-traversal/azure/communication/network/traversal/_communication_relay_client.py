@@ -4,14 +4,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any, List, Union, Tuple
+from typing import TYPE_CHECKING, Any
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.credentials import AccessToken
+from azure.communication.identity import CommunicationUserIdentifier
 
-
-from ._generated._communication_network_traversal_client import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
-from ._generated.models import CommunicationRelayConfigurationRequest
+from ._generated._communication_network_traversal_client\
+    import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 from ._generated.models import CommunicationRelayConfiguration
@@ -84,7 +83,7 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
-            body, # type: str
+            user, # type: CommunicationUserIdentifier
             **kwargs # type: Any
     ):
         # type: (Any) -> CommunicationRelayConfiguration
@@ -94,5 +93,5 @@ class CommunicationRelayClient(object):
         :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
         """
         return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-            body.id,
+            user.properties['id'],
             **kwargs)

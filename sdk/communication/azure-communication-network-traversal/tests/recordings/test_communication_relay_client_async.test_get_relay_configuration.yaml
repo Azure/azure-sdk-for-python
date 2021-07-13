@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.0.1 Python/3.7.4 (Windows-10-10.0.21390-SP0)
       x-ms-date:
-      - Fri, 09 Jul 2021 07:54:11 GMT
+      - Sun, 11 Jul 2021 02:44:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -23,13 +23,13 @@ interactions:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
         2021-03-31-preview1
       content-type: application/json; charset=utf-8
-      date: Fri, 09 Jul 2021 07:54:11 GMT
-      ms-cv: iEGYw8mnTkqW3zOTGv24uQ.0
+      date: Sun, 11 Jul 2021 02:44:22 GMT
+      ms-cv: H8oxJNgikUKiyuKyiBKKrQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 114ms
+      x-processing-time: 80ms
     status:
       code: 201
       message: Created
@@ -44,28 +44,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-network-traversal/1package-2021-06-21-preview Python/3.7.4
+      - azsdk-python-communication-network-traversal/1.0.0b1 (2021-07-12) Python/3.7.4
         (Windows-10-10.0.21390-SP0)
       x-ms-date:
-      - Fri, 09 Jul 2021 07:54:11 GMT
+      - Sun, 11 Jul 2021 02:44:23 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/networktraversal/:issueRelayConfiguration?api-version=2021-06-21-preview
   response:
     body:
-      string: '{"expiresOn": "sanitized", "iceServers": [{"urls": "sanitized", "username":
-        "sanitized", "credential": "sanitized"}]}'
+      string: '{"expiresOn": "2021-07-11T02:44:23.8112612+00:00", "iceServers": [{"urls":
+        ["turn.skype.com"], "username": "sanitized", "credential": "sanitized"}]}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview
       content-type: application/json; charset=utf-8
-      date: Fri, 09 Jul 2021 07:54:11 GMT
-      ms-cv: hZ4C73GJvkKqIqV8KSKWEA.0
+      date: Sun, 11 Jul 2021 02:44:22 GMT
+      ms-cv: M+0o0NEgUEaJQgukis2fsw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 45ms
+      x-processing-time: 192ms
     status:
       code: 200
       message: OK

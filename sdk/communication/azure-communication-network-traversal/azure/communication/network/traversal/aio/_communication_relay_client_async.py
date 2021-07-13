@@ -7,9 +7,9 @@
 from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.credentials import AccessToken
-
-from .._generated.aio._communication_network_traversal_client import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
+from azure.communication.identity import CommunicationUserIdentifier
+from .._generated.aio._communication_network_traversal_client\
+    import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 
@@ -33,10 +33,10 @@ class CommunicationRelayClient:
             :dedent: 8
     """
     def __init__(
-            self,
-            endpoint: str, 
-            credential: 'AsyncTokenCredential',
-            **kwargs
+        self,
+        endpoint: str,
+        credential: 'AsyncTokenCredential',
+        **kwargs
         ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
@@ -57,8 +57,8 @@ class CommunicationRelayClient:
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str, 
-            **kwargs 
+            cls, conn_str: str,
+            **kwargs
         ) -> 'CommunicationRelayClient':
         """Create CommunicationRelayClient from a Connection String.
 
@@ -82,16 +82,16 @@ class CommunicationRelayClient:
     @distributed_trace_async
     async def get_relay_configuration(
             self,
-            body,
-            **kwargs
+            user: CommunicationUserIdentifier,
+            **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
-        """get a Communication Relay configuration
-
+        """get a Communication Relay configuration.
+        :param: CommunicationUserIdentifier user: A user from which we will get an id
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
         """
         return await self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-            body.id,
+            user.properties['id'],
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationRelayClient":

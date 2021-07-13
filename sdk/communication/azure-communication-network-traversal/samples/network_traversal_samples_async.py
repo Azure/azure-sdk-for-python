@@ -33,7 +33,6 @@ class CommunicationRelayClientSamples(object):
 
     async def get_relay_config(self):
         from azure.communication.network.traversal.aio import CommunicationRelayClient
-        from azure.communication.network.traversal import CommunicationRelayConfigurationRequest
         from azure.communication.identity.aio import CommunicationIdentityClient
 
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
@@ -48,13 +47,11 @@ class CommunicationRelayClientSamples(object):
         async with identity_client:
             print("Creating new user")
             user = await identity_client.create_user()
-        
-        print("User created with id:" + user.properties.get('id'))
-        request = CommunicationRelayConfigurationRequest(id=user.properties.get('id'))
+            print("User created with id:" + user.properties.get('id'))
 
         async with relay_client:
             print("Getting relay configuration")
-            relay_configuration = await relay_client.get_relay_configuration(request)
+            relay_configuration = await relay_client.get_relay_configuration(user)
 
         for iceServer in relay_configuration.ice_servers:
             print("Icer server:")

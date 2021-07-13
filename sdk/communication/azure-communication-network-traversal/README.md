@@ -2,15 +2,18 @@
 
 Azure Communication Relay client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity) | [Package (Pypi)](https://pypi.org/project/azure-communication-identity/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/azure-communication-identity) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
-
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication)
 
 # Getting started
+
 ### Prerequisites
+
 - Python 2.7, or 3.6 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
+
 ### Install the package
+
 Install the Azure Communication Identity client library for Python with [pip](https://pypi.org/project/pip/):
 Install the Azure Communication Relay Client library for Python with [pip](https://pypi.org/project/pip/):
 
@@ -22,6 +25,7 @@ pip install azure-communication-network-traversal
 # Key concepts
 
 ### Initializing Relay Client
+
 ```python
 # You can find your endpoint and access token from your resource in the Azure Portal
 import os
@@ -37,31 +41,42 @@ endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
 # We also need Identity client to get a User Identifier
 identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
 relay_client = CommunicationRelayClient(endpoint, DefaultAzureCredential())
-           
+```    
 
+## Examples
+
+The following section provides code snippets covering some of the most common Azure Communication Services tasks, including:
+
+- [Getting the relay configuration](#getting-the-relay-configuration)
 #You can also authenticate using your connection string
 identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 relay_client = CommunicationRelayClient.from_connection_string(self.connection_string)
 
-```
+### Getting the relay configuration 
 
-### Getting the configurationRelay 
 ```python
-
 # We need a user from Identity
 user = identity_client.create_user()
-request = CommunicationRelayConfigurationRequest(id=user.properties.get('id'))
+relay_configuration = relay_client.get_relay_configuration(user)
 
-relay_configuration = relay_client.get_relay_configuration(request)
+for iceServer in config.ice_servers:
+    assert iceServer.username is not None
+    print('Username: ' + iceServer.username)
 
-for iceServer in relay_configuration.ice_servers:
-    print(iceServer)
+    assert iceServer.credential is not None
+    print('Credential: ' + iceServer.credential)
+    
+    assert iceServer.urls is not None
+    for url in iceServer.urls:
+        print('Url:' + url)
 ```
 
 # Troubleshooting
+
 The Azure Communication Relay client will raise exceptions defined in [Azure Core][azure_core].
 
 # Next steps
+
 ## More sample code
 
 ## Provide Feedback
@@ -69,6 +84,7 @@ The Azure Communication Relay client will raise exceptions defined in [Azure Cor
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project
 
 # Contributing
+
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
