@@ -99,7 +99,8 @@ class DriveStatus(msrest.serialization.Model):
     :param drive_header_hash: The drive header hash value.
     :type drive_header_hash: str
     :param state: The drive's current state. Possible values include: "Specified", "Received",
-     "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", "ShippedBack".
+     "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", "ShippedBack". Default
+     value: "Specified".
     :type state: str or ~storage_import_export.models.DriveState
     :param copy_status: Detailed status about the data transfer process. This field is not returned
      in the response until the drive is in the Transferring state.
@@ -141,7 +142,7 @@ class DriveStatus(msrest.serialization.Model):
         manifest_file: Optional[str] = None,
         manifest_hash: Optional[str] = None,
         drive_header_hash: Optional[str] = None,
-        state: Optional[Union[str, "DriveState"]] = None,
+        state: Optional[Union[str, "DriveState"]] = "Specified",
         copy_status: Optional[str] = None,
         percent_complete: Optional[int] = None,
         verbose_log_uri: Optional[str] = None,
@@ -446,9 +447,9 @@ class JobDetails(msrest.serialization.Model):
         return_package: Optional["PackageInformation"] = None,
         diagnostics_path: Optional[str] = None,
         log_level: Optional[str] = None,
-        backup_drive_manifest: Optional[bool] = None,
-        state: Optional[str] = None,
-        cancel_requested: Optional[bool] = None,
+        backup_drive_manifest: Optional[bool] = False,
+        state: Optional[str] = "Creating",
+        cancel_requested: Optional[bool] = False,
         percent_complete: Optional[int] = None,
         incomplete_blob_list_uri: Optional[str] = None,
         drive_list: Optional[List["DriveStatus"]] = None,
@@ -1096,13 +1097,13 @@ class UpdateJobParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Any] = None,
-        cancel_requested: Optional[bool] = None,
+        cancel_requested: Optional[bool] = False,
         state: Optional[str] = None,
         return_address: Optional["ReturnAddress"] = None,
         return_shipping: Optional["ReturnShipping"] = None,
         delivery_package: Optional["DeliveryPackageInformation"] = None,
         log_level: Optional[str] = None,
-        backup_drive_manifest: Optional[bool] = None,
+        backup_drive_manifest: Optional[bool] = False,
         drive_list: Optional[List["DriveStatus"]] = None,
         **kwargs
     ):

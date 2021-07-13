@@ -86,7 +86,8 @@ class DriveStatus(msrest.serialization.Model):
     :param drive_header_hash: The drive header hash value.
     :type drive_header_hash: str
     :param state: The drive's current state. Possible values include: "Specified", "Received",
-     "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", "ShippedBack".
+     "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", "ShippedBack". Default
+     value: "Specified".
     :type state: str or ~storage_import_export.models.DriveState
     :param copy_status: Detailed status about the data transfer process. This field is not returned
      in the response until the drive is in the Transferring state.
@@ -130,7 +131,7 @@ class DriveStatus(msrest.serialization.Model):
         self.manifest_file = kwargs.get('manifest_file', None)
         self.manifest_hash = kwargs.get('manifest_hash', None)
         self.drive_header_hash = kwargs.get('drive_header_hash', None)
-        self.state = kwargs.get('state', None)
+        self.state = kwargs.get('state', "Specified")
         self.copy_status = kwargs.get('copy_status', None)
         self.percent_complete = kwargs.get('percent_complete', None)
         self.verbose_log_uri = kwargs.get('verbose_log_uri', None)
@@ -400,9 +401,9 @@ class JobDetails(msrest.serialization.Model):
         self.return_package = kwargs.get('return_package', None)
         self.diagnostics_path = kwargs.get('diagnostics_path', None)
         self.log_level = kwargs.get('log_level', None)
-        self.backup_drive_manifest = kwargs.get('backup_drive_manifest', None)
-        self.state = kwargs.get('state', None)
-        self.cancel_requested = kwargs.get('cancel_requested', None)
+        self.backup_drive_manifest = kwargs.get('backup_drive_manifest', False)
+        self.state = kwargs.get('state', "Creating")
+        self.cancel_requested = kwargs.get('cancel_requested', False)
         self.percent_complete = kwargs.get('percent_complete', None)
         self.incomplete_blob_list_uri = kwargs.get('incomplete_blob_list_uri', None)
         self.drive_list = kwargs.get('drive_list', None)
@@ -960,11 +961,11 @@ class UpdateJobParameters(msrest.serialization.Model):
     ):
         super(UpdateJobParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
-        self.cancel_requested = kwargs.get('cancel_requested', None)
+        self.cancel_requested = kwargs.get('cancel_requested', False)
         self.state = kwargs.get('state', None)
         self.return_address = kwargs.get('return_address', None)
         self.return_shipping = kwargs.get('return_shipping', None)
         self.delivery_package = kwargs.get('delivery_package', None)
         self.log_level = kwargs.get('log_level', None)
-        self.backup_drive_manifest = kwargs.get('backup_drive_manifest', None)
+        self.backup_drive_manifest = kwargs.get('backup_drive_manifest', False)
         self.drive_list = kwargs.get('drive_list', None)
