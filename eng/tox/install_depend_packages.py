@@ -33,7 +33,6 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'six': '1.9',
     'typing-extensions': '3.6.5',
     'opentelemetry-api': '1.3.0',
-    'cryptography': '3.3',
     'azure-core': '1.11.0',
 }
 
