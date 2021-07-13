@@ -206,13 +206,13 @@ class ResourcesOperations(object):
         # type: (...) -> LROPoller[None]
         """Moves resources from one resource group to another resource group.
 
-        The resources to move must be in the same source resource group. The target resource group may
-        be in a different subscription. When moving resources, both the source group and the target
-        group are locked for the duration of the operation. Write and delete operations are blocked on
-        the groups until the move completes.
+        The resources to be moved must be in the same source resource group in the source subscription
+        being used. The target resource group may be in a different subscription. When moving
+        resources, both the source group and the target group are locked for the duration of the
+        operation. Write and delete operations are blocked on the groups until the move completes.
 
-        :param source_resource_group_name: The name of the resource group containing the resources to
-         move.
+        :param source_resource_group_name: The name of the resource group from the source subscription
+         containing the resources to be moved.
         :type source_resource_group_name: str
         :param parameters: Parameters for moving resources.
         :type parameters: ~azure.mgmt.resource.resources.v2021_04_01.models.ResourcesMoveInfo
@@ -326,14 +326,14 @@ class ResourcesOperations(object):
         """Validates whether resources can be moved from one resource group to another resource group.
 
         This operation checks whether the specified resources can be moved to the target. The resources
-        to move must be in the same source resource group. The target resource group may be in a
-        different subscription. If validation succeeds, it returns HTTP response code 204 (no content).
-        If validation fails, it returns HTTP response code 409 (Conflict) with an error message.
-        Retrieve the URL in the Location header value to check the result of the long-running
-        operation.
+        to be moved must be in the same source resource group in the source subscription being used.
+        The target resource group may be in a different subscription. If validation succeeds, it
+        returns HTTP response code 204 (no content). If validation fails, it returns HTTP response code
+        409 (Conflict) with an error message. Retrieve the URL in the Location header value to check
+        the result of the long-running operation.
 
-        :param source_resource_group_name: The name of the resource group containing the resources to
-         validate for move.
+        :param source_resource_group_name: The name of the resource group from the source subscription
+         containing the resources to be validated for move.
         :type source_resource_group_name: str
         :param parameters: Parameters for moving resources.
         :type parameters: ~azure.mgmt.resource.resources.v2021_04_01.models.ResourcesMoveInfo
