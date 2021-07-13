@@ -485,7 +485,7 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
+        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_FRAME_SIZE_BYTES
         self.message  = BatchMessage(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
