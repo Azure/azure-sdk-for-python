@@ -1,5 +1,28 @@
 # Release History
 
+## 2.0.0 (2021-07-13)
+
+**Features**
+
+  - Model PrivateCloud has a new parameter external_cloud_links
+  - Model MetricDimension has a new parameter internal_name
+  - Model MetricDimension has a new parameter to_be_exported_for_shoebox
+  - Added operation PrivateCloudsOperations.rotate_vcenter_password
+  - Added operation PrivateCloudsOperations.rotate_nsxt_password
+  - Added operation group ScriptExecutionsOperations
+  - Added operation group DatastoresOperations
+  - Added operation group CloudLinksOperations
+  - Added operation group ScriptPackagesOperations
+  - Added operation group WorkloadNetworksOperations
+  - Added operation group ScriptCmdletsOperations
+  - Added operation group AddonsOperations
+  - Added operation group GlobalReachConnectionsOperations
+
+**Breaking changes**
+
+  - Operation HcxEnterpriseSitesOperations.create_or_update has a new signature
+  - Operation AuthorizationsOperations.create_or_update has a new signature
+
 ## 1.0.0 (2020-11-11)
 
 **Features**
