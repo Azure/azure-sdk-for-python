@@ -66,7 +66,7 @@ class TestExamplesTests(KeyVaultTestCase):
         restore_poller = backup_client.begin_restore(folder_url, sas_token)
 
         # check if the restore completed
-        done = backup_poller.done()
+        done = restore_poller.done()
 
         # wait for the restore to complete
         restore_poller.wait()
@@ -91,7 +91,7 @@ class TestExamplesTests(KeyVaultTestCase):
         restore_poller = backup_client.begin_restore(folder_url, sas_token, key_name=key_name)
 
         # check if the restore completed
-        done = backup_poller.done()
+        done = restore_poller.done()
 
         # wait for the restore to complete
         restore_poller.wait()
