@@ -43,13 +43,6 @@ client = EventGridPublisherClient(endpoint, credential)
 from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
-event = EventGridEvent(
-    data={"team": "azure-sdk"},
-    subject="Door1",
-    event_type="Azure.Sdk.Demo",
-    data_version="2.0"
-)
-
 credential = DefaultAzureCredential()
 endpoint = os.environ["EG_TOPIC_HOSTNAME"]
 client = EventGridPublisherClient(endpoint, credential)

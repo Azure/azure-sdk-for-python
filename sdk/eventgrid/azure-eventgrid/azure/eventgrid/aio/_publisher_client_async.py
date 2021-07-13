@@ -22,8 +22,8 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    AsyncBearerTokenCredentialPolicy
 )
-from ._helpers_async import _get_authentication_policy_async
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
 from .._helpers import (
@@ -32,6 +32,7 @@ from .._helpers import (
     _eventgrid_data_typecheck,
     _build_request,
     _cloud_event_to_generated,
+    _get_authentication_policy
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
@@ -89,7 +90,7 @@ class EventGridPublisherClient:
     def _policies(
         credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> List[Any]:
-        auth_policy = _get_authentication_policy_async(credential)
+        auth_policy = _get_authentication_policy(credential, AsyncBearerTokenCredentialPolicy)
         sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),

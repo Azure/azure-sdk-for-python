@@ -69,11 +69,11 @@ def _generate_hmac(key, message):
     return base64.b64encode(hmac_new)
 
 
-def _get_authentication_policy(credential):
+def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCredentialPolicy):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
     if hasattr(credential, "get_token"):
-        return BearerTokenCredentialPolicy(
+        return bearer_token_policy(
             credential,
             constants.DEFAULT_EVENTGRID_SCOPE
         )
