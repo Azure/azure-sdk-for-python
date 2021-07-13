@@ -1,5 +1,22 @@
 # Release History
 
+## 16.0.0 (2021-07-13)
+
+**Features**
+
+- Added two new properties on accounts which enable auto-storage to use a managed identity for authentication rather than a shared key:
+  - Setting `authentication_mode` to "BatchAccountManagedIdentity" will use the identity on the account for storage management operations such as blob container creation/deletion.
+  - Setting `node_identity_reference` will specify the identity which can be used on compute nodes to access auto-storage. Note that this identity *must* be assigned to each pool individually.
+- Added `identity_reference` property to the following models to support accessing resources via managed identity:
+  - `AzureBlobFileSystemConfiguration`
+  - `ContainerRegistry`
+  - `ResourceFile`
+- Added `allowed_authentication_modes` property on `BatchAccount` to list the allowed authentication modes for a given account. This does not affect authentication with the control plane.
+- Added new `os_disk` property to `VirtualMachineConfiguration`, which contains settings for the operating system disk of the Virtual Machine.
+  - The `placement` property on 'DiffDiskSettings' specifies the ephemeral disk placement for operating system disks for all VMs in the pool. Setting it to "CacheDisk" will store the ephemeral OS disk on the VM cache.
+- Added a new `list_supported_virtual_machine_skus` location operation, which gets the list of Batch-supported Virtual Machine VM sizes available at a given location.
+- Added a new `list_outbound_network_dependencies_endpoints` account operation, which lists the endpoints that nodes may call as part of Batch service administration.
+
 ## 15.0.0 (2021-02-01)
 
 - Fix changelog
