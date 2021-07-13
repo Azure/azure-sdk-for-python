@@ -1,7 +1,7 @@
 {
   "autorest": "V2",
   "use": "@microsoft.azure/autorest.python@~4.0.71",
-  "commit": "d78e99bbaa8170a72c38d8a6dad8a896f9a5c636",
+  "commit": "9d35bc9e89687145294705eb72e378bd83c1520c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest_command": "autorest specification/mediaservices/resource-manager/readme.md --keep-version-file --multiapi --no-async --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --use=@microsoft.azure/autorest.python@~4.0.71 --version=V2",
   "readme": "specification/mediaservices/resource-manager/readme.md"

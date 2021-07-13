@@ -24,7 +24,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-05-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-06-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2021-05-01"
+        self.api_version = "2021-06-01"
 
         self.config = config
 
@@ -49,54 +49,43 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
-        :rtype:
-         ~azure.mgmt.media.models.OperationPaged[~azure.mgmt.media.models.Operation]
+        :return: OperationCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.OperationCollection or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+         :class:`ErrorResponseException<azure.mgmt.media.models.ErrorResponseException>`
         """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
+        # Construct URL
+        url = self.list.metadata['url']
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationCollection', response)
 
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ApiErrorException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
         if raw:
-            header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.Media/operations'}

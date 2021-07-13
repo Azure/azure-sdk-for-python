@@ -17,7 +17,6 @@ try:
     from ._models_py3 import AccountFilter
     from ._models_py3 import AkamaiAccessControl
     from ._models_py3 import AkamaiSignatureHeaderAuthenticationKey
-    from ._models_py3 import ApiError, ApiErrorException
     from ._models_py3 import Asset
     from ._models_py3 import AssetContainerSas
     from ._models_py3 import AssetFileEncryptionMetadata
@@ -72,6 +71,9 @@ try:
     from ._models_py3 import EnabledProtocols
     from ._models_py3 import EntityNameAvailabilityCheckOutput
     from ._models_py3 import EnvelopeEncryption
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import FaceDetectorPreset
     from ._models_py3 import Filters
     from ._models_py3 import FilterTrackPropertyCondition
@@ -126,7 +128,6 @@ try:
     from ._models_py3 import LiveEventPreviewAccessControl
     from ._models_py3 import LiveEventTranscription
     from ._models_py3 import LiveOutput
-    from ._models_py3 import Location
     from ._models_py3 import LogSpecification
     from ._models_py3 import MediaService
     from ._models_py3 import MediaServiceIdentity
@@ -136,8 +137,8 @@ try:
     from ._models_py3 import Mp4Format
     from ._models_py3 import MultiBitrateFormat
     from ._models_py3 import NoEncryption
-    from ._models_py3 import ODataError
     from ._models_py3 import Operation
+    from ._models_py3 import OperationCollection
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OutputFile
     from ._models_py3 import Overlay
@@ -146,6 +147,7 @@ try:
     from ._models_py3 import PngLayer
     from ._models_py3 import PresentationTimeRange
     from ._models_py3 import Preset
+    from ._models_py3 import PresetConfigurations
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
@@ -153,10 +155,10 @@ try:
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import Properties
-    from ._models_py3 import Provider
     from ._models_py3 import ProxyResource
     from ._models_py3 import Rectangle
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
     from ._models_py3 import SelectAudioTrackByAttribute
     from ._models_py3 import SelectAudioTrackById
     from ._models_py3 import SelectVideoTrackByAttribute
@@ -186,6 +188,7 @@ try:
     from ._models_py3 import Transform
     from ._models_py3 import TransformOutput
     from ._models_py3 import TransportStreamFormat
+    from ._models_py3 import UserAssignedManagedIdentity
     from ._models_py3 import UtcClipTime
     from ._models_py3 import Video
     from ._models_py3 import VideoAnalyzerPreset
@@ -200,7 +203,6 @@ except (SyntaxError, ImportError):
     from ._models import AccountFilter
     from ._models import AkamaiAccessControl
     from ._models import AkamaiSignatureHeaderAuthenticationKey
-    from ._models import ApiError, ApiErrorException
     from ._models import Asset
     from ._models import AssetContainerSas
     from ._models import AssetFileEncryptionMetadata
@@ -255,6 +257,9 @@ except (SyntaxError, ImportError):
     from ._models import EnabledProtocols
     from ._models import EntityNameAvailabilityCheckOutput
     from ._models import EnvelopeEncryption
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import FaceDetectorPreset
     from ._models import Filters
     from ._models import FilterTrackPropertyCondition
@@ -309,7 +314,6 @@ except (SyntaxError, ImportError):
     from ._models import LiveEventPreviewAccessControl
     from ._models import LiveEventTranscription
     from ._models import LiveOutput
-    from ._models import Location
     from ._models import LogSpecification
     from ._models import MediaService
     from ._models import MediaServiceIdentity
@@ -319,8 +323,8 @@ except (SyntaxError, ImportError):
     from ._models import Mp4Format
     from ._models import MultiBitrateFormat
     from ._models import NoEncryption
-    from ._models import ODataError
     from ._models import Operation
+    from ._models import OperationCollection
     from ._models import OperationDisplay
     from ._models import OutputFile
     from ._models import Overlay
@@ -329,6 +333,7 @@ except (SyntaxError, ImportError):
     from ._models import PngLayer
     from ._models import PresentationTimeRange
     from ._models import Preset
+    from ._models import PresetConfigurations
     from ._models import PrivateEndpoint
     from ._models import PrivateEndpointConnection
     from ._models import PrivateEndpointConnectionListResult
@@ -336,10 +341,10 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkResourceListResult
     from ._models import PrivateLinkServiceConnectionState
     from ._models import Properties
-    from ._models import Provider
     from ._models import ProxyResource
     from ._models import Rectangle
     from ._models import Resource
+    from ._models import ResourceIdentity
     from ._models import SelectAudioTrackByAttribute
     from ._models import SelectAudioTrackById
     from ._models import SelectVideoTrackByAttribute
@@ -369,6 +374,7 @@ except (SyntaxError, ImportError):
     from ._models import Transform
     from ._models import TransformOutput
     from ._models import TransportStreamFormat
+    from ._models import UserAssignedManagedIdentity
     from ._models import UtcClipTime
     from ._models import Video
     from ._models import VideoAnalyzerPreset
@@ -383,15 +389,11 @@ from ._paged_models import JobPaged
 from ._paged_models import LiveEventPaged
 from ._paged_models import LiveOutputPaged
 from ._paged_models import MediaServicePaged
-from ._paged_models import OperationPaged
 from ._paged_models import StreamingEndpointPaged
 from ._paged_models import StreamingLocatorPaged
 from ._paged_models import StreamingPolicyPaged
 from ._paged_models import TransformPaged
 from ._azure_media_services_enums import (
-    FilterTrackPropertyType,
-    FilterTrackPropertyCompareOperation,
-    CreatedByType,
     MetricUnit,
     MetricAggregationType,
     ActionType,
@@ -399,9 +401,12 @@ from ._azure_media_services_enums import (
     StorageAuthentication,
     AccountEncryptionKeyType,
     DefaultAction,
-    ManagedIdentityType,
+    PublicNetworkAccess,
+    CreatedByType,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
+    FilterTrackPropertyType,
+    FilterTrackPropertyCompareOperation,
     AssetStorageEncryptionFormat,
     AssetContainerPermission,
     ContentKeyPolicyPlayReadyUnknownOutputPassingOption,
@@ -427,6 +432,8 @@ from ._azure_media_services_enums import (
     H264VideoProfile,
     EntropyMode,
     H264Complexity,
+    Complexity,
+    InterleaveOutput,
     EncoderNamedPreset,
     InsightsType,
     OnErrorType,
@@ -456,7 +463,6 @@ __all__ = [
     'AccountFilter',
     'AkamaiAccessControl',
     'AkamaiSignatureHeaderAuthenticationKey',
-    'ApiError', 'ApiErrorException',
     'Asset',
     'AssetContainerSas',
     'AssetFileEncryptionMetadata',
@@ -511,6 +517,9 @@ __all__ = [
     'EnabledProtocols',
     'EntityNameAvailabilityCheckOutput',
     'EnvelopeEncryption',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'FaceDetectorPreset',
     'Filters',
     'FilterTrackPropertyCondition',
@@ -565,7 +574,6 @@ __all__ = [
     'LiveEventPreviewAccessControl',
     'LiveEventTranscription',
     'LiveOutput',
-    'Location',
     'LogSpecification',
     'MediaService',
     'MediaServiceIdentity',
@@ -575,8 +583,8 @@ __all__ = [
     'Mp4Format',
     'MultiBitrateFormat',
     'NoEncryption',
-    'ODataError',
     'Operation',
+    'OperationCollection',
     'OperationDisplay',
     'OutputFile',
     'Overlay',
@@ -585,6 +593,7 @@ __all__ = [
     'PngLayer',
     'PresentationTimeRange',
     'Preset',
+    'PresetConfigurations',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
@@ -592,10 +601,10 @@ __all__ = [
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
     'Properties',
-    'Provider',
     'ProxyResource',
     'Rectangle',
     'Resource',
+    'ResourceIdentity',
     'SelectAudioTrackByAttribute',
     'SelectAudioTrackById',
     'SelectVideoTrackByAttribute',
@@ -625,15 +634,15 @@ __all__ = [
     'Transform',
     'TransformOutput',
     'TransportStreamFormat',
+    'UserAssignedManagedIdentity',
     'UtcClipTime',
     'Video',
     'VideoAnalyzerPreset',
     'VideoLayer',
     'VideoOverlay',
     'VideoTrackDescriptor',
-    'AccountFilterPaged',
-    'OperationPaged',
     'MediaServicePaged',
+    'AccountFilterPaged',
     'AssetPaged',
     'AssetFilterPaged',
     'ContentKeyPolicyPaged',
@@ -644,9 +653,6 @@ __all__ = [
     'LiveEventPaged',
     'LiveOutputPaged',
     'StreamingEndpointPaged',
-    'FilterTrackPropertyType',
-    'FilterTrackPropertyCompareOperation',
-    'CreatedByType',
     'MetricUnit',
     'MetricAggregationType',
     'ActionType',
@@ -654,9 +660,12 @@ __all__ = [
     'StorageAuthentication',
     'AccountEncryptionKeyType',
     'DefaultAction',
-    'ManagedIdentityType',
+    'PublicNetworkAccess',
+    'CreatedByType',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',
+    'FilterTrackPropertyType',
+    'FilterTrackPropertyCompareOperation',
     'AssetStorageEncryptionFormat',
     'AssetContainerPermission',
     'ContentKeyPolicyPlayReadyUnknownOutputPassingOption',
@@ -682,6 +691,8 @@ __all__ = [
     'H264VideoProfile',
     'EntropyMode',
     'H264Complexity',
+    'Complexity',
+    'InterleaveOutput',
     'EncoderNamedPreset',
     'InsightsType',
     'OnErrorType',
