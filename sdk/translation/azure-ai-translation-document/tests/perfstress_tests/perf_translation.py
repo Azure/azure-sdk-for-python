@@ -88,6 +88,10 @@ class TranslationPerfStressTest(PerfStressTest):
         """The global setup is run only once."""
         self.source_container_sas_url = await self.create_source_container()
         self.target_container_sas_url = await self.create_target_container()
+        poller = await self.async_service_client.begin_translation(
+            self.source_container_sas_url, self.target_container_sas_url, "fr"
+        )
+        self.translation_id = poller.id
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
@@ -104,16 +108,16 @@ class TranslationPerfStressTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        poller = self.service_client.begin_translation(
-            self.source_container_sas_url, self.target_container_sas_url, "fr"
+        statuses = self.service_client.list_all_document_statuses(
+            self.translation_id
         )
-        result = poller.result()
-        assert result
+        for doc in statuses:
+            pass
 
     async def run_async(self):
         """The asynchronous perf test."""
-        poller = await self.async_service_client.begin_translation(
-            self.source_container_sas_url, self.target_container_sas_url, "fr"
+        statuses = self.async_service_client.list_all_document_statuses(
+            self.translation_id
         )
-        result = await poller.result()
-        assert result
+        async for doc in statuses:
+            pass

@@ -42,5 +42,5 @@ These options are available for all perf tests:
 
 ## Example command
 ```cmd
-(env) ~/azure-ai-translation-document/tests/perfstress_tests> perfstress TranslationPerfStressTest --parallel=50 --warmup=1
+(env) ~/azure-ai-translation-document/tests/perfstress_tests> perfstress TranslationPerfStressTest
 ```
