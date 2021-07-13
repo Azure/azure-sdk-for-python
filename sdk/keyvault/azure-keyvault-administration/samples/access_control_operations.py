@@ -11,7 +11,6 @@ from azure.keyvault.administration import (
     KeyVaultRoleScope,
 )
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -19,7 +18,10 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+# 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
+#    
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
+#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -36,58 +38,53 @@ from azure.core.exceptions import HttpResponseError
 # 5. Delete a role definition (delete_role_definition)
 # ----------------------------------------------------------------------------------------------------------
 
-VAULT_URL = os.environ["VAULT_URL"]
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 
 # Instantiate an access control client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 credential = DefaultAzureCredential()
-client = KeyVaultAccessControlClient(vault_url=VAULT_URL, credential=credential)
-try:
-    # Let's first create a custom role definition. This role permits creating keys in a Managed HSM.
-    # We'll provide a friendly role name, and let a unique role definition name (a GUID) be generated for us.
-    print("\n.. Create a role definition")
-    role_name = "customRole"
-    scope = KeyVaultRoleScope.GLOBAL
-    permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
-    role_definition = client.set_role_definition(scope=scope, role_name=role_name, permissions=permissions)
-    print("Role definition '{}' created successfully.".format(role_definition.role_name))
+client = KeyVaultAccessControlClient(vault_url=MANAGED_HSM_URL, credential=credential)
 
-    # Let's update our role definition to allow reading keys, but not allow creating keys.
-    # To update an existing definition, pass the name keyword argument to set_role_definition. This is the unique name
-    # of the role definition, which is stored in KeyVaultRoleDefinition.name.
-    print("\n.. Update a role definition")
-    new_permissions = [
-        KeyVaultPermission(
-            data_actions=[KeyVaultDataAction.READ_HSM_KEY],
-            not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
-        )
-    ]
-    unique_definition_name = role_definition.name
-    updated_definition = client.set_role_definition(
-        scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
+# Let's first create a custom role definition. This role permits creating keys in a Managed HSM.
+# We'll provide a friendly role name, and let a unique role definition name (a GUID) be generated for us.
+print("\n.. Create a role definition")
+role_name = "customRole"
+scope = KeyVaultRoleScope.GLOBAL
+permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
+role_definition = client.set_role_definition(scope=scope, role_name=role_name, permissions=permissions)
+print("Role definition '{}' created successfully.".format(role_definition.role_name))
+
+# Let's update our role definition to allow reading keys, but not allow creating keys.
+# To update an existing definition, pass the name keyword argument to set_role_definition. This is the unique name
+# of the role definition, which is stored in KeyVaultRoleDefinition.name.
+print("\n.. Update a role definition")
+new_permissions = [
+    KeyVaultPermission(
+        data_actions=[KeyVaultDataAction.READ_HSM_KEY],
+        not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
     )
-    print("Role definition '{}' updated successfully.".format(updated_definition.role_name))
+]
+unique_definition_name = role_definition.name
+updated_definition = client.set_role_definition(
+    scope=scope, name=unique_definition_name, role_name=role_name, permissions=new_permissions
+)
+print("Role definition '{}' updated successfully.".format(updated_definition.role_name))
 
-    # Now let's create a role assignment to apply our role definition to our service principal.
-    # Since we don't provide the name keyword argument to create_role_definition, a unique role assignment name (a GUID)
-    # is generated for us.
-    print("\n.. Create a role assignment")
-    principal_id = os.environ["AZURE_CLIENT_ID"]
-    definition_id = updated_definition.id
-    role_assignment = client.create_role_assignment(scope=scope, definition_id=definition_id, principal_id=principal_id)
-    print("Role assignment created successfully.")
+# Now let's create a role assignment to apply our role definition to our service principal.
+# Since we don't provide the name keyword argument to create_role_definition, a unique role assignment name (a GUID)
+# is generated for us.
+print("\n.. Create a role assignment")
+principal_id = os.environ["AZURE_CLIENT_ID"]
+definition_id = updated_definition.id
+role_assignment = client.create_role_assignment(scope=scope, definition_id=definition_id, principal_id=principal_id)
+print("Role assignment created successfully.")
 
-    # Let's delete the role assignment.
-    print("\n.. Delete a role assignment")
-    client.delete_role_assignment(scope=scope, name=role_assignment.name)
-    print("Role assignment deleted successfully.")
+# Let's delete the role assignment.
+print("\n.. Delete a role assignment")
+client.delete_role_assignment(scope=scope, name=role_assignment.name)
+print("Role assignment deleted successfully.")
 
-    # Finally, let's delete the role definiton as well.
-    print("\n.. Delete a role definition")
-    client.delete_role_definition(scope=scope, name=definition_id)
-    print("Role definition deleted successfully.")
-
-except HttpResponseError as e:
-    print("\nThis sample has caught an error. {}".format(e.message))
+# Finally, let's delete the role definiton as well.
+print("\n.. Delete a role definition")
+client.delete_role_definition(scope=scope, name=definition_id)
+print("Role definition deleted successfully.")
