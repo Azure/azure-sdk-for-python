@@ -837,7 +837,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
     ):
         analyze_result = self._client.models(
-            api_version="v3.2-preview.1"
+            api_version=self._api_version
         ).AnalyzeJobState.deserialize(raw_response)
         return analyze_paged_result(
             doc_id_order,
@@ -919,10 +919,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     actions over a batch of documents.
         """
 
+        if self._api_version == "v3.0":
+            raise ValueError(
+                "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
+            )
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.2-preview.1").MultiLanguageBatchInput(
+        docs = self._client.models(api_version=self._api_version).MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -935,9 +939,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             raise ValueError("Multiple of the same action is not currently supported.")
 
         try:
-            analyze_tasks = self._client.models(api_version="v3.2-preview.1").JobManifestTasks(
+            analyze_tasks = self._client.models(api_version=self._api_version).JobManifestTasks(
                 entity_recognition_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -946,7 +950,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 entity_recognition_pii_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -955,7 +959,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 key_phrase_extraction_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -964,7 +968,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 entity_linking_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -973,7 +977,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 sentiment_analysis_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -982,7 +986,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ],
                 extractive_summarization_tasks=[
-                    t._to_generated()  # pylint: disable=protected-access
+                    t._to_generated(self._api_version)  # pylint: disable=protected-access
                     for t in [
                         a
                         for a in actions
@@ -990,7 +994,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ]
             )
-            analyze_body = self._client.models(api_version="v3.2-preview.1").AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version=self._api_version).AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return self._client.begin_analyze(

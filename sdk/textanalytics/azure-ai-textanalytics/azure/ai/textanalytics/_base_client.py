@@ -15,6 +15,7 @@ class TextAnalyticsApiVersion(str, Enum):
     """Text Analytics API versions supported by this package"""
 
     #: this is the default version
+    V3_2_PREVIEW = "v3.2-preview.1"
     V3_1 = "v3.1"
     V3_0 = "v3.0"
 
@@ -40,7 +41,7 @@ class TextAnalyticsClientBase(object):
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
-            api_version=kwargs.pop("api_version", TextAnalyticsApiVersion.V3_1),
+            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
             custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
@@ -60,3 +61,6 @@ class TextAnalyticsClientBase(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         self._client.close()
+
+
+DEFAULT_API_VERSION = TextAnalyticsApiVersion.V3_2_PREVIEW
