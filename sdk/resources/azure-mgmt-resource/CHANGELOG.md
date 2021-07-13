@@ -1,5 +1,11 @@
 # Release History
 
+## 18.1.0 (2021-07-13)
+
+**Features**
+
+  - Added operation group SubscriptionFeatureRegistrationsOperations
+
 ## 18.0.0 (2021-05-19)
 
 **Breaking changes**
