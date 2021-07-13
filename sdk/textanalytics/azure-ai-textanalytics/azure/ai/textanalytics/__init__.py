@@ -53,10 +53,12 @@ from ._models import (
     ExtractSummaryAction,
     ExtractSummaryResult,
     SummarySentence,
-    CustomClassificationAction,
+    ClassifyDocumentAction,
     RecognizeCustomEntitiesAction,
-    CustomClassificationResult,
-    Classification
+    ClassifyDocumentResult,
+    DocumentClassification,
+    MultiClassifyDocumentAction,
+    MultiClassifyDocumentResult,
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
@@ -111,10 +113,12 @@ __all__ = [
     "ExtractSummaryAction",
     "ExtractSummaryResult",
     "SummarySentence",
-    "CustomClassificationAction",
+    "ClassifyDocumentAction",
     "RecognizeCustomEntitiesAction",
-    "CustomClassificationResult",
-    "Classification"
+    "ClassifyDocumentResult",
+    "DocumentClassification",
+    "MultiClassifyDocumentAction",
+    "MultiClassifyDocumentResult",
 ]
 
 __version__ = VERSION

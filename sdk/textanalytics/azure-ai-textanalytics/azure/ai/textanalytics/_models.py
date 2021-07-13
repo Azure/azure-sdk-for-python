@@ -2219,15 +2219,13 @@ class RecognizeCustomEntitiesAction(DictMixin):
         self.string_index_type = kwargs.get('string_index_type', "UnicodeCodePoint")
 
 
-class CustomClassificationAction(DictMixin):
-    """CustomClassificationAction.
+class ClassifyDocumentAction(DictMixin):
+    """ClassifyDocumentAction.
 
     :keyword str project_name:
     :keyword str deployment_name:
-    :keyword bool multi_classification:
     :ivar str project_name:
     :ivar str deployment_name:
-    :ivar bool multi_classification:
     """
 
     def __init__(
@@ -2236,15 +2234,31 @@ class CustomClassificationAction(DictMixin):
     ):
         self.project_name = kwargs.get('project_name', None)
         self.deployment_name = kwargs.get('deployment_name', None)
-        self.multi_classification = kwargs.get('multi_classification', None)
 
 
-class CustomClassificationResult(DictMixin):
-    """CustomClassificationResult.
+class MultiClassifyDocumentAction(DictMixin):
+    """MultiClassifyDocumentAction.
+
+    :keyword str project_name:
+    :keyword str deployment_name:
+    :ivar str project_name:
+    :ivar str deployment_name:
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.project_name = kwargs.get('project_name', None)
+        self.deployment_name = kwargs.get('deployment_name', None)
+
+
+class ClassifyDocumentResult(DictMixin):
+    """ClassifyDocumentResult.
 
     :ivar str id: Required. Unique, non-empty document identifier.
     :ivar classification: Required. Recognized custom classification for the document.
-    :vartype classification: ~azure.ai.textanalytics.Classification
+    :vartype classification: ~azure.ai.textanalytics.DocumentClassification
     :ivar warnings: Required. Warnings encountered while processing document.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: if showStats=true was specified in the request this field will contain
@@ -2265,8 +2279,34 @@ class CustomClassificationResult(DictMixin):
         self.is_error = False
 
 
-class Classification(DictMixin):
-    """Classification.
+class MultiClassifyDocumentResult(DictMixin):
+    """MultiClassifyDocumentResult.
+
+    :ivar str id: Required. Unique, non-empty document identifier.
+    :ivar classifications: Required. Recognized custom classification for the document.
+    :vartype classifications: list[~azure.ai.textanalytics.DocumentClassification]
+    :ivar warnings: Required. Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of an ExtractSummaryResult.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs['id']
+        self.classifications = kwargs['classifications']
+        self.warnings = kwargs['warnings']
+        self.statistics = kwargs.get('statistics', None)
+        self.is_error = False
+
+
+class DocumentClassification(DictMixin):
+    """DocumentClassification.
 
     :ivar str category: Required. Class name.
     :ivar float confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
