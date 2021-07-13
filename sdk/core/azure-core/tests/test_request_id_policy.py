@@ -54,3 +54,12 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
         assert request.headers["x-ms-client-request-id"] == "VALUE"
     else:
         assert not "x-ms-client-request-id" in request.headers
+
+def test_request_id_already_exists():
+    """Test policy with no other policy and happy path"""
+    request_id_policy = RequestIdPolicy()
+    request = HttpRequest('GET', 'http://127.0.0.1/')
+    request.headers["x-ms-client-request-id"] = "VALUE"
+    pipeline_request = PipelineRequest(request, PipelineContext(None))
+    request_id_policy.on_request(pipeline_request)
+    assert request.headers["x-ms-client-request-id"] == "VALUE"
