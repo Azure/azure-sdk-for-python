@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from .._consumer import EventHubConsumer
     from .._consumer_client import EventHubConsumerClient
 
+
 _LOGGER = logging.getLogger(__name__)
 
 

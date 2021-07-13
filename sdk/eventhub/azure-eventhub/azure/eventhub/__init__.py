@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from uamqp import constants
+from .pyamqp import constants
 from ._common import EventData, EventDataBatch
 from ._version import VERSION
 
@@ -18,8 +18,7 @@ from ._connection_string_parser import (
     parse_connection_string,
     EventHubConnectionStringProperties
 )
-
-TransportType = constants.TransportType
+from ._constants import TransportType
 
 __all__ = [
     "EventData",

@@ -19,9 +19,9 @@ from typing import (
 )
 
 import six
-
+from .pyamqp import constants, _encode as encode
 from .pyamqp.message import BatchMessage, Message
-from .pyamqp import constants
+
 
 from ._utils import (
     set_message_partition_key,
@@ -123,6 +123,7 @@ class EventData(object):
         # type: () -> str
         # pylint: disable=bare-except
         try:
+            # TODO: below call won't work b/c pyamqp.message.message doesn't have body_type
             body_str = self.body_as_str()
         except:
             body_str = "<read-error>"
