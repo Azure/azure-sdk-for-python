@@ -1,5 +1,11 @@
 # Release History
 
+## 0.29.1 (2021-07-13)
+
+**Fixed bugs**
+
+  - Fixed parameters in create_or_update of OutboundFirewallRulesOperations
+
 ## 0.29.0 (2021-06-18)
 
 **Features**
