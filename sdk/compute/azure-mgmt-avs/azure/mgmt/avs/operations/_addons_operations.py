@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class AuthorizationsOperations(object):
-    """AuthorizationsOperations operations.
+class AddonsOperations(object):
+    """AddonsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -43,7 +43,7 @@ class AuthorizationsOperations(object):
 
     def list(
             self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """List ExpressRoute Circuit Authorizations in a private cloud.
+        """List addons in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -55,9 +55,9 @@ class AuthorizationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ExpressRouteAuthorization
+        :return: An iterator like instance of Addon
         :rtype:
-         ~azure.mgmt.avs.models.ExpressRouteAuthorizationPaged[~azure.mgmt.avs.models.ExpressRouteAuthorization]
+         ~azure.mgmt.avs.models.AddonPaged[~azure.mgmt.avs.models.Addon]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -109,30 +109,29 @@ class AuthorizationsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ExpressRouteAuthorizationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.AddonPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons'}
 
     def get(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """Get an ExpressRoute Circuit Authorization by name in a private cloud.
+            self, resource_group_name, private_cloud_name, addon_name, custom_headers=None, raw=False, **operation_config):
+        """Get an addon by name in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param authorization_name: Name of the ExpressRoute Circuit
-         Authorization in the private cloud
-        :type authorization_name: str
+        :param addon_name: Name of the addon for the private cloud
+        :type addon_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ExpressRouteAuthorization or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.avs.models.ExpressRouteAuthorization or
+        :return: Addon or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.avs.models.Addon or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -142,7 +141,7 @@ class AuthorizationsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str')
+            'addonName': self._serialize.url("addon_name", addon_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -171,19 +170,19 @@ class AuthorizationsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Addon', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations/{authorizationName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        authorization = None
+            self, resource_group_name, private_cloud_name, addon_name, properties=None, custom_headers=None, raw=False, **operation_config):
+        addon = models.Addon(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -191,7 +190,7 @@ class AuthorizationsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str')
+            'addonName': self._serialize.url("addon_name", addon_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -211,7 +210,7 @@ class AuthorizationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(authorization, 'ExpressRouteAuthorization')
+        body_content = self._serialize.body(addon, 'Addon')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -225,9 +224,9 @@ class AuthorizationsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Addon', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Addon', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -236,43 +235,43 @@ class AuthorizationsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an ExpressRoute Circuit Authorization in a private
-        cloud.
+            self, resource_group_name, private_cloud_name, addon_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update a addon in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: The name of the private cloud.
         :type private_cloud_name: str
-        :param authorization_name: Name of the ExpressRoute Circuit
-         Authorization in the private cloud
-        :type authorization_name: str
+        :param addon_name: Name of the addon for the private cloud
+        :type addon_name: str
+        :param properties: The properties of an addon resource
+        :type properties: ~azure.mgmt.avs.models.AddonProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         ExpressRouteAuthorization or
-         ClientRawResponse<ExpressRouteAuthorization> if raw==True
+        :return: An instance of LROPoller that returns Addon or
+         ClientRawResponse<Addon> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.avs.models.ExpressRouteAuthorization]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.avs.models.Addon]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.avs.models.ExpressRouteAuthorization]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.avs.models.Addon]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            authorization_name=authorization_name,
+            addon_name=addon_name,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Addon', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -287,18 +286,18 @@ class AuthorizationsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations/{authorizationName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, private_cloud_name, addon_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str')
+            'addonName': self._serialize.url("addon_name", addon_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -329,17 +328,16 @@ class AuthorizationsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete an ExpressRoute Circuit Authorization in a private cloud.
+            self, resource_group_name, private_cloud_name, addon_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a addon in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param authorization_name: Name of the ExpressRoute Circuit
-         Authorization in the private cloud
-        :type authorization_name: str
+        :param addon_name: Name of the addon for the private cloud
+        :type addon_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -354,7 +352,7 @@ class AuthorizationsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            authorization_name=authorization_name,
+            addon_name=addon_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -372,4 +370,4 @@ class AuthorizationsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations/{authorizationName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/addons/{addonName}'}

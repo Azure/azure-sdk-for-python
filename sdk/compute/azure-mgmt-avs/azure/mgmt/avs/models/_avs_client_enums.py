@@ -49,6 +49,12 @@ class PrivateCloudProvisioningState(str, Enum):
     updating = "Updating"
 
 
+class InternetEnum(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class ClusterProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
@@ -58,10 +64,31 @@ class ClusterProvisioningState(str, Enum):
     updating = "Updating"
 
 
-class InternetEnum(str, Enum):
+class AddonProvisioningState(str, Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class DatastoreProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    pending = "Pending"
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+
+
+class MountOptionEnum(str, Enum):
+
+    mount = "MOUNT"
+    attach = "ATTACH"
 
 
 class HcxEnterpriseSiteStatus(str, Enum):
@@ -70,3 +97,170 @@ class HcxEnterpriseSiteStatus(str, Enum):
     consumed = "Consumed"
     deactivated = "Deactivated"
     deleted = "Deleted"
+
+
+class GlobalReachConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    updating = "Updating"
+
+
+class GlobalReachConnectionStatus(str, Enum):
+
+    connected = "Connected"
+    connecting = "Connecting"
+    disconnected = "Disconnected"
+
+
+class CloudLinkStatus(str, Enum):
+
+    active = "Active"
+    building = "Building"
+    deleting = "Deleting"
+    failed = "Failed"
+    disconnected = "Disconnected"
+
+
+class SegmentStatusEnum(str, Enum):
+
+    successfailure = "SUCCESS, FAILURE"
+
+
+class WorkloadNetworkSegmentProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class WorkloadNetworkDhcpProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class PortMirroringDirectionEnum(str, Enum):
+
+    ingressegressbidirectional = "INGRESS, EGRESS, BIDIRECTIONAL"
+
+
+class PortMirroringStatusEnum(str, Enum):
+
+    successfailure = "SUCCESS, FAILURE"
+
+
+class WorkloadNetworkPortMirroringProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class VMGroupStatusEnum(str, Enum):
+
+    successfailure = "SUCCESS, FAILURE"
+
+
+class WorkloadNetworkVMGroupProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class VMTypeEnum(str, Enum):
+
+    regularedgeservice = "REGULAR, EDGE, SERVICE"
+
+
+class DnsServiceLogLevelEnum(str, Enum):
+
+    debug = "DEBUG"
+    info = "INFO"
+    warning = "WARNING"
+    error = "ERROR"
+    fatal = "FATAL"
+
+
+class DnsServiceStatusEnum(str, Enum):
+
+    success = "SUCCESS"
+    failure = "FAILURE"
+
+
+class WorkloadNetworkDnsServiceProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class WorkloadNetworkDnsZoneProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class WorkloadNetworkPublicIPProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    building = "Building"
+    deleting = "Deleting"
+    updating = "Updating"
+
+
+class ScriptParameterTypes(str, Enum):
+
+    string = "String"
+    secure_string = "SecureString"
+    credential = "Credential"
+    int_enum = "Int"
+    bool_enum = "Bool"
+    float_enum = "Float"
+
+
+class VisibilityParameterEnum(str, Enum):
+
+    visible = "Visible"
+    hidden = "Hidden"
+
+
+class OptionalParamEnum(str, Enum):
+
+    optional = "Optional"
+    required = "Required"
+
+
+class ScriptExecutionProvisioningState(str, Enum):
+
+    pending = "Pending"
+    running = "Running"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancelling = "Cancelling"
+    cancelled = "Cancelled"
+    deleting = "Deleting"
+
+
+class ScriptOutputStreamType(str, Enum):
+
+    information = "Information"
+    warning = "Warning"
+    output = "Output"
+    error = "Error"

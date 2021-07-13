@@ -51,6 +51,19 @@ class ClusterPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ClusterPaged, self).__init__(*args, **kwargs)
+class DatastorePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Datastore <azure.mgmt.avs.models.Datastore>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Datastore]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatastorePaged, self).__init__(*args, **kwargs)
 class HcxEnterpriseSitePaged(Paged):
     """
     A paging container for iterating over a list of :class:`HcxEnterpriseSite <azure.mgmt.avs.models.HcxEnterpriseSite>` object
@@ -77,3 +90,198 @@ class ExpressRouteAuthorizationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ExpressRouteAuthorizationPaged, self).__init__(*args, **kwargs)
+class GlobalReachConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`GlobalReachConnection <azure.mgmt.avs.models.GlobalReachConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[GlobalReachConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(GlobalReachConnectionPaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkSegmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkSegment <azure.mgmt.avs.models.WorkloadNetworkSegment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkSegment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkSegmentPaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkDhcpPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkDhcp <azure.mgmt.avs.models.WorkloadNetworkDhcp>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkDhcp]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkDhcpPaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkGatewayPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkGateway <azure.mgmt.avs.models.WorkloadNetworkGateway>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkGateway]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkGatewayPaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkPortMirroringPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkPortMirroring <azure.mgmt.avs.models.WorkloadNetworkPortMirroring>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkPortMirroring]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkPortMirroringPaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkVMGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkVMGroup <azure.mgmt.avs.models.WorkloadNetworkVMGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkVMGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkVMGroupPaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkVirtualMachinePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkVirtualMachine <azure.mgmt.avs.models.WorkloadNetworkVirtualMachine>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkVirtualMachine]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkVirtualMachinePaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkDnsServicePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkDnsService <azure.mgmt.avs.models.WorkloadNetworkDnsService>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkDnsService]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkDnsServicePaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkDnsZonePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkDnsZone <azure.mgmt.avs.models.WorkloadNetworkDnsZone>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkDnsZone]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkDnsZonePaged, self).__init__(*args, **kwargs)
+class WorkloadNetworkPublicIPPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadNetworkPublicIP <azure.mgmt.avs.models.WorkloadNetworkPublicIP>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadNetworkPublicIP]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadNetworkPublicIPPaged, self).__init__(*args, **kwargs)
+class CloudLinkPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CloudLink <azure.mgmt.avs.models.CloudLink>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CloudLink]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CloudLinkPaged, self).__init__(*args, **kwargs)
+class AddonPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Addon <azure.mgmt.avs.models.Addon>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Addon]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AddonPaged, self).__init__(*args, **kwargs)
+class ScriptPackagePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ScriptPackage <azure.mgmt.avs.models.ScriptPackage>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ScriptPackage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ScriptPackagePaged, self).__init__(*args, **kwargs)
+class ScriptCmdletPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ScriptCmdlet <azure.mgmt.avs.models.ScriptCmdlet>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ScriptCmdlet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ScriptCmdletPaged, self).__init__(*args, **kwargs)
+class ScriptExecutionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ScriptExecution <azure.mgmt.avs.models.ScriptExecution>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ScriptExecution]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ScriptExecutionPaged, self).__init__(*args, **kwargs)

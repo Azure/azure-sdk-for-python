@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class AuthorizationsOperations(object):
-    """AuthorizationsOperations operations.
+class DatastoresOperations(object):
+    """DatastoresOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -42,22 +42,24 @@ class AuthorizationsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, private_cloud_name, custom_headers=None, raw=False, **operation_config):
-        """List ExpressRoute Circuit Authorizations in a private cloud.
+            self, resource_group_name, private_cloud_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        """List datastores in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
+        :param cluster_name: Name of the cluster in the private cloud
+        :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ExpressRouteAuthorization
+        :return: An iterator like instance of Datastore
         :rtype:
-         ~azure.mgmt.avs.models.ExpressRouteAuthorizationPaged[~azure.mgmt.avs.models.ExpressRouteAuthorization]
+         ~azure.mgmt.avs.models.DatastorePaged[~azure.mgmt.avs.models.Datastore]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -67,7 +69,8 @@ class AuthorizationsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-                    'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str')
+                    'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -109,30 +112,32 @@ class AuthorizationsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ExpressRouteAuthorizationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.DatastorePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/datastores'}
 
     def get(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """Get an ExpressRoute Circuit Authorization by name in a private cloud.
+            self, resource_group_name, private_cloud_name, cluster_name, datastore_name, custom_headers=None, raw=False, **operation_config):
+        """Get a datastore in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param authorization_name: Name of the ExpressRoute Circuit
-         Authorization in the private cloud
-        :type authorization_name: str
+        :param cluster_name: Name of the cluster in the private cloud
+        :type cluster_name: str
+        :param datastore_name: Name of the datastore in the private cloud
+         cluster
+        :type datastore_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ExpressRouteAuthorization or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.avs.models.ExpressRouteAuthorization or
+        :return: Datastore or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.avs.models.Datastore or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -142,7 +147,8 @@ class AuthorizationsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str')
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'datastoreName': self._serialize.url("datastore_name", datastore_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -171,19 +177,19 @@ class AuthorizationsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Datastore', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations/{authorizationName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/datastores/{datastoreName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        authorization = None
+            self, resource_group_name, private_cloud_name, cluster_name, datastore_name, net_app_volume=None, disk_pool_volume=None, custom_headers=None, raw=False, **operation_config):
+        datastore = models.Datastore(net_app_volume=net_app_volume, disk_pool_volume=disk_pool_volume)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -191,7 +197,8 @@ class AuthorizationsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str')
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'datastoreName': self._serialize.url("datastore_name", datastore_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -211,7 +218,7 @@ class AuthorizationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(authorization, 'ExpressRouteAuthorization')
+        body_content = self._serialize.body(datastore, 'Datastore')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -225,9 +232,9 @@ class AuthorizationsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Datastore', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Datastore', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -236,43 +243,50 @@ class AuthorizationsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an ExpressRoute Circuit Authorization in a private
-        cloud.
+            self, resource_group_name, private_cloud_name, cluster_name, datastore_name, net_app_volume=None, disk_pool_volume=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update a datastore in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud.
+        :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param authorization_name: Name of the ExpressRoute Circuit
-         Authorization in the private cloud
-        :type authorization_name: str
+        :param cluster_name: Name of the cluster in the private cloud
+        :type cluster_name: str
+        :param datastore_name: Name of the datastore in the private cloud
+         cluster
+        :type datastore_name: str
+        :param net_app_volume: An Azure NetApp Files volume
+        :type net_app_volume: ~azure.mgmt.avs.models.NetAppVolume
+        :param disk_pool_volume: An iSCSI volume
+        :type disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         ExpressRouteAuthorization or
-         ClientRawResponse<ExpressRouteAuthorization> if raw==True
+        :return: An instance of LROPoller that returns Datastore or
+         ClientRawResponse<Datastore> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.avs.models.ExpressRouteAuthorization]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.avs.models.Datastore]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.avs.models.ExpressRouteAuthorization]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.avs.models.Datastore]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            authorization_name=authorization_name,
+            cluster_name=cluster_name,
+            datastore_name=datastore_name,
+            net_app_volume=net_app_volume,
+            disk_pool_volume=disk_pool_volume,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ExpressRouteAuthorization', response)
+            deserialized = self._deserialize('Datastore', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -287,18 +301,19 @@ class AuthorizationsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations/{authorizationName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/datastores/{datastoreName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, private_cloud_name, cluster_name, datastore_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
-            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str')
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'datastoreName': self._serialize.url("datastore_name", datastore_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -329,17 +344,19 @@ class AuthorizationsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete an ExpressRoute Circuit Authorization in a private cloud.
+            self, resource_group_name, private_cloud_name, cluster_name, datastore_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a datastore in a private cloud cluster.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud
         :type private_cloud_name: str
-        :param authorization_name: Name of the ExpressRoute Circuit
-         Authorization in the private cloud
-        :type authorization_name: str
+        :param cluster_name: Name of the cluster in the private cloud
+        :type cluster_name: str
+        :param datastore_name: Name of the datastore in the private cloud
+         cluster
+        :type datastore_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -354,7 +371,8 @@ class AuthorizationsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            authorization_name=authorization_name,
+            cluster_name=cluster_name,
+            datastore_name=datastore_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -372,4 +390,4 @@ class AuthorizationsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/authorizations/{authorizationName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/clusters/{clusterName}/datastores/{datastoreName}'}

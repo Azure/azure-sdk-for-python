@@ -25,7 +25,7 @@ class HcxEnterpriseSitesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-20".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-06-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class HcxEnterpriseSitesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-20"
+        self.api_version = "2021-06-01"
 
         self.config = config
 
@@ -64,7 +64,7 @@ class HcxEnterpriseSitesOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -138,7 +138,7 @@ class HcxEnterpriseSitesOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'hcxEnterpriseSiteName': self._serialize.url("hcx_enterprise_site_name", hcx_enterprise_site_name, 'str')
         }
@@ -179,7 +179,7 @@ class HcxEnterpriseSitesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/hcxEnterpriseSites/{hcxEnterpriseSiteName}'}
 
     def create_or_update(
-            self, resource_group_name, private_cloud_name, hcx_enterprise_site_name, hcx_enterprise_site, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, private_cloud_name, hcx_enterprise_site_name, custom_headers=None, raw=False, **operation_config):
         """Create or update an HCX Enterprise Site in a private cloud.
 
         :param resource_group_name: The name of the resource group. The name
@@ -190,8 +190,6 @@ class HcxEnterpriseSitesOperations(object):
         :param hcx_enterprise_site_name: Name of the HCX Enterprise Site in
          the private cloud
         :type hcx_enterprise_site_name: str
-        :param hcx_enterprise_site: The HCX Enterprise Site
-        :type hcx_enterprise_site: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -202,11 +200,13 @@ class HcxEnterpriseSitesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        hcx_enterprise_site = None
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'hcxEnterpriseSiteName': self._serialize.url("hcx_enterprise_site_name", hcx_enterprise_site_name, 'str')
         }
@@ -228,7 +228,7 @@ class HcxEnterpriseSitesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(hcx_enterprise_site, 'object')
+        body_content = self._serialize.body(hcx_enterprise_site, 'HcxEnterpriseSite')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -277,7 +277,7 @@ class HcxEnterpriseSitesOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'hcxEnterpriseSiteName': self._serialize.url("hcx_enterprise_site_name", hcx_enterprise_site_name, 'str')
         }

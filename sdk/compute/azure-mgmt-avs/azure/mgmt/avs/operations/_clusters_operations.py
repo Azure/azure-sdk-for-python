@@ -27,7 +27,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-20".
+    :ivar api_version: The API version to use for this operation. Constant value: "2021-06-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-20"
+        self.api_version = "2021-06-01"
 
         self.config = config
 
@@ -66,7 +66,7 @@ class ClustersOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -139,7 +139,7 @@ class ClustersOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
         }
@@ -186,7 +186,7 @@ class ClustersOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
         }
@@ -295,7 +295,7 @@ class ClustersOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
         }
@@ -402,7 +402,7 @@ class ClustersOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'privateCloudName': self._serialize.url("private_cloud_name", private_cloud_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
         }
