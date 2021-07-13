@@ -239,6 +239,8 @@ class ChatThreadClient(object):
     @distributed_trace_async
     async def send_typing_notification(
         self,
+        *,
+        sender_display_name: Optional[str] = None,
         **kwargs
     ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
@@ -259,7 +261,6 @@ class ChatThreadClient(object):
                 :caption: Send typing notification.
         """
 
-        sender_display_name = kwargs.pop("sender_display_name", None)
         send_typing_notification_request = SendTypingNotificationRequest(sender_display_name=sender_display_name)
 
         return await self._client.chat_thread.send_typing_notification(
