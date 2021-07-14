@@ -107,10 +107,6 @@ class MultivariateSample:
                 r = self.ad_client.get_detection_result(result_id)
                 time.sleep(1)
 
-            if r.summary.status == DetectionStatus.RUNNING or r.summary.status == DetectionStatus.CREATED:
-                print("Detection is not ready yet. Detection status: {}".format(r.summary.status))
-                return None
-
             if r.summary.status == DetectionStatus.FAILED:
                 print("Detection failed.")
                 print("Errors:")
