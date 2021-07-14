@@ -40,10 +40,10 @@ class TableCheckpointStore:
     def _look_entity_checkpoint(self, checkpoint, **kwargs):
         pass
 
-    def list_ownership(self, eventhub, namespace, consumergroup, **kwargs):
+    def list_ownership(self, namespace, eventhub, consumergroup, **kwargs):
         pass
 
-    def list_checkpoints(self, eventhub, namespace, consumergroup, **kwargs):
+    def list_checkpoints(self, namespace, eventhub, consumergroup, **kwargs):
         pass
 
     def update_checkpoint(self, checkpoint, **kwargs):
