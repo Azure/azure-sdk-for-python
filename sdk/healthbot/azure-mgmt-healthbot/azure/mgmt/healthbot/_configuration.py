@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class HealthbotConfiguration(Configuration):
-    """Configuration for Healthbot.
+class HealthbotClientConfiguration(Configuration):
+    """Configuration for HealthbotClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -44,11 +44,11 @@ class HealthbotConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(HealthbotConfiguration, self).__init__(**kwargs)
+        super(HealthbotClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-12-08"
+        self.api_version = "2021-06-10"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-healthbot/{}'.format(VERSION))
         self._configure(**kwargs)

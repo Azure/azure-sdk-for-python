@@ -16,15 +16,16 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import HealthbotConfiguration
+from ._configuration import HealthbotClientConfiguration
 from .operations import BotsOperations
 from .operations import Operations
 from . import models
 
 
-class Healthbot(object):
-    """Microsoft Healthcare Bot is a cloud platform that empowers developers in Healthcare organizations to build and deploy their compliant, AI-powered virtual health assistants and health bots, that help them improve processes and reduce costs.
+class HealthbotClient(object):
+    """Azure Health Bot is a cloud platform that empowers developers in Healthcare organizations to build and deploy their compliant, AI-powered virtual health assistants and health bots, that help them improve processes and reduce costs.
 
     :ivar bots: BotsOperations operations
     :vartype bots: azure.mgmt.healthbot.operations.BotsOperations
@@ -48,11 +49,12 @@ class Healthbot(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = HealthbotConfiguration(credential, subscription_id, **kwargs)
+        self._config = HealthbotClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.bots = BotsOperations(
@@ -60,12 +62,30 @@ class Healthbot(object):
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
 
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
+
     def close(self):
         # type: () -> None
         self._client.close()
 
     def __enter__(self):
-        # type: () -> Healthbot
+        # type: () -> HealthbotClient
         self._client.__enter__()
         return self
 

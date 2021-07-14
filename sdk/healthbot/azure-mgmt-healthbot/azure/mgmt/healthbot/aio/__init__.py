@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._healthbot import Healthbot
-__all__ = ['Healthbot']
+from ._healthbot_client import HealthbotClient
+__all__ = ['HealthbotClient']

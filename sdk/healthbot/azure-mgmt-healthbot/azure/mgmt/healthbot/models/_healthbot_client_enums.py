@@ -35,8 +35,19 @@ class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type. The type 'SystemAssigned, UserAssigned' includes both an implicitly created
+    identity and a set of user assigned identities. The type 'None' will remove any identities from
+    the Azure Health Bot
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"
+
 class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the HealthBot SKU
+    """The name of the Azure Health Bot SKU
     """
 
     F0 = "F0"

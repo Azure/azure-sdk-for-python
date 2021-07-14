@@ -60,7 +60,7 @@ class BotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-08"
+        api_version = "2021-06-10"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -91,7 +91,7 @@ class BotsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -114,18 +114,18 @@ class BotsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.HealthBot"]
-        """Create a new HealthBot.
+        """Create a new Azure Health Bot.
 
         :param resource_group_name: The name of the Bot resource group in the user subscription.
         :type resource_group_name: str
         :param bot_name: The name of the Bot resource.
         :type bot_name: str
-        :param parameters: The parameters to provide for the created bot.
+        :param parameters: The parameters to provide for the created Azure Health Bot.
         :type parameters: ~azure.mgmt.healthbot.models.HealthBot
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either HealthBot or the result of cls(response)
@@ -201,7 +201,7 @@ class BotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-08"
+        api_version = "2021-06-10"
         accept = "application/json"
 
         # Construct URL
@@ -227,7 +227,7 @@ class BotsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('HealthBot', pipeline_response)
@@ -252,7 +252,7 @@ class BotsOperations(object):
         :type resource_group_name: str
         :param bot_name: The name of the Bot resource.
         :type bot_name: str
-        :param parameters: The parameters to provide for the required bot.
+        :param parameters: The parameters to provide for the required Azure Health Bot.
         :type parameters: ~azure.mgmt.healthbot.models.HealthBotUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HealthBot, or the result of cls(response)
@@ -264,7 +264,7 @@ class BotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-08"
+        api_version = "2021-06-10"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -295,7 +295,7 @@ class BotsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -322,7 +322,7 @@ class BotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-08"
+        api_version = "2021-06-10"
         accept = "application/json"
 
         # Construct URL
@@ -348,7 +348,7 @@ class BotsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -371,8 +371,8 @@ class BotsOperations(object):
         :type bot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -441,7 +441,7 @@ class BotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-08"
+        api_version = "2021-06-10"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -482,7 +482,7 @@ class BotsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -510,7 +510,7 @@ class BotsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-08"
+        api_version = "2021-06-10"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -550,7 +550,7 @@ class BotsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

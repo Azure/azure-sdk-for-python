@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._healthbot import Healthbot
+from ._healthbot_client import HealthbotClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['Healthbot']
+__all__ = ['HealthbotClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore
