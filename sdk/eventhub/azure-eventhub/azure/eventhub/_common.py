@@ -17,11 +17,7 @@ from typing import (
     TYPE_CHECKING,
     cast,
 )
-
 import six
-
-from .pyamqp import constants, _encode as encode
-from .pyamqp.message import BatchMessage, Message
 
 from ._utils import (
     set_message_partition_key,
@@ -56,6 +52,9 @@ from .amqp import (
     AmqpMessageHeader,
     AmqpMessageProperties,
 )
+
+from .pyamqp import constants, utils as pyutils
+from .pyamqp.message import BatchMessage, Message
 
 if TYPE_CHECKING:
     import datetime
@@ -108,8 +107,8 @@ class EventData(object):
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
-            data_body=body, annotations={}, application_properties={}
-        )  
+            data_body=[body], annotations={}, application_properties={}
+        )
         self.message = (self._raw_amqp_message._message)  # pylint:disable=protected-access
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
@@ -483,13 +482,14 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = max_size_in_bytes #TODO: FIND REPLACEMENT - or constants.MAX_MESSAGE_LENGTH_BYTES
-        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_FRAME_SIZE_BYTES
+        self.message = BatchMessage(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
-
-        set_message_partition_key(self.message, self._partition_key)
-        self._size = len(encode.encode_payload(b"", self.message))
+        # TODO: test whether we need to set partition key of a batch message, or setting each single message if enough
+        #  this is performance related
+        #set_message_partition_key(self.message, self._partition_key)
+        self._size = pyutils.get_message_encoded_size(self.message)
         self._count = 0
 
     def __repr__(self):
@@ -562,8 +562,7 @@ class EventDataBatch(object):
                 )
 
         trace_message(outgoing_event_data)
-        event_data_size = outgoing_event_data.message.get_message_encoded_size()
-
+        event_data_size = pyutils.get_message_encoded_size(outgoing_event_data.message)
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
@@ -579,7 +578,7 @@ class EventDataBatch(object):
                 )
             )
 
-        self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
+        pyutils.add_batch(self.message, outgoing_event_data.message)
         self._size = size_after_add
         self._count += 1
 

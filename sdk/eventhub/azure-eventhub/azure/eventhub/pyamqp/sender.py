@@ -113,8 +113,6 @@ class SenderLink(Link):
             self._outgoing_flow()
 
     def _incoming_disposition(self, frame):
-        if self.network_trace:
-            _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
         if not frame[3]:  # settled
             return
         range_end = (frame[2] or frame[1]) + 1  # first or last
