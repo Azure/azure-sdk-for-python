@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Bumped dependency on `msrest` to `>=0.6.21`
+
 ## 12.1.0 (2021-07-06)
 
 ### Features Added
