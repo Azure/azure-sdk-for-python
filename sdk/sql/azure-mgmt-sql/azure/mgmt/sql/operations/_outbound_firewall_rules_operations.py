@@ -110,7 +110,7 @@ class OutboundFirewallRulesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, server_name, outbound_rule_fqdn, custom_headers=None, raw=False, **operation_config):
-        parameters = None
+        parameters = {}
 
         # Construct URL
         url = self.create_or_update.metadata['url']
