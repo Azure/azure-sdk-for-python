@@ -133,6 +133,9 @@ def test_receive_over_websocket_sync(connstr_senders):
     app_prop = {"raw_prop": "raw_value"}
 
     def on_event(partition_context, event):
+        assert event.partition_key == b'0'
+        ed_str = str(event)
+        assert ", partition_key=" in ed_str
         on_event.received.append(event)
         on_event.app_prop = event.properties
 
@@ -158,6 +161,3 @@ def test_receive_over_websocket_sync(connstr_senders):
     assert len(on_event.received) == 5
     for ed in on_event.received:
         assert ed.properties[b"raw_prop"] == b"raw_value"
-        assert ed.partition_key == b'0'
-        ed_str = str(ed)
-        assert ", partition_key=" in ed_str
