@@ -86,9 +86,6 @@ class MultivariateSample:
             # Return the latest model id
             return trained_model_id
 
-        # If model status is "CREATED" or "RUNNING"
-        print("Model is not ready yet. Model status: {}".format(model_status))
-        return None
 
     def detect(self, model_id, start_time, end_time):
 
