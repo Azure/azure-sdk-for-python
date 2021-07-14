@@ -181,6 +181,29 @@ class AmqpAnnotatedMessage(object):
 
         return Message(**dict)
 
+        # amqp_body = self._message._body  # pylint: disable=protected-access
+        # if isinstance(amqp_body, uamqp.message.DataBody):
+        #     amqp_body_type = uamqp.MessageBodyType.Data
+        #     amqp_body = list(amqp_body.data)
+        # elif isinstance(amqp_body, uamqp.message.SequenceBody):
+        #     amqp_body_type = uamqp.MessageBodyType.Sequence
+        #     amqp_body = list(amqp_body.data)
+        # else:
+        #     # amqp_body is type of uamqp.message.ValueBody
+        #     amqp_body_type = uamqp.MessageBodyType.Value
+        #     amqp_body = amqp_body.data
+        #
+        # return uamqp.message.Message(
+        #     body=amqp_body,
+        #     body_type=amqp_body_type,
+        #     header=message_header,
+        #     properties=message_properties,
+        #     application_properties=self.application_properties,
+        #     annotations=self.annotations,
+        #     delivery_annotations=self.delivery_annotations,
+        #     footer=self.footer
+        # )
+
     @property
     def body(self) -> Any:
         """The body of the Message. The format may vary depending on the body type:

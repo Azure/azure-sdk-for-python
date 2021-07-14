@@ -238,6 +238,8 @@ class Session(object):
         self._connection._process_outgoing_frame(self.channel, frame)
 
     def _incoming_disposition(self, frame):
+        if self.network_trace:
+            _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
         for link in self._input_handles.values():
             link._incoming_disposition(frame)
 
