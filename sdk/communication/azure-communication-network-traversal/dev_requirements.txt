@@ -2,7 +2,5 @@
 -e ../../identity/azure-identity
 ../azure-communication-identity
 ../../core/azure-core
-../../nspkg/azure-communication-nspkg
-../azure-mgmt-communication
 aiohttp>=3.0; python_version >= '3.5'
 -e ../../../tools/azure-devtools
