@@ -9,7 +9,7 @@ from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
 )
-from ._base_client import DEFAULT_API_VERSION
+from ._version import DEFAULT_API_VERSION
 
 from ._generated.v3_0 import models as _v3_0_models
 

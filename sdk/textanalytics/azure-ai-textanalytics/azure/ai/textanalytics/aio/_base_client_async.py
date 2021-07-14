@@ -9,7 +9,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
 from .._policies import TextAnalyticsResponseHookPolicy
 from .._user_agent import USER_AGENT
-from .._base_client import DEFAULT_API_VERSION
+from .._version import DEFAULT_API_VERSION
 
 
 def _authentication_policy(credential):

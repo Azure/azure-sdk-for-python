@@ -5,3 +5,4 @@
 # ------------------------------------
 
 VERSION = "5.1.1"
+DEFAULT_API_VERSION = "v3.2-preview.1"

@@ -9,6 +9,7 @@ from azure.core.credentials import AzureKeyCredential
 from ._generated import TextAnalyticsClient as _TextAnalyticsClient
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
+from ._version import DEFAULT_API_VERSION
 
 
 class TextAnalyticsApiVersion(str, Enum):
@@ -61,6 +62,3 @@ class TextAnalyticsClientBase(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         self._client.close()
-
-
-DEFAULT_API_VERSION = TextAnalyticsApiVersion.V3_2_PREVIEW
