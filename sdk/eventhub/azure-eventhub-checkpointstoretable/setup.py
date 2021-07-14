@@ -10,7 +10,7 @@ import re
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
-PACKAGE_NAME = "azure-eventhub-checkpointstoretable"
+PACKAGE_NAME = "azure/eventhub/extensions/checkpointstoretable"
 PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Tables Storage"
 
 # a-b-c => a/b/c
