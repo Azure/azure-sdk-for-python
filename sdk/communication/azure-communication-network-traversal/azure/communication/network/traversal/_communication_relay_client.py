@@ -39,12 +39,13 @@ class CommunicationRelayClient(object):
             credential, # type: TokenCredential
             **kwargs # type: Any
         ):
+        # pylint: disable=raise-missing-from
         # type: (...) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError as e:
-            raise ValueError("Account URL must be a string.") from e
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
 
         if not credential:
             raise ValueError(
