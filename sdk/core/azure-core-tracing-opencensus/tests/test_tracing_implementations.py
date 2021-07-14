@@ -12,7 +12,7 @@ except ImportError:
     import mock
 
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, Link
 from opencensus.trace import tracer as tracer_module
 from opencensus.trace.attributes import Attributes
 from opencensus.trace.span import SpanKind as OpenCensusSpanKind
@@ -128,6 +128,47 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class.add_attribute("test", "test2")
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
+
+    def test_passing_kind_in_ctor(self):
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(kind=SpanKind.CLIENT)
+            assert wrapped_class.kind == SpanKind.CLIENT
+
+    def test_passing_links_in_ctor(self):
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(
+                links=[Link(
+                    headers= {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
+                    )
+                ]
+            )
+            assert len(wrapped_class.span_instance.links) == 1
+            link = wrapped_class.span_instance.links[0]
+            assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
+            assert link.span_id == "231ebdc614cb9ddd"
+
+    def test_passing_links_in_ctor_with_attr(self):
+        attributes = {"attr1": 1}
+        with ContextHelper() as ctx:
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(
+                links=[Link(
+                    headers= {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"},
+                    attributes=attributes
+                    )
+                ]
+            )
+            assert len(wrapped_class.span_instance.links) == 1
+            link = wrapped_class.span_instance.links[0]
+            assert link.attributes is not None
+            assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
+            assert link.span_id == "231ebdc614cb9ddd"
+
 
     def test_set_http_attributes(self):
         with ContextHelper():

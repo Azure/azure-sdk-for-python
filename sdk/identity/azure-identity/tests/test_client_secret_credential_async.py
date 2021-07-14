@@ -196,7 +196,7 @@ def test_token_cache():
         assert not mock_msal_extensions.PersistedTokenCache.called
 
         ClientSecretCredential(
-            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions(),
+            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
         )
         assert mock_msal_extensions.PersistedTokenCache.call_count == 1
 

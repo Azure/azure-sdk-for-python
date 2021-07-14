@@ -6,7 +6,7 @@ import json
 import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import CertificateCredential, TokenCachePersistenceOptions
+from azure.identity import CertificateCredential, RegionalAuthority, TokenCachePersistenceOptions
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
@@ -25,7 +25,6 @@ from helpers import (
     mock_response,
     msal_validating_transport,
     Request,
-    validating_transport,
 )
 
 try:
@@ -78,7 +77,7 @@ def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
     transport = msal_validating_transport(
-        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))]
     )
 
     credential = CertificateCredential(
@@ -133,6 +132,38 @@ def test_authority(authority):
     assert mock_ctor.call_count == 1
     _, kwargs = mock_ctor.call_args
     assert kwargs["authority"] == expected_authority
+
+
+def test_regional_authority():
+    """the credential should configure MSAL with a regional authority specified via kwarg or environment variable"""
+
+    mock_confidential_client = Mock(
+        return_value=Mock(acquire_token_silent_with_error=lambda *_, **__: {"access_token": "**", "expires_in": 3600}),
+    )
+
+    for region in RegionalAuthority:
+        mock_confidential_client.reset_mock()
+
+        with patch.dict("os.environ", {}, clear=True):
+            credential = CertificateCredential("tenant", "client-id", CERT_PATH, regional_authority=region)
+        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
+            # must call get_token because the credential constructs the MSAL application lazily
+            credential.get_token("scope")
+
+        assert mock_confidential_client.call_count == 1
+        _, kwargs = mock_confidential_client.call_args
+        assert kwargs["azure_region"] == region
+        mock_confidential_client.reset_mock()
+
+        # region can be configured via environment variable
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
+            credential = CertificateCredential("tenant", "client-id", CERT_PATH)
+        with patch("msal.ConfidentialClientApplication", mock_confidential_client):
+            credential.get_token("scope")
+
+        assert mock_confidential_client.call_count == 1
+        _, kwargs = mock_confidential_client.call_args
+        assert kwargs["azure_region"] == region
 
 
 def test_requires_certificate():

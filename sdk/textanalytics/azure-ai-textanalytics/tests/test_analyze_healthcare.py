@@ -152,8 +152,8 @@ class TestHealth(TextAnalyticsTest):
             if doc.is_error:
                 num_error += 1
                 continue
-            assert doc.statistics.characters_count
-            assert doc.statistics.transactions_count
+            assert doc.statistics.character_count
+            assert doc.statistics.transaction_count
         assert num_error == 1
 
     @TextAnalyticsPreparer()
