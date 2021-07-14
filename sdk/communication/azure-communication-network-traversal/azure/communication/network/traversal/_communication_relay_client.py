@@ -10,7 +10,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.communication.identity import CommunicationUserIdentifier
 
 from ._generated._communication_network_traversal_client\
-    import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
+    import CommunicationNetworkTraversalClient\
+        as CommunicationNetworkTraversalClientGen
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 from ._generated.models import CommunicationRelayConfiguration
@@ -42,8 +43,8 @@ class CommunicationRelayClient(object):
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as e:
+            raise ValueError("Account URL must be a string.") from e
 
         if not credential:
             raise ValueError(
@@ -88,7 +89,7 @@ class CommunicationRelayClient(object):
     ):
         # type: (Any) -> CommunicationRelayConfiguration
         """get a Communication Relay configuration
-
+        :param: CommunicationUserIdentifier user: A user from which we will get an id
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.CommunicationRelayConfiguration
         """

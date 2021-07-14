@@ -41,8 +41,8 @@ class CommunicationRelayClient:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as e:
+            raise ValueError("Account URL must be a string.") from e
 
         if not credential:
             raise ValueError(
