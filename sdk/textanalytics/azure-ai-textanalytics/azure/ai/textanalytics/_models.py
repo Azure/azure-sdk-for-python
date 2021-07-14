@@ -71,6 +71,12 @@ class DictMixin(object):
         return default
 
 
+class SortSummarySentencesBy(str, Enum):
+
+    OFFSET = "Offset"
+    RANK = "Rank"
+
+
 class EntityAssociation(str, Enum):
     """Describes if the entity is the subject of the text or if it describes someone else."""
 
@@ -2094,7 +2100,8 @@ class ExtractSummaryAction(DictMixin):
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
     :keyword int sentence_count: Number of sentences to return.
-    :keyword str sort_by:  Possible values include: "offset", "rank". Default value: "offset".
+    :keyword sort_by: Possible values include: "Offset", "Rank". Default value: "Offset".
+    :paramtype sort_by: str or ~azure.ai.textanalytics.SortSummarySentencesBy
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2109,7 +2116,8 @@ class ExtractSummaryAction(DictMixin):
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
     :ivar int sentence_count: Number of sentences to return.
-    :ivar str sort_by:  Possible values include: "offset", "rank". Default value: "offset".
+    :ivar str sort_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+    :vartype sort_by: str or ~azure.ai.textanalytics.SortSummarySentencesBy
     """
 
     def __init__(self, **kwargs):

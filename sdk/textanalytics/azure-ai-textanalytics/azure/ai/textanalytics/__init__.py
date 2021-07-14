@@ -52,7 +52,8 @@ from ._models import (
     HealthcareEntityCategory,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    SummarySentence
+    SummarySentence,
+    SortSummarySentencesBy
 )
 
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller
@@ -106,7 +107,8 @@ __all__ = [
     "HealthcareEntityCategory",
     "ExtractSummaryAction",
     "ExtractSummaryResult",
-    "SummarySentence"
+    "SummarySentence",
+    "SortSummarySentencesBy"
 ]
 
 __version__ = VERSION

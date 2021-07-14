@@ -71,8 +71,8 @@ class ErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class ExtractiveSummarizationTaskParametersSortBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    OFFSET = "offset"
-    RANK = "rank"
+    OFFSET = "Offset"
+    RANK = "Rank"
 
 class HealthcareEntityCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Healthcare Entity Category.

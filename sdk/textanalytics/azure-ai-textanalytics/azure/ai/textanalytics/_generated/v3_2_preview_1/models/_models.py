@@ -1194,7 +1194,7 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
     :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
     :param sentence_count:
     :type sentence_count: int
-    :param sort_by:  Possible values include: "offset", "rank". Default value: "offset".
+    :param sort_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
     :type sort_by: str or
      ~azure.ai.textanalytics.v3_2_preview_1.models.ExtractiveSummarizationTaskParametersSortBy
     """
@@ -1216,7 +1216,7 @@ class ExtractiveSummarizationTaskParameters(msrest.serialization.Model):
         self.logging_opt_out = kwargs.get('logging_opt_out', True)
         self.string_index_type = kwargs.get('string_index_type', None)
         self.sentence_count = kwargs.get('sentence_count', 3)
-        self.sort_by = kwargs.get('sort_by', "offset")
+        self.sort_by = kwargs.get('sort_by', "Offset")
 
 
 class ExtractiveSummarizationTaskResult(msrest.serialization.Model):
