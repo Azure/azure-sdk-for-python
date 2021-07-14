@@ -150,8 +150,8 @@ class MultivariateSample:
 
 
 if __name__ == '__main__':
-    SUBSCRIPTION_KEY = "<Your Subscription Key>"
-    ANOMALY_DETECTOR_ENDPOINT = "<Your Endpoint>"
+    SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
+    ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
 
     # *****************************
     # Use your own data source here
