@@ -20,7 +20,9 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
+from datetime import datetime
 import os
+from uuid import uuid4
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -32,18 +34,22 @@ class InsertDeleteEntity(object):
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = (
-            u"DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
                 self.account_name, self.access_key, self.endpoint_suffix
             )
         )
         self.table_name = "SampleInsertDelete"
 
         self.entity = {
-            u"PartitionKey": u"color",
-            u"RowKey": u"brand",
-            u"text": u"Marker",
-            u"color": u"Purple",
-            u"price": u"5",
+            "PartitionKey": u"color",
+            "RowKey": u"brand",
+            "text": "Marker",
+            "color": "Purple",
+            "price": 4.99,
+            "last_updated": datetime.today(),
+            "product_id": uuid4(),
+            "inventory_count": 42,
+            "some_binary_value": b"somebinaryvalue"
         }
 
     def create_entity(self):

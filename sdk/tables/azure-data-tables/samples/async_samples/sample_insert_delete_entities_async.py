@@ -22,6 +22,8 @@ USAGE:
 
 import os
 import asyncio
+from datetime import datetime
+from uuid import uuid4
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -37,7 +39,17 @@ class InsertDeleteEntity(object):
         )
         self.table_name = "InsertDeleteAsync"
 
-        self.entity = {"PartitionKey": "color", "RowKey": "brand", "text": "Marker", "color": "Purple", "price": "5"}
+        self.entity = {
+            "PartitionKey": "color",
+            "RowKey": "brand",
+            "text": "Marker",
+            "color": "Purple",
+            "price": 4.99,
+            "last_updated": datetime.today(),
+            "product_id": uuid4(),
+            "inventory_count": 42,
+            "some_binary_value": b"somebinaryvalue"
+        }
 
     async def create_entity(self):
         from azure.data.tables.aio import TableClient

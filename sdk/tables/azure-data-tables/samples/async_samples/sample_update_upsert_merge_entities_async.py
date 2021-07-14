@@ -22,6 +22,7 @@ USAGE:
 from datetime import datetime, timedelta
 import os
 from time import sleep
+from uuid import uuid4
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -49,12 +50,17 @@ class TableEntitySamples(object):
             await table.create_table()
 
             my_entity = {
-                "PartitionKey": "color",
-                "RowKey": "crayola",
+                "PartitionKey": u"color",
+                "RowKey": u"brand",
                 "text": "Marker",
                 "color": "Purple",
-                "price": "5",
+                "price": 4.99,
+                "last_updated": datetime.today(),
+                "product_id": uuid4(),
+                "inventory_count": 42,
+                "some_binary_value": b"somebinaryvalue"
             }
+
             try:
                 created_entity = await table.create_entity(entity=my_entity)
                 print("Created entity: {}".format(created_entity))
@@ -80,8 +86,24 @@ class TableEntitySamples(object):
         async with table:
             await table.create_table()
 
-            entity = {"PartitionKey": "color2", "RowKey": "sharpie", "text": "Marker", "color": "Purple", "price": "5"}
-            entity1 = {"PartitionKey": "color2", "RowKey": "crayola", "text": "Marker", "color": "Red", "price": "3"}
+            entity = {
+                u"PartitionKey": u"color2",
+                u"RowKey": u"sharpie",
+                u"text": u"Marker",
+                u"color": u"Purple",
+                u"price": 5.99,
+                u"inventory": 42,
+                "product_id": uuid4(),
+            }
+            entity1 = {
+                u"PartitionKey": u"color2",
+                u"RowKey": u"crayola",
+                u"text": u"Marker",
+                u"color": u"Red",
+                u"price": 3.99,
+                u"inventory": 42,
+                "product_id": uuid4(),
+            }
 
             try:
                 # Create entities
@@ -109,8 +131,24 @@ class TableEntitySamples(object):
         async with table:
             await table.create_table()
 
-            entity = {"PartitionKey": "color", "RowKey": "sharpie", "text": "Marker", "color": "Purple", "price": "5"}
-            entity1 = {"PartitionKey": "color2", "RowKey": "crayola", "text": "Marker", "color": "Red", "price": "3"}
+            entity = {
+                u"PartitionKey": u"color2",
+                u"RowKey": u"sharpie",
+                u"text": u"Marker",
+                u"color": u"Purple",
+                u"price": 5.99,
+                u"inventory": 42,
+                "product_id": uuid4(),
+            }
+            entity1 = {
+                u"PartitionKey": u"color2",
+                u"RowKey": u"crayola",
+                u"text": u"Marker",
+                u"color": u"Red",
+                u"price": 3.99,
+                u"inventory": 42,
+                "product_id": uuid4(),
+            }
 
             try:
                 # Create entities
