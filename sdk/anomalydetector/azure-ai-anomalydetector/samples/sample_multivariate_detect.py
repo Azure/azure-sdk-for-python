@@ -44,14 +44,14 @@ class MultivariateSample:
 
         self.data_source = data_source
 
-    def train(self, start_time, end_time, timeout_in_seconds=1000):
+    def train(self, start_time, end_time):
 
         # Number of models available now
         model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
         print("{:d} available models before training.".format(len(model_list)))
 
         # Use sample data to train the model
-        print("Training new model...")
+        print("Training new model...(it may take a few minutes)")
         data_feed = ModelInfo(start_time=start_time, end_time=end_time, source=self.data_source)
         response_header = \
             self.ad_client.train_multivariate_model(data_feed, cls=lambda *args: [args[i] for i in range(len(args))])[
@@ -61,8 +61,7 @@ class MultivariateSample:
         # Wait until the model is ready. It usually takes several minutes
         model_status = None
 
-        start = time.time()
-        while time.time() - start < timeout_in_seconds and model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
+        while model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
             model_info = self.ad_client.get_multivariate_model(trained_model_id).model_info
             model_status = model_info.status
             time.sleep(1)
@@ -91,7 +90,7 @@ class MultivariateSample:
         print("Model is not ready yet. Model status: {}".format(model_status))
         return None
 
-    def detect(self, model_id, start_time, end_time, timeout_in_seconds=500):
+    def detect(self, model_id, start_time, end_time):
 
         # Detect anomaly in the same data source (but a different interval)
         try:
@@ -102,8 +101,9 @@ class MultivariateSample:
 
             # Get results (may need a few seconds)
             r = self.ad_client.get_detection_result(result_id)
-            start = time.time()
-            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED and time.time() - start < timeout_in_seconds:
+            print("Get detection result...(it may take a few seconds)")
+
+            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED:
                 r = self.ad_client.get_detection_result(result_id)
                 time.sleep(1)
 
