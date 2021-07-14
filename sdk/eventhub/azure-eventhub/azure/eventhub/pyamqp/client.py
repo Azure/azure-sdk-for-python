@@ -22,7 +22,6 @@ from .sender import SenderLink
 from .receiver import ReceiverLink
 from .sasl import SASLTransport
 from .endpoints import Source, Target
-from .error import AMQPConnectionError
 
 from .constants import (
     MessageDeliveryState,
@@ -33,6 +32,9 @@ from .constants import (
     SEND_DISPOSITION_ACCEPT,
     SEND_DISPOSITION_REJECT,
     AUTH_TYPE_CBS,
+    MAX_FRAME_SIZE_BYTES,
+    INCOMING_WINDOW,
+    OUTGOING_WIDNOW,
     DEFAULT_AUTH_TIMEOUT,
     MESSAGE_DELIVERY_DONE_STATES
 )
@@ -43,7 +45,6 @@ from .authentication import _CBSAuth
 
 
 _logger = logging.getLogger(__name__)
-_MAX_FRAME_SIZE_BYTES = 64 * 1024
 
 
 class AMQPClient(object):
@@ -129,15 +130,15 @@ class AMQPClient(object):
         self._mgmt_links = {}
 
         # Connection settings
-        self._max_frame_size = kwargs.pop('max_frame_size', None) or _MAX_FRAME_SIZE_BYTES
+        self._max_frame_size = kwargs.pop('max_frame_size', None) or MAX_FRAME_SIZE_BYTES
         self._channel_max = kwargs.pop('channel_max', None) or 65535
         self._idle_timeout = kwargs.pop('idle_timeout', None)
         self._properties = kwargs.pop('properties', None)
         self._network_trace = kwargs.pop("network_trace", False)
 
         # Session settings
-        self._outgoing_window = kwargs.pop('outgoing_window', None) or _MAX_FRAME_SIZE_BYTES
-        self._incoming_window = kwargs.pop('incoming_window', None) or _MAX_FRAME_SIZE_BYTES
+        self._outgoing_window = kwargs.pop('outgoing_window', None) or OUTGOING_WIDNOW
+        self._incoming_window = kwargs.pop('incoming_window', None) or INCOMING_WINDOW
         self._handle_max = kwargs.pop('handle_max', None)
 
         # Link settings
@@ -303,10 +304,6 @@ class AMQPClient(object):
             operation_type=operation_type,
             timeout=timeout
         )
-        status_code_field = kwargs.pop('status_code_field', b'statusCode')
-        description_field = kwargs.pop('description_field', b'statusDescription')
-        response.application_properties[status_code_field] = status
-        response.application_properties[description_field] = description
         if parse_response:
             return parse_response(status, response, description)
         return response
@@ -316,7 +313,7 @@ class SendClient(AMQPClient):
     def __init__(self, hostname, target, auth=None, **kwargs):
         self.target = target
         # Sender and Link settings
-        self._max_message_size = kwargs.pop('max_message_size', None) or _MAX_FRAME_SIZE_BYTES
+        self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
         super(SendClient, self).__init__(hostname, auth=auth, **kwargs)
@@ -503,7 +500,7 @@ class ReceiveClient(AMQPClient):
         self._message_received_callback = None
 
         # Sender and Link settings
-        self._max_message_size = kwargs.pop('max_message_size', None) or _MAX_FRAME_SIZE_BYTES
+        self._max_message_size = kwargs.pop('max_message_size', None) or MAX_FRAME_SIZE_BYTES
         self._link_properties = kwargs.pop('link_properties', None)
         self._link_credit = kwargs.pop('link_credit', None)
         super(ReceiveClient, self).__init__(hostname, auth=auth, **kwargs)
@@ -562,6 +559,10 @@ class ReceiveClient(AMQPClient):
             self._message_received_callback(message)
         if not self._streaming_receive:
             self._received_messages.put(message)
+        # TODO: do we need settled property for a message?
+        #elif not message.settled:
+        #    # Message was received with callback processing and wasn't settled.
+        #    _logger.info("Message was not settled.")
 
     def receive_message_batch(self, max_batch_size=None, on_message_received=None, timeout=0):
         """Receive a batch of messages. Messages returned in the batch have already been

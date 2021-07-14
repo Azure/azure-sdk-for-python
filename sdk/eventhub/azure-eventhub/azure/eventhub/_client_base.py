@@ -18,11 +18,15 @@ try:
 except ImportError:
     from urllib.parse import urlparse, quote_plus
 
+
+from .pyamqp.client import AMQPClient as PyAMQPClient
+from .pyamqp.authentication import _generate_sas_token as Py_generate_sas_token
+from .pyamqp.message import Message as PyMessage, Properties as PyMessageProperties
 from uamqp import authentication
 from .pyamqp import constants, error as errors, utils
 from .pyamqp.authentication import JWTTokenAuth as PyJWTTokenAuth
-from .pyamqp.client import AMQPClient
-from .pyamqp.message import Message
+
+
 import six
 from azure.core.credentials import (
     AccessToken,
@@ -189,7 +193,9 @@ class EventHubSharedKeyCredential(object):
         # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
-        return _generate_sas_token(scopes[0], self.policy, self.key)
+
+        return Py_generate_sas_token(scopes[0], self.policy, self.key)
+
 
 
 class EventhubAzureNamedKeyTokenCredential(object):
@@ -381,7 +387,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
-            mgmt_client = AMQPClient(
+            mgmt_client = PyAMQPClient(
                 self._address.hostname, auth=mgmt_auth, debug=self._config.network_tracing
             )
             try:
@@ -485,7 +491,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def _get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
-        mgmt_msg = Message(
+        mgmt_msg = PyMessage(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
@@ -544,15 +550,15 @@ class ConsumerProducerMixin(object):
             auth = self._client._create_auth()
             self._create_handler(auth)
             self._handler.open(
-                connection=self._client._conn_manager.get_connection(
-                    self._client._address.hostname, auth
-                )  # pylint: disable=protected-access
+                # connection=self._client._conn_manager.get_connection(
+                #     self._client._address.hostname, auth
+                # )  # pylint: disable=protected-access
             )
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
-                or MAX_MESSAGE_LENGTH_BYTES
+                self._handler._link.remote_max_message_size
+                or constants.MAX_FRAME_SIZE_BYTES
             )  # pylint: disable=protected-access
             self.running = True
 

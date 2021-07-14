@@ -42,7 +42,7 @@ SASL_HEADER_FRAME = b"AMQP\x03" + _AS_BYTES.pack(SASL_MAJOR) + _AS_BYTES.pack(SA
 #: frame size can be set. By defining this value, the peers can guarantee that they can send frames of up to this
 #: size until they have agreed a definitive maximum frame size for that Connection.
 MIN_MAX_FRAME_SIZE = 512
-MAX_FRAME_SIZE_BYTES = 64 * 1024
+MAX_FRAME_SIZE_BYTES = 1024 * 1024
 MAX_CHANNELS = 65535
 INCOMING_WINDOW = 64 * 1024
 OUTGOING_WIDNOW = 64 * 1024

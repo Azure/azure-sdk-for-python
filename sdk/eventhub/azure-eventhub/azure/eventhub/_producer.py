@@ -34,6 +34,7 @@ from ._utils import (
     transform_outbound_single_message,
 )
 from ._constants import TIMEOUT_SYMBOL
+from .pyamqp import SendClient as PySendClient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -120,17 +121,12 @@ class EventHubProducer(
 
     def _create_handler(self, auth):
         # type: (JWTTokenAuth) -> None
-        self._handler = SendClient(
+        self._handler = PySendClient(
+            self._client._address.hostname,
             self._target,
             auth=auth,
-            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            msg_timeout=self._timeout * 1000,
-            idle_timeout=self._idle_timeout,
-            error_policy=self._retry_policy,
-            keep_alive_interval=self._keep_alive,
-            client_name=self._name,
-            link_properties=self._link_properties,
-            properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access
+            idle_timeout=10,
+            network_trace=self._client._config.network_tracing
         )
 
     def _open_with_retry(self):
@@ -156,14 +152,14 @@ class EventHubProducer(
         if self._unsent_events:
             self._open()
             self._set_msg_timeout(timeout_time, last_exception)
-            self._handler.queue_message(*self._unsent_events)  # type: ignore
-            self._handler.wait()  # type: ignore
-            self._unsent_events = self._handler.pending_messages  # type: ignore
-            if self._outcome != constants.MessageSendResult.Ok:
-                if self._outcome == constants.MessageSendResult.Timeout:
-                    self._condition = OperationTimeoutError("Send operation timed out")
-                if self._condition:
-                    raise self._condition
+            self._handler.send_message(self._unsent_events[0])
+            self._unsent_events = None
+            # self._unsent_events = self._handler.pending_messages  # type: ignore
+            # if self._outcome != constants.MessageSendResult.Ok:
+            #     if self._outcome == constants.MessageSendResult.Timeout:
+            #         self._condition = OperationTimeoutError("Send operation timed out")
+            #     if self._condition:
+            #         raise self._condition
 
     def _send_event_data_with_retry(self, timeout=None):
         # type: (Optional[float]) -> None
@@ -205,7 +201,8 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for event in event_data.message._body_gen: # pylint: disable=protected-access
+
+                for event in event_data.message.data:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
