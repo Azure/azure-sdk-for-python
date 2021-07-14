@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Bumped dependency on `msrest` to `>=0.6.21`
+
 ## 1.0.0b4 (2021-07-07)
 ### Bugs Fixed
 * Fixes a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
