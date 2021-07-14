@@ -30,7 +30,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
 
-class MultivariateSample():
+class MultivariateSample:
 
     def __init__(self, subscription_key, anomaly_detector_endpoint, data_source=None):
         self.sub_key = subscription_key
@@ -150,8 +150,8 @@ class MultivariateSample():
 
 
 if __name__ == '__main__':
-    SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
-    ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
+    SUBSCRIPTION_KEY = "<Your Subscription Key>"
+    ANOMALY_DETECTOR_ENDPOINT = "<Your Endpoint>"
 
     # *****************************
     # Use your own data source here
