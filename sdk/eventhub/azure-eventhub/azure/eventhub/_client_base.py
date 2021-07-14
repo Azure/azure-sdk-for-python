@@ -186,7 +186,9 @@ class EventHubSharedKeyCredential(object):
         # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
-        return _generate_sas_token(scopes[0], self.policy, self.key)
+
+        return Py_generate_sas_token(scopes[0], self.policy, self.key)
+
 
 
 class EventhubAzureNamedKeyTokenCredential(object):

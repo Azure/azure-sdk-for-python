@@ -54,6 +54,9 @@ from .amqp import (
 )
 from ._transport._uamqp_transport import UamqpTransport
 
+from .pyamqp import constants, utils as pyutils
+from .pyamqp.message import BatchMessage, Message
+
 if TYPE_CHECKING:
     from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
     from ._transport._base import AmqpTransport
