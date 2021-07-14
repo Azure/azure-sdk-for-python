@@ -17,11 +17,7 @@ from typing import (
     TYPE_CHECKING,
     cast,
 )
-
 import six
-from .pyamqp import constants, _encode as encode
-from .pyamqp.message import BatchMessage, Message
-
 
 from ._utils import (
     set_message_partition_key,
@@ -57,7 +53,8 @@ from .amqp import (
     AmqpMessageProperties,
 )
 
-from .pyamqp import utils as pyutils
+from .pyamqp import constants, utils as pyutils
+from .pyamqp.message import BatchMessage, Message
 
 if TYPE_CHECKING:
     import datetime
@@ -486,7 +483,7 @@ class EventDataBatch(object):
             )
 
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_FRAME_SIZE_BYTES
-        self.message  = BatchMessage(data=[])
+        self.message = BatchMessage(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
         # TODO: test whether we need to set partition key of a batch message, or setting each single message if enough

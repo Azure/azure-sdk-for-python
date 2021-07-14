@@ -270,7 +270,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "{}/{}".format(
+        self._mgmt_target = "amqps://{}/{}".format(
             self._address.hostname, self.eventhub_name
         )
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
