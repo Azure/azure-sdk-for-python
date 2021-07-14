@@ -88,7 +88,7 @@ The framework has a series of common command line options built in:
 
 ## Running with the test proxy
 Follow the instructions here to install and run the test proxy server:
-https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy
+https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy
 
 Once running, in a separate process run the perf test in question, combined with the `-x` flag to specify the proxy endpoint.
 ```cmd
