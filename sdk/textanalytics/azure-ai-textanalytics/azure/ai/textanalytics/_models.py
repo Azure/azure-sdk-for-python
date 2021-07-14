@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1 import models as _v3_1_models
+from ._version import DEFAULT_API_VERSION
 
 
 def _get_indices(relation):
@@ -1786,9 +1786,13 @@ class RecognizeEntitiesAction(DictMixin):
             :1024
         ]
 
-    def _to_generated(self):
-        return _v3_1_models.EntitiesTask(
-            parameters=_v3_1_models.EntitiesTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.EntitiesTask(
+            parameters=models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
@@ -1859,9 +1863,13 @@ class AnalyzeSentimentAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.SentimentAnalysisTask(
-            parameters=_v3_1_models.SentimentAnalysisTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.SentimentAnalysisTask(
+            parameters=models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
                 opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type,
@@ -1937,9 +1945,13 @@ class RecognizePiiEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.PiiTask(
-            parameters=_v3_1_models.PiiTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.PiiTask(
+            parameters=models.PiiTaskParameters(
                 model_version=self.model_version,
                 domain=self.domain_filter,
                 pii_categories=self.categories_filter,
@@ -1988,9 +2000,13 @@ class ExtractKeyPhrasesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.KeyPhrasesTask(
-            parameters=_v3_1_models.KeyPhrasesTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.KeyPhrasesTask(
+            parameters=models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
                 logging_opt_out=self.disable_service_logs,
             )
@@ -2046,9 +2062,13 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def _to_generated(self):
-        return _v3_1_models.EntityLinkingTask(
-            parameters=_v3_1_models.EntityLinkingTaskParameters(
+    def _to_generated(self, api_version):
+        if api_version == DEFAULT_API_VERSION:
+            from ._generated.v3_2_preview_1 import models
+        else:
+            from ._generated.v3_1 import models
+        return models.EntityLinkingTask(
+            parameters=models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,

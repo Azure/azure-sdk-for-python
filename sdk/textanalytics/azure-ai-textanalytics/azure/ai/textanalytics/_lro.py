@@ -115,7 +115,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
-        from ._generated.v3_1.models import JobMetadata
+        from ._generated.models import JobMetadata
 
         return JobMetadata.deserialize(self._pipeline_response)
 
@@ -233,7 +233,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller, Generic[PollingReturnType]):
 class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
     @property
     def _current_body(self):
-        from ._generated.v3_1.models import AnalyzeJobMetadata
+        from ._generated.models import AnalyzeJobMetadata
 
         return AnalyzeJobMetadata.deserialize(self._pipeline_response)
 
