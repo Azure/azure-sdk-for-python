@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from enum import Enum
 import uuid
 from typing import Any, Optional, List
 
@@ -566,3 +567,15 @@ class MetricAvailability(object):
             time_grain=generated.time_grain,
             retention=generated.retention
         )
+
+
+class AggregationType(str, Enum):
+    """the aggregation type of the metric.
+    """
+
+    NONE = "None"
+    AVERAGE = "Average"
+    COUNT = "Count"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
