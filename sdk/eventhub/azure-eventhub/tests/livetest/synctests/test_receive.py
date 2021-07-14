@@ -135,9 +135,6 @@ def test_receive_over_websocket_sync(connstr_senders):
     message_id_base = "mess_id_sample_"
 
     def on_event(partition_context, event):
-        assert event.partition_key == b'0'
-        ed_str = str(event)
-        assert ", partition_key=" in ed_str
         on_event.received.append(event)
         on_event.app_prop = event.properties
 
@@ -156,13 +153,13 @@ def test_receive_over_websocket_sync(connstr_senders):
         ed.correlation_id = message_id_base
         ed.message_id = message_id_base + str(i)
         event_list.append(ed)
-    senders[0].send(event_list, partition_key="0")
+    senders[0].send(event_list)
     single_ed = EventData("Event Number {}".format(6))
     single_ed.properties = app_prop
     single_ed.content_type = content_type
     single_ed.correlation_id = message_id_base
     single_ed.message_id = message_id_base + str(6)
-    senders[0].send(single_ed, partition_key="0")
+    senders[0].send(single_ed)
 
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
