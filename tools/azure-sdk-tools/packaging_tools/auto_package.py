@@ -56,7 +56,7 @@ def main(generate_input, generate_output):
         package_name = package['packageName']
         # Changelog
         if 'azure-mgmt-' in package_name:
-            md_output = change_log_generate(package_name, last_version)
+            md_output = change_log_generate(package_name)
         else:
             md_output = "data-plan skip changelog generation temporarily"
         package["changelog"] = {
