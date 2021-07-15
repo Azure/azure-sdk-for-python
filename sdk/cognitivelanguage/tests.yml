@@ -1,4 +1,28 @@
-trigger: none
+trigger:
+  branches:
+    include:
+    - master
+    - main
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/cognitivelanguage/
+    - scripts/
+
+pr:
+  branches:
+    include:
+    - master
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/cognitivelanguage/
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
