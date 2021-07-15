@@ -12,39 +12,39 @@ try:
     from ._models_py3 import Error
     from ._models_py3 import ErrorResponse
     from ._models_py3 import InnerErrorModel
-    from ._models_py3 import KnowledgebaseAnswer
-    from ._models_py3 import KnowledgebaseAnswerDialog
-    from ._models_py3 import KnowledgebaseAnswerPrompt
-    from ._models_py3 import KnowledgebaseAnswerRequestContext
-    from ._models_py3 import KnowledgebaseAnswers
-    from ._models_py3 import KnowledgebaseQueryParameters
+    from ._models_py3 import KnowledgeBaseAnswer
+    from ._models_py3 import KnowledgeBaseAnswerDialog
+    from ._models_py3 import KnowledgeBaseAnswerPrompt
+    from ._models_py3 import KnowledgeBaseAnswerRequestContext
+    from ._models_py3 import KnowledgeBaseAnswers
+    from ._models_py3 import KnowledgeBaseQueryOptions
     from ._models_py3 import MetadataFilter
     from ._models_py3 import StrictFilters
     from ._models_py3 import TextAnswer
     from ._models_py3 import TextAnswers
-    from ._models_py3 import TextInput
-    from ._models_py3 import TextQueryParameters
+    from ._models_py3 import TextQueryOptions
+    from ._models_py3 import TextRecord
 except (SyntaxError, ImportError):
     from ._models import AnswerSpan  # type: ignore
     from ._models import AnswerSpanRequest  # type: ignore
     from ._models import Error  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import InnerErrorModel  # type: ignore
-    from ._models import KnowledgebaseAnswer  # type: ignore
-    from ._models import KnowledgebaseAnswerDialog  # type: ignore
-    from ._models import KnowledgebaseAnswerPrompt  # type: ignore
-    from ._models import KnowledgebaseAnswerRequestContext  # type: ignore
-    from ._models import KnowledgebaseAnswers  # type: ignore
-    from ._models import KnowledgebaseQueryParameters  # type: ignore
+    from ._models import KnowledgeBaseAnswer  # type: ignore
+    from ._models import KnowledgeBaseAnswerDialog  # type: ignore
+    from ._models import KnowledgeBaseAnswerPrompt  # type: ignore
+    from ._models import KnowledgeBaseAnswerRequestContext  # type: ignore
+    from ._models import KnowledgeBaseAnswers  # type: ignore
+    from ._models import KnowledgeBaseQueryOptions  # type: ignore
     from ._models import MetadataFilter  # type: ignore
     from ._models import StrictFilters  # type: ignore
     from ._models import TextAnswer  # type: ignore
     from ._models import TextAnswers  # type: ignore
-    from ._models import TextInput  # type: ignore
-    from ._models import TextQueryParameters  # type: ignore
+    from ._models import TextQueryOptions  # type: ignore
+    from ._models import TextRecord  # type: ignore
 
 from ._question_answering_client_enums import (
-    CompoundOperationType,
+    CompoundOperationKind,
     ErrorCode,
     InnerErrorCode,
     RankerType,
@@ -57,19 +57,19 @@ __all__ = [
     "Error",
     "ErrorResponse",
     "InnerErrorModel",
-    "KnowledgebaseAnswer",
-    "KnowledgebaseAnswerDialog",
-    "KnowledgebaseAnswerPrompt",
-    "KnowledgebaseAnswerRequestContext",
-    "KnowledgebaseAnswers",
-    "KnowledgebaseQueryParameters",
+    "KnowledgeBaseAnswer",
+    "KnowledgeBaseAnswerDialog",
+    "KnowledgeBaseAnswerPrompt",
+    "KnowledgeBaseAnswerRequestContext",
+    "KnowledgeBaseAnswers",
+    "KnowledgeBaseQueryOptions",
     "MetadataFilter",
     "StrictFilters",
     "TextAnswer",
     "TextAnswers",
-    "TextInput",
-    "TextQueryParameters",
-    "CompoundOperationType",
+    "TextQueryOptions",
+    "TextRecord",
+    "CompoundOperationKind",
     "ErrorCode",
     "InnerErrorCode",
     "RankerType",
