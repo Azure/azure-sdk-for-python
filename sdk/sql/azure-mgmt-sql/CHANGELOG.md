@@ -1,8 +1,8 @@
 # Release History
 
-## 0.0.0b1 (2021-07-15)
+## 3.1.0 (2021-07-15)
 
-
+ - Some parameters change
 
 ## 3.0.0 (2021-06-18)
 
