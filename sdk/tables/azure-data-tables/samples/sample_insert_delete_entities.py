@@ -41,15 +41,15 @@ class InsertDeleteEntity(object):
         self.table_name = "SampleInsertDelete"
 
         self.entity = {
-            "PartitionKey": u"color",
-            "RowKey": u"brand",
+            "PartitionKey": "color",
+            "RowKey": "brand",
             "text": "Marker",
             "color": "Purple",
             "price": 4.99,
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "some_binary_value": b"somebinaryvalue"
+            "barcode": b"135aefg8oj0ld58"
         }
 
     def create_entity(self):

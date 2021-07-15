@@ -50,15 +50,15 @@ class TableEntitySamples(object):
             await table.create_table()
 
             my_entity = {
-                "PartitionKey": u"color",
-                "RowKey": u"brand",
+                "PartitionKey": "color",
+                "RowKey": "brand",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 4.99,
                 "last_updated": datetime.today(),
                 "product_id": uuid4(),
                 "inventory_count": 42,
-                "some_binary_value": b"somebinaryvalue"
+                "barcode": b"135aefg8oj0ld58"
             }
 
             try:
@@ -87,21 +87,21 @@ class TableEntitySamples(object):
             await table.create_table()
 
             entity = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"sharpie",
-                u"text": u"Marker",
-                u"color": u"Purple",
-                u"price": 5.99,
-                u"inventory": 42,
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 5.99,
+                "inventory": 42,
                 "product_id": uuid4(),
             }
             entity1 = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"crayola",
-                u"text": u"Marker",
-                u"color": u"Red",
-                u"price": 3.99,
-                u"inventory": 42,
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
+                "text": "Marker",
+                "color": "Red",
+                "price": 3.99,
+                "inventory": 42,
                 "product_id": uuid4(),
             }
 
@@ -132,21 +132,21 @@ class TableEntitySamples(object):
             await table.create_table()
 
             entity = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"sharpie",
-                u"text": u"Marker",
-                u"color": u"Purple",
-                u"price": 5.99,
-                u"inventory": 42,
+                "PartitionKey": "color2",
+                "RowKey": "sharpie",
+                "text": "Marker",
+                "color": "Purple",
+                "price": 5.99,
+                "inventory": 42,
                 "product_id": uuid4(),
             }
             entity1 = {
-                u"PartitionKey": u"color2",
-                u"RowKey": u"crayola",
-                u"text": u"Marker",
-                u"color": u"Red",
-                u"price": 3.99,
-                u"inventory": 42,
+                "PartitionKey": "color2",
+                "RowKey": "crayola",
+                "text": "Marker",
+                "color": "Red",
+                "price": 3.99,
+                "inventory": 42,
                 "product_id": uuid4(),
             }
 
