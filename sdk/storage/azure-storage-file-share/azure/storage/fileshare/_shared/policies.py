@@ -12,7 +12,6 @@ from time import time
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
-import types
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
