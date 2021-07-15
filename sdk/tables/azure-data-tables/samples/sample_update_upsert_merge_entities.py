@@ -48,8 +48,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             my_entity = {
-                "PartitionKey": "color",
-                "RowKey": "brand",
+                u"PartitionKey": "color",
+                u"RowKey": "brand",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 4.99,
@@ -84,8 +84,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             entity = {
-                "PartitionKey": "color2",
-                "RowKey": "sharpie",
+                u"PartitionKey": "color2",
+                u"RowKey": "sharpie",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 5.99,
@@ -93,8 +93,8 @@ class TableEntitySamples(object):
                 "product_id": uuid4(),
             }
             entity1 = {
-                "PartitionKey": "color2",
-                "RowKey": "crayola",
+                u"PartitionKey": "color2",
+                u"RowKey": "crayola",
                 "text": "Marker",
                 "color": "Red",
                 "price": 3.99,
@@ -129,8 +129,8 @@ class TableEntitySamples(object):
             table.create_table()
 
             entity = {
-                "PartitionKey": "color2",
-                "RowKey": "sharpie",
+                u"PartitionKey": "color2",
+                u"RowKey": "sharpie",
                 "text": "Marker",
                 "color": "Purple",
                 "price": 5.99,
@@ -138,8 +138,8 @@ class TableEntitySamples(object):
                 "product_id": uuid4(),
             }
             entity1 = {
-                "PartitionKey": "color2",
-                "RowKey": "crayola",
+                u"PartitionKey": "color2",
+                u"RowKey": "crayola",
                 "text": "Marker",
                 "color": "Red",
                 "price": 3.99,

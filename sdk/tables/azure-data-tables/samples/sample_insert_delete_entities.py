@@ -41,8 +41,8 @@ class InsertDeleteEntity(object):
         self.table_name = "SampleInsertDelete"
 
         self.entity = {
-            "PartitionKey": "color",
-            "RowKey": "brand",
+            u"PartitionKey": "color",
+            u"RowKey": "brand",
             "text": "Marker",
             "color": "Purple",
             "price": 4.99,
