@@ -1,6 +1,8 @@
 # Azure Communication Network Traversal Package client library for Python
 
-Azure Communication Relay client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
+Azure Communication Network Traversal is managing TURN credentials for Azure Communication Services.
+
+It will provide TURN credentials to a user.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication)
 

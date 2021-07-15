@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: identity_sample.py
+FILE: network_traversal_samples_async.py
 DESCRIPTION:
     These samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
 
 USAGE:
-    python identity_samples.py
+    python network_traversal_samples.py
     Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
     2) AZURE_CLIENT_ID - the client ID of your active directory application
