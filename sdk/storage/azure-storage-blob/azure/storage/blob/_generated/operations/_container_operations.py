@@ -1471,10 +1471,10 @@ class ContainerOperations(object):
         response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        deserialized = self._deserialize('ListBlobsFlatSegmentResponse', pipeline_response)
+        #deserialized = self._deserialize('ListBlobsFlatSegmentResponse', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, None, response_headers)
 
         return deserialized
     list_blob_flat_segment.metadata = {'url': '/{containerName}'}  # type: ignore

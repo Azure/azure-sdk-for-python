@@ -27,14 +27,17 @@ class ListBlobsTest(_ContainerTest):
                 break
 
     def run_sync(self):
-        for _ in self.container_client.list_blobs():
+        select = ['name'] if self.args.name_only else None
+        for _ in self.container_client.list_blobs(select=select):
             pass
 
     async def run_async(self):
-        async for _ in self.async_container_client.list_blobs():
+        select = ['name'] if self.args.name_only else None
+        async for _ in self.async_container_client.list_blobs(select=select):
             pass
 
     @staticmethod
     def add_arguments(parser):
         super(ListBlobsTest, ListBlobsTest).add_arguments(parser)
         parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
+        parser.add_argument('--name-only', action='store_true', help='Return only blob name. Defaults to False', default=False)

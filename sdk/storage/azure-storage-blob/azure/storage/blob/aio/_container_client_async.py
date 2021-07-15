@@ -624,6 +624,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
+        select = kwargs.pop('select', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             include=include,
@@ -633,6 +634,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
+            select=select,
+            deserializer=self._client._deserialize,
             page_iterator_class=BlobPropertiesPaged
         )
 
@@ -680,6 +683,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
+            select=None,
+            deserializer=self._client._deserialize,
             delimiter=delimiter)
 
     @distributed_trace_async

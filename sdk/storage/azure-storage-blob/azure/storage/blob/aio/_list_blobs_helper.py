@@ -12,6 +12,13 @@ from .._models import BlobProperties
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
 from .._shared.models import DictMixin
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
+from .._list_blobs_helper import (
+    deserialize_list_result,
+    load_many_nodes,
+    load_xml_string,
+    load_xml_int,
+    blob_properties_from_xml
+)
 
 
 class BlobPropertiesPaged(AsyncPageIterator):
@@ -48,6 +55,8 @@ class BlobPropertiesPaged(AsyncPageIterator):
             container=None,
             prefix=None,
             results_per_page=None,
+            select=None,
+            deserializer=None,
             continuation_token=None,
             delimiter=None,
             location_mode=None):
@@ -57,10 +66,12 @@ class BlobPropertiesPaged(AsyncPageIterator):
             continuation_token=continuation_token or ""
         )
         self._command = command
+        self._deserializer = deserializer
         self.service_endpoint = None
         self.prefix = prefix
         self.marker = None
         self.results_per_page = results_per_page
+        self.select = select
         self.container = container
         self.delimiter = delimiter
         self.current_page = None
@@ -72,30 +83,29 @@ class BlobPropertiesPaged(AsyncPageIterator):
                 prefix=self.prefix,
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
-                cls=return_context_and_deserialized,
+                cls=deserialize_list_result,
                 use_location=self.location_mode)
         except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
+        self.service_endpoint = self._response.get('ServiceEndpoint')
+        self.prefix = load_xml_string(self._response, 'Prefix')
+        self.marker = load_xml_string(self._response, 'Marker')
+        self.results_per_page = load_xml_int(self._response, 'MaxResults')
+        self.container = self._response.get('ContainerName')
 
-        return self._response.next_marker or None, self.current_page
+        blobs = load_many_nodes(self._response, 'Blob', wrapper='Blobs')
+        self.current_page = [self._build_item(blob) for blob in blobs]
+
+        next_marker = load_xml_string(self._response, 'NextMarker')
+        return next_marker or None, self.current_page
 
     def _build_item(self, item):
-        if isinstance(item, BlobProperties):
-            return item
-        if isinstance(item, BlobItemInternal):
-            blob = get_blob_properties_from_generated_code(item)  # pylint: disable=protected-access
-            blob.container = self.container
-            return blob
-        return item
+        blob = blob_properties_from_xml(item, self.select, self._deserializer)
+        blob.container = self.container
+        return blob
 
 
 class BlobPrefix(AsyncItemPaged, DictMixin):
@@ -144,20 +154,22 @@ class BlobPrefixPaged(BlobPropertiesPaged):
         self.name = self.prefix
 
     async def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = await super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
+        continuation_token, current_page = await super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
+
+        blob_prefixes = load_many_nodes(self._response, 'BlobPrefix', wrapper='Blobs')
+        blob_prefixes = [self._build_item(blob) for blob in blob_prefixes]
+
+        self.current_page = blob_prefixes + current_page
+        self.delimiter = load_xml_string(self._response, 'Delimiter')
         self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
-        self.current_page = [self._build_item(item) for item in self.current_page]
-        self.delimiter = self._response.delimiter
 
         return continuation_token, self.current_page
 
     def _build_item(self, item):
-        item = super(BlobPrefixPaged, self)._build_item(item)
-        if isinstance(item, GenBlobPrefix):
-            return BlobPrefix(
-                self._command,
-                container=self.container,
-                prefix=item.name,
-                results_per_page=self.results_per_page,
-                location_mode=self.location_mode)
-        return item
+        return BlobPrefix(
+            self._command,
+            container=self.container,
+            prefix=load_xml_string(item, 'Name'),
+            results_per_page=self.results_per_page,
+            location_mode=self.location_mode
+        )

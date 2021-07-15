@@ -17,8 +17,12 @@ class LegacyListBlobsTest(_LegacyContainerTest):
                 blob=b"")
 
     def run_sync(self):
-        for _ in self.service_client.list_blobs(container_name=self.container_name):
-            pass
+        if self.args.name_only:
+            for _ in self.service_client.list_blob_names(container_name=self.container_name):
+                pass
+        else:
+            for _ in self.service_client.list_blobs(container_name=self.container_name):
+                pass
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")
@@ -27,3 +31,4 @@ class LegacyListBlobsTest(_LegacyContainerTest):
     def add_arguments(parser):
         super(LegacyListBlobsTest, LegacyListBlobsTest).add_arguments(parser)
         parser.add_argument('-c', '--count', nargs='?', type=int, help='Number of blobs to list. Defaults to 100', default=100)
+        parser.add_argument('--name-only', action='store_true', help='Return only blob name. Defaults to False', default=False)
