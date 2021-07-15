@@ -923,10 +923,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     a batch of documents.
         """
 
-        if self._api_version == "v3.0":
-            raise ValueError(
-                "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-            )
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
