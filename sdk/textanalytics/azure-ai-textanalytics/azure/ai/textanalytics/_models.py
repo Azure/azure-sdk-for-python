@@ -2094,7 +2094,7 @@ class ExtractSummaryAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :keyword int sentence_count: Number of sentences to return.
+    :keyword int max_sentence_count: Maximum number of sentences to return. Defaults to 3.
     :keyword str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
@@ -2109,15 +2109,15 @@ class ExtractSummaryAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar int sentence_count: Number of sentences to return.
-    :ivar str order_by:  Possible values include: "Offset", "Importance". Default value: "Offset".
+    :ivar int max_sentence_count: Number of sentences to return. Defaults to 3.
+    :ivar str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get('model_version', "latest")
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", False)
-        self.sentence_count = kwargs.get('sentence_count', 3)
+        self.max_sentence_count = kwargs.get('max_sentence_count', 3)
         self.order_by = kwargs.get('order_by', "Offset")
 
     def __repr__(self, **kwargs):
@@ -2127,20 +2127,18 @@ class ExtractSummaryAction(DictMixin):
                 self.model_version,
                 self.string_index_type,
                 self.disable_service_logs,
-                self.sentence_count,
+                self.max_sentence_count,
                 self.order_by
             )[:1024]
         )
 
     def _to_generated(self):
-        if self.order_by and self.order_by.lower() == "importance":
-            self.order_by = "Rank"
         return _v3_2_preview_1_models.ExtractiveSummarizationTask(
             parameters=_v3_2_preview_1_models.ExtractiveSummarizationTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
-                sentence_count=self.sentence_count,
+                sentence_count=self.max_sentence_count,
                 sort_by=self.order_by
             )
         )
