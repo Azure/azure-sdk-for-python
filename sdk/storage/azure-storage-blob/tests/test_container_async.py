@@ -1155,6 +1155,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         await blob1.upload_blob(b"abc", overwrite=True)
         root_content = b"cde"
         root_version_id = (await blob1.upload_blob(root_content, overwrite=True))['version_id']
+        # this will delete the root blob, while you can still access it through versioning
         await blob1.delete_blob()
 
         await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
@@ -1162,6 +1163,8 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
 
         # Act
         blobs = list()
+        
+        # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
         async for blob in container.list_blobs(include=["deletedwithversions"]):
             blobs.append(blob)
         downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
