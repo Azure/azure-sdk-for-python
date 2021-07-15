@@ -49,11 +49,12 @@ async def sample_chit_chat():
 
         output = await client.query_knowledgebase(
             project_name=knowledgebase_project,
-            knowledge_base_query_options=first_question
+            knowledge_base_query_options=first_question,
+            deployment_name="test"
         )
-        best_answer = [a for a in output.answers if a.confidence_score > 0.9][0]
+        best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]
         print("Q: {}".format(first_question.question))
-        print("A: {}".format(best_answer.answer_span.text))
+        print("A: {}".format(best_candidate.answer))
 
         followup_question = qna.KnowledgeBaseQueryOptions(
             question="How long it takes to charge Surface?",
@@ -61,7 +62,7 @@ async def sample_chit_chat():
             confidence_score_threshold=0.2,
             context=qna.KnowledgeBaseAnswerRequestContext(
                 previous_user_query="How long should my Surface battery last?",
-                previous_qna_id=best_answer.id
+                previous_qna_id=best_candidate.id
             ),
             answer_span_request=qna.AnswerSpanRequest(
                 enable=True,
@@ -73,11 +74,11 @@ async def sample_chit_chat():
 
         output = await client.query_knowledgebase(
             project_name=knowledgebase_project,
-            knowledge_base_query_options=followup_question
+            knowledge_base_query_options=followup_question,
+            deployment_name="test"
         )
-        best_answer = [a for a in output.answers if a.confidence_score > 0.9][0]
         print("Q: {}".format(followup_question.question))
-        print("A: {}".format(best_answer.answer_span.text))
+        print("A: {}".format(output.answers[0].answer))
 
     # [END chit_chat_async]
 

@@ -49,11 +49,12 @@ async def sample_query_knowledgebase():
 
         output = await client.query_knowledgebase(
             project_name=knowledgebase_project,
-            knowledge_base_query_options=input
+            knowledge_base_query_options=input,
+            deployment_name="test"
         )
-        best_answer = [a for a in output.answers if a.confidence_score > 0.9][0]
+        best_candidate = [a for a in output.answers if a.confidence_score > 0.9][0]
         print("Q: {}".format(input.question))
-        print("A: {}".format(best_answer.answer_span.text))
+        print("A: {}".format(best_candidate.answer))
 
     # [END query_knowledgebase_async]
 

@@ -17,6 +17,7 @@ USAGE:
     1) AZURE_QUESTIONANSWERING_ENDPOINT - the endpoint to your QuestionAnswering resource.
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
 """
+import asyncio
 
 
 async def sample_query_text():
