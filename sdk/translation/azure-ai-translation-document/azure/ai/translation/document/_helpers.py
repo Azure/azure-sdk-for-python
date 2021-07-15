@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import datetime
-from typing import Union, Optional
+from typing import Union, Optional, List
 import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -126,7 +126,7 @@ def convert_datetime(date_time):
 
 
 def convert_order_by(order_by):
-    # type: (Optional[list[str]]) -> Optional[list[str]]
+    # type: (Optional[List[str]]) -> Optional[List[str]]
     if order_by:
         order_by = [order.replace("created_on", "createdDateTimeUtc") for order in order_by]
     return order_by
