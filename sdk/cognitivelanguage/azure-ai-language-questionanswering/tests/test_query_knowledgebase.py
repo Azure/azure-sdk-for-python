@@ -312,3 +312,17 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             )
 
             assert len(output.answers) == 1
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_knowledgebase_python_dict(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+        with client:
+            query_params = {"qna_id": 19}
+
+            output = client.query_knowledgebase(
+                project_name=qna_project,
+                deployment_name='test',
+                knowledge_base_query_options=query_params
+            )
+
+            assert len(output.answers) == 1
