@@ -4,4 +4,5 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=bad-option-value, unused-import
 from ._communication_relay_client import CommunicationRelayClient
