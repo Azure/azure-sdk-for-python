@@ -2188,7 +2188,7 @@ class SummarySentence(DictMixin):
     """SummarySentence.
 
     :ivar str text: Required. The extracted sentence text.
-    :ivar float importance_score: Required. A double value representing the relevance of the sentence within
+    :ivar float rank_score: Required. A double value representing the relevance of the sentence within
      the summary. Higher values indicate higher importance.
     :ivar int offset: Required. The sentence offset from the start of the document, based on the value
      of the parameter StringIndexType.
@@ -2200,7 +2200,7 @@ class SummarySentence(DictMixin):
         **kwargs
     ):
         self.text = kwargs['text']
-        self.importance_score = kwargs['importance_score']
+        self.rank_score = kwargs['rank_score']
         self.offset = kwargs['offset']
         self.length = kwargs['length']
 
@@ -2208,7 +2208,7 @@ class SummarySentence(DictMixin):
     def _from_generated(cls, sentence):
         return cls(
             text=sentence.text,
-            importance_score=sentence.rank_score,
+            rank_score=sentence.rank_score,
             offset=sentence.offset,
             length=sentence.length
         )
