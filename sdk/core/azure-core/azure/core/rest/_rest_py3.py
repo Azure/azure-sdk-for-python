@@ -41,7 +41,7 @@ from typing import (
 
 from azure.core.exceptions import HttpResponseError
 
-from ..utils._utils import _case_insensitive_dict
+from ..utils import case_insensitive_dict
 
 from ._helpers import (
     ParamsType,
@@ -147,7 +147,7 @@ class HttpRequest:
             files=files,
             json=json,
         )
-        self.headers = _case_insensitive_dict(default_headers)
+        self.headers = case_insensitive_dict(default_headers)
         self.headers.update(headers or {})
 
         if kwargs:
