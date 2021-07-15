@@ -138,7 +138,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             output = client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                knowledge_base_query_options=query_params
             )
 
         assert output.answers
@@ -184,7 +184,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             output = client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                knowledge_base_query_options=query_params
             )
 
         assert output.answers
@@ -235,7 +235,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             output = client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                knowledge_base_query_options=query_params
             )
 
         assert len(output.answers) == 3
@@ -263,7 +263,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             output = client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                knowledge_base_query_options=query_params
             )
             confident_answers = [a for a in output.answers if a.confidence_score > 0.9]
             assert len(confident_answers) == 1
@@ -288,7 +288,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             output = client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                knowledge_base_query_options=query_params
             )
 
             assert len(output.answers) == 2
@@ -308,7 +308,7 @@ class QnAKnowledgeBaseTests(QuestionAnsweringTest):
             output = client.query_knowledgebase(
                 project_name=qna_project,
                 deployment_name='test',
-                knowledgebase_query_parameters=query_params
+                knowledge_base_query_options=query_params
             )
 
             assert len(output.answers) == 1

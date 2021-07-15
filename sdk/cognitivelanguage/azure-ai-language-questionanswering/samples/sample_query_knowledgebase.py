@@ -8,7 +8,7 @@
 FILE: sample_query_knowledgebase.py
 
 DESCRIPTION:
-    This sample demonstrates how to ask a question from a knowledgebase.
+    This sample demonstrates how to ask a question from a knowledge base.
 
 USAGE:
     python sample_query_knowledgebase.py
@@ -16,7 +16,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_QUESTIONANSWERING_ENDPOINT - the endpoint to your QuestionAnswering resource.
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
-    3) AZURE_QUESTIONANSWERING_PROJECT - the name of a knowledgebase project.
+    3) AZURE_QUESTIONANSWERING_PROJECT - the name of a knowledge base project.
 """
 
 
@@ -47,7 +47,7 @@ def sample_query_knowledgebase():
 
         output = client.query_knowledgebase(
             project_name=knowledgebase_project,
-            knowledgebase_query_parameters=input
+            knowledge_base_query_options=input
         )
         best_answer = [a for a in output.answers if a.confidence_score > 0.9][0]
         print("Q: {}".format(input.question))
