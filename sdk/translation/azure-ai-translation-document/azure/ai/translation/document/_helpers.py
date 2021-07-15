@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import datetime
-from typing import Union
+from typing import Union, Optional
 import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -123,3 +123,10 @@ def convert_datetime(date_time):
             except ValueError:
                 return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     raise TypeError("Bad datetime type")
+
+
+def convert_order_by(order_by):
+    # type: (Optional[list[str]]) -> Optional[list[str]]
+    if order_by:
+        order_by = [order.replace("created_on", "createdDateTimeUtc") for order in order_by]
+    return order_by
