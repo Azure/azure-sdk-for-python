@@ -75,7 +75,7 @@ The only input required to ask a question using a knowledgebase is just the ques
 ```python
 from azure.ai.language.questionanswering import models as qna
 
-params = qna.KnowledgebaseQueryParameters(
+params = qna.KnowledgeBaseQueryOptions(
     question="How long should my Surface battery last?"
 )
 
@@ -89,16 +89,16 @@ for candidate in output.answers:
 
 ```
 
-You can set additional properties on `KnowledgebaseQueryParameters` to limit the number of answers, specify a minimum confidence score, and more.
+You can set additional properties on `KnowledgeBaseQueryOptions` to limit the number of answers, specify a minimum confidence score, and more.
 
 ### Ask a follow-up question
 
 If your knowledgebase is configured for [chit-chat][questionanswering_docs_chat], you can ask a follow-up question provided the previous question-answering ID and, optionally, the exact question the user asked:
 
 ```python
-params = qna.models.KnowledgebaseQueryParameters(
+params = qna.models.KnowledgeBaseQueryOptions(
     question="How long should charging take?"
-    context=qna.models.KnowledgebaseAnswerRequestContext(
+    context=qna.models.KnowledgeBaseAnswerRequestContext(
         previous_user_query="How long should my Surface battery last?",
         previous_qna_id=previous_answer.id
     )
@@ -123,7 +123,7 @@ from azure.ai.language.questionanswering import models as qna
 
 client = QuestionAnsweringClient(endpoint, credential)
 
-params = qna.KnowledgebaseQueryParameters(
+params = qna.KnowledgeBaseQueryOptions(
     question="How long should my Surface battery last?"
 )
 

@@ -16,15 +16,15 @@ from testcase import (
 from asynctestcase import AsyncQuestionAnsweringTest
 
 from azure.ai.language.questionanswering.models import (
-    KnowledgebaseQueryParameters,
-    KnowledgebaseAnswerRequestContext,
+    KnowledgeBaseQueryOptions,
+    KnowledgeBaseAnswerRequestContext,
     AnswerSpanRequest,
 )
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswering.rest import *
 
 
-class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
+class QnAKnowledgeBaseTestsAsync(AsyncQuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_llc(self, qna_account, qna_key, qna_project):
@@ -127,10 +127,10 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgebaseQueryParameters(
+        query_params = KnowledgeBaseQueryOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgebaseAnswerRequestContext(
+            context=KnowledgeBaseAnswerRequestContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             )
@@ -168,10 +168,10 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     async def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgebaseQueryParameters(
+        query_params = KnowledgeBaseQueryOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgebaseAnswerRequestContext(
+            context=KnowledgeBaseAnswerRequestContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             ),
@@ -248,7 +248,7 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
     async def test_query_knowledgebase_with_followup(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         async with client:
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
@@ -270,12 +270,12 @@ class QnAKnowledgebaseTestsAsync(AsyncQuestionAnsweringTest):
             assert len(confident_answers) == 1
             assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 question="How long it takes to charge Surface?",
                 top=3,
                 user_id="sd53lsY=",
                 confidence_score_threshold=0.2,
-                context=KnowledgebaseAnswerRequestContext(
+                context=KnowledgeBaseAnswerRequestContext(
                     previous_user_query="How long should my Surface battery last?",
                     previous_qna_id=confident_answers[0].id
                 ),

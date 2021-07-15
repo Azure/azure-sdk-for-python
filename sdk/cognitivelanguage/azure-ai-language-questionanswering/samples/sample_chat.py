@@ -33,7 +33,7 @@ def sample_chit_chat():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     with client:
-        first_question = qna.KnowledgebaseQueryParameters(
+        first_question = qna.KnowledgeBaseQueryOptions(
             question="How long should my Surface battery last?",
             top=3,
             confidence_score_threshold=0.2,
@@ -53,11 +53,11 @@ def sample_chit_chat():
         print("Q: {}".format(first_question.question))
         print("A: {}".format(best_answer.answer_span.text))
 
-        followup_question = qna.KnowledgebaseQueryParameters(
+        followup_question = qna.KnowledgeBaseQueryOptions(
             question="How long it takes to charge Surface?",
             top=3,
             confidence_score_threshold=0.2,
-            context=qna.KnowledgebaseAnswerRequestContext(
+            context=qna.KnowledgeBaseAnswerRequestContext(
                 previous_user_query="How long should my Surface battery last?",
                 previous_qna_id=best_answer.id
             ),
