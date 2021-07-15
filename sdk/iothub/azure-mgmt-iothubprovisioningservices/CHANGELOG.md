@@ -1,5 +1,26 @@
 # Release History
 
+## 0.3.0 (2021-07-15)
+
+**Features**
+
+  - Model CertificateProperties has a new parameter certificate
+  - Model VerificationCodeResponseProperties has a new parameter certificate
+  - Model CertificateBodyDescription has a new parameter is_verified
+  - Model IotDpsPropertiesDescription has a new parameter ip_filter_rules
+  - Model IotDpsPropertiesDescription has a new parameter public_network_access
+  - Model IotDpsPropertiesDescription has a new parameter private_endpoint_connections
+  - Added operation IotDpsResourceOperations.get_private_link_resources
+  - Added operation IotDpsResourceOperations.list_private_link_resources
+  - Added operation IotDpsResourceOperations.get_private_endpoint_connection
+  - Added operation IotDpsResourceOperations.list_private_endpoint_connections
+  - Added operation IotDpsResourceOperations.create_or_update_private_endpoint_connection
+  - Added operation IotDpsResourceOperations.delete_private_endpoint_connection
+
+**Breaking changes**
+
+  - Operation DpsCertificateOperations.create_or_update has a new signature
+
 ## 0.2.0 (2018-04-17)
 
 **General Breaking changes**
