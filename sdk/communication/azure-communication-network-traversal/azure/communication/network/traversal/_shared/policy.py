@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+# pylint: disable=bad-option-value,useless-object-inheritance,disable=super-with-arguments
 
 import hashlib
 import urllib
@@ -21,7 +22,6 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             decode_url=False # type: bool
         ):
         # type: (...) -> None
-        # pylint: disable=super-with-arguments
         super(HMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):

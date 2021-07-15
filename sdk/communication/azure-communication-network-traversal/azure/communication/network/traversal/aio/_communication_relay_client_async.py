@@ -38,7 +38,7 @@ class CommunicationRelayClient:
         credential: 'AsyncTokenCredential',
         **kwargs
         ) -> None:
-        # pylint: disable=raise-missing-from
+        # pylint: disable=bad-option-value, disable=raise-missing-from
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
