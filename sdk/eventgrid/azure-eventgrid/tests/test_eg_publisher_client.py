@@ -347,7 +347,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         with pytest.raises(ValueError, match="The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"):
             client = EventGridPublisherClient("eventgrid_endpoint", bad_credential)
 
-    @pytest.mark.skip("Unblock after prod")
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):

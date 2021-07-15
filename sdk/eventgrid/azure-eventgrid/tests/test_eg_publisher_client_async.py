@@ -331,7 +331,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
 
-    @pytest.mark.skip("Unblock after prod")
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @pytest.mark.asyncio
