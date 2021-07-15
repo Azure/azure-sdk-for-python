@@ -7,7 +7,7 @@
 #from datetime import datetime
 #from azure.eventhub import CheckpointStore, EventHubConsumerClient
 #from azure.data.tables import TableClient, TableServiceClient, UpdateMode
-#from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError 
+#from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
 
 class TableCheckpointStore:
     """A CheckpointStore that uses Azure Table Storage to store the partition ownership and checkpoint data.
