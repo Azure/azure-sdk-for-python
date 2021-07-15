@@ -13,6 +13,8 @@ from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
+import pdb
+
 from pypi_tools.pypi import PyPIClient
 
 setup_parser_path = os.path.abspath(
@@ -30,9 +32,9 @@ logging.getLogger().setLevel(logging.INFO)
 MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     'azure-common': '1.1.10',
     'msrest': '0.6.10',
-    'six': '1.9',
     'typing-extensions': '3.6.5',
     'opentelemetry-api': '1.3.0',
+    'opentelemetry-sdk': '1.3.0',
     'azure-core': '1.11.0',
     'requests': '2.19.0',
     'six': '1.12.0'
@@ -158,6 +160,8 @@ def install_packages(packages, req_file):
 
     if req_file:
         commands.extend(["-r", req_file])
+
+    pdb.set_trace()
 
     logging.info("Installing packages. Command: %s", commands)
     check_call(commands)
