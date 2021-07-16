@@ -332,12 +332,13 @@ class EventGridPublisherClientTests(AsyncEventGridTest):
         with pytest.raises(ValueError, match="Parameter 'self._credential' must not be None."):
             client = EventGridPublisherClient(eventgrid_topic_endpoint, None)
 
+    @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @pytest.mark.asyncio
     async def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         credential = self.generate_oauth_token()
-        client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
+        client = EventGridPublisherClient(self.get_oauth_endpoint(), credential)
         eg_event = EventGridEvent(
                 subject="sample", 
                 data={"sample": "eventgridevent"}, 

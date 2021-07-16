@@ -115,6 +115,9 @@ class EventGridTest(AzureMgmtTestCase):
     def __init__(self, method_name):
         super(EventGridTest, self).__init__(method_name)
 
+    def get_oauth_endpoint(self):
+        return os.getenv("EG_TOPIC_HOSTNAME")
+
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
