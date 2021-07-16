@@ -50,7 +50,7 @@ def get_translation_input(args, kwargs, continuation_token):
             source_language_code = kwargs.pop("source_language_code", None)
             prefix = kwargs.pop("prefix", None)
             suffix = kwargs.pop("suffix", None)
-            storage_type = ("storage_type", None)
+            storage_type = kwargs.pop("storage_type", None)
             source_storage_source = kwargs.pop("source_storage_source", None)
             category_id = kwargs.pop("category_id", None)
             glossaries = kwargs.pop("glossaries", None)
@@ -65,16 +65,16 @@ def get_translation_input(args, kwargs, continuation_token):
                             suffix=suffix
                         ),
                         language=source_language_code,
-                        source_storage_source=source_storage_source
+                        storage_source=source_storage_source
                     ),
                     targets=[
                         _TargetInput(
                             target_url=target_url,
                             language=target_language_code,
-                            glossaries=[g._to_generated for g in glossaries]  # pylint: disable=protected-access
+                            glossaries=[g._to_generated() for g in glossaries]  # pylint: disable=protected-access
                             if glossaries else None,
-                            category_id=category_id,
-                            target_storage_source=target_storage_source
+                            category=category_id,
+                            storage_source=target_storage_source
                         )
                     ],
                     storage_type=storage_type
