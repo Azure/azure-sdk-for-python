@@ -13,7 +13,6 @@ from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
-import pdb
 
 from pypi_tools.pypi import PyPIClient
 
@@ -160,8 +159,6 @@ def install_packages(packages, req_file):
 
     if req_file:
         commands.extend(["-r", req_file])
-
-    pdb.set_trace()
 
     logging.info("Installing packages. Command: %s", commands)
     check_call(commands)
