@@ -1,5 +1,32 @@
 # Release History
 
+## 7.0.0 (2021-07-16)
+
+**Features**
+
+  - Model RedisFirewallRuleCreateParameters has a new parameter name
+  - Model RedisFirewallRuleCreateParameters has a new parameter id
+  - Model RedisFirewallRuleCreateParameters has a new parameter type
+  - Model RedisResource has a new parameter private_endpoint_connections
+  - Model RedisResource has a new parameter replicas_per_primary
+  - Model RedisResource has a new parameter public_network_access
+  - Model RedisUpdateParameters has a new parameter redis_version
+  - Model RedisUpdateParameters has a new parameter replicas_per_primary
+  - Model RedisUpdateParameters has a new parameter public_network_access
+  - Model RedisCreateParameters has a new parameter redis_version
+  - Model RedisCreateParameters has a new parameter replicas_per_primary
+  - Model RedisCreateParameters has a new parameter public_network_access
+  - Model RedisInstanceDetails has a new parameter is_primary
+  - Added operation RedisOperations.list_by_subscription
+  - Added operation FirewallRulesOperations.list
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+  - Removed operation RedisOperations.list
+  - Removed operation FirewallRulesOperations.list_by_redis_resource
+
 ## 7.0.0rc2 (2020-09-01)
 
 **Features**
