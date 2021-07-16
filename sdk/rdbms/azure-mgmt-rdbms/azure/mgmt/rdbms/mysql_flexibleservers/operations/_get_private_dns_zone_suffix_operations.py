@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class CheckVirtualNetworkSubnetUsageOperations(object):
-    """CheckVirtualNetworkSubnetUsageOperations operations.
+class GetPrivateDnsZoneSuffixOperations(object):
+    """GetPrivateDnsZoneSuffixOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -46,38 +46,26 @@ class CheckVirtualNetworkSubnetUsageOperations(object):
 
     def execute(
         self,
-        location_name,  # type: str
-        parameters,  # type: "_models.VirtualNetworkSubnetUsageParameter"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.VirtualNetworkSubnetUsageResult"
-        """Get virtual network subnet usage for a given vNet resource id.
+        # type: (...) -> "_models.GetPrivateDnsZoneSuffixResponse"
+        """Get private DNS zone suffix in the cloud.
 
-        :param location_name: The name of the location.
-        :type location_name: str
-        :param parameters: The required parameters for creating or updating a server.
-        :type parameters: ~azure.mgmt.rdbms.mysql_flexibleservers.models.VirtualNetworkSubnetUsageParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualNetworkSubnetUsageResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.VirtualNetworkSubnetUsageResult
+        :return: GetPrivateDnsZoneSuffixResponse, or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.GetPrivateDnsZoneSuffixResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkSubnetUsageResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GetPrivateDnsZoneSuffixResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2021-05-01-preview"
-        content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.execute.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'locationName': self._serialize.url("location_name", location_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -85,13 +73,9 @@ class CheckVirtualNetworkSubnetUsageOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'VirtualNetworkSubnetUsageParameter')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -99,10 +83,10 @@ class CheckVirtualNetworkSubnetUsageOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VirtualNetworkSubnetUsageResult', pipeline_response)
+        deserialized = self._deserialize('GetPrivateDnsZoneSuffixResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/checkVirtualNetworkSubnetUsage'}  # type: ignore
+    execute.metadata = {'url': '/providers/Microsoft.DBforMySQL/getPrivateDnsZoneSuffix'}  # type: ignore

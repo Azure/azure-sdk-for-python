@@ -19,14 +19,14 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class WaitStatisticsOperations:
-    """WaitStatisticsOperations async operations.
+class BackupsOperations:
+    """BackupsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.rdbms.mysql.models
+    :type models: ~azure.mgmt.rdbms.mysql_flexibleservers.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -45,28 +45,28 @@ class WaitStatisticsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        wait_statistics_id: str,
+        backup_name: str,
         **kwargs: Any
-    ) -> "_models.WaitStatistic":
-        """Retrieve wait statistics for specified identifier.
+    ) -> "_models.ServerBackup":
+        """List all the backups for a given server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param wait_statistics_id: The Wait Statistic identifier.
-        :type wait_statistics_id: str
+        :param backup_name: The name of the backup.
+        :type backup_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: WaitStatistic, or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.mysql.models.WaitStatistic
+        :return: ServerBackup, or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WaitStatistic"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerBackup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -75,7 +75,7 @@ class WaitStatisticsOperations:
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'waitStatisticsId': self._serialize.url("wait_statistics_id", wait_statistics_id, 'str'),
+            'backupName': self._serialize.url("backup_name", backup_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -95,47 +95,42 @@ class WaitStatisticsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('WaitStatistic', pipeline_response)
+        deserialized = self._deserialize('ServerBackup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/waitStatistics/{waitStatisticsId}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/backups/{backupName}'}  # type: ignore
 
     def list_by_server(
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: "_models.WaitStatisticsInput",
         **kwargs: Any
-    ) -> AsyncIterable["_models.WaitStatisticsResultList"]:
-        """Retrieve wait statistics for specified aggregation window.
+    ) -> AsyncIterable["_models.ServerBackupListResult"]:
+        """List all the backups for a given server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param parameters: The required parameters for retrieving wait statistics.
-        :type parameters: ~azure.mgmt.rdbms.mysql.models.WaitStatisticsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either WaitStatisticsResultList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mysql.models.WaitStatisticsResultList]
+        :return: An iterator like instance of either ServerBackupListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerBackupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WaitStatisticsResultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServerBackupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01"
-        content_type = "application/json"
+        api_version = "2021-05-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
             header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
@@ -151,21 +146,15 @@ class WaitStatisticsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-                body_content_kwargs = {}  # type: Dict[str, Any]
-                body_content = self._serialize.body(parameters, 'WaitStatisticsInput')
-                body_content_kwargs['content'] = body_content
-                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-                body_content_kwargs = {}  # type: Dict[str, Any]
-                body_content = self._serialize.body(parameters, 'WaitStatisticsInput')
-                body_content_kwargs['content'] = body_content
-                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('WaitStatisticsResultList', pipeline_response)
+            deserialized = self._deserialize('ServerBackupListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -186,4 +175,4 @@ class WaitStatisticsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/waitStatistics'}  # type: ignore
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/flexibleServers/{serverName}/backups'}  # type: ignore
