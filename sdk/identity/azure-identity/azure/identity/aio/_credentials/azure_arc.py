@@ -17,10 +17,9 @@ from ..._credentials.azure_arc import _get_request, _get_secret_key
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, Optional
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from azure.core.pipeline.transport import AsyncHttpTransport
 
 
 class AzureArcCredential(AsyncContextManager, GetTokenMixin):
@@ -62,11 +61,6 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
 
 class ArcChallengeAuthPolicy(AsyncHTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
-
-    def __init__(self):
-        # workaround for https://github.com/Azure/azure-sdk-for-python/issues/5797
-        super().__init__()
-        self.next = None  # type: Union[AsyncHTTPPolicy, AsyncHttpTransport]
 
     async def send(self, request: "PipelineRequest") -> "PipelineResponse":
         request.http_request.headers["Metadata"] = "true"
