@@ -9,7 +9,6 @@ import asyncio
 import sys
 import os
 import json
-from azure.identity.aio import DefaultAzureCredential
 import pytest
 from datetime import timedelta
 from msrest.serialization import UTC
@@ -30,7 +29,9 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer
 )
 
-class EventGridPublisherClientTests(AzureMgmtTestCase):
+from asynctestcase import AsyncEventGridTest
+
+class EventGridPublisherClientTests(AsyncEventGridTest):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -335,7 +336,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @pytest.mark.asyncio
     async def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        credential = DefaultAzureCredential()
+        credential = self.generate_oauth_token()
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
                 subject="sample", 

@@ -8,7 +8,6 @@ import logging
 import sys
 import os
 import json
-from azure.identity import DefaultAzureCredential
 import pytest
 import uuid
 from datetime import datetime, timedelta
@@ -30,10 +29,11 @@ from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_s
 from azure.eventgrid._helpers import _cloud_event_to_generated
 
 from eventgrid_preparer import (
-    CachedEventGridTopicPreparer
+    CachedEventGridTopicPreparer,
+    EventGridTest
 )
 
-class EventGridPublisherClientTests(AzureMgmtTestCase):
+class EventGridPublisherClientTests(EventGridTest):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -350,7 +350,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        credential = DefaultAzureCredential()
+        credential = self.generate_oauth_token()
         client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
                 subject="sample", 
