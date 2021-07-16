@@ -9,8 +9,6 @@ from asyncio import Lock
 from uamqp import TransportType, c_uamqp
 from uamqp.async_ops import ConnectionAsync
 
-from .._connection_manager import _ConnectionMode
-
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync
 
@@ -47,7 +45,4 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs) -> "ConnectionManager":
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
-    if connection_mode == _ConnectionMode.ShareConnection:
-        pass
     return _SeparateConnectionManager(**kwargs)
