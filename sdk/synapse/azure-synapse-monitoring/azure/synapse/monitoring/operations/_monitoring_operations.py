@@ -78,6 +78,12 @@ class MonitoringOperations(object):
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+        # Add rudimentary support for paginating the results returned:
+        # See Also: <https://github.com/Azure/azure-sdk-for-python/issues/19855>
+        skip = kwargs.pop('skip', None)
+        if skip != None:
+            query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
+
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if x_ms_client_request_id is not None:
