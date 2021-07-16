@@ -14,26 +14,27 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2020-03-01
   response:
     body:
       string: '{"name":"myProvisioningServiceRND","location":"East US","properties":{"state":"Activating","provisioningState":"Accepted","allocationPolicy":"Hashed","idScope":null},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfZjcwOTRiZjctNzQ4OC00MTE0LTg0MDctNTA5NjMwNTQ5NDMx?api-version=2018-01-22&asyncinfo
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfNzhlOTQzMmItOWIzOS00MjFjLWE4NWMtZTFhZDhjNDU1Nzkz?api-version=2020-03-01&asyncinfo
       cache-control:
       - no-cache
       content-length:
-      - '659'
+      - '669'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:16:40 GMT
+      - Thu, 15 Jul 2021 06:24:01 GMT
       expires:
       - '-1'
       pragma:
@@ -59,53 +60,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfZjcwOTRiZjctNzQ4OC00MTE0LTg0MDctNTA5NjMwNTQ5NDMx?api-version=2018-01-22&asyncinfo
-  response:
-    body:
-      string: '{"status":"Running"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '20'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 01 May 2020 20:17:10 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfZjcwOTRiZjctNzQ4OC00MTE0LTg0MDctNTA5NjMwNTQ5NDMx?api-version=2018-01-22&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfNzhlOTQzMmItOWIzOS00MjFjLWE4NWMtZTFhZDhjNDU1Nzkz?api-version=2020-03-01&asyncinfo
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -117,7 +76,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:41 GMT
+      - Thu, 15 Jul 2021 06:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -145,23 +104,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2020-03-01
   response:
     body:
-      string: '{"etag":"AAAAAALwwXo=","name":"myProvisioningServiceRND","location":"East
-        US","properties":{"state":"Active","provisioningState":"Succeeded","iotHubs":[],"allocationPolicy":"Hashed","serviceOperationsHostName":"myProvisioningServiceRND.azure-devices-provisioning.net","deviceProvisioningHostName":"global.azure-devices-provisioning.net","idScope":"0ne000F9208"},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
+      string: '{"etag":"AAAAAAowMjI=","name":"myProvisioningServiceRND","location":"East
+        US","properties":{"state":"Active","provisioningState":"Succeeded","iotHubs":[],"allocationPolicy":"Hashed","serviceOperationsHostName":"myProvisioningServiceRND.azure-devices-provisioning.net","deviceProvisioningHostName":"global.azure-devices-provisioning.net","idScope":"0ne00339C89"},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '855'
+      - '865'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:46 GMT
+      - Thu, 15 Jul 2021 06:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -188,15 +148,14 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Type:
-      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/certificates?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/certificates?api-version=2020-03-01
   response:
     body:
       string: '{"value":[]}'
@@ -208,7 +167,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:46 GMT
+      - Thu, 15 Jul 2021 06:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -235,28 +194,27 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Type:
-      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2020-03-01
   response:
     body:
-      string: '{"etag":"AAAAAALwwXo=","name":"myProvisioningServiceRND","location":"East
-        US","properties":{"state":"Active","provisioningState":"Succeeded","iotHubs":[],"allocationPolicy":"Hashed","serviceOperationsHostName":"myProvisioningServiceRND.azure-devices-provisioning.net","deviceProvisioningHostName":"global.azure-devices-provisioning.net","idScope":"0ne000F9208"},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
+      string: '{"etag":"AAAAAAowMjI=","name":"myProvisioningServiceRND","location":"East
+        US","properties":{"state":"Active","provisioningState":"Succeeded","iotHubs":[],"allocationPolicy":"Hashed","serviceOperationsHostName":"myProvisioningServiceRND.azure-devices-provisioning.net","deviceProvisioningHostName":"global.azure-devices-provisioning.net","idScope":"0ne00339C89"},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '855'
+      - '865'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:47 GMT
+      - Thu, 15 Jul 2021 06:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -288,24 +246,25 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2020-03-01
   response:
     body:
-      string: '{"etag":"","name":"myProvisioningServiceRND","location":"East US","properties":{"state":"Active","provisioningState":"Succeeded","iotHubs":[],"allocationPolicy":"Hashed","serviceOperationsHostName":"myProvisioningServiceRND.azure-devices-provisioning.net","deviceProvisioningHostName":"global.azure-devices-provisioning.net","idScope":"0ne000F9208"},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
+      string: '{"etag":"","name":"myProvisioningServiceRND","location":"East US","properties":{"state":"Active","provisioningState":"Succeeded","iotHubs":[],"allocationPolicy":"Hashed","serviceOperationsHostName":"myProvisioningServiceRND.azure-devices-provisioning.net","deviceProvisioningHostName":"global.azure-devices-provisioning.net","idScope":"0ne00339C89"},"resourcegroup":"test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44","type":"Microsoft.Devices/provisioningServices","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND","subscriptionid":"00000000-0000-0000-0000-000000000000","tags":{},"sku":{"name":"S1","tier":"Standard","capacity":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '843'
+      - '853'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:49 GMT
+      - Thu, 15 Jul 2021 06:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -321,7 +280,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '4999'
+      - '4998'
     status:
       code: 200
       message: OK
@@ -339,12 +298,13 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkProvisioningServiceNameAvailability?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkProvisioningServiceNameAvailability?api-version=2020-03-01
   response:
     body:
       string: '{"nameAvailable":true,"reason":"Invalid","message":null}'
@@ -356,7 +316,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:49 GMT
+      - Thu, 15 Jul 2021 06:24:31 GMT
       expires:
       - '-1'
       pragma:
@@ -387,21 +347,20 @@ interactions:
       - keep-alive
       Content-Length:
       - '0'
-      Content-Type:
-      - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2018-01-22
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND?api-version=2020-03-01
   response:
     body:
       string: 'null'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfNTk5NjE4ZjUtY2Q1Yy00ZTUwLTlmMDEtNTljOGFjNDdmMzlm?api-version=2018-01-22&asyncinfo
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfYjVjMWZkMDAtMWQ1ZS00MjdmLWFhMDEtZDdlNTEzY2ExNjU2?api-version=2020-03-01&asyncinfo
       cache-control:
       - no-cache
       content-length:
@@ -409,11 +368,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:17:51 GMT
+      - Thu, 15 Jul 2021 06:24:32 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfNTk5NjE4ZjUtY2Q1Yy00ZTUwLTlmMDEtNTljOGFjNDdmMzlm?api-version=2018-01-22
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfYjVjMWZkMDAtMWQ1ZS00MjdmLWFhMDEtZDdlNTEzY2ExNjU2?api-version=2020-03-01
       pragma:
       - no-cache
       server:
@@ -423,7 +382,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 202
       message: Accepted
@@ -437,10 +396,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-iothubprovisioningservices/0.2.0 Azure-SDK-For-Python
+      - python/3.8.10 (Linux-5.8.0-1036-azure-x86_64-with-glibc2.2.5) msrest/0.6.21
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0 msrest_azure/0.6.4
+        azure-mgmt-iothubprovisioningservices/0.3.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfNTk5NjE4ZjUtY2Q1Yy00ZTUwLTlmMDEtNTljOGFjNDdmMzlm?api-version=2018-01-22&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_iothubprovisioningservices_test_iothubprovisioningservices4ed01e44/providers/Microsoft.Devices/provisioningServices/myProvisioningServiceRND/operationResults/b3NfaWRfYjVjMWZkMDAtMWQ1ZS00MjdmLWFhMDEtZDdlNTEzY2ExNjU2?api-version=2020-03-01&asyncinfo
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -452,7 +412,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 May 2020 20:18:07 GMT
+      - Thu, 15 Jul 2021 06:24:47 GMT
       expires:
       - '-1'
       pragma:
