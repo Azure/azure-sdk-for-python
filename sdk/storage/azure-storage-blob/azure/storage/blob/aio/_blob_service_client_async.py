@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
@@ -567,14 +568,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             Specifies the name of the deleted container to restore.
         :param str deleted_container_version:
             Specifies the version of the deleted container to restore.
-        :keyword str new_name:
-            The new name for the deleted container to be restored to.
-            If not specified deleted_container_name will be used as the restored container name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.aio.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)
+        if new_name:
+            warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
             await container._client.container.restore(deleted_container_name=deleted_container_name, # pylint: disable = protected-access

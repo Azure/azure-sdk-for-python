@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: http://www.google.com/
+  response:
+    body: {string: !!python/unicode 'not actually google'}
+    headers:
+    - !!python/tuple
+      - Expires
+      - ['-1']
+    - !!python/tuple
+      - Connection
+      - [close]
+    - !!python/tuple
+      - P3p
+      - ['CP="This is not a P3P policy! See http://www.google.com/support/accounts/bin/answer.py?hl=en&answer=151657
+          for more info."']
+    - !!python/tuple
+      - Alternate-Protocol
+      - ['80:quic,p=0']
+    - !!python/tuple
+      - Accept-Ranges
+      - [none]
+    - !!python/tuple
+      - X-Xss-Protection
+      - [1; mode=block]
+    - !!python/tuple
+      - Vary
+      - [Accept-Encoding]
+    - !!python/tuple
+      - Date
+      - ['Thu, 30 Jul 2015 08:41:40 GMT']
+    - !!python/tuple
+      - Cache-Control
+      - ['private, max-age=0']
+    - !!python/tuple
+      - Content-Type
+      - [text/html; charset=ISO-8859-1]
+    - !!python/tuple
+      - Set-Cookie
+      - ['PREF=ID=1111111111111111:FF=0:TM=1438245700:LM=1438245700:V=1:S=GAzVO0ALebSpC_cJ;
+          expires=Sat, 29-Jul-2017 08:41:40 GMT; path=/; domain=.google.com', 'NID=69=Br7oRAwgmKoK__HC6FEnuxglTFDmFxqP6Md63lKhzW1w6WkDbp3U90CDxnUKvDP6wJH8yxY5Lk5ZnFf66Q1B0d4OsYoKgq0vjfBAYXuCIAWtOuGZEOsFXanXs7pt2Mjx;
+          expires=Fri, 29-Jan-2016 08:41:40 GMT; path=/; domain=.google.com; HttpOnly']
+    - !!python/tuple
+      - X-Frame-Options
+      - [SAMEORIGIN]
+    - !!python/tuple
+      - Server
+      - [gws]
+    status: {code: 200, message: OK}
+version: 1

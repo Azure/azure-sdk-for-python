@@ -226,7 +226,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 ingestion_start_offset=-1,
                 stop_retry_after=-1,
             ),
-            admin_emails=["yournamehere@microsoft.com"],
+            admins=["yournamehere@microsoft.com"],
             data_feed_description="my first data feed",
             missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                 fill_type="SmartFilling"
@@ -235,7 +235,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 rollup_type="NoRollup",
                 rollup_method="None",
             ),
-            viewer_emails=["viewers"],
+            viewers=["viewers"],
             access_mode="Private",
             action_link_template="action link template"
         )

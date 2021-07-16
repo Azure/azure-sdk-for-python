@@ -105,6 +105,7 @@ This sample shows getting a log query. to handle the response and view it in a t
 ```Python
 import os
 import pandas as pd
+from datetime import datetime
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
@@ -155,18 +156,18 @@ requests = [
     LogsQueryRequest(
         query="AzureActivity | summarize count()",
         duration=timedelta(hours=1),
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= """AppRequests | take 10  |
             summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
         duration=timedelta(hours=1),
         start_time=datetime(2021, 6, 2),
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
     LogsQueryRequest(
         query= "AppRequests | take 2",
-        workspace= os.environ['LOG_WORKSPACE_ID']
+        workspace_id=os.environ['LOG_WORKSPACE_ID']
     ),
 ]
 response = client.batch_query(requests)

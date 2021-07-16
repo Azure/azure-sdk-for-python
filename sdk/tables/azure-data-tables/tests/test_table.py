@@ -334,7 +334,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             self._assert_policy_datetime(dt, acl['full'].start)
 
             signed_identifiers.pop('empty')
-            signed_identifiers['partial'] = None   
+            signed_identifiers['partial'] = None
 
             table.set_table_access_policy(signed_identifiers)
             acl = table.get_table_access_policy()

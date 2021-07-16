@@ -96,7 +96,7 @@ class EntityConditionality(str, Enum):
 
 
 class HealthcareEntityRelation(str, Enum):
-    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc."""
+    """Type of relation. Examples include: 'DosageOfMedication' or 'FrequencyOfMedication', etc."""
 
     ABBREVIATION = "Abbreviation"
     DIRECTION_OF_BODY_STRUCTURE = "DirectionOfBodyStructure"
@@ -122,6 +122,8 @@ class HealthcareEntityRelation(str, Enum):
 
 
 class PiiEntityCategory(str, Enum):
+    """Categories of Personally Identifiable Information (PII).
+    """
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -430,7 +432,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
     :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out. Only returned for API versions v3.1 and up.
+        redacted out.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -440,8 +442,6 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
-    .. versionadded:: v3.1
-        The *redacted_text* parameter.
     """
 
     def __init__(self, **kwargs):
@@ -547,7 +547,8 @@ class HealthcareRelation(DictMixin):
 
     :ivar relation_type: The type of relation, i.e. the relationship between "100mg" and
         "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
-    :vartype relation_type: str or ~azure.ai.textanalytics.HealthcareEntityRelation
+        Possible values found in :class:`~azure.ai.textanalytics.HealthcareEntityRelation`
+    :vartype relation_type: str
     :ivar roles: The roles present in this relation. I.e., in the document
         "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
     :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
@@ -672,16 +673,16 @@ class CategorizedEntity(DictMixin):
     :vartype subcategory: str
     :ivar int length: The entity text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1 and up.
+        by default.
     :ivar int offset: The entity text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1 and up.
+        set in the original request, which is UnicodeCodePoints by default.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
+
     .. versionadded:: v3.1
-        The *offset* property.
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -781,7 +782,7 @@ class HealthcareEntity(DictMixin):
 
     :ivar str text: Entity text as appears in the document.
     :ivar str normalized_text: Optional. Normalized version of the raw `text` we extract
-        from the document. Not all `text`s have a normalized version.
+        from the document. Not all `text` will have a normalized version.
     :ivar str category: Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
         type for possible healthcare entity categories.
     :ivar str subcategory: Entity subcategory.
@@ -1267,7 +1268,7 @@ class LinkedEntity(DictMixin):
     :vartype data_source: str
     :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
         Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
-        Only available for API version v3.1 and up.
+
     .. versionadded:: v3.1
         The *bing_entity_search_api_id* property.
     """
@@ -1325,14 +1326,13 @@ class LinkedEntityMatch(DictMixin):
     :ivar text: Entity text as appears in the request.
     :ivar int length: The linked entity match text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1 and up.
     :ivar int offset: The linked entity match text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default.
-        Only returned for API versions v3.1 and up.
     :vartype text: str
+
     .. versionadded:: v3.1
-        The *offset* property.
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -1456,11 +1456,10 @@ class SentenceSentiment(DictMixin):
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int length: The sentence text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default. Only returned for API versions v3.1 and up.
+        by default.
     :ivar int offset: The sentence text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default. Only returned for
-        API versions v3.1 and up.
+        set in the original request, which is UnicodeCodePoints by default.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in the sentence "The food is good, but the service is bad", we would
         mine the two opinions "food is good" and "service is bad". Only returned
@@ -1468,8 +1467,9 @@ class SentenceSentiment(DictMixin):
         api version is v3.1 and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
+
     .. versionadded:: v3.1
-        The *offset* and *mined_opinions* properties.
+        The *offset*, *length*, and *mined_opinions* properties.
     """
 
     def __init__(self, **kwargs):
@@ -1786,7 +1786,7 @@ class RecognizeEntitiesAction(DictMixin):
             :1024
         ]
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.EntitiesTask(
             parameters=_v3_1_models.EntitiesTaskParameters(
                 model_version=self.model_version,
@@ -1859,7 +1859,7 @@ class AnalyzeSentimentAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.SentimentAnalysisTask(
             parameters=_v3_1_models.SentimentAnalysisTaskParameters(
                 model_version=self.model_version,
@@ -1890,11 +1890,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+    :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
+        input text on the service side for troubleshooting. If set to False, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
+        the Text Analytics natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
@@ -1910,11 +1909,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, Text Analytics logs your
+    :ivar bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
+        input text on the service side for troubleshooting. If set to False, Text Analytics logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the Text Analytics natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
+        the Text Analytics natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
@@ -1939,7 +1937,7 @@ class RecognizePiiEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.PiiTask(
             parameters=_v3_1_models.PiiTaskParameters(
                 model_version=self.model_version,
@@ -1990,7 +1988,7 @@ class ExtractKeyPhrasesAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.KeyPhrasesTask(
             parameters=_v3_1_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version,
@@ -2048,7 +2046,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
             )[:1024]
         )
 
-    def to_generated(self):
+    def _to_generated(self):
         return _v3_1_models.EntityLinkingTask(
             parameters=_v3_1_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
