@@ -90,7 +90,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Test Samples'
-    condition: and(eq(variables['TestSamples'], 'true'), ne('${{ parameters.PythonVerison }}', '2.7'), ne('${{ parameters.PythonVerison }}', '3.5'))
+    condition: and(eq(variables['TestSamples'], 'true'), ne('${{ parameters.PythonVersion }}', '2.7'), ne('${{ parameters.PythonVersion }}', '3.5'))
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
