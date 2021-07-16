@@ -44,7 +44,7 @@ Azure Event Grid provides integration with Azure Active Directory (Azure AD) for
 
 To send events to a topic or domain with a `TokenCredential`, the authenticated identity should have the "EventGrid Data Sender" role assigned.
 
-With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Azure Active Directory, see the [`azure-identity` README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md).
+With the `azure-identity` package, you can seamlessly authorize requests in both development and production environments. To learn more about Azure Active Directory, see the [`azure-identity` README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
 
 For example, you can use `DefaultAzureCredential` to construct a client which will authenticate using Azure Active Directory:
 
