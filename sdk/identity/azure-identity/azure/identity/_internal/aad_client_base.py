@@ -93,12 +93,14 @@ class AadClientBase(ABC):
         pass
 
     @abc.abstractmethod
-    def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
+    def _build_pipeline(self, **kwargs):
         pass
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
+        content = response.context.get(
+            ContentDecodePolicy.CONTEXT_NAME
+        ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
