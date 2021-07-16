@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- The single translation input version of `begin_translation(source, target, target_language_code)` now accepts keyword arguments
+`storage_type`, `glossaries`, `category_id`, `prefix`, `suffix`, `source_language_code`, `source_storage_source`, and `target_storage_source`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

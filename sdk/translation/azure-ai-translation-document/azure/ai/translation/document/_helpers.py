@@ -71,7 +71,8 @@ def get_translation_input(args, kwargs, continuation_token):
                         _TargetInput(
                             target_url=target_url,
                             language=target_language_code,
-                            glossaries=[g._to_generated for g in glossaries] if glossaries else None,
+                            glossaries=[g._to_generated for g in glossaries]  # pylint: disable=protected-access
+                            if glossaries else None,
                             category_id=category_id,
                             target_storage_source=target_storage_source
                         )
