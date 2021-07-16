@@ -527,6 +527,10 @@ class BlobProperties(DictMixin):
         Key value pair of tags on this blob.
 
         .. versionadded:: 12.4.0
+    :ivar bool has_versions_only:
+        A true value indicates the root blob is deleted
+
+        .. versionadded:: 12.10.0
 
     """
 
@@ -567,6 +571,7 @@ class BlobProperties(DictMixin):
         self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
+        self.has_versions_only = None
 
 
 class FilteredBlob(DictMixin):

@@ -1162,6 +1162,46 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blobs[1].metadata['name'], 'car')
 
     @GlobalStorageAccountPreparer()
+    async def test_list_blobs_include_deletedwithversion_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # pytest.skip("Waiting on metadata XML fix in msrest")
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        blob1 = container.get_blob_client('blob1')
+        resp = await blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        version_id_1 = resp['version_id']
+        await blob1.upload_blob(b"abc", overwrite=True)
+        root_content = b"cde"
+        root_version_id = (await blob1.upload_blob(root_content, overwrite=True))['version_id']
+        # this will delete the root blob, while you can still access it through versioning
+        await blob1.delete_blob()
+
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+
+        # Act
+        blobs = list()
+        
+        # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
+        async for blob in container.list_blobs(include=["deletedwithversions"]):
+            blobs.append(blob)
+        downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
+        downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
+
+        # Assert
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertTrue(blobs[0].has_versions_only)
+        self.assertEqual(root_content, downloaded_root_content)
+        self.assertEqual(data, downloaded_original_content)
+        self.assertEqual(blobs[1].name, 'blob2')
+        self.assertFalse(blobs[1].has_versions_only)
+        self.assertEqual(blobs[2].name, 'blob3')
+        self.assertFalse(blobs[2].has_versions_only)
+
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, transport=AiohttpTestTransport())
