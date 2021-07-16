@@ -2,6 +2,8 @@
 
 ## 4.3.1 (Unreleased)
 
+- Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
+
 ### Features Added
 
 ### Breaking Changes
