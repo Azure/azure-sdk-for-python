@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
-    AsyncBearerTokenCredentialPolicy
+    AsyncBearerTokenCredentialPolicy,
 )
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import EventGridEvent
@@ -32,7 +32,7 @@ from .._helpers import (
     _eventgrid_data_typecheck,
     _build_request,
     _cloud_event_to_generated,
-    _get_authentication_policy
+    _get_authentication_policy,
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._version import VERSION
@@ -78,7 +78,9 @@ class EventGridPublisherClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AsyncTokenCredential", AzureKeyCredential, AzureSasCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureKeyCredential, AzureSasCredential
+        ],
         **kwargs: Any
     ) -> None:
         self._client = EventGridPublisherClientAsync(
@@ -88,9 +90,14 @@ class EventGridPublisherClient:
 
     @staticmethod
     def _policies(
-        credential: Union[AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"], **kwargs: Any
+        credential: Union[
+            AzureKeyCredential, AzureSasCredential, "AsyncTokenCredential"
+        ],
+        **kwargs: Any
     ) -> List[Any]:
-        auth_policy = _get_authentication_policy(credential, AsyncBearerTokenCredentialPolicy)
+        auth_policy = _get_authentication_policy(
+            credential, AsyncBearerTokenCredentialPolicy
+        )
         sdk_moniker = "eventgridpublisherclient/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
@@ -181,7 +188,8 @@ class EventGridPublisherClient:
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    _cloud_event_to_generated(e, **kwargs) for e in events # pylint: disable=protected-access
+                    _cloud_event_to_generated(e, **kwargs)
+                    for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
                 pass  # means it's a dictionary
@@ -189,9 +197,8 @@ class EventGridPublisherClient:
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        await self._client._send_request( # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events),
-            **kwargs
+        await self._client._send_request(  # pylint: disable=protected-access
+            _build_request(self._endpoint, content_type, events), **kwargs
         )
 
     async def __aenter__(self) -> "EventGridPublisherClient":
