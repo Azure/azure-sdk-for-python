@@ -24,13 +24,13 @@ interactions:
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 82923f05-3c9f-416f-9855-2fbefa6085dc
+      apim-request-id: 527dd21e-90c2-4419-8e21-6704202b7098
       content-length: '583'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Jun 2021 15:15:47 GMT
+      date: Thu, 15 Jul 2021 22:08:30 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '132'
+      x-envoy-upstream-service-time: '812'
     status:
       code: 200
       message: OK

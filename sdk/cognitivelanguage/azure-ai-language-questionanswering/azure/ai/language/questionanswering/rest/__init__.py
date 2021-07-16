@@ -14,6 +14,6 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_query_text_request  # type: ignore
 
 __all__ = [
-    'build_query_knowledgebase_request',
-    'build_query_text_request',
+    "build_query_knowledgebase_request",
+    "build_query_text_request",
 ]

@@ -16,13 +16,13 @@ from testcase import (
 from azure.ai.language.questionanswering import QuestionAnsweringClient
 from azure.ai.language.questionanswering.rest import *
 from azure.ai.language.questionanswering.models import (
-    KnowledgebaseQueryParameters,
-    KnowledgebaseAnswerRequestContext,
+    KnowledgeBaseQueryOptions,
+    KnowledgeBaseAnswerRequestContext,
     AnswerSpanRequest,
 )
 
 
-class QnAKnowledgebaseTests(QuestionAnsweringTest):
+class QnAKnowledgeBaseTests(QuestionAnsweringTest):
 
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_llc(self, qna_account, qna_key, qna_project):
@@ -125,10 +125,10 @@ class QnAKnowledgebaseTests(QuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgebaseQueryParameters(
+        query_params = KnowledgeBaseQueryOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgebaseAnswerRequestContext(
+            context=KnowledgeBaseAnswerRequestContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             )
@@ -166,10 +166,10 @@ class QnAKnowledgebaseTests(QuestionAnsweringTest):
     @GlobalQuestionAnsweringAccountPreparer()
     def test_query_knowledgebase_with_answerspan(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
-        query_params = KnowledgebaseQueryParameters(
+        query_params = KnowledgeBaseQueryOptions(
             question="Ports and connectors",
             top=3,
-            context=KnowledgebaseAnswerRequestContext(
+            context=KnowledgeBaseAnswerRequestContext(
                 previous_user_query="Meet Surface Pro 4",
                 previous_qna_id=4
             ),
@@ -271,7 +271,7 @@ class QnAKnowledgebaseTests(QuestionAnsweringTest):
     def test_query_knowledgebase_with_followup(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         with client:
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 question="How long should my Surface battery last?",
                 top=3,
                 user_id="sd53lsY=",
@@ -293,12 +293,12 @@ class QnAKnowledgebaseTests(QuestionAnsweringTest):
             assert len(confident_answers) == 1
             assert confident_answers[0].source == "surface-pro-4-user-guide-EN.pdf"
 
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 question="How long it takes to charge Surface?",
                 top=3,
                 user_id="sd53lsY=",
                 confidence_score_threshold=0.2,
-                context=KnowledgebaseAnswerRequestContext(
+                context=KnowledgeBaseAnswerRequestContext(
                     previous_user_query="How long should my Surface battery last?",
                     previous_qna_id=confident_answers[0].id
                 ),
@@ -325,9 +325,23 @@ class QnAKnowledgebaseTests(QuestionAnsweringTest):
     def test_query_knowledgebase_only_id(self, qna_account, qna_key, qna_project):
         client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
         with client:
-            query_params = KnowledgebaseQueryParameters(
+            query_params = KnowledgeBaseQueryOptions(
                 qna_id=19
             )
+
+            output = client.query_knowledgebase(
+                query_params,
+                project_name=qna_project,
+                deployment_name='test'
+            )
+
+            assert len(output.answers) == 1
+
+    @GlobalQuestionAnsweringAccountPreparer()
+    def test_query_knowledgebase_python_dict(self, qna_account, qna_key, qna_project):
+        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+        with client:
+            query_params = {"qna_id": 19}
 
             output = client.query_knowledgebase(
                 query_params,

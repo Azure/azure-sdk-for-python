@@ -68,7 +68,7 @@ interactions:
         on Surface.com. |\\n| Sensors | Six sensors\u2014 accelerometer, magnetometer,
         gyro, ambient light sensor, Hall effect, Wi-Fi SAR\u2014let apps do things
         like track motion and determine location. |\",\n      \"confidenceScore\":
-        1.0,\n      \"id\": 5,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        100.0,\n      \"id\": 5,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n
         \       \"prompts\": [\n          {\n            \"displayOrder\": 0,\n            \"qnaId\":
         6,\n            \"displayText\": \"Software\"\n          },\n          {\n
@@ -88,7 +88,7 @@ interactions:
         Pro 4 using the USB port, Mini DisplayPort, or Bluetooth. Or, connect everything
         to a Surface Dock (sold separately). With Surface Dock, you can switch between
         fully connected and fully mobile with a single connector.\",\n      \"confidenceScore\":
-        0.46590000000000004,\n      \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
+        46.59,\n      \"id\": 64,\n      \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n
         \     \"metadata\": {\n        \"explicitlytaggedheading\": \"connect monitors,
         accessories, and other devices\"\n      },\n      \"dialog\": {\n        \"isContextOnly\":
         false,\n        \"prompts\": [\n          {\n            \"displayOrder\":
@@ -104,25 +104,25 @@ interactions:
         is for video only. Audio will play from your Surface speakers unless you\u2019ve
         connected external speakers. For more info about this, see [Surface sound,](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
         [volume, and audio accessories](http://www.microsoft.com/surface/support/hardware-and-drivers/sound-volume-and-speakers)
-        on Surface.com.\",\n      \"confidenceScore\": 0.4397,\n      \"id\": 68,\n
+        on Surface.com.\",\n      \"confidenceScore\": 43.97,\n      \"id\": 68,\n
         \     \"source\": \"surface-pro-4-user-guide-EN.pdf\",\n      \"metadata\":
         {},\n      \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 85f2aadc-d3c7-4aac-8692-66a226ebb04a
+      - 2eb92f74-cda1-4bdb-a18f-a59b4d7cdf11
       content-length:
-      - '7472'
+      - '7459'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Jul 2021 17:24:00 GMT
+      - Fri, 25 Jun 2021 19:41:13 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '428'
+      - '426'
     status:
       code: 200
       message: OK

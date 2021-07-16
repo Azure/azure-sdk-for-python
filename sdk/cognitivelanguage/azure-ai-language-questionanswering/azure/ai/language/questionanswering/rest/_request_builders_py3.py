@@ -16,21 +16,21 @@ _SERIALIZER = Serializer()
 def build_query_knowledgebase_request(
     *, project_name: str, json: Any = None, content: Any = None, deployment_name: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
-    """Answers the specified question using your knowledgebase.
+    """Answers the specified question using your knowledge base.
 
-    Answers the specified question using your knowledgebase.
+    Answers the specified question using your knowledge base.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
-    code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder
+    into your code flow.
 
     :keyword project_name: The name of the project to use.
     :paramtype project_name: str
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. Post body of the request.
-    :paramtype json: Any
+    :paramtype json: any
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Post body of the request.
-    :paramtype content: Any
+    :paramtype content: any
     :keyword deployment_name: The name of the specific deployment of the project to use.
     :paramtype deployment_name: str
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
@@ -41,7 +41,7 @@ def build_query_knowledgebase_request(
     Example:
         .. code-block:: python
 
-            # JSON input template you can fill out and use as your `json` input.
+            # JSON input template you can fill out and use as your body input.
             json = {
                 "answerSpanRequest": {
                     "confidenceScoreThreshold": "float (optional)",
@@ -112,7 +112,6 @@ def build_query_knowledgebase_request(
 
     api_version = "2021-05-01-preview"
     accept = "application/json"
-
     # Construct URL
     url = kwargs.pop("template_url", "/:query-knowledgebases")
 
@@ -139,15 +138,15 @@ def build_query_text_request(*, json: Any = None, content: Any = None, **kwargs:
 
     Answers the specified question using the provided text in the body.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your
-    code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder
+    into your code flow.
 
     :keyword json: Pass in a JSON-serializable object (usually a dictionary). See the template in
      our example to find the input shape. Post body of the request.
-    :paramtype json: Any
+    :paramtype json: any
     :keyword content: Pass in binary content you want in the body of the request (typically bytes,
      a byte iterator, or stream input). Post body of the request.
-    :paramtype content: Any
+    :paramtype content: any
     :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's
      `send_request` method. See https://aka.ms/azsdk/python/protocol/quickstart for how to
      incorporate this response into your code flow.
@@ -156,7 +155,7 @@ def build_query_text_request(*, json: Any = None, content: Any = None, **kwargs:
     Example:
         .. code-block:: python
 
-            # JSON input template you can fill out and use as your `json` input.
+            # JSON input template you can fill out and use as your body input.
             json = {
                 "language": "str (optional)",
                 "question": "str",
@@ -193,7 +192,6 @@ def build_query_text_request(*, json: Any = None, content: Any = None, **kwargs:
 
     api_version = "2021-05-01-preview"
     accept = "application/json"
-
     # Construct URL
     url = kwargs.pop("template_url", "/:query-text")
 

@@ -40,13 +40,13 @@ interactions:
         {\n        \"isContextOnly\": false,\n        \"prompts\": []\n      }\n    }\n
         \ ]\n}"
     headers:
-      apim-request-id: 27f990a5-793c-4878-9ef3-0816cd087ab8
+      apim-request-id: 7cd6d31a-771e-4cdb-a6be-7a1504295914
       content-length: '1609'
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Jul 2021 17:24:14 GMT
+      date: Wed, 30 Jun 2021 15:14:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '349'
+      x-envoy-upstream-service-time: '970'
     status:
       code: 200
       message: OK
@@ -101,13 +101,13 @@ interactions:
         \     \"dialog\": {\n        \"isContextOnly\": false,\n        \"prompts\":
         []\n      }\n    }\n  ]\n}"
     headers:
-      apim-request-id: 294dc37f-dd69-41f0-a1da-91c6aa3b8e09
+      apim-request-id: db4190a2-426a-4932-8d83-dd14b10f4b37
       content-length: '2177'
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Jul 2021 17:24:14 GMT
+      date: Wed, 30 Jun 2021 15:14:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '334'
+      x-envoy-upstream-service-time: '1060'
     status:
       code: 200
       message: OK
