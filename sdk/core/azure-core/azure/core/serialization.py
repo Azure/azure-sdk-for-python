@@ -29,13 +29,14 @@ with no data. This gets serialized to `null` on the wire.
 """
 
 
-def iso_timedelta(value):
-    """Represent a timedelta in ISO 8601 format.
+def timedelta_as_isostr(value):
+    # type: (datetime.timedelta) -> str
+    """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
-    Function from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
+    Function adapted from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
     """
 
-    # split seconds to larger units
+    # Split seconds to larger units
     seconds = value.total_seconds()
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
@@ -44,32 +45,35 @@ def iso_timedelta(value):
     days, hours, minutes = list(map(int, (days, hours, minutes)))
     seconds = round(seconds, 6)
 
-    # build date
+    # Build date
     date = ""
     if days:
         date = "%sD" % days
 
-    # build time
+    # Build time
     time = "T"
 
-    # hours
+    # Hours
     bigger_exists = date or hours
     if bigger_exists:
         time += "{:02}H".format(hours)
 
-    # minutes
+    # Minutes
     bigger_exists = bigger_exists or minutes
     if bigger_exists:
         time += "{:02}M".format(minutes)
 
-    # seconds
-    if seconds.is_integer():
-        seconds = "{:02}".format(int(seconds))
-    else:
-        # 9 chars long w/leading 0, 6 digits after decimal
-        seconds = "%09.6f" % seconds
-        # remove trailing zeros
-        seconds = seconds.rstrip("0")
+    # Seconds
+    try:
+        if seconds.is_integer():
+            seconds = "{:02}".format(int(seconds))
+        else:
+            # 9 chars long w/ leading 0, 6 digits after decimal
+            seconds = "%09.6f" % seconds
+            # Remove trailing zeros
+            seconds = seconds.rstrip("0")
+    except AttributeError:  # int.is_integer() raises on Python 2.7
+        seconds = "{:02}".format(seconds)
 
     time += "{}S".format(seconds)
 
@@ -91,16 +95,23 @@ class ComplexEncoder(JSONEncoder):
         try:
             return super(ComplexEncoder, self).default(o)
         except TypeError:
-            o_type = type(o)
-
-            if o_type is datetime.date or o_type is datetime.time:
-                return o.isoformat()
-            if o_type is datetime.datetime:
-                if not o.tzinfo:  # astimezone() fails for naive times in Python 2.7
-                    return o.replace(tzinfo=TZ_UTC).isoformat()
-                return o.astimezone(TZ_UTC).isoformat()
-            if o_type is datetime.timedelta:
-                return iso_timedelta(o)
-            if o_type is bytes or o_type is bytearray:
+            if isinstance(o, (bytes, bytearray)):
                 return base64.b64encode(o).decode()
+            try:
+                # First try datetime.datetime
+                if hasattr(o, "year") and hasattr(o, "hour"):
+                    if not o.tzinfo:  # astimezone() fails for naive times in Python 2.7
+                        return o.replace(tzinfo=TZ_UTC).isoformat()
+                    return o.astimezone(TZ_UTC).isoformat()
+                # Next try datetime.date or datetime.time
+                else:
+                    return o.isoformat()
+            except AttributeError:
+                pass
+            # Last, try datetime.timedelta
+            try:
+                return timedelta_as_isostr(o)
+            except AttributeError:
+                # This will be raised when it hits value.total_seconds in the method above
+                pass
             return super(ComplexEncoder, self).default(o)
