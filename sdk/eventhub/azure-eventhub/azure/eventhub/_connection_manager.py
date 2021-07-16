@@ -29,11 +29,6 @@ if TYPE_CHECKING:
             pass
 
 
-class _ConnectionMode(Enum):
-    ShareConnection = 1
-    SeparateConnection = 2
-
-
 class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
@@ -53,7 +48,4 @@ class _SeparateConnectionManager(object):
 
 def get_connection_manager(**kwargs):
     # type: (...) -> 'ConnectionManager'
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
-    if connection_mode == _ConnectionMode.ShareConnection:
-        pass
     return _SeparateConnectionManager(**kwargs)
