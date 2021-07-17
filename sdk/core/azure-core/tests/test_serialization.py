@@ -3,12 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-from datetime import date, timedelta, time, datetime
+from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 
 from azure.core.serialization import ComplexEncoder, NULL
-import isodate
 import pytest
 
 
@@ -35,11 +34,41 @@ def _expand_dict(d):
     return dict((key, _expand_value(value)) for key, value in d.items())
 
 
+class DatetimeSubclass(datetime):
+    """datetime.datetime subclass that tests datetimes without a type() of datetime.datetime"""
+
+
 class SerializerMixin(object):
     """Mixin that provides methods for representing a model as a dictionary"""
 
     def to_dict(self):
         return _expand_value(vars(self))
+
+
+class NegativeUtcOffset(tzinfo):
+    """tzinfo class with UTC offset of -12 hours"""
+    _offset = timedelta(seconds=-43200)
+    _dst = timedelta(0)
+    _name = "-1200"
+    def utcoffset(self, dt):
+        return self.__class__._offset
+    def dst(self, dt):
+        return self.__class__._dst
+    def tzname(self, dt):
+        return self.__class__._name
+
+
+class PositiveUtcOffset(tzinfo):
+    """tzinfo class with UTC offset of +12 hours"""
+    _offset = timedelta(seconds=43200)
+    _dst = timedelta(0)
+    _name = "+1200"
+    def utcoffset(self, dt):
+        return self.__class__._offset
+    def dst(self, dt):
+        return self.__class__._dst
+    def tzname(self, dt):
+        return self.__class__._name
 
 
 def test_NULL_is_falsy():
@@ -111,7 +140,7 @@ def test_dictionary_datetime(json_dumps_with_encoder):
     test_obj = {
         "timedelta": timedelta(1),
         "date": date(2021, 5, 12),
-        "datetime": isodate.parse_datetime('2012-02-24T00:53:52.780Z'),
+        "datetime": datetime.strptime('2012-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ"),
         "time": time(11,12,13),
     }
     expected = {
@@ -127,7 +156,7 @@ def test_model_datetime(json_dumps_with_encoder):
         def __init__(self):
             self.timedelta = timedelta(1)
             self.date = date(2021, 5, 12)
-            self.datetime = isodate.parse_datetime('2012-02-24T00:53:52.780Z')
+            self.datetime = datetime.strptime('2012-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
             self.time = time(11,12,13)
 
     expected = DatetimeModel()
@@ -141,20 +170,20 @@ def test_model_datetime(json_dumps_with_encoder):
 
 def test_serialize_datetime(json_dumps_with_encoder):
 
-    date_obj = isodate.parse_datetime('2015-01-01T00:00:00')
+    date_obj = datetime.strptime('2015-01-01T00:00:00', "%Y-%m-%dT%H:%M:%S")
     date_str = json_dumps_with_encoder(date_obj)
 
     assert date_str == '"2015-01-01T00:00:00+00:00"'
 
-    date_obj = isodate.parse_datetime('1999-12-31T23:59:59-12:00')
+    date_obj = datetime.strptime('1999-12-31T23:59:59', "%Y-%m-%dT%H:%M:%S").replace(tzinfo=NegativeUtcOffset())
     date_str = json_dumps_with_encoder(date_obj)
 
     assert date_str == '"2000-01-01T11:59:59+00:00"'
 
-    date_obj = isodate.parse_datetime("2015-06-01T16:10:08.0121-07:00")
+    date_obj = datetime.strptime("2015-06-01T16:10:08.0121", "%Y-%m-%dT%H:%M:%S.%f").replace(tzinfo=PositiveUtcOffset())
     date_str = json_dumps_with_encoder(date_obj)
 
-    assert date_str == '"2015-06-01T23:10:08.012100+00:00"'
+    assert date_str == '"2015-06-01T04:10:08.012100+00:00"'
 
     date_obj = datetime.min
     date_str = json_dumps_with_encoder(date_obj)
@@ -164,11 +193,17 @@ def test_serialize_datetime(json_dumps_with_encoder):
     date_str = json_dumps_with_encoder(date_obj)
     assert date_str == '"9999-12-31T23:59:59.999999+00:00"'
 
-    date_obj = isodate.parse_datetime('2012-02-24T00:53:52.000001Z')
+    date_obj = datetime.strptime('2012-02-24T00:53:52.000001Z', "%Y-%m-%dT%H:%M:%S.%fZ")
     date_str = json_dumps_with_encoder(date_obj)
     assert date_str == '"2012-02-24T00:53:52.000001+00:00"'
 
-    date_obj = isodate.parse_datetime('2012-02-24T00:53:52.780Z')
+    date_obj = datetime.strptime('2012-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
+    date_str = json_dumps_with_encoder(date_obj)
+    assert date_str == '"2012-02-24T00:53:52.780000+00:00"'
+
+def test_serialize_datetime_subclass(json_dumps_with_encoder):
+
+    date_obj = DatetimeSubclass.strptime('2012-02-24T00:53:52.780Z', "%Y-%m-%dT%H:%M:%S.%fZ")
     date_str = json_dumps_with_encoder(date_obj)
     assert date_str == '"2012-02-24T00:53:52.780000+00:00"'
 
