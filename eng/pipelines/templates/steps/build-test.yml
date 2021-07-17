@@ -89,7 +89,7 @@ steps:
       failTaskOnFailedTests: true
 
 
-  - ${{ and(ne(parameters.PythonVersion, '2.7'), ne(parameters.PythonVersion, '3.5')) }}:
+  - ${{ if and(ne(parameters.PythonVersion, '2.7'), ne(parameters.PythonVersion, '3.5')) }}:
     - task: PythonScript@0
       displayName: 'Test Samples'
       condition: eq(variables['TestSamples'], 'true')
