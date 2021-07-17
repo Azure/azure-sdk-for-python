@@ -88,13 +88,15 @@ steps:
       testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
-  - task: PythonScript@0
-    displayName: 'Test Samples'
-    condition: and(eq(variables['TestSamples'], 'true'), ne(parameters['PythonVersion'], '2.7'), ne(parameters['PythonVersion'], '3.5'))
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "${{ parameters.BuildTargetingString }}"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="samples"
-    env: ${{ parameters.EnvVars }}
+
+  - ${{ and(ne(parameters.PythonVersion, '2.7'), ne(parameters.PythonVersion, '3.5')) }}:
+    - task: PythonScript@0
+      displayName: 'Test Samples'
+      condition: eq(variables['TestSamples'], 'true')
+      inputs:
+        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+        arguments: >-
+          "${{ parameters.BuildTargetingString }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="samples"
+      env: ${{ parameters.EnvVars }}
