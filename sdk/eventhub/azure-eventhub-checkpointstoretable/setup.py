@@ -11,7 +11,7 @@ import re
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-eventhub-checkpointstoretable"
-PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Tables Storage"
+PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Azure Table Storage"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
