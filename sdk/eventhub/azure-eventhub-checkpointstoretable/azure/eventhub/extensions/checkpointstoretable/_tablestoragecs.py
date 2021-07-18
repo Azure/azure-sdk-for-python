@@ -31,18 +31,6 @@ class TableCheckpointStore:
     def __init__(self, **kwargs):
         pass
 
-    def _create_entity_checkpoint(self, checkpoint, **kwargs):
-        pass
-
-    def _create_entity_ownership(self, ownership, **kwargs):
-        pass
-
-    def _look_entity_ownership(self, ownership, **kwargs):
-        pass
-
-    def _look_entity_checkpoint(self, checkpoint, **kwargs):
-        pass
-
     def list_ownership(self, namespace, eventhub, consumergroup, **kwargs):
         pass
 
@@ -50,12 +38,6 @@ class TableCheckpointStore:
         pass
 
     def update_checkpoint(self, checkpoint, **kwargs):
-        pass
-
-    def upload_ownership(self, ownership, metadata, **kwargs):
-        pass
-
-    def claim_one_partition(self, ownership, **kwargs):
         pass
 
     def claim_ownership(self, ownershiplist, **kwargs):
