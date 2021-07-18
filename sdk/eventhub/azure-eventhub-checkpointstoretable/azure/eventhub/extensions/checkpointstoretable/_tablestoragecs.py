@@ -2,12 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-#from typing import Sequence
-#from collections import defaultdict
-#from datetime import datetime
-#from azure.eventhub import CheckpointStore, EventHubConsumerClient
-#from azure.data.tables import TableClient, TableServiceClient, UpdateMode
-#from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError
 
 class TableCheckpointStore:
     """A CheckpointStore that uses Azure Table Storage to store the partition ownership and checkpoint data.
