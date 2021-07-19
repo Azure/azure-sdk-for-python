@@ -8,13 +8,6 @@
 
 - `EventGridPublisherClient` now supports Azure Active Directory (AAD) for authentication.
 
-### Breaking Changes
-
-### Key Bugs Fixed
-
-### Fixed
-
-
 ## 4.3.0 (2021-06-09)
 
   **New Features**
