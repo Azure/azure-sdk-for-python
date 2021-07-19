@@ -15,7 +15,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.transport import HttpRequest
 from azure.identity import ManagedIdentityCredential
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.imds import IMDS_URL
+from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.managed_identity_client import ManagedIdentityClient
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
@@ -438,9 +438,9 @@ def test_imds():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_URL),  # first request should be availability probe => match only the URL
+            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
-                base_url=IMDS_URL,
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope},
@@ -532,7 +532,7 @@ def test_imds_user_assigned_identity():
     access_token = "****"
     expires_on = 42
     expected_token = AccessToken(access_token, expires_on)
-    endpoint = IMDS_URL
+    endpoint = IMDS_AUTHORITY + IMDS_TOKEN_PATH
     scope = "scope"
     client_id = "some-guid"
     transport = validating_transport(
