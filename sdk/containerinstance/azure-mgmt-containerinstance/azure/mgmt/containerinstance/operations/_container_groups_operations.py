@@ -27,7 +27,7 @@ class ContainerGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-12-01".
+    :ivar api_version: Client API version. Constant value: "2021-03-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ContainerGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2021-03-01"
 
         self.config = config
 
@@ -697,7 +697,7 @@ class ContainerGroupsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
