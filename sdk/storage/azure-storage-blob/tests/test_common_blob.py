@@ -1789,7 +1789,7 @@ class StorageCommonBlobTest(StorageTestCase):
             self.bsc.account_name,
             self.bsc.credential.account_key,
             ResourceTypes(container=True, object=True),
-            AccountSasPermissions(read=True, immutability_policy=True),
+            AccountSasPermissions(read=True, set_immutability_policy=True),
             datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient(
@@ -1809,7 +1809,7 @@ class StorageCommonBlobTest(StorageTestCase):
             self.bsc.account_name,
             container_name,
             account_key=self.bsc.credential.account_key,
-            permission=ContainerSasPermissions(read=True, immutability_policy=True),
+            permission=ContainerSasPermissions(read=True, set_immutability_policy=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob1 = BlobClient(
@@ -1827,7 +1827,7 @@ class StorageCommonBlobTest(StorageTestCase):
             container_name,
             blob_name,
             account_key=self.bsc.credential.account_key,
-            permission=BlobSasPermissions(read=True, immutability_policy=True),
+            permission=BlobSasPermissions(read=True, set_immutability_policy=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob2 = BlobClient(

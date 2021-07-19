@@ -885,8 +885,9 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
-    :keyword bool immutability_policy:
-        To enable operations related to immutability policy.
+    :keyword bool set_immutability_policy:
+        To enable operations related to set/delete immutability policy.
+        To get immutability policy, you just need read permission.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
@@ -896,14 +897,14 @@ class ContainerSasPermissions(object):
         self.list = list
         self.delete_previous_version = delete_previous_version
         self.tag = tag
-        self.immutability_policy = kwargs.pop('immutability_policy', False)
+        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
                      ('l' if self.list else '') +
                      ('t' if self.tag else '') +
-                     ('i' if self.immutability_policy else ''))
+                     ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
         return self._str
@@ -927,10 +928,10 @@ class ContainerSasPermissions(object):
         p_list = 'l' in permission
         p_delete_previous_version = 'x' in permission
         p_tag = 't' in permission
-        p_immutability_policy = 'i' in permission
+        p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
                      delete_previous_version=p_delete_previous_version, tag=p_tag,
-                     immutability_policy=p_immutability_policy)
+                     set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
@@ -956,8 +957,9 @@ class BlobSasPermissions(object):
         Delete the previous blob version for the versioning enabled storage account.
     :param bool tag:
         Set or get tags on the blob.
-    :keyword bool immutability_policy:
-        To enable operations related to immutability policy.
+    :keyword bool set_immutability_policy:
+        To enable operations related to set/delete immutability policy.
+        To get immutability policy, you just need read permission.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
                  delete=False, delete_previous_version=False, tag=True, **kwargs):
@@ -968,7 +970,7 @@ class BlobSasPermissions(object):
         self.delete = delete
         self.delete_previous_version = delete_previous_version
         self.tag = tag
-        self.immutability_policy = kwargs.pop('immutability_policy', False)
+        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
@@ -976,7 +978,7 @@ class BlobSasPermissions(object):
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
                      ('t' if self.tag else '') +
-                     ('i' if self.immutability_policy else ''))
+                     ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
         return self._str
@@ -1001,11 +1003,11 @@ class BlobSasPermissions(object):
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
         p_tag = 't' in permission
-        p_immutability_policy = 'i' in permission
+        p_set_immutability_policy = 'i' in permission
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
                      delete_previous_version=p_delete_previous_version, tag=p_tag,
-                     immutability_policy=p_immutability_policy)
+                     set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 

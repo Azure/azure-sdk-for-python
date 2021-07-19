@@ -328,8 +328,9 @@ class AccountSasPermissions(object):
         To enable set or get tags on the blobs in the container.
     :keyword bool filter_by_tags:
         To enable get blobs by tags, this should be used together with list permission.
-    :keyword bool immutability_policy:
-        To enable operations related to immutability policy.
+    :keyword bool set_immutability_policy:
+        To enable operations related to set/delete immutability policy.
+        To get immutability policy, you just need read permission.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False,  # pylint: disable=redefined-builtin
@@ -345,7 +346,7 @@ class AccountSasPermissions(object):
         self.process = process
         self.tag = kwargs.pop('tag', False)
         self.filter_by_tags = kwargs.pop('filter_by_tags', False)
-        self.immutability_policy = kwargs.pop('immutability_policy', False)
+        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
@@ -357,7 +358,7 @@ class AccountSasPermissions(object):
                      ('p' if self.process else '') +
                      ('f' if self.filter_by_tags else '') +
                      ('t' if self.tag else '') +
-                     ('i' if self.immutability_policy else '')
+                     ('i' if self.set_immutability_policy else '')
                      )
 
     def __str__(self):
@@ -387,10 +388,10 @@ class AccountSasPermissions(object):
         p_process = 'p' in permission
         p_tag = 't' in permission
         p_filter_by_tags = 'f' in permission
-        p_immutability_policy = 'i' in permission
+        p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
                      list=p_list, add=p_add, create=p_create, update=p_update, process=p_process, tag=p_tag,
-                     filter_by_tags=p_filter_by_tags, immutability_policy=p_immutability_policy)
+                     filter_by_tags=p_filter_by_tags, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
