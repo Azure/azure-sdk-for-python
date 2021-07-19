@@ -25,6 +25,57 @@ from helpers import build_aad_response, validating_transport, mock_response, Req
 MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
 
 
+ALL_ENVIRONMENTS = (
+    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # App Service
+    {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
+    {  # Service Fabric
+        EnvironmentVariables.IDENTITY_ENDPOINT: "...",
+        EnvironmentVariables.IDENTITY_HEADER: "...",
+        EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
+    },
+    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
+    {},  # IMDS
+)
+
+
+@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
+def test_response_hook(environ):
+    """The credential should call raw_response_hook with all responses"""
+
+    scope = "scope"
+    expected_token = "***"
+    hook = mock.Mock()
+    now = int(time.time())
+    expected_response = mock_response(
+        json_payload={
+            "access_token": expected_token,
+            "expires_in": 3600,
+            "expires_on": now + 3600,
+            "ext_expires_in": 3600,
+            "not_before": now,
+            "resource": scope,
+            "token_type": "Bearer",
+        }
+    )
+    transport = validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
+
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        credential = ManagedIdentityCredential(transport=transport, raw_response_hook=hook)
+    credential.get_token(scope)
+
+    if environ:
+        # some environment variables are set, so we're not mocking IMDS and should expect 1 response
+        assert hook.call_count == 1
+        args, kwargs = hook.call_args
+        pipeline_response = args[0]
+        assert pipeline_response.http_response == expected_response
+    else:
+        # we're mocking IMDS and should expect 2 responses
+        assert hook.call_count == 2
+        responses = [args[0].http_response for args, _ in hook.call_args_list]
+        assert responses == [expected_response] * 2
+
+
 def test_cloud_shell():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
@@ -491,7 +542,9 @@ def test_client_id_none():
 
     # Cloud Shell
     with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True,
+        MANAGED_IDENTITY_ENVIRON,
+        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"},
+        clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = credential.get_token(scope)

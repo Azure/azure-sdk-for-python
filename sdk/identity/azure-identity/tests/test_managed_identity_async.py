@@ -19,19 +19,49 @@ import pytest
 
 from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, get_completed_future
+from test_managed_identity import ALL_ENVIRONMENTS
+
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
-ALL_ENVIRONMENTS = (
-    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # App Service
-    {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
-    {  # Service Fabric
-        EnvironmentVariables.IDENTITY_ENDPOINT: "...",
-        EnvironmentVariables.IDENTITY_HEADER: "...",
-        EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
-    },
-    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
-    {},  # IMDS
-)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
+async def test_response_hook(environ):
+    """The credential should call raw_response_hook with all responses"""
+
+    scope = "scope"
+    expected_token = "***"
+    hook = mock.Mock()
+    now = int(time.time())
+    expected_response = mock_response(
+        json_payload={
+            "access_token": expected_token,
+            "expires_in": 3600,
+            "expires_on": now + 3600,
+            "ext_expires_in": 3600,
+            "not_before": now,
+            "resource": scope,
+            "token_type": "Bearer",
+        }
+    )
+    transport = async_validating_transport(requests=[Request()] * 2, responses=[expected_response] * 2)
+
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        credential = ManagedIdentityCredential(transport=transport, raw_response_hook=hook)
+    await credential.get_token(scope)
+
+    if environ:
+        # some environment variables are set, so we're not mocking IMDS and should expect 1 response
+        assert hook.call_count == 1
+        args, kwargs = hook.call_args
+        pipeline_response = args[0]
+        assert pipeline_response.http_response == expected_response
+    else:
+        # we're mocking IMDS and should expect 2 responses
+        assert hook.call_count == 2
+        responses = [args[0].http_response for args, _ in hook.call_args_list]
+        assert responses == [expected_response] * 2
 
 
 @pytest.mark.asyncio
