@@ -16,7 +16,7 @@ This Checkpoint Store package works as a plug-in package to `EventHubConsumerCli
 - **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 - **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Storage Table to store the checkpoint data with entities. You may follow the guide [creating an Azure Storage Table Account]
-(https://docs.microsoft.com/en-us/azure/storage/tables/table-storage-overview).
+(https://docs.microsoft.com/azure/storage/tables/table-storage-overview).
 
 # Key concepts
 
