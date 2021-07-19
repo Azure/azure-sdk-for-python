@@ -1,6 +1,6 @@
 # Release History
 
-## 4.4.0 (Unreleased)
+## 4.4.0 (2021-07-19)
 
 - Bumped `msrest` dependency to `0.6.21` to align with mgmt package.
 
