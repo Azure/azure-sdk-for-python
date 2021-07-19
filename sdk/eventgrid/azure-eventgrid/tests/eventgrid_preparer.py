@@ -107,26 +107,3 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
 
 
 CachedEventGridTopicPreparer = functools.partial(EventGridTopicPreparer, use_cache=True)
-
-
-class EventGridTest(AzureMgmtTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
-
-    def __init__(self, method_name):
-        super(EventGridTest, self).__init__(method_name)
-
-    def get_oauth_endpoint(self):
-        return os.getenv("EG_TOPIC_HOSTNAME")
-
-    def generate_oauth_token(self):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("AZURE_TENANT_ID"),
-                os.getenv("AZURE_CLIENT_ID"),
-                os.getenv("AZURE_CLIENT_SECRET"),
-            )
-        return self.generate_fake_token()
-
-    def generate_fake_token(self):
-        return FakeTokenCredential()

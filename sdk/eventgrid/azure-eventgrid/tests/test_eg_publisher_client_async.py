@@ -29,9 +29,8 @@ from eventgrid_preparer import (
     CachedEventGridTopicPreparer
 )
 
-from asynctestcase import AsyncEventGridTest
 
-class EventGridPublisherClientTests(AsyncEventGridTest):
+class EventGridPublisherClientTests(AzureMgmtTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key', 'aeg-sas-token']
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
@@ -337,8 +336,8 @@ class EventGridPublisherClientTests(AsyncEventGridTest):
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @pytest.mark.asyncio
     async def test_send_token_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-        credential = self.generate_oauth_token()
-        client = EventGridPublisherClient(self.get_oauth_endpoint(), credential)
+        credential = self.get_credential(EventGridPublisherClient)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, credential)
         eg_event = EventGridEvent(
                 subject="sample", 
                 data={"sample": "eventgridevent"}, 
