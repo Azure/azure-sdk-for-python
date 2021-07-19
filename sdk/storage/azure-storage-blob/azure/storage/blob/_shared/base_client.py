@@ -26,7 +26,6 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
-    ContentDecodePolicy,
     BearerTokenCredentialPolicy,
     ProxyPolicy,
     DistributedTracingPolicy,
@@ -254,7 +253,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
-            ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,

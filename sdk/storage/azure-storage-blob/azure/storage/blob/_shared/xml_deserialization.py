@@ -50,7 +50,7 @@ else:
 
 import isodate
 
-from typing import Dict, Any
+from typing import Dict, Any, cast, IO
 
 
 try:
@@ -68,12 +68,14 @@ except NameError:
     _long_type = int
 
 
+from azure.core.exceptions import DecodeError
 from msrest.exceptions import DeserializationError, raise_with_traceback
 from msrest.serialization import (
     TZ_UTC,
     _FixedOffset,
     _FLATTEN
 )
+
 
 def full_restapi_key_transformer(key, attr_desc, value):
     """A key transformer that returns the full RestAPI key path.
@@ -479,34 +481,12 @@ class Deserializer(object):
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
         :raises UnicodeDecodeError: If bytes is not UTF8
         """
-        # This avoids a circular dependency. We might want to consider RawDesializer is more generic
-        # than the pipeline concept, and put it in a toolbox, used both here and in pipeline. TBD.
-        from azure.core.pipeline.policies import ContentDecodePolicy
-
-        # Assume this is enough to detect a Pipeline Response without importing it
-        context = getattr(raw_data, "context", {})
-        if context:
-            if ContentDecodePolicy.CONTEXT_NAME in context:
-                return context[ContentDecodePolicy.CONTEXT_NAME]
-            raise ValueError("This pipeline didn't have the ContentDecodePolicy policy; can't deserialize")
-
-        #Assume this is enough to recognize universal_http.ClientResponse without importing it
-        if hasattr(raw_data, "body"):
-            return ContentDecodePolicy.deserialize_from_http_generics(
-                raw_data.text(),
-                raw_data.headers
-            )
-
-        # Assume this enough to recognize requests.Response without importing it.
-        if hasattr(raw_data, '_content_consumed'):
-            return ContentDecodePolicy.deserialize_from_http_generics(
-                raw_data.text,
-                raw_data.headers
-            )
-
         if isinstance(raw_data, (basestring, bytes)) or hasattr(raw_data, 'read'):
-            return ContentDecodePolicy.deserialize_from_text(raw_data, content_type)
-        return raw_data
+            return deserialize_from_text(raw_data, content_type)
+        try:
+            return deserialize_from_http_generics(raw_data.http_response)
+        except AttributeError:
+            return raw_data
 
     def _instantiate_model(self, response, attrs, additional_properties=None):
         """Instantiate a response model passing in deserialized args.
@@ -940,3 +920,98 @@ class Deserializer(object):
             raise_with_traceback(DeserializationError, msg, err)
         else:
             return date_obj
+
+
+
+def deserialize_from_text(
+    data,  # type: Optional[Union[AnyStr, IO]]
+    mime_type=None,  # Optional[str]
+    response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
+):
+    """Decode response data according to content-type.
+    Accept a stream of data as well, but will be load at once in memory for now.
+    If no content-type, will return the string version (not bytes, not stream)
+    :param response: The HTTP response.
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    :param str mime_type: The mime type. As mime type, charset is not expected.
+    :param response: If passed, exception will be annotated with that response
+    :raises ~azure.core.exceptions.DecodeError: If deserialization fails
+    :returns: A dict or XML tree, depending of the mime_type
+    """
+    if not data:
+        return None
+
+    if hasattr(data, 'read'):
+        # Assume a stream
+        data = cast(IO, data).read()
+
+    if isinstance(data, bytes):
+        data_as_str = data.decode(encoding='utf-8-sig')
+    else:
+        # Explain to mypy the correct type.
+        data_as_str = cast(str, data)
+
+    if mime_type is None:
+        return data_as_str
+
+    if "xml" in (mime_type or []):
+        try:
+            try:
+                if isinstance(data, unicode):  # type: ignore
+                    # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
+                    data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
+            except NameError:
+                pass
+            return ET.fromstring(data_as_str)   # nosec
+        except ET.ParseError:
+            # It might be because the server has an issue, and returned JSON with
+            # content-type XML....
+            # So let's try a JSON load, and if it's still broken
+            # let's flow the initial exception
+            def _json_attemp(data):
+                try:
+                    return True, json.loads(data)
+                except ValueError:
+                    return False, None # Don't care about this one
+            success, json_result = _json_attemp(data)
+            if success:
+                return json_result
+            # If i'm here, it's not JSON, it's not XML, let's scream
+            # and raise the last context in this block (the XML exception)
+            # The function hack is because Py2.7 messes up with exception
+            # context otherwise.
+            _LOGGER.critical("Wasn't XML not JSON, failing")
+            raise_with_traceback(DecodeError, message="XML is invalid", response=response)
+    elif mime_type.startswith("text/"):
+        return data_as_str
+    else:
+        try:
+            return json.loads(data_as_str)
+        except ValueError as err:
+            raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
+    raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
+
+
+def deserialize_from_http_generics(
+    response,  # Union[HttpResponse, AsyncHttpResponse]
+    encoding=None,  # Optional[str]
+):
+    """Deserialize from HTTP response.
+    Headers will tested for "content-type"
+    :param response: The HTTP response
+    :param encoding: The encoding to use if known for this service (will disable auto-detection)
+    :raises ~azure.core.exceptions.DecodeError: If deserialization fails
+    :returns: A dict or XML tree, depending of the mime-type
+    """
+    # Try to use content-type from headers if available
+    if response.content_type:
+        mime_type = response.content_type.split(";")[0].strip().lower()
+    # Ouch, this server did not declare what it sent...
+    # Let's guess it's JSON...
+    # Also, since Autorest was considering that an empty body was a valid JSON,
+    # need that test as well....
+    else:
+        mime_type = "application/json"
+
+    # Rely on transport implementation to give me "text()" decoded correctly
+    return deserialize_from_text(response.text(encoding), mime_type, response=response)

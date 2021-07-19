@@ -10,7 +10,7 @@ from typing import (  # pylint: disable=unused-import
 import logging
 from xml.etree.ElementTree import Element
 
-from azure.core.pipeline.policies import ContentDecodePolicy
+#from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -19,6 +19,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     DecodeError)
 
+from .xml_deserialization import deserialize_from_http_generics
 from .parser import _to_utc_datetime
 from .models import StorageErrorCode, UserDelegationKey, get_enum_value
 
@@ -96,7 +97,7 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     additional_data = {}
     error_dict = {}
     try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        error_body = deserialize_from_http_generics(storage_error.response)
         # If it is an XML response
         if isinstance(error_body, Element):
             error_dict = {
@@ -108,7 +109,7 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
             error_dict = error_body.get('error', {})
         elif not error_code:
             _LOGGER.warning(
-                'Unexpected return type % from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
+                'Unexpected return type % from deserialize_from_http_generics.', type(error_body))
             error_dict = {'message': str(error_body)}
 
         # If we extracted from a Json or XML response

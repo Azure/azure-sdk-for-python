@@ -7,17 +7,19 @@
 
 from azure.core.paging import PageIterator, ItemPaged
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy
+#from azure.core.pipeline.policies import ContentDecodePolicy
 
 from ._deserialize import get_blob_properties_from_generated_code, parse_tags
 from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
+from ._shared.xml_deserialization import deserialize_from_http_generics
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
 
 def deserialize_list_result(pipeline_response, _, headers):
-    payload = pipeline_response.context[ContentDecodePolicy.CONTEXT_NAME]
+    #payload = pipeline_response.context[ContentDecodePolicy.CONTEXT_NAME]
+    payload = deserialize_from_http_generics(pipeline_response.http_response)
     location = pipeline_response.http_response.location_mode
     return location, payload
 
@@ -64,13 +66,6 @@ def blob_properties_from_xml(element, select, deserializer):
     if 'version' in select:
         blob.version_id = load_xml_string(element, 'VersionId')
         blob.is_current_version = load_xml_bool(element, 'IsCurrentVersion')
-    # TODO: Should also support selecting 'tags' and 'metadata', but these are only returned
-    # if opted-into with the 'include' parameter.
-    # if 'metadata' in select:
-    #     blob.metadata = None
-    #     blob.encrypted_metadata = None
-    # if 'tags' in select:
-    #     blob.tags = None
     return blob
 
 
@@ -171,20 +166,23 @@ class BlobPrefixPaged(BlobPropertiesPaged):
         continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
 
         blob_prefixes = load_many_nodes(self._response, 'BlobPrefix', wrapper='Blobs')
-        blob_prefixes = [self._build_item(blob) for blob in blob_prefixes]
+        blob_prefixes = [self._build_prefix(blob) for blob in blob_prefixes]
 
         self.current_page = blob_prefixes + self.current_page
         self.delimiter = load_xml_string(self._response, 'Delimiter')
 
         return continuation_token, self.current_page
 
-    def _build_item(self, item):
+    def _build_prefix(self, item):
         return BlobPrefix(
             self._command,
             container=self.container,
             prefix=load_xml_string(item, 'Name'),
             results_per_page=self.results_per_page,
-            location_mode=self.location_mode
+            location_mode=self.location_mode,
+            select=self.select,
+            deserializer=self._deserializer,
+            delimiter=self.delimiter
         )
 
 

@@ -155,21 +155,20 @@ class BlobPrefixPaged(BlobPropertiesPaged):
 
     async def _extract_data_cb(self, get_next_return):
         continuation_token, current_page = await super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-
         blob_prefixes = load_many_nodes(self._response, 'BlobPrefix', wrapper='Blobs')
-        blob_prefixes = [self._build_item(blob) for blob in blob_prefixes]
-
+        blob_prefixes = [self._build_prefix(blob) for blob in blob_prefixes]
         self.current_page = blob_prefixes + current_page
         self.delimiter = load_xml_string(self._response, 'Delimiter')
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
-
         return continuation_token, self.current_page
 
-    def _build_item(self, item):
+    def _build_prefix(self, item):
         return BlobPrefix(
             self._command,
             container=self.container,
             prefix=load_xml_string(item, 'Name'),
             results_per_page=self.results_per_page,
-            location_mode=self.location_mode
+            location_mode=self.location_mode,
+            select=self.select,
+            deserializer=self._deserializer,
+            delimiter=self.delimiter
         )

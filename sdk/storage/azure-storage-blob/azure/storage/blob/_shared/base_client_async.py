@@ -15,7 +15,6 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
@@ -97,7 +96,6 @@ class AsyncStorageAccountHostsMixin(object):
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
             config.retry_policy,
