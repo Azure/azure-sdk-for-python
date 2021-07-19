@@ -555,7 +555,7 @@ class BlobProperties(DictMixin):
         .. versionadded:: 12.10.0
             This was introduced in API version '2020-10-02'.
 
-    :ivar bool legal_hold:
+    :ivar bool has_legal_hold:
         Specified if a legal hold should be set on the blob.
         Currently this parameter of upload_blob() API is for BlockBlob only.
 
@@ -603,7 +603,7 @@ class BlobProperties(DictMixin):
         self.tags = None
         self.immutability_policy_expiry_time = kwargs.get('x-ms-immutability-policy-until-date')
         self.immutability_policy_mode = kwargs.get('x-ms-immutability-policy-mode')
-        self.legal_hold = kwargs.get('x-ms-legal-hold')
+        self.has_legal_hold = kwargs.get('x-ms-legal-hold')
         self.has_versions_only = None
 
 class FilteredBlob(DictMixin):
