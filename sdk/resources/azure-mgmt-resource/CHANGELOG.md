@@ -1,5 +1,14 @@
 # Release History
 
+## 19.0.0 (2021-07-19)
+
+**Breaking changes**
+
+  - Operation SubscriptionFeatureRegistrationsOperations.create_or_update has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.delete has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.get has a new signature
+  - Operation SubscriptionFeatureRegistrationsOperations.list_by_subscription has a new signature
+
 ## 18.1.0 (2021-07-13)
 
 **Features**
