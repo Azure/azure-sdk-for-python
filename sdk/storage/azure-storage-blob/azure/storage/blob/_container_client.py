@@ -34,6 +34,7 @@ from ._shared.response_handlers import (
     return_response_headers,
     return_headers_and_deserialized)
 from ._generated import AzureBlobStorage
+from ._generated import models as generated_models
 from ._generated.models import SignedIdentifier
 from ._deserialize import deserialize_container_properties
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
@@ -156,6 +157,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._custom_xml_deserializer(generated_models)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
 

@@ -28,6 +28,7 @@ from ._shared.parser import _to_utc_datetime
 from ._shared.response_handlers import return_response_headers, process_storage_error, \
     parse_to_internal_user_delegation_key
 from ._generated import AzureBlobStorage
+from ._generated import models as generated_models
 from ._generated.models import StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
@@ -134,6 +135,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._custom_xml_deserializer(generated_models)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
 

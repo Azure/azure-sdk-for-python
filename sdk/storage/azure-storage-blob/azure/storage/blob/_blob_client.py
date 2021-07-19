@@ -31,6 +31,7 @@ from ._shared.request_handlers import (
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
 from ._generated import AzureBlobStorage
+from ._generated import models as generated_models
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
@@ -175,6 +176,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._custom_xml_deserializer(generated_models)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
 

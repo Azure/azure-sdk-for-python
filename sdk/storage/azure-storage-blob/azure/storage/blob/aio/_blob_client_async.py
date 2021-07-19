@@ -21,6 +21,7 @@ from .._shared.response_handlers import return_response_headers, process_storage
 from .._deserialize import get_page_ranges_result, parse_tags, deserialize_pipeline_response_into_cls
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated.aio import AzureBlobStorage
+from .._generated import models as generated_models
 from .._generated.models import CpkInfo
 from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
@@ -120,6 +121,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._custom_xml_deserializer(generated_models)
         default_api_version = self._client._config.version  # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
 

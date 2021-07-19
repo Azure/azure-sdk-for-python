@@ -35,6 +35,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy
 )
 
+from .xml_deserialization import Deserializer
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
@@ -198,6 +199,19 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         :type: str
         """
         return self._client._config.version  # pylint: disable=protected-access
+    
+    def _custom_xml_deserializer(self, generated_models):
+        """Reset the deserializer on the generated client to be Storage implementation"""
+        client_models = {k: v for k, v in generated_models.__dict__.items() if isinstance(v, type)}
+        custom_deserialize = Deserializer(client_models)
+        self._client._deserialize = custom_deserialize
+        self._client.service._deserialize = custom_deserialize
+        self._client.container._deserialize = custom_deserialize
+        self._client.directory._deserialize = custom_deserialize
+        self._client.blob._deserialize = custom_deserialize
+        self._client.page_blob._deserialize = custom_deserialize
+        self._client.append_blob._deserialize = custom_deserialize
+        self._client.block_blob._deserialize = custom_deserialize
 
     def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
         query_str = "?"
